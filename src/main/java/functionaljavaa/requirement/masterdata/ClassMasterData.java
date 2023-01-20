@@ -21,6 +21,8 @@ import functionaljavaa.certification.AnalysisMethodCertif;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.materialspec.ConfigSpecStructure;
 import functionaljavaa.parameter.Parameter;
+import functionaljavaa.requirement.ModuleTableOrViewGet;
+import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement;
 import static functionaljavaa.unitsofmeasurement.UnitsOfMeasurement.getUomFromConfig;
 import functionaljavaa.user.UserProfile;
 import java.util.Arrays;
@@ -68,6 +70,7 @@ public class ClassMasterData {
         MD_INSTRUMENTS(new EnumIntTables[]{TblsAppProcData.TablesAppProcData.INSTRUMENTS}), 
         MD_VARIABLES(new EnumIntTables[]{TblsAppProcConfig.TablesAppProcConfig.VARIABLES}), 
         MD_VARIABLES_SET(new EnumIntTables[]{TblsAppProcConfig.TablesAppProcConfig.VARIABLES_SET}), 
+        MD_UOM(new EnumIntTables[]{TblsCnfg.TablesConfig.UOM}), 
         ;
         private MasterDataObjectTypes(EnumIntTables[] tblsObj){
             this.tblsObj=tblsObj;
@@ -75,42 +78,80 @@ public class ClassMasterData {
         public EnumIntTables[] getInvolvedTables() {return this.tblsObj;}
         private final EnumIntTables[] tblsObj;
     }
-
-    public ClassMasterData(String instanceName, String objectType, String jsonObj){
+    
+    public ClassMasterData(String instanceName, String objectType, String jsonObj, String moduleName){
         String userCreator="PROCEDURE_DEPLOYMENT";
-        MasterDataObjectTypes endPoint=null;
-        try{
-            endPoint = MasterDataObjectTypes.valueOf(objectType.toUpperCase());
-        } catch (Exception ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-            this.diagnostic=new Object[]{LPPlatform.LAB_FALSE, ex.getMessage()};
-            this.objectTypeExists=false;
-            return;
-        }        
+
         Object[] objToJsonObj = convertToJsonObjectStringedObject(jsonObj, true);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString())){
            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, objToJsonObj[1].toString()+".Object: <*1*>", new Object[]{jsonObj});
            return;
-        }
-        
+        }        
         JsonObject jsonObject=(JsonObject) objToJsonObj[1];
-        String jsonObjType = jsonObject.get("object_type").getAsString();
-        if (!objectType.toUpperCase().contains(jsonObjType.toUpperCase())){
-            this.diagnostic=new Object[]{LPPlatform.LAB_FALSE, "objectType in record and objectType in the JsonObject mismatch"};
-            return;
-        }
-        if (endPoint.getInvolvedTables()!=null && endPoint.getInvolvedTables().length>0){
-            for (EnumIntTables curTbl: endPoint.getInvolvedTables()){
-                Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(instanceName, curTbl.getRepositoryName()), curTbl.getTableName());
-                if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())){
-                    this.diagnostic=dbTableExists;
-                    return;
-                }
-            }
-        }
+        
         Object[] actionDiagnoses = null;
         String globalDiagn=LPPlatform.LAB_TRUE;
         JSONArray jLogArr=new JSONArray();
+        if (jsonObject.has("parsing_type")&&"SIMPLE_TABLE".equalsIgnoreCase(jsonObject.get("parsing_type").getAsString())){
+            JsonArray asJsonArray = jsonObject.get("values").getAsJsonArray();
+            for (JsonElement jO: asJsonArray){
+                String diagn="";
+                JSONObject jLog=new JSONObject();
+                if (!jsonObject.has("object_type"))
+                    this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
+                        "object_type property not found in this json model which is required for 'simple_table' parsing_type", null);
+                String tableName=jsonObject.get("object_type").getAsString();
+                ModuleTableOrViewGet tblDiagn=new ModuleTableOrViewGet(Boolean.FALSE, moduleName, GlobalVariables.Schemas.CONFIG.getName(), tableName);
+                if (!tblDiagn.getFound()){
+                    this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, tblDiagn.getErrorMsg(), null);
+                    //curTblJsonObj.put("error", tableCreationScriptTable);
+                }else{
+                    Object[] fldsInfo=getFldsNamesAndValues(tblDiagn.getTableObj(), jO);
+                    if (fldsInfo.length==3)
+                        this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null);
+                    else{   
+                        String[] fldsName=(String[]) fldsInfo[0];
+                        Object[] fldsValue=(Object[])fldsInfo[1];
+
+                        if (EnumIntTableFields.getFldPosicInArray(tblDiagn.getTableObj().getTableFields(), TblsEnvMonitConfig.InstrIncubator.CREATED_BY.getName())>-1){
+                            fldsName=LPArray.addValueToArray1D(fldsName, new String[]{TblsEnvMonitConfig.InstrIncubator.CREATED_BY.getName(), TblsEnvMonitConfig.InstrIncubator.CREATED_ON.getName()});
+                            fldsValue=LPArray.addValueToArray1D(fldsValue, new Object[]{userCreator, LPDate.getCurrentTimeStamp()});
+                        }
+                        RdbmsObject insertRecord = Rdbms.insertRecord(tblDiagn.getTableObj(), fldsName, fldsValue, instanceName);
+                        this.diagnostic=insertRecord.getApiMessage();
+                    }
+                }
+                jLog.put("diagnostic", Arrays.toString(this.diagnostic));
+                jLogArr.add(jLog);
+            }
+            calculateDiagnostic(jLogArr);
+        }else{
+        
+            MasterDataObjectTypes endPoint=null;
+            try{
+                endPoint = MasterDataObjectTypes.valueOf(objectType.toUpperCase());
+            } catch (Exception ex) {
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+                this.diagnostic=new Object[]{LPPlatform.LAB_FALSE, ex.getMessage()};
+                this.objectTypeExists=false;
+                return;
+            }        
+
+            String jsonObjType = jsonObject.get("object_type").getAsString();
+            if (!objectType.toUpperCase().contains(jsonObjType.toUpperCase())){
+                this.diagnostic=new Object[]{LPPlatform.LAB_FALSE, "objectType in record and objectType in the JsonObject mismatch"};
+                return;
+            }
+            if (endPoint.getInvolvedTables()!=null && endPoint.getInvolvedTables().length>0){
+                for (EnumIntTables curTbl: endPoint.getInvolvedTables()){
+                    Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(instanceName, curTbl.getRepositoryName()), curTbl.getTableName());
+                    if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())){
+                        this.diagnostic=dbTableExists;
+                        return;
+                    }
+                }
+            }
+        
             switch (endPoint){
                 case MD_METHODS:      
                     JsonArray asJsonArray = jsonObject.get("values").getAsJsonArray();
@@ -618,11 +659,22 @@ public class ClassMasterData {
                         }
                     }                    
                     this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new "+endPoint.name().toLowerCase(), null);
-                    break;   
+                    break;  
+                case MD_UOM:                        
+                    asJsonArray = jsonObject.get("values").getAsJsonArray();
+                    for (JsonElement jO: asJsonArray){
+                        String uomName=jO.getAsJsonObject().get("name").getAsString();
+                        String importType=UnitsOfMeasurement.UomImportType.INDIV.toString();
+                        if (jO.getAsJsonObject().has("import_all_family")&&jO.getAsJsonObject().get("import_all_family").getAsBoolean())
+                            UnitsOfMeasurement.UomImportType.FAMIL.toString();
+                        this.diagnostic=getUomFromConfig(uomName, importType);
+                    }
+                    break;
                 default:
                     this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "mdParserNotFound", new Object[]{endPoint.name()});
                     break;
-            }    
+            }   
+        }
     }
     
     /**
