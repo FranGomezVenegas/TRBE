@@ -21,8 +21,8 @@ public class TblsCnfg {
 
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.CONFIG.getName();
     public enum TablesConfig implements EnumIntTables{
-        UOM(null, "units_of_measurement", SCHEMA_NAME, true, UnitsOfMeasurement.values(), UnitsOfMeasurement.NAME.getName(),
-            new String[]{UnitsOfMeasurement.NAME.getName()}, null, "UnitsOfMeasurement"),
+        UOM(null, "units_of_measurement", SCHEMA_NAME, true, UnitsOfMeasurement.values(), 
+            null, new String[]{UnitsOfMeasurement.NAME.getName()}, null, "UnitsOfMeasurement"),
         METHODS(null, "methods", SCHEMA_NAME, true, Methods.values(), null,
             new String[]{Methods.CODE.getName()}, null, "Analysis methods"),
         ANALYSIS(null, "analysis", SCHEMA_NAME, true, Analysis.values(), null,
