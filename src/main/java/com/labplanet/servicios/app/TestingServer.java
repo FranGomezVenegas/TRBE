@@ -109,7 +109,24 @@ public class TestingServer extends HttpServlet {
             out.println("Value: " + valueToDecrypt);
             Object[] decryptVal = DbEncryption.decryptValue(valueToDecrypt);
             out.println("Decrypted back: "+decryptVal[decryptVal.length-1].toString());
-            
+lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueba", new String[]{"info.fran.gomez@gmail.com"}, 
+        null, null, null);
+out.println("SSL Mail sent without attachment");
+lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueba", new String[]{"info.fran.gomez@gmail.com"}, 
+        null, null, new String[]{"d:/FE Refactoring LP.xlsx"});
+out.println("SSL Mail sent with attachment");
+
+            lbplanet.utilities.LPMailing.sendMailViaTLS("prueba", "esto es una prueba desde Trazit", 
+        new String[]{"info.fran.gomez@gmail.com", "fgomez@trazit.net", "jmallorqui@trazit.net"},         
+        null, null, new String[]{});
+out.println("TLS Mail sent");
+lbplanet.utilities.LPMailing.sendMailViaTLS("prueba", "esto es una prueba", 
+        new String[]{"info.fran.gomez@gmail.com", "fgomez@trazit.net", "jmallorqui@trazit.net"}, 
+        null, null, new String[]{}); //"d:/FE Refactoring LP.xlsx", "D:/LP-Documentacion/hexagon-white-blue-light.jpg"});
+out.println("TLS Mail sent");
+
+
+            if (1==1)return;               
             Rdbms.stablishDBConection("labplanet"); 
 
             JSONObject jObj=new JSONObject();
@@ -123,7 +140,8 @@ public class TestingServer extends HttpServlet {
             //token = new Token(myToken);
             //JSONArray newProcedureDefinition = AppProcedureListAPI.newProcedureDefinition(token, "proc-deploy");
             //String[] scriptPublicFieldNames = TblsTesting.getScriptPublicFieldNames("em-demo-a");
-if (1==1)return;           
+
+            if (1==1)return;           
         JSONObject procedure=new JSONObject();
         JSONArray procEventsIconsDown = new JSONArray(); 
         JSONObject procEventJson = new JSONObject();
