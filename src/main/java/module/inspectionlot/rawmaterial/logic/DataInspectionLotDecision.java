@@ -3,18 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package functionaljavaa.moduleinspectionlot;
+package module.inspectionlot.rawmaterial.logic;
 
-import com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.InspLotRMAPIactionsEndpoints;
-import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMConfig;
-import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMData;
+import module.inspectionlot.rawmaterial.apis.InspLotRMAPIactions.InspLotRMAPIactionsEndpoints;
+import module.inspectionlot.rawmaterial.definition.TblsInspLotRMConfig;
+import module.inspectionlot.rawmaterial.definition.TblsInspLotRMData;
 import databases.Rdbms;
 import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.SqlWhere;
 import databases.features.Token;
 import functionaljavaa.audit.LotAudit;
-import functionaljavaa.moduleinspectionlot.ModuleInspLotRMenum.DataInspLotErrorTrapping;
+import module.inspectionlot.rawmaterial.logic.ModuleInspLotRMenum.DataInspLotErrorTrapping;
 import functionaljavaa.samplestructure.DataSampleStructureStatuses;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;

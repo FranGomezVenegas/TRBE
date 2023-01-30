@@ -5,7 +5,7 @@
  */
 package functionaljavaa.materialspec;
 
-import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMData;
+import module.inspectionlot.rawmaterial.definition.TblsInspLotRMData;
 import databases.Rdbms;
 import databases.RdbmsObject;
 import lbplanet.utilities.LPArray;

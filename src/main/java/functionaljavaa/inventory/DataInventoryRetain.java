@@ -5,8 +5,8 @@
  */
 package functionaljavaa.inventory;
 
-import com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI.InspLotRMAPIactionsEndpoints;
-import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMData;
+import module.inspectionlot.rawmaterial.apis.InspLotRMAPIactions.InspLotRMAPIactionsEndpoints;
+import module.inspectionlot.rawmaterial.definition.TblsInspLotRMData;
 import databases.Rdbms;
 import databases.RdbmsObject;
 import databases.SqlStatement.WHERECLAUSE_TYPES;

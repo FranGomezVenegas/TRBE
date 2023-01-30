@@ -57,7 +57,7 @@ public class LPTestingParams {
         DB_SCHEMADATA_SAMPLES("/testing/moduleSamples/TestingSamples", "DBSchema_data_Samples.txt", 1, "Action Name;Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided", true),
         DB_SCHEMADATA_GENOMA("/testing/moduleGenoma/TestingGenoma", "DBSchema_data_genoma.txt", 1, "Action Name;Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided", true),        
         DB_SCHEMADATA_INSPECTION_LOT_RM("/testing/moduleInspLotRM/TestingInspLotRM", "DBSchema_data_inspLotRM.txt", 1, "Action Name;Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided", true),        
-        
+        MODULE_INVENTORY_LOT("/testing/app/TestingPlatformInvTracking", "DBSchema_data_inspLotRM.txt", 1, "Action Name;Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided", true),
         DB_PLATFORM_INSTRUMENTS("/testing/app/TestingPlatformInstruments", "DBSchema_platform_instruments.txt", 1, "Action Name;Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided", false),
         ;
         private TestingServletsConfig(String url, String fileName, Integer numTables, String tablesHeaders, Boolean forProcedure){

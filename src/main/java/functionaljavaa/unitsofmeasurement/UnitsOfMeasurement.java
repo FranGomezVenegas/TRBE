@@ -81,6 +81,7 @@ public class UnitsOfMeasurement {
         NEW_UNITS_NOT_DEFINED("UnitsOfMeasurement_newUnitsNotDefined","",""),
         SAME_VALUE_NOT_CONVERTED("UnitsOfMeasurement_sameValueNotConverted","",""),
         FAMILY_FIELD_NOT_IN_QUERY("UnitsOfMeasurement_methodError_familyFieldNotAddedToTheQuery","",""),
+        CONVERSION_FAILED("UnitsOfMeasurement_unitsConversionFailed","",""),
         ;
         private UomErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;

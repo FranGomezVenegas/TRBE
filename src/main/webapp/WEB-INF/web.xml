@@ -239,7 +239,7 @@
     </servlet>
     <servlet>
         <servlet-name>TestingInspLotRM</servlet-name>
-        <servlet-class>com.labplanet.servicios.moduleinspectionlotrm.TestingInspLotRM</servlet-class>
+        <servlet-class>module.inspectionlot.rawmaterial.apis.TestingInspLotRM</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>TestingEnvMonitSamples</servlet-name>
@@ -292,7 +292,7 @@
     <servlet>
         <servlet-name>TestingPlatformInvTracking</servlet-name>
         <servlet-class>module.inventorytrack.apis.TestingPlatformInvTracking</servlet-class>
-    </servlet>    
+    </servlet>
     <servlet>
         <description>This servlet sends file to client</description>
         <display-name>DownloadFileServlet</display-name>
@@ -309,11 +309,11 @@
     </servlet>
     <servlet>
         <servlet-name>InspLotRMAPIactions</servlet-name>
-        <servlet-class>com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPI</servlet-class>
+        <servlet-class>module.inspectionlot.rawmaterial.apis.InspLotRMAPIactions</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>InspLotRMAPIqueries</servlet-name>
-        <servlet-class>com.labplanet.servicios.moduleinspectionlotrm.InspLotRMAPIfrontend</servlet-class>
+        <servlet-class>module.inspectionlot.rawmaterial.apis.InspLotRMAPIqueries</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>AppTrazitInitSession</servlet-name>
@@ -718,84 +718,4 @@
             30
         </session-timeout>
     </session-config>
-
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-    
-    
-    
-    
-    
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 </web-app>

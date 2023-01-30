@@ -1448,6 +1448,7 @@ public class ProcedureDefinitionToInstance {
      }        
     public static final  JSONArray createBusinessRules(String procedure,  Integer procVersion, String instanceName){
         try{
+            
             String[] fieldsRequired=new String[]{TblsReqs.ProcedureBusinessRules.FILE_SUFFIX.getName(), TblsReqs.ProcedureBusinessRules.RULE_NAME.getName(), TblsReqs.ProcedureBusinessRules.RULE_VALUE.getName()};
             String diagnObjName="diagnostic";
             String[] fildsToGet=new String[]{TblsReqs.ProcedureBusinessRules.FILE_SUFFIX.getName(), TblsReqs.ProcedureBusinessRules.RULE_NAME.getName(),
@@ -1465,32 +1466,32 @@ public class ProcedureDefinitionToInstance {
               jsonObj.put(JsonTags.ERROR.getTagValue(), RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode());
               jsonObj.put(JsonTags.NUM_RECORDS_IN_DEFINITION.getTagValue(), 0); 
               jsonArr.add(jsonObj);
-              return jsonArr;
+              //return jsonArr;
             }else{
                 jsonObj.put(JsonTags.NUM_RECORDS_IN_DEFINITION.getTagValue(), procBusRules.length); 
-            }
-            jsonArr.add(jsonObj);
-            Parameter parm=new Parameter();
-           // Object[] procBusRulesFiles = LPArray.getColumnFromArray2D(procBusRules, LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureBusinessRules.FILE_SUFFIX.getName()));
-    /*        String[] filesNames=LPArray.getUniquesArray(procBusRulesFiles);
-            for (String curFile: filesNames){
-                parm.createPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
-                        instanceName+"-"+curFile);  
-            }        */
-            for (Object[] curprocBusRules: procBusRules){
-                RdbmsObject diagn = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, 
-                        new String[]{TblsProcedure.ProcedureBusinessRules.AREA.getName(), TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()}, 
-                        curprocBusRules);
-                curprocBusRules=LPArray.addValueToArray1D(curprocBusRules, diagn.getApiMessage());
-                JSONObject convertArrayRowToJSONObject = LPJson.convertArrayRowToJSONObject(fildsToGet, curprocBusRules);
-                //Object curProcEventName = curProcEventSops[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROC_EVENT_DESTINATION.split("\\|"), TblsProcedure.ProcedureEvents.PROCEDURE_NAME.getName())];
-                jsonArr.add(convertArrayRowToJSONObject);
+            
+                jsonArr.add(jsonObj);
+               // Object[] procBusRulesFiles = LPArray.getColumnFromArray2D(procBusRules, LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureBusinessRules.FILE_SUFFIX.getName()));
+        /*        String[] filesNames=LPArray.getUniquesArray(procBusRulesFiles);
+                for (String curFile: filesNames){
+                    parm.createPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
+                            instanceName+"-"+curFile);  
+                }        */
+                for (Object[] curprocBusRules: procBusRules){
+                    RdbmsObject diagn = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, 
+                            new String[]{TblsProcedure.ProcedureBusinessRules.AREA.getName(), TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()}, 
+                            curprocBusRules);
+                    curprocBusRules=LPArray.addValueToArray1D(curprocBusRules, diagn.getApiMessage());
+                    JSONObject convertArrayRowToJSONObject = LPJson.convertArrayRowToJSONObject(fildsToGet, curprocBusRules);
+                    //Object curProcEventName = curProcEventSops[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROC_EVENT_DESTINATION.split("\\|"), TblsProcedure.ProcedureEvents.PROCEDURE_NAME.getName())];
+                    jsonArr.add(convertArrayRowToJSONObject);
+                }
             }
             //Build procedureActions and actionEnabled properties
             fildsToGet=new String[]{TblsReqs.ProcedureUserRequirements.WINDOW_ACTION.getName(), TblsReqs.ProcedureUserRequirements.ROLES.getName(), TblsReqs.ProcedureUserRequirements.CONFIRM_DIALOG.getName(), TblsReqs.ProcedureUserRequirements.CONFIRM_DIALOG_DETAIL.getName()};
             Object[][] procActionsEnabledBusRules = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS.getTableName(), 
-                    new String[]{TblsReqs.ProcedureUserRequirements.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRequirements.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureUserRequirements.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUserRequirements.ACTIVE.getName(), TblsReqs.ProcedureUserRequirements.IN_SYSTEM.getName(), TblsReqs.ProcedureUserRequirements.IN_SCOPE.getName()}, 
-                    new Object[]{procedure, procVersion, instanceName, true, true, true}, 
+                    new String[]{TblsReqs.ProcedureUserRequirements.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRequirements.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureUserRequirements.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUserRequirements.ACTIVE.getName(), TblsReqs.ProcedureUserRequirements.IN_SYSTEM.getName(), TblsReqs.ProcedureUserRequirements.IN_SCOPE.getName(), TblsReqs.ProcedureUserRequirements.WINDOW_ELEMENT_TYPE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.LIKE}, 
+                    new Object[]{procedure, procVersion, instanceName, true, true, true, "WindowAction%"}, 
                     fildsToGet, new String[]{});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procActionsEnabledBusRules[0][0].toString())){
               jsonObj.put(JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procActionsEnabledBusRules[0]));
@@ -1518,15 +1519,16 @@ public class ProcedureDefinitionToInstance {
                     jsonArr.add(convertArrayRowToJSONObject);
                     if (allEnabledActions.length()>0)allEnabledActions=allEnabledActions+"|";
                     allEnabledActions=allEnabledActions+LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.WINDOW_ACTION.getName())]).toString();
-                }
-            }        
-            String diagn=parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  instanceName+"-"+GlobalVariables.Schemas.PROCEDURE.getName(),  
+                }                    
+            }
+            Parameter parm=new Parameter();            
+            RdbmsObject addProcBusinessRule = parm.addProcBusinessRule(LpPlatformBusinessRules.PROCEDURE_ACTIONS.getAreaName(),  
                     LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName(), allEnabledActions);
-            diagn=parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  instanceName+"-"+GlobalVariables.Schemas.PROCEDURE.getName(),  
+            
+            addProcBusinessRule = parm.addProcBusinessRule(LpPlatformBusinessRules.ESIGN_REQUIRED.getAreaName(),
                     LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName(), allEsigReq);
-            diagn=parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  instanceName+"-"+GlobalVariables.Schemas.PROCEDURE.getName(),  
+            addProcBusinessRule = parm.addProcBusinessRule(LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getAreaName(),
                     LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName(), allUserConfirmReq);
-
             return jsonArr;
         }catch(Exception e){
             JSONArray jsonArr = new JSONArray();

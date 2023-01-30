@@ -5,7 +5,7 @@
  */
 package functionaljavaa.materialspec;
 
-import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMConfig;
+import module.inspectionlot.rawmaterial.definition.TblsInspLotRMConfig;
 import databases.Rdbms;
 import java.util.ArrayList;
 import java.util.Arrays;
