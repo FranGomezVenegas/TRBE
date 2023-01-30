@@ -138,18 +138,18 @@ public class TestingPlatformInvTracking extends HttpServlet {
                     testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                     
                 }else{    
-                    ClassInvTrackingController clssInstrumentsController=new ClassInvTrackingController(request, actionName.toString(), testingContent, iLines, table1NumArgs, tstOut.getAuditReasonPosic());
-                    if (clssInstrumentsController.getFunctionFound()){
-                        functionRelatedObjects=clssInstrumentsController.getFunctionRelatedObjects();
-                        functionEvaluation=(Object[]) clssInstrumentsController.getFunctionDiagn();
+                    ClassInvTrackingController clssInvTrackingController=new ClassInvTrackingController(request, actionName.toString(), testingContent, iLines, table1NumArgs, tstOut.getAuditReasonPosic());
+                    if (clssInvTrackingController.getFunctionFound()){
+                        functionRelatedObjects=clssInvTrackingController.getFunctionRelatedObjects();
+                        functionEvaluation=(Object[]) clssInvTrackingController.getFunctionDiagn();
                         testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                        fileContentTable1Builder.append(clssInstrumentsController.getRowArgsRows());
+                        fileContentTable1Builder.append(clssInvTrackingController.getRowArgsRows());
                     }else{
                         functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName});
                         testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                        fileContentTable1Builder.append(clssInstrumentsController.getRowArgsRows());         
+                        fileContentTable1Builder.append(clssInvTrackingController.getRowArgsRows());         
                     }
-                    clssInstrumentsController=null;
+                    clssInvTrackingController=null;
                 }
                 if (testingContent[iLines][0]==null){tstAssertSummary.increasetotalLabPlanetBooleanUndefined();}
                 if (testingContent[iLines][1]==null){tstAssertSummary.increasetotalLabPlanetErrorCodeUndefined();}
