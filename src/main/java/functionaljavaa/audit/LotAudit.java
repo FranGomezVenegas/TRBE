@@ -5,7 +5,7 @@
  */
 package functionaljavaa.audit;
 
-import com.labplanet.servicios.moduleinspectionlotrm.TblsInspLotRMDataAudit;
+import module.inspectionlot.rawmaterial.definition.TblsInspLotRMDataAudit;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import java.util.Arrays;
