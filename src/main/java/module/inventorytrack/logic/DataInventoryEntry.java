@@ -114,7 +114,7 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
                 }*/
                 RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES, fieldsName, fieldsValue);            
                     if (insertRecordInTable.getRunSuccess())
-                    instrumentsAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.START_CALIBRATION, instrName, TablesAppProcData.INSTRUMENTS.getTableName(), instrEventId.toString(),
+                    instrumentsAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.CREATED_QUALIFICATION, instrName, TablesAppProcData.INSTRUMENTS.getTableName(), instrEventId.toString(),
                         fieldsName, fieldsValue);
             }
         }        

@@ -12,10 +12,6 @@ import databases.SqlWhere;
 import databases.TblsAppProcConfig;
 import databases.TblsAppProcData;
 import databases.TblsAppProcData.TablesAppProcData;
-import databases.TblsAppProcData.ViewsAppProcData;
-import databases.TblsAppProcDataAudit;
-import databases.TblsAppProcDataAudit.TablesAppProcDataAudit;
-import databases.TblsDataAudit;
 import databases.features.Token;
 import functionaljavaa.parameter.Parameter;
 import java.io.IOException;
@@ -35,6 +31,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import module.inventorytrack.definition.TblsInvTrackingData;
 import module.inventorytrack.definition.TblsInvTrackingData.TablesInvTrackingData;
+import module.inventorytrack.definition.TblsInvTrackingDataAudit;
 import module.inventorytrack.logic.InvTrackingEnums.InvLotStatuses;
 import module.inventorytrack.logic.InvTrackingEnums.InventoryTrackAPIqueriesEndpoints;
 import org.json.simple.JSONArray;
@@ -107,7 +104,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                         EnumIntTableFields.getAllFieldNamesFromDatabase(TablesInvTrackingData.LOT),
                         new String[]{TblsInvTrackingData.Lot.STATUS.getName()+"<>"}, 
                         new Object[]{InvLotStatuses.RETIRED.toString()}, 
-                        new String[]{TblsInvTrackingData.Lot.LOT_ID.getName()+" desc"});
+                        new String[]{TblsInvTrackingData.Lot.LOT_NAME.getName()+" desc"});
                 JSONArray jArr = new JSONArray();
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentsInfo[0][0].toString())){
                     for (Object[] currInstr: instrumentsInfo){
@@ -121,44 +118,44 @@ public class InvTrackingAPIqueries extends HttpServlet {
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
                 return;  
-            case INSTRUMENT_AUDIT_FOR_GIVEN_INSTRUMENT:
-                String instrName=LPNulls.replaceNull(argValues[0]).toString();
-                fieldsToRetrieve=getAllFieldNames(TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS);
-                if (!LPArray.valueInArray(fieldsToRetrieve, TblsAppProcDataAudit.Instruments.AUDIT_ID.getName()))
-                    fieldsToRetrieve=LPArray.addValueToArray1D(fieldsToRetrieve, TblsAppProcDataAudit.Instruments.AUDIT_ID.getName());
-                instrumentsInfo=QueryUtilitiesEnums.getTableData(TablesAppProcDataAudit.INSTRUMENTS,
-                    EnumIntTableFields.getAllFieldNamesFromDatabase(TablesAppProcDataAudit.INSTRUMENTS),
-                    new String[]{TblsAppProcDataAudit.Instruments.INSTRUMENT_NAME.getName(), TblsDataAudit.Sample.PARENT_AUDIT_ID.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, 
-                    new Object[]{instrName, ""}, 
-                    new String[]{TblsAppProcDataAudit.Instruments.INSTRUMENT_NAME.getName(), TblsAppProcDataAudit.Instruments.DATE.getName()+" asc"});
+            case AUDIT_FOR_GIVEN_INVENTORY_LOT:
+                String lotName=LPNulls.replaceNull(argValues[0]).toString();
+                fieldsToRetrieve=getAllFieldNames(TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT);
+                if (!LPArray.valueInArray(fieldsToRetrieve, TblsInvTrackingDataAudit.Lot.AUDIT_ID.getName()))
+                    fieldsToRetrieve=LPArray.addValueToArray1D(fieldsToRetrieve, TblsInvTrackingDataAudit.Lot.AUDIT_ID.getName());
+                instrumentsInfo=QueryUtilitiesEnums.getTableData(TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT,
+                    EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT),
+                    new String[]{TblsInvTrackingDataAudit.Lot.LOT_NAME.getName(), TblsInvTrackingDataAudit.Lot.PARENT_AUDIT_ID.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, 
+                    new Object[]{lotName, ""}, 
+                    new String[]{TblsInvTrackingDataAudit.Lot.LOT_NAME.getName(), TblsInvTrackingDataAudit.Lot.DATE.getName()+" asc"}, null, false);
                 jArr = new JSONArray();
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentsInfo[0][0].toString())){
                     for (Object[] currInstrAudit: instrumentsInfo){
                         JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrAudit);
 
-                        Object[] convertToJsonObjectStringedObject = LPJson.convertToJsonObjectStringedObject(currInstrAudit[LPArray.valuePosicInArray(fieldsToRetrieve, TblsDataAudit.Sample.FIELDS_UPDATED.getName())].toString());
+                        Object[] convertToJsonObjectStringedObject = LPJson.convertToJsonObjectStringedObject(currInstrAudit[LPArray.valuePosicInArray(fieldsToRetrieve, TblsInvTrackingDataAudit.Lot.FIELDS_UPDATED.getName())].toString());
                         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(convertToJsonObjectStringedObject[0].toString()))
-                            jObj.put(TblsDataAudit.Sample.FIELDS_UPDATED.getName(), convertToJsonObjectStringedObject[1]);            
+                            jObj.put(TblsInvTrackingDataAudit.Lot.FIELDS_UPDATED.getName(), convertToJsonObjectStringedObject[1]);            
 
-                        Integer curAuditId=Integer.valueOf(currInstrAudit[LPArray.valuePosicInArray(fieldsToRetrieve, TblsAppProcDataAudit.Instruments.AUDIT_ID.getName())].toString());
-                        Object[][] sampleAuditInfoLvl2=QueryUtilitiesEnums.getTableData(TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS,
-                            EnumIntTableFields.getTableFieldsFromString(TablesAppProcDataAudit.INSTRUMENTS, "ALL"),
-                            new String[]{TblsDataAudit.Sample.PARENT_AUDIT_ID.getName()}, new Object[]{curAuditId}, 
-                            new String[]{TblsDataAudit.Sample.AUDIT_ID.getName()});
+                        Integer curAuditId=Integer.valueOf(currInstrAudit[LPArray.valuePosicInArray(fieldsToRetrieve, TblsInvTrackingDataAudit.Lot.AUDIT_ID.getName())].toString());
+                        Object[][] auditInfoLvl2=QueryUtilitiesEnums.getTableData(TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT,
+                            EnumIntTableFields.getTableFieldsFromString(TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT, "ALL"),
+                            new String[]{TblsInvTrackingDataAudit.Lot.PARENT_AUDIT_ID.getName()}, new Object[]{curAuditId}, 
+                            new String[]{TblsInvTrackingDataAudit.Lot.AUDIT_ID.getName()}, null, false);
                         JSONArray jArrLvl2 = new JSONArray();
-                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditInfoLvl2[0][0].toString())){
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditInfoLvl2[0][0].toString())){
                             Object[] childJObj=new Object[]{null, null, "No child", "", "", "", null, "", "", null, null};
                             for (int iChild=childJObj.length;iChild<fieldsToRetrieve.length;iChild++)
                                 childJObj=LPArray.addValueToArray1D(childJObj, "");                            
                             JSONObject jObjLvl2=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, childJObj); 
                             jArrLvl2.add(jObjLvl2);
                         }else{
-                            for (Object[] curRowLvl2: sampleAuditInfoLvl2){
+                            for (Object[] curRowLvl2: auditInfoLvl2){
                                 JSONObject jObjLvl2=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curRowLvl2,
-                                    new String[]{TblsDataAudit.Sample.FIELDS_UPDATED.getName()});  
-                                Object[] convertToJsonObjectStringedObjectLvl2 = LPJson.convertToJsonObjectStringedObject(curRowLvl2[LPArray.valuePosicInArray(fieldsToRetrieve, TblsDataAudit.Sample.FIELDS_UPDATED.getName())].toString());
+                                    new String[]{TblsInvTrackingDataAudit.Lot.FIELDS_UPDATED.getName()});  
+                                Object[] convertToJsonObjectStringedObjectLvl2 = LPJson.convertToJsonObjectStringedObject(curRowLvl2[LPArray.valuePosicInArray(fieldsToRetrieve, TblsInvTrackingDataAudit.Lot.FIELDS_UPDATED.getName())].toString());
                                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(convertToJsonObjectStringedObjectLvl2[0].toString()))
-                                    jObjLvl2.put(TblsDataAudit.Sample.FIELDS_UPDATED.getName(), convertToJsonObjectStringedObjectLvl2[1]);            
+                                    jObjLvl2.put(TblsInvTrackingDataAudit.Lot.FIELDS_UPDATED.getName(), convertToJsonObjectStringedObjectLvl2[1]);            
                                 jArrLvl2.add(jObjLvl2);
                             }
                         }
@@ -169,13 +166,134 @@ public class InvTrackingAPIqueries extends HttpServlet {
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
                 return;
+            case RETIRED_INVENTORY_LOTS_LAST_N_DAYS:
+                String numDays = LPNulls.replaceNull(argValues[0]).toString();
+                String reference = LPNulls.replaceNull(argValues[1]).toString();
+                String category = LPNulls.replaceNull(argValues[2]).toString();
+                if (numDays.length()==0) numDays=String.valueOf(7);
+                int numDaysInt=0-Integer.valueOf(numDays);               
+                fieldsToRetrieve=getAllFieldNames(TblsInvTrackingData.TablesInvTrackingData.LOT);
+                Object[][] instrDecommissionedClosedLastDays = QueryUtilitiesEnums.getTableData(TblsInvTrackingData.TablesInvTrackingData.LOT, 
+                    EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInvTrackingData.TablesInvTrackingData.LOT),
+                    new String[]{TblsInvTrackingData.Lot.RETIRED.getName(), TblsInvTrackingData.Lot.RETIRED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()},
+                    new Object[]{true, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
+                    new String[]{TblsInvTrackingData.Lot.RETIRED_ON.getName()+" desc"});
+                jArr = new JSONArray();
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrDecommissionedClosedLastDays[0][0].toString())){
+                    for (Object[] currIncident: instrDecommissionedClosedLastDays){
+                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
+                        jArr.add(jObj);
+                    }
+                }
+                Rdbms.closeRdbms();  
+                LPFrontEnd.servletReturnSuccess(request, response, jArr);              
+                return;
+            case EXPIRED_LOTS:
+                SqlWhere sWhere=new SqlWhere();
+                category = LPNulls.replaceNull(argValues[0]).toString();
+                reference = LPNulls.replaceNull(argValues[1]).toString();
+                if (category.length()>0)
+                     sWhere.addConstraint(TblsInvTrackingData.ViewExpiredLots.CATEGORY, 
+                        category.contains("*")  ? SqlStatement.WHERECLAUSE_TYPES.LIKE: SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{category}, null);
+                if (reference.length()>0)
+                     sWhere.addConstraint(TblsInvTrackingData.ViewExpiredLots.REFERENCE, 
+                        reference.contains("*")  ? SqlStatement.WHERECLAUSE_TYPES.LIKE: SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{reference}, null);
+
+                sWhere.addConstraint(TblsInvTrackingData.Lot.LOT_NAME, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, null, null);
+                reference = LPNulls.replaceNull(argValues[0]).toString();
+                category = LPNulls.replaceNull(argValues[1]).toString();
+                fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsInvTrackingData.ViewsInvTrackingData.LOTS_EXPIRED.getViewFields());
+                Object[][] referenceWithControlIssues = QueryUtilitiesEnums.getViewData(TblsInvTrackingData.ViewsInvTrackingData.LOTS_EXPIRED, 
+                    TblsInvTrackingData.ViewsInvTrackingData.LOTS_EXPIRED.getViewFields(),
+                    sWhere, new String[]{TblsInvTrackingData.ViewExpiredLots.EXPIRY_REASON.getName()+" desc"});
+                jArr = new JSONArray();
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithControlIssues[0][0].toString())){
+                    for (Object[] currIncident: referenceWithControlIssues){
+                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
+                        jArr.add(jObj);
+                    }
+                }
+                Rdbms.closeRdbms();  
+                JSONObject jSummaryObj=new JSONObject();
+                jSummaryObj.put("datatable", jArr);
+                LPFrontEnd.servletReturnSuccess(request, response, jSummaryObj);              
+                return;
+            case REFERENCES_UNDER_MIN_STOCK:
+                sWhere=new SqlWhere();
+                category = LPNulls.replaceNull(argValues[0]).toString();
+                reference = LPNulls.replaceNull(argValues[1]).toString();
+                if (category.length()>0)
+                     sWhere.addConstraint(TblsInvTrackingData.ViewReferencesStockUnderMin.CATEGORY, 
+                        category.contains("*")  ? SqlStatement.WHERECLAUSE_TYPES.LIKE: SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{category}, null);
+                if (reference.length()>0)
+                     sWhere.addConstraint(TblsInvTrackingData.ViewReferencesStockUnderMin.NAME, 
+                        reference.contains("*")  ? SqlStatement.WHERECLAUSE_TYPES.LIKE: SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{reference}, null);
+                fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsInvTrackingData.ViewsInvTrackingData.REFERENCE_STOCK_UNDER_MIN.getViewFields());
+                
+                sWhere.addConstraint(TblsInvTrackingData.ViewReferencesStockUnderMin.CURRENT_STOCK, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, null, null);
+                Object[][] referenceWithStockUponMin = QueryUtilitiesEnums.getViewData(TblsInvTrackingData.ViewsInvTrackingData.REFERENCE_STOCK_UNDER_MIN, 
+                    TblsInvTrackingData.ViewsInvTrackingData.REFERENCE_STOCK_UNDER_MIN.getViewFields(),
+                    sWhere, new String[]{TblsInvTrackingData.ViewReferencesStockUnderMin.CURRENT_STOCK.getName()+" desc"});
+                jArr = new JSONArray();
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithStockUponMin[0][0].toString())){
+                    for (Object[] currIncident: referenceWithStockUponMin){
+                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
+                        jArr.add(jObj);
+                    }
+                }
+                Rdbms.closeRdbms();  
+                jSummaryObj=new JSONObject();
+                jSummaryObj.put("datatable", jArr);
+                LPFrontEnd.servletReturnSuccess(request, response, jSummaryObj);     
+                return;
+            case REFERENCE_WITH_CONTROL_ISSUES:
+                jSummaryObj=new JSONObject();
+                sWhere=new SqlWhere();
+                sWhere.addConstraint(TblsInvTrackingData.Lot.LOT_NAME, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, null, null);
+                reference = LPNulls.replaceNull(argValues[0]).toString();
+                category = LPNulls.replaceNull(argValues[1]).toString();
+                fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsInvTrackingData.ViewsInvTrackingData.LOTS_EXPIRED.getViewFields());
+                referenceWithControlIssues = QueryUtilitiesEnums.getViewData(TblsInvTrackingData.ViewsInvTrackingData.LOTS_EXPIRED, 
+                    TblsInvTrackingData.ViewsInvTrackingData.LOTS_EXPIRED.getViewFields(),
+                    sWhere, new String[]{TblsInvTrackingData.ViewExpiredLots.EXPIRY_REASON.getName()+" desc"});
+                jArr = new JSONArray();
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithControlIssues[0][0].toString())){
+                    for (Object[] currIncident: referenceWithControlIssues){
+                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
+                        jArr.add(jObj);
+                    }
+                    jSummaryObj.put("has_expired_lots", true);
+                }else{
+                    jSummaryObj.put("has_expired_lots", false);
+                }
+                jSummaryObj.put("expired_lots_list", jArr);                
+                fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsInvTrackingData.ViewsInvTrackingData.REFERENCE_STOCK_UNDER_MIN.getViewFields());
+                sWhere=new SqlWhere();
+                sWhere.addConstraint(TblsInvTrackingData.ViewReferencesStockUnderMin.CURRENT_STOCK, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, null, null);
+                referenceWithStockUponMin = QueryUtilitiesEnums.getViewData(TblsInvTrackingData.ViewsInvTrackingData.REFERENCE_STOCK_UNDER_MIN, 
+                    TblsInvTrackingData.ViewsInvTrackingData.REFERENCE_STOCK_UNDER_MIN.getViewFields(),
+                    sWhere, new String[]{TblsInvTrackingData.ViewReferencesStockUnderMin.CURRENT_STOCK.getName()+" desc"});
+                jArr = new JSONArray();
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithStockUponMin[0][0].toString())){
+                    for (Object[] currIncident: referenceWithStockUponMin){
+                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
+                        jArr.add(jObj);
+                    }
+                    jSummaryObj.put("has_references_with_stock_upon_min", true);
+                }else{
+                    jSummaryObj.put("has_references_with_stock_upon_min", false);
+                }
+                jSummaryObj.put("references_with_stock_upon_min_list", jArr);                
+                Rdbms.closeRdbms();  
+                LPFrontEnd.servletReturnSuccess(request, response, jSummaryObj);              
+                return;
             case INSTRUMENT_EVENTS_FOR_GIVEN_INSTRUMENT:
-                instrName=LPNulls.replaceNull(argValues[0]).toString();
+                lotName=LPNulls.replaceNull(argValues[0]).toString();
                 fieldsToRetrieve=getAllFieldNames(TblsAppProcData.TablesAppProcData.INSTRUMENT_EVENT);
                 Object[][] AppInstrumentsAuditEvents = QueryUtilitiesEnums.getTableData(TablesAppProcData.INSTRUMENT_EVENT, 
                     EnumIntTableFields.getAllFieldNamesFromDatabase(TablesAppProcData.INSTRUMENT_EVENT),
                     new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName()},
-                    new Object[]{instrName},
+                    new Object[]{lotName},
                     new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.CREATED_ON.getName()+" desc"});
                 jArr = new JSONArray();
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(AppInstrumentsAuditEvents[0][0].toString())){
@@ -187,7 +305,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
                 return;
-            case INSTRUMENT_EVENTS_INPROGRESS:
+/*            case INSTRUMENT_EVENTS_INPROGRESS:
                 String[] whereFldName=new String[]{TblsAppProcData.ViewNotDecommInstrumentAndEventData.COMPLETED_BY.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()};
                 Object[] whereFldValue=new Object[]{};
                 String fieldName=LPNulls.replaceNull(argValues[0]).toString();
@@ -211,7 +329,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
                 return;
-
+*/
             case INSTRUMENT_EVENT_VARIABLES:
                 Integer instrEventId=(Integer)argValues[0];
                 EnumIntTableFields[] tblFieldsToRetrieveObj = (EnumIntTableFields[]) EnumIntTableFields.getAllFieldNamesFromDatabase(TablesAppProcData.INSTR_EVENT_VARIABLE_VALUES);
@@ -230,28 +348,6 @@ public class InvTrackingAPIqueries extends HttpServlet {
                 }
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
-                return;
-
-
-            case DECOMISSIONED_INSTRUMENTS_LAST_N_DAYS:
-                String numDays = LPNulls.replaceNull(argValues[0]).toString();
-                if (numDays.length()==0) numDays=String.valueOf(7);
-                int numDaysInt=0-Integer.valueOf(numDays);               
-                fieldsToRetrieve=getAllFieldNames(TblsAppProcData.TablesAppProcData.INSTRUMENTS);
-                Object[][] instrDecommissionedClosedLastDays = QueryUtilitiesEnums.getTableData(TablesAppProcData.INSTRUMENTS, 
-                    EnumIntTableFields.getAllFieldNamesFromDatabase(TablesAppProcData.INSTRUMENTS),
-                    new String[]{TblsAppProcData.Instruments.DECOMMISSIONED.getName(), TblsAppProcData.Instruments.DECOMMISSIONED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()},
-                    new Object[]{true, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
-                    new String[]{TblsAppProcData.Instruments.DECOMMISSIONED_ON.getName()+" desc"});
-                jArr = new JSONArray();
-                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrDecommissionedClosedLastDays[0][0].toString())){
-                    for (Object[] currIncident: instrDecommissionedClosedLastDays){
-                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
-                        jArr.add(jObj);
-                    }
-                }
-                Rdbms.closeRdbms();  
-                LPFrontEnd.servletReturnSuccess(request, response, jArr);              
                 return;
             case COMPLETED_EVENTS_LAST_N_DAYS:
                 numDays = LPNulls.replaceNull(argValues[0]).toString();
@@ -273,7 +369,54 @@ public class InvTrackingAPIqueries extends HttpServlet {
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);              
                 return;
-
+            case LOT_PRINT_LABEL:
+                lotName=LPNulls.replaceNull(argValues[0]).toString();
+                JSONObject jObj = new JSONObject();
+                String zplCode="^XA\n" +
+"\n" +
+"^FX Top section with logo, name and address.\n" +
+"^CF0,60\n" +
+"^FO50,50^GB100,100,100^FS\n" +
+"^FO75,75^FR^GB100,100,100^FS\n" +
+"^FO93,93^GB40,40,40^FS\n" +
+"^FO220,50^FDIntershipping, Inc.^FS\n" +
+"^CF0,30\n" +
+"^FO220,115^FD1000 Shipping Lane^FS\n" +
+"^FO220,155^FDShelbyville TN 38102^FS\n" +
+"^FO220,195^FDUnited States (USA)^FS\n" +
+"^FO50,250^GB700,3,3^FS\n" +
+"\n" +
+"^FX Second section with recipient address and permit information.\n" +
+"^CFA,30\n" +
+"^FO50,300^FDJohn Doe^FS\n" +
+"^FO50,340^FD100 Main Street^FS\n" +
+"^FO50,380^FDSpringfield TN 39021^FS\n" +
+"^FO50,420^FDUnited States (USA)^FS\n" +
+"^CFA,15\n" +
+"^FO600,300^GB150,150,3^FS\n" +
+"^FO638,340^FDPermit^FS\n" +
+"^FO638,390^FD123456^FS\n" +
+"^FO50,500^GB700,3,3^FS\n" +
+"\n" +
+"^FX Third section with bar code.\n" +
+"^BY5,2,270\n" +
+"^FO100,550^BC^FD"+lotName+"^FS\n" +
+"\n" +
+"^FX Fourth section (the two boxes on the bottom).\n" +
+"^FO50,900^GB700,250,3^FS\n" +
+"^FO400,900^GB3,250,3^FS\n" +
+"^CF0,40\n" +
+"^FO100,960^FDCtr. X34B-1^FS\n" +
+"^FO100,1010^FDREF1 F00B47^FS\n" +
+"^FO100,1060^FDREF2 BL4H8^FS\n" +
+"^CF0,190\n" +
+"^FO470,955^FDCA^FS\n" +
+"\n" +
+"^XZ";
+                jObj.put("zpl_code", zplCode);
+                Rdbms.closeRdbms();  
+                LPFrontEnd.servletReturnSuccess(request, response, jObj);
+                return;
             case GET_INSTRUMENT_FAMILY_LIST:
                 fieldsToRetrieve=getAllFieldNames(TblsAppProcConfig.TablesAppProcConfig.INSTRUMENTS_FAMILY);
                 Object[][] instrumentFamily=QueryUtilitiesEnums.getTableData(TblsAppProcConfig.TablesAppProcConfig.INSTRUMENTS_FAMILY, 
@@ -284,7 +427,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                 jArr = new JSONArray();
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentFamily[0][0].toString())){
                     for (Object[] currInstr: instrumentFamily){
-                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
+                        jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
                         jArr.add(jObj);
                     }
                 }

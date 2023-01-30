@@ -1,29 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package module.inventorytrack.logic;
 
 import databases.Rdbms;
 import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.SqlWhere;
-import databases.TblsAppProcConfig;
-import databases.TblsAppProcData;
-import databases.TblsAppProcData.TablesAppProcData;
 import databases.features.Token;
-import static functionaljavaa.audit.AppInstrumentsAudit.instrumentsAuditAdd;
 import static functionaljavaa.audit.AppInventoryLotAudit.InventoryLotAuditAdd;
-import static functionaljavaa.instruments.DataInstrumentsEvents.addVariableSetToObject;
-import static functionaljavaa.instruments.DataInstrumentsEvents.eventHasNotEnteredVariables;
-import functionaljavaa.instruments.InstrumentsEnums.AppInstrumentsAuditEvents;
-import functionaljavaa.instruments.InstrumentsEnums.InstrLockingReasons;
-import functionaljavaa.instruments.InstrumentsEnums.InstrumentsErrorTrapping;
-import functionaljavaa.responserelatedobjects.RelatedObjects;
+import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement;
+import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement.UomErrorTrapping;
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
 import trazit.session.ResponseMessages;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
@@ -35,7 +20,10 @@ import module.inventorytrack.definition.TblsInvTrackingData;
 import module.inventorytrack.definition.TblsInvTrackingData.TablesInvTrackingData;
 import module.inventorytrack.logic.InvTrackingEnums.InvLotStatuses;
 import module.inventorytrack.logic.InvTrackingEnums.InvReferenceStockControlTypes;
-import module.inventorytrack.logic.InvTrackingEnums.InventoryTrackErrorTrapping;
+import module.inventorytrack.logic.InvTrackingEnums.InventoryTrackingErrorTrapping;
+import trazit.enums.EnumIntAuditEvents;
+import trazit.enums.EnumIntEndpoints;
+import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
@@ -48,54 +36,56 @@ import trazit.session.ProcedureRequestSession;
  */
 
 public class DataInventory {
+
+    /**
+     * @return the lotName
+     */
+    public String getLotName() {
+        return lotName;
+    }
+
+    /**
+     * @return the reference
+     */
+    public String getReference() {
+        return reference;
+    }
+
+    /**
+     * @return the category
+     */
+    public String getCategory() {
+        return category;
+    }
     private final String lotName;
     private Boolean availableForUse;
     private Boolean isLocked;
-    private Boolean isDecommissioned;
+    private Boolean isRetired;
     private String lockedReason;
-    private String[] fieldNames;
-    private Object[] fieldValues;
+    private String[] lotFieldNames;
+    private Object[] lotFieldValues;
     private String status;
+    private String statusPrevious;
     private String reference;
     private String category;
     private String[] referenceFieldNames;
     private Object[] referenceFieldValues;
     private final Boolean hasError;
-    private InternalMessage errorDetail;
+    private InternalMessage errorDetail;    
+    private BigDecimal currentVolume;
+    private String currentVolumeUom;
+    private Boolean requiresQualification;
+    private Boolean isQualified;
+    private String[] qualificationFieldNames;
+    private Object[] qualificationFieldValues;
     
     public enum Decisions{ACCEPTED, ACCEPTED_WITH_RESTRICTIONS, REJECTED}
 
-    private InternalMessage decisionValueIsCorrect(String decision){
-        try{
-            Decisions.valueOf(decision);
-            return new InternalMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.CORRECT, null, null);
-        }catch(Exception e){
-            ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();
-            messages.addMainForError(InstrumentsErrorTrapping.WRONG_DECISION, new Object[]{decision, Arrays.toString(Decisions.values())});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.WRONG_DECISION, new Object[]{decision, Arrays.toString(Decisions.values())}, null);
-        }
-    }
-    private Boolean decisionAndFamilyRuleToTurnOn(String decision, String fieldName){
-        if (!decision.toUpperCase().contains("ACCEPT")) return false;
-        Integer fldPosic=LPArray.valuePosicInArray(this.referenceFieldNames, fieldName);
-        if (fldPosic==-1) return false;
-        return Boolean.valueOf(LPNulls.replaceNull(this.referenceFieldValues[fldPosic]).toString());
-    }
-    
-    private Date nextEventDate(String fieldName){
-        Integer fldPosic=LPArray.valuePosicInArray(this.referenceFieldNames, fieldName);
-        if (fldPosic==-1) return null;
-        String intervalInfo = LPNulls.replaceNull(this.referenceFieldValues[fldPosic]).toString();
-        if (intervalInfo==null || intervalInfo.length()==0) return null;
-        String[] intvlInfoArr=intervalInfo.split("\\*");
-        if (intvlInfoArr.length!=2) return null;
-        return LPDate.addIntervalToGivenDate(LPDate.getCurrentDateWithNoTime(), intvlInfoArr[0], Integer.valueOf(intvlInfoArr[1]));
-    }
     
     public DataInventory(String lotName, String reference, String category){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
         Object[][] invLotInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), 
-                new String[]{TblsInvTrackingData.Lot.LOT_ID.getName(), TblsInvTrackingData.Lot.REFERENCE.getName(), TblsInvTrackingData.Lot.CATEGORY.getName()}, 
+                new String[]{TblsInvTrackingData.Lot.LOT_NAME.getName(), TblsInvTrackingData.Lot.REFERENCE.getName(), TblsInvTrackingData.Lot.CATEGORY.getName()}, 
                 new Object[]{lotName, reference, category}, getAllFieldNames(TblsInvTrackingData.TablesInvTrackingData.LOT.getTableFields()));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(invLotInfo[0][0].toString())){
             this.lotName=null;
@@ -103,22 +93,29 @@ public class DataInventory {
             this.errorDetail=new InternalMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{lotName, TablesInvTrackingData.LOT.getTableName(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName())}, lotName);
         }else{
             this.hasError=false;
-            this.fieldNames=getAllFieldNames(TblsInvTrackingData.TablesInvTrackingData.LOT.getTableFields());
-            this.fieldValues=invLotInfo[0];
+            this.lotFieldNames=getAllFieldNames(TblsInvTrackingData.TablesInvTrackingData.LOT.getTableFields());
+            this.lotFieldValues=invLotInfo[0];
             this.lotName=lotName;
-            this.status=LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(fieldNames, TblsInvTrackingData.Lot.STATUS.getName())]).toString();
-            this.availableForUse=InvLotStatuses.AVAILABLE_FOR_USE.toString().equalsIgnoreCase(LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(fieldNames, TblsInvTrackingData.Lot.STATUS.getName())]).toString());
-            if (this.availableForUse==null) this.availableForUse=false;
-            this.isLocked= Boolean.valueOf(LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(fieldNames, TblsInvTrackingData.Lot.IS_LOCKED.getName())]).toString());
+            this.status=LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.STATUS.getName())]).toString();
+            this.statusPrevious=LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.STATUS_PREVIOUS.getName())]).toString();
+            String value=LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.VOLUME.getName())]).toString();
+            if (value.length()>0)
+                this.currentVolume=BigDecimal.valueOf(Double.valueOf(LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.VOLUME.getName())]).toString()));
+            value=LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.VOLUME_UOM.getName())]).toString();
+            if (value.length()>0)
+                this.currentVolumeUom=LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.VOLUME_UOM.getName())]).toString();
+            this.lotIsAvailableForUse();
+            this.isLocked= Boolean.valueOf(LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.IS_LOCKED.getName())]).toString());
             if (this.isLocked==null) this.isLocked=false;
-            this.isDecommissioned= InvLotStatuses.RETIRED.toString().equalsIgnoreCase(LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(fieldNames, TblsInvTrackingData.Lot.STATUS.getName())]).toString());
-            if (this.isDecommissioned==null) this.isDecommissioned=false;
-            this.lockedReason=LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(fieldNames, TblsInvTrackingData.Lot.LOCKED_REASON.getName())]).toString();
-            this.reference=LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(fieldNames, TblsInvTrackingData.Lot.REFERENCE.getName())]).toString();
-            this.category=LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(fieldNames, TblsInvTrackingData.Lot.CATEGORY.getName())]).toString();
+            this.isRetired= InvLotStatuses.RETIRED.toString().equalsIgnoreCase(LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.STATUS.getName())]).toString());
+            if (this.isRetired==null) this.isRetired=false;
+            this.lockedReason=LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.LOCKED_REASON.getName())]).toString();
+            this.reference=LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.REFERENCE.getName())]).toString();
+            this.category=LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.CATEGORY.getName())]).toString();
             if (this.reference!=null && this.reference.length()>0){
                 Object[][] invReferenceInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName(), 
-                        new String[]{TblsInvTrackingConfig.Reference.NAME.getName()}, new Object[]{this.reference}, getAllFieldNames(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableFields()));
+                        new String[]{TblsInvTrackingConfig.Reference.NAME.getName(), TblsInvTrackingConfig.Reference.CATEGORY.getName()}, 
+                        new Object[]{this.reference, this.category}, getAllFieldNames(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableFields()));
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(invReferenceInfo[0][0].toString())){
                     referenceFieldNames=null;
                     referenceFieldValues=null;
@@ -127,22 +124,68 @@ public class DataInventory {
                     referenceFieldValues=invReferenceInfo[0];
                 }
             }
+            Integer valuePosicInArray = LPArray.valuePosicInArray(referenceFieldNames, TblsInvTrackingConfig.Reference.LOT_REQUIRES_QUALIF.getName());
+            if (valuePosicInArray==-1) 
+                this.requiresQualification=true;
+            this.requiresQualification=Boolean.valueOf(LPNulls.replaceNull(referenceFieldValues[valuePosicInArray]).toString());
+            lotIsQualified();
         }
     }    
-    public static InternalMessage checkVolumeCoherency(EnumIntTableFields[] invReferenceFlds, Object[] invReferenceVls, BigDecimal lotVolume, String lotVolumeUom){
-        if (InvReferenceStockControlTypes.VOLUME.toString().equalsIgnoreCase(LPNulls.replaceNull(invReferenceVls[EnumIntTableFields.getFldPosicInArray(invReferenceFlds, TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE.getName())].toString()))){
-            if (LPNulls.replaceNull(lotVolume).toString().length()==0)
-                return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackErrorTrapping.NO_LOT_VOLUME_SPECIFIED_AND_REQUIRED, null, null);
-            String[] refAllowedUOMS=LPNulls.replaceNull(invReferenceVls[EnumIntTableFields.getFldPosicInArray(invReferenceFlds, TblsInvTrackingConfig.Reference.ALLOWED_UOMS.getName())].toString()).split("\\|");
-            String refUom=LPNulls.replaceNull(invReferenceVls[EnumIntTableFields.getFldPosicInArray(invReferenceFlds, TblsInvTrackingConfig.Reference.MIN_STOCK_UOM.getName())].toString());
-            if (!LPArray.valueInArray(refAllowedUOMS, lotVolume)||!refUom.equalsIgnoreCase(lotVolumeUom))
-                return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackErrorTrapping.UOM_NOT_INTHELIST, null, null);            
-            return new InternalMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.CORRECT, null, null);
+    private void lotIsAvailableForUse(){
+        this.availableForUse=InvLotStatuses.AVAILABLE_FOR_USE.toString().equalsIgnoreCase(LPNulls.replaceNull(getLotFieldValues()[LPArray.valuePosicInArray(getLotFieldNames(), TblsInvTrackingData.Lot.STATUS.getName())]).toString());
+        if (this.getAvailableForUse()==null) this.availableForUse=false;
+    }
+    private void lotIsQualified(){
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
+        if (!this.getRequiresQualification()) return;
+        Object[][] invLotCertifInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION.getTableName(), 
+                new String[]{TblsInvTrackingData.LotCertification.LOT_NAME.getName(), TblsInvTrackingData.LotCertification.CATEGORY.getName(), TblsInvTrackingData.LotCertification.REFERENCE.getName()}, 
+                new Object[]{this.getLotName(), this.getCategory(), this.getReference()}, getAllFieldNames(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION.getTableFields()));
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(invLotCertifInfo[0][0].toString())){
+            qualificationFieldNames=null;
+            qualificationFieldValues=null;
+            return;
+        }
+        qualificationFieldNames=getAllFieldNames(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION.getTableFields());
+        qualificationFieldValues=invLotCertifInfo[0];
+        
+        String qualifCompletedDecision = LPNulls.replaceNull(invLotCertifInfo[0][LPArray.valuePosicInArray(getQualificationFieldNames(), TblsInvTrackingData.LotCertification.COMPLETED_DECISION.getName())]).toString();
+        if (qualifCompletedDecision.toUpperCase().contains("ACCEPT"))
+            this.isQualified=true;
+        else
+            this.isQualified=false;
+    }
+    public static Object[] checkVolumeCoherency(DataInventory invLot, EnumIntTableFields[] invReferenceFlds, Object[] invReferenceVls, BigDecimal lotVolume, String lotVolumeUom){        
+        String refUOM=null;
+        String[] refAllowedUOMS=null;
+        String minStockType=LPNulls.replaceNull(invReferenceVls[EnumIntTableFields.getFldPosicInArray(invReferenceFlds, TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE.getName())].toString());
+        String minStock=LPNulls.replaceNull(invReferenceVls[EnumIntTableFields.getFldPosicInArray(invReferenceFlds, TblsInvTrackingConfig.Reference.MIN_STOCK.getName())].toString());
+        if (minStockType.equalsIgnoreCase(InvReferenceStockControlTypes.VOLUME.toString())&& LPNulls.replaceNull(minStock).toString().length()>0&&LPNulls.replaceNull(lotVolume).toString().length()==0)
+            return new Object[]{new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.NO_LOT_VOLUME_SPECIFIED_AND_REQUIRED, null, null)};
+        if (invLot!=null){
+            refUOM=LPNulls.replaceNull(invLot.getReferenceFieldValues()[LPArray.valuePosicInArray(invLot.getReferenceFieldNames(), TblsInvTrackingConfig.Reference.MIN_STOCK_UOM.getName())].toString());
+            refAllowedUOMS=LPNulls.replaceNull(invLot.getReferenceFieldValues()[LPArray.valuePosicInArray(invLot.getReferenceFieldNames(), TblsInvTrackingConfig.Reference.ALLOWED_UOMS.getName())].toString()).split("\\|");
+        }else if (InvReferenceStockControlTypes.VOLUME.toString().equalsIgnoreCase(LPNulls.replaceNull(invReferenceVls[EnumIntTableFields.getFldPosicInArray(invReferenceFlds, TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE.getName())].toString()))){
+            refUOM=LPNulls.replaceNull(invReferenceVls[EnumIntTableFields.getFldPosicInArray(invReferenceFlds, TblsInvTrackingConfig.Reference.MIN_STOCK_UOM.getName())].toString());
+            refAllowedUOMS=LPNulls.replaceNull(invReferenceVls[EnumIntTableFields.getFldPosicInArray(invReferenceFlds, TblsInvTrackingConfig.Reference.ALLOWED_UOMS.getName())].toString()).split("\\|");
+        }
+        if (refAllowedUOMS!=null){
+            if (!(LPArray.valueInArray(refAllowedUOMS, lotVolumeUom)||refUOM.equalsIgnoreCase(lotVolumeUom)
+                    ||"ALL".equalsIgnoreCase(refAllowedUOMS[0])))
+                return new Object[]{new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.UOM_NOT_INTHELIST, null, null)};
+            if (refUOM.equalsIgnoreCase(lotVolumeUom))
+                return new Object[]{new InternalMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.CORRECT, null, null)};
+            UnitsOfMeasurement uom = new UnitsOfMeasurement(lotVolume, lotVolumeUom);
+            uom.convertValue(refUOM);
+            if (!uom.getConvertedFine()) 
+                return new Object[]{new InternalMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.CONVERSION_FAILED, null, null), uom};
+            String convertedQuantityUom = uom.getConvertedQuantityUom();
+            uom.getConvertedQuantity();
+            return new Object[]{new InternalMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.CORRECT, null, null), uom};
         }else
-            return new InternalMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.CORRECT, null, null);
-            
+            return new Object[]{new InternalMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.CORRECT, null, null)};            
     }       
-    public static InternalMessage createNewInventoryLot(String name, String reference, String category, BigDecimal lotVolume, String lotVolumeUom, String[] fldNames, Object[] fldValues){   
+    public static InternalMessage createNewInventoryLot(String name, String reference, String category, BigDecimal lotVolume, String lotVolumeUom, String[] fldNames, Object[] fldValues, Integer numEntries){   
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
         ResponseMessages messages = procReqSession.getMessages();
         Token token = procReqSession.getToken();
@@ -156,108 +199,147 @@ public class DataInventory {
                 new String[]{TblsInvTrackingConfig.Reference.NAME.getName(), TblsInvTrackingConfig.Reference.CATEGORY.getName()}, new Object[]{reference, category}, 
                 getAllFieldNames(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableFields()));
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceInfo[0][0].toString())){
-                messages.addMainForError(InvTrackingEnums.InventoryTrackErrorTrapping.REFERENCE_NOT_FOUND, new Object[]{reference});                
-                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.FAMILY_NOT_FOUND, new Object[]{reference}, null);            
+                messages.addMainForError(InvTrackingEnums.InventoryTrackingErrorTrapping.REFERENCE_NOT_FOUND, new Object[]{reference});                
+                return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.REFERENCE_NOT_FOUND, new Object[]{reference}, null);            
             }
             fldNames=LPArray.addValueToArray1D(fldNames, TblsInvTrackingData.Lot.REFERENCE.getName());
             fldValues=LPArray.addValueToArray1D(fldValues, reference);
             fldNames=LPArray.addValueToArray1D(fldNames, TblsInvTrackingData.Lot.CATEGORY.getName());
             fldValues=LPArray.addValueToArray1D(fldValues, category);
         }
-        fldNames=LPArray.addValueToArray1D(fldNames, new String[]{TblsInvTrackingData.Lot.LOT_ID.getName(), 
-            TblsInvTrackingData.Lot.LOGGED_ON.getName(), TblsInvTrackingData.Lot.LOGGED_BY.getName(),
+        fldNames=LPArray.addValueToArray1D(fldNames, new String[]{TblsInvTrackingData.Lot.LOGGED_ON.getName(), TblsInvTrackingData.Lot.LOGGED_BY.getName(),
             TblsInvTrackingData.Lot.STATUS.getName()});
-        InternalMessage checkVolumeCoherency = checkVolumeCoherency(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableFields(), referenceInfo[0], lotVolume, lotVolumeUom);
+        Object[] checkVolumeCoherencyDiagn = checkVolumeCoherency(null, TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableFields(), referenceInfo[0], lotVolume, lotVolumeUom);
+        InternalMessage checkVolumeCoherency=(InternalMessage) checkVolumeCoherencyDiagn[0];
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(checkVolumeCoherency.getDiagnostic()))
             return checkVolumeCoherency;
-        fldValues=LPArray.addValueToArray1D(fldValues, new Object[]{name, LPDate.getCurrentTimeStamp(), token.getPersonName(),        
+        UnitsOfMeasurement myUom = null;
+        if (checkVolumeCoherencyDiagn.length>1){
+            myUom=(UnitsOfMeasurement)checkVolumeCoherencyDiagn[1];
+            if (!myUom.getConvertedFine())
+                return new InternalMessage(LPPlatform.LAB_FALSE, myUom.getConversionErrorDetail()[0].toString(), new Object[]{name}, null);
+        }        
+        fldValues=LPArray.addValueToArray1D(fldValues, new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName(),        
         InvLotStatuses.getStatusFirstCode(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableFields(), referenceInfo[0])});
-        Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT.getTableName(), 
-                new String[]{TblsInvTrackingData.Lot.LOT_ID.getName()}, new Object[]{name});
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString()))
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_EXISTS, new Object[]{name}, null);
-        
-        RdbmsObject invLotCreationDiagn = Rdbms.insertRecordInTable(TablesInvTrackingData.LOT, fldNames, fldValues);
-        if (!invLotCreationDiagn.getRunSuccess())
-            return new InternalMessage(LPPlatform.LAB_FALSE, invLotCreationDiagn.getErrorMessageCode(), new Object[]{name}, null);
-        InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.CREATION, name, reference, category, TablesInvTrackingData.LOT.getTableName(), name,
-            fldNames, fldValues); 
+        for (int iNum=0;iNum<numEntries;iNum++){
+            String newName=name;
+            if (numEntries>1){
+                newName=newName+" "+String.valueOf(iNum+1)+"/"+numEntries.toString();
+            }
+            Integer lotNamePosic=LPArray.valuePosicInArray(fldNames, TblsInvTrackingData.Lot.LOT_NAME.getName());
+            if (lotNamePosic==-1){
+                fldNames=LPArray.addValueToArray1D(fldNames, TblsInvTrackingData.Lot.LOT_NAME.getName());
+                fldValues=LPArray.addValueToArray1D(fldValues, newName);                
+            }else
+                fldValues[lotNamePosic]=newName;
+            Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT.getTableName(), 
+                    new String[]{TblsInvTrackingData.Lot.LOT_NAME.getName()}, new Object[]{newName});
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString()))
+                return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.ALREADY_EXISTS, new Object[]{newName}, null);
+
+            RdbmsObject invLotCreationDiagn = Rdbms.insertRecordInTable(TablesInvTrackingData.LOT, fldNames, fldValues);
+            if (!invLotCreationDiagn.getRunSuccess())
+                return new InternalMessage(LPPlatform.LAB_FALSE, invLotCreationDiagn.getErrorMessageCode(), new Object[]{newName}, null);
+            InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.CREATION, newName, reference, category, TablesInvTrackingData.LOT.getTableName(), newName,
+                fldNames, fldValues); 
+            if (myUom!=null&&myUom.getConvertedFine()&&!myUom.getOrigQuantity().equals(myUom.getConvertedQuantity())){            
+                SqlWhere whereObj=new SqlWhere(TablesInvTrackingData.LOT, 
+                    new String[]{TblsInvTrackingData.Lot.REFERENCE.getName(), TblsInvTrackingData.Lot.CATEGORY.getName(), TblsInvTrackingData.Lot.LOT_NAME.getName()}, 
+                        new Object[]{reference, category, newName});
+                String[] updateFieldNames=new String[]{TblsInvTrackingData.Lot.VOLUME.getName(), TblsInvTrackingData.Lot.VOLUME_UOM.getName()};
+                Object[] updateFieldValues=new Object[]{myUom.getConvertedQuantity(), myUom.getConvertedQuantityUom()}; 
+                Rdbms.updateTableRecordFieldsByFilter(TablesInvTrackingData.LOT, 
+                    EnumIntTableFields.getTableFieldsFromString(TablesInvTrackingData.LOT,updateFieldNames), updateFieldValues, whereObj, null);
+                updateFieldNames=new String[]{"converted_volume", "converted_volume_uom", "creation_volume", "creation_volume_uom"};
+                updateFieldValues=LPArray.addValueToArray1D(updateFieldValues, new Object[]{myUom.getOrigQuantity(), myUom.getOrigQuantityUom()});
+                InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.UOM_CONVERSION_ON_CREATION, newName, reference, category, TablesInvTrackingData.LOT.getTableName(), newName,    
+                    updateFieldNames, updateFieldValues); 
+            }
+            myUom=null;
+            String reqCertification = referenceInfo[0][EnumIntTableFields.getFldPosicInArray(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableFields(),
+                    TblsInvTrackingConfig.Reference.LOT_REQUIRES_QUALIF.getName())].toString();
+            if (reqCertification==null||Boolean.valueOf(reqCertification))
+                DataInventoryQualif.createInventoryLotQualif(newName, category, reference, false);
+        }
         messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.NEW_INVENTORY_LOT, new Object[]{name, category, reference});
+        
         return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.NEW_INVENTORY_LOT, new Object[]{name}, name);
     }
     
-    public static InternalMessage turnAvailable(String name, String reference, String category, String[] fldNames, Object[] fldValues){   
+    private InternalMessage updateLotTransaction(String newStatus, EnumIntEndpoints actionObj,  EnumIntAuditEvents auditEventObj, String[] extraFldNames, Object[] extraFldValues, EnumIntMessages msgWhenAlreadyStatus){   
+        
+        if (newStatus.equalsIgnoreCase(this.getStatus()))
+            return new InternalMessage(LPPlatform.LAB_FALSE, msgWhenAlreadyStatus, new Object[]{this.getLotName(), this.getStatus()}, null);
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
         ResponseMessages messages = procReqSession.getMessages();
 	SqlWhere sqlWhere = new SqlWhere();
-	sqlWhere.addConstraint(TblsInvTrackingData.Lot.LOT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{name}, "");
-        sqlWhere.addConstraint(TblsInvTrackingData.Lot.REFERENCE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{reference}, "");
-        sqlWhere.addConstraint(TblsInvTrackingData.Lot.CATEGORY, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{category}, "");
+	sqlWhere.addConstraint(TblsInvTrackingData.Lot.LOT_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{this.getLotName()}, "");
+        sqlWhere.addConstraint(TblsInvTrackingData.Lot.REFERENCE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{this.getReference()}, "");
+        sqlWhere.addConstraint(TblsInvTrackingData.Lot.CATEGORY, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{this.getCategory()}, "");
+        String[] fldNames=new String[]{TblsInvTrackingData.Lot.STATUS.getName(), TblsInvTrackingData.Lot.STATUS_PREVIOUS.getName()};
+        Object[] fldValues=new Object[]{newStatus, this.getStatus()};
         RdbmsObject invLotTurnAvailableDiagn = Rdbms.updateTableRecordFieldsByFilter(TablesInvTrackingData.LOT, 
-                new EnumIntTableFields[]{TblsInvTrackingData.Lot.STATUS},
-                new Object[]{InvLotStatuses.AVAILABLE_FOR_USE.toString()}, sqlWhere, null);
+                new EnumIntTableFields[]{TblsInvTrackingData.Lot.STATUS, TblsInvTrackingData.Lot.STATUS_PREVIOUS},
+                fldValues, sqlWhere, null);
         if (!invLotTurnAvailableDiagn.getRunSuccess())
-            return new InternalMessage(LPPlatform.LAB_FALSE, invLotTurnAvailableDiagn.getErrorMessageCode(), new Object[]{name}, null);
-        InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.TURN_AVAILABLE, name, reference, category, TablesInvTrackingData.LOT.getTableName(), name,
+            return new InternalMessage(LPPlatform.LAB_FALSE, invLotTurnAvailableDiagn.getErrorMessageCode(), new Object[]{this.getLotName()}, null);
+        InventoryLotAuditAdd(auditEventObj, this.getLotName(), getReference(), getCategory(), TablesInvTrackingData.LOT.getTableName(), this.getLotName(),
             fldNames, fldValues); 
-        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.TURN_LOT_AVAILABLE, new Object[]{name, category, reference});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.TURN_LOT_AVAILABLE, new Object[]{name}, name);
-    }
-    
-    public static InternalMessage turnUnAvailable(String name, String reference, String category, String[] fldNames, Object[] fldValues){   
-        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
-        ResponseMessages messages = procReqSession.getMessages();
-	SqlWhere sqlWhere = new SqlWhere();
-	sqlWhere.addConstraint(TblsInvTrackingData.Lot.LOT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{name}, "");
-        sqlWhere.addConstraint(TblsInvTrackingData.Lot.REFERENCE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{reference}, "");
-        sqlWhere.addConstraint(TblsInvTrackingData.Lot.CATEGORY, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{category}, "");
-        RdbmsObject invLotTurnAvailableDiagn = Rdbms.updateTableRecordFieldsByFilter(TablesInvTrackingData.LOT, 
-                new EnumIntTableFields[]{TblsInvTrackingData.Lot.STATUS},
-                new Object[]{InvLotStatuses.NOT_AVAILABLEFOR_USE.toString()}, sqlWhere, null);
-        if (!invLotTurnAvailableDiagn.getRunSuccess())
-            return new InternalMessage(LPPlatform.LAB_FALSE, invLotTurnAvailableDiagn.getErrorMessageCode(), new Object[]{name}, null);
-        InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.TURN_UNAVAILABLE, name, reference, category, TablesInvTrackingData.LOT.getTableName(), name,
-            fldNames, fldValues); 
-        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.TURN_LOT_UNAVAILABLE, new Object[]{name, category, reference});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.TURN_LOT_UNAVAILABLE, new Object[]{name}, name);
+        messages.addMainForSuccess(actionObj, new Object[]{this.getLotName(), getCategory(), getReference()});
+        return new InternalMessage(LPPlatform.LAB_TRUE, actionObj, new Object[]{this.getLotName()}, this.getLotName());
     }
 
-    public InternalMessage updateInstrument(String[] fldNames, Object[] fldValues){
-        return updateInstrument(fldNames, fldValues, null);
+    public InternalMessage turnAvailable(String[] fldNames, Object[] fldValues){   
+        if (this.getRequiresQualification()&&!this.getIsQualified()){
+            return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.LOT_NOTQUALIFIED_YET, new Object[]{this.getLotName()}, null);
+        }
+        return updateLotTransaction(InvLotStatuses.AVAILABLE_FOR_USE.toString(), InvTrackingEnums.InventoryTrackAPIactionsEndpoints.TURN_LOT_AVAILABLE,
+            InvTrackingEnums.AppInventoryTrackingAuditEvents.TURN_AVAILABLE, null, null, InventoryTrackingErrorTrapping.ALREADY_AVAILABLE);
     }
-    public InternalMessage updateInstrument(String[] fldNames, Object[] fldValues, String actionName){
-        if (this.isDecommissioned)
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.lotName}, null);
-        String[] reservedFldsNotUpdatable=new String[]{TblsAppProcData.Instruments.NAME.getName(), TblsAppProcData.Instruments.ON_LINE.getName()};
-        String[] reservedFldsNotUpdatableFromActions=new String[]{TblsAppProcData.Instruments.NAME.getName(), TblsAppProcData.Instruments.ON_LINE.getName()};
+    
+    public InternalMessage turnUnAvailable(String[] fldNames, Object[] fldValues){   
+        return updateLotTransaction(InvLotStatuses.NOT_AVAILABLEFOR_USE.toString(), InvTrackingEnums.InventoryTrackAPIactionsEndpoints.TURN_LOT_UNAVAILABLE,
+            InvTrackingEnums.AppInventoryTrackingAuditEvents.TURN_UNAVAILABLE, null, null, InventoryTrackingErrorTrapping.ALREADY_AVAILABLE);
+    }
+
+    public InternalMessage updateInventoryLot(String[] fldNames, Object[] fldValues){
+        return updateInventoryLot(fldNames, fldValues, null);
+    }
+    public InternalMessage updateInventoryLot(String[] fldNames, Object[] fldValues, String actionName){
+        if (this.getIsRetired())
+            return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.ALREADY_RETIRED, new Object[]{this.getLotName()}, null);
+        String[] reservedFldsNotUpdatable=new String[]{TblsInvTrackingData.Lot.LOT_NAME.getName()};
+        String[] reservedFldsNotUpdatableFromActions=new String[]{TblsInvTrackingData.Lot.LOT_NAME.getName()};
         if (actionName!=null)reservedFldsNotUpdatable=reservedFldsNotUpdatableFromActions;
         for (String curFld: fldNames){
             if (LPArray.valueInArray(reservedFldsNotUpdatable, curFld))
-                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.TRYINGUPDATE_RESERVED_FIELD, new Object[]{curFld}, null);                
+                return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.TRYINGUPDATE_RESERVED_FIELD, new Object[]{curFld}, null);                
         }
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         if (fldNames==null || fldNames[0].length()==0){
             fldNames=new String[]{};
             fldValues=new Object[]{};
         }        
-        fldNames=LPArray.addValueToArray1D(fldNames, new String[]{TblsAppProcData.Instruments.ON_LINE.getName()});
-        fldValues=LPArray.addValueToArray1D(fldValues, new Object[]{true});
 	SqlWhere sqlWhere = new SqlWhere();
-	sqlWhere.addConstraint(TblsAppProcData.Instruments.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{lotName}, "");
-	Object[] instUpdateDiagn=Rdbms.updateRecordFieldsByFilter(TablesAppProcData.INSTRUMENTS,
-		EnumIntTableFields.getTableFieldsFromString(TablesAppProcData.INSTRUMENTS, fldNames), fldValues, sqlWhere, null);
+        sqlWhere.addConstraint(TblsInvTrackingData.Lot.LOT_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{getLotName()}, "");
+        Object[] instUpdateDiagn=Rdbms.updateRecordFieldsByFilter(TablesInvTrackingData.LOT,
+                EnumIntTableFields.getTableFieldsFromString(TablesInvTrackingData.LOT, fldNames), fldValues, sqlWhere, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instUpdateDiagn[0].toString()))
-            return new InternalMessage(LPPlatform.LAB_FALSE, instUpdateDiagn[instUpdateDiagn.length-1].toString(), new Object[]{lotName}, null);
-        instrumentsAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.UPDATE_INSTRUMENT, lotName, TablesAppProcData.INSTRUMENTS.getTableName(), lotName,
-            fldNames, fldValues);
-        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.UPDATE_INSTRUMENT, new Object[]{lotName});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.UPDATE_INSTRUMENT, new Object[]{lotName}, lotName);
+            return new InternalMessage(LPPlatform.LAB_FALSE, instUpdateDiagn[instUpdateDiagn.length-1].toString(), new Object[]{getLotName()}, null);
+        InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.UPDATE_INVENTORY_LOT, this.getLotName(), getReference(), getCategory(), TablesInvTrackingData.LOT.getTableName(), this.getLotName(),
+            fldNames, fldValues); 
+        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.UPDATE_LOT, new Object[]{getLotName()});
+        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.UPDATE_LOT, new Object[]{getLotName()}, getLotName());
     }
-    public InternalMessage decommissionInstrument(String[] fldNames, Object[] fldValues){
+    
+    public InternalMessage retireInventoryLot(String[] fldNames, Object[] fldValues){
+        return updateLotTransaction(InvLotStatuses.RETIRED.toString(), InvTrackingEnums.InventoryTrackAPIactionsEndpoints.RETIRE_LOT,
+            InvTrackingEnums.AppInventoryTrackingAuditEvents.RETIRED, null, null, InventoryTrackingErrorTrapping.ALREADY_RETIRED);
+/*
         if (this.isDecommissioned)
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.lotName}, null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.ALREADY_RETIRED, new Object[]{this.lotName}, null);
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getToken();
-        String[] reservedFldsNotUpdatable=new String[]{TblsAppProcData.Instruments.NAME.getName(), TblsAppProcData.Instruments.IS_LOCKED.getName(),
+        String[] reservedFldsNotUpdatable=new String[]{TblsInvTrackingData.Lot.LOT_NAME.getName(), TblsAppProcData.Instruments.IS_LOCKED.getName(),
             TblsAppProcData.Instruments.LOCKED_REASON.getName(), TblsAppProcData.Instruments.ON_LINE.getName()};
         if (fldNames==null || fldNames[0].length()==0){
             fldNames=new String[]{};
@@ -265,7 +347,7 @@ public class DataInventory {
         }        
         for (String curFld: fldNames){
             if (LPArray.valueInArray(reservedFldsNotUpdatable, curFld))
-                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.TRYINGUPDATE_RESERVED_FIELD, new Object[]{curFld}, null);                
+                return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.TRYINGUPDATE_RESERVED_FIELD, new Object[]{curFld}, null);                
         }
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         fldNames=LPArray.addValueToArray1D(fldNames, new String[]{TblsAppProcData.Instruments.ON_LINE.getName(),
@@ -275,548 +357,61 @@ public class DataInventory {
         fldValues=LPArray.addValueToArray1D(fldValues, new Object[]{false, true, LPDate.getCurrentTimeStamp(), token.getPersonName(),
             true, "decommissioned"});
 	SqlWhere sqlWhere = new SqlWhere();
-	sqlWhere.addConstraint(TblsAppProcData.Instruments.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{lotName}, "");
+        fldNames=new String[]{TblsInvTrackingData.Lot.STATUS.getName(), TblsInvTrackingData.Lot.STATUS_PREVIOUS.getName()};
+        fldValues=new Object[]{InvLotStatuses.RETIRED.toString(), this.status};
+
+        sqlWhere.addConstraint(TblsInvTrackingData.Lot.LOT_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{lotName}, "");
+        sqlWhere.addConstraint(TblsInvTrackingData.Lot.REFERENCE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{reference}, "");
+        sqlWhere.addConstraint(TblsInvTrackingData.Lot.CATEGORY, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{category}, "");
 	Object[] instUpdateDiagn=Rdbms.updateRecordFieldsByFilter(TablesAppProcData.INSTRUMENTS,
 		EnumIntTableFields.getTableFieldsFromString(TablesAppProcData.INSTRUMENTS, fldNames), fldValues, sqlWhere, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instUpdateDiagn[0].toString()))
             return new InternalMessage(LPPlatform.LAB_FALSE, instUpdateDiagn[instUpdateDiagn.length-1].toString(), new Object[]{lotName}, null);
         instrumentsAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.DECOMMISSION, lotName, TablesAppProcData.INSTRUMENTS.getTableName(), lotName,
             fldNames, fldValues);
-        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.DECOMMISSION_INSTRUMENT, new Object[]{lotName});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.DECOMMISSION_INSTRUMENT, new Object[]{lotName}, lotName);
+        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.RETIRE_LOT, new Object[]{lotName});
+        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.RETIRE_LOT, new Object[]{lotName}, lotName);
+*/
     }
-    public InternalMessage unDecommissionInstrument(String[] fldNames, Object[] fldValues){
-        if (!this.isDecommissioned)
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.NOT_DECOMMISSIONED, new Object[]{this.lotName}, null);
-        Token token = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getToken();
-        String[] reservedFldsNotUpdatable=new String[]{TblsAppProcData.Instruments.NAME.getName(), TblsAppProcData.Instruments.IS_LOCKED.getName(),
-            TblsAppProcData.Instruments.LOCKED_REASON.getName(), TblsAppProcData.Instruments.ON_LINE.getName()};
-        if (fldNames==null || fldNames[0].length()==0){
-            fldNames=new String[]{};
-            fldValues=new Object[]{};
-        }        
-        for (String curFld: fldNames){
-            if (LPArray.valueInArray(reservedFldsNotUpdatable, curFld))
-                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.TRYINGUPDATE_RESERVED_FIELD, new Object[]{curFld}, null);                
-        }
-        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
-        fldNames=LPArray.addValueToArray1D(fldNames, new String[]{TblsAppProcData.Instruments.ON_LINE.getName(),
-            TblsAppProcData.Instruments.DECOMMISSIONED.getName(), TblsAppProcData.Instruments.DECOMMISSIONED_ON.getName(),
-            TblsAppProcData.Instruments.DECOMMISSIONED_BY.getName(), 
-            TblsAppProcData.Instruments.UNDECOMMISSIONED_ON.getName(),
-            TblsAppProcData.Instruments.UNDECOMMISSIONED_BY.getName(), TblsAppProcData.Instruments.IS_LOCKED.getName(),
-            TblsAppProcData.Instruments.LOCKED_REASON.getName()});
-        fldValues=LPArray.addValueToArray1D(fldValues, new Object[]{false, false, "NULL>>>LOCALDATETIME", 
-            "NULL>>>STRING",
-            LPDate.getCurrentTimeStamp(), token.getPersonName(),false, ""});
-	SqlWhere sqlWhere = new SqlWhere();
-	sqlWhere.addConstraint(TblsAppProcData.Instruments.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{lotName}, "");
-	Object[] instUpdateDiagn=Rdbms.updateRecordFieldsByFilter(TablesAppProcData.INSTRUMENTS,
-		EnumIntTableFields.getTableFieldsFromString(TablesAppProcData.INSTRUMENTS, fldNames), fldValues, sqlWhere, null);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instUpdateDiagn[0].toString()))
-            return new InternalMessage(LPPlatform.LAB_FALSE, instUpdateDiagn[instUpdateDiagn.length-1].toString(), new Object[]{lotName}, null);
-        instrumentsAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.UNDECOMMISSION, lotName, TablesAppProcData.INSTRUMENTS.getTableName(), lotName,
-            fldNames, fldValues);
-        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.UNDECOMMISSION_INSTRUMENT, new Object[]{lotName});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.UNDECOMMISSION_INSTRUMENT, new Object[]{lotName}, lotName);
+    public InternalMessage unRetireInventoryLot(String[] fldNames, Object[] fldValues){
+        if (!InvLotStatuses.RETIRED.toString().equalsIgnoreCase(this.status))
+            return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.NOT_RETIRED, new Object[]{getLotName()}, null);
+        return updateLotTransaction(this.getStatusPrevious(), InvTrackingEnums.InventoryTrackAPIactionsEndpoints.UNRETIRE_LOT,
+            InvTrackingEnums.AppInventoryTrackingAuditEvents.UNRETIRED, null, null, InventoryTrackingErrorTrapping.NOT_RETIRED);
     }
 
-    public InternalMessage turnOnLine(String[] fldNames, Object[] fldValues){
-        return turnOnLine(fldNames, fldValues, null);
+    public InternalMessage completeQualification(String decision, Boolean turnAvailable){
+        return DataInventoryQualif.completeInventoryLotQualif(this, decision, turnAvailable);
     }
-    public InternalMessage turnOnLine(String[] fldNames, Object[] fldValues, String actionName){
-        if (this.isDecommissioned)
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.lotName}, null);
-        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
-        if (fldNames==null || fldNames[0].length()==0){
-            fldNames=new String[]{};
-            fldValues=new Object[]{};
-        }        
-        fldNames=LPArray.addValueToArray1D(fldNames, new String[]{TblsAppProcData.Instruments.ON_LINE.getName()});
-        fldValues=LPArray.addValueToArray1D(fldValues, new Object[]{true});
-        if (this.availableForUse){
-            messages.addMainForError(InstrumentsErrorTrapping.ALREADY_ONLINE, new Object[]{lotName});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_ONLINE, new Object[]{lotName}, null);
-        }
-        if (actionName==null && this.isLocked){
-            messages.addMainForError(InstrumentsErrorTrapping.IS_LOCKED, new Object[]{lotName, this.lockedReason});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.IS_LOCKED, new Object[]{lotName, this.lockedReason}, null);
-        }
-	SqlWhere sqlWhere = new SqlWhere();
-	sqlWhere.addConstraint(TblsAppProcData.Instruments.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{lotName}, "");
-	Object[] instUpdateDiagn=Rdbms.updateRecordFieldsByFilter(TablesAppProcData.INSTRUMENTS,
-		EnumIntTableFields.getTableFieldsFromString(TablesAppProcData.INSTRUMENTS, fldNames), fldValues, sqlWhere, null);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instUpdateDiagn[0].toString()))
-            return new InternalMessage(LPPlatform.LAB_FALSE, instUpdateDiagn[instUpdateDiagn.length-1].toString(), new Object[]{lotName}, null);
-        instrumentsAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.TURN_AVAILABLE, lotName, TablesAppProcData.INSTRUMENTS.getTableName(), lotName,
-            fldNames, fldValues);
-        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.TURN_ON_LINE, new Object[]{lotName});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.TURN_ON_LINE, new Object[]{lotName}, lotName);
+    public InternalMessage reopenQualification(){
+        return DataInventoryQualif.reopenInventoryLotQualif(this);
     }
-    public InternalMessage turnOffLine(String[] fldNames, Object[] fldValues){
-        if (this.isDecommissioned)
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.lotName}, null);
-        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
-        if (fldNames==null || fldNames[0].length()==0){
-            fldNames=new String[]{};
-            fldValues=new Object[]{};
-        }        
-        if (!this.availableForUse){
-            messages.addMainForError(InstrumentsErrorTrapping.NOT_ONLINE, new Object[]{lotName});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.NOT_ONLINE, new Object[]{lotName}, null);
-        }
-        fldNames=LPArray.addValueToArray1D(fldNames, new String[]{TblsAppProcData.Instruments.ON_LINE.getName()});
-        fldValues=LPArray.addValueToArray1D(fldValues, new Object[]{false});
-	SqlWhere sqlWhere = new SqlWhere();
-	sqlWhere.addConstraint(TblsAppProcData.Instruments.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{lotName}, "");
-	Object[] instUpdateDiagn=Rdbms.updateRecordFieldsByFilter(TablesAppProcData.INSTRUMENTS,
-		EnumIntTableFields.getTableFieldsFromString(TablesAppProcData.INSTRUMENTS, fldNames), fldValues, sqlWhere, null);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instUpdateDiagn[0].toString()))
-            return new InternalMessage(LPPlatform.LAB_FALSE, instUpdateDiagn[instUpdateDiagn.length-1].toString(), new Object[]{lotName}, null);
-        instrumentsAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.TURN_UNAVAILABLE, lotName, TablesAppProcData.INSTRUMENTS.getTableName(), lotName,
-                        fldNames, fldValues);
-        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.TURN_OFF_LINE, new Object[]{lotName});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.TURN_OFF_LINE, new Object[]{lotName}, lotName);
+    public InternalMessage consumeInvLotVolume(BigDecimal nwVolume, String nwVolumeUom){
+        return DataInventoryMovements.consumeInventoryLotVolume(this, nwVolume, nwVolumeUom);
     }
-
-    public InternalMessage startCalibration(){
-        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
-        if (this.isDecommissioned)
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.lotName}, null);        
-        Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
-        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
-        
-        Object[][] instrEventInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), 
-                new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
-                    TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, 
-                new Object[]{this.lotName, AppInstrumentsAuditEvents.CALIBRATION.toString(), ""}, new String[]{TblsAppProcData.InstrumentEvent.ID.getName()});
-        
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
-            messages.addMainForError(InvTrackingEnums.InventoryTrackErrorTrapping.ALREADY_HAS_PENDING_CALIBRATION, new Object[]{lotName});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackErrorTrapping.ALREADY_HAS_PENDING_CALIBRATION, new Object[]{lotName}, lotName);
-        }        
-        String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
-            TblsAppProcData.InstrumentEvent.CREATED_ON.getName(), TblsAppProcData.InstrumentEvent.CREATED_BY.getName()};
-        Object[] fldValues=new Object[]{this.lotName, AppInstrumentsAuditEvents.CALIBRATION.toString(), LPDate.getCurrentTimeStamp(), token.getPersonName()};
-        RdbmsObject instCreationDiagn = Rdbms.insertRecordInTable(TablesAppProcData.INSTRUMENT_EVENT, fldNames, fldValues);
-        if (!instCreationDiagn.getRunSuccess())
-            return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn.getErrorMessageCode(), new Object[]{lotName}, null);
-        String insEventIdCreated=instCreationDiagn.getNewRowId().toString();
-        instrumentsAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.START_CALIBRATION, lotName, TablesAppProcData.INSTRUMENTS.getTableName(), lotName,
-                        fldNames, fldValues);
-        
-        String variableSetName=null;
-        Integer fldPosic=LPArray.valuePosicInArray(this.referenceFieldNames, TblsAppProcConfig.InstrumentsFamily.CALIB_VARIABLES_SET.getName());
-        if (fldPosic>-1) 
-            variableSetName=LPNulls.replaceNull(this.referenceFieldValues[fldPosic]).toString();
-        if (variableSetName!=null){
-            String ownerId= token.getPersonName();
-            Integer instrEventId=Integer.valueOf(instCreationDiagn.getNewRowId().toString());
-            addVariableSetToObject(lotName, instrEventId, variableSetName, ownerId);
-        }
-        if (this.availableForUse){
-            fldNames=new String[]{TblsAppProcData.Instruments.IS_LOCKED.getName(), TblsAppProcData.Instruments.LOCKED_REASON.getName()};
-            fldValues=new Object[]{true, InstrLockingReasons.UNDER_CALIBRATION_EVENT.getPropertyName()};
-            turnOffLine(fldNames, fldValues);
-        }
-        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.START_CALIBRATION, new Object[]{lotName});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.START_CALIBRATION, new Object[]{lotName}, insEventIdCreated);
+    public InternalMessage addInvLotVolume(BigDecimal nwVolume, String nwVolumeUom){
+        return DataInventoryMovements.addInventoryLotVolume(this, nwVolume, nwVolumeUom);
     }
-    public InternalMessage completeCalibration(String decision){
-        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
-        InternalMessage decisionValueIsCorrect = decisionValueIsCorrect(decision);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(decisionValueIsCorrect.getDiagnostic())) return decisionValueIsCorrect;
-        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
-        if (this.isDecommissioned!=null && this.isDecommissioned){
-            messages.addMainForError(InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.lotName});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.lotName}, null);
-        }
-        Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
-        
-        Object[][] instrEventInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENT_EVENT.getTableName(),
-                new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
-                    TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, 
-                new Object[]{this.lotName, AppInstrumentsAuditEvents.CALIBRATION.toString(), ""}, 
-                new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.ID.getName()});
-        
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
-            messages.addMainForError(InvTrackingEnums.InventoryTrackErrorTrapping.NO_PENDING_CALIBRATION, new Object[]{lotName});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackErrorTrapping.NO_PENDING_CALIBRATION, new Object[]{lotName}, lotName);
-        }
-        String instrName=instrEventInfo[0][0].toString();
-        Integer eventId=Integer.valueOf(instrEventInfo[0][1].toString());
-        RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), eventId);                
-        
-        InternalMessage eventHasNotEnteredVariables = eventHasNotEnteredVariables(instrName, eventId);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(eventHasNotEnteredVariables.getDiagnostic())){
-            messages.addMainForError(eventHasNotEnteredVariables.getMessageCodeObj(), eventHasNotEnteredVariables.getMessageCodeVariables());            
-            return eventHasNotEnteredVariables;
-        }
-
-        String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.COMPLETED_DECISION.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_BY.getName()};
-        Object[] fldValues=new Object[]{decision, LPDate.getCurrentTimeStamp(), token.getPersonName()};
-	SqlWhere sqlWhere = new SqlWhere();
-	sqlWhere.addConstraint(TblsAppProcData.InstrumentEvent.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{eventId}, "");
-	Object[] instCreationDiagn=Rdbms.updateRecordFieldsByFilter(TablesAppProcData.INSTRUMENT_EVENT,
-		EnumIntTableFields.getTableFieldsFromString(TablesAppProcData.INSTRUMENT_EVENT, fldNames), fldValues, sqlWhere, null);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString()))
-            return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length-1].toString(), new Object[]{lotName}, null);
-        instrumentsAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.COMPLETE_CALIBRATION, lotName, TablesAppProcData.INSTRUMENTS.getTableName(), lotName,
-                        fldNames, fldValues);        
-        fldNames=new String[]{TblsAppProcData.Instruments.LAST_CALIBRATION.getName(), TblsAppProcData.Instruments.IS_LOCKED.getName(), TblsAppProcData.Instruments.LOCKED_REASON.getName()};
-        fldValues=new Object[]{LPDate.getCurrentTimeStamp(),false, ""};
-        
-        Date nextEventDate = nextEventDate(TblsAppProcConfig.InstrumentsFamily.CALIB_INTERVAL.getName());
-        if (nextEventDate!=null){
-            fldNames=LPArray.addValueToArray1D(fldNames, TblsAppProcData.Instruments.NEXT_CALIBRATION.getName());
-            fldValues=LPArray.addValueToArray1D(fldValues, nextEventDate);
-        }
-        if (!this.availableForUse && decisionAndFamilyRuleToTurnOn(decision, TblsAppProcConfig.InstrumentsFamily.CALIB_TURN_ON_WHEN_COMPLETED.getName())){
-            turnOnLine(fldNames, fldValues, InvTrackingEnums.AppInventoryTrackingAuditEvents.COMPLETE_CALIBRATION.toString());
-        }else{
-            updateInstrument(fldNames, fldValues, InvTrackingEnums.AppInventoryTrackingAuditEvents.COMPLETE_CALIBRATION.toString());            
-        }
-        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.COMPLETE_CALIBRATION, new Object[]{lotName, decision});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.COMPLETE_CALIBRATION, new Object[]{lotName, decision}, lotName);
+    public InternalMessage adjustInvLotVolume(BigDecimal nwVolume, String nwVolumeUom){
+        return DataInventoryMovements.adjustInventoryLotVolume(this, nwVolume, nwVolumeUom);
     }
-
-    public InternalMessage startPrevMaint(){
-        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
-        if (this.isDecommissioned)
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.lotName}, null);        
-        Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
-        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
-        
-        Object[][] instrEventInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), 
-                new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
-                    TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, 
-                new Object[]{this.lotName, AppInstrumentsAuditEvents.PREVENTIVE_MAINTENANCE.toString(), ""}, new String[]{TblsAppProcData.InstrumentEvent.ID.getName()});
-        
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
-            messages.addMainForError(InvTrackingEnums.InventoryTrackErrorTrapping.ALREADY_HAS_PENDING_PREV_MAINT, new Object[]{lotName});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackErrorTrapping.ALREADY_HAS_PENDING_PREV_MAINT, new Object[]{lotName}, lotName);
-        }        
-        String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
-            TblsAppProcData.InstrumentEvent.CREATED_ON.getName(), TblsAppProcData.InstrumentEvent.CREATED_BY.getName()};
-        Object[] fldValues=new Object[]{this.lotName, AppInstrumentsAuditEvents.PREVENTIVE_MAINTENANCE.toString(), LPDate.getCurrentTimeStamp(), token.getPersonName()};
-        RdbmsObject instCreationDiagn = Rdbms.insertRecordInTable(TablesAppProcData.INSTRUMENT_EVENT, fldNames, fldValues);
-        String insEventIdCreated=instCreationDiagn.getNewRowId().toString();
-        if (!instCreationDiagn.getRunSuccess())
-            return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn.getErrorMessageCode(), new Object[]{lotName}, null);
-        instrumentsAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.START_PREVENTIVE_MAINTENANCE, lotName, TablesAppProcData.INSTRUMENTS.getTableName(), lotName,
-                        fldNames, fldValues);
-
-        String variableSetName=null;
-        Integer fldPosic=LPArray.valuePosicInArray(this.referenceFieldNames, TblsAppProcConfig.InstrumentsFamily.PM_VARIABLES_SET.getName());
-        if (fldPosic>-1) 
-            variableSetName=LPNulls.replaceNull(this.referenceFieldValues[fldPosic]).toString();
-        if (variableSetName!=null){
-            String ownerId= token.getPersonName();
-            Integer instrEventId=Integer.valueOf(instCreationDiagn.getNewRowId().toString());
-            addVariableSetToObject(lotName, instrEventId, variableSetName, ownerId);
-        }
-        
-        if (this.availableForUse){
-            fldNames=new String[]{TblsAppProcData.Instruments.IS_LOCKED.getName(), TblsAppProcData.Instruments.LOCKED_REASON.getName()};
-            fldValues=new Object[]{true, InstrLockingReasons.UNDER_MAINTENANCE_EVENT.getPropertyName()};
-            turnOffLine(fldNames, fldValues);
-        }
-        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.START_PREVENTIVE_MAINTENANCE, new Object[]{lotName});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.START_PREVENTIVE_MAINTENANCE, new Object[]{lotName}, insEventIdCreated);
-    }
-    public InternalMessage completePrevMaint(String decision){
-        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
-        InternalMessage decisionValueIsCorrect = decisionValueIsCorrect(decision);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(decisionValueIsCorrect.getDiagnostic())) return decisionValueIsCorrect;
-        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
-        if (this.isDecommissioned!=null && this.isDecommissioned){
-            messages.addMainForError(InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.lotName});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.lotName}, null);
-        }
-        Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
-        
-        Object[][] instrEventInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), 
-                new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
-                    TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, 
-                new Object[]{this.lotName, AppInstrumentsAuditEvents.PREVENTIVE_MAINTENANCE.toString(), ""}, 
-                new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.ID.getName()});
-        
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
-            messages.addMainForError(InvTrackingEnums.InventoryTrackErrorTrapping.NO_PENDING_PREV_MAINT, new Object[]{lotName});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackErrorTrapping.NO_PENDING_PREV_MAINT, new Object[]{lotName}, lotName);
-        }
-        String instrName=instrEventInfo[0][0].toString();
-        Integer eventId=Integer.valueOf(instrEventInfo[0][1].toString());
-        RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), eventId);
-        
-        InternalMessage eventHasNotEnteredVariables = eventHasNotEnteredVariables(instrName, eventId);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(eventHasNotEnteredVariables.getDiagnostic())) return eventHasNotEnteredVariables;
-        
-        String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.COMPLETED_DECISION.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_BY.getName()};
-        Object[] fldValues=new Object[]{decision, LPDate.getCurrentTimeStamp(), token.getPersonName()};
-	SqlWhere sqlWhere = new SqlWhere();
-	sqlWhere.addConstraint(TblsAppProcData.InstrumentEvent.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{eventId}, "");
-	Object[] instCreationDiagn=Rdbms.updateRecordFieldsByFilter(TablesAppProcData.INSTRUMENT_EVENT,
-		EnumIntTableFields.getTableFieldsFromString(TablesAppProcData.INSTRUMENT_EVENT, fldNames), fldValues, sqlWhere, null);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString()))
-            return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length-1].toString(), new Object[]{lotName}, null);
-        instrumentsAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.COMPLETE_PREVENTIVE_MAINTENANCE, lotName, TablesAppProcData.INSTRUMENTS.getTableName(), lotName,
-                        fldNames, fldValues);        
-        fldNames=new String[]{TblsAppProcData.Instruments.LAST_PM.getName(), TblsAppProcData.Instruments.IS_LOCKED.getName(), TblsAppProcData.Instruments.LOCKED_REASON.getName()};
-        fldValues=new Object[]{LPDate.getCurrentTimeStamp(),false, ""};
-
-        Date nextEventDate = nextEventDate(TblsAppProcConfig.InstrumentsFamily.PM_INTERVAL.getName());
-        if (nextEventDate!=null){
-            fldNames=LPArray.addValueToArray1D(fldNames, TblsAppProcData.Instruments.NEXT_PM.getName());
-            fldValues=LPArray.addValueToArray1D(fldValues, nextEventDate);
-        }
-        if (!this.availableForUse  && decisionAndFamilyRuleToTurnOn(decision, TblsAppProcConfig.InstrumentsFamily.PM_TURN_ON_WHEN_COMPLETED.getName())){
-            turnOnLine(fldNames, fldValues, InvTrackingEnums.AppInventoryTrackingAuditEvents.COMPLETE_PREVENTIVE_MAINTENANCE.toString());
-        }else{
-            updateInstrument(fldNames, fldValues, InvTrackingEnums.AppInventoryTrackingAuditEvents.COMPLETE_PREVENTIVE_MAINTENANCE.toString());            
-        }
-        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.COMPLETE_PREVENTIVE_MAINTENANCE, new Object[]{lotName, decision});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.COMPLETE_PREVENTIVE_MAINTENANCE, new Object[]{lotName, decision}, lotName);
-    }
-    
-    public InternalMessage startVerification(){
-        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
-        if (this.isDecommissioned)
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.lotName}, null);        
-        Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
-        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
-        
-        Object[][] instrEventInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), 
-                new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
-                    TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, 
-                new Object[]{this.lotName, AppInstrumentsAuditEvents.VERIFICATION.toString(), ""}, new String[]{TblsAppProcData.InstrumentEvent.ID.getName()});
-        
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
-            messages.addMainForError(InvTrackingEnums.InventoryTrackErrorTrapping.ALREADY_HAS_PENDING_VERIFICATION, new Object[]{lotName});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackErrorTrapping.ALREADY_HAS_PENDING_VERIFICATION, new Object[]{lotName}, lotName);
-        }        
-        String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
-            TblsAppProcData.InstrumentEvent.CREATED_ON.getName(), TblsAppProcData.InstrumentEvent.CREATED_BY.getName()};
-        Object[] fldValues=new Object[]{this.lotName, AppInstrumentsAuditEvents.VERIFICATION.toString(), LPDate.getCurrentTimeStamp(), token.getPersonName()};
-        RdbmsObject instCreationDiagn = Rdbms.insertRecordInTable(TablesAppProcData.INSTRUMENT_EVENT, 
-                fldNames, fldValues);
-        if (!instCreationDiagn.getRunSuccess())
-            return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn.getErrorMessageCode(), new Object[]{lotName}, null);
-        String insEventIdCreated=instCreationDiagn.getNewRowId().toString();
-        instrumentsAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.START_VERIFICATION, lotName, TablesAppProcData.INSTRUMENTS.getTableName(), lotName,
-                        fldNames, fldValues);
-        String variableSetName=null;
-        Integer fldPosic=LPArray.valuePosicInArray(this.referenceFieldNames, TblsAppProcConfig.InstrumentsFamily.VERIF_SAME_DAY_VARIABLES_SET.getName());
-        if (fldPosic>-1) 
-            variableSetName=LPNulls.replaceNull(this.referenceFieldValues[fldPosic]).toString();
-        if (variableSetName!=null){
-            String ownerId= token.getPersonName();
-            Integer instrEventId=Integer.valueOf(instCreationDiagn.getNewRowId().toString());
-            addVariableSetToObject(lotName, instrEventId, variableSetName, ownerId);
-        }
-        
-        if (this.availableForUse){
-            fldNames=new String[]{TblsAppProcData.Instruments.IS_LOCKED.getName(), TblsAppProcData.Instruments.LOCKED_REASON.getName()};
-            fldValues=new Object[]{true, InstrLockingReasons.UNDER_DAILY_VERIF_EVENT.getPropertyName()};
-            turnOffLine(fldNames, fldValues);
-        }
-        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.START_VERIFICATION, new Object[]{lotName});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.START_VERIFICATION, new Object[]{lotName}, insEventIdCreated);
-    }
-    public InternalMessage completeVerification(String decision){
-        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
-        InternalMessage decisionValueIsCorrect = decisionValueIsCorrect(decision);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(decisionValueIsCorrect.getDiagnostic())) return decisionValueIsCorrect;
-        
-        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
-        if (this.isDecommissioned!=null && this.isDecommissioned){
-            messages.addMainForError(InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.lotName});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.lotName}, null);
-        }
-        Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
-        
-        Object[][] instrEventInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), 
-                new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
-                    TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, 
-                new Object[]{this.lotName, AppInstrumentsAuditEvents.VERIFICATION.toString(), ""}, 
-                new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.ID.getName()});
-        
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
-            messages.addMainForError(InvTrackingEnums.InventoryTrackErrorTrapping.NO_PENDING_VERIFICATION, new Object[]{lotName});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackErrorTrapping.NO_PENDING_VERIFICATION, new Object[]{lotName}, lotName);
-        }
-        String instrName=instrEventInfo[0][0].toString();
-        Integer eventId=Integer.valueOf(instrEventInfo[0][1].toString());
-        RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), eventId);                
-        
-        InternalMessage eventHasNotEnteredVariables = eventHasNotEnteredVariables(instrName, eventId);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(eventHasNotEnteredVariables.getDiagnostic())) return eventHasNotEnteredVariables;
-
-        String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.COMPLETED_DECISION.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_BY.getName()};
-        Object[] fldValues=new Object[]{decision, LPDate.getCurrentTimeStamp(), token.getPersonName()};
-	SqlWhere sqlWhere = new SqlWhere();
-	sqlWhere.addConstraint(TblsAppProcData.InstrumentEvent.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{eventId}, "");
-	Object[] instCreationDiagn=Rdbms.updateRecordFieldsByFilter(TablesAppProcData.INSTRUMENT_EVENT,
-		EnumIntTableFields.getTableFieldsFromString(TablesAppProcData.INSTRUMENT_EVENT, fldNames), fldValues, sqlWhere, null);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString()))
-            return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length-1].toString(), new Object[]{lotName}, null);
-        instrumentsAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.COMPLETE_VERIFICATION, lotName, TablesAppProcData.INSTRUMENTS.getTableName(), lotName,
-                        fldNames, fldValues);        
-        fldNames=new String[]{TblsAppProcData.Instruments.LAST_VERIF.getName(), TblsAppProcData.Instruments.IS_LOCKED.getName(), TblsAppProcData.Instruments.LOCKED_REASON.getName()};
-        fldValues=new Object[]{LPDate.getCurrentTimeStamp(),false, ""};
-        if (!this.availableForUse){
-            turnOnLine(fldNames, fldValues);
-        }else{
-            updateInstrument(fldNames, fldValues, InvTrackingEnums.AppInventoryTrackingAuditEvents.COMPLETE_VERIFICATION.toString());            
-        }
-        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.COMPLETE_VERIFICATION, new Object[]{lotName, decision});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.COMPLETE_VERIFICATION, new Object[]{lotName, decision}, lotName);
-    }
-
-    public InternalMessage startSevice(){
-        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
-        if (this.isDecommissioned)
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.lotName}, null);        
-        Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
-        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
-        
-        Object[][] instrEventInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), 
-                new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
-                    TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, 
-                new Object[]{this.lotName, AppInstrumentsAuditEvents.SERVICE.toString(), ""}, new String[]{TblsAppProcData.InstrumentEvent.ID.getName()});
-        
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
-            messages.addMainForError(InvTrackingEnums.InventoryTrackErrorTrapping.ALREADY_HAS_PENDING_SERVICE, new Object[]{lotName});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackErrorTrapping.ALREADY_HAS_PENDING_SERVICE, new Object[]{lotName}, lotName);
-        }        
-        String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
-            TblsAppProcData.InstrumentEvent.CREATED_ON.getName(), TblsAppProcData.InstrumentEvent.CREATED_BY.getName()};
-        Object[] fldValues=new Object[]{this.lotName, AppInstrumentsAuditEvents.SERVICE.toString(), LPDate.getCurrentTimeStamp(), token.getPersonName()};
-        RdbmsObject instCreationDiagn = Rdbms.insertRecordInTable(TablesAppProcData.INSTRUMENT_EVENT, fldNames, fldValues);
-        if (!instCreationDiagn.getRunSuccess())
-            return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn.getErrorMessageCode(), new Object[]{lotName}, null);
-        String insEventIdCreated=instCreationDiagn.getNewRowId().toString();
-        instrumentsAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.START_SERVICE, lotName, TablesAppProcData.INSTRUMENTS.getTableName(), lotName,
-                        fldNames, fldValues);
-        String variableSetName=null;
-        Integer fldPosic=LPArray.valuePosicInArray(this.referenceFieldNames, TblsAppProcConfig.InstrumentsFamily.SERVICE_VARIABLES_SET.getName());
-        if (fldPosic>-1) 
-            variableSetName=LPNulls.replaceNull(this.referenceFieldValues[fldPosic]).toString();
-        if (variableSetName!=null){
-            String ownerId= token.getPersonName();
-            Integer instrEventId=Integer.valueOf(instCreationDiagn.getNewRowId().toString());
-            addVariableSetToObject(lotName, instrEventId, variableSetName, ownerId);
-        }
-        
-        if (this.availableForUse){
-            fldNames=new String[]{TblsAppProcData.Instruments.IS_LOCKED.getName(), TblsAppProcData.Instruments.LOCKED_REASON.getName()};
-            fldValues=new Object[]{true, InstrLockingReasons.UNDER_SERVICE_EVENT.getPropertyName()};
-            turnOffLine(fldNames, fldValues);
-        }
-        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.START_SERVICE, new Object[]{lotName});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.START_SERVICE, new Object[]{lotName}, insEventIdCreated);
-    }
-    public InternalMessage completeService(String decision){
-        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
-        InternalMessage decisionValueIsCorrect = decisionValueIsCorrect(decision);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(decisionValueIsCorrect.getDiagnostic())) return decisionValueIsCorrect;
-        
-        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
-        if (this.isDecommissioned!=null && this.isDecommissioned){
-            messages.addMainForError(InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.lotName});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.lotName}, null);
-        }
-        Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
-        
-        Object[][] instrEventInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), 
-                new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.EVENT_TYPE.getName(),
-                    TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, 
-                new Object[]{this.lotName, AppInstrumentsAuditEvents.SERVICE.toString(), ""}, 
-                new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.ID.getName()});
-        
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
-            messages.addMainForError(InvTrackingEnums.InventoryTrackErrorTrapping.NO_PENDING_SERVICE, new Object[]{lotName});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackErrorTrapping.NO_PENDING_SERVICE, new Object[]{lotName}, lotName);
-        }
-        String instrName=instrEventInfo[0][0].toString();
-        Integer eventId=Integer.valueOf(instrEventInfo[0][1].toString());
-        RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), eventId);                
-        
-        InternalMessage eventHasNotEnteredVariables = eventHasNotEnteredVariables(instrName, eventId);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(eventHasNotEnteredVariables.getDiagnostic())) return eventHasNotEnteredVariables;
-
-        String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.COMPLETED_DECISION.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_BY.getName()};
-        Object[] fldValues=new Object[]{decision, LPDate.getCurrentTimeStamp(), token.getPersonName()};
-	SqlWhere sqlWhere = new SqlWhere();
-	sqlWhere.addConstraint(TblsAppProcData.InstrumentEvent.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{eventId}, "");
-	Object[] instCreationDiagn=Rdbms.updateRecordFieldsByFilter(TablesAppProcData.INSTRUMENT_EVENT,
-		EnumIntTableFields.getTableFieldsFromString(TablesAppProcData.INSTRUMENT_EVENT, fldNames), fldValues, sqlWhere, null);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString()))
-            return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length-1].toString(), new Object[]{lotName}, null);
-        instrumentsAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.COMPLETE_SERVICE, lotName, TablesAppProcData.INSTRUMENTS.getTableName(), lotName,
-                        fldNames, fldValues);        
-        fldNames=new String[]{TblsAppProcData.Instruments.LAST_VERIF.getName(), TblsAppProcData.Instruments.IS_LOCKED.getName(), TblsAppProcData.Instruments.LOCKED_REASON.getName()};
-        fldValues=new Object[]{LPDate.getCurrentTimeStamp(),false, ""};
-        if (!this.availableForUse){
-            turnOnLine(fldNames, fldValues);
-        }else{
-            updateInstrument(fldNames, fldValues, InvTrackingEnums.AppInventoryTrackingAuditEvents.COMPLETE_SERVICE.toString());            
-        }
-        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.COMPLETE_SERVICE, new Object[]{lotName, decision});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.COMPLETE_SERVICE, new Object[]{lotName, decision}, lotName);
-    }
-    
-    public InternalMessage reopenEvent(Integer instrEventId){
-        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
-        if (this.isDecommissioned)
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.lotName}, null);
-        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
-        Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
-        
-        Object[][] instrEventInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), 
-                new String[]{TblsAppProcData.InstrumentEvent.INSTRUMENT.getName(), TblsAppProcData.InstrumentEvent.ID.getName()}, 
-                new Object[]{this.lotName, instrEventId}, 
-                new String[]{TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_DECISION.getName()});        
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
-            messages.addMainForError(InvTrackingEnums.InventoryTrackErrorTrapping.NOT_FOUND, new Object[]{lotName});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackErrorTrapping.NOT_FOUND, new Object[]{lotName}, lotName);
-        }
-        String eventCompletedOn=LPNulls.replaceNull(instrEventInfo[0][0]).toString();
-        String eventDecision=LPNulls.replaceNull(instrEventInfo[0][1]).toString();
-        RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), instrEventId);                
-        
-        if (eventCompletedOn.length()==0 || eventDecision.length()==0){
-            messages.addMainForError(InvTrackingEnums.InventoryTrackErrorTrapping.ALREADY_INPROGRESS, new Object[]{instrEventId});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackErrorTrapping.ALREADY_INPROGRESS, new Object[]{instrEventId}, lotName);
-        }
-
-        String[] fldNames=new String[]{TblsAppProcData.InstrumentEvent.COMPLETED_DECISION.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_ON.getName(), TblsAppProcData.InstrumentEvent.COMPLETED_BY.getName()};
-        Object[] fldValues=new Object[]{"NULL>>>STRING", "NULL>>>LOCALDATETIME", "NULL>>>STRING"};
-	SqlWhere sqlWhere = new SqlWhere();
-	sqlWhere.addConstraint(TblsAppProcData.InstrumentEvent.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{instrEventId}, "");
-	Object[] instCreationDiagn=Rdbms.updateRecordFieldsByFilter(TablesAppProcData.INSTRUMENT_EVENT,
-		EnumIntTableFields.getTableFieldsFromString(TablesAppProcData.INSTRUMENT_EVENT, fldNames), fldValues, sqlWhere, null);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString()))
-            return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length-1].toString(), new Object[]{lotName}, null);
-        instrumentsAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.REOPEN_EVENT, lotName, TablesAppProcData.INSTRUMENTS.getTableName(), lotName,
-                        fldNames, fldValues);        
-        fldNames=new String[]{TblsAppProcData.Instruments.LAST_VERIF.getName(), TblsAppProcData.Instruments.IS_LOCKED.getName(), TblsAppProcData.Instruments.LOCKED_REASON.getName()};
-        fldValues=new Object[]{LPDate.getCurrentTimeStamp(),false, ""};
-        if (this.availableForUse){
-            turnOffLine(fldNames, fldValues);
-        }else{
-            updateInstrument(fldNames, fldValues, InvTrackingEnums.AppInventoryTrackingAuditEvents.REOPEN_EVENT.toString());            
-        }
-        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.REOPEN_EVENT, new Object[]{lotName});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.REOPEN_EVENT, new Object[]{lotName}, lotName);
-    }
-
     public Boolean getHasError() {        return hasError;    }
     public InternalMessage getErrorDetail() {        return errorDetail;    }
+    public Boolean getIsRetired() {        return isRetired;    }
+    public Boolean getAvailableForUse() {        return availableForUse;    }
+    public Boolean getIsLocked() {        return isLocked;    }
+    public String getLockedReason() {        return lockedReason;    }
+    public String getStatus() {        return status;    }
+    public String getStatusPrevious() {        return statusPrevious;    }
+    public String[] getReferenceFieldNames() {        return referenceFieldNames;    }
+    public Object[] getReferenceFieldValues() {        return referenceFieldValues;    }
+    public Boolean getRequiresQualification() {        return requiresQualification;    }
+    public Boolean getIsQualified() {        return isQualified;    }
+    public String[] getQualificationFieldNames() {        return qualificationFieldNames;    }
+    public Object[] getQualificationFieldValues() {        return qualificationFieldValues;    }
+    public String[] getLotFieldNames() {        return lotFieldNames;    }
+    public Object[] getLotFieldValues() {        return lotFieldValues;    }
+    public BigDecimal getCurrentVolume() {        return currentVolume;    }
+    public String getCurrentVolumeUom() {        return currentVolumeUom;    }
 
 }

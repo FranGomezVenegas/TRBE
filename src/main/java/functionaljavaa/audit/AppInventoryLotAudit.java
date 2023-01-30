@@ -24,7 +24,7 @@ public final class AppInventoryLotAudit {
         String[] fieldNames=gAuditFlds.getFieldNames();
         Object[] fieldValues=gAuditFlds.getFieldValues();
 
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInvTrackingDataAudit.Lot.LOT_ID.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInvTrackingDataAudit.Lot.LOT_NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, lotId);
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInvTrackingDataAudit.Lot.REFERENCE.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, reference);

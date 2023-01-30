@@ -65,7 +65,7 @@ public class TblsInvTrackingDataAudit {
         FIELDS_UPDATED("fields_updated", LPDatabase.string(), null, null, null, null), 
         REFERENCE("reference", LPDatabase.string(), null, null, null, null), 
         CATEGORY("category", LPDatabase.string(), null, null, null, null), 
-        LOT_ID("lot_id", LPDatabase.string(), null, null, null, null), 
+        LOT_NAME("lot_name", LPDatabase.string(), null, null, null, null), 
         USER_ROLE("user_role", LPDatabase.string(), null, null, null, null), 
         PROCEDURE("procedure", LPDatabase.string(), null, null, null, null), 
         PROCEDURE_VERSION("procedure_version", LPDatabase.integer(), null, null, null, null), 

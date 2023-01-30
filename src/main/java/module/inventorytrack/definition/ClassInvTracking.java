@@ -7,7 +7,6 @@ package module.inventorytrack.definition;
 
 import databases.TblsAppProcData;
 import databases.TblsAppProcData.TablesAppProcData;
-import databases.TblsAppProcDataAudit;
 import functionaljavaa.audit.SampleAudit;
 import static functionaljavaa.instruments.DataInstrumentsEvents.instrumentAuditSetAuditRecordAsReviewed;
 import static functionaljavaa.instruments.DataInstrumentsEvents.objectVariableChangeValue;
@@ -19,10 +18,11 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
+import lbplanet.utilities.LPMath;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.ApiErrorTraping;
-import lbplanet.utilities.TrazitUtiilitiesEnums;
+import module.inventorytrack.definition.TblsInvTrackingConfig.TablesInvTrackingConfig;
 import module.inventorytrack.definition.TblsInvTrackingData.TablesInvTrackingData;
 import module.inventorytrack.logic.DataInventory;
 import module.inventorytrack.logic.InvTrackingEnums.InventoryTrackAPIactionsEndpoints;
@@ -33,10 +33,6 @@ import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 
-/**
- *
- * @author User
- */
 public class ClassInvTracking {
     private Object[] messageDynamicData=new Object[]{};
     private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
@@ -44,7 +40,7 @@ public class ClassInvTracking {
     private Object[] diagnostic=new Object[0];
     InternalMessage actionDiagnosesObj=null;
     private Boolean functionFound=false;
-
+    private Boolean isSuccess;
     public ClassInvTracking(HttpServletRequest request, InventoryTrackAPIactionsEndpoints endPoint){
         
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
@@ -52,6 +48,22 @@ public class ClassInvTracking {
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         InternalMessage actionDiagnoses = null;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
+/*        
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
+        //procReqSession.killIt();
+            String language=procReqSession.getLanguage();
+            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
+                    argValues[1].toString(), new Object[]{argValues[2].toString()});
+            this.messageDynamicData=new Object[]{argValues[2].toString()};
+            return;                        
+        }         
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
+            procReqSession.killIt();
+            this.isSuccess=false;           
+            this.diagnostic=(Object[]) argValues[1];
+            this.messageDynamicData=new Object[]{argValues[2].toString()};
+            return;                        
+        }
         
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
         //procReqSession.killIt();
@@ -59,8 +71,8 @@ public class ClassInvTracking {
             this.diagnostic=(Object[]) argValues[1];
             this.messageDynamicData=new Object[]{argValues[2].toString()};
             return; 
-        }
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
+        }*/
+/*        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
             //this.diagnostic=argValues;
             this.diagnostic=ApiMessageReturn.trapMessage(argValues[0].toString(), argValues[1].toString(), new Object[]{argValues[2].toString()});
             this.relatedObj=rObj;
@@ -74,11 +86,12 @@ public class ClassInvTracking {
                     argValues[1].toString(), new Object[]{argValues[2].toString()});
             this.messageDynamicData=new Object[]{argValues[2].toString()};
             return;                        
-        }        
+        }*/        
+
         DataInventory invLot=null;
         String lotName=argValues[0].toString();
-        String reference=argValues[1].toString();
-        String category=argValues[2].toString();
+        String category=argValues[1].toString();
+        String reference=argValues[2].toString();
         if (!"NEW_INVENTORY_LOT".equalsIgnoreCase(endPoint.getName())){
             invLot=new DataInventory(lotName, reference, category);
             if (invLot.getHasError()){
@@ -86,6 +99,7 @@ public class ClassInvTracking {
                 this.diagnostic=ApiMessageReturn.trapMessage(invLot.getErrorDetail().getDiagnostic(),invLot.getErrorDetail().getMessageCodeObj(), invLot.getErrorDetail().getMessageCodeVariables());
                 this.relatedObj=rObj;
                 rObj.killInstance();
+                invLot=null;
                 return;
             }
         }
@@ -95,18 +109,22 @@ public class ClassInvTracking {
                     String expiryDate=argValues[3].toString();
                     String expiryDateInUse=argValues[4].toString();
                     String retestDate=argValues[5].toString();
-                    String vendor=argValues[6].toString();
-                    String vendorLot=argValues[7].toString();
-                    String vendorReference=argValues[8].toString();
-                    String purity=argValues[9].toString();
-                    String conservCondition=argValues[10].toString();
-                    BigDecimal volume=(BigDecimal) argValues[11];
-                    String volumeUom=argValues[12].toString();
+                    BigDecimal volume=null;
+                    if (argValues[6]!=null&&argValues[6].toString().length()>0)
+                        volume=BigDecimal.valueOf(Double.valueOf(argValues[6].toString()));
+                    String volumeUom=argValues[7].toString();
+                    String vendor=argValues[8].toString();
+                    String vendorLot=argValues[9].toString();
+                    String vendorReference=argValues[10].toString();
+                    String purity=argValues[11].toString();
+                    String conservCondition=argValues[12].toString();
                     String fldNamesStr=argValues[13].toString();
                     String fldValuesStr=argValues[14].toString();
+                    Integer numEntries=LPPlatform.LAB_FALSE.equalsIgnoreCase(LPMath.isNumeric(LPNulls.replaceNull(argValues[15]).toString())[0].toString()) ? 
+                            1 :Integer.valueOf(LPNulls.replaceNull(argValues[15].toString()));
                     String[] fieldNames=null;
                     Object[] fieldValues=null;
-                    if (vendorReference!=null&&vendorReference.length()>0) fieldNames = vendorReference.split("\\|");
+                    //if (vendorReference!=null&&vendorReference.length()>0) fieldNames = vendorReference.split("\\|");
                     if (fldValuesStr!=null&&fldValuesStr.length()>0){
                         fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fldValuesStr.split("\\|"));
                         fieldNames=fldNamesStr.split("\\|");
@@ -149,13 +167,10 @@ public class ClassInvTracking {
                         if (LPNulls.replaceNull(volumeUom).length()>0){
                             fieldNames=LPArray.addValueToArray1D(fieldNames, TblsInvTrackingData.Lot.VOLUME_UOM.getName());
                             fieldValues=LPArray.addValueToArray1D(fieldValues, volumeUom);
-                        }     
-                        
-                    actionDiagnoses=DataInventory.createNewInventoryLot(lotName, reference, category, volume, volumeUom, fieldNames, fieldValues);
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), lotName);                
+                        }                             
+                    actionDiagnoses=DataInventory.createNewInventoryLot(lotName, reference, category, volume, volumeUom, fieldNames, fieldValues, numEntries);
                     break;
-                case TURN_LOT_AVAILABLE:
+                case TURN_LOT_AVAILABLE:                    
                     fldNamesStr=argValues[3].toString();
                     fldValuesStr=argValues[4].toString();
                     fieldNames=null;
@@ -167,9 +182,7 @@ public class ClassInvTracking {
                     if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString()))
                         actionDiagnoses=(InternalMessage) fieldValues[1];
                     else{
-                        actionDiagnoses=DataInventory.turnAvailable(lotName, reference, category, fieldNames, fieldValues);
-                        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
-                            rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), lotName);                
+                        actionDiagnoses=invLot.turnAvailable(fieldNames, fieldValues);
                     }
                     break;
                 case TURN_LOT_UNAVAILABLE:
@@ -184,18 +197,10 @@ public class ClassInvTracking {
                     if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString()))
                         actionDiagnoses=(InternalMessage) fieldValues[1];
                     else{
-                        actionDiagnoses=DataInventory.turnUnAvailable(lotName, reference, category, fieldNames, fieldValues);
-                        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
-                            rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), lotName);                
+                        actionDiagnoses=invLot.turnUnAvailable(fieldNames, fieldValues);
                     }
                     break;
-                case CHANGE_INSTRUMENT_FAMILY:
-                    //this.actionDiagnosesObj=instr.getErrorDetail();
-                    diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
-                    this.relatedObj=rObj;
-                    rObj.killInstance();
-                    return;                    
-                case UPDATE_INSTRUMENT:
+                case UPDATE_LOT:
                     category=argValues[1].toString();
                     expiryDate=argValues[2].toString();
                     expiryDateInUse=argValues[3].toString();
@@ -225,196 +230,129 @@ public class ClassInvTracking {
                             fieldNames=LPArray.addValueToArray1D(fieldNames, TblsAppProcData.Instruments.MANUFACTURER.getName());
                             fieldValues=LPArray.addValueToArray1D(fieldValues, retestDate);
                         }
-                        actionDiagnoses=invLot.updateInstrument(fieldNames, fieldValues);
+                        actionDiagnoses=invLot.updateInventoryLot(fieldNames, fieldValues);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), lotName);                
                     break;
-                case DECOMMISSION_INSTRUMENT:
-                    vendorReference=argValues[1].toString();
-                    purity=argValues[2].toString();
+                case RETIRE_LOT:
+                    fldNamesStr=argValues[3].toString();
+                    fldValuesStr=argValues[4].toString();
                     fieldNames=null;
                     fieldValues=null;
-                    if (purity!=null && purity.length()>0){
-                        if (vendorReference!=null) fieldNames = vendorReference.split("\\|");
-                        fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(purity.split("\\|"));
+                    if (fldValuesStr!=null&&fldValuesStr.length()>0){
+                        fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fldValuesStr.split("\\|"));
+                        fieldNames=fldNamesStr.split("\\|");
                     }
                     if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString()))
                         actionDiagnoses=(InternalMessage) fieldValues[1];
-                    else
-                        actionDiagnoses=invLot.decommissionInstrument(fieldNames, fieldValues);
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), lotName);                
+                    else{
+                        actionDiagnoses=invLot.retireInventoryLot(fieldNames, fieldValues);
+                    }
                     break;
-                case UNDECOMMISSION_INSTRUMENT:
-                    vendorReference=argValues[1].toString();
-                    purity=argValues[2].toString();
+                case UNRETIRE_LOT:
+                    fldNamesStr=argValues[3].toString();
+                    fldValuesStr=argValues[4].toString();
                     fieldNames=null;
                     fieldValues=null;
-                    if (purity!=null && purity.length()>0){
-                        if (vendorReference!=null) fieldNames = vendorReference.split("\\|");
-                        fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(purity.split("\\|"));
+                    if (fldValuesStr!=null&&fldValuesStr.length()>0){
+                        fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fldValuesStr.split("\\|"));
+                        fieldNames=fldNamesStr.split("\\|");
                     }
                     if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString()))
                         actionDiagnoses=(InternalMessage) fieldValues[1];
-                    else
-                        actionDiagnoses=invLot.unDecommissionInstrument(fieldNames, fieldValues);
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), lotName);                
-                    break;
-                case TURN_ON_LINE:
-                    vendorReference=argValues[1].toString();
-                    purity=argValues[2].toString();
-                    fieldNames=null;
-                    fieldValues=null;
-                    if (purity!=null && purity.length()>0){
-                        if (vendorReference!=null) fieldNames = vendorReference.split("\\|");
-                        fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(purity.split("\\|"));
-                    }
-                    if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString()))
-                        actionDiagnoses=(InternalMessage) fieldValues[1];
-                    else
-                        actionDiagnoses=invLot.turnOnLine(fieldNames, fieldValues);
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), lotName);                
-                    break;
-                case TURN_OFF_LINE:
-                    vendorReference=argValues[1].toString();
-                    purity=argValues[2].toString();
-                    fieldNames=null;
-                    fieldValues=null;
-                    if (purity!=null && purity.length()>0){
-                        if (vendorReference!=null) fieldNames = vendorReference.split("\\|");
-                        fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(purity.split("\\|"));
-                    }
-                    if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString()))
-                        actionDiagnoses=(InternalMessage) fieldValues[1];
-                    else
-                        //invLot=new DataInventory(lotName);
-                        actionDiagnoses=invLot.turnOffLine(fieldNames, fieldValues);
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), lotName);                
-                    break;
-                case START_CALIBRATION:
-                    //invLot=new DataInventory(lotName);
-                    actionDiagnoses=invLot.startCalibration();
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())){
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), lotName);                
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), actionDiagnoses.getNewObjectId());                
+                    else{
+                        actionDiagnoses=invLot.unRetireInventoryLot(fieldNames, fieldValues);
                     }
                     break;
-                case COMPLETE_CALIBRATION:
+                case CONSUME_INV_LOT_VOLUME:
+                    volume=null;
+                    if (argValues[3]!=null&&argValues[3].toString().length()>0)
+                        volume=BigDecimal.valueOf(Double.valueOf(argValues[3].toString()));
+                    volumeUom=argValues[4].toString();                    
+                    actionDiagnoses=invLot.consumeInvLotVolume(volume, volumeUom);
+                    break;
+                case ADD_INV_LOT_VOLUME:
+                    volume=null;
+                    if (argValues[3]!=null&&argValues[3].toString().length()>0)
+                        volume=BigDecimal.valueOf(Double.valueOf(argValues[3].toString()));
+                    volumeUom=argValues[4].toString();                    
+                    actionDiagnoses=invLot.addInvLotVolume(volume, volumeUom);
+                    break;
+                case ADJUST_INV_LOT_VOLUME:
+                    volume=null;
+                    if (argValues[3]!=null&&argValues[3].toString().length()>0)
+                        volume=BigDecimal.valueOf(Double.valueOf(argValues[3].toString()));
+                    volumeUom=argValues[4].toString();                    
+                    actionDiagnoses=invLot.adjustInvLotVolume(volume, volumeUom);
+                    break;
+                case COMPLETE_QUALIFICATION:
                     //invLot=new DataInventory(lotName);
                     String decision=argValues[3].toString();
-                    actionDiagnoses=invLot.completeCalibration(decision);
+                    String turnAvailable = argValues[4].toString();                    
+                    actionDiagnoses=invLot.completeQualification(decision, Boolean.valueOf(turnAvailable));
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())){
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), lotName);
                     }
                     break;
-                case START_PREVENTIVE_MAINTENANCE:
-                    //invLot=new DataInventory(lotName);
-                    actionDiagnoses=invLot.startPrevMaint();
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())){
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), lotName);                
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), actionDiagnoses.getNewObjectId());                
-                    }
-                    break;
-                case COMPLETE_PREVENTIVE_MAINTENANCE:
-                    //invLot=new DataInventory(lotName);
-                    decision=argValues[3].toString();
-                    actionDiagnoses=invLot.completePrevMaint(decision);
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())){
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), lotName);                
-                    }
-                    break;
-                case START_VERIFICATION:
-                    //invLot=new DataInventory(lotName);
-                    actionDiagnoses=invLot.startVerification();
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())){
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), lotName);                
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), actionDiagnoses.getNewObjectId());                
-                    }
-                    break;
-                case COMPLETE_VERIFICATION:
-                    //invLot=new DataInventory(lotName);
-                    decision=argValues[3].toString();
-                    actionDiagnoses=invLot.completeVerification(decision);
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), lotName);                
-                    break;
-                case START_SERVICE:
-                    //invLot=new DataInventory(lotName);
-                    actionDiagnoses=invLot.startSevice();
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())){
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), lotName);                
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), actionDiagnoses.getNewObjectId());                
-                    }
-                    break;
-                case COMPLETE_SERVICE:
-                    //invLot=new DataInventory(lotName);
-                    decision=argValues[3].toString();
-                    actionDiagnoses=invLot.completeService(decision);
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), lotName);                
-                    break;
-                case REOPEN_EVENT:
-                    //invLot=new DataInventory(lotName);
-                    Integer instrEventId=(Integer)argValues[1];
-                    actionDiagnoses=invLot.reopenEvent(instrEventId);
+                case REOPEN_QUALIFICATION:
+                    actionDiagnoses=invLot.reopenQualification();
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), lotName);                
                     break;                    
                 case ENTER_EVENT_RESULT:
-                    instrEventId=(Integer)argValues[1];
+            Integer instrEventId = (Integer)argValues[1];
                     String variableName=argValues[2].toString();
                     String newValue=argValues[3].toString();
                     //instr=new DataInstruments(instrName);
-                    //actionDiagnoses=instr.startCalibration();
+                    //actionDiagnoses=instr.startCertification();
                     actionDiagnoses=objectVariableSetValue(lotName, instrEventId, variableName, newValue);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), lotName);                
                     break;
+
                 case REENTER_EVENT_RESULT:
                     instrEventId=(Integer)argValues[1];
                     variableName=argValues[2].toString();
                     newValue=argValues[3].toString();
                     //instr=new DataInstruments(instrName);
-                    //actionDiagnoses=instr.startCalibration();
+                    //actionDiagnoses=instr.startCertification();
                     actionDiagnoses=objectVariableChangeValue(lotName, instrEventId, variableName, newValue);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), lotName);                
                     break;
-                case INSTRUMENTAUDIT_SET_AUDIT_ID_REVIEWED:
-//                    ResponseMessages message=ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
-//                    message.addMainForError(TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
-//                    actionDiagnoses=new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null,null);
-//if (1==2){
-                    String instrumentName=LPNulls.replaceNull(argValues[0]).toString();
+                case LOTAUDIT_SET_AUDIT_ID_REVIEWED:
+                    lotName=LPNulls.replaceNull(argValues[0]).toString();
                     Integer auditId = Integer.valueOf(LPNulls.replaceNull(argValues[1]).toString());
-                    Object[][] auditInfo=QueryUtilitiesEnums.getTableData(TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS,
-                        EnumIntTableFields.getTableFieldsFromString(TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS, new String[]{TblsAppProcDataAudit.Instruments.INSTRUMENT_NAME.getName()}),
-                        new String[]{TblsAppProcDataAudit.Instruments.AUDIT_ID.getName()}, new Object[]{auditId}, 
-                        new String[]{TblsAppProcDataAudit.Instruments.AUDIT_ID.getName()});
+                    Object[][] auditInfo=QueryUtilitiesEnums.getTableData(TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT,
+                        EnumIntTableFields.getTableFieldsFromString(TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT, new String[]{TblsInvTrackingDataAudit.Lot.LOT_NAME.getName()}),
+                        new String[]{TblsInvTrackingDataAudit.Lot.AUDIT_ID.getName()}, new Object[]{auditId}, 
+                        new String[]{TblsInvTrackingDataAudit.Lot.AUDIT_ID.getName()});
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditInfo[0][0].toString())){
                         actionDiagnoses=new InternalMessage(auditInfo[0][0].toString(), SampleAudit.SampleAuditErrorTrapping.AUDIT_RECORD_NOT_FOUND, new Object[]{auditId});
-                        instrumentName=null;
+                        lotName=null;
                     }else{
                         actionDiagnoses=instrumentAuditSetAuditRecordAsReviewed(auditId, ProcedureRequestSession.getInstanceForActions(null, null, null).getToken().getPersonName());
 //                    }
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS.getTableName(), auditId);
-                    this.messageDynamicData=new Object[]{auditId, instrumentName};
+                    this.messageDynamicData=new Object[]{auditId, lotName};
                     break;
                     }
                     break;
                 default:
                     LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, null, ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, null);   
+                    invLot=null;
                     return;
             }     
         this.actionDiagnosesObj=actionDiagnoses;
+        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), lotName);
+        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TablesInvTrackingConfig.INV_REFERENCE.getTableName(), reference);
+        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TablesInvTrackingConfig.INV_CATEGORY.getTableName(), category);                        
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))
             this.diagnostic=ApiMessageReturn.trapMessage(actionDiagnoses.getDiagnostic(),actionDiagnoses.getMessageCodeObj(), actionDiagnoses.getMessageCodeVariables());
-        else            
+        else
             this.diagnostic=ApiMessageReturn.trapMessage(actionDiagnoses.getDiagnostic(),endPoint, actionDiagnoses.getMessageCodeVariables());
+        
         this.relatedObj=rObj;
+        invLot=null;
         rObj.killInstance();
     }
     

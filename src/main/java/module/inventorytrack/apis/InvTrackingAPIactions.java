@@ -66,6 +66,11 @@ public class InvTrackingAPIactions extends HttpServlet {
         }
         argList=LPArray.addValueToArray1D(argList, MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE.split("\\|"));
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  
+        
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
+            Object[] errLog=(Object[])argValues[1];
+            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, errLog[errLog.length-1].toString(), null);
+        }         
         String lotName=argValues[0].toString();
         String reference=argValues[1].toString();
         String category=argValues[2].toString();
