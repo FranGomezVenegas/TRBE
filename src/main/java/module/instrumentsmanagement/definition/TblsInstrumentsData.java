@@ -21,18 +21,18 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author Administrator
  */
-public class TblsAppProcData {
+public class TblsInstrumentsData {
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.DATA.getName();
     private static final Boolean IS_PRODEDURE_INSTANCE = true;
-    public enum TablesAppProcData implements EnumIntTables{
+    public enum TablesInstrumentsData implements EnumIntTables{
         INSTRUMENTS(null, "instruments", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Instruments.values(), 
             null, new String[]{Instruments.NAME.getName()}, null, ""),
-        INSTRUMENT_EVENT(null, "instrument_event", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsAppProcData.InstrumentEvent.values(), 
-            TblsAppProcData.InstrumentEvent.ID.getName(),new String[]{TblsAppProcData.InstrumentEvent.ID.getName()}, null, ""),
-        INSTR_EVENT_VARIABLE_VALUES(null, "instr_event_variable_values", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsAppProcData.InstrEventVariableValues.values(), 
-            TblsAppProcData.InstrumentEvent.ID.getName(), new String[]{TblsAppProcData.InstrEventVariableValues.ID.getName()}, null, ""),
+        INSTRUMENT_EVENT(null, "instrument_event", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsInstrumentsData.InstrumentEvent.values(), 
+            TblsInstrumentsData.InstrumentEvent.ID.getName(),new String[]{TblsInstrumentsData.InstrumentEvent.ID.getName()}, null, ""),
+        INSTR_EVENT_VARIABLE_VALUES(null, "instr_event_variable_values", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsInstrumentsData.InstrEventVariableValues.values(), 
+            TblsInstrumentsData.InstrumentEvent.ID.getName(), new String[]{TblsInstrumentsData.InstrEventVariableValues.ID.getName()}, null, ""),
         ;
-        private TablesAppProcData(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
+        private TablesInstrumentsData(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){
             this.getTblBusinessRules=fldBusRules;
             this.tableName=dbTblName;
@@ -64,7 +64,7 @@ public class TblsAppProcData {
         private final String tableComment;
     }
 
-    public enum ViewsAppProcData implements EnumIntViews{
+    public enum ViewsInstrumentsData implements EnumIntViews{
         NOT_DECOM_INSTR_EVENT_DATA_VW(""
                 + "select ie.id, ie.instrument, ie.event_type, ie.created_on, ie.completed_on, ie.decision, ie.attachment, " +
                 "ie.created_by, ie.completed_by, ie.completed_decision, " +
@@ -73,14 +73,14 @@ public class TblsAppProcData {
                 "from #SCHEMA_DATA.instruments i, #SCHEMA_DATA.instrument_event ie " +
                 "where ie.instrument=i.name and i.decommissioned=false and ie.completed_on is null"+
                 "ALTER VIEW  #SCHEMA.#TBL  OWNER TO #OWNER;",
-            null, "not_decom_instr_event_data_vw", SCHEMA_NAME, true, TblsAppProcData.ViewNotDecommInstrumentAndEventData.values(), "pr_scheduled_locations", 
+            null, "not_decom_instr_event_data_vw", SCHEMA_NAME, true, TblsInstrumentsData.ViewNotDecommInstrumentAndEventData.values(), "pr_scheduled_locations", 
         new EnumIntTablesJoin[]{
-            new EnumIntTablesJoin(TablesAppProcData.INSTRUMENTS, "i", TablesAppProcData.INSTRUMENT_EVENT, "ie", true,
-                new EnumIntTableFields[][]{{TblsAppProcData.Instruments.NAME, TblsAppProcData.InstrumentEvent.INSTRUMENT}
+            new EnumIntTablesJoin(TablesInstrumentsData.INSTRUMENTS, "i", TablesInstrumentsData.INSTRUMENT_EVENT, "ie", true,
+                new EnumIntTableFields[][]{{TblsInstrumentsData.Instruments.NAME, TblsInstrumentsData.InstrumentEvent.INSTRUMENT}
                 }, " and i.decommissioned=false and ie.completed_on is null", JOIN_TYPES.INNER),
         }, ""),
         ;
-        private ViewsAppProcData(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds, 
+        private ViewsInstrumentsData(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds, 
                 String comment, EnumIntTablesJoin[] TablesInView, String extraFilters){
             this.getTblBusinessRules=fldBusRules;
             this.viewName=dbVwName;

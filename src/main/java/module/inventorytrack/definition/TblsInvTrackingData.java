@@ -10,7 +10,7 @@ import databases.TblsAppConfig;
 import databases.TblsCnfg;
 import databases.TblsCnfg.TablesConfig;
 import lbplanet.utilities.LPDatabase;
-import module.instrumentsmanagement.definition.TblsAppProcData.Instruments;
+import module.instrumentsmanagement.definition.TblsInstrumentsData.Instruments;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.enums.EnumIntTablesJoin;

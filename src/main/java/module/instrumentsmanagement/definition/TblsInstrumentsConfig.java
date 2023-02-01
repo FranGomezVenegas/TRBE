@@ -17,11 +17,11 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author Administrator
  */
-public class TblsAppProcConfig {
+public class TblsInstrumentsConfig {
     
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.CONFIG.getName();
     private static final Boolean IS_PRODEDURE_INSTANCE = true;
-    public enum TablesAppProcConfig implements EnumIntTables{
+    public enum TablesInstrumentsConfig implements EnumIntTables{
         
         INSTRUMENTS_FAMILY(null, "instruments_family", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, InstrumentsFamily.values(), null,
             new String[]{InstrumentsFamily.NAME.getName()}, null, ""),
@@ -30,7 +30,7 @@ public class TblsAppProcConfig {
         VARIABLES_SET(null, "variables_set", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, VariablesSet.values(), null,
             new String[]{VariablesSet.NAME.getName()}, null, ""),
         ;
-        private TablesAppProcConfig(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
+        private TablesInstrumentsConfig(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){
             this.getTblBusinessRules=fldBusRules;
             this.tableName=dbTblName;

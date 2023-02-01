@@ -39,10 +39,10 @@ import functionaljavaa.requirement.masterdata.ClassMasterData;
 import java.util.Arrays;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform.LpPlatformBusinessRules;
-import module.instrumentsmanagement.definition.TblsAppProcConfig.TablesAppProcConfig;
-import module.instrumentsmanagement.definition.TblsAppProcData.TablesAppProcData;
-import module.instrumentsmanagement.definition.TblsAppProcData.ViewsAppProcData;
-import module.instrumentsmanagement.definition.TblsAppProcDataAudit.TablesAppProcDataAudit;
+import module.instrumentsmanagement.definition.TblsInstrumentsConfig.TablesInstrumentsConfig;
+import module.instrumentsmanagement.definition.TblsInstrumentsData.TablesInstrumentsData;
+import module.instrumentsmanagement.definition.TblsInstrumentsData.ViewsInstrumentsData;
+import module.instrumentsmanagement.definition.TblsInstrumentsDataAudit.TablesInstrumentsDataAudit;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
@@ -707,7 +707,7 @@ public class ProcedureDefinitionToInstance {
                             switch (curSchemaName.toLowerCase()){                            
                                 case "config":
                                     try{
-                                        tblCreateScript = createTableScript(TablesAppProcConfig.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
+                                        tblCreateScript = createTableScript(TablesInstrumentsConfig.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
                                     }catch(Exception e){                                        
                                         tblCreateScript = createTableScript(TablesConfig.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
                                     }
@@ -715,7 +715,7 @@ public class ProcedureDefinitionToInstance {
                                 case "config-audit":
                                     try{
                                         tblCreateScript = "TablesAppProcConfigAudit collection not exists";
-                                        //tblCreateScript = createTableScript(TablesAppProcConfigAudit.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
+                                        //tblCreateScript = createTableScript(TablesInstrumentsConfigAudit.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
                                     }catch(Exception e){
                                         tblCreateScript = createTableScript(TablesCfgAudit.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
                                     }
@@ -723,16 +723,16 @@ public class ProcedureDefinitionToInstance {
                                 case "data":
                                     if (curIsView==null || !Boolean.valueOf(curIsView)){
                                         try{
-                                            tblCreateScript = createTableScript(TablesAppProcData.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
-                                            tblCreateScriptTesting = createTableScript(TablesAppProcData.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
+                                            tblCreateScript = createTableScript(TablesInstrumentsData.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
+                                            tblCreateScriptTesting = createTableScript(TablesInstrumentsData.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
                                         }catch(Exception e){
                                             tblCreateScript = createTableScript(TablesData.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
                                             tblCreateScriptTesting = createTableScript(TablesData.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
                                         }
                                     }else{
                                         try{
-                                            tblCreateScript=EnumIntViews.getViewScriptCreation(ViewsAppProcData.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, false);
-                                            tblCreateScriptTesting=EnumIntViews.getViewScriptCreation(ViewsAppProcData.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, true);
+                                            tblCreateScript=EnumIntViews.getViewScriptCreation(ViewsInstrumentsData.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, false);
+                                            tblCreateScriptTesting=EnumIntViews.getViewScriptCreation(ViewsInstrumentsData.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, true);
                                             if (tblCreateScript.length()==0){
                                                 tblCreateScript=EnumIntViews.getViewScriptCreation(ViewsData.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, false);
                                                 tblCreateScriptTesting=EnumIntViews.getViewScriptCreation(ViewsData.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, true);
@@ -745,8 +745,8 @@ public class ProcedureDefinitionToInstance {
                                     break;
                                 case "data-audit":
                                     try{
-                                        tblCreateScript = createTableScript(TablesAppProcDataAudit.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
-                                        tblCreateScriptTesting = createTableScript(TablesAppProcDataAudit.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
+                                        tblCreateScript = createTableScript(TablesInstrumentsDataAudit.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
+                                        tblCreateScriptTesting = createTableScript(TablesInstrumentsDataAudit.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
                                     }catch(Exception e){
                                         tblCreateScript = createTableScript(TablesDataAudit.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
                                         tblCreateScriptTesting = createTableScript(TablesDataAudit.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
@@ -755,11 +755,11 @@ public class ProcedureDefinitionToInstance {
                                 case "procedure":
                                     if (curIsView==null || !Boolean.valueOf(curIsView)){                                        
                                         try{
-                                            tblCreateScript = "TablesAppProcProcedure collection not exists";
-                                            //tblCreateScript = createTableScript(TablesAppProcProcedure.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
+                                            tblCreateScript = "TablesInstrumentsProcedure collection not exists";
+                                            //tblCreateScript = createTableScript(TablesInstrumentsProcedure.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
                                             if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName)))
-                                                tblCreateScript = "TablesAppProcProcedure collection not exists";
-                                            //    tblCreateScriptTesting = createTableScript(TablesAppProcProcedure.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
+                                                tblCreateScript = "TablesInstrumentsProcedure collection not exists";
+                                            //    tblCreateScriptTesting = createTableScript(TablesInstrumentsProcedure.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
                                         }catch(Exception e){
                                             tblCreateScript = createTableScript(TablesProcedure.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
                                             if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName)))
@@ -770,7 +770,7 @@ public class ProcedureDefinitionToInstance {
                                             tblCreateScript=EnumIntViews.getViewScriptCreation(ViewsProcedure.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, false);
                                             tblCreateScriptTesting=EnumIntViews.getViewScriptCreation(ViewsProcedure.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, true);
                                             if (tblCreateScript.length()==0){
-//                                                tblCreateScript = ViewsAppProcData.valueOf(curTableName.toUpperCase()).getViewCreatecript();
+//                                                tblCreateScript = ViewsInstrumentsData.valueOf(curTableName.toUpperCase()).getViewCreatecript();
 //                                                tblCreateScriptTesting = createTableScript(ViewsProcedure.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
                                             }
                                         }catch(Exception e){

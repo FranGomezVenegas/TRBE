@@ -5,7 +5,7 @@
  */
 package module.instrumentsmanagement.definition;
 
-import module.instrumentsmanagement.definition.TblsAppProcData.TablesAppProcData;
+import module.instrumentsmanagement.definition.TblsInstrumentsData.TablesInstrumentsData;
 import functionaljavaa.audit.SampleAudit;
 import module.instrumentsmanagement.logic.DataInstruments;
 import static module.instrumentsmanagement.logic.DataInstrumentsEvents.instrumentAuditSetAuditRecordAsReviewed;
@@ -103,32 +103,32 @@ public class ClassInstruments {
                         actionDiagnoses=(InternalMessage) fieldValues[1];
                     else
                         if (LPNulls.replaceNull(modelNumber).length()>0){
-                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsAppProcData.Instruments.MODEL_NUMBER.getName());
+                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsInstrumentsData.Instruments.MODEL_NUMBER.getName());
                             fieldValues=LPArray.addValueToArray1D(fieldValues, modelNumber);
                         }
                         if (LPNulls.replaceNull(serialNumber).length()>0){
-                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsAppProcData.Instruments.SERIAL_NUMBER.getName());
+                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsInstrumentsData.Instruments.SERIAL_NUMBER.getName());
                             fieldValues=LPArray.addValueToArray1D(fieldValues, serialNumber);
                         }
                         if (LPNulls.replaceNull(supplierName).length()>0){
-                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsAppProcData.Instruments.SUPPLIER.getName());
+                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsInstrumentsData.Instruments.SUPPLIER.getName());
                             fieldValues=LPArray.addValueToArray1D(fieldValues, supplierName);
                         }
                         if (LPNulls.replaceNull(manufacturerName).length()>0){
-                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsAppProcData.Instruments.MANUFACTURER.getName());
+                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsInstrumentsData.Instruments.MANUFACTURER.getName());
                             fieldValues=LPArray.addValueToArray1D(fieldValues, manufacturerName);
                         }
                         if (LPNulls.replaceNull(poDateStr).length()>0){
-                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsAppProcData.Instruments.PO_DATE.getName());
+                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsInstrumentsData.Instruments.PO_DATE.getName());
                             fieldValues=LPArray.addValueToArray1D(fieldValues, LPDate.stringFormatToDate(poDateStr));
                         }
                         if (LPNulls.replaceNull(installationDateStr).length()>0){
-                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsAppProcData.Instruments.INSTALLATION_DATE.getName());
+                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsInstrumentsData.Instruments.INSTALLATION_DATE.getName());
                             fieldValues=LPArray.addValueToArray1D(fieldValues, LPDate.stringFormatToDate(installationDateStr));
                         }
                         actionDiagnoses=DataInstruments.createNewInstrument(instrName, familyName, fieldNames, fieldValues);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()),TablesAppProcData.INSTRUMENTS.getTableName(), instrName);                
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()),TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
                     break;
                 case CHANGE_INSTRUMENT_FAMILY:
                     //this.actionDiagnosesObj=instr.getErrorDetail();
@@ -151,24 +151,24 @@ public class ClassInstruments {
                         actionDiagnoses=(InternalMessage) fieldValues[1];
                     else
                         if (LPNulls.replaceNull(modelNumber).length()>0){
-                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsAppProcData.Instruments.MODEL_NUMBER.getName());
+                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsInstrumentsData.Instruments.MODEL_NUMBER.getName());
                             fieldValues=LPArray.addValueToArray1D(fieldValues, modelNumber);
                         }
                         if (LPNulls.replaceNull(serialNumber).length()>0){
-                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsAppProcData.Instruments.SERIAL_NUMBER.getName());
+                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsInstrumentsData.Instruments.SERIAL_NUMBER.getName());
                             fieldValues=LPArray.addValueToArray1D(fieldValues, serialNumber);
                         }
                         if (LPNulls.replaceNull(supplierName).length()>0){
-                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsAppProcData.Instruments.SUPPLIER.getName());
+                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsInstrumentsData.Instruments.SUPPLIER.getName());
                             fieldValues=LPArray.addValueToArray1D(fieldValues, supplierName);
                         }
                         if (LPNulls.replaceNull(manufacturerName).length()>0){
-                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsAppProcData.Instruments.MANUFACTURER.getName());
+                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsInstrumentsData.Instruments.MANUFACTURER.getName());
                             fieldValues=LPArray.addValueToArray1D(fieldValues, manufacturerName);
                         }
                         actionDiagnoses=instr.updateInstrument(fieldNames, fieldValues);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), instrName);                
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
                     break;
                 case DECOMMISSION_INSTRUMENT:
                     fieldName=argValues[1].toString();
@@ -184,7 +184,7 @@ public class ClassInstruments {
                     else
                         actionDiagnoses=instr.decommissionInstrument(fieldNames, fieldValues);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), instrName);                
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
                     break;
                 case UNDECOMMISSION_INSTRUMENT:
                     fieldName=argValues[1].toString();
@@ -200,7 +200,7 @@ public class ClassInstruments {
                     else
                         actionDiagnoses=instr.unDecommissionInstrument(fieldNames, fieldValues);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), instrName);                
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
                     break;
                 case TURN_ON_LINE:
                     fieldName=argValues[1].toString();
@@ -216,7 +216,7 @@ public class ClassInstruments {
                     else
                         actionDiagnoses=instr.turnOnLine(fieldNames, fieldValues);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), instrName);                
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
                     break;
                 case TURN_OFF_LINE:
                     fieldName=argValues[1].toString();
@@ -233,14 +233,14 @@ public class ClassInstruments {
                         instr=new DataInstruments(instrName);
                     actionDiagnoses=instr.turnOffLine(fieldNames, fieldValues);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), instrName);                
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
                     break;
                 case START_CALIBRATION:
                     instr=new DataInstruments(instrName);
                     actionDiagnoses=instr.startCalibration();
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())){
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), instrName);                
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), actionDiagnoses.getNewObjectId());                
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(), actionDiagnoses.getNewObjectId());                
                     }
                     break;
                 case COMPLETE_CALIBRATION:
@@ -248,15 +248,15 @@ public class ClassInstruments {
                     String decision=argValues[3].toString();
                     actionDiagnoses=instr.completeCalibration(decision);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())){
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), instrName);
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);
                     }
                     break;
                 case START_PREVENTIVE_MAINTENANCE:
                     instr=new DataInstruments(instrName);
                     actionDiagnoses=instr.startPrevMaint();
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())){
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), instrName);                
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), actionDiagnoses.getNewObjectId());                
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(), actionDiagnoses.getNewObjectId());                
                     }
                     break;
                 case COMPLETE_PREVENTIVE_MAINTENANCE:
@@ -264,15 +264,15 @@ public class ClassInstruments {
                     decision=argValues[3].toString();
                     actionDiagnoses=instr.completePrevMaint(decision);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())){
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), instrName);                
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
                     }
                     break;
                 case START_VERIFICATION:
                     instr=new DataInstruments(instrName);
                     actionDiagnoses=instr.startVerification();
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())){
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), instrName);                
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), actionDiagnoses.getNewObjectId());                
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(), actionDiagnoses.getNewObjectId());                
                     }
                     break;
                 case COMPLETE_VERIFICATION:
@@ -280,14 +280,14 @@ public class ClassInstruments {
                     decision=argValues[3].toString();
                     actionDiagnoses=instr.completeVerification(decision);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), instrName);                
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
                     break;
                 case START_SERVICE:
                     instr=new DataInstruments(instrName);
                     actionDiagnoses=instr.startSevice();
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())){
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), instrName);                
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENT_EVENT.getTableName(), actionDiagnoses.getNewObjectId());                
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(), actionDiagnoses.getNewObjectId());                
                     }
                     break;
                 case COMPLETE_SERVICE:
@@ -295,14 +295,14 @@ public class ClassInstruments {
                     decision=argValues[3].toString();
                     actionDiagnoses=instr.completeService(decision);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), instrName);                
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
                     break;
                 case REOPEN_EVENT:
                     instr=new DataInstruments(instrName);
                     Integer instrEventId=(Integer)argValues[1];
                     actionDiagnoses=instr.reopenEvent(instrEventId);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), instrName);                
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
                     break;                    
                 case ENTER_EVENT_RESULT:
                     instrEventId=(Integer)argValues[1];
@@ -312,7 +312,7 @@ public class ClassInstruments {
                     //actionDiagnoses=instr.startCalibration();
                     actionDiagnoses=objectVariableSetValue(instrName, instrEventId, variableName, newValue);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), instrName);                
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
                     break;
                 case REENTER_EVENT_RESULT:
                     instrEventId=(Integer)argValues[1];
@@ -322,7 +322,7 @@ public class ClassInstruments {
                     //actionDiagnoses=instr.startCalibration();
                     actionDiagnoses=objectVariableChangeValue(instrName, instrEventId, variableName, newValue);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesAppProcData.INSTRUMENTS.getTableName(), instrName);                
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
                     break;
                 case INSTRUMENTAUDIT_SET_AUDIT_ID_REVIEWED:
 //                    ResponseMessages message=ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
@@ -331,17 +331,17 @@ public class ClassInstruments {
 //if (1==2){
                     String instrumentName=LPNulls.replaceNull(argValues[0]).toString();
                     Integer auditId = Integer.valueOf(LPNulls.replaceNull(argValues[1]).toString());
-                    Object[][] auditInfo=QueryUtilitiesEnums.getTableData(TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS,
-                        EnumIntTableFields.getTableFieldsFromString(TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS, new String[]{TblsAppProcDataAudit.Instruments.INSTRUMENT_NAME.getName()}),
-                        new String[]{TblsAppProcDataAudit.Instruments.AUDIT_ID.getName()}, new Object[]{auditId}, 
-                        new String[]{TblsAppProcDataAudit.Instruments.AUDIT_ID.getName()});
+                    Object[][] auditInfo=QueryUtilitiesEnums.getTableData(TblsInstrumentsDataAudit.TablesInstrumentsDataAudit.INSTRUMENTS,
+                        EnumIntTableFields.getTableFieldsFromString(TblsInstrumentsDataAudit.TablesInstrumentsDataAudit.INSTRUMENTS, new String[]{TblsInstrumentsDataAudit.Instruments.INSTRUMENT_NAME.getName()}),
+                        new String[]{TblsInstrumentsDataAudit.Instruments.AUDIT_ID.getName()}, new Object[]{auditId}, 
+                        new String[]{TblsInstrumentsDataAudit.Instruments.AUDIT_ID.getName()});
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditInfo[0][0].toString())){
                         actionDiagnoses=new InternalMessage(auditInfo[0][0].toString(), SampleAudit.SampleAuditErrorTrapping.AUDIT_RECORD_NOT_FOUND, new Object[]{auditId});
                         instrumentName=null;
                     }else{
                         actionDiagnoses=instrumentAuditSetAuditRecordAsReviewed(auditId, ProcedureRequestSession.getInstanceForActions(null, null, null).getToken().getPersonName());
 //                    }
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS.getTableName(), auditId);
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInstrumentsDataAudit.TablesInstrumentsDataAudit.INSTRUMENTS.getTableName(), auditId);
                     this.messageDynamicData=new Object[]{auditId, instrumentName};
                     break;
                     }

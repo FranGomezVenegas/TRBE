@@ -7,7 +7,7 @@ package functionaljavaa.audit;
 
 import databases.Rdbms;
 import databases.TblsAppAudit;
-import module.instrumentsmanagement.definition.TblsAppProcDataAudit;
+import module.instrumentsmanagement.definition.TblsInstrumentsDataAudit;
 import databases.features.Token;
 import functionaljavaa.parameter.Parameter;
 import java.util.Arrays;
@@ -44,7 +44,7 @@ public class GenericAuditFields {
         internalAuditFields(null, true);
         internalAuditActionField(auditEventObj, tblObj);
         if (fldNames!=null){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppProcDataAudit.Instruments.FIELDS_UPDATED.getName());
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInstrumentsDataAudit.Instruments.FIELDS_UPDATED.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, LPJson.convertArrayRowToJSONObject(fldNames, fldValues).toJSONString());
         }                
     }
@@ -52,7 +52,7 @@ public class GenericAuditFields {
         internalAuditFields(alternativePerson, includeUserSessionRole);
         internalAuditActionField(auditEventObj, tblObj);
         if (fldNames!=null){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppProcDataAudit.Instruments.FIELDS_UPDATED.getName());
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInstrumentsDataAudit.Instruments.FIELDS_UPDATED.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, LPJson.convertArrayRowToJSONObject(fldNames, fldValues).toJSONString());
         }        
     }
@@ -99,7 +99,7 @@ public class GenericAuditFields {
         SessionAuditActions auditActions = ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditActions();
         for (GlobalVariables.Languages curLang: GlobalVariables.Languages.values()){            
             Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), 
-                   tblObj.getTableName(), TblsAppProcDataAudit.Instruments.ACTION_PRETTY_EN.getName().replace("en", curLang.getName()));
+                   tblObj.getTableName(), TblsInstrumentsDataAudit.Instruments.ACTION_PRETTY_EN.getName().replace("en", curLang.getName()));
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())){                
                 String propValue = "";
                 if (instanceForActions.getActionEndpoint()!=null)
@@ -110,16 +110,16 @@ public class GenericAuditFields {
                         fileName, null, auditEventObj.toString(), curLang.getName(), false, null);
                 if (propValue==null || propValue.length()==0)propValue=auditEventObj.toString();
                 fieldNames = LPArray.addValueToArray1D(fieldNames, 
-                        TblsAppProcDataAudit.Instruments.ACTION_PRETTY_EN.getName().replace("en", curLang.getName()));
+                        TblsInstrumentsDataAudit.Instruments.ACTION_PRETTY_EN.getName().replace("en", curLang.getName()));
                 fieldValues = LPArray.addValueToArray1D(fieldValues, propValue);            
             }
         }
         String actionPrettyEn=auditEventObj.toString();
-        Integer actionPrettyEnPosic = LPArray.valuePosicInArray(fieldNames, TblsAppProcDataAudit.Instruments.ACTION_PRETTY_EN.getName());
+        Integer actionPrettyEnPosic = LPArray.valuePosicInArray(fieldNames, TblsInstrumentsDataAudit.Instruments.ACTION_PRETTY_EN.getName());
         if (actionPrettyEnPosic>-1)
             actionPrettyEn=LPNulls.replaceNull(fieldValues[actionPrettyEnPosic]).toString();
         String actionPrettyEs=auditEventObj.toString();
-        Integer actionPrettyEsPosic = LPArray.valuePosicInArray(fieldNames, TblsAppProcDataAudit.Instruments.ACTION_PRETTY_ES.getName());
+        Integer actionPrettyEsPosic = LPArray.valuePosicInArray(fieldNames, TblsInstrumentsDataAudit.Instruments.ACTION_PRETTY_ES.getName());
         if (actionPrettyEsPosic>-1)
             actionPrettyEs=LPNulls.replaceNull(fieldValues[actionPrettyEsPosic]).toString();
         if (auditActions!=null && auditActions.getLastAuditAction()!=null){
@@ -128,13 +128,13 @@ public class GenericAuditFields {
             actionPrettyEs=auditActions.getLastAuditAction().getActionPrettyEs()+" > "+actionPrettyEs;
         }
         if (actionPrettyEnPosic==-1){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppProcDataAudit.Instruments.ACTION_PRETTY_EN.getName());
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInstrumentsDataAudit.Instruments.ACTION_PRETTY_EN.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, actionPrettyEn);
         }else
             fieldValues[actionPrettyEnPosic]=actionPrettyEn;
         
         if (actionPrettyEsPosic==-1){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppProcDataAudit.Instruments.ACTION_PRETTY_ES.getName());
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInstrumentsDataAudit.Instruments.ACTION_PRETTY_ES.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, actionPrettyEs);
         }else
             fieldValues[actionPrettyEsPosic]=actionPrettyEs;
@@ -143,10 +143,10 @@ public class GenericAuditFields {
         this.actionPrettyNameEn=actionPrettyEn;
         this.actionPrettyNameEs=actionPrettyEs;
         
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppProcDataAudit.Instruments.ACTION_NAME.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInstrumentsDataAudit.Instruments.ACTION_NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, auditEventObj.toString());
         if (auditActions.getMainParentAuditAction()!=null){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppProcDataAudit.Instruments.PARENT_AUDIT_ID.getName());
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInstrumentsDataAudit.Instruments.PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditActions.getMainParentAuditAction().getAuditId());
         }            
     }

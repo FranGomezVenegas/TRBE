@@ -5,7 +5,7 @@
  */
 package module.instrumentsmanagement.logic;
 
-import module.instrumentsmanagement.definition.TblsAppProcDataAudit;
+import module.instrumentsmanagement.definition.TblsInstrumentsDataAudit;
 import functionaljavaa.audit.AuditUtilities;
 import functionaljavaa.audit.GenericAuditFields;
 import lbplanet.utilities.LPArray;
@@ -21,18 +21,18 @@ public final class AppInstrumentsAudit {
     
     public static Object[] instrumentsAuditAdd(EnumIntAuditEvents action, String instrName, String tableName, String tableId,
                         String[] fldNames, Object[] fldValues) {
-        GenericAuditFields gAuditFlds=new GenericAuditFields(action, TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS, fldNames, fldValues);
+        GenericAuditFields gAuditFlds=new GenericAuditFields(action, TblsInstrumentsDataAudit.TablesInstrumentsDataAudit.INSTRUMENTS, fldNames, fldValues);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();
         String[] fieldNames=gAuditFlds.getFieldNames();
         Object[] fieldValues=gAuditFlds.getFieldValues();
 
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppProcDataAudit.Instruments.INSTRUMENT_NAME.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInstrumentsDataAudit.Instruments.INSTRUMENT_NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, instrName);
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppProcDataAudit.Instruments.TABLE_NAME.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInstrumentsDataAudit.Instruments.TABLE_NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableName);
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppProcDataAudit.Instruments.TABLE_ID.getName());
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInstrumentsDataAudit.Instruments.TABLE_ID.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableId);
-        Object[] insertRecordInfo=AuditUtilities.applyTheInsert(gAuditFlds, TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS, fieldNames, fieldValues);
+        Object[] insertRecordInfo=AuditUtilities.applyTheInsert(gAuditFlds, TblsInstrumentsDataAudit.TablesInstrumentsDataAudit.INSTRUMENTS, fieldNames, fieldValues);
         return insertRecordInfo;
     }    
     

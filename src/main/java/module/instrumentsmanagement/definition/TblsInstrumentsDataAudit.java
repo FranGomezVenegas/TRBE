@@ -17,14 +17,14 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author User
  */
-public class TblsAppProcDataAudit {
+public class TblsInstrumentsDataAudit {
     
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.DATA_AUDIT.getName();
-    public enum TablesAppProcDataAudit implements EnumIntTables{
+    public enum TablesInstrumentsDataAudit implements EnumIntTables{
         INSTRUMENTS(null, "instruments", SCHEMA_NAME, true, Instruments.values(), Instruments.AUDIT_ID.getName(),
             new String[]{Instruments.AUDIT_ID.getName()}, null, "Audit for User Sessions"),
         ;
-        private TablesAppProcDataAudit(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
+        private TablesInstrumentsDataAudit(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){
             this.getTblBusinessRules=fldBusRules;
             this.tableName=dbTblName;

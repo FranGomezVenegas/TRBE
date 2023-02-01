@@ -15,8 +15,7 @@ import databases.Rdbms;
 import static databases.Rdbms.dbTableExists;
 import databases.RdbmsObject;
 import databases.SqlStatement;
-import module.instrumentsmanagement.definition.TblsAppProcData.ViewsAppProcData;
-import module.instrumentsmanagement.definition.TblsAppProcDataAudit;
+import module.instrumentsmanagement.definition.TblsInstrumentsDataAudit;
 import databases.TblsCnfg;
 import databases.TblsData;
 import databases.TblsData.TablesData;
@@ -67,6 +66,7 @@ import trazit.globalvariables.GlobalVariables;
 import static trazit.session.ProcReqSessionAutomatisms.markAsExpiredTheExpiredObjects;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
+import module.instrumentsmanagement.definition.TblsInstrumentsData.ViewsInstrumentsData;
 import module.inventorytrack.definition.TblsInvTrackingData.ViewsInvTrackingData;
 import module.inventorytrack.logic.InvTrackingFrontendMasterData;
 import org.json.simple.JSONArray;
@@ -216,10 +216,10 @@ out.println("************ ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW NO test
 
 
 out.println("************ ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VWtesting. Begin");  
-out.println(EnumIntViews.getViewScriptCreation(ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VW, "app-proc",false, false, true));
+out.println(EnumIntViews.getViewScriptCreation(ViewsInstrumentsData.NOT_DECOM_INSTR_EVENT_DATA_VW, "app-proc",false, false, true));
 out.println("************ ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VW testing. End");  
 out.println("************ ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VW NO testing. Begin");  
-out.println(EnumIntViews.getViewScriptCreation(ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VW, "app-proc", false, false, false));
+out.println(EnumIntViews.getViewScriptCreation(ViewsInstrumentsData.NOT_DECOM_INSTR_EVENT_DATA_VW, "app-proc", false, false, false));
 out.println("************ ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VW NO testing. End");  
 
 if (1==1) return;              
@@ -418,7 +418,7 @@ lbplanet.utilities.LPMailing.sendMailViaTLS("prueba", "esto es una prueba", new 
 
                 
     LPFilesTools.toCsvFromArray(true, "D:\\LP\\home\\toCsvFromArray.csv", new String[]{"bien bien", "bien"});            */
-String tblCreateScript2=createTableScript(TblsAppProcDataAudit.TablesAppProcDataAudit.INSTRUMENTS, false, true);
+String tblCreateScript2=createTableScript(TblsInstrumentsDataAudit.TablesInstrumentsDataAudit.INSTRUMENTS, false, true);
 Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 
 if (1==1) return;

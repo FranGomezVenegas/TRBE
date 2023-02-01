@@ -11,8 +11,7 @@ import com.google.gson.JsonObject;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import databases.Rdbms;
 import databases.RdbmsObject;
-import module.instrumentsmanagement.definition.TblsAppProcConfig;
-import module.instrumentsmanagement.definition.TblsAppProcData;
+import module.instrumentsmanagement.definition.TblsInstrumentsConfig;
 import databases.TblsCnfg;
 import databases.TblsData;
 import databases.TblsProcedureConfig;
@@ -33,6 +32,7 @@ import lbplanet.utilities.LPDate;
 import static lbplanet.utilities.LPJson.convertToJsonObjectStringedObject;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import module.instrumentsmanagement.definition.TblsInstrumentsData;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
@@ -66,10 +66,10 @@ public class ClassMasterData {
         MD_SAMPLES(new EnumIntTables[]{TblsCnfg.TablesConfig.SAMPLE}), 
         MD_SAMPLE_RULES(new EnumIntTables[]{TblsCnfg.TablesConfig.SAMPLE_RULES}), 
         MD_PERSONAL_AREAS(new EnumIntTables[]{}),
-        MD_INSTRUMENTS_FAMILIES(new EnumIntTables[]{TblsAppProcConfig.TablesAppProcConfig.INSTRUMENTS_FAMILY}), 
-        MD_INSTRUMENTS(new EnumIntTables[]{TblsAppProcData.TablesAppProcData.INSTRUMENTS}), 
-        MD_VARIABLES(new EnumIntTables[]{TblsAppProcConfig.TablesAppProcConfig.VARIABLES}), 
-        MD_VARIABLES_SET(new EnumIntTables[]{TblsAppProcConfig.TablesAppProcConfig.VARIABLES_SET}), 
+        MD_INSTRUMENTS_FAMILIES(new EnumIntTables[]{TblsInstrumentsConfig.TablesInstrumentsConfig.INSTRUMENTS_FAMILY}), 
+        MD_INSTRUMENTS(new EnumIntTables[]{TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS}), 
+        MD_VARIABLES(new EnumIntTables[]{TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES}), 
+        MD_VARIABLES_SET(new EnumIntTables[]{TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES_SET}), 
         MD_UOM(new EnumIntTables[]{TblsCnfg.TablesConfig.UOM}), 
         ;
         private MasterDataObjectTypes(EnumIntTables[] tblsObj){
@@ -621,11 +621,11 @@ public class ClassMasterData {
                 case MD_INSTRUMENTS:
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
                     for (JsonElement jO: asJsonArray){
-                        Object[] fldsInfo=getFldsNamesAndValues(TblsAppProcData.TablesAppProcData.INSTRUMENTS, jO);
+                        Object[] fldsInfo=getFldsNamesAndValues(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS, jO);
                         if (fldsInfo.length==3)
                             this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null);
                         else{                    
-                            RdbmsObject insertRecord = Rdbms.insertRecord(TblsAppProcData.TablesAppProcData.INSTRUMENTS, 
+                            RdbmsObject insertRecord = Rdbms.insertRecord(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS, 
                                 (String[]) fldsInfo[0], (Object[])fldsInfo[1], instanceName);
                             this.diagnostic=insertRecord.getApiMessage();
                         }
@@ -635,11 +635,11 @@ public class ClassMasterData {
                 case MD_VARIABLES:
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
                     for (JsonElement jO: asJsonArray){
-                        Object[] fldsInfo=getFldsNamesAndValues(TblsAppProcConfig.TablesAppProcConfig.VARIABLES, jO);
+                        Object[] fldsInfo=getFldsNamesAndValues(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES, jO);
                         if (fldsInfo.length==3)
                             this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null);
                         else{                    
-                            RdbmsObject insertRecord = Rdbms.insertRecord(TblsAppProcConfig.TablesAppProcConfig.VARIABLES, 
+                            RdbmsObject insertRecord = Rdbms.insertRecord(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES, 
                                 (String[]) fldsInfo[0], (Object[])fldsInfo[1], instanceName);
                             this.diagnostic=insertRecord.getApiMessage();
                         }
@@ -649,11 +649,11 @@ public class ClassMasterData {
                 case MD_VARIABLES_SET:                    
                     asJsonArray = jsonObject.get("values").getAsJsonArray();
                     for (JsonElement jO: asJsonArray){
-                        Object[] fldsInfo=getFldsNamesAndValues(TblsAppProcConfig.TablesAppProcConfig.VARIABLES_SET, jO);
+                        Object[] fldsInfo=getFldsNamesAndValues(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES_SET, jO);
                         if (fldsInfo.length==3)
                             this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null);
                         else{                    
-                            RdbmsObject insertRecord = Rdbms.insertRecord(TblsAppProcConfig.TablesAppProcConfig.VARIABLES_SET, 
+                            RdbmsObject insertRecord = Rdbms.insertRecord(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES_SET, 
                                 (String[]) fldsInfo[0], (Object[])fldsInfo[1], instanceName);
                             this.diagnostic=insertRecord.getApiMessage();
                         }

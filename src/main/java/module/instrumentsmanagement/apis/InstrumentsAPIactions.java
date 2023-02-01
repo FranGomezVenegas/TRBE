@@ -7,7 +7,6 @@ package module.instrumentsmanagement.apis;
 
 import module.instrumentsmanagement.definition.ClassInstruments;
 import static trazit.session.ProcedureRequestSession.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
-import module.instrumentsmanagement.definition.TblsAppProcData;
 import module.instrumentsmanagement.logic.DataInstruments;
 import module.instrumentsmanagement.definition.InstrumentsEnums.InstrumentsAPIactionsEndpoints;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
@@ -25,6 +24,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.ApiErrorTraping;
+import module.instrumentsmanagement.definition.TblsInstrumentsData;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
@@ -76,7 +76,7 @@ public class InstrumentsAPIactions extends HttpServlet {
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnosticObj.getMessageCodeObj(), diagnosticObj.getMessageCodeVariables());   
             }else{
                 RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsAppProcData.TablesAppProcData.INSTRUMENTS.getTableName(), instrName);                
+                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, new Object[]{instrName}, rObj.getRelatedObject());
                 rObj.killInstance();
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
