@@ -30,20 +30,35 @@ public interface EnumIntTableFields {
         }
         return flds;
     }
-
     public static String[] getAllFieldNames(EnumIntTables tblObj){
+        return getAllFieldNames(tblObj, null);
+    }
+
+    public static String[] getAllFieldNames(EnumIntTables tblObj, String alternativeProcInstanceName){
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        String procInstanceName=instanceForActions.getProcedureInstance();        
-        HashMap<String[], Object[][]> dbTableGetFieldDefinition = Rdbms.dbTableGetFieldDefinition(LPPlatform.buildSchemaName(procInstanceName, tblObj.getRepositoryName()), tblObj.getTableName());
+        String procInstanceName="";
+        if (alternativeProcInstanceName==null)
+            procInstanceName=instanceForActions.getProcedureInstance();       
+        else
+            procInstanceName = alternativeProcInstanceName;     
+        HashMap<String[], Object[][]> dbTableGetFieldDefinition = Rdbms.dbTableGetFieldDefinition(LPPlatform.buildSchemaName(procInstanceName, tblObj.getRepositoryName()), tblObj.getTableName(), alternativeProcInstanceName);
         String[] fldDefinitionColName= dbTableGetFieldDefinition.keySet().iterator().next();    
         Object[][] tableFldsInfo = dbTableGetFieldDefinition.get(fldDefinitionColName);
         String[] tableFldsInfoColumns = LPArray.convertObjectArrayToStringArray(LPArray.getColumnFromArray2D(tableFldsInfo, LPArray.valuePosicInArray(fldDefinitionColName, "column_name")));
         return tableFldsInfoColumns;
     }    
-    
     public static EnumIntTableFields[] getAllFieldNamesFromDatabase(EnumIntTables tblObj){
+        return getAllFieldNamesFromDatabase(tblObj, null);
+    }
+    public static EnumIntTableFields[] getAllFieldNamesFromDatabase(EnumIntTables tblObj, String alternativeProcInstanceName){
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        String procInstanceName=instanceForActions.getProcedureInstance();        
+        String procInstanceName="";
+        if (alternativeProcInstanceName==null)
+            procInstanceName=instanceForActions.getProcedureInstance();       
+        else
+            procInstanceName = alternativeProcInstanceName;
+        
+        
         HashMap<String[], Object[][]> dbTableGetFieldDefinition = Rdbms.dbTableGetFieldDefinition(LPPlatform.buildSchemaName(procInstanceName, tblObj.getRepositoryName()), tblObj.getTableName());
         String[] fldDefinitionColName= dbTableGetFieldDefinition.keySet().iterator().next();    
         Object[][] tableFldsInfo = dbTableGetFieldDefinition.get(fldDefinitionColName);

@@ -2022,6 +2022,9 @@ if (1==1){Rdbms.transactionId=1; return;}
     * @return
     */
     public static HashMap<String[], Object[][]> dbTableGetFieldDefinition(String schemaName, String tableName){
+        return dbTableGetFieldDefinition(schemaName, tableName, null);
+    }
+    public static HashMap<String[], Object[][]> dbTableGetFieldDefinition(String schemaName, String tableName, String alternativeProcInstanceName){
         schemaName=addSuffixIfItIsForTesting(schemaName, tableName);      
         schemaName=schemaName.replace("\"", "");
         HashMap<String[], Object[][]> hm = new HashMap<>();          

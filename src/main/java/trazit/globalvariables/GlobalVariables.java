@@ -109,6 +109,11 @@ public enum ApiUrls{
         INSTRUMENTS_QUERIES("/app/procs/InstrumentsAPIqueries"),
         // /testing/app/TestingPlatformInstruments
         
+        INVENTORY_TRACKING_ACTIONS("/app/procs/InvTrackingAPIactions"),
+        INVENTORY_TRACKING_QUERIES("/app/procs/InvTrackingAPIqueries"),
+        // /testing/app/TestingPlatformInstruments
+        
+        
         GENOMA_PROJECT_ACTIONS("/modulegenoma/GenomaProjectAPIactions"),
         GENOMA_PROJECT_QUERIES(""),
         GENOMA_STUDY_ACTIONS("/modulegenoma/GenomaStudyAPIactions"),

@@ -15,8 +15,8 @@ import databases.Rdbms;
 import static databases.Rdbms.dbTableExists;
 import databases.RdbmsObject;
 import databases.SqlStatement;
-import databases.TblsAppProcData.ViewsAppProcData;
-import databases.TblsAppProcDataAudit;
+import module.instrumentsmanagement.definition.TblsAppProcData.ViewsAppProcData;
+import module.instrumentsmanagement.definition.TblsAppProcDataAudit;
 import databases.TblsCnfg;
 import databases.TblsData;
 import databases.TblsData.TablesData;
@@ -67,6 +67,8 @@ import trazit.globalvariables.GlobalVariables;
 import static trazit.session.ProcReqSessionAutomatisms.markAsExpiredTheExpiredObjects;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
+import module.inventorytrack.definition.TblsInvTrackingData.ViewsInvTrackingData;
+import module.inventorytrack.logic.InvTrackingFrontendMasterData;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntBusinessRules;
@@ -96,6 +98,20 @@ public class TestingServer extends HttpServlet {
         response=LPHttp.responsePreparation(response);
     try (PrintWriter out = response.getWriter()) {
         
+        
+Rdbms.stablishDBConection("labplanet");      
+            InvTrackingFrontendMasterData mdObj=new InvTrackingFrontendMasterData();
+            JSONObject masterDataJsonObject = mdObj.getMasterDataJsonObject("inv-draft");  
+            out.println(masterDataJsonObject.toJSONString());
+out.println("************ ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE testing. Begin");  
+out.println(EnumIntViews.getViewScriptCreation(ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE, "inv-draft",false, false, true));
+out.println("************ ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE testing. End");  
+out.println("************ ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE NO testing. Begin");  
+out.println(EnumIntViews.getViewScriptCreation(ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE, "inv-draft", false, false, false));
+out.println("************ ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE NO testing. End");  
+
+if (1==1)
+    return;
 //Map<String, ? extends ServletRegistration> registrations = servletContext.getServletRegistrations();        
 //@Override
             //public int hashCode() {

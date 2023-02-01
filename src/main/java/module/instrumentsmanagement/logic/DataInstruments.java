@@ -3,22 +3,23 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package functionaljavaa.instruments;
+package module.instrumentsmanagement.logic;
 
 import databases.Rdbms;
 import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.SqlWhere;
-import databases.TblsAppProcConfig;
-import databases.TblsAppProcData;
-import databases.TblsAppProcData.TablesAppProcData;
+import module.instrumentsmanagement.definition.TblsAppProcConfig;
+import module.instrumentsmanagement.definition.TblsAppProcData;
+import module.instrumentsmanagement.definition.TblsAppProcData.TablesAppProcData;
 import databases.features.Token;
-import static functionaljavaa.audit.AppInstrumentsAudit.instrumentsAuditAdd;
-import static functionaljavaa.instruments.DataInstrumentsEvents.addVariableSetToObject;
-import static functionaljavaa.instruments.DataInstrumentsEvents.eventHasNotEnteredVariables;
-import functionaljavaa.instruments.InstrumentsEnums.AppInstrumentsAuditEvents;
-import functionaljavaa.instruments.InstrumentsEnums.InstrLockingReasons;
-import functionaljavaa.instruments.InstrumentsEnums.InstrumentsErrorTrapping;
+import module.instrumentsmanagement.definition.InstrumentsEnums;
+import static module.instrumentsmanagement.logic.AppInstrumentsAudit.instrumentsAuditAdd;
+import static module.instrumentsmanagement.logic.DataInstrumentsEvents.addVariableSetToObject;
+import static module.instrumentsmanagement.logic.DataInstrumentsEvents.eventHasNotEnteredVariables;
+import module.instrumentsmanagement.definition.InstrumentsEnums.AppInstrumentsAuditEvents;
+import module.instrumentsmanagement.definition.InstrumentsEnums.InstrLockingReasons;
+import module.instrumentsmanagement.definition.InstrumentsEnums.InstrumentsErrorTrapping;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.util.Arrays;
 import java.util.Date;

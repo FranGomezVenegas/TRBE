@@ -3,12 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.labplanet.servicios.app.procs;
+package module.instrumentsmanagement.apis;
 
+import module.instrumentsmanagement.definition.ClassInstruments;
 import static trazit.session.ProcedureRequestSession.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
-import databases.TblsAppProcData;
-import functionaljavaa.instruments.DataInstruments;
-import functionaljavaa.instruments.InstrumentsEnums.InstrumentsAPIactionsEndpoints;
+import module.instrumentsmanagement.definition.TblsAppProcData;
+import module.instrumentsmanagement.logic.DataInstruments;
+import module.instrumentsmanagement.definition.InstrumentsEnums.InstrumentsAPIactionsEndpoints;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.io.IOException;
 import java.io.PrintWriter;

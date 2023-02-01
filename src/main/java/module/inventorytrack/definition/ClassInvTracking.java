@@ -5,12 +5,12 @@
  */
 package module.inventorytrack.definition;
 
-import databases.TblsAppProcData;
-import databases.TblsAppProcData.TablesAppProcData;
+import module.instrumentsmanagement.definition.TblsAppProcData;
+import module.instrumentsmanagement.definition.TblsAppProcData.TablesAppProcData;
 import functionaljavaa.audit.SampleAudit;
-import static functionaljavaa.instruments.DataInstrumentsEvents.instrumentAuditSetAuditRecordAsReviewed;
-import static functionaljavaa.instruments.DataInstrumentsEvents.objectVariableChangeValue;
-import static functionaljavaa.instruments.DataInstrumentsEvents.objectVariableSetValue;
+import static module.instrumentsmanagement.logic.DataInstrumentsEvents.instrumentAuditSetAuditRecordAsReviewed;
+import static module.instrumentsmanagement.logic.DataInstrumentsEvents.objectVariableChangeValue;
+import static module.instrumentsmanagement.logic.DataInstrumentsEvents.objectVariableSetValue;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.math.BigDecimal;
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +25,7 @@ import lbplanet.utilities.LPPlatform.ApiErrorTraping;
 import module.inventorytrack.definition.TblsInvTrackingConfig.TablesInvTrackingConfig;
 import module.inventorytrack.definition.TblsInvTrackingData.TablesInvTrackingData;
 import module.inventorytrack.logic.DataInventory;
-import module.inventorytrack.logic.InvTrackingEnums.InventoryTrackAPIactionsEndpoints;
+import module.inventorytrack.definition.InvTrackingEnums.InventoryTrackAPIactionsEndpoints;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.queries.QueryUtilitiesEnums;

@@ -223,15 +223,15 @@
     </servlet>
     <servlet>
         <servlet-name>InstrumentsAPIactions</servlet-name>
-        <servlet-class>com.labplanet.servicios.app.procs.InstrumentsAPIactions</servlet-class>
+        <servlet-class>module.instrumentsmanagement.apis.InstrumentsAPIactions</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>InstrumentsAPIqueries</servlet-name>
-        <servlet-class>com.labplanet.servicios.app.procs.InstrumentsAPIqueries</servlet-class>
+        <servlet-class>module.instrumentsmanagement.apis.InstrumentsAPIqueries</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>TestingPlatformInstruments</servlet-name>
-        <servlet-class>com.labplanet.servicios.app.procs.TestingPlatformInstruments</servlet-class>
+        <servlet-class>module.instrumentsmanagement.apis.TestingPlatformInstruments</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>TestingGenoma</servlet-name>

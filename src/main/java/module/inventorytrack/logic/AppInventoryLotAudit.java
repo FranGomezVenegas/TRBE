@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package functionaljavaa.audit;
+package module.inventorytrack.logic;
 
+import functionaljavaa.audit.AuditUtilities;
+import functionaljavaa.audit.GenericAuditFields;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import module.inventorytrack.definition.TblsInvTrackingDataAudit;

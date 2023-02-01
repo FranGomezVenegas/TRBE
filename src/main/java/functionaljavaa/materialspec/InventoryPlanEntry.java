@@ -54,7 +54,7 @@ public class InventoryPlanEntry {
     public enum invLocations{RETAIN}
     private Boolean hasErrors;
     private String[] errorsArr;
-    private JSONArray errorsjArr;
+    private final JSONArray errorsjArr;
     private List<InventoryPlanEntryItem> invEntries ;
 
     public InventoryPlanEntry(String materialName, String specCode, Integer specCodeVersion, Integer quant, Integer numCont) {        

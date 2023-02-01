@@ -11,7 +11,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPArray;
-import module.inventorytrack.logic.InvTrackingEnums;
 import org.json.simple.JSONArray;
 
 /**

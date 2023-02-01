@@ -22,6 +22,7 @@ import functionaljavaa.materialspec.InventoryPlanEntryItem;
 import functionaljavaa.materialspec.SamplingPlanEntry;
 import functionaljavaa.materialspec.SamplingPlanEntryItem;
 import functionaljavaa.parameter.Parameter;
+import static functionaljavaa.parameter.Parameter.isTagValueOneOfDisableOnes;
 import functionaljavaa.samplestructure.DataSample;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -36,6 +37,7 @@ import lbplanet.utilities.LPParadigm.ParadigmErrorTrapping;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
+import module.inspectionlot.rawmaterial.logic.ModuleInspLotRMenum.DataInspLotCertificateStatuses;
 
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
@@ -78,6 +80,16 @@ public class DataInspectionLot {
         private final Boolean isOptional;
         private final ArrayList<String[]> preReqs;
     }
+        public static String getStatusFirstCode(){
+            ArrayList<String[]> preReqs = new ArrayList<String[]>();
+            preReqs.add(0, new String[]{"data","sampleStatusesByBusinessRules"});
+            String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+            String sampleStatusFirst = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataInspectionLotBusinessRules.SUFFIX_STATUS_FIRST.getAreaName(), DataInspectionLotBusinessRules.SUFFIX_STATUS_FIRST.getTagName(), preReqs, true);     
+            if (sampleStatusFirst==null || sampleStatusFirst.length()==0 || (isTagValueOneOfDisableOnes(sampleStatusFirst)) ) 
+                return DataInspLotCertificateStatuses.NEW.toString();
+            return sampleStatusFirst;        
+        }
+    
     public Object[] createLot(String lotName, String materialName, String template, Integer templateVersion, String[] fieldName, Object[] fieldValue, Integer numLotsToCreate) {
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procPrefix=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
@@ -98,7 +110,7 @@ public class DataInspectionLot {
 
         String[] mandatoryFields = labIntChecker.getTableMandatoryFields(lotLevel, actionName);
         
-        String lotStatusFirst = Parameter.getBusinessRuleProcedureFile(procPrefix, DataInspectionLotBusinessRules.SUFFIX_STATUS_FIRST.getAreaName(), lotLevel+DataInspectionLotBusinessRules.SUFFIX_STATUS_FIRST.getTagName());     
+        String lotStatusFirst = getStatusFirstCode();
 
         String[] lotFieldName =fieldName; //new String[]{};
         Object[] lotFieldValue =fieldValue; //new Object[]{};

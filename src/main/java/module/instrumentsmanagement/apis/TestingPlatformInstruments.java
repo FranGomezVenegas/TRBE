@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.labplanet.servicios.app.procs;
+package module.instrumentsmanagement.apis;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
+import module.instrumentsmanagement.definition.ClassInstrumentsController;
 import com.labplanet.servicios.proceduredefinition.ReqProcedureEnums.ProcedureDefinitionAPIActionsEndpoints;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.testingscripts.LPTestingOutFormat;

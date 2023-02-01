@@ -5,20 +5,21 @@
  */
 package module.inventorytrack.logic;
 
+import module.inventorytrack.definition.InvTrackingEnums;
 import databases.Rdbms;
 import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.SqlWhere;
-import databases.TblsAppProcConfig;
-import databases.TblsAppProcData;
-import databases.TblsAppProcData.TablesAppProcData;
-import databases.TblsAppProcDataAudit;
-import databases.TblsAppProcDataAudit.TablesAppProcDataAudit;
-import static functionaljavaa.audit.AppInstrumentsAudit.instrumentsAuditAdd;
-import functionaljavaa.instruments.InstrumentsEnums.InstrEventsErrorTrapping;
-import functionaljavaa.instruments.InstrumentsEnums.InstrumentsAPIactionsEndpoints;
-import functionaljavaa.instruments.InstrumentsEnums.InstrumentsBusinessRules;
-import functionaljavaa.instruments.InstrumentsEnums.InstrumentsErrorTrapping;
+import module.instrumentsmanagement.definition.TblsAppProcConfig;
+import module.instrumentsmanagement.definition.TblsAppProcData;
+import module.instrumentsmanagement.definition.TblsAppProcData.TablesAppProcData;
+import module.instrumentsmanagement.definition.TblsAppProcDataAudit;
+import module.instrumentsmanagement.definition.TblsAppProcDataAudit.TablesAppProcDataAudit;
+import static module.instrumentsmanagement.logic.AppInstrumentsAudit.instrumentsAuditAdd;
+import module.instrumentsmanagement.definition.InstrumentsEnums.InstrEventsErrorTrapping;
+import module.instrumentsmanagement.definition.InstrumentsEnums.InstrumentsAPIactionsEndpoints;
+import module.instrumentsmanagement.definition.InstrumentsEnums.InstrumentsBusinessRules;
+import module.instrumentsmanagement.definition.InstrumentsEnums.InstrumentsErrorTrapping;
 import functionaljavaa.modulegenoma.DataStudyObjectsVariableValues;
 import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.parameter.Parameter.isTagValueOneOfEnableOnes;

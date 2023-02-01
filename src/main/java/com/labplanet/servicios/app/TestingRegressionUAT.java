@@ -215,6 +215,7 @@ public class TestingRegressionUAT extends HttpServlet {
             case DB_SCHEMADATA_SAMPLES:
             case DB_SCHEMADATA_ENVMONIT_SAMPLES:
             case DB_SCHEMADATA_INSPECTION_LOT_RM:
+            case MODULE_INVENTORY_LOT:
                 Object[][] scriptStepsTblInfo = Rdbms.getRecordFieldsByFilter(repositoryName, TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(), 
                         new String[]{TblsTesting.Script.SCRIPT_ID.getName(), TblsTesting.Script.ACTIVE.getName()}, new Object[]{scriptId, true}, 
                         new String[]{TblsTesting.ScriptSteps.STEP_ID.getName(), TblsTesting.ScriptSteps.ACTION_NAME.getName()},

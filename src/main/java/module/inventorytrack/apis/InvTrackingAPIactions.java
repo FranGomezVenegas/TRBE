@@ -24,7 +24,7 @@ import lbplanet.utilities.LPPlatform.ApiErrorTraping;
 import module.inventorytrack.definition.ClassInvTracking;
 import module.inventorytrack.definition.TblsInvTrackingData;
 import module.inventorytrack.logic.DataInventory;
-import module.inventorytrack.logic.InvTrackingEnums.InventoryTrackAPIactionsEndpoints;
+import module.inventorytrack.definition.InvTrackingEnums.InventoryTrackAPIactionsEndpoints;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 

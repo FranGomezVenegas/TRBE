@@ -3,17 +3,15 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.labplanet.servicios.app.procs;
+package module.instrumentsmanagement.definition;
 
-import databases.TblsAppProcData;
-import databases.TblsAppProcData.TablesAppProcData;
-import databases.TblsAppProcDataAudit;
+import module.instrumentsmanagement.definition.TblsAppProcData.TablesAppProcData;
 import functionaljavaa.audit.SampleAudit;
-import functionaljavaa.instruments.DataInstruments;
-import static functionaljavaa.instruments.DataInstrumentsEvents.instrumentAuditSetAuditRecordAsReviewed;
-import static functionaljavaa.instruments.DataInstrumentsEvents.objectVariableChangeValue;
-import static functionaljavaa.instruments.DataInstrumentsEvents.objectVariableSetValue;
-import functionaljavaa.instruments.InstrumentsEnums.InstrumentsAPIactionsEndpoints;
+import module.instrumentsmanagement.logic.DataInstruments;
+import static module.instrumentsmanagement.logic.DataInstrumentsEvents.instrumentAuditSetAuditRecordAsReviewed;
+import static module.instrumentsmanagement.logic.DataInstrumentsEvents.objectVariableChangeValue;
+import static module.instrumentsmanagement.logic.DataInstrumentsEvents.objectVariableSetValue;
+import module.instrumentsmanagement.definition.InstrumentsEnums.InstrumentsAPIactionsEndpoints;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;

@@ -77,6 +77,7 @@ public interface EnumIntViews {
         
         vwScript=" SELECT "+getViewFldsList(vwDef, procInstanceName, tblAliases).toString()+" from "+vwScript;
         vwScript=vwScript.replace("#SCHEMA_CONFIG", LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), "config", isForTesting, ""));
+        vwScript=vwScript.replace("#SCHEMA_DATA", LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), "data", isForTesting, ""));
         
         vwScript="create view "+LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), vwDef.getRepositoryName(), isForTesting, vwDef.getViewName())+"."+vwDef.getViewName()+" AS "+vwScript;
         return vwScript;
@@ -84,16 +85,22 @@ public interface EnumIntViews {
     static StringBuilder getViewFldsList(EnumIntViews vwDef, String procInstanceName, String[] tblAliases){
         StringBuilder fldsStr=new StringBuilder(0);
         for (EnumIntViewFields curFld: vwDef.getViewFields()){
+            if (fldsStr.length()>0) fldsStr=fldsStr.append(", ");
             String[] split = curFld.getViewAliasName().split("\\.");
-            if (LPArray.valueInArray(tblAliases, split[0])){
-                if (fldsStr.length()>0) fldsStr=fldsStr.append(", ");
-
+            //if ((split.length==1)&&curFld.getViewAliasName().toLowerCase().contains(" as "))
+            if (curFld.getViewAliasName().toLowerCase().contains(" as ")){
+                String vwFldMask=curFld.getViewAliasName();
+                vwFldMask=vwFldMask.replace("#PROC_INSTANCE_NAME", "\""+procInstanceName);
+                vwFldMask=vwFldMask.replace("#SCHEMA_DATA", GlobalVariables.Schemas.DATA.getName()+"\"");
+                fldsStr=fldsStr.append(vwFldMask).append(" ");
+            }else if (LPArray.valueInArray(tblAliases, split[0])){
                 String vwFldMask=curFld.getViewAliasName();
                 vwFldMask=vwFldMask.replace("#PROC_INSTANCE_NAME", procInstanceName);
                 vwFldMask=vwFldMask.replace("#SCHEMA_DATA", GlobalVariables.Schemas.DATA.getName());            
 
                 fldsStr=fldsStr.append(vwFldMask).append(" ");
-            }
+            }else
+                fldsStr=fldsStr.append(curFld.getViewAliasName()).append(" *** the alias should include the word as  or the alias assigned to this table in the join ");
         }
         return fldsStr;
 

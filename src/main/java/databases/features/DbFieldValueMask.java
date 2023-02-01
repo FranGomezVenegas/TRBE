@@ -10,10 +10,8 @@ import lbplanet.utilities.LPArray;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.session.ProcedureRequestSession;
 
-/**
- *
- * @author User
- */
+// fieldMasked Date-Time only hours and minutes "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')";
+
 public class DbFieldValueMask {
     public static Object[] getMaskedFields(String dbName, Boolean isApp, String procInstanceName){
         ProcedureRequestSession instanceForQueries = ProcedureRequestSession.getInstanceForQueries(null, null, false);

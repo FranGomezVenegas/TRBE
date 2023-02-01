@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package databases;
+package module.instrumentsmanagement.definition;
 
 import databases.SqlStatementEnums.JOIN_TYPES;
+import databases.TblsAppConfig;
 import lbplanet.utilities.LPDatabase;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;

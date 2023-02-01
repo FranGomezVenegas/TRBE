@@ -7,10 +7,10 @@ package module.inventorytrack.definition;
 
 import databases.SqlStatementEnums.JOIN_TYPES;
 import databases.TblsAppConfig;
-import databases.TblsAppProcData.Instruments;
 import databases.TblsCnfg;
 import databases.TblsCnfg.TablesConfig;
 import lbplanet.utilities.LPDatabase;
+import module.instrumentsmanagement.definition.TblsAppProcData.Instruments;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.enums.EnumIntTablesJoin;
@@ -94,6 +94,12 @@ public class TblsInvTrackingData {
                   "or (expiry_date_in_use is not null and expiry_date_in_use < now()) " +
                   "or (expiry_date_in_use<expiry_date and expiry_date_in_use < now()) " +
                 ")"),
+        AVAILABLE_LOTS_PER_REFERENCE("",
+            null, "available_lots_per_reference", SCHEMA_NAME, true, TblsInvTrackingData.ViewAvailableLotsPerReference.values(), "Lots which expiry_date or expiry_date_in_use is over", 
+        new EnumIntTablesJoin[]{
+            new EnumIntTablesJoin(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_CATEGORY, "cat", TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE, "ref", true,
+                new EnumIntTableFields[][]{{TblsInvTrackingConfig.Category.NAME, TblsInvTrackingConfig.Reference.CATEGORY}}, "", JOIN_TYPES.INNER),
+        }, ""),
         ;
         private ViewsInvTrackingData(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds, 
                 String comment, EnumIntTablesJoin[] TablesInView, String extraFilters){
@@ -313,5 +319,38 @@ public class TblsInvTrackingData {
         @Override public EnumIntTableFields getTableField() {return this.fldObj;}
     }        
 
+    public enum ViewAvailableLotsPerReference implements EnumIntViewFields{
+        NAME(TblsInvTrackingConfig.Reference.NAME.getName(), "ref."+TblsInvTrackingConfig.Reference.NAME.getName(), TblsInvTrackingConfig.Reference.NAME, null, null, null),
+        CATEGORY(TblsInvTrackingConfig.Reference.CATEGORY.getName(), "ref."+TblsInvTrackingConfig.Reference.CATEGORY.getName(), TblsInvTrackingConfig.Reference.CATEGORY, null, null, null),
+        COUNT("count", "(select count(*) from #PROC_INSTANCE_NAME-#SCHEMA_DATA.lot l where l.category=ref.category and l.reference=ref.name and l.status='AVAILABLE_FOR_USE') as count ", Lot.LOCKED_REASON, null, null, null),
+        ;
+        private ViewAvailableLotsPerReference(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
+//            try{
+//            this.fldName="";
+            this.fldName=name;
+            this.fldAliasInView=vwAliasName;
+            this.fldMask=fldMask;
+            this.fldComment=comment;
+            this.fldBusinessRules=busRules;
+            this.fldObj=fldObj;
+/*            }catch(Exception e){
+                String s= e.getMessage();
+                //String s2=name;
+                this.fldName="";
+            }*/
+        }
+        private final String fldName;
+        private final String fldAliasInView;
+        private final EnumIntTableFields fldObj;
+        private final String fldMask;
+        private final String fldComment;
+        private final FldBusinessRules[] fldBusinessRules;        
+        @Override public String getName() {return fldName;}
+        @Override public String getViewAliasName() {return this.fldAliasInView;}
+        @Override public String getFieldMask() {return this.fldMask;}
+        @Override public String getFieldComment() {return this.fldComment;}
+        @Override public FldBusinessRules[] getFldBusinessRules() {return this.fldBusinessRules;}
+        @Override public EnumIntTableFields getTableField() {return this.fldObj;}
+    }        
     
 }

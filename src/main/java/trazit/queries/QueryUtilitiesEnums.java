@@ -106,7 +106,7 @@ public class QueryUtilitiesEnums {
             res.last();
 
             if (res.getRow()>0){
-             Integer totalLines = res.getRow();
+             Integer totalLines = res.getRow();             
              res.first();
              Integer icurrLine = 0;   
              

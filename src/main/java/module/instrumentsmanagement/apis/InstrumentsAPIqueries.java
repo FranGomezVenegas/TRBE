@@ -3,21 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.labplanet.servicios.app.procs;
+package module.instrumentsmanagement.apis;
 
 import static com.labplanet.servicios.app.IncidentAPIactions.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.SqlWhere;
-import databases.TblsAppProcConfig;
-import databases.TblsAppProcData;
-import databases.TblsAppProcData.TablesAppProcData;
-import databases.TblsAppProcData.ViewsAppProcData;
-import databases.TblsAppProcDataAudit;
-import databases.TblsAppProcDataAudit.TablesAppProcDataAudit;
+import module.instrumentsmanagement.definition.TblsAppProcConfig;
+import module.instrumentsmanagement.definition.TblsAppProcData;
+import module.instrumentsmanagement.definition.TblsAppProcData.TablesAppProcData;
+import module.instrumentsmanagement.definition.TblsAppProcData.ViewsAppProcData;
+import module.instrumentsmanagement.definition.TblsAppProcDataAudit;
+import module.instrumentsmanagement.definition.TblsAppProcDataAudit.TablesAppProcDataAudit;
 import databases.TblsDataAudit;
 import databases.features.Token;
-import functionaljavaa.instruments.InstrumentsEnums.InstrumentsAPIqueriesEndpoints;
+import module.instrumentsmanagement.definition.InstrumentsEnums.InstrumentsAPIqueriesEndpoints;
 import functionaljavaa.parameter.Parameter;
 import java.io.IOException;
 import java.util.logging.Level;

@@ -1,11 +1,12 @@
 package module.inventorytrack.logic;
 
+import module.inventorytrack.definition.InvTrackingEnums;
 import databases.Rdbms;
 import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.SqlWhere;
 import databases.features.Token;
-import static functionaljavaa.audit.AppInventoryLotAudit.InventoryLotAuditAdd;
+import static module.inventorytrack.logic.AppInventoryLotAudit.InventoryLotAuditAdd;
 import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement;
 import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement.UomErrorTrapping;
 import java.math.BigDecimal;
@@ -18,9 +19,9 @@ import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
 import module.inventorytrack.definition.TblsInvTrackingConfig;
 import module.inventorytrack.definition.TblsInvTrackingData;
 import module.inventorytrack.definition.TblsInvTrackingData.TablesInvTrackingData;
-import module.inventorytrack.logic.InvTrackingEnums.InvLotStatuses;
-import module.inventorytrack.logic.InvTrackingEnums.InvReferenceStockControlTypes;
-import module.inventorytrack.logic.InvTrackingEnums.InventoryTrackingErrorTrapping;
+import module.inventorytrack.definition.InvTrackingEnums.InvLotStatuses;
+import module.inventorytrack.definition.InvTrackingEnums.InvReferenceStockControlTypes;
+import module.inventorytrack.definition.InvTrackingEnums.InventoryTrackingErrorTrapping;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntMessages;

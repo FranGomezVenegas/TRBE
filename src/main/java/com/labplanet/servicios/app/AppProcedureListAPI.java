@@ -33,6 +33,7 @@ import functionaljavaa.sop.UserSop;
 import static functionaljavaa.sop.UserSop.isProcedureSopEnable;
 import java.util.Arrays;
 import lbplanet.utilities.LPNulls;
+import module.inventorytrack.logic.InvTrackingFrontendMasterData;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -193,6 +194,9 @@ public class AppProcedureListAPI extends HttpServlet {
         if (procInstanceName.toLowerCase().contains("em-demo-a")){
             BusinessRules bi=new BusinessRules(procInstanceName, null);
             return ConfigMasterData.getMasterData(procInstanceName, bi);
+        }else if (procInstanceName.toLowerCase().contains("inv-draft")){
+            InvTrackingFrontendMasterData mdObj=new InvTrackingFrontendMasterData();
+            return mdObj.getMasterDataJsonObject(procInstanceName);                
         }else{ 
             jObj.put(procInstanceName, "no master date logic defined");
             return jObj;

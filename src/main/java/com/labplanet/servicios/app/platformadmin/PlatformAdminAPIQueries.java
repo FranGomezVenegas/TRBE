@@ -139,10 +139,11 @@ public class PlatformAdminAPIQueries extends HttpServlet {
         }catch(Exception e){
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         }finally {
-             Rdbms.closeRdbms(); 
+            ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false);
+            procReqInstance.killIt();
+//             Rdbms.closeRdbms(); 
             // release database resources
             try {           
-                ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false);
                 procReqInstance.killIt();
                 // Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);

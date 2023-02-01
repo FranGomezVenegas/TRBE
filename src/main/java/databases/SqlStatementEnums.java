@@ -194,7 +194,7 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
         HashMap<String, Object[]> hm = new HashMap();        
         
         String queryWhere = "";
-        Object[] schemaDiag=getTableSchema(tblObj, null);
+        Object[] schemaDiag=getTableSchema(tblObj, alternativeProcInstanceName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(schemaDiag[0].toString())) return null;
         String schemaName=schemaDiag[0].toString();
         schemaName=LPPlatform.buildSchemaName(schemaName, "");
@@ -515,10 +515,24 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
     private String buildFieldsToRetrieve(EnumIntTables tblObj, EnumIntTableFields[] fieldsToRetrieve, Boolean avoidMask) {
         StringBuilder fieldsToRetrieveStr = new StringBuilder(0);
         if (fieldsToRetrieve != null) {
-            
+            String fn="";      
+            Boolean alreadyAdded=false;
             for (EnumIntTableFields curFld : fieldsToRetrieve) {
-                
-                Boolean alreadyAdded=false;
+            fn=curFld.getName();
+            if (curFld.getReferenceTable()!=null){ 
+                if (GlobalVariables.Schemas.CONFIG.toString().equalsIgnoreCase(curFld.getReferenceTable().getRepository())
+                   && "person".equalsIgnoreCase(curFld.getReferenceTable().getTableName())
+                   && "person_id".equalsIgnoreCase(curFld.getReferenceTable().getFieldName()))
+                fn="(select alias from config.person where person_id="+curFld.getName()+")";
+                fn=fn+" as "+curFld.getName();
+                fieldsToRetrieveStr.append(fn.toLowerCase()).append(", ");
+            }else{
+            if (curFld.getFieldMask()!=null){
+                fn=curFld.getFieldMask(); 
+                fn=fn+" as "+curFld.getName();
+                fieldsToRetrieveStr.append(fn.toLowerCase()).append(", ");
+            }else{               
+                alreadyAdded=false;               
                 if (curFld.getFieldType()==null){
                     fieldsToRetrieveStr.append(curFld.getName().toLowerCase()).append(", ");
                     alreadyAdded=true;
@@ -529,21 +543,23 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
                     }
                     if (curFld.getFieldType().equals(LPDatabase.dateTime())){
                         if (avoidMask!=null && !avoidMask)
-                            fieldsToRetrieveStr.append("to_char("+curFld.getName().toLowerCase()+",'DD.MM/YY HH:MI')").append(", ");
+                            fieldsToRetrieveStr.append("to_char("+curFld.getName().toLowerCase()+",'DD.MM/YY HH:MI')").append(" as ").append(curFld.getName()).append(", ");
                         else
                             fieldsToRetrieveStr.append(curFld.getName().toLowerCase()).append(", ");
                             alreadyAdded=true;
                     }
                     if (curFld.getFieldType().equals(LPDatabase.dateTimeWithDefaultNow())){
                         if (avoidMask!=null && !avoidMask)
-                            fieldsToRetrieveStr.append("to_char("+curFld.getName().toLowerCase()+",'DD.MM/YY HH:MI')").append(", ");
+                            fieldsToRetrieveStr.append("to_char("+curFld.getName().toLowerCase()+",'DD.MM/YY HH:MI')").append(" as ").append(curFld.getName()).append(", ");
                         else
                             fieldsToRetrieveStr.append(curFld.getName().toLowerCase()).append(", ");
                         alreadyAdded=true;
-                    }
+                    }            
+                    if (!alreadyAdded)
+                        fieldsToRetrieveStr.append(curFld.getName().toLowerCase()).append(", ");
                 }
-                if (!alreadyAdded)
-                    fieldsToRetrieveStr.append(curFld.getName().toLowerCase()).append(", ");
+            }
+            }
                 /*                String fn = curFld.getName();
                 if (fn.contains("|")){
                     String[] fnArr=fn.split("\\|");
@@ -563,10 +579,12 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
                     fn = fn.substring(0, posicINClause - 1);
                     fieldsToRetrieveStr.append(fn.toLowerCase()).append(", ");
                 }
+                }
                 fieldsToRetrieveStr.append(fn.toLowerCase()).append(", ");*/
-            }
+        }    
             fieldsToRetrieveStr.deleteCharAt(fieldsToRetrieveStr.length() - 1);
             fieldsToRetrieveStr.deleteCharAt(fieldsToRetrieveStr.length() - 1);
+        
         }
         return fieldsToRetrieveStr.toString();
     }
@@ -730,6 +748,7 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
                 (fn.toUpperCase().contains(WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause())) || 
                 (fn.toUpperCase().contains(WHERECLAUSE_TYPES.GREATER_THAN_STRICT.getSqlClause()))) {
                 queryWhere.append(fn).append(" ? ");
+                
                 whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
             } else {
                 queryWhere.append(fn).append("=? ");

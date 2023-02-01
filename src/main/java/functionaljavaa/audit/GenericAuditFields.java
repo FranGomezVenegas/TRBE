@@ -7,7 +7,7 @@ package functionaljavaa.audit;
 
 import databases.Rdbms;
 import databases.TblsAppAudit;
-import databases.TblsAppProcDataAudit;
+import module.instrumentsmanagement.definition.TblsAppProcDataAudit;
 import databases.features.Token;
 import functionaljavaa.parameter.Parameter;
 import java.util.Arrays;
