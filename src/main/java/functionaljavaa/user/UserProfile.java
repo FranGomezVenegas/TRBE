@@ -116,19 +116,23 @@ public class UserProfile {
      * @return
      */
     public static Object[] getProcedureUsers ( String procInstanceName, String rolName) {
+        Object[][] procedureUsersAndRolesList = getProcedureUsersAndRolesList(procInstanceName, rolName);
+        return LPArray.getUniquesArray(LPArray.getColumnFromArray2D(procedureUsersAndRolesList, 0));
+    }
+    public static Object[][] getProcedureUsersAndRolesList ( String procInstanceName, String rolName) {
         SqlWhere where=new SqlWhere();
-        if (rolName==null)
-            where.addConstraint(TblsProcedure.PersonProfile.PERSON_NAME, WHERECLAUSE_TYPES.IS_NOT_NULL, null, null);
-        else
+        where.addConstraint(TblsProcedure.PersonProfile.ACTIVE, WHERECLAUSE_TYPES.EQUAL, new Object[]{true}, null);
+        if (rolName!=null)
             where.addConstraint(TblsProcedure.PersonProfile.ROLE_NAME, WHERECLAUSE_TYPES.EQUAL, new Object[]{rolName}, null);
-        Object[][] tableData = QueryUtilitiesEnums.getTableData(TblsProcedure.TablesProcedure.PERSON_PROFILE, new EnumIntTableFields[]{TblsProcedure.PersonProfile.PERSON_NAME}, 
-                where, null, procInstanceName);
+        Object[][] tableData = QueryUtilitiesEnums.getTableData(TblsProcedure.TablesProcedure.PERSON_PROFILE, 
+            new EnumIntTableFields[]{TblsProcedure.PersonProfile.PERSON_NAME, TblsProcedure.PersonProfile.ROLE_NAME}, 
+            where, null, procInstanceName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(tableData[0][0].toString()))
-            return tableData[0];
-        for (int i=0;i<tableData.length;i++){
-            tableData[i][0]=UserAndRolesViews.getUserByPerson(tableData[i][0].toString());
+            return tableData;
+        for (Object[] tableData1 : tableData) {
+            tableData1[0] = UserAndRolesViews.getUserByPerson(tableData1[0].toString());
         }
-        return LPArray.getUniquesArray((Object[])LPArray.getColumnFromArray2D(tableData, 0));        
+        return tableData;
     }
 
     // Should not return any role from config and data schemas as those are considered specials, not for business users.
