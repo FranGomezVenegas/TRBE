@@ -62,6 +62,10 @@ public class SqlWhere {
         this.allWhereEntries = myEntries;
     }
 
+    public SqlWhere(SqlWhereEntry[] orConstraint){
+        ArrayList<SqlWhereEntry> myEntries = new ArrayList<>();
+        this.allWhereEntries = myEntries;
+    }    
     public SqlWhere(EnumIntViews viewObj, String[] fldName, Object[] fldValue){
         ArrayList<SqlWhereEntry> myEntries = new ArrayList<>();
         for (int iFld=0;iFld<fldName.length;iFld++){
@@ -107,7 +111,12 @@ public class SqlWhere {
     public void addConstraint(EnumIntViewFields fldN, SqlStatement.WHERECLAUSE_TYPES symb, Object[] fldVal, String separtr){
         this.getAllWhereEntries().add(new SqlWhereEntry(fldN, symb, fldVal, separtr));
     }
-
+    public void addOrClauseConstraint(SqlWhereEntry[] orClauses){
+         this.getAllWhereEntries().add(new SqlWhereEntry(orClauses));
+/*        for (SqlWhereEntry currClause: orClauses){
+            this.getAllWhereEntries().add(new SqlWhereEntry(currClause.getTblFldName(), currClause.getSymbol(), currClause.getFldValue(), currClause.getSeparator()));
+        }*/
+    }
     public ArrayList<SqlWhereEntry> getAllWhereEntries() {
         return allWhereEntries;
     }

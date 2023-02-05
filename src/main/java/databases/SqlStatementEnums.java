@@ -380,82 +380,23 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
         Object[] whereFieldValuesNew = new Object[0];
         ArrayList<SqlWhereEntry> allWhereEntries = whereObj.getAllWhereEntries();
         for (SqlWhereEntry curEntry: allWhereEntries){
-            
-        //for (int iwhereFieldNames=0; iwhereFieldNames<whereFieldNames.length; iwhereFieldNames++){
-            String fn = null;
-            if (curEntry.getTblFldName()!=null)
-                fn = curEntry.getTblFldName().getName();
-            else
-                fn = curEntry.getVwFldName().getName();
-            String symbol = curEntry.getSymbol().getSqlClause();
-            String separator = curEntry.getSeparator();
-            Object[] fldV=curEntry.getFldValue();
-            if (fn==null || fn.length()==0) break;
-            if (queryWhere.length() > 0) {
-                if (!symbol.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase()))
-//                    queryWhere.append(" or ");
-//                else
-                    queryWhere.append(" and ");
-            }
-            switch (curEntry.getSymbol()){
-                case IS_NOT_NULL:
-                case IS_NULL:
-                case NULL:
-                    queryWhere.append(fn).append(" ").append(symbol.toLowerCase());
-                    break;
-                case EQUAL:
-                    queryWhere.append(fn).append("=? ");
-                    whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV);
-                    break;
-                case IN:
-                case NOT_IN:
-                    if (separator==null||separator.length()==0) separator="|";
-                    String textSpecs = fldV[0].toString();
-                    Boolean valuesAreNumbers=false;
-                    if (textSpecs.toUpperCase().contains("INTEGER*")){
-                        textSpecs=textSpecs.replace("INTEGER*", "");
-                        valuesAreNumbers = true;
-                    }
-                    Object[] textSpecArray = textSpecs.split("\\" + separator);
-                    queryWhere.append(fn).append(" ").append(symbol.toLowerCase()).append("(");
-                    if (!valuesAreNumbers)
-                        if (curEntry.getFldValue()[0] instanceof Object[])
-                            textSpecArray=(Object[]) curEntry.getFldValue()[0];
-                        else if (curEntry.getFldValue()[0] instanceof String[])
-                            textSpecArray=(Object[]) curEntry.getFldValue()[0];
-                        else
-                            textSpecArray=new Object[]{curEntry.getFldValue()[0]};
-                    for (Object f : textSpecArray) {
-                        queryWhere.append("?,");
-                        if (valuesAreNumbers)
-                            whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, Integer.valueOf(f.toString()));
-                        else
-                            whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFldValuesGetCurrArrValue(textSpecs, f.toString()));
-                    }
-                    queryWhere.deleteCharAt(queryWhere.length() - 1);
-                    queryWhere.append(")");
-                    break;
-                case LIKE:
-                    queryWhere.append(caseSensitive ? fn : "lower("+fn+")").append(" like ? ");
-                    whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, caseSensitive ? fldV[0].toString().replace("*", "%"): fldV[0].toString().replace("*", "%").toLowerCase());                    
-                    break;
-                case BETWEEN:
-                    queryWhere.append(fn).append(" between ? and ? ");
-                    whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV[0]);
-                    whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV[1]);
-                    break;
-                case LESS_THAN:
-                    queryWhere.append(fn).append(" < ? ");
-                    whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV[0]);
-                    break;
-                case GREATER_THAN:
-                    queryWhere.append(fn).append(" > ? ");
-                    whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV[0]);
-                    break;
-                default:
-                    queryWhere.append(caseSensitive ? fn : "lower("+fn+")").append("=? ");
-                    whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, caseSensitive ? fldV[0]: fldV[0].toString().toLowerCase());
-                    break;
+            if (curEntry.getOrClause()!=null){
+                if (curEntry.getOrClause().length==1)
+                    queryWhere.append(" or ");
+                else 
+                    queryWhere.append(" and (");
+                for (SqlWhereEntry curEntryOr: curEntry.getOrClause()){
+                    Object[] addSingleConstraint = addSingleConstraint(curEntryOr, caseSensitive, "or");
+                    queryWhere=queryWhere.append((StringBuilder) addSingleConstraint[0]);                    
+                    queryWhere.append(" or ");
+                    whereFieldValuesNew=LPArray.addValueToArray1D(whereFieldValuesNew,(Object[]) addSingleConstraint[1]);
+                }                
+                queryWhere.delete(queryWhere.length()-3, queryWhere.length());
+                queryWhere.append(")");
+            }else{
+                Object[] addSingleConstraint = addSingleConstraint(curEntry, caseSensitive, "and");
+                queryWhere=queryWhere.append((StringBuilder) addSingleConstraint[0]);
+                whereFieldValuesNew=LPArray.addValueToArray1D(whereFieldValuesNew,(Object[]) addSingleConstraint[1]);
             }
         }
         return new Object[]{queryWhere.toString(), whereFieldValuesNew};
@@ -876,5 +817,92 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
            return new Object[]{LPPlatform.LAB_FALSE, new RdbmsObject(false, "", TrazitUtilitiesErrorTrapping.MISSING_FIELDS_IN_TABLE, new Object[]{tblObj.getRepositoryName()+"."+tblObj.getTableName(), Arrays.toString(missingFlds)})}; 
         return new Object[]{LPPlatform.LAB_TRUE, fldNamesObj};
     }       
+    
+    private static Object[] addSingleConstraint(SqlWhereEntry curEntry, Boolean caseSensitive, String constraintType){
+        StringBuilder queryWhere = new StringBuilder(0);
+        Object[] whereFieldValuesNew = new Object[0];
+
+        String fn = null;
+        if (curEntry.getTblFldName()!=null)
+            fn = curEntry.getTblFldName().getName();
+        else
+            fn = curEntry.getVwFldName().getName();
+        String symbol = curEntry.getSymbol().getSqlClause();
+        String separator = curEntry.getSeparator();
+        Object[] fldV=curEntry.getFldValue();
+        if (fn==null || fn.length()==0) return new Object[]{};
+        if (queryWhere.length() > 0) {
+            if (!symbol.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase()))
+//                    queryWhere.append(" or ");
+//                else
+                queryWhere.append(" ").append(constraintType).append(" ");
+        }
+        switch (curEntry.getSymbol()){
+            case IS_NOT_NULL:
+            case IS_NULL:
+            case NULL:
+                queryWhere.append(fn).append(" ").append(symbol.toLowerCase());
+                break;
+            case NOT_EQUAL:
+                queryWhere.append(fn).append("<>? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV);
+                break;
+            case EQUAL:
+                queryWhere.append(fn).append("=? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV);
+                break;
+            case IN:
+            case NOT_IN:
+                if (separator==null||separator.length()==0) separator="|";
+                String textSpecs = fldV[0].toString();
+                Boolean valuesAreNumbers=false;
+                if (textSpecs.toUpperCase().contains("INTEGER*")){
+                    textSpecs=textSpecs.replace("INTEGER*", "");
+                    valuesAreNumbers = true;
+                }
+                Object[] textSpecArray = textSpecs.split("\\" + separator);
+                queryWhere.append(fn).append(" ").append(symbol.toLowerCase()).append("(");
+                if (!valuesAreNumbers)
+                    if (curEntry.getFldValue()[0] instanceof Object[])
+                        textSpecArray=(Object[]) curEntry.getFldValue()[0];
+                    else if (curEntry.getFldValue()[0] instanceof String[])
+                        textSpecArray=(Object[]) curEntry.getFldValue()[0];
+                    else
+                        textSpecArray=new Object[]{curEntry.getFldValue()[0]};
+                for (Object f : textSpecArray) {
+                    queryWhere.append("?,");
+                    if (valuesAreNumbers)
+                        whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, Integer.valueOf(f.toString()));
+                    else
+                        whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFldValuesGetCurrArrValue(textSpecs, f.toString()));
+                }
+                queryWhere.deleteCharAt(queryWhere.length() - 1);
+                queryWhere.append(")");
+                break;
+            case LIKE:
+                queryWhere.append(caseSensitive ? fn : "lower("+fn+")").append(" like ? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, caseSensitive ? fldV[0].toString().replace("*", "%"): fldV[0].toString().replace("*", "%").toLowerCase());                    
+                break;
+            case BETWEEN:
+                queryWhere.append(fn).append(" between ? and ? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV[0]);
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV[1]);
+                break;
+            case LESS_THAN:
+                queryWhere.append(fn).append(" < ? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV[0]);
+                break;
+            case GREATER_THAN:
+                queryWhere.append(fn).append(" > ? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV[0]);
+                break;
+            default:
+                queryWhere.append(caseSensitive ? fn : "lower("+fn+")").append("=? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, caseSensitive ? fldV[0]: fldV[0].toString().toLowerCase());
+                break;
+        }
+        return new Object[]{queryWhere, whereFieldValuesNew};
+        
+    }
     
 }
