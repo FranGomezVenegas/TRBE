@@ -31,6 +31,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
 import functionaljavaa.sop.UserSop;
 import static functionaljavaa.sop.UserSop.isProcedureSopEnable;
+import static functionaljavaa.user.UserProfile.getProcedureUsers;
+import static functionaljavaa.user.UserProfile.getProcedureUsersAndRolesList;
 import java.util.Arrays;
 import lbplanet.utilities.LPNulls;
 import module.inventorytrack.logic.InvTrackingFrontendMasterData;
@@ -193,14 +195,29 @@ public class AppProcedureListAPI extends HttpServlet {
         JSONObject jObj=new JSONObject();
         if (procInstanceName.toLowerCase().contains("em-demo-a")){
             BusinessRules bi=new BusinessRules(procInstanceName, null);
-            return ConfigMasterData.getMasterData(procInstanceName, bi);
+            jObj=ConfigMasterData.getMasterData(procInstanceName, bi);
         }else if (procInstanceName.toLowerCase().contains("inv-draft")){
             InvTrackingFrontendMasterData mdObj=new InvTrackingFrontendMasterData();
-            return mdObj.getMasterDataJsonObject(procInstanceName);                
+            jObj=mdObj.getMasterDataJsonObject(procInstanceName);                
         }else{ 
             jObj.put(procInstanceName, "no master date logic defined");
             return jObj;
         }
+        JSONArray usArr=new JSONArray();
+        for (Object[] curRow: getProcedureUsersAndRolesList(procInstanceName, null)){
+            JSONObject convertArrayRowToJSONObject = LPJson.convertArrayRowToJSONObject(new String[]{"user_name", TblsProcedure.PersonProfile.ROLE_NAME.getName()}, curRow);
+            usArr.add(convertArrayRowToJSONObject);
+        }
+        jObj.put("users_and_roles", usArr);
+        
+        usArr=new JSONArray();
+        for (Object curRow: getProcedureUsers (procInstanceName, null)){
+            JSONObject newRow=new JSONObject();
+            newRow.put("user", curRow);
+            usArr.add(newRow);
+        }
+        jObj.put("users", usArr);
+        return jObj;
     }
     public static JSONArray procActionsWithESign(String procInstanceName){
         JSONArray jArr = new JSONArray();   
