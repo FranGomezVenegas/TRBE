@@ -13,6 +13,7 @@ import static module.instrumentsmanagement.logic.DataInstrumentsEvents.objectVar
 import static module.instrumentsmanagement.logic.DataInstrumentsEvents.objectVariableSetValue;
 import module.instrumentsmanagement.definition.InstrumentsEnums.InstrumentsAPIactionsEndpoints;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
+import functionaljavaa.user.UserAndRolesViews;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
@@ -167,6 +168,94 @@ public class ClassInstruments {
                             fieldValues=LPArray.addValueToArray1D(fieldValues, manufacturerName);
                         }
                         actionDiagnoses=instr.updateInstrument(fieldNames, fieldValues);
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
+                    break;
+                case ASSIGN_RESPONSIBLE:
+                    String userName=argValues[1].toString();
+                    Object[] personByUserDaign = UserAndRolesViews.getPersonByUser(userName);
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUserDaign[0].toString())){
+                        actionDiagnoses=new InternalMessage(LPPlatform.LAB_FALSE, personByUserDaign[personByUserDaign.length-1].toString(), new Object[]{}, null);   
+                        break;
+                    }
+                    String personName=personByUserDaign[0].toString();  
+                    fieldName=argValues[2].toString();
+                    fieldValue=argValues[3].toString();
+                    fieldNames=null;
+                    fieldValues=null;
+                    if (fieldName!=null) fieldNames = fieldName.split("\\|");
+                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
+                    if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString()))
+                        actionDiagnoses=(InternalMessage) fieldValues[1];
+                    fieldNames=LPArray.addValueToArray1D(fieldNames, TblsInstrumentsData.Instruments.RESPONSIBLE.getName());
+                    fieldValues=LPArray.addValueToArray1D(fieldValues, personName);
+                    actionDiagnoses=instr.assignResponsible(fieldNames, fieldValues);
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
+                    break;
+                case CHANGE_RESPONSIBLE:
+                    userName=argValues[1].toString();
+                    personByUserDaign = UserAndRolesViews.getPersonByUser(userName);
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUserDaign[0].toString())){
+                        actionDiagnoses=new InternalMessage(LPPlatform.LAB_FALSE, personByUserDaign[personByUserDaign.length-1].toString(), new Object[]{}, null);   
+                        break;
+                    }
+                    personName=personByUserDaign[0].toString();  
+                    fieldName=argValues[2].toString();
+                    fieldValue=argValues[3].toString();
+                    fieldNames=null;
+                    fieldValues=null;
+                    if (fieldName!=null) fieldNames = fieldName.split("\\|");
+                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
+                    if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString()))
+                        actionDiagnoses=(InternalMessage) fieldValues[1];
+                    fieldNames=LPArray.addValueToArray1D(fieldNames, TblsInstrumentsData.Instruments.RESPONSIBLE.getName());
+                    fieldValues=LPArray.addValueToArray1D(fieldValues, personName);
+                    actionDiagnoses=instr.changeResponsible(fieldNames, fieldValues);
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
+                    break;
+                case ASSIGN_RESPONSIBLE_BACKUP:
+                    userName=argValues[1].toString();
+                    personByUserDaign = UserAndRolesViews.getPersonByUser(userName);
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUserDaign[0].toString())){
+                        actionDiagnoses=new InternalMessage(LPPlatform.LAB_FALSE, personByUserDaign[personByUserDaign.length-1].toString(), new Object[]{}, null);   
+                        break;
+                    }
+                    personName=personByUserDaign[0].toString();  
+                    fieldName=argValues[2].toString();
+                    fieldValue=argValues[3].toString();
+                    fieldNames=null;
+                    fieldValues=null;
+                    if (fieldName!=null) fieldNames = fieldName.split("\\|");
+                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
+                    if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString()))
+                        actionDiagnoses=(InternalMessage) fieldValues[1];
+                    fieldNames=LPArray.addValueToArray1D(fieldNames, TblsInstrumentsData.Instruments.RESPONSIBLE.getName());
+                    fieldValues=LPArray.addValueToArray1D(fieldValues, personName);
+                    actionDiagnoses=instr.assignResponsibleBackup(fieldNames, fieldValues);
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
+                    break;
+                case CHANGE_RESPONSIBLE_BACKUP:
+                    userName=argValues[1].toString();
+                    personByUserDaign = UserAndRolesViews.getPersonByUser(userName);
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUserDaign[0].toString())){
+                        actionDiagnoses=new InternalMessage(LPPlatform.LAB_FALSE, personByUserDaign[personByUserDaign.length-1].toString(), new Object[]{}, null);   
+                        break;
+                    }
+                    personName=personByUserDaign[0].toString();  
+                    fieldName=argValues[2].toString();
+                    fieldValue=argValues[3].toString();
+                    fieldNames=null;
+                    fieldValues=null;
+                    if (fieldName!=null) fieldNames = fieldName.split("\\|");
+                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
+                    if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString()))
+                        actionDiagnoses=(InternalMessage) fieldValues[1];
+                    fieldNames=LPArray.addValueToArray1D(fieldNames, TblsInstrumentsData.Instruments.RESPONSIBLE.getName());
+                    fieldValues=LPArray.addValueToArray1D(fieldValues, personName);
+                    actionDiagnoses=instr.changeResponsibleBackup(fieldNames, fieldValues);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
                     break;

@@ -100,6 +100,7 @@ public class DataInstruments {
             if (this.onLine==null) this.onLine=false;
             this.isLocked= Boolean.valueOf(LPNulls.replaceNull(instrInfo[0][LPArray.valuePosicInArray(fieldNames, TblsInstrumentsData.Instruments.IS_LOCKED.getName())]).toString());
             if (this.isLocked==null) this.isLocked=false;
+            responsibleLocking();
             this.isDecommissioned= Boolean.valueOf(LPNulls.replaceNull(instrInfo[0][LPArray.valuePosicInArray(fieldNames, TblsInstrumentsData.Instruments.DECOMMISSIONED.getName())]).toString());
             if (this.isDecommissioned==null) this.isDecommissioned=false;
             this.lockedReason=LPNulls.replaceNull(instrInfo[0][LPArray.valuePosicInArray(fieldNames, TblsInstrumentsData.Instruments.LOCKED_REASON.getName())]).toString();
@@ -117,7 +118,22 @@ public class DataInstruments {
             }
         }
     }    
-    
+    private void responsibleLocking(){
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);    
+        Token token = procReqSession.getToken();
+        Integer respFldPosic=LPArray.valuePosicInArray(this.fieldNames, TblsInstrumentsData.Instruments.RESPONSIBLE.getName());
+        Integer resp2FldPosic=LPArray.valuePosicInArray(this.fieldNames, TblsInstrumentsData.Instruments.RESPONSIBLE_BACKUP.getName());
+        if (respFldPosic>-1){
+            if (LPNulls.replaceNull(this.fieldValues[respFldPosic]).toString().equalsIgnoreCase(token.getUserName()))
+               return;
+        if (resp2FldPosic>-1){
+            if (LPNulls.replaceNull(this.fieldValues[resp2FldPosic]).toString().equalsIgnoreCase(token.getUserName()))
+               return;
+            }
+            this.isLocked=true;
+            this.lockedReason="user is not responsible neither responsible backup";
+        }
+    }
     public static InternalMessage createNewInstrument(String name, String familyName, String[] fldNames, Object[] fldValues){   
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
         ResponseMessages messages = procReqSession.getMessages();
@@ -154,9 +170,22 @@ public class DataInstruments {
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.NEW_INSTRUMENT, new Object[]{name}, name);
     }
     public InternalMessage updateInstrument(String[] fldNames, Object[] fldValues){
-        return updateInstrument(fldNames, fldValues, null);
+        return updateInstrument(fldNames, fldValues, null, null);
     }
-    public InternalMessage updateInstrument(String[] fldNames, Object[] fldValues, String actionName){
+    public InternalMessage assignResponsible(String[] fldNames, Object[] fldValues){
+        return updateInstrument(fldNames, fldValues, "ASSIGN_RESPONSIBLE", AppInstrumentsAuditEvents.RESPONSIBLE_ASSIGNED);
+    }
+    public InternalMessage changeResponsible(String[] fldNames, Object[] fldValues){
+        return updateInstrument(fldNames, fldValues, "CHANGE_RESPONSIBLE", AppInstrumentsAuditEvents.RESPONSIBLE_CHANGED);
+    }
+    public InternalMessage assignResponsibleBackup(String[] fldNames, Object[] fldValues){
+        return updateInstrument(fldNames, fldValues, "ASSIGN_RESPONSIBLE_BACKUP", AppInstrumentsAuditEvents.RESPONSIBLE_BACKUP_ASSIGNED);
+    }
+    public InternalMessage changeResponsibleBackup(String[] fldNames, Object[] fldValues){
+        return updateInstrument(fldNames, fldValues, "CHANGE_RESPONSIBLE_BACKUP", AppInstrumentsAuditEvents.RESPONSIBLE_BACKUP_CHANGED);
+    }
+    
+    public InternalMessage updateInstrument(String[] fldNames, Object[] fldValues, String actionName, AppInstrumentsAuditEvents eventObj){
         if (this.isDecommissioned)
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);
         String[] reservedFldsNotUpdatable=new String[]{TblsInstrumentsData.Instruments.NAME.getName(), TblsInstrumentsData.Instruments.ON_LINE.getName()};
@@ -179,7 +208,9 @@ public class DataInstruments {
 		EnumIntTableFields.getTableFieldsFromString(TablesInstrumentsData.INSTRUMENTS, fldNames), fldValues, sqlWhere, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instUpdateDiagn[0].toString()))
             return new InternalMessage(LPPlatform.LAB_FALSE, instUpdateDiagn[instUpdateDiagn.length-1].toString(), new Object[]{name}, null);
-        instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.UPDATE_INSTRUMENT, name, TablesInstrumentsData.INSTRUMENTS.getTableName(), name,
+        if (eventObj==null)
+            eventObj=InstrumentsEnums.AppInstrumentsAuditEvents.UPDATE_INSTRUMENT;
+        instrumentsAuditAdd(eventObj, name, TablesInstrumentsData.INSTRUMENTS.getTableName(), name,
             fldNames, fldValues);
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.UPDATE_INSTRUMENT, new Object[]{name});
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.UPDATE_INSTRUMENT, new Object[]{name}, name);
@@ -406,7 +437,7 @@ public class DataInstruments {
         if (!this.onLine && decisionAndFamilyRuleToTurnOn(decision, TblsInstrumentsConfig.InstrumentsFamily.CALIB_TURN_ON_WHEN_COMPLETED.getName())){
             turnOnLine(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_CALIBRATION.toString());
         }else{
-            updateInstrument(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_CALIBRATION.toString());            
+            updateInstrument(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_CALIBRATION.toString(), AppInstrumentsAuditEvents.COMPLETE_CALIBRATION);            
         }
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_CALIBRATION, new Object[]{name, decision});
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_CALIBRATION, new Object[]{name, decision}, name);
@@ -506,7 +537,7 @@ public class DataInstruments {
         if (!this.onLine  && decisionAndFamilyRuleToTurnOn(decision, TblsInstrumentsConfig.InstrumentsFamily.PM_TURN_ON_WHEN_COMPLETED.getName())){
             turnOnLine(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_PREVENTIVE_MAINTENANCE.toString());
         }else{
-            updateInstrument(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_PREVENTIVE_MAINTENANCE.toString());            
+            updateInstrument(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_PREVENTIVE_MAINTENANCE.toString(), InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_PREVENTIVE_MAINTENANCE);            
         }
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_PREVENTIVE_MAINTENANCE, new Object[]{name, decision});
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_PREVENTIVE_MAINTENANCE, new Object[]{name, decision}, name);
@@ -601,7 +632,7 @@ public class DataInstruments {
         if (!this.onLine){
             turnOnLine(fldNames, fldValues);
         }else{
-            updateInstrument(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_VERIFICATION.toString());            
+            updateInstrument(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_VERIFICATION.toString(), InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_VERIFICATION);            
         }
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_VERIFICATION, new Object[]{name, decision});
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_VERIFICATION, new Object[]{name, decision}, name);
@@ -695,7 +726,7 @@ public class DataInstruments {
         if (!this.onLine){
             turnOnLine(fldNames, fldValues);
         }else{
-            updateInstrument(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_SERVICE.toString());            
+            updateInstrument(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_SERVICE.toString(), InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_SERVICE);            
         }
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_SERVICE, new Object[]{name, decision});
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_SERVICE, new Object[]{name, decision}, name);
@@ -741,12 +772,16 @@ public class DataInstruments {
         if (this.onLine){
             turnOffLine(fldNames, fldValues);
         }else{
-            updateInstrument(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.REOPEN_EVENT.toString());            
+            updateInstrument(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.REOPEN_EVENT.toString(), InstrumentsEnums.AppInstrumentsAuditEvents.REOPEN_EVENT);            
         }
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.REOPEN_EVENT, new Object[]{name});
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.REOPEN_EVENT, new Object[]{name}, name);
     }
-
+    public static InternalMessage logNextEventWhenExpiredOrClose(){
+        
+        return new InternalMessage(LPPlatform.LAB_TRUE, "underDevelopment", new Object[]{}, null);
+        
+    }
     public Boolean getHasError() {        return hasError;    }
     public InternalMessage getErrorDetail() {        return errorDetail;    }
 

@@ -9,6 +9,7 @@ import static com.labplanet.servicios.app.IncidentAPIactions.MANDATORY_PARAMS_MA
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.SqlWhere;
+import databases.SqlWhereEntry;
 import module.instrumentsmanagement.definition.TblsInstrumentsConfig;
 import module.instrumentsmanagement.definition.TblsInstrumentsData;
 import module.instrumentsmanagement.definition.TblsInstrumentsData.TablesInstrumentsData;
@@ -101,12 +102,24 @@ public class InstrumentsAPIqueries extends HttpServlet {
 
             switch (endPoint){
             case ACTIVE_INSTRUMENTS_LIST:
+                Boolean filterByResponsible=Boolean.valueOf(LPNulls.replaceNull(argValues[0]).toString());
+                SqlWhere sW=new SqlWhere(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS, 
+                    new String[]{TblsInstrumentsData.Instruments.DECOMMISSIONED.getName()+"<>"}, new Object[]{true});
+                if (filterByResponsible){
+                    SqlWhereEntry[] orClauses=new SqlWhereEntry[]{
+                        new SqlWhereEntry(TblsInstrumentsData.ViewNotDecommInstrumentAndEventData.RESPONSIBLE, 
+                                SqlStatement.WHERECLAUSE_TYPES.IS_NULL, new Object[]{""}, null),
+                        new SqlWhereEntry(TblsInstrumentsData.ViewNotDecommInstrumentAndEventData.RESPONSIBLE, 
+                                SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{token.getUserName()}, null),
+                        new SqlWhereEntry(TblsInstrumentsData.ViewNotDecommInstrumentAndEventData.RESPONSIBLE_BACKUP, 
+                                SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{token.getUserName()}, null)                    
+                    };
+                    sW.addOrClauseConstraint(orClauses);
+                }                
                 String[] fieldsToRetrieve=getAllFieldNames(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS);
                 Object[][] instrumentsInfo=QueryUtilitiesEnums.getTableData(TablesInstrumentsData.INSTRUMENTS,
                         EnumIntTableFields.getAllFieldNamesFromDatabase(TablesInstrumentsData.INSTRUMENTS),
-                        new String[]{TblsInstrumentsData.Instruments.DECOMMISSIONED.getName()+"<>"}, 
-                        new Object[]{true}, 
-                        new String[]{TblsInstrumentsData.Instruments.NAME.getName()+" desc"});
+                        sW, new String[]{TblsInstrumentsData.Instruments.NAME.getName()+" desc"});
                 JSONArray jArr = new JSONArray();
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentsInfo[0][0].toString())){
                     for (Object[] currInstr: instrumentsInfo){
@@ -187,19 +200,30 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
                 return;
             case INSTRUMENT_EVENTS_INPROGRESS:
+                filterByResponsible=Boolean.valueOf(LPNulls.replaceNull(argValues[0]).toString());
                 String[] whereFldName=new String[]{TblsInstrumentsData.ViewNotDecommInstrumentAndEventData.COMPLETED_BY.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()};
                 Object[] whereFldValue=new Object[]{};
-                String fieldName=LPNulls.replaceNull(argValues[0]).toString();
-                String fieldValue=LPNulls.replaceNull(argValues[1]).toString();
+                String fieldName=LPNulls.replaceNull(argValues[1]).toString();
+                String fieldValue=LPNulls.replaceNull(argValues[2]).toString();
                 if (fieldValue.length()>0){                    
                     Object[] convertStringWithDataTypeToObjectArray = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
+                }
+                sW=new SqlWhere(ViewsInstrumentsData.NOT_DECOM_INSTR_EVENT_DATA_VW, whereFldName, whereFldValue);
+                if (filterByResponsible){
+                    SqlWhereEntry[] orClauses=new SqlWhereEntry[]{
+                        new SqlWhereEntry(TblsInstrumentsData.ViewNotDecommInstrumentAndEventData.RESPONSIBLE, 
+                                SqlStatement.WHERECLAUSE_TYPES.IS_NULL, new Object[]{""}, null),
+                        new SqlWhereEntry(TblsInstrumentsData.ViewNotDecommInstrumentAndEventData.RESPONSIBLE, 
+                                SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{token.getPersonName()}, null),
+                        new SqlWhereEntry(TblsInstrumentsData.ViewNotDecommInstrumentAndEventData.RESPONSIBLE_BACKUP, 
+                                SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{token.getPersonName()}, null)                    
+                    };
+                    sW.addOrClauseConstraint(orClauses);
                 }
                 EnumIntViewFields[] fieldsToRetrieveObj = EnumIntViewFields.getViewFieldsFromString(ViewsInstrumentsData.NOT_DECOM_INSTR_EVENT_DATA_VW, "ALL");
                 fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(fieldsToRetrieveObj);
                 AppInstrumentsAuditEvents = QueryUtilitiesEnums.getViewData(ViewsInstrumentsData.NOT_DECOM_INSTR_EVENT_DATA_VW, 
-                    fieldsToRetrieveObj,    
-                    new SqlWhere(ViewsInstrumentsData.NOT_DECOM_INSTR_EVENT_DATA_VW, whereFldName, whereFldValue),
-                    new String[]{TblsInstrumentsData.ViewNotDecommInstrumentAndEventData.INSTRUMENT.getName(), TblsInstrumentsData.ViewNotDecommInstrumentAndEventData.CREATED_ON.getName()+" desc"});
+                    fieldsToRetrieveObj, sW, new String[]{TblsInstrumentsData.ViewNotDecommInstrumentAndEventData.INSTRUMENT.getName(), TblsInstrumentsData.ViewNotDecommInstrumentAndEventData.CREATED_ON.getName()+" desc"});
                 jArr = new JSONArray();
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(AppInstrumentsAuditEvents[0][0].toString())){
                     for (Object[] currInstrEv: AppInstrumentsAuditEvents){

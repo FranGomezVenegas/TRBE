@@ -79,6 +79,8 @@ public class TblsInstrumentsConfig {
         VERIF_SAME_DAY_VARIABLES_SET("verif_same_day_variables_set", LPDatabase.string(), null, null, null, null),
         SERVICE_REQUIRED("service_required", LPDatabase.booleanFld(), null, null, null, null),
         SERVICE_VARIABLES_SET("service_variables_set", LPDatabase.string(), null, null, null, null),
+        SYSTEM_CREATE_NWEV_WHEN_EXPIRES("system_create_new_event_when_expires", LPDatabase.booleanFld(false), null, null, null, null),
+        SYSTEM_CREATE_OFFSET_INTVL("system_create_offset_interval", LPDatabase.string(), null, null, null, null),
         
         ;
         private InstrumentsFamily(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,

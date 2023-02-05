@@ -34,9 +34,11 @@ import trazit.globalvariables.GlobalVariables.ApiUrls;
 public class InstrumentsEnums {
     
     public enum AppInstrumentsAuditEvents implements EnumIntAuditEvents{ 
-        CREATION, TURN_ON_LINE, TURN_OFF_LINE, PREVIOUS_USAGE_PERF_CHECK, CALIBRATION, START_CALIBRATION, COMPLETE_CALIBRATION, 
+        CREATION, TURN_ON_LINE, TURN_OFF_LINE, 
+        RESPONSIBLE_ASSIGNED, RESPONSIBLE_CHANGED, RESPONSIBLE_BACKUP_ASSIGNED, RESPONSIBLE_BACKUP_CHANGED, 
+        PREVIOUS_USAGE_PERF_CHECK, CALIBRATION, START_CALIBRATION, COMPLETE_CALIBRATION, 
         PREVENTIVE_MAINTENANCE, START_PREVENTIVE_MAINTENANCE, COMPLETE_PREVENTIVE_MAINTENANCE,  
-        VERIFICATION, START_VERIFICATION, COMPLETE_VERIFICATION,
+        VERIFICATION, START_VERIFICATION, COMPLETE_VERIFICATION, 
         SERVICE, START_SERVICE, COMPLETE_SERVICE,
         NON_ROUTINE_EVENT, DECOMMISSION, UNDECOMMISSION, UPDATE_INSTRUMENT,
         VALUE_ENTERED, VALUE_REENTERED, REOPEN_EVENT
@@ -73,6 +75,39 @@ public class InstrumentsEnums {
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
                 .add("table", TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build()
         ),
+        ASSIGN_RESPONSIBLE("ASSIGN_RESPONSIBLE", "instrumentName", "", "instrumentResponsibleAssigned_success",  
+            new LPAPIArguments[]{ new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
+                new LPAPIArguments("userName", LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
+                new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8 ),
+                new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9 ),},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
+                .add("table", TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build()
+        ),
+        CHANGE_RESPONSIBLE("CHANGE_RESPONSIBLE", "instrumentName", "", "instrumentResponsibleChanged_success",  
+            new LPAPIArguments[]{ new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
+                new LPAPIArguments("userName", LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
+                new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8 ),
+                new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9 ),},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
+                .add("table", TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build()
+        ),
+        ASSIGN_RESPONSIBLE_BACKUP("ASSIGN_RESPONSIBLE_BACKUP", "instrumentName", "", "instrumentResponsibleBackupAssigned_success",  
+            new LPAPIArguments[]{ new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
+                new LPAPIArguments("userName", LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
+                new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8 ),
+                new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9 ),},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
+                .add("table", TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build()
+        ),
+        CHANGE_RESPONSIBLE_BACKUP("CHANGE_RESPONSIBLE_BACKUP", "instrumentName", "", "instrumentResponsibleBackupChanged_success",  
+            new LPAPIArguments[]{ new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
+                new LPAPIArguments("userName", LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
+                new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8 ),
+                new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9 ),},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
+                .add("table", TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build()
+        ),
+        
         DECOMMISSION_INSTRUMENT("DECOMMISSION_INSTRUMENT", "instrumentName", "", "instrumentDecommissioned_success",  
             new LPAPIArguments[]{ new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
                 new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7 ),
@@ -226,7 +261,8 @@ public class InstrumentsEnums {
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
     
     public enum InstrumentsAPIqueriesEndpoints implements EnumIntEndpoints{
-        ACTIVE_INSTRUMENTS_LIST("ACTIVE_INSTRUMENTS_LIST", "",new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects),
+        ACTIVE_INSTRUMENTS_LIST("ACTIVE_INSTRUMENTS_LIST", "",new LPAPIArguments[]{
+            new LPAPIArguments("excludeIfUserIsNotResponsibleOrBackUp", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 6)}, EndPointsToRequirements.endpointWithNoOutputObjects),
         DECOMISSIONED_INSTRUMENTS_LAST_N_DAYS("DECOMISSIONED_INSTRUMENTS_LAST_N_DAYS","",
             new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6)}, 
             EndPointsToRequirements.endpointWithNoOutputObjects),
@@ -234,8 +270,9 @@ public class InstrumentsEnums {
         INSTRUMENT_AUDIT_FOR_GIVEN_INSTRUMENT("INSTRUMENT_AUDIT_FOR_GIVEN_INSTRUMENT", "",new LPAPIArguments[]{new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
         INSTRUMENT_EVENTS_FOR_GIVEN_INSTRUMENT("INSTRUMENT_EVENTS_FOR_GIVEN_INSTRUMENT", "",new LPAPIArguments[]{new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
         INSTRUMENT_EVENTS_INPROGRESS("INSTRUMENT_EVENTS_INPROGRESS","", new LPAPIArguments[]{
-            new LPAPIArguments("fieldName", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
-            new LPAPIArguments("fielValue", LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 7)}, EndPointsToRequirements.endpointWithNoOutputObjects),
+            new LPAPIArguments("excludeIfUserIsNotResponsibleOrBackUp", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 6),
+            new LPAPIArguments("fieldName", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
+            new LPAPIArguments("fielValue", LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 8)}, EndPointsToRequirements.endpointWithNoOutputObjects),
         INSTRUMENT_EVENT_VARIABLES("INSTRUMENT_EVENT_VARIABLES", "",new LPAPIArguments[]{            
             new LPAPIArguments("eventId", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6), }, EndPointsToRequirements.endpointWithNoOutputObjects),
         COMPLETED_EVENTS_LAST_N_DAYS("COMPLETED_EVENTS_LAST_N_DAYS","",
