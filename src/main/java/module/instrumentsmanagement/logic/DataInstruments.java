@@ -53,7 +53,8 @@ public class DataInstruments {
     private Object[] familyFieldValues;
     private final Boolean hasError;
     private InternalMessage errorDetail;
-    
+    private String responsible=null;
+    private String responsibleBackup=null;
     public enum Decisions{ACCEPTED, ACCEPTED_WITH_RESTRICTIONS, REJECTED}
 
     private InternalMessage decisionValueIsCorrect(String decision){
@@ -84,8 +85,9 @@ public class DataInstruments {
     }
     
     public DataInstruments(String instrName){
-        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
-        Object[][] instrInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), 
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null); 
+        String procInstanceName=procReqSession.getProcedureInstance();
+        Object[][] instrInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), 
                 new String[]{TblsInstrumentsData.Instruments.NAME.getName()}, new Object[]{instrName}, getAllFieldNames(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS.getTableFields()));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString())){
             this.name=null;
@@ -124,9 +126,11 @@ public class DataInstruments {
         Integer respFldPosic=LPArray.valuePosicInArray(this.fieldNames, TblsInstrumentsData.Instruments.RESPONSIBLE.getName());
         Integer resp2FldPosic=LPArray.valuePosicInArray(this.fieldNames, TblsInstrumentsData.Instruments.RESPONSIBLE_BACKUP.getName());
         if (respFldPosic>-1){
+            this.responsible=LPNulls.replaceNull(this.fieldValues[respFldPosic]).toString();
             if (LPNulls.replaceNull(this.fieldValues[respFldPosic]).toString().equalsIgnoreCase(token.getUserName()))
                return;
         if (resp2FldPosic>-1){
+            this.responsibleBackup=LPNulls.replaceNull(this.fieldValues[resp2FldPosic]).toString();
             if (LPNulls.replaceNull(this.fieldValues[resp2FldPosic]).toString().equalsIgnoreCase(token.getUserName()))
                return;
             }
@@ -341,7 +345,7 @@ public class DataInstruments {
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.TURN_OFF_LINE, new Object[]{name}, name);
     }
 
-    public InternalMessage startCalibration(){
+    public InternalMessage startCalibration(Boolean isScheduled){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
         if (this.isDecommissioned)
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);        
@@ -359,7 +363,7 @@ public class DataInstruments {
         }        
         String[] fldNames=new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName(), TblsInstrumentsData.InstrumentEvent.EVENT_TYPE.getName(),
             TblsInstrumentsData.InstrumentEvent.CREATED_ON.getName(), TblsInstrumentsData.InstrumentEvent.CREATED_BY.getName()};
-        Object[] fldValues=new Object[]{this.name, AppInstrumentsAuditEvents.CALIBRATION.toString(), LPDate.getCurrentTimeStamp(), token.getPersonName()};
+        Object[] fldValues=new Object[]{this.name, AppInstrumentsAuditEvents.CALIBRATION.toString(), LPDate.getCurrentTimeStamp(), (isScheduled) ? GlobalVariables.TRAZIT_SCHEDULER : token.getPersonName()};
         RdbmsObject instCreationDiagn = Rdbms.insertRecordInTable(TablesInstrumentsData.INSTRUMENT_EVENT, fldNames, fldValues);
         if (!instCreationDiagn.getRunSuccess())
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn.getErrorMessageCode(), new Object[]{name}, null);
@@ -371,8 +375,8 @@ public class DataInstruments {
         Integer fldPosic=LPArray.valuePosicInArray(this.familyFieldNames, TblsInstrumentsConfig.InstrumentsFamily.CALIB_VARIABLES_SET.getName());
         if (fldPosic>-1) 
             variableSetName=LPNulls.replaceNull(this.familyFieldValues[fldPosic]).toString();
-        if (variableSetName!=null){
-            String ownerId= token.getPersonName();
+        if (variableSetName!=null){            
+            String ownerId= token.getPersonName();            
             Integer instrEventId=Integer.valueOf(instCreationDiagn.getNewRowId().toString());
             addVariableSetToObject(name, instrEventId, variableSetName, ownerId);
         }
@@ -443,7 +447,7 @@ public class DataInstruments {
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_CALIBRATION, new Object[]{name, decision}, name);
     }
 
-    public InternalMessage startPrevMaint(){
+    public InternalMessage startPrevMaint(Boolean isScheduled){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
         if (this.isDecommissioned)
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);        
@@ -461,7 +465,7 @@ public class DataInstruments {
         }        
         String[] fldNames=new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName(), TblsInstrumentsData.InstrumentEvent.EVENT_TYPE.getName(),
             TblsInstrumentsData.InstrumentEvent.CREATED_ON.getName(), TblsInstrumentsData.InstrumentEvent.CREATED_BY.getName()};
-        Object[] fldValues=new Object[]{this.name, AppInstrumentsAuditEvents.PREVENTIVE_MAINTENANCE.toString(), LPDate.getCurrentTimeStamp(), token.getPersonName()};
+        Object[] fldValues=new Object[]{this.name, AppInstrumentsAuditEvents.PREVENTIVE_MAINTENANCE.toString(), LPDate.getCurrentTimeStamp(), (isScheduled) ? GlobalVariables.TRAZIT_SCHEDULER : token.getPersonName()};
         RdbmsObject instCreationDiagn = Rdbms.insertRecordInTable(TablesInstrumentsData.INSTRUMENT_EVENT, fldNames, fldValues);
         String insEventIdCreated=instCreationDiagn.getNewRowId().toString();
         if (!instCreationDiagn.getRunSuccess())
@@ -777,12 +781,22 @@ public class DataInstruments {
         messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.REOPEN_EVENT, new Object[]{name});
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.REOPEN_EVENT, new Object[]{name}, name);
     }
-    public static InternalMessage logNextEventWhenExpiredOrClose(){
-        
-        return new InternalMessage(LPPlatform.LAB_TRUE, "underDevelopment", new Object[]{}, null);
-        
-    }
+
     public Boolean getHasError() {        return hasError;    }
     public InternalMessage getErrorDetail() {        return errorDetail;    }
+
+    /**
+     * @return the responsible
+     */
+    public String getResponsible() {
+        return responsible;
+    }
+
+    /**
+     * @return the responsibleBackup
+     */
+    public String getResponsibleBackup() {
+        return responsibleBackup;
+    }
 
 }

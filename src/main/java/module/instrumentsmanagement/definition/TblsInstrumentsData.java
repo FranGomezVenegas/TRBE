@@ -79,6 +79,46 @@ public class TblsInstrumentsData {
                 new EnumIntTableFields[][]{{TblsInstrumentsData.Instruments.NAME, TblsInstrumentsData.InstrumentEvent.INSTRUMENT}
                 }, " and i.decommissioned=false and ie.completed_on is null", JOIN_TYPES.INNER),
         }, ""),
+        CALIB_PM_EXPIRED_OR_EXPIRING(""
+                + "select 'CALIBRATION' as type, DATE(now()) as now, i.name as name, i.family as family, i.next_calibration as next_date, fam.calib_system_create_new_event_when_expires as system_create_new_event_when_expires, fam.calib_sched_create_offset_days as sched_create_offset_days\n" +
+"  ,(select count(*) from \"app-proc-data\".instrument_event ev where event_type='CALIBRATION' and completed_on is null ) as events_in_progress\n" +
+"  from \"app-proc-config\".instruments_family fam, \"app-proc-data\".instruments i\n" +
+" where i.family=fam.name \n" +
+"   and fam.calib_system_create_new_event_when_expires\n" +
+"   and (fam.calib_sched_create_offset_days is null and \n" +
+"		(i.next_calibration is null or (i.next_calibration is not null and date(i.next_calibration) < date(now())) ) )   		\n" +
+"union\n" +
+"select 'CALIBRATION_OFFSET' as type, DATE(now()) as now, i.name as name, i.family as family, i.next_calibration as next_date, fam.calib_system_create_new_event_when_expires as system_create_new_event_when_expires, fam.calib_sched_create_offset_days as sched_create_offset_days\n" +
+"  ,(select count(*) from \"app-proc-data\".instrument_event ev where event_type='CALIBRATION' and completed_on is null ) as events_in_progress \n" +
+"  from \"app-proc-config\".instruments_family fam, \"app-proc-data\".instruments i\n" +
+" where i.family=fam.name \n" +
+"   and fam.calib_system_create_new_event_when_expires\n" +
+"   and (fam.calib_sched_create_offset_days is not null and \n" +
+"		(i.next_calibration is null or \n" +
+" 	(i.next_calibration is not null and (date(i.next_calibration)-fam.calib_sched_create_offset_days) < date(now()) ))) \n" +
+"union\n" +
+"select 'PM' as type, DATE(now()) as now, i.name as name, i.family as family, i.next_prev_maint as next_date, fam.pm_system_create_new_event_when_expires as system_create_new_event_when_expires, fam.pm_sched_create_offset_days as sched_create_offset_days\n" +
+"  ,(select count(*) from \"app-proc-data\".instrument_event ev where event_type='PREVENTIVE_MAINTENANCE' and completed_on is null ) as events_in_progress\n" +
+"  from \"app-proc-config\".instruments_family fam, \"app-proc-data\".instruments i\n" +
+" where i.family=fam.name \n" +
+"   and fam.pm_system_create_new_event_when_expires\n" +
+"   and (fam.pm_sched_create_offset_days is null and \n" +
+"		(i.next_prev_maint is null or (i.next_prev_maint is not null and date(i.next_prev_maint) < date(now())) ) )\n" +
+"union\n" +
+"select 'PM_OFFSET' as type, DATE(now()) as now, i.name as name, i.family as family, i.next_prev_maint as next_date, fam.pm_system_create_new_event_when_expires as system_create_new_event_when_expires, fam.pm_sched_create_offset_days as sched_create_offset_days\n" +
+"  ,(select count(*) from \"app-proc-data\".instrument_event ev where event_type='PREVENTIVE_MAINTENANCE' and completed_on is null ) as events_in_progress\n" +
+"  from \"app-proc-config\".instruments_family fam, \"app-proc-data\".instruments i\n" +
+" where i.family=fam.name \n" +
+"   and fam.pm_system_create_new_event_when_expires\n" +
+"   and (fam.pm_sched_create_offset_days is not null and \n" +
+"		(i.next_prev_maint is null or \n" +
+" 	(i.next_prev_maint is not null and (date(i.next_prev_maint)-fam.pm_sched_create_offset_days) < date(now()) ))) ",
+            null, "calib_pm_expired_or_expiring", SCHEMA_NAME, true, TblsInstrumentsData.CalibPmExpiredOrExpiring.values(), "pr_scheduled_locations", 
+        new EnumIntTablesJoin[]{
+            new EnumIntTablesJoin(TablesInstrumentsData.INSTRUMENTS, "i", TablesInstrumentsData.INSTRUMENT_EVENT, "ie", true,
+                new EnumIntTableFields[][]{{TblsInstrumentsData.Instruments.NAME, TblsInstrumentsData.InstrumentEvent.INSTRUMENT}
+                }, " and i.decommissioned=false and ie.completed_on is null", JOIN_TYPES.INNER),
+        }, ""),
         ;
         private ViewsInstrumentsData(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds, 
                 String comment, EnumIntTablesJoin[] TablesInView, String extraFilters){
@@ -295,4 +335,37 @@ public class TblsInstrumentsData {
         @Override public EnumIntTableFields getTableField() {return this.fldObj;}
     }        
     
+    public enum CalibPmExpiredOrExpiring implements EnumIntViewFields{
+        TYPE("type", "type as type", null, null, null, null),
+        NOW("now", "now as now", null, null, null, null),
+        NAME("name", "name as name", null, null, null, null),                
+        FAMILY("family", "family as family", null, null, null, null),                
+        NEXT_DATE("next_date", "next_date as next_date", null, null, null, null),                
+        SYSTEM_CREATE_NEW_EVENT_WHEN_EXPIRES("system_create_new_event_when_expires", "system_create_new_event_when_expires as system_create_new_event_when_expires", InstrumentEvent.EVENT_TYPE, null, null, null),
+        EVENTS_IN_PROGRESS("events_in_progress", "events_in_progress  as events_in_progress", null, null, null, null),
+        SCHED_CREATE_OFFSET_DAYS("sched_create_offset_days", "sched_create_offset_days  as sched_create_offset_days", null, null, null, null)
+        
+        ;
+        private CalibPmExpiredOrExpiring(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
+            this.fldName=name;
+            this.fldAliasInView=vwAliasName;
+            this.fldMask=fldMask;
+            this.fldComment=comment;
+            this.fldBusinessRules=busRules;
+            this.fldObj=fldObj;
+        }
+        private final String fldName;
+        private final String fldAliasInView;
+        private final EnumIntTableFields fldObj;
+        private final String fldMask;
+        private final String fldComment;
+        private final FldBusinessRules[] fldBusinessRules;        
+        @Override public String getName() {return fldName;}
+        @Override public String getViewAliasName() {return this.fldAliasInView;}
+        @Override public String getFieldMask() {return this.fldMask;}
+        @Override public String getFieldComment() {return this.fldComment;}
+        @Override public FldBusinessRules[] getFldBusinessRules() {return this.fldBusinessRules;}
+        @Override public EnumIntTableFields getTableField() {return this.fldObj;}
+    }        
+        
 }

@@ -375,7 +375,9 @@ public class InstrumentsEnums {
         AUTHOR_CANNOT_BE_REVIEWER("AuditSamePersonCannotBeAuthorAndReviewer", "Same person cannot review its own actions", "La misma persona no puede revisar sus propias acciones"),
         PARAMETER_MISSING("sampleAuditRevisionMode_ParameterMissing", "", ""),
         DISABLED("instrumentAuditRevisionMode_Disable", "", ""),
-        VARIABLE_TYPE_NOT_RECOGNIZED("variableTypeNotRecognized", "", "")
+        VARIABLE_TYPE_NOT_RECOGNIZED("variableTypeNotRecognized", "", ""),
+        INSTR_ALREADY_HAS_RESPONSIBLE("instrumentAlreadyHasResponsible", "", ""),
+        INSTR_ALREADY_HAS_RESPONSIBLE_BACKUP("instrumentAlreadyHasResponsibleBackup", "", "")
         ;
         private InstrumentsErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;

@@ -5,7 +5,7 @@
  */
 package module.instrumentsmanagement.apis;
 
-import static com.labplanet.servicios.app.IncidentAPIactions.MANDATORY_PARAMS_MAIN_SERVLET;
+import static platform.app.apis.IncidentAPIactions.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.SqlWhere;
@@ -103,8 +103,10 @@ public class InstrumentsAPIqueries extends HttpServlet {
             switch (endPoint){
             case ACTIVE_INSTRUMENTS_LIST:
                 Boolean filterByResponsible=Boolean.valueOf(LPNulls.replaceNull(argValues[0]).toString());
-                SqlWhere sW=new SqlWhere(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS, 
-                    new String[]{TblsInstrumentsData.Instruments.DECOMMISSIONED.getName()+"<>"}, new Object[]{true});
+                SqlWhere sW=new SqlWhere();
+                sW.addConstraint(TblsInstrumentsData.Instruments.DECOMMISSIONED, SqlStatement.WHERECLAUSE_TYPES.NOT_EQUAL, new Object[]{true}, null);
+//                TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS, 
+//                    new String[]{+"<>"}, );
                 if (filterByResponsible){
                     SqlWhereEntry[] orClauses=new SqlWhereEntry[]{
                         new SqlWhereEntry(TblsInstrumentsData.ViewNotDecommInstrumentAndEventData.RESPONSIBLE, 
@@ -298,19 +300,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 return;
 
             case GET_INSTRUMENT_FAMILY_LIST:
-                fieldsToRetrieve=getAllFieldNames(TblsInstrumentsConfig.TablesInstrumentsConfig.INSTRUMENTS_FAMILY);
-                Object[][] instrumentFamily=QueryUtilitiesEnums.getTableData(TblsInstrumentsConfig.TablesInstrumentsConfig.INSTRUMENTS_FAMILY, 
-                        EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInstrumentsConfig.TablesInstrumentsConfig.INSTRUMENTS_FAMILY),
-                        new String[]{TblsInstrumentsConfig.InstrumentsFamily.NAME.getName()+"<>"}, 
-                        new Object[]{">>>"}, 
-                        new String[]{TblsInstrumentsConfig.InstrumentsFamily.NAME.getName()+" desc"});
-                jArr = new JSONArray();
-                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentFamily[0][0].toString())){
-                    for (Object[] currInstr: instrumentFamily){
-                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
-                        jArr.add(jObj);
-                    }
-                }
+                jArr=instrumentFamiliesList(null);
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
             default: 
@@ -345,6 +335,22 @@ public class InstrumentsAPIqueries extends HttpServlet {
         jObj.put("message_en", errorTextEn);
         jObj.put("message_es", errorTextEs);            
         return jObj;
+    }
+    public static JSONArray instrumentFamiliesList(String alternativeProcInstanceName){
+        String[] fieldsToRetrieve = getAllFieldNames(TblsInstrumentsConfig.TablesInstrumentsConfig.INSTRUMENTS_FAMILY, alternativeProcInstanceName);
+        Object[][] instrumentFamily=QueryUtilitiesEnums.getTableData(TblsInstrumentsConfig.TablesInstrumentsConfig.INSTRUMENTS_FAMILY, 
+                EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInstrumentsConfig.TablesInstrumentsConfig.INSTRUMENTS_FAMILY, alternativeProcInstanceName),
+                new String[]{TblsInstrumentsConfig.InstrumentsFamily.NAME.getName()+"<>"}, 
+                new Object[]{">>>"}, 
+                new String[]{TblsInstrumentsConfig.InstrumentsFamily.NAME.getName()+" desc"}, alternativeProcInstanceName);
+        JSONArray jArr = new JSONArray();
+        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentFamily[0][0].toString())){
+            for (Object[] currInstr: instrumentFamily){
+                JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
+                jArr.add(jObj);
+            }
+        }
+        return jArr;
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

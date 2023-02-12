@@ -172,6 +172,10 @@ public class ClassInstruments {
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
                     break;
                 case ASSIGN_RESPONSIBLE:
+                    if (instr.getResponsible()!=null){
+                        actionDiagnoses=new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.INSTR_ALREADY_HAS_RESPONSIBLE, new Object[]{}, null);   
+                        break;
+                    }
                     String userName=argValues[1].toString();
                     Object[] personByUserDaign = UserAndRolesViews.getPersonByUser(userName);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUserDaign[0].toString())){
@@ -216,6 +220,11 @@ public class ClassInstruments {
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
                     break;
                 case ASSIGN_RESPONSIBLE_BACKUP:
+                    if (instr.getResponsibleBackup()!=null){
+                        actionDiagnoses=new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.INSTR_ALREADY_HAS_RESPONSIBLE_BACKUP, new Object[]{}, null);   
+                        break;
+                    }
+                    
                     userName=argValues[1].toString();
                     personByUserDaign = UserAndRolesViews.getPersonByUser(userName);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUserDaign[0].toString())){
@@ -326,7 +335,7 @@ public class ClassInstruments {
                     break;
                 case START_CALIBRATION:
                     instr=new DataInstruments(instrName);
-                    actionDiagnoses=instr.startCalibration();
+                    actionDiagnoses=instr.startCalibration(false);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())){
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(), actionDiagnoses.getNewObjectId());                
@@ -342,7 +351,7 @@ public class ClassInstruments {
                     break;
                 case START_PREVENTIVE_MAINTENANCE:
                     instr=new DataInstruments(instrName);
-                    actionDiagnoses=instr.startPrevMaint();
+                    actionDiagnoses=instr.startPrevMaint(false);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())){
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(), actionDiagnoses.getNewObjectId());                
