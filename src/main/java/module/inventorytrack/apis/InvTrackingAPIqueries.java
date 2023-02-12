@@ -5,7 +5,7 @@
  */
 package module.inventorytrack.apis;
 
-import static com.labplanet.servicios.app.IncidentAPIactions.MANDATORY_PARAMS_MAIN_SERVLET;
+import static platform.app.apis.IncidentAPIactions.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.SqlWhere;
@@ -244,15 +244,43 @@ public class InvTrackingAPIqueries extends HttpServlet {
                 if (reference.length()>0)
                      sWhere.addConstraint(TblsInvTrackingData.ViewReferencesStockUnderMin.NAME, 
                         reference.contains("*")  ? SqlStatement.WHERECLAUSE_TYPES.LIKE: SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{reference.split("\\|")}, "|");
-                fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsInvTrackingData.ViewsInvTrackingData.REFERENCE_STOCK_UNDER_MIN.getViewFields());
+                fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsInvTrackingData.ViewsInvTrackingData.REFERENCES_STOCK_UNDER_MIN.getViewFields());
                 
                 sWhere.addConstraint(TblsInvTrackingData.ViewReferencesStockUnderMin.CURRENT_STOCK, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, null, null);
-                Object[][] referenceWithStockUponMin = QueryUtilitiesEnums.getViewData(TblsInvTrackingData.ViewsInvTrackingData.REFERENCE_STOCK_UNDER_MIN, 
-                    TblsInvTrackingData.ViewsInvTrackingData.REFERENCE_STOCK_UNDER_MIN.getViewFields(),
+                Object[][] referenceWithStockAvailableForUseUponMin = QueryUtilitiesEnums.getViewData(TblsInvTrackingData.ViewsInvTrackingData.REFERENCES_STOCK_UNDER_MIN, 
+                    TblsInvTrackingData.ViewsInvTrackingData.REFERENCES_STOCK_UNDER_MIN.getViewFields(),
                     sWhere, new String[]{TblsInvTrackingData.ViewReferencesStockUnderMin.CURRENT_STOCK.getName()+" desc"});
                 jArr = new JSONArray();
-                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithStockUponMin[0][0].toString())){
-                    for (Object[] currIncident: referenceWithStockUponMin){
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithStockAvailableForUseUponMin[0][0].toString())){
+                    for (Object[] currIncident: referenceWithStockAvailableForUseUponMin){
+                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
+                        jArr.add(jObj);
+                    }
+                }
+                Rdbms.closeRdbms();  
+                jSummaryObj=new JSONObject();
+                jSummaryObj.put("datatable", jArr);
+                LPFrontEnd.servletReturnSuccess(request, response, jSummaryObj);     
+                return;
+            case REFERENCES_AVAILABLE_FOR_USE_UNDER_MIN_STOCK:
+                sWhere=new SqlWhere();
+                category = LPNulls.replaceNull(argValues[0]).toString();
+                reference = LPNulls.replaceNull(argValues[1]).toString();
+                if (category.length()>0)
+                     sWhere.addConstraint(TblsInvTrackingData.ViewReferencesAvailableForUseUnderMin.CATEGORY, 
+                        category.contains("*")  ? SqlStatement.WHERECLAUSE_TYPES.LIKE: SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{category.split("\\|")}, "|");
+                if (reference.length()>0)
+                     sWhere.addConstraint(TblsInvTrackingData.ViewReferencesAvailableForUseUnderMin.NAME, 
+                        reference.contains("*")  ? SqlStatement.WHERECLAUSE_TYPES.LIKE: SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{reference.split("\\|")}, "|");
+                fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsInvTrackingData.ViewsInvTrackingData.REFERENCES_AVAILABLE_FOR_USE_UNDER_MIN.getViewFields());
+                
+                sWhere.addConstraint(TblsInvTrackingData.ViewReferencesAvailableForUseUnderMin.CURRENT_STOCK_AVAILABLE_FOR_USE, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, null, null);
+                referenceWithStockAvailableForUseUponMin = QueryUtilitiesEnums.getViewData(TblsInvTrackingData.ViewsInvTrackingData.REFERENCES_AVAILABLE_FOR_USE_UNDER_MIN, 
+                    TblsInvTrackingData.ViewsInvTrackingData.REFERENCES_AVAILABLE_FOR_USE_UNDER_MIN.getViewFields(),
+                    sWhere, new String[]{TblsInvTrackingData.ViewReferencesAvailableForUseUnderMin.CURRENT_STOCK_AVAILABLE_FOR_USE.getName()+" desc"});
+                jArr = new JSONArray();
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithStockAvailableForUseUponMin[0][0].toString())){
+                    for (Object[] currIncident: referenceWithStockAvailableForUseUponMin){
                         JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
                         jArr.add(jObj);
                     }
@@ -269,10 +297,10 @@ public class InvTrackingAPIqueries extends HttpServlet {
                 category = LPNulls.replaceNull(argValues[0]).toString();
                 reference = LPNulls.replaceNull(argValues[1]).toString();
                 if (category.length()>0)
-                     sWhere.addConstraint(TblsInvTrackingData.ViewReferencesStockUnderMin.CATEGORY, 
+                     sWhere.addConstraint(TblsInvTrackingData.ViewExpiredLots.CATEGORY, 
                         category.contains("*")  ? SqlStatement.WHERECLAUSE_TYPES.LIKE: SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{category.split("\\|")}, "|");
                 if (reference.length()>0)
-                     sWhere.addConstraint(TblsInvTrackingData.ViewReferencesStockUnderMin.NAME, 
+                     sWhere.addConstraint(TblsInvTrackingData.ViewExpiredLots.REFERENCE, 
                         reference.contains("*")  ? SqlStatement.WHERECLAUSE_TYPES.LIKE: SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{reference.split("\\|")}, "|");
                 fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsInvTrackingData.ViewsInvTrackingData.LOTS_EXPIRED.getViewFields());
                 referenceWithControlIssues = QueryUtilitiesEnums.getViewData(TblsInvTrackingData.ViewsInvTrackingData.LOTS_EXPIRED, 
@@ -289,15 +317,16 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     jSummaryObj.put("has_expired_lots", false);
                 }
                 jSummaryObj.put("expired_lots_list", jArr);                
-                fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsInvTrackingData.ViewsInvTrackingData.REFERENCE_STOCK_UNDER_MIN.getViewFields());
+
+                fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsInvTrackingData.ViewsInvTrackingData.REFERENCES_STOCK_UNDER_MIN.getViewFields());
                 sWhere=new SqlWhere();
                 sWhere.addConstraint(TblsInvTrackingData.ViewReferencesStockUnderMin.CURRENT_STOCK, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, null, null);
-                referenceWithStockUponMin = QueryUtilitiesEnums.getViewData(TblsInvTrackingData.ViewsInvTrackingData.REFERENCE_STOCK_UNDER_MIN, 
-                    TblsInvTrackingData.ViewsInvTrackingData.REFERENCE_STOCK_UNDER_MIN.getViewFields(),
+                referenceWithStockAvailableForUseUponMin = QueryUtilitiesEnums.getViewData(TblsInvTrackingData.ViewsInvTrackingData.REFERENCES_STOCK_UNDER_MIN, 
+                    TblsInvTrackingData.ViewsInvTrackingData.REFERENCES_STOCK_UNDER_MIN.getViewFields(),
                     sWhere, new String[]{TblsInvTrackingData.ViewReferencesStockUnderMin.CURRENT_STOCK.getName()+" desc"});
                 jArr = new JSONArray();
-                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithStockUponMin[0][0].toString())){
-                    for (Object[] currIncident: referenceWithStockUponMin){
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithStockAvailableForUseUponMin[0][0].toString())){
+                    for (Object[] currIncident: referenceWithStockAvailableForUseUponMin){
                         JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
                         jArr.add(jObj);
                     }
@@ -306,6 +335,25 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     jSummaryObj.put("has_references_with_stock_upon_min", false);
                 }
                 jSummaryObj.put("references_with_stock_upon_min_list", jArr);                
+
+                fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsInvTrackingData.ViewsInvTrackingData.REFERENCES_AVAILABLE_FOR_USE_UNDER_MIN.getViewFields());
+                sWhere=new SqlWhere();
+                sWhere.addConstraint(TblsInvTrackingData.ViewReferencesAvailableForUseUnderMin.CURRENT_STOCK_AVAILABLE_FOR_USE, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, null, null);
+                referenceWithStockAvailableForUseUponMin = QueryUtilitiesEnums.getViewData(TblsInvTrackingData.ViewsInvTrackingData.REFERENCES_AVAILABLE_FOR_USE_UNDER_MIN, 
+                    TblsInvTrackingData.ViewsInvTrackingData.REFERENCES_AVAILABLE_FOR_USE_UNDER_MIN.getViewFields(),
+                    sWhere, new String[]{TblsInvTrackingData.ViewReferencesAvailableForUseUnderMin.CURRENT_STOCK_AVAILABLE_FOR_USE.getName()+" desc"});
+                jArr = new JSONArray();
+                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithStockAvailableForUseUponMin[0][0].toString())){
+                    for (Object[] curRow: referenceWithStockAvailableForUseUponMin){
+                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curRow);
+                        jArr.add(jObj);
+                    }
+                    jSummaryObj.put("has_references_with_stock_available_for_use_upon_min", true);
+                }else{
+                    jSummaryObj.put("has_references_with_stock_available_for_use_upon_min", false);
+                }
+                jSummaryObj.put("references_with_stock_available_for_use_upon_min_list", jArr);                
+
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jSummaryObj);              
                 return;

@@ -82,8 +82,20 @@ public class TblsInvTrackingData {
                   "or (expiry_date_in_use is not null and expiry_date_in_use < now()) " +
                   "or (expiry_date_in_use<expiry_date and expiry_date_in_use < now()) " +
                 ")"),
-        REFERENCE_STOCK_UNDER_MIN("",
-            null, "refereces_stock_under_min", SCHEMA_NAME, true, TblsInvTrackingData.ViewReferencesStockUnderMin.values(), "Lots which expiry_date or expiry_date_in_use is over", 
+        REFERENCES_STOCK_UNDER_MIN("",
+            null, "references_stock_under_min", SCHEMA_NAME, true, TblsInvTrackingData.ViewReferencesStockUnderMin.values(), "Lots which expiry_date or expiry_date_in_use is over", 
+        new EnumIntTablesJoin[]{
+            new EnumIntTablesJoin(TblsInvTrackingData.TablesInvTrackingData.LOT, "l", TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE, "s", true,
+                new EnumIntTableFields[][]{{TblsInvTrackingData.Lot.REFERENCE, TblsInvTrackingConfig.Reference.NAME}, 
+                {TblsInvTrackingData.Lot.CATEGORY, TblsInvTrackingConfig.Reference.CATEGORY}}, "", JOIN_TYPES.INNER),
+        }, "where (expiry_date is not null or expiry_date_in_use is not null) " +
+              "and ( " +
+                "(expiry_date_in_use is null and expiry_date < now()) " +
+                  "or (expiry_date_in_use is not null and expiry_date_in_use < now()) " +
+                  "or (expiry_date_in_use<expiry_date and expiry_date_in_use < now()) " +
+                ")"),
+        REFERENCES_AVAILABLE_FOR_USE_UNDER_MIN("",
+            null, "references_available_for_use_under_min", SCHEMA_NAME, true, TblsInvTrackingData.ViewReferencesAvailableForUseUnderMin.values(), "Lots which expiry_date or expiry_date_in_use is over", 
         new EnumIntTablesJoin[]{
             new EnumIntTablesJoin(TblsInvTrackingData.TablesInvTrackingData.LOT, "l", TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE, "s", true,
                 new EnumIntTableFields[][]{{TblsInvTrackingData.Lot.REFERENCE, TblsInvTrackingConfig.Reference.NAME}, 
@@ -319,6 +331,47 @@ public class TblsInvTrackingData {
         @Override public EnumIntTableFields getTableField() {return this.fldObj;}
     }        
 
+    public enum ViewReferencesAvailableForUseUnderMin implements EnumIntViewFields{
+        CATEGORY(TblsInvTrackingConfig.Reference.CATEGORY.getName(), "l."+TblsInvTrackingConfig.Reference.CATEGORY.getName(), TblsInvTrackingConfig.Reference.CATEGORY, null, null, null),
+        NAME(TblsInvTrackingConfig.Reference.NAME.getName(), "l."+TblsInvTrackingConfig.Reference.NAME.getName(), TblsInvTrackingConfig.Reference.NAME, null, null, null),
+        MIN_STOCK_AVAILABLE_FOR_USE(TblsInvTrackingConfig.Reference.MIN_AVAILABLES_FOR_USE.getName(), "l."+TblsInvTrackingConfig.Reference.MIN_AVAILABLES_FOR_USE.getName(), TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE, null, null, null),
+        MIN_AVAILABLES_FOR_USE_TYPE(TblsInvTrackingConfig.Reference.MIN_AVAILABLES_FOR_USE_TYPE.getName(), "l.min_availables_for_use_type", TblsInvTrackingConfig.Reference.MIN_AVAILABLES_FOR_USE_TYPE, null, null, null),
+        ALLOW_OPENING_SOME_AT_A_TIME(TblsInvTrackingConfig.Reference.ALLOW_OPENING_SOME_AT_A_TIME.getName(), "l."+TblsInvTrackingConfig.Reference.ALLOW_OPENING_SOME_AT_A_TIME.getName(), TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE, null, null, null),
+        CURRENT_STOCK_AVAILABLE_FOR_USE("current_stock_available_for_use", "case when ref.min_availables_for_use_type='ITEMS' then count(l.*) " +
+            "when ref.min_availables_for_use_type='VOLUME' then sum(l.volume) " +
+            "else null end " +
+            "as current_stock_available_for_use ", Lot.LOCKED_REASON, null, null, null),
+        ;
+        private ViewReferencesAvailableForUseUnderMin(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
+//            try{
+//            this.fldName="";
+            this.fldName=name;
+            this.fldAliasInView=vwAliasName;
+            this.fldMask=fldMask;
+            this.fldComment=comment;
+            this.fldBusinessRules=busRules;
+            this.fldObj=fldObj;
+/*            }catch(Exception e){
+                String s= e.getMessage();
+                //String s2=name;
+                this.fldName="";
+            }*/
+        }
+        private final String fldName;
+        private final String fldAliasInView;
+        private final EnumIntTableFields fldObj;
+        private final String fldMask;
+        private final String fldComment;
+        private final FldBusinessRules[] fldBusinessRules;        
+        @Override public String getName() {return fldName;}
+        @Override public String getViewAliasName() {return this.fldAliasInView;}
+        @Override public String getFieldMask() {return this.fldMask;}
+        @Override public String getFieldComment() {return this.fldComment;}
+        @Override public FldBusinessRules[] getFldBusinessRules() {return this.fldBusinessRules;}
+        @Override public EnumIntTableFields getTableField() {return this.fldObj;}
+    }        
+    
+    
     public enum ViewAvailableLotsPerReference implements EnumIntViewFields{
         NAME(TblsInvTrackingConfig.Reference.NAME.getName(), "ref."+TblsInvTrackingConfig.Reference.NAME.getName(), TblsInvTrackingConfig.Reference.NAME, null, null, null),
         CATEGORY(TblsInvTrackingConfig.Reference.CATEGORY.getName(), "ref."+TblsInvTrackingConfig.Reference.CATEGORY.getName(), TblsInvTrackingConfig.Reference.CATEGORY, null, null, null),
