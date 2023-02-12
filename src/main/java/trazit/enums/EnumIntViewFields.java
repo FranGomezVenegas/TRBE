@@ -32,8 +32,11 @@ public interface EnumIntViewFields {
         return flds;
     }
     public static EnumIntViewFields[] getViewFieldsFromString(EnumIntViews tblObj, Object flds){
-        if (flds==null || flds.toString().length()==0) return getAllFieldNamesFromDatabase(tblObj);
-        if ("ALL".equalsIgnoreCase(flds.toString())) return getAllFieldNamesFromDatabase(tblObj);        
+        return getViewFieldsFromString(tblObj, flds, null);
+    }
+    public static EnumIntViewFields[] getViewFieldsFromString(EnumIntViews tblObj, Object flds, String alternativeProcInstanceName){
+        if (flds==null || flds.toString().length()==0) return getAllFieldNamesFromDatabase(tblObj, alternativeProcInstanceName);
+        if ("ALL".equalsIgnoreCase(flds.toString())) return getAllFieldNamesFromDatabase(tblObj, alternativeProcInstanceName);        
         return getViewFieldsFromString(tblObj, flds.toString().split("\\|"));
     }
     public static EnumIntViewFields[] getViewFieldsFromString(EnumIntViews tblObj, String[] flds){
@@ -56,9 +59,13 @@ public interface EnumIntViewFields {
         return -1;
     }
     
-    public static EnumIntViewFields[] getAllFieldNamesFromDatabase(EnumIntViews tblObj){
+    public static EnumIntViewFields[] getAllFieldNamesFromDatabase(EnumIntViews tblObj, String alternativeProcInstanceName){
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        String procInstanceName=instanceForActions.getProcedureInstance();        
+        String procInstanceName="";
+        if (alternativeProcInstanceName!=null)
+            procInstanceName=alternativeProcInstanceName;
+        else
+            procInstanceName=instanceForActions.getProcedureInstance();        
         HashMap<String[], Object[][]> dbTableGetFieldDefinition = Rdbms.dbTableGetFieldDefinition(LPPlatform.buildSchemaName(procInstanceName, tblObj.getRepositoryName()), tblObj.getViewName());
         String[] fldDefinitionColName= dbTableGetFieldDefinition.keySet().iterator().next();    
         Object[][] tableFldsInfo = dbTableGetFieldDefinition.get(fldDefinitionColName);

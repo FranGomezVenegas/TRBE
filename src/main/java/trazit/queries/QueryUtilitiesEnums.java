@@ -76,6 +76,9 @@ public class QueryUtilitiesEnums {
     public static Object[][] getViewData(EnumIntViews tblObj, EnumIntViewFields[] fldsToRetrieve, SqlWhere where, String[] orderBy, Boolean isCaseSensitive){        
         return getViewRecordFieldsByFilter(tblObj, fldsToRetrieve, where, orderBy, false, null, isCaseSensitive);
     }    
+    public static Object[][] getViewData(EnumIntViews tblObj, EnumIntViewFields[] fldsToRetrieve, SqlWhere where, String[] orderBy, String alternativeProcInstanceName){        
+        return getViewRecordFieldsByFilter(tblObj, fldsToRetrieve, where, orderBy, false, alternativeProcInstanceName);
+    }    
 
     /*
     public static Object[][] getViewData(EnumIntViews tblObj, EnumIntViewFields[] fldsToRetrieve, String[] whereFldName, Object[] whereFldValue, String[] orderBy){        
