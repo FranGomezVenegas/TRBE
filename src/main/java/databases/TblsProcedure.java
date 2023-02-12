@@ -213,6 +213,7 @@ public class TblsProcedure {
         VERSION("version", LPDatabase.integerNotNull(), null, null, null, null),
         PROCEDURE_HASH_CODE("procedure_hash_code", LPDatabase.stringNotNull(), null, null, null, null),
         PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
+        MODULE_NAME("module_name", LPDatabase.string(), null, null, null, null),
         LABEL_EN("label_en", LPDatabase.string(), null, null, null, null),
         LABEL_ES("label_es", LPDatabase.string(), null, null, null, null),
         DESCRIPTION("description", LPDatabase.string(), null, null, null, null),
