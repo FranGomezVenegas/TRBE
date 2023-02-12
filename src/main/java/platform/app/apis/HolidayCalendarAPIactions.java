@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.labplanet.servicios.app;
+package platform.app.apis;
 
+import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.TblsApp;
 import functionaljavaa.holidayscalendar.HolidaysCalendar;
 import functionaljavaa.holidayscalendar.HolidaysCalendarEnums.CalendarAPIactionsEndpoints;

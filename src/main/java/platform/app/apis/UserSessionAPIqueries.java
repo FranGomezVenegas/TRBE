@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.labplanet.servicios.app;
+package platform.app.apis;
 
 
 
+import com.labplanet.servicios.app.GlobalAPIsParams;
 import static com.labplanet.servicios.app.InvestigationAPI.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import databases.TblsApp;
@@ -46,7 +47,7 @@ import trazit.queries.QueryUtilitiesEnums;
  *
  * @author User
  */
-public class UserSessionAPIfrontend extends HttpServlet {
+public class UserSessionAPIqueries extends HttpServlet {
     public enum UserSessionAPIqueriesEndpoints implements EnumIntEndpoints{
         /**
          *

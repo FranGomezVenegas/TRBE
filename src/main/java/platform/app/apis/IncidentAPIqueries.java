@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.labplanet.servicios.app;
+package platform.app.apis;
 
-import com.labplanet.servicios.app.IncidentAPIactions.IncidentAPIqueriesEndpoints;
-import static com.labplanet.servicios.app.IncidentAPIactions.MANDATORY_PARAMS_MAIN_SERVLET;
+import platform.app.apis.IncidentAPIactions.IncidentAPIqueriesEndpoints;
+import static platform.app.apis.IncidentAPIactions.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.SqlWhere;

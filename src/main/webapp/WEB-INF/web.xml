@@ -207,19 +207,19 @@
     </servlet>
     <servlet>
         <servlet-name>HolidayCalendarAPIactions</servlet-name>
-        <servlet-class>com.labplanet.servicios.app.HolidayCalendarAPIactions</servlet-class>
+        <servlet-class>platform.app.apis.HolidayCalendarAPIactions</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>HolidayCalendarAPIqueries</servlet-name>
-        <servlet-class>com.labplanet.servicios.app.HolidayCalendarAPIqueries</servlet-class>
+        <servlet-class>platform.app.apis.HolidayCalendarAPIqueries</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>IncidentAPIactions</servlet-name>
-        <servlet-class>com.labplanet.servicios.app.IncidentAPIactions</servlet-class>
+        <servlet-class>platform.app.apis.IncidentAPIactions</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>IncidentAPIqueries</servlet-name>
-        <servlet-class>com.labplanet.servicios.app.IncidentAPIqueries</servlet-class>
+        <servlet-class>platform.app.apis.IncidentAPIqueries</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>InstrumentsAPIactions</servlet-name>
@@ -301,11 +301,11 @@
     </servlet>
     <servlet>
         <servlet-name>VideoTutorialAPIqueries</servlet-name>
-        <servlet-class>com.labplanet.servicios.app.VideoTutorialAPIqueries</servlet-class>
+        <servlet-class>platform.app.apis.VideoTutorialAPIqueries</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>UserSessionAPIqueries</servlet-name>
-        <servlet-class>com.labplanet.servicios.app.UserSessionAPIfrontend</servlet-class>
+        <servlet-class>platform.app.apis.UserSessionAPIqueries</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>InspLotRMAPIactions</servlet-name>
@@ -329,11 +329,11 @@
     </servlet>
     <servlet>
         <servlet-name>PlatformAdminAPIQueries</servlet-name>
-        <servlet-class>com.labplanet.servicios.app.platformadmin.PlatformAdminAPIQueries</servlet-class>
+        <servlet-class>platform.app.apis.PlatformAdminAPIQueries</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>PlatformAdminAPIActions</servlet-name>
-        <servlet-class>com.labplanet.servicios.app.platformadmin.PlatformAdminAPIActions</servlet-class>
+        <servlet-class>platform.app.apis.PlatformAdminAPIActions</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>SavedQueriesactions</servlet-name>

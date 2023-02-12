@@ -1,5 +1,6 @@
-package com.labplanet.servicios.app;
+package platform.app.apis;
 
+import com.labplanet.servicios.app.GlobalAPIsParams;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;

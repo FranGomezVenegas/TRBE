@@ -5,7 +5,7 @@
  */
 package functionaljavaa.incident;
 
-import com.labplanet.servicios.app.IncidentAPIactions;
+import platform.app.apis.IncidentAPIactions;
 import databases.TblsApp;
 import javax.json.Json;
 import javax.json.JsonArray;

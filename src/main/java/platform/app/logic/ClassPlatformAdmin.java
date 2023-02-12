@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.labplanet.servicios.app.platformadmin;
+package platform.app.logic;
 
 import databases.TblsApp;
 import functionaljavaa.platformadmin.AdminActions;

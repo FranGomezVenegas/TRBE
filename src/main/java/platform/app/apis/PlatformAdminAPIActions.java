@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.labplanet.servicios.app.platformadmin;
+package platform.app.apis;
 
+import platform.app.logic.ClassPlatformAdmin;
 import static trazit.session.ProcedureRequestSession.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
 import functionaljavaa.platformadmin.PlatformAdminEnums;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
