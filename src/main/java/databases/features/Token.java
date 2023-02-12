@@ -38,6 +38,7 @@ public final class Token {
     private static final String TOKEN_PARAM_USER_ROLE="userRole";
     private static final String TOKEN_PARAM_USER_ESIGN="eSign";
     private static final String TOKEN_PARAM_APP_SESSION_ID="appSessionId";
+    private static final String TOKEN_PARAM_PROCS_MODULE_NAME="procsModuleName";
     private static final String TOKEN_PARAM_APP_SESSION_STARTED_DATE="appSessionStartedDate";
     private static final String TOKEN_PARAM_USER_PROCEDURES="user_procedures";
     private static final String TOKEN_PARAM_DB_NAME="dbName";
@@ -54,7 +55,8 @@ public final class Token {
     private Date appSessionStartedDate;
     private String userProcedures="";    
     private String userProceduresVersionsAndHashCodes="";     
-    private String dbName="";  
+    private String dbName="";
+    private String procsModuleNames;
     /**
      *
      * @param tokenString
@@ -72,6 +74,7 @@ public final class Token {
         this.userProcedures = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USER_PROCEDURES)]; 
         this.userProceduresVersionsAndHashCodes=tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USER_PROCEDURES_VERSIONS_HASHCODES)]; 
         this.dbName = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_DB_NAME)]; 
+        this.procsModuleNames = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_PROCS_MODULE_NAME)];
     }
 
     /**
@@ -90,6 +93,7 @@ public final class Token {
         diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_USER_PROCEDURES);
         diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_USER_PROCEDURES_VERSIONS_HASHCODES);
         diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_DB_NAME);
+        diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_PROCS_MODULE_NAME);
         return diagnoses;
     }  
     
@@ -151,6 +155,7 @@ public final class Token {
      * @param appSessionId
      * @param appSessionStartedDate
      * @param eSign
+     * @param dbName
      * @return
      */
     public String  createToken(String userDBId, String userDBPassword, String userId, String userRole, String appSessionId, String appSessionStartedDate, String eSign, String dbName){        
@@ -167,21 +172,34 @@ public final class Token {
         UserProfile usProf = new UserProfile();
         Object[] allUserProcedurePrefix = usProf.getAllUserProcedurePrefix(userDBId);
         myParams.put(TOKEN_PARAM_USER_PROCEDURES, Arrays.toString(allUserProcedurePrefix));
-        String procHashCodes="";        
+        String procHashCodes="";  
+        String procModuleName="";
+        //JSONArray procModulesArr=new JSONArray();
+        String procModulesArr="";
         for (Object curProcPrefix: allUserProcedurePrefix){            
             if (!"proc_management".equalsIgnoreCase(curProcPrefix.toString())){
                 if (procHashCodes.length()>0)procHashCodes=procHashCodes+"|";
                 Object[][] procInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(curProcPrefix.toString(), GlobalVariables.Schemas.PROCEDURE.getName()), 
                     TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), 
                     new String[]{TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{curProcPrefix.toString()}, 
-                    new String[]{TblsProcedure.ProcedureInfo.VERSION.getName(), TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE.getName()});
+                    new String[]{TblsProcedure.ProcedureInfo.VERSION.getName(), TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE.getName(), TblsProcedure.ProcedureInfo.MODULE_NAME.getName()});
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfo[0][0].toString()))
                     return "ERROR: procedure_info into node procedure not found for instance "+curProcPrefix.toString();  
-                else
+                else{
                     procHashCodes=procHashCodes+curProcPrefix.toString()+"*"+procInfo[0][0].toString()+"*"+procInfo[0][1].toString();            
+                    if (procModulesArr.length()>0)
+                        procModulesArr=procModulesArr+"|";
+                    procModulesArr=procModulesArr+curProcPrefix.toString()+"*"+procInfo[0][2].toString();
+/*                    JSONObject jObj=new JSONObject();
+                    jObj.put(TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName(), curProcPrefix.toString());
+                    jObj.put(TblsProcedure.ProcedureInfo.MODULE_NAME.getName(), LPNulls.replaceNull(procInfo[0][2]).toString());
+                    procModulesArr.add(jObj);*/
+                }
             }
         }   
         myParams.put(TOKEN_PARAM_USER_PROCEDURES_VERSIONS_HASHCODES, procHashCodes);
+        this.procsModuleNames=procModulesArr;
+        myParams.put(TOKEN_PARAM_PROCS_MODULE_NAME, procModulesArr);
         try{
             return JWT.create()
                     .withHeader(myParams)
@@ -329,4 +347,25 @@ public final class Token {
     public String getDbName() {
         return this.dbName;
     }    
+    /**
+     * @return the userProceduresList in a Arrays.strings format
+     */
+    public String getProcsModuleNames() {
+        return this.procsModuleNames;
+    }    
+    
+    public String getModuleNameFromProcInstance(String instanceName){
+        if (this.procsModuleNames==null||!this.procsModuleNames.contains(instanceName))
+            return "notFound";
+        
+        for (String curFld: this.procsModuleNames.split("\\|")){
+            if (curFld.contains(instanceName)){
+                String[] split = curFld.split("\\*");
+                return split[1];
+            }                
+        }        
+        return "notFound";
+        
+    }
+    
 }

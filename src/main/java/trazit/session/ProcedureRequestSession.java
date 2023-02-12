@@ -24,7 +24,6 @@ import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
 import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
-import static trazit.session.ProcReqSessionAutomatisms.markAsExpiredTheExpiredObjects;
 
 /**
  *
@@ -99,16 +98,16 @@ public class ProcedureRequestSession {
         Token tokn = null;
         String dbName = "";
         
-            dbName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_DB_NAME);            
-            finalToken = (String) request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN); 
-            if (finalToken==null || finalToken.length()==0)
-                finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);         
-            if (finalToken==null || finalToken.length()==0){
-                this.hasErrors=true;
-                this.errorMessage="No token provided";
-                return;            
-            }
-            tokn = new Token(finalToken);
+        dbName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_DB_NAME);            
+        finalToken = (String) request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN); 
+        if (finalToken==null || finalToken.length()==0)
+            finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);         
+        if (finalToken==null || finalToken.length()==0){
+            this.hasErrors=true;
+            this.errorMessage="No token provided";
+            return;            
+        }
+        tokn = new Token(finalToken);
         if (!isForDocumentation){            
             if ( (!LPNulls.replaceNull(dbName).equalsIgnoreCase(LPNulls.replaceNull(tokn.getDbName()))) ){
                 this.hasErrors=true;
@@ -238,7 +237,6 @@ public class ProcedureRequestSession {
         if (this.tokenStr==null)
             this.tokenStr=finalToken;
         rspMessages=ResponseMessages.getInstance();
-        markAsExpiredTheExpiredObjects(this.procedureInstance);
         }catch(Exception e){
             this.hasErrors=true;
             if (this.rspMessages==null)
@@ -390,14 +388,20 @@ public class ProcedureRequestSession {
         return theSession;
     }
     public static ProcedureRequestSession getInstanceForActions(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting){
-        return getInstanceForActions(req, resp, null, isTesting, false);
+        ProcedureRequestSession instanceForActions = getInstanceForActions(req, resp, null, isTesting, false);
+        //SchedProcedures.schedProcesses(instanceForActions.getToken(), instanceForActions.getProcedureInstance());
+        return instanceForActions;
     }
     public static ProcedureRequestSession getInstanceForActionsWithEndpoint(HttpServletRequest req, HttpServletResponse resp, EnumIntEndpoints endPoint, Boolean isTesting){
-        return getInstanceForActions(req, resp, endPoint, isTesting, false);
+        ProcedureRequestSession instanceForActions = getInstanceForActions(req, resp, endPoint, isTesting, false);
+        //SchedProcedures.schedProcesses(instanceForActions.getToken(), instanceForActions.getProcedureInstance());
+        return instanceForActions;
+        
     }
     public static ProcedureRequestSession getInstanceForActions(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting, Boolean isPlatform){
         if (theSession==null || theSession.getTokenString()==null){
             theSession=new ProcedureRequestSession(req, resp, null, isTesting, false, false, null, isPlatform, false);
+            SchedProcedures.schedProcesses(theSession.getToken(), theSession.getProcedureInstance());
         }
         return theSession;
     }

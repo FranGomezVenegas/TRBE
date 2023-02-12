@@ -60,7 +60,7 @@ public class InvTrackingFrontendMasterData implements FrontendMasterData{
                         jArrLvl2.add(jObjLvl2);
                     }
                 }
-                jObj.put(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_CATEGORY.getTableName(), jArrLvl2);
+                jObj.put(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName(), jArrLvl2);
                 jSummaryArr.add(jObj);
             }
         }                

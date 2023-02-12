@@ -35,6 +35,7 @@ import static functionaljavaa.user.UserProfile.getProcedureUsers;
 import static functionaljavaa.user.UserProfile.getProcedureUsersAndRolesList;
 import java.util.Arrays;
 import lbplanet.utilities.LPNulls;
+import module.instrumentsmanagement.logic.InstrumentsFrontendMasterData;
 import module.inventorytrack.logic.InvTrackingFrontendMasterData;
 import trazit.globalvariables.GlobalVariables;
 
@@ -145,11 +146,11 @@ public class AppProcedureListAPI extends HttpServlet {
                         if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONObject();}      
 
                         procedure.put("new_"+LABEL_ARRAY_PROC_EVENTS, newProcedureDefinition(token, curProc,
-                            Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING.toString())))));
+                            Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING)))));
                         procedure.put(LABEL_ARRAY_PROC_EVENTS_ICONS_UP, procedureIconsUp(token, curProc, 
-                            Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING.toString())))));
+                            Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING)))));
                         procedure.put(LABEL_ARRAY_PROC_EVENTS_ICONS_DOWN, procedureIconsDown(token, curProc,
-                            Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING.toString())))));
+                            Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING)))));
                     }    
                     procedure.put("actions_with_esign", procActionsWithESign(curProc.toString()));
                     procedure.put("actions_with_confirm_user", procActionsWithConfirmUser(curProc.toString()));
@@ -159,7 +160,7 @@ public class AppProcedureListAPI extends HttpServlet {
                     String includeProcModelInfo = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_PROC_MODEL_INFO);    
                     if (includeProcModelInfo!=null && Boolean.valueOf(includeProcModelInfo))                
                         procedure.put("procModel", procModel(curProc.toString(), sizeValue));
-                    procedure.put("master_data", getMasterData(curProc.toString()));
+                    procedure.put("master_data", getMasterData(token, curProc.toString()));
                     procedures.add(procedure);
                 }
             }
@@ -191,12 +192,16 @@ public class AppProcedureListAPI extends HttpServlet {
         }
     }
 
-    public static JSONObject getMasterData(String procInstanceName){
+    public static JSONObject getMasterData(Token token, String procInstanceName){
+        String moduleNameFromProcInstance = token.getModuleNameFromProcInstance(procInstanceName);
         JSONObject jObj=new JSONObject();
         if (procInstanceName.toLowerCase().contains("em-demo-a")){
             BusinessRules bi=new BusinessRules(procInstanceName, null);
             jObj=ConfigMasterData.getMasterData(procInstanceName, bi);
-        }else if (procInstanceName.toLowerCase().contains("inv-draft")){
+        }else if (GlobalVariables.TrazitModules.INSTRUMENTS.name().equalsIgnoreCase(moduleNameFromProcInstance)){
+            InstrumentsFrontendMasterData mdObj=new InstrumentsFrontendMasterData();
+            jObj=mdObj.getMasterDataJsonObject(procInstanceName);                
+        }else if (GlobalVariables.TrazitModules.INVENTORY_TRACKING.name().equalsIgnoreCase(moduleNameFromProcInstance)){
             InvTrackingFrontendMasterData mdObj=new InvTrackingFrontendMasterData();
             jObj=mdObj.getMasterDataJsonObject(procInstanceName);                
         }else{ 
@@ -323,6 +328,7 @@ public class AppProcedureListAPI extends HttpServlet {
      * @param procEventJson procedureEvents (json object)
      * @param procEventFldNameArray SOP field names
      * @param procEvent1 not sure
+     * @param isForTesting
      * @return the SOPs linked to the procedure Event (to confirm)
      */
     public static JSONObject procEventSops(String internalUserID, String curProc, JSONObject procedure, JSONObject procEventJson, String[] procEventFldNameArray, Object[] procEvent1, Boolean isForTesting){
