@@ -394,7 +394,10 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
                 queryWhere.delete(queryWhere.length()-3, queryWhere.length());
                 queryWhere.append(")");
             }else{
-                Object[] addSingleConstraint = addSingleConstraint(curEntry, caseSensitive, "and");
+                
+                Object[] addSingleConstraint = addSingleConstraint(curEntry, caseSensitive, "and");   
+                if (queryWhere.length()>0)
+                    queryWhere.append(" and ");
                 queryWhere=queryWhere.append((StringBuilder) addSingleConstraint[0]);
                 whereFieldValuesNew=LPArray.addValueToArray1D(whereFieldValuesNew,(Object[]) addSingleConstraint[1]);
             }
