@@ -30,7 +30,6 @@ import javax.print.DocPrintJob;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
-import org.apache.http.HttpRequest;
 
 /**
  *
@@ -39,6 +38,38 @@ import org.apache.http.HttpRequest;
 public class ZPL {
 
     enum ContentType{TEXT, BARCODE39}
+    public static StringBuilder zplDemoLabel(String ip, int port){    
+        StringBuilder logMsg=new StringBuilder(0);
+        logMsg.append("printing in ip:"+ip+":"+port).append(String.format("%n", ""));
+        ZebraLabel zebraLabel = new ZebraLabel(912, 912);
+        zebraLabel.setDefaultZebraFont(ZebraFont.ZEBRA_ZERO);
+
+        zebraLabel.addElement(new ZebraText(10, 84, "Product:", 14));
+        zebraLabel.addElement(new ZebraText(395, 85, "Camera", 14));
+
+        zebraLabel.addElement(new ZebraText(10, 161, "CA201212AA", 14));
+
+        //Add Code Bar 39
+        zebraLabel.addElement(new ZebraBarCode39(10, 297, "CA201212AA", 118, 2, 2));
+
+        zebraLabel.addElement(new ZebraText(10, 365, "Qté:", 11));
+        zebraLabel.addElement(new ZebraText(180, 365, "3", 11));
+        zebraLabel.addElement(new ZebraText(317, 365, "QA", 11));
+
+        zebraLabel.addElement(new ZebraText(10, 520, "Ref log:", 11));
+        zebraLabel.addElement(new ZebraText(180, 520, "0035", 11));
+        zebraLabel.addElement(new ZebraText(10, 596, "Ref client:", 11));
+        zebraLabel.addElement(new ZebraText(180, 599, "1234", 11));
+        try {
+            ZebraUtils.printZpl(zebraLabel, ip, port);
+            logMsg.append("Printed successfully");
+            return logMsg;
+        } catch (ZebraPrintException ex) {
+            Logger.getLogger(ZPL.class.getName()).log(Level.SEVERE, null, ex);
+            logMsg.append("Error printing: "+ex.getMessage());
+            return logMsg;
+        }
+    }
     public static void zplLabel(String ip, int port, Object[][] lblContent){
         try {
             ResourceBundle propValue = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);

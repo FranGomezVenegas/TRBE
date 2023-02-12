@@ -22,7 +22,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lbplanet.labelling.ZPL;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 
 /**
@@ -43,6 +45,19 @@ public class TesterFromUploadFile extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)           throws ServletException, IOException {
         response = LPTestingOutFormat.responsePreparation(response);        
         try{
+            String ipAddr = request.getParameter("ipAddr");
+            String portNum = request.getParameter("portNum");
+
+            String ip="192.168.1.139";
+            Integer port=3910;
+            if (LPNulls.replaceNull(ipAddr).toString().length()>0)
+                ip=ipAddr;
+            if (LPNulls.replaceNull(portNum).toString().length()>0)
+                port=Integer.valueOf(portNum);
+            StringBuilder zplDemoLabel = ZPL.zplDemoLabel(ip, port);
+            PrintWriter outZpl = response.getWriter();
+            outZpl.println(zplDemoLabel);
+            if (1==1) return;
             String saveDirectory="D:\\LP\\"; //TESTING_FILES_PATH;
             MultipartRequest mReq = new MultipartRequest(request, saveDirectory);
             Enumeration files = mReq.getFileNames();
