@@ -26,8 +26,8 @@ public class GlobalVariables {
         }
         private final String name;        
     }
-
     public static final String DEFAULTLANGUAGE="en";
+    public static final String TRAZIT_SCHEDULER="TRAZIT_SCHEDULER";
     public static final String LANGUAGE_ALL_LANGUAGES="ALL";
     public enum Languages{EN("en"), ES("es")
         ;
@@ -39,6 +39,9 @@ public class GlobalVariables {
         }
         private final String name;        
     }    
+    
+    public enum TrazitModules{INVENTORY_TRACKING, INSTRUMENTS, ENVIRONMENTAL_MONITORING, GENOMICS,
+        PLATFORM_ADMIN, SAMPLES_MANAGEMENT, INSPECTION_LOTS_RAW_MAT};
     
     public enum ServletsResponse{SUCCESS("/ResponseSuccess", "response"), ERROR("/ResponseError", "errorDetail");
         ServletsResponse(String svlt, String attr){
