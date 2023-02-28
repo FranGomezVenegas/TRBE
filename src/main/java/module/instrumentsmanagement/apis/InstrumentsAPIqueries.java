@@ -102,8 +102,11 @@ public class InstrumentsAPIqueries extends HttpServlet {
 
             switch (endPoint){
             case ACTIVE_INSTRUMENTS_LIST:
-                Boolean filterByResponsible=Boolean.valueOf(LPNulls.replaceNull(argValues[0]).toString());
+                Boolean filterByResponsible=Boolean.valueOf(LPNulls.replaceNull(argValues[1]).toString());
+                String familyName=LPNulls.replaceNull(argValues[0]).toString();
                 SqlWhere sW=new SqlWhere();
+                if (familyName.length()>0)
+                    sW.addConstraint(TblsInstrumentsData.Instruments.FAMILY, SqlStatement.WHERECLAUSE_TYPES.IN, familyName.split("\\|"), "|");                
                 sW.addConstraint(TblsInstrumentsData.Instruments.DECOMMISSIONED, SqlStatement.WHERECLAUSE_TYPES.NOT_EQUAL, new Object[]{true}, null);
 //                TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS, 
 //                    new String[]{+"<>"}, );
@@ -203,14 +206,17 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 return;
             case INSTRUMENT_EVENTS_INPROGRESS:
                 filterByResponsible=Boolean.valueOf(LPNulls.replaceNull(argValues[0]).toString());
+                familyName=LPNulls.replaceNull(argValues[1]).toString();
                 String[] whereFldName=new String[]{TblsInstrumentsData.ViewNotDecommInstrumentAndEventData.COMPLETED_BY.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()};
                 Object[] whereFldValue=new Object[]{};
-                String fieldName=LPNulls.replaceNull(argValues[1]).toString();
-                String fieldValue=LPNulls.replaceNull(argValues[2]).toString();
+                String fieldName=LPNulls.replaceNull(argValues[2]).toString();
+                String fieldValue=LPNulls.replaceNull(argValues[3]).toString();
                 if (fieldValue.length()>0){                    
                     Object[] convertStringWithDataTypeToObjectArray = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
-                }
+                }                                
                 sW=new SqlWhere(ViewsInstrumentsData.NOT_DECOM_INSTR_EVENT_DATA_VW, whereFldName, whereFldValue);
+                if (familyName.length()>0)
+                    sW.addConstraint(TblsInstrumentsData.ViewNotDecommInstrumentAndEventData.INSTRUMENT_FAMILY, SqlStatement.WHERECLAUSE_TYPES.IN, familyName.split("\\|"), "|");                
                 if (filterByResponsible){
                     SqlWhereEntry[] orClauses=new SqlWhereEntry[]{
                         new SqlWhereEntry(TblsInstrumentsData.ViewNotDecommInstrumentAndEventData.RESPONSIBLE, 
@@ -256,18 +262,27 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
                 return;
-
-
             case DECOMISSIONED_INSTRUMENTS_LAST_N_DAYS:
                 String numDays = LPNulls.replaceNull(argValues[0]).toString();
+                familyName=LPNulls.replaceNull(argValues[1]).toString();
+
                 if (numDays.length()==0) numDays=String.valueOf(7);
                 int numDaysInt=0-Integer.valueOf(numDays);               
+                sW=new SqlWhere();
+                sW.addConstraint(TblsInstrumentsData.Instruments.DECOMMISSIONED, 
+                        SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{true}, null);
+                sW.addConstraint(TblsInstrumentsData.Instruments.DECOMMISSIONED_ON, 
+                        SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN, new Object[]{LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, null);
+//                sW=new SqlWhere(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS, 
+//                    new String[]{TblsInstrumentsData.Instruments.DECOMMISSIONED.getName(), TblsInstrumentsData.Instruments.DECOMMISSIONED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()},
+//                    new Object[]{true, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)});
+                if (familyName.length()>0)
+                    sW.addConstraint(TblsInstrumentsData.Instruments.FAMILY, SqlStatement.WHERECLAUSE_TYPES.IN, familyName.split("\\|"), "|");                
+
                 fieldsToRetrieve=getAllFieldNames(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS);
                 Object[][] instrDecommissionedClosedLastDays = QueryUtilitiesEnums.getTableData(TablesInstrumentsData.INSTRUMENTS, 
                     EnumIntTableFields.getAllFieldNamesFromDatabase(TablesInstrumentsData.INSTRUMENTS),
-                    new String[]{TblsInstrumentsData.Instruments.DECOMMISSIONED.getName(), TblsInstrumentsData.Instruments.DECOMMISSIONED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()},
-                    new Object[]{true, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
-                    new String[]{TblsInstrumentsData.Instruments.DECOMMISSIONED_ON.getName()+" desc"});
+                    sW, new String[]{TblsInstrumentsData.Instruments.DECOMMISSIONED_ON.getName()+" desc"});
                 jArr = new JSONArray();
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrDecommissionedClosedLastDays[0][0].toString())){
                     for (Object[] currIncident: instrDecommissionedClosedLastDays){

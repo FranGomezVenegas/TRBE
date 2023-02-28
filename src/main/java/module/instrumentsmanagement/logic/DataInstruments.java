@@ -102,10 +102,11 @@ public class DataInstruments {
             if (this.onLine==null) this.onLine=false;
             this.isLocked= Boolean.valueOf(LPNulls.replaceNull(instrInfo[0][LPArray.valuePosicInArray(fieldNames, TblsInstrumentsData.Instruments.IS_LOCKED.getName())]).toString());
             if (this.isLocked==null) this.isLocked=false;
-            responsibleLocking();
             this.isDecommissioned= Boolean.valueOf(LPNulls.replaceNull(instrInfo[0][LPArray.valuePosicInArray(fieldNames, TblsInstrumentsData.Instruments.DECOMMISSIONED.getName())]).toString());
             if (this.isDecommissioned==null) this.isDecommissioned=false;
             this.lockedReason=LPNulls.replaceNull(instrInfo[0][LPArray.valuePosicInArray(fieldNames, TblsInstrumentsData.Instruments.LOCKED_REASON.getName())]).toString();
+            if (!this.isLocked)
+                responsibleLocking();
             this.family=LPNulls.replaceNull(instrInfo[0][LPArray.valuePosicInArray(fieldNames, TblsInstrumentsData.Instruments.FAMILY.getName())]).toString();
             if (this.family!=null && this.family.length()>0){
                 Object[][] instrFamilyInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsInstrumentsConfig.TablesInstrumentsConfig.INSTRUMENTS_FAMILY.getTableName(), 
@@ -121,22 +122,32 @@ public class DataInstruments {
         }
     }    
     private void responsibleLocking(){
+        
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);    
         Token token = procReqSession.getToken();
         Integer respFldPosic=LPArray.valuePosicInArray(this.fieldNames, TblsInstrumentsData.Instruments.RESPONSIBLE.getName());
         Integer resp2FldPosic=LPArray.valuePosicInArray(this.fieldNames, TblsInstrumentsData.Instruments.RESPONSIBLE_BACKUP.getName());
         if (respFldPosic>-1){
             this.responsible=LPNulls.replaceNull(this.fieldValues[respFldPosic]).toString();
-            if (LPNulls.replaceNull(this.fieldValues[respFldPosic]).toString().equalsIgnoreCase(token.getUserName()))
-               return;
+            if (LPNulls.replaceNull(this.fieldValues[respFldPosic]).toString().equalsIgnoreCase(token.getUserName())){
+                this.isLocked=false;            
+                return;
+            }
+        }
         if (resp2FldPosic>-1){
             this.responsibleBackup=LPNulls.replaceNull(this.fieldValues[resp2FldPosic]).toString();
-            if (LPNulls.replaceNull(this.fieldValues[resp2FldPosic]).toString().equalsIgnoreCase(token.getUserName()))
-               return;
+            if (LPNulls.replaceNull(this.fieldValues[resp2FldPosic]).toString().equalsIgnoreCase(token.getUserName())){
+                this.isLocked=false;
+                return;            
             }
-            this.isLocked=true;
-            this.lockedReason="user is not responsible neither responsible backup";
         }
+        if ((this.responsible==null||this.responsible.length()==0)&&(this.responsibleBackup==null||this.responsibleBackup.length()==0)){
+            this.isLocked=false;
+            return;
+        }
+        this.isLocked=true;
+        this.lockedReason="user is not responsible neither responsible backup";
+        
     }
     public static InternalMessage createNewInstrument(String name, String familyName, String[] fldNames, Object[] fldValues){   
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        

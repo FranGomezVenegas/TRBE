@@ -8,7 +8,7 @@ package module.inspectionlot.rawmaterial.apis;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import static module.inspectionlot.rawmaterial.definition.InspLotQueries.configMaterialStructure;
 import static module.inspectionlot.rawmaterial.definition.InspLotQueries.dataSampleStructure;
-import module.inspectionlot.rawmaterial.apis.InspLotRMAPIactions.InspLotRMQueriesAPIEndpoints;
+import module.inspectionlot.rawmaterial.definition.InspLotRMEnums.InspLotRMQueriesAPIEndpoints;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMConfig;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMData;
 import databases.Rdbms;
