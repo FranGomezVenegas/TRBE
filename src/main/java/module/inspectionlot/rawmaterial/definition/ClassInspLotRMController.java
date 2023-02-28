@@ -5,7 +5,6 @@
  */
 package module.inspectionlot.rawmaterial.definition;
 
-import module.inspectionlot.rawmaterial.apis.InspLotRMAPIactions;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -13,6 +12,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPArray;
 import org.json.simple.JSONArray;
+import trazit.session.InternalMessage;
 
 /**
  *
@@ -20,16 +20,16 @@ import org.json.simple.JSONArray;
  */
 public class ClassInspLotRMController {
     private StringBuilder rowArgsRows=new StringBuilder(0);
-    private Object[] functionDiagn=new Object[0];
+    private InternalMessage functionDiagn=null;
     private JSONArray functionRelatedObjects=new JSONArray();
     private Boolean functionFound=false;
     
     public ClassInspLotRMController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
         
         Object[] argsForLogFiles=new Object[0];
-        InspLotRMAPIactions.InspLotRMAPIactionsEndpoints endPoint = null;
+        InspLotRMEnums.InspLotRMAPIactionsEndpoints endPoint = null;
         try{
-            endPoint = InspLotRMAPIactions.InspLotRMAPIactionsEndpoints.valueOf(actionName.toUpperCase());
+            endPoint = InspLotRMEnums.InspLotRMAPIactionsEndpoints.valueOf(actionName.toUpperCase());
                     HashMap<HttpServletRequest, Object[]> hmQuery = endPoint.testingSetAttributesAndBuildArgsArray(request, testingContent, iLines);
                     HttpServletRequest query= hmQuery.keySet().iterator().next();   
                     argsForLogFiles = hmQuery.get(query);

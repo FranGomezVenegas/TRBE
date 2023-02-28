@@ -24,6 +24,7 @@ import trazit.enums.EnumIntTablesJoin;
 import trazit.enums.EnumIntViewFields;
 import trazit.enums.EnumIntViews;
 import trazit.enums.FldBusinessRules;
+import trazit.enums.ForeignkeyFld;
 import trazit.enums.ReferenceFld;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -39,7 +40,12 @@ public class TblsInspLotRMData {
         LOT_DECISION(null, "lot_decision", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, LotDecision.values(), null, new String[]{LotDecision.LOT_NAME.getName()}, null, "LotDecision table"),
         LOT_CERTIFICATE(null, "lot_certificate", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, LotCertificate.values(), LotCertificate.CERTIFICATE_ID.getName(), new String[]{LotCertificate.CERTIFICATE_ID.getName()}, null, "LotCertificate table"),
         LOT_CERTIFICATE_TRACK(null, "lot_certificate_track", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, LotCertificateTrack.values(), LotCertificateTrack.ID.getName(), new String[]{LotCertificateTrack.ID.getName()}, null, "LotCertificateTrack table"),
+        LOT_BULK(null, "lot_bulk", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, LotBulk.values(), LotBulk.BULK_ID.getName(), new String[]{LotBulk.BULK_ID.getName()}, null, "LotBulk table"),
         SAMPLE(null, "sample", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Sample.values(), Sample.SAMPLE_ID.getName(), new String[]{Sample.SAMPLE_ID.getName()}, null, "Sample table"),
+        SAMPLE_ANALYSIS_RESULT(null, "sample_analysis_result", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, SampleAnalysisResult.values(), SampleAnalysisResult.RESULT_ID.getName(),
+            new String[]{SampleAnalysisResult.RESULT_ID.getName()}, 
+            new Object[]{new ForeignkeyFld(SampleAnalysisResult.TEST_ID.getName(), SCHEMA_NAME, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), TblsData.SampleAnalysis.TEST_ID.getName())}, "sample analysis results table"),
+
         INVENTORY_RETAIN(null, "inventory_retain", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, InventoryRetain.values(), InventoryRetain.ID.getName(), new String[]{InventoryRetain.ID.getName()}, null, "InventoryRetain table"),
         ;
         private TablesInspLotRMData(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
@@ -326,7 +332,7 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         CERTIFICATE_VERSION("certificate_version", LPDatabase.integer(), null, null, null, null),
         STATUS("status",LPDatabase.stringNotNull(), null, null, null, null),
         STATUS_PREVIOUS("status_previous",LPDatabase.string(), null, null, null, null),
-        CREATED_ON("created_on", LPDatabase.date(), null, null, null, null),
+        CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null),
         CREATED_BY("created_by", LPDatabase.string(), null, null, null, null),
         CERTIFICATE_FORMAT("certificate_format", LPDatabase.string(), null, null, null, null),
         ;
@@ -358,7 +364,7 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         LOT_NAME("lot_name",  LPDatabase.stringNotNull(100), null, null, null, null),
         CONFIG_NAME("config_name", LPDatabase.integer(), null, null, null, null),       
         EVENT("event",LPDatabase.stringNotNull(), null, null, null, null),
-        CREATED_ON("created_on", LPDatabase.date(), null, null, null, null),
+        CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null),
         CREATED_BY("created_by", LPDatabase.string(), null, null, null, null),
         ;
         private LotCertificateTrack(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
@@ -384,7 +390,42 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         @Override        public String getFieldComment(){return this.fieldComment;}
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }
+    public enum LotBulk implements EnumIntTableFields{
+        BULK_ID("id", LPDatabase.integerNotNull(), null, null, null, null),
+        LOT_NAME("lot_name",  LPDatabase.stringNotNull(100), null, null, null, null),
+        CERTIFICATE_VERSION("certificate_version", LPDatabase.integer(), null, null, null, null),
+        STATUS("status",LPDatabase.stringNotNull(), null, null, null, null),
+        STATUS_PREVIOUS("status_previous",LPDatabase.string(), null, null, null, null),
+        CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null),
+        CREATED_BY("created_by", LPDatabase.string(), null, null, null, null),
+        DECISION("decision", LPDatabase.string(), null, null, null, null),
+        QUANTITY("quantity", LPDatabase.real(), null, null, null, null),
+        QUANTITY_UOM("quantity_uom", LPDatabase.string(), null, null, null, null),
+        
+        ;
+        private LotBulk(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
 
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }
     public enum Sample implements EnumIntTableFields{
         SAMPLE_ID("sample_id", LPDatabase.integerNotNull(), null, null, null, null),
         LOT_NAME("lot_name",  LPDatabase.stringNotNull(), null, null, null, null),
@@ -392,9 +433,9 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         CONFIG_CODE_VERSION("sample_config_code_version", LPDatabase.integer(), null, null, null, null),
         STATUS("status",LPDatabase.stringNotNull(), null, null, null, null),
         STATUS_PREVIOUS("status_previous",LPDatabase.string(), null, null, null, null),
-        LOGGED_ON("logged_on", LPDatabase.date(), null, null, null, null),
+        LOGGED_ON("logged_on", LPDatabase.dateTime(), null, null, null, null),
         LOGGED_BY("logged_by", LPDatabase.string(), null, null, null, null),
-        RECEIVED_ON("received_on", LPDatabase.date(), null, null, null, null),
+        RECEIVED_ON("received_on", LPDatabase.dateTime(), null, null, null, null),
         RECEIVED_BY("received_by", LPDatabase.string(), null, null, null, null),
         VOLUME(LPDatabase.FIELDS_NAMES_VOLUME, LPDatabase.real(), null, null, null, null),
         VOLUME_UOM(LPDatabase.FIELDS_NAMES_VOLUME_UOM,LPDatabase.string(), null, null, null, null),
@@ -408,11 +449,12 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         SPEC_EVAL("spec_eval",  LPDatabase.string(2), null, null, null, null),
         CUSTODIAN("custodian",  LPDatabase.string(2), null, null, null, null),
         CUSTODIAN_CANDIDATE("custodian_candidate",  LPDatabase.string(2), null, null, null, null),
-        COC_REQUESTED_ON("coc_requested_on", LPDatabase.date(), null, null, null, null),
-        COC_CONFIRMED_ON("coc_confirmed_on", LPDatabase.date(), null, null, null, null),
+        COC_REQUESTED_ON("coc_requested_on", LPDatabase.dateTime(), null, null, null, null),
+        COC_CONFIRMED_ON("coc_confirmed_on", LPDatabase.dateTime(), null, null, null, null),
         CURRENT_STAGE("current_stage",LPDatabase.string(), null, null, null, null),
         PREVIOUS_STAGE("previous_stage",LPDatabase.string(), null, null, null, null),
         READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld(), null, null, null, null),
+        BULK_ID("bulk_id", LPDatabase.integer(), null, null, null, null),
         ;
         private Sample(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
@@ -447,7 +489,7 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         MANUFACTURER_NAME("manufacturer_name", LPDatabase.string(), null, null, null, null),
         MANUFACTURER_BATCH("manufacturer_batch", LPDatabase.string(), null, null, null, null),
         MANUFACTURER_SITE("manufacturer_site", LPDatabase.string(), null, null, null, null),
-        CREATED_ON("created_on", LPDatabase.date(), null, null, null, null),
+        CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null),
         CREATED_BY("created_by", LPDatabase.string(), null, null, null, null),
         EXPIRY_DATE("expiry_date", LPDatabase.date(), null, null, null, null),
         REQUALIF_DATE("requalif_date", LPDatabase.date(), null, null, null, null),
@@ -462,7 +504,7 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         RECEPTION_ON("reception_on", LPDatabase.date(), null, null, null, null),
         RECEPTION_BY("reception_by", LPDatabase.string(), null, null, null, null),
         LOCKED("locked", LPDatabase.booleanFld(), null, null, null, null),
-        LOCKED_ON("locked_on", LPDatabase.date(), null, null, null, null),
+        LOCKED_ON("locked_on", LPDatabase.dateTime(), null, null, null, null),
         LOCKED_BY("locked_by", LPDatabase.string(), null, null, null, null),
         ;
         private InventoryRetain(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
@@ -488,5 +530,86 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         @Override        public String getFieldComment(){return this.fieldComment;}
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }
+    public enum SampleAnalysisResult implements EnumIntTableFields{
+        RESULT_ID("result_id", LPDatabase.integer(), null, null, null, null),
+        TEST_ID(TblsData.SampleAnalysis.TEST_ID.getName(), LPDatabase.integer(), null, null, null, null),
+        SAMPLE_ID(TblsData.Sample.SAMPLE_ID.getName(), LPDatabase.integer(), null, null, null, null),
+        STATUS(FIELDS_NAMES_STATUS, LPDatabase.stringNotNull(), null, null, null, null),
+        STATUS_PREVIOUS(FIELDS_NAMES_STATUS_PREVIOUS, LPDatabase.string(), null, null, null, null),
+        ANALYSIS(FIELDS_NAMES_ANALYSIS, LPDatabase.stringNotNull(), null, null, null, null),
+        METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, LPDatabase.string(), null, null, null, null),
+        METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, LPDatabase.integer(), null, null, null, null),
+        REPLICA(FIELDS_NAMES_REPLICA, LPDatabase.integer(), null, null, null, null),
+        PARAM_NAME("param_name", LPDatabase.string(), null, null, null, null),
+        PARAM_TYPE("param_type", LPDatabase.string(), null, null, null, null),
+        MANDATORY("mandatory", LPDatabase.booleanFld(false), null, null, null, null),
+        REQUIRES_LIMIT("requires_limit", LPDatabase.booleanFld(false), null, null, null, null),
+        RAW_VALUE("raw_value", LPDatabase.string(), null, null, null, null),
+        PRETTY_VALUE("pretty_value", LPDatabase.string(), null, null, null, null),
+        ENTERED_ON("entered_on", LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        ENTERED_BY("entered_by", LPDatabase.string(), null, null, null, null),
+        REENTERED("reentered", LPDatabase.booleanFld(), null, null, null, null),
+        SPEC_EVAL(FIELDS_NAMES_SPEC_EVAL, LPDatabase.string(200), null, null, null, null),
+        SPEC_EVAL_DETAIL("spec_eval_detail",  LPDatabase.string(200), null, null, null, null),
+        UOM("uom", LPDatabase.string(), null, null, null, null),
+        UOM_CONVERSION_MODE("uom_conversion_mode", LPDatabase.string(), null, null, null, null),
+        ALIQUOT_ID(FIELDS_NAMES_ALIQUOT_ID, LPDatabase.integer(), null, null, null, null),
+        SUBALIQUOT_ID(FIELDS_NAMES_SUBALIQUOT_ID, LPDatabase.integer(), null, null, null, null),
+        LIMIT_ID("limit_id", LPDatabase.integer(), null, null, null, null),
+        REVIEWED("reviewed", LPDatabase.booleanFld(), null, null, null, null),
+        REVIEWED_ON("reviewed_on", LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        REVIEWED_BY("reviewed_by", LPDatabase.string(), null, null, null, null),
+        MAX_DP("max_dp", LPDatabase.integer(), null, null, null, null),
+        MIN_ALLOWED("min_allowed", LPDatabase.real(), null, null, null, null),
+        MAX_ALLOWED("max_allowed", LPDatabase.real(), null, null, null, null),
+        LIST_ENTRY("list_entry", LPDatabase.string(), null, null, null, null),
+        ADD_IN_COA("add_in_coa", LPDatabase.booleanFld(true), null, null, null, null),
+        /* Este bloque de campos está a nivel de SampleAnalysis, es posible que pueda ser interesante tb en sample_analysis_result
+        , REVIEWER("reviewer", LPDatabase.String())
+        , REVIEWER_ASSIGNED_ON("reviewer_assigned_on", LPDatabase.dateTime())        
+        , REVIEWER_ASSIGNED_BY("reviewer_assigned_by", LPDatabase.String())        
+        , ANALYST("analyst", LPDatabase.String())
+        , ANALYST_ASSIGNED_ON("analyst_assigned_on", LPDatabase.dateTime())        
+        , ANALYST_ASSIGNED_BY("analyst_assigned_by", LPDatabase.String())        
+        , ANALYST_CERTIFICATION_MODE("analyst_certification_mode", LPDatabase.String()) */
+        //, UNDER_DEVIATION("under_deviation", LPDatabase.Boolean()) Desviaciones aún no implementadas
+/*     Este bloque de campos está a nivel de Sample, es posible que pueda ser interesante tb en sample_analysis   
+        , VOLUME( LPDatabase.FIELDS_NAMES_VOLUME, LPDatabase.Real())
+        , VOLUME_UOM( LPDatabase.FIELDS_NAMES_VOLUME_UOM, LPDatabase.StringNotNull())
+        , ALIQUOTED("aliquoted", LPDatabase.Boolean(false))
+        , ALIQUOT_STATUS("aliq_status", LPDatabase.StringNotNull())
+        , VOLUME_FOR_ALIQ("volume_for_aliq", LPDatabase.Real())
+        , VOLUME_FOR_ALIQ_UOM("volume_for_aliq_uom", LPDatabase.StringNotNull())
+        , SAMPLING_DATE("sampling_date", LPDatabase.dateTime())
+        , SAMPLING_COMMENT("sampling_comment", LPDatabase.String())
+        , INCUBATION_START("incubation_start", LPDatabase.dateTime())
+        , INCUBATION_END("incubation_end", LPDatabase.dateTime())
+        , INCUBATION_PASSED("incubation_passed", LPDatabase.Boolean())*/ 
+        ;
+        private SampleAnalysisResult(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }            
+    
+    
 
 }
