@@ -118,7 +118,7 @@ Object[][] firstStageData=new Object[0][0];
     public DataSampleStages() {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        String sampleStagesMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.SAMPLE_STAGE_MODE.getAreaName(), SampleStageBusinessRules.SAMPLE_STAGE_MODE.getTagName(), SampleStageBusinessRules.SAMPLE_STAGE_TIMING_CAPTURE_MODE.getPreReqs());
+        String sampleStagesMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.SAMPLE_STAGE_MODE.getAreaName(), SampleStageBusinessRules.SAMPLE_STAGE_MODE.getTagName(), SampleStageBusinessRules.SAMPLE_STAGE_TIMING_CAPTURE_MODE.getPreReqs(), true);
         if (Parameter.isTagValueOneOfDisableOnes(sampleStagesMode)){
             this.isSampleStagesEnable=false;  
             return;
