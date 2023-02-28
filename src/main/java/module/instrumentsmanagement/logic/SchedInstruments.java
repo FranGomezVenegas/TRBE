@@ -16,6 +16,7 @@ import module.instrumentsmanagement.definition.TblsInstrumentsData.ViewsInstrume
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntViewFields;
+import trazit.globalvariables.GlobalVariables;
 import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.InternalMessage;
 
@@ -27,7 +28,7 @@ public class SchedInstruments {
     
     public static void InstrumentsSchedProcesses(Token token, String procInstanceName){
         String moduleNameFromProcInstance = token.getModuleNameFromProcInstance(procInstanceName);
-        if (!"INSTRUMENTS".equalsIgnoreCase(moduleNameFromProcInstance)) return;
+        if (!GlobalVariables.TrazitModules.INSTRUMENTS.name().equalsIgnoreCase(moduleNameFromProcInstance)) return;
         logNextEventWhenExpiredOrClose(token, procInstanceName);
     }
     public static void logNextEventWhenExpiredOrClose(Token token, String procInstanceName){       
