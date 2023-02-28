@@ -13,6 +13,7 @@ import databases.SqlWhere;
 import databases.TblsApp;
 import databases.TblsAppConfig;
 import databases.TblsProcedure;
+import databases.features.DbEncryption;
 import java.time.LocalDateTime;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
@@ -31,6 +32,10 @@ public class PlatformNewInstance {
         String fakeProcName = "check-platform";
         String fakeProcUserName = "demo";
         String personId="d1m2";
+        String fakeEsingn="firmademo";
+        String defaultMail="info@trazit.net";
+        Object[] encryptValue=DbEncryption.encryptValue(fakeEsingn);        
+        String fakeEsingnEncrypted = encryptValue[encryptValue.length-1].toString();
         String[] schemaNames = new String[]{LPPlatform.buildSchemaName(fakeProcName, GlobalVariables.Schemas.PROCEDURE.getName())};
         String tblCreateScript="";
         JSONObject jsonObj=new JSONObject();
@@ -70,7 +75,7 @@ public class PlatformNewInstance {
         insertRecordInTable = Rdbms.insertRecord(TblsApp.TablesApp.USERS, 
                 new String[]{TblsApp.Users.USER_NAME.getName(), TblsApp.Users.EMAIL.getName(), TblsApp.Users.ESIGN.getName(),
                     TblsApp.Users.PASSWORD.getName(), TblsApp.Users.PERSON_NAME.getName()},
-                new Object[]{fakeProcUserName, "trazit.info@gmail.com", "firmademo", fakeProcUserName+fakeProcUserName, personId}, null);
+                new Object[]{fakeProcUserName, defaultMail, fakeEsingnEncrypted, fakeProcUserName+fakeProcUserName, personId}, null);
         if (insertRecordInTable.getRunSuccess())
             actionLog="success";
         else{
