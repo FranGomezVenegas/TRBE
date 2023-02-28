@@ -250,6 +250,8 @@ public class ProcedureRequestSession {
     }
     
     public void killIt(){
+            SchedProcedures.schedProcesses(theSession.getToken(), theSession.getProcedureInstance());
+        
 //        LPSession.addProcessSession(Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.DATE_STARTED.getName()});
        // if (1==1) return;
 //        if (!this.isForQuery) 
@@ -389,19 +391,19 @@ public class ProcedureRequestSession {
     }
     public static ProcedureRequestSession getInstanceForActions(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting){
         ProcedureRequestSession instanceForActions = getInstanceForActions(req, resp, null, isTesting, false);
-        //SchedProcedures.schedProcesses(instanceForActions.getToken(), instanceForActions.getProcedureInstance());
+//        //SchedProcedures.schedProcesses(instanceForActions.getToken(), instanceForActions.getProcedureInstance());
         return instanceForActions;
     }
     public static ProcedureRequestSession getInstanceForActionsWithEndpoint(HttpServletRequest req, HttpServletResponse resp, EnumIntEndpoints endPoint, Boolean isTesting){
         ProcedureRequestSession instanceForActions = getInstanceForActions(req, resp, endPoint, isTesting, false);
-        //SchedProcedures.schedProcesses(instanceForActions.getToken(), instanceForActions.getProcedureInstance());
+//        //SchedProcedures.schedProcesses(instanceForActions.getToken(), instanceForActions.getProcedureInstance());
         return instanceForActions;
         
     }
     public static ProcedureRequestSession getInstanceForActions(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting, Boolean isPlatform){
         if (theSession==null || theSession.getTokenString()==null){
             theSession=new ProcedureRequestSession(req, resp, null, isTesting, false, false, null, isPlatform, false);
-            SchedProcedures.schedProcesses(theSession.getToken(), theSession.getProcedureInstance());
+//            SchedProcedures.schedProcesses(theSession.getToken(), theSession.getProcedureInstance());
         }
         return theSession;
     }
