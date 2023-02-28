@@ -25,9 +25,11 @@ import trazit.session.SessionAuditActions;
  */
 public final class AuditUtilities {
     private AuditUtilities() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
-    
     public static Object[] applyTheInsert(GenericAuditFields gAuditFlds, EnumIntTables tblObj, String[] fldN, Object[] fldV){
-        RdbmsObject insertDiagn = Rdbms.insertRecordInTable(tblObj, fldN, fldV);
+        return applyTheInsert(gAuditFlds, tblObj, fldN, fldV, null);
+    }
+    public static Object[] applyTheInsert(GenericAuditFields gAuditFlds, EnumIntTables tblObj, String[] fldN, Object[] fldV, String externalProcInstanceName){
+        RdbmsObject insertDiagn = Rdbms.insertRecord(tblObj, fldN, fldV, externalProcInstanceName);
 	if (insertDiagn.getRunSuccess()){
             SessionAuditActions auditActions = ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditActions();
             auditActions.addAuditAction(Integer.valueOf(insertDiagn.getNewRowId().toString()), 
