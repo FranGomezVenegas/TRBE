@@ -121,8 +121,6 @@ public class AdminActions {
             fldNames=LPArray.addValueToArray1D(fldNames, TblsApp.IPWhiteList.IP_VALUE4.getName());
             fldValues=LPArray.addValueToArray1D(fldValues, val4);
         }   
-        String[] extraFldNames=null;
-        Object[] extraFldValues=null;
         if (description!=null && description.length()>0){
             fldNames=LPArray.addValueToArray1D(fldNames, TblsApp.IPWhiteList.DESCRIPTION.getName());
             fldValues=LPArray.addValueToArray1D(fldValues, description);
