@@ -149,6 +149,8 @@ public class TblsEnvMonitConfig {
         SPEC_CONFIG_VERSION("spec_config_version", LPDatabase.integerNotNull(), null, null, null, null), 
         SAMPLE_CONFIG_CODE("sample_config_code", LPDatabase.stringNotNull(), null, null, null, null), 
         SAMPLE_CONFIG_CODE_VERSION("sample_config_code_version", LPDatabase.integerNotNull(), null, null, null, null), 
+        PERSONAL_SAMPLE_CONFIG_CODE("personal_sample_config_code", LPDatabase.string(), null, null, null, null), 
+        PERSONAL_SAMPLE_CONFIG_CODE_VERSION("personal_sample_config_code_version", LPDatabase.integer(), null, null, null, null), 
         MAP_IMAGE("map_image", LPDatabase.string(), null, null, null, null), 
         DESCRIPTION_EN("description_en", LPDatabase.string(), null, null, null, null), 
         DESCRIPTION_ES("description_es", LPDatabase.string(), null, null, null, null), 
@@ -335,6 +337,7 @@ public class TblsEnvMonitConfig {
      *
      */
     public enum ProgramCalendarDate implements EnumIntTableFields{
+        ID("id", LPDatabase.integerNotNull(), null, null, null, null),
         CALENDAR_ID("calendar_id", LPDatabase.integerNotNull(), null, null, null, null),
         PROGRAM_CONFIG_ID("program_config_id", LPDatabase.integerNotNull(), null, null, null, null), 
         PROGRAM_CONFIG_VERSION("program_config_version", LPDatabase.integerNotNull(), null, null, null, null), 
@@ -347,6 +350,7 @@ public class TblsEnvMonitConfig {
         SPEC("spec", LPDatabase.string(), null, null, null, null),
         VARIATION_NAME("variation_name", LPDatabase.string(), null, null, null, null),
         ANALYSIS_VARIATION("analysis_variation", LPDatabase.string(), null, null, null, null),
+        SAMPLE_ID("sample_id", LPDatabase.integer(), null, null, null, null),
         ;        
         private ProgramCalendarDate(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
@@ -534,6 +538,7 @@ public class TblsEnvMonitConfig {
         PERSON_ANA_DEFINITION("person_ana_definition", "dpl.person_ana_definition", TblsEnvMonitConfig.ProgramLocation.PERSON_ANA_DEFINITION, null, null, null),
         LOCATION_NAME("location_name", "cnfpcd.location_name", TblsEnvMonitConfig.ProgramLocation.LOCATION_NAME, null, null, null),
         ID("id", "cnfpcd.id", TblsEnvMonitConfig.ProgramCalendarDate.CALENDAR_ID, null, null, null),
+        SAMPLE_ID("sample_id", "cnfpcd.sample_id", TblsEnvMonitConfig.ProgramCalendarDate.SAMPLE_ID, null, null, null),
         PROGRAM_CONFIG_ID("program_config_id", "cnfpcd.program_config_id", TblsEnvMonitConfig.ProgramCalendarDate.PROGRAM_CONFIG_ID, null, null, null),
         DATE("date", "cnfpcd.date", TblsEnvMonitConfig.ProgramCalendarDate.DATE, null, null, null),
         ;
