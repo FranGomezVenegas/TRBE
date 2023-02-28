@@ -169,6 +169,17 @@ public class EnvMonSampleAPI extends HttpServlet {
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
                 .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build()
         ),        
+        ASSIGN_SAMPLE_CULTURE_MEDIA("ASSIGN_SAMPLE_CULTURE_MEDIA", "CultureMediaAssigned_success",  
+            new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
+                new LPAPIArguments("inventoryTrackinProcInstanceName", LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
+                new LPAPIArguments("category", LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),
+                new LPAPIArguments("reference", LPAPIArguments.ArgumentType.STRING.toString(), true, 9 ),
+                new LPAPIArguments("referenceLot", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 10),
+                new LPAPIArguments("useOpenReferenceLot", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 11)},
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsData.TablesData.SAMPLE.getTableName()).build()).build()
+        ),
+        
         ;      
         private EnvMonSampleAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
