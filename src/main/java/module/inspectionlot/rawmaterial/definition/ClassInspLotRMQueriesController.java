@@ -5,7 +5,6 @@
  */
 package module.inspectionlot.rawmaterial.definition;
 
-import module.inspectionlot.rawmaterial.apis.InspLotRMAPIactions;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -27,9 +26,9 @@ public class ClassInspLotRMQueriesController {
     public ClassInspLotRMQueriesController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
         
         Object[] argsForLogFiles=new Object[0];
-        InspLotRMAPIactions.InspLotRMQueriesAPIEndpoints endPoint = null;
+        InspLotRMEnums.InspLotRMQueriesAPIEndpoints endPoint = null;
         try{
-            endPoint = InspLotRMAPIactions.InspLotRMQueriesAPIEndpoints.valueOf(actionName.toUpperCase());
+            endPoint = InspLotRMEnums.InspLotRMQueriesAPIEndpoints.valueOf(actionName.toUpperCase());
                     HashMap<HttpServletRequest, Object[]> hmQuery = endPoint.testingSetAttributesAndBuildArgsArray(request, testingContent, iLines);
                     HttpServletRequest query= hmQuery.keySet().iterator().next();   
                     argsForLogFiles = hmQuery.get(query);
