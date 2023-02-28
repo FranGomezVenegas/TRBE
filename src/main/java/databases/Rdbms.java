@@ -222,6 +222,11 @@ public class Rdbms {
             dbProps.setProperty("password", pass);
             dbProps.setProperty("Ssl", DbConnectionParams.SSL.getParamValue());
             dbProps.setProperty("ConnectTimeout", conTimeOut.toString());                
+            
+dbProps.setProperty("idleTimeout", "60000");    
+dbProps.setProperty("maxLifetime", "180000");    
+
+            
             //dbProps.setProperty("ssl", "true");
             //dbProps.setProperty("ConnectTimeout", "conTimeOut");
             Connection getConnection = DriverManager.getConnection(dbUrlAndName, dbProps);          
@@ -390,7 +395,7 @@ public class Rdbms {
         String dbUrlAndName=prop.getString(DbConnectionParams.DBURL.getParamValue());
         dbUrlAndName=dbUrlAndName+"/"+prop.getString(DbConnectionParams.DBNAME.getParamValue());        
 
-            Integer conTimeOut = Integer.valueOf(prop.getString(DbConnectionParams.DBTIMEOUT.getParamValue()));  
+            Integer conTimeOut = 30000;// Integer.valueOf(prop.getString(DbConnectionParams.DBTIMEOUT.getParamValue()));  
             Integer initialConnections = 3;
             Integer maxConnections = 50; //Integer.valueOf(prop.getString(BUNDLE_PARAMETER_MAX_CONNECTIONS));  
             try{
@@ -402,6 +407,14 @@ public class Rdbms {
                 dbProps.setProperty("setMaxConnections", maxConnections.toString()); 
                 dbProps.setProperty("initialConnections", initialConnections.toString());
                 
+                dbProps.setProperty("minimumIdle", String.valueOf(5)); 
+                dbProps.setProperty("maximumPoolSize", String.valueOf(10)); 
+                dbProps.setProperty("idleTimeout", String.valueOf(60000)); 
+                dbProps.setProperty("maxIdle", String.valueOf(150)); 
+                dbProps.setProperty("maxLifetime", String.valueOf(180000)); 
+                dbProps.setProperty("testWhileIdle", "true"); 
+                dbProps.setProperty("validationQuery", "SELECT 1"); 
+
                 //dbProps.setProperty("ssl", "true");
                 //dbProps.setProperty("ConnectTimeout", "conTimeOut");
                 Connection getConnection = DriverManager.getConnection(dbUrlAndName, dbProps);                          
@@ -1477,12 +1490,12 @@ if (1==1){Rdbms.transactionId=1; return;}
             ResultSet rs = prep.getGeneratedKeys();
             if (rs.next()) {
                 newId = rs.getString(indexposition);
-                Integer newIdInt = Integer.parseInt(newId);
+                //Integer newIdInt = Integer.parseInt(newId);
                 dbProcHashcode.procHashCodeHandler(schemaName, tableName);
-                if (newIdInt==0)
+                if ("0".equalsIgnoreCase(newId))
                     return new RdbmsObject(true, consultaconinterrogaciones+" "+Arrays.toString(valoresinterrogaciones), RdbmsSuccess.RDBMS_RECORD_CREATED, null, -999);
                 else
-                    return new RdbmsObject(true, consultaconinterrogaciones+" "+Arrays.toString(valoresinterrogaciones), RdbmsSuccess.RDBMS_RECORD_CREATED, null, newIdInt);
+                    return new RdbmsObject(true, consultaconinterrogaciones+" "+Arrays.toString(valoresinterrogaciones), RdbmsSuccess.RDBMS_RECORD_CREATED, null, newId);
             }
             return new RdbmsObject(true, consultaconinterrogaciones+" "+Arrays.toString(valoresinterrogaciones), RdbmsSuccess.RDBMS_RECORD_CREATED, null, pkValue);
         } catch (NumberFormatException nfe) {
@@ -2339,40 +2352,16 @@ private static final int CLIENT_CODE_STACK_INDEX;
     }
 */     
     
-    public static Object[] insertRecordInTablexxx(EnumIntTables tblObj, EnumIntTableFields[] fieldsToRetrieve, Object[] fieldValues){
-        String schemaName=addSuffixIfItIsForTesting(tblObj.getRepositoryName(), tblObj.getTableName());
-        if (fieldsToRetrieve.length==0)
-           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tblObj.getTableName(), schemaName});                                 
-        if (fieldsToRetrieve.length!=fieldValues.length)
-           return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "DataSample_FieldArraysDifferentSize", new Object[]{Arrays.toString(getAllFieldNames(fieldsToRetrieve)), Arrays.toString(fieldValues)});        
-        SqlStatement sql = new SqlStatement(); 
-        HashMap<String, Object[]> hmQuery = sql.buildSqlStatement("INSERT", schemaName, tblObj.getTableName(),
-                null, null, null, getAllFieldNames(fieldsToRetrieve), fieldValues,
-                null, null);              
-        String query= hmQuery.keySet().iterator().next();   
-        fieldValues = DbEncryptionObject.encryptTableFieldArray(tblObj, fieldsToRetrieve, fieldValues);
-        String[] insertRecordDiagnosis = Rdbms.prepUpQueryK(query, fieldValues, 1);
-        fieldValues = DbEncryptionObject.decryptTableFieldArray(tblObj, fieldsToRetrieve, fieldValues);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(insertRecordDiagnosis[0])){
-            if (schemaName.toUpperCase().contains("AUDIT")){
-                TestingAuditIds tstAuditId = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingAuditObj();
-                if (tstAuditId!=null)
-                    tstAuditId.AddObject(schemaName, tblObj.getTableName(), Integer.valueOf(insertRecordDiagnosis[1]), getAllFieldNames(fieldsToRetrieve), fieldValues);
-            }
-            Object[] diagnosis =  ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.RDBMS_RECORD_CREATED, new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(fieldValues), schemaName});
-            diagnosis = LPArray.addValueToArray1D(diagnosis, insertRecordDiagnosis[1]);
-            dbProcHashcode.procHashCodeHandler(schemaName, tblObj.getTableName());
-            return diagnosis;
-        }else{
-            Object[] diagnosis =  ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_CREATED, new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(fieldValues), schemaName});
-            diagnosis = LPArray.addValueToArray1D(diagnosis, insertRecordDiagnosis[1]);
-            return diagnosis;                         
-        }
-    }
     public static RdbmsObject insertRecordInTable(EnumIntTables tblObj, String[] fieldNames, Object[] fieldValues){
-        return insertRecord(tblObj, fieldNames, fieldValues, null);
+        return insertRecord(tblObj, fieldNames, fieldValues, null, false);
+    }
+    public static RdbmsObject insertRecordInTable(EnumIntTables tblObj, String[] fieldNames, Object[] fieldValues, Boolean encryptAllFlds){
+        return insertRecord(tblObj, fieldNames, fieldValues, null, encryptAllFlds);
     }
     public static RdbmsObject insertRecord(EnumIntTables tblObj, String[] fieldNames, Object[] fieldValues, String alternativeProcInstanceName){
+        return insertRecord(tblObj, fieldNames, fieldValues, alternativeProcInstanceName, false);
+    }
+    public static RdbmsObject insertRecord(EnumIntTables tblObj, String[] fieldNames, Object[] fieldValues, String alternativeProcInstanceName, Boolean encryptAllFlds){
         String schemaName=addSuffixIfItIsForTesting(tblObj.getRepositoryName(), tblObj.getTableName());
         if (fieldNames.length==0)
            return new RdbmsObject(false, "", RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tblObj.getTableName(), schemaName});
@@ -2390,9 +2379,9 @@ private static final int CLIENT_CODE_STACK_INDEX;
                 null, null, alternativeProcInstanceName);              
         
         String query= hmQuery.keySet().iterator().next();   
-        fieldValues = DbEncryptionObject.encryptTableFieldArray(tblObj, fldNamesObj, fieldValues);
+        fieldValues = DbEncryptionObject.encryptTableFieldArray(tblObj, fldNamesObj, fieldValues, encryptAllFlds);
         RdbmsObject insertRecordDiagnosis = Rdbms.prepUpQueryWithKey(schemaName, tblObj.getTableName(), query, fieldValues, 1);
-        fieldValues = DbEncryptionObject.decryptTableFieldArray(tblObj, fldNamesObj, fieldValues);
+        fieldValues = DbEncryptionObject.decryptTableFieldArray(tblObj, fldNamesObj, fieldValues, encryptAllFlds);
         if (insertRecordDiagnosis.getRunSuccess()){
             if (schemaName.toUpperCase().contains("AUDIT")){
                 TestingAuditIds tstAuditId = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingAuditObj();
@@ -2409,12 +2398,12 @@ private static final int CLIENT_CODE_STACK_INDEX;
         DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
         
         String schemaName=addSuffixIfItIsForTesting(tblObj.getRepositoryName(), tblObj.getTableName());
-        updateFieldValues = DbEncryptionObject.decryptTableFieldArray(tblObj, updateFieldNames, (Object[]) updateFieldValues);        
+        updateFieldValues = DbEncryptionObject.decryptTableFieldArray(tblObj, updateFieldNames, (Object[]) updateFieldValues, false);        
         if (whereObj.getAllWhereEntries().isEmpty()){
            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tblObj.getTableName(), schemaName});                         
         }
         SqlStatementEnums sql = new SqlStatementEnums();       
-        updateFieldValues = DbEncryptionObject.encryptTableFieldArray(tblObj, updateFieldNames, (Object[]) updateFieldValues);         
+        updateFieldValues = DbEncryptionObject.encryptTableFieldArray(tblObj, updateFieldNames, (Object[]) updateFieldValues, false);         
         HashMap<String, Object[]> hmQuery = sql.buildSqlStatementTable("UPDATE", tblObj,
                 whereObj, null, updateFieldNames, updateFieldValues,
                 null, null, null, alternativeProcInstanceName);         
@@ -2434,35 +2423,36 @@ private static final int CLIENT_CODE_STACK_INDEX;
     public static RdbmsObject removeRecordInTable(EnumIntTables tblObj, SqlWhere whereObj, String alternativeProcInstanceName){
         DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
         String schemaName=addSuffixIfItIsForTesting(tblObj.getRepositoryName(), tblObj.getTableName());
-        SqlStatementEnums sql = new SqlStatementEnums(); 
+        SqlStatementEnums sql = new SqlStatementEnums();
         HashMap<String, Object[]> hmQuery = sql.buildSqlStatementTable("DELETE", tblObj,
-                whereObj, null, null, null, null, null, null, alternativeProcInstanceName);              
-        String query= hmQuery.keySet().iterator().next();   
-        Object[] whereFieldValues = DbEncryptionObject.encryptTableFieldArray(tblObj, 
-                whereObj.getAllWhereEntriesFldNames(), whereObj.getAllWhereEntriesFldValues());
-        Integer deleteRecordDiagnosis = Rdbms.prepUpQuery(query, whereFieldValues); 
-        if (deleteRecordDiagnosis>0){    
+                whereObj, null, null, null, null, null, null, alternativeProcInstanceName);
+        String query= hmQuery.keySet().iterator().next();
+        Object[] whereFieldValues = hmQuery.get(query);
+        whereFieldValues = DbEncryptionObject.encryptTableFieldArray(tblObj, 
+                whereObj.getAllWhereEntriesFldNames(), whereFieldValues, false);
+        Integer deleteRecordDiagnosis = Rdbms.prepUpQuery(query, whereFieldValues);
+        if (deleteRecordDiagnosis>0){
             dbProcHashcode.procHashCodeHandler(schemaName, tblObj.getTableName());            
             return new RdbmsObject(true, query+" "+Arrays.toString(whereFieldValues), RdbmsSuccess.RDBMS_RECORD_REMOVED, null, -999);
         }else if(deleteRecordDiagnosis==-999){
             dbLogSummary.setFailure(query, whereFieldValues);
             return new RdbmsObject(false, query+" "+Arrays.toString(whereFieldValues), RdbmsErrorTrapping.DB_ERROR, new Object[]{"The database cannot perform this sql statement: Schema: "+schemaName+". Table: "+tblObj.getTableName()+". Statement: "+query+", By the values "+ Arrays.toString(whereFieldValues), query}); 
-        }else{   
+        }else{
             dbLogSummary.setFailure(query, whereFieldValues);
             return new RdbmsObject(false, query+" "+Arrays.toString(whereFieldValues), RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{tblObj.getTableName(), Arrays.toString(whereFieldValues), schemaName});
-        }        
+        }
     }
     public static RdbmsObject updateTableRecordFieldsByFilter(EnumIntTables tblObj, EnumIntTableFields[] updateFieldNames, Object[] updateFieldValues, SqlWhere whereObj, String alternativeProcInstanceName) {
         DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
 
         String schemaName=addSuffixIfItIsForTesting(tblObj.getRepositoryName(), tblObj.getTableName());
-        updateFieldValues = DbEncryptionObject.decryptTableFieldArray(tblObj, updateFieldNames, (Object[]) updateFieldValues);        
+        updateFieldValues = DbEncryptionObject.decryptTableFieldArray(tblObj, updateFieldNames, (Object[]) updateFieldValues, false);        
         if (whereObj.getAllWhereEntries().isEmpty()){
            return new RdbmsObject(false, "no sql yet", RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, 
                    new Object[]{tblObj.getTableName(), schemaName});
         }
         SqlStatementEnums sql = new SqlStatementEnums();       
-        updateFieldValues = DbEncryptionObject.encryptTableFieldArray(tblObj, updateFieldNames, (Object[]) updateFieldValues); 
+        updateFieldValues = DbEncryptionObject.encryptTableFieldArray(tblObj, updateFieldNames, (Object[]) updateFieldValues, false); 
         HashMap<String, Object[]> hmQuery = sql.buildSqlStatementTable("UPDATE", tblObj,
                 whereObj, null, updateFieldNames, updateFieldValues,
                 null, null, null, alternativeProcInstanceName);         
