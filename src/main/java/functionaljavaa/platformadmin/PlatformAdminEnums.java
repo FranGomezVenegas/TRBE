@@ -87,6 +87,16 @@ public class PlatformAdminEnums {
             new LPAPIArguments("userName", LPAPIArguments.ArgumentType.STRING.toString(), false, 10 ),}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
                 .add("table", TblsApp.TablesApp.USERS.getTableName()).build()).build()),
+        UPDATE_USER_MAIL("UPDATE_USER_MAIL", "userMailUpdated_success",new LPAPIArguments[]{
+            new LPAPIArguments("newMail", LPAPIArguments.ArgumentType.STRING.toString(), true, 9 ),
+            new LPAPIArguments("userName", LPAPIArguments.ArgumentType.STRING.toString(), false, 10 ),}, 
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
+                .add("table", TblsApp.TablesApp.USERS.getTableName()).build()).build()),
+        UPDATE_USER_ALIAS("UPDATE_USER_ALIAS", "userAliasUpdated_success",new LPAPIArguments[]{
+            new LPAPIArguments("newAlias", LPAPIArguments.ArgumentType.STRING.toString(), true, 9 ),
+            new LPAPIArguments("userName", LPAPIArguments.ArgumentType.STRING.toString(), false, 10 ),}, 
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.APP.getName())
+                .add("table", TblsApp.TablesApp.USERS.getTableName()).build()).build()),
         ;
         private PlatformAdminAPIActionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
