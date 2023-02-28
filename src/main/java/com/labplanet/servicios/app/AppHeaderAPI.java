@@ -120,6 +120,8 @@ public class AppHeaderAPI extends HttpServlet {
             return personInfoJsonObj;
         }
         personInfoJsonObj=LPJson.convertArrayRowToJSONObject(personFieldsNameArr, personInfoArr[0]);
+        personInfoJsonObj.put("mail", token.getUserMailAddress());
+        
         return personInfoJsonObj;
     }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
