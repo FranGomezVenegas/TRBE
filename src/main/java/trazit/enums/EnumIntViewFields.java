@@ -44,10 +44,12 @@ public interface EnumIntViewFields {
         flds=LPArray.getUniquesArray(flds);
         EnumIntViewFields[] custFlds=new EnumIntViewFields[flds.length];
         EnumIntViewFields[] ViewFields = tblObj.getViewFields();
-        for (EnumIntViewFields curFld: ViewFields){
-            Integer valuePosicInArray = LPArray.valuePosicInArray(flds, curFld.getName());
+        int iFld=0;
+        for (String curFld: flds){
+            Integer valuePosicInArray = getFldPosicInArray(ViewFields, curFld);
             if (valuePosicInArray>-1)
-                custFlds[valuePosicInArray]=curFld;
+                custFlds[iFld]=ViewFields[valuePosicInArray];
+            iFld++;
         }
         return custFlds;
     }
