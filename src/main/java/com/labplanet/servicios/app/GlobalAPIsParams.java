@@ -154,7 +154,9 @@ public class GlobalAPIsParams extends HttpServlet {
      *
      */
     public static final String REQUEST_PARAM_MATERIAL_NAME = "materialName";    
-    
+    public static final String REQUEST_PARAM_BULK_ID = "bulkId";
+        public static final String REQUEST_PARAM_LOT_BULK_DECISION = "lotBulkDecision";    
+
     public static final String REQUEST_PARAM_MY_TOKEN = "myToken";
 
     /**
@@ -309,6 +311,7 @@ public class GlobalAPIsParams extends HttpServlet {
     public static final String REQUEST_PARAM_QUANTITY = "quantity";  
     public static final String REQUEST_PARAM_QUANTITY_UOM = "quantityUom";  
     public static final String REQUEST_PARAM_NUM_CONTAINERS = "numContainers";  
+    public static final String REQUEST_PARAM_NUM_BULKS = "numBulks";  
     public static final String REQUEST_PARAM_NUM_DAYS = "numDays";  
 
     public static final String INCUBATION_REPORT_JSON_TAG_NAME_FIELD_TO_RETRIEVE = "incubatorFieldToRetrieve";
