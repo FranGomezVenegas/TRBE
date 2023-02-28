@@ -934,7 +934,7 @@ String holidaysCalendar="España Comunidad X 2019";
 //Structured Batches. End
             
             out.println("Before creating the token");
-            String myToken2 = token.createToken(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW, "3", "Admin", "", "", "", null);
+            String myToken2 = token.createToken(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW, "3", "Admin", "", "", "", null, "");
             out.println("Token created: "+myToken2);
             
             out.println("Reading web text file");
