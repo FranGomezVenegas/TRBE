@@ -7,6 +7,7 @@ package databases.features;
 
 import databases.TblsAppConfig;
 import lbplanet.utilities.LPArray;
+import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.session.ProcedureRequestSession;
 
@@ -66,5 +67,15 @@ public class DbFieldValueMask {
         joinTwo1DArraysInOneOf1DString = LPArray.joinTwo1DArraysInOneOf1DString(joinTwo1DArraysInOneOf1DString, fldColArr, "");
         return LPArray.valueInArray(joinTwo1DArraysInOneOf1DString, schemaN+tblN+fldN);
     }
-    
+        
+    public static String datetimeFormat(EnumIntTableFields curFld){
+        StringBuilder str=new StringBuilder(0);
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(null, null, false, true);
+        String dateFormatAtPlatformLvl = procReqInstance.getToken().getDateFormatAtPlatformLvl();
+        if (dateFormatAtPlatformLvl!=null&&dateFormatAtPlatformLvl.toUpperCase().contains("YY")){
+            return dateFormatAtPlatformLvl;
+        }else
+            return "DD/MM/YY HH:MI";
+        
+    }
 }
