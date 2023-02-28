@@ -77,8 +77,8 @@ public class LotAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.LOT_NAME.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, lotName);
         }    
-        fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.FIELDS_UPDATED.getName());
-        fieldValues = LPArray.addValueToArray1D(fieldValues, Arrays.toString(auditlog));
+        //fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.FIELDS_UPDATED.getName());
+        //fieldValues = LPArray.addValueToArray1D(fieldValues, Arrays.toString(auditlog));
         if (parentAuditId!=null){
             fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);

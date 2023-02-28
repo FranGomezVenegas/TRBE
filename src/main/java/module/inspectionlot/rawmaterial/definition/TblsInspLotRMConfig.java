@@ -70,7 +70,11 @@ public class TblsInspLotRMConfig {
         NAME("name",  LPDatabase.stringNotNull(100), null, null, null, null),
         SPEC_CODE("spec_code", LPDatabase.string(), null, null, null, null),
         SPEC_CODE_VERSION("spec_code_version", LPDatabase.integer(), null, null, null, null),
+        ANALYSIS_VARIATION_NAME("analysis_variation_name", LPDatabase.string(), null, null, null, null),
         INVENTORY_MANAGEMENT("inventory_management", LPDatabase.booleanFld(), null, null, null, null),
+        BULK_SAMPLING_DEFAULT_ALGORITHM("bulk_sampling_default_algorithm", LPDatabase.stringNotNull(), null, null, null, null),
+        PERFORM_BULK_CONTROL("perform_bulk_control", LPDatabase.booleanFld(), null, null, null, null),
+        
         // ...
         
         ;
