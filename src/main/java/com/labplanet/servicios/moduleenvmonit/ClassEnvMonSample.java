@@ -15,13 +15,13 @@ import static functionaljavaa.moduleenvironmentalmonitoring.ConfigMicroorganisms
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSample;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSampleAnalysis;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSampleAnalysisResult;
-import functionaljavaa.parameter.Parameter;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.samplestructure.DataSample;
 import functionaljavaa.samplestructure.DataSampleAnalysisResult;
 import functionaljavaa.samplestructure.DataSampleStages;
 import functionaljavaa.samplestructure.DataSampleStructureEnums;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -35,6 +35,7 @@ import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 import trazit.session.ResponseMessages;
 /**
  *
@@ -111,7 +112,9 @@ public class ClassEnvMonSample {
                     String[] fieldNames=null;
                     Object[] fieldValues=null;
                     String smpTmp=LPNulls.replaceNull(argValues[0]).toString();
-                    if (smpTmp==null || smpTmp.length()==0)smpTmp=Parameter.getBusinessRuleProcedureFile(procInstanceName, "procedure", "SampleTemplate");  
+                    //if (smpTmp==null || smpTmp.length()==0)
+                    //    smpTmp=Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramSampleBusinessRules.SAMPLE_TEMPLATE.getAreaName(), DataProgramSampleBusinessRules.SAMPLE_TEMPLATE.getTagName());  
+                        //smpTmp=Parameter.getBusinessRuleProcedureFile(procInstanceName, "procedure", "SampleTemplate");  
                     Object smpTmpV=LPNulls.replaceNull(argValues[1]);
                     if (smpTmpV==null || smpTmpV.toString().length()==0)smpTmpV=1;
                     if (LPNulls.replaceNull(argValues[2]).toString().length()>0){
@@ -393,6 +396,28 @@ public class ClassEnvMonSample {
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), sampleId);
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), batchName);
                     break;
+                case ASSIGN_SAMPLE_CULTURE_MEDIA: 
+                    sampleId=(Integer) argValues[0];
+                    String externalProcInstanceName=LPNulls.replaceNull(argValues[1]).toString();
+                    String category=LPNulls.replaceNull(argValues[2]).toString();
+                    String reference=LPNulls.replaceNull(argValues[3]).toString();
+                    String referenceLot=LPNulls.replaceNull(argValues[4]).toString();
+                    String useOpenReferenceLot=LPNulls.replaceNull(argValues[5]).toString();
+                    
+                    numItems=1;
+                    InternalMessage actionDiagnosesObj = DataProgramSample.assignCultureMedia(sampleId, referenceLot, reference, category, 
+                        new BigDecimal(numItems.toString()), null, externalProcInstanceName, Boolean.valueOf(useOpenReferenceLot));
+                    dynamicDataObjects=actionDiagnosesObj.getMessageCodeVariables();
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), 
+                            TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), sampleId);
+                    if (actionDiagnosesObj!=null &&  LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnosesObj.getDiagnostic()))
+                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), dynamicDataObjects);
+                    else
+                        actionDiagnoses=ApiMessageReturn.trapMessage(actionDiagnosesObj.getDiagnostic(), actionDiagnosesObj.getMessageCodeObj().getErrorCode(), actionDiagnosesObj.getMessageCodeVariables());
+
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), sampleId);                                                
+                    break;
+                    
                 default:
                     this.endpointExists=false;
                     Rdbms.closeRdbms(); 
