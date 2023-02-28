@@ -54,7 +54,7 @@ if (1==1) return fieldValue;
                     String text = fieldValue[iFields].toString();
                     // Create key and cipher
                     Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
-                    Cipher cipher = Cipher.getInstance(CYPHER_TYPE);
+                    Cipher cipher = Cipher.getInstance("AES");
                     // encrypt the text
                     cipher.init(Cipher.ENCRYPT_MODE, aesKey);
                     byte[] encrypted = cipher.doFinal(text.getBytes());
@@ -99,7 +99,7 @@ if (1==1) return fieldValue;
             String text = val.toString();
             // Create key and cipher
             Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
-            Cipher cipher = Cipher.getInstance(CYPHER_TYPE);
+            Cipher cipher = Cipher.getInstance("AES");
             // encrypt the text
             cipher.init(Cipher.ENCRYPT_MODE, aesKey);
             byte[] encrypted = cipher.doFinal(text.getBytes());
@@ -122,8 +122,8 @@ if (1==1) return fieldValue;
         String key = ENCRYPTION_KEY; // 128 bit key
         try{                    
             // Create key and cipher for decryption
-            Key aesKey = new SecretKeySpec(key.getBytes(), CYPHER_TYPE);
-            Cipher cipher = Cipher.getInstance(CYPHER_TYPE);
+            Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
+            Cipher cipher = Cipher.getInstance("AES");
             byte[] bb = new byte[val.length()];
             for (int i=0; i<val.length(); i++) {
                 bb[i] = (byte) val.charAt(i);
@@ -163,8 +163,8 @@ if (1==1) return fieldValue;
                         if (enc!=null){
                             try{                    
                                 // Create key and cipher for decryption
-                                Key aesKey = new SecretKeySpec(key.getBytes(), CYPHER_TYPE);
-                                Cipher cipher = Cipher.getInstance(CYPHER_TYPE);
+                                Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
+                                Cipher cipher = Cipher.getInstance("AES");
                                 byte[] bb = new byte[enc.length()];
                                 for (int i=0; i<enc.length(); i++) {
                                     bb[i] = (byte) enc.charAt(i);
@@ -205,7 +205,7 @@ if (1==1) return fieldValue;
                     String enc = fieldValue[iFields].toString();
                     // Create key and cipher
                     Key aesKey = new SecretKeySpec(key.getBytes(), "AES");
-                    Cipher cipher = Cipher.getInstance(CYPHER_TYPE);
+                    Cipher cipher = Cipher.getInstance("AES");
                     // for decryption
                     byte[] bb = new byte[enc.length()];
                     for (int i=0; i<enc.length(); i++) {

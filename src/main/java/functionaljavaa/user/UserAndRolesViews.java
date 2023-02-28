@@ -11,9 +11,11 @@ import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.SqlWhere;
 import databases.TblsApp;
+import databases.TblsApp.TablesApp;
 import databases.TblsApp.Users;
 import databases.TblsAppConfig;
 import databases.TblsAppConfig.TablesAppConfig;
+import databases.features.DbEncryption;
 import databases.features.Token;
 import functionaljavaa.parameter.Parameter;
 import java.util.ResourceBundle;
@@ -21,6 +23,7 @@ import lbplanet.utilities.LPNulls;
 import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
+import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
@@ -92,21 +95,42 @@ public class UserAndRolesViews {
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
         String userIsCaseSensitive = prop.getString(UserAndRolesErrorTrapping.BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT.getErrorCode());
         if (!Boolean.valueOf(userIsCaseSensitive)) user=user.toLowerCase();
-        return Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), 
-                new String[]{Users.USER_NAME.getName(), Users.PASSWORD.getName()}, new Object[]{user, pass});
+        //Object[] encryptValue = DbEncryption.encryptValue(pass);
+        //pass=encryptValue[encryptValue.length-1].toString();
+        
+        SqlWhere sW=new SqlWhere();
+        sW.addConstraint(Users.USER_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{user}, null);        
+        EnumIntTableFields[] fieldsToRetrieve = EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.USERS, 
+            Users.PASSWORD);
+        Object[][] tableData = QueryUtilitiesEnums.getTableData(TblsApp.TablesApp.USERS,
+            fieldsToRetrieve, sW, null);         
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(tableData[0][0].toString()))
+            return tableData[0];
+        Object[] decryptValue = DbEncryption.decryptValue(tableData[0][0].toString());
+        String dbPass = decryptValue[decryptValue.length-1].toString();
+        if (pass.equalsIgnoreCase(dbPass))
+            return new Object[]{LPPlatform.LAB_TRUE};
+        else
+            return new Object[]{LPPlatform.LAB_FALSE};
+//        return Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), 
+//                new String[]{Users.USER_NAME.getName(), Users.PASSWORD.getName()}, new Object[]{user, pass});
     }
 
     public static final Object[] setUserNewPassword(String user, String newPass) {
-        return setUserProperty(user, Users.PASSWORD.getName(), newPass);
+        return setUserProperty(user, Users.PASSWORD.getName(), newPass, true);
     }
     public static final Object[] setUserNewEsign(String user, String newEsign) {
-        return setUserProperty(user, Users.ESIGN.getName(), newEsign);        
+        return setUserProperty(user, Users.ESIGN.getName(), newEsign, true);        
     }
-    public static final Object[] setUserProperty(String user, String fieldName, String newValue) {
+    public static final Object[] setUserProperty(String user, String fieldName, String newValue, Boolean isEnctrypted) {
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
         String userIsCaseSensitive = prop.getString(UserAndRolesErrorTrapping.BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT.getErrorCode());
         if (!Boolean.valueOf(userIsCaseSensitive)) user=user.toLowerCase();
 	SqlWhere sqlWhere = new SqlWhere();
+        if (isEnctrypted){
+            Object[] encryptValue=DbEncryption.encryptValue(newValue);        
+            newValue=encryptValue[encryptValue.length-1].toString();
+        }
 	sqlWhere.addConstraint(Users.USER_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{user}, "");
 	return Rdbms.updateRecordFieldsByFilter(TblsApp.TablesApp.USERS,
             EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.USERS, new String[]{fieldName}), new Object[]{newValue}, sqlWhere, null);
@@ -121,6 +145,10 @@ public class UserAndRolesViews {
     }
     
     public static final Object[] createAppUser(String uName, String[] fldNames, Object[] fldValues){
+        String pasEsingn="trazit4ever";
+        Object[] encryptValue=DbEncryption.encryptValue(pasEsingn);        
+        String pasEncrypted = encryptValue[encryptValue.length-1].toString();
+        
         Object[] personByUserObj = getPersonByUser(uName);        
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUserObj[0].toString())) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "UserAlreadyExists", new Object[]{uName});        
         Object[] personIdDiagn = getNextAppPersonId();
@@ -130,7 +158,7 @@ public class UserAndRolesViews {
                 new String[]{TblsAppConfig.Person.PERSON_ID.getName(), TblsAppConfig.Person.FIRST_NAME.getName()}, new Object[]{personId, uName});
         if (!personCreatedDiagn.getRunSuccess()) return personCreatedDiagn.getApiMessage();
         RdbmsObject userCreatedDiagn = Rdbms.insertRecordInTable(TblsApp.TablesApp.USERS, 
-                new String[]{Users.USER_NAME.getName(), Users.PASSWORD.getName(), Users.PERSON_NAME.getName()}, new Object[]{uName, "trazit123", personId});        
+                new String[]{Users.USER_NAME.getName(), Users.PASSWORD.getName(), Users.PERSON_NAME.getName()}, new Object[]{uName, pasEncrypted, personId});        
         return userCreatedDiagn.getApiMessage();
         //return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "not implemented yet", null);        
     }
@@ -138,7 +166,7 @@ public class UserAndRolesViews {
         return new Object[]{LPPlatform.LAB_TRUE, "14"};
         //return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "not implemented yet", null);
     }
-    
+ /*   
     public static InternalMessage updateUserShift(String newShift, String userName){
         String personId="";
         if (LPNulls.replaceNull(userName).length()==0){
@@ -157,5 +185,48 @@ public class UserAndRolesViews {
         return new InternalMessage(updateRecordFieldsByFilter[0].toString(), updateRecordFieldsByFilter[updateRecordFieldsByFilter.length-1].toString(), new Object[]{}, null);
     }   
     
+    public static InternalMessage updateUserMail(String newMail, String userName){
+        String personId="";
+        if (LPNulls.replaceNull(userName).length()==0){
+            ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+            personId=instanceForActions.getToken().getPersonName();
+        }else{
+            Object[] personByUser = getPersonByUser(userName);            
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUser[0].toString()))
+                return new InternalMessage(LPPlatform.LAB_FALSE, personByUser[personByUser.length-1].toString(), new Object[]{}, null);
+            personId=personByUser[0].toString();
+        }
+	SqlWhere sqlWhere = new SqlWhere();
+	sqlWhere.addConstraint(TblsAppConfig.Person.PERSON_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{personId}, "");
+	Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(TablesAppConfig.PERSON,
+            EnumIntTableFields.getTableFieldsFromString(TablesAppConfig.PERSON, new String[]{TblsAppConfig.Person.SHIFT.getName()}), new Object[]{newMail}, sqlWhere, null);        
+        return new InternalMessage(updateRecordFieldsByFilter[0].toString(), updateRecordFieldsByFilter[updateRecordFieldsByFilter.length-1].toString(), new Object[]{}, null);
+    }   
+*/
+    public static InternalMessage updateUsersFields(String userName, EnumIntTableFields[] updateFldsN, Object[] updateFldV){
+	SqlWhere sqlWhere = new SqlWhere();
+	sqlWhere.addConstraint(TblsApp.Users.USER_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{userName}, "");
+	Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(TablesApp.USERS,
+            updateFldsN, updateFldV, sqlWhere, null);        
+        return new InternalMessage(updateRecordFieldsByFilter[0].toString(), updateRecordFieldsByFilter[updateRecordFieldsByFilter.length-1].toString(), new Object[]{}, null);
+    }   
+
+    public static InternalMessage updateUserPersonFields(String userName, EnumIntTableFields[] updateFldsN, Object[] updateFldV){
+        String personId="";
+        if (LPNulls.replaceNull(userName).length()==0){
+            ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+            personId=instanceForActions.getToken().getPersonName();
+        }else{
+            Object[] personByUser = getPersonByUser(userName);            
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUser[0].toString()))
+                return new InternalMessage(LPPlatform.LAB_FALSE, personByUser[personByUser.length-1].toString(), new Object[]{}, null);
+            personId=personByUser[0].toString();
+        }
+	SqlWhere sqlWhere = new SqlWhere();
+	sqlWhere.addConstraint(TblsAppConfig.Person.PERSON_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{personId}, "");
+	Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(TablesAppConfig.PERSON,
+            updateFldsN, updateFldV, sqlWhere, null);        
+        return new InternalMessage(updateRecordFieldsByFilter[0].toString(), updateRecordFieldsByFilter[updateRecordFieldsByFilter.length-1].toString(), new Object[]{}, null);
+    }   
     
 }
