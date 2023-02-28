@@ -1,8 +1,6 @@
 package trazit.enums;
 
 import databases.SqlStatementEnums.JOIN_TYPES;
-import databases.TblsCnfg;
-import databases.TblsData;
 
 /**
  *
