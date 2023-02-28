@@ -19,7 +19,7 @@ import trazit.session.ProcedureRequestSession;
  *
  * @author User
  */
-public class InventoryPlanEntry {
+public final class InventoryPlanEntry {
     /**
      * @return the hasErrors
      */

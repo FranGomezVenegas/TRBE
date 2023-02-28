@@ -81,6 +81,8 @@ public class TblsInvTrackingDataAudit {
         REASON("reason", LPDatabase.string(), null, null, null, null), 
         ACTION_PRETTY_EN("action_pretty_en", LPDatabase.string(), null, null, null, null),
         ACTION_PRETTY_ES("action_pretty_es", LPDatabase.string(), null, null, null, null),
+        EXTERNAL_PROCESS("external_process", LPDatabase.string(), null, null, null, null),
+        
         ;
         private Lot(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){

@@ -48,52 +48,13 @@ public class ClassInvTracking {
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         InternalMessage actionDiagnoses = null;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
-/*        
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
-        //procReqSession.killIt();
-            String language=procReqSession.getLanguage();
-            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
-                    argValues[1].toString(), new Object[]{argValues[2].toString()});
-            this.messageDynamicData=new Object[]{argValues[2].toString()};
-            return;                        
-        }         
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
-            procReqSession.killIt();
-            this.isSuccess=false;           
-            this.diagnostic=(Object[]) argValues[1];
-            this.messageDynamicData=new Object[]{argValues[2].toString()};
-            return;                        
-        }
-        
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
-        //procReqSession.killIt();
-            String language = ProcedureRequestSession.getInstanceForActions(null, null, null).getLanguage();
-            this.diagnostic=(Object[]) argValues[1];
-            this.messageDynamicData=new Object[]{argValues[2].toString()};
-            return; 
-        }*/
-/*        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
-            //this.diagnostic=argValues;
-            this.diagnostic=ApiMessageReturn.trapMessage(argValues[0].toString(), argValues[1].toString(), new Object[]{argValues[2].toString()});
-            this.relatedObj=rObj;
-            rObj.killInstance();
-            return;
-        }
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
-            //procReqSession.killIt();
-            String language=procReqSession.getLanguage();
-            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
-                    argValues[1].toString(), new Object[]{argValues[2].toString()});
-            this.messageDynamicData=new Object[]{argValues[2].toString()};
-            return;                        
-        }*/        
 
         DataInventory invLot=null;
         String lotName=argValues[0].toString();
         String category=argValues[1].toString();
         String reference=argValues[2].toString();
         if (!"NEW_INVENTORY_LOT".equalsIgnoreCase(endPoint.getName())){
-            invLot=new DataInventory(lotName, reference, category);
+            invLot=new DataInventory(lotName, reference, category, null);
             if (invLot.getHasError()){
                 this.actionDiagnosesObj=invLot.getErrorDetail();
                 this.diagnostic=ApiMessageReturn.trapMessage(invLot.getErrorDetail().getDiagnostic(),invLot.getErrorDetail().getMessageCodeObj(), invLot.getErrorDetail().getMessageCodeVariables());
@@ -168,7 +129,7 @@ public class ClassInvTracking {
                             fieldNames=LPArray.addValueToArray1D(fieldNames, TblsInvTrackingData.Lot.VOLUME_UOM.getName());
                             fieldValues=LPArray.addValueToArray1D(fieldValues, volumeUom);
                         }                             
-                    actionDiagnoses=DataInventory.createNewInventoryLot(lotName, reference, category, volume, volumeUom, fieldNames, fieldValues, numEntries);
+                    actionDiagnoses=DataInventory.createNewInventoryLot(lotName, reference, category, volume, volumeUom, fieldNames, fieldValues, numEntries, null);
                     break;
                 case TURN_LOT_AVAILABLE:                    
                     fldNamesStr=argValues[3].toString();

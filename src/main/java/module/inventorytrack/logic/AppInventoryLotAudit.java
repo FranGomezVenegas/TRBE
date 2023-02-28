@@ -11,6 +11,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import module.inventorytrack.definition.TblsInvTrackingDataAudit;
 import trazit.enums.EnumIntAuditEvents;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -21,6 +22,12 @@ public final class AppInventoryLotAudit {
     
     public static Object[] InventoryLotAuditAdd(EnumIntAuditEvents action, String lotId, String reference, String category, String tableName, String tableId,
                         String[] fldNames, Object[] fldValues) {
+        return InventoryLotAuditAdd(action, lotId, reference, category, tableName, tableId,
+            fldNames, fldValues, null);
+    }
+        
+    public static Object[] InventoryLotAuditAdd(EnumIntAuditEvents action, String lotId, String reference, String category, String tableName, String tableId,
+                        String[] fldNames, Object[] fldValues, String externalProcInstanceName) {
         GenericAuditFields gAuditFlds=new GenericAuditFields(action, TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT, fldNames, fldValues);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();
         String[] fieldNames=gAuditFlds.getFieldNames();
@@ -37,8 +44,14 @@ public final class AppInventoryLotAudit {
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableName);
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInvTrackingDataAudit.Lot.TABLE_ID.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableId);
-        Object[] insertRecordInfo=AuditUtilities.applyTheInsert(gAuditFlds, TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT, fieldNames, fieldValues);
-        return insertRecordInfo;
+        if (externalProcInstanceName!=null){
+            ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);  
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInvTrackingDataAudit.Lot.EXTERNAL_PROCESS.getName());
+            fieldValues = LPArray.addValueToArray1D(fieldValues, procReqSession.getProcedureInstance());            
+            return AuditUtilities.applyTheInsert(gAuditFlds, TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT, fieldNames, fieldValues, externalProcInstanceName);            
+        }else        
+            return AuditUtilities.applyTheInsert(gAuditFlds, TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT, fieldNames, fieldValues);
+        
     }    
     
  }

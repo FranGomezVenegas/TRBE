@@ -18,7 +18,6 @@ import javax.json.JsonArray;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
-import module.inventorytrack.definition.TblsInvTrackingConfig;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntBusinessRules;
@@ -352,7 +351,10 @@ public class InvTrackingEnums {
         IS_LOCKED("InventoryLotIsLocked", "The lot <*1*> is locked, the reason is <*2*>","El lote <*1*> está actualmente bloqueado, la razón es <*2*>"),
         WRONG_DECISION("InventoryLotWrongDecision", "Wrong Decision <*1*>, it is not one of the accepted values(<*2*>)", "wrongDecision <*1*> is not one of the accepted values(<*2*>)"),
         TRYINGUPDATE_RESERVED_FIELD("InventoryLotTryingToUpdateReservedField", "Not allowed to update the reserved field <*1*>","No permitido modificar el campo reservado <*1*>"),
-        
+        REFERENCE_NOT_ALLOWED_TO_CONSUME_EXTERNALLY("InventoryLotReferenceNotConsumableExternally", "",""),
+        PROCEDURE_NOT_DECLARED_IN_AUTHORIZED_FOR_CONSUME_EXTERNALLY("InventoryLotProcedureNotDeclaredAsReferenceConsumableExternally", "",""),
+        REFERENCE_LOT_OR_USE_OPEN_REFERENCE_LOT_SHOULDBESPECIFIED("InventoryLotReferenceLotNameOrUseOpenReferenceLotShouldBeSpecified", "",""),
+        MORE_THAN_ONE_OPEN_REFERENCE_LOT("InventoryLotMoreThanOneOpenReferenceLots", "", "")
 /*        ALREADY_INPROGRESS("instrumentEventAlreadyInprogress", "The instrument event <*1*> is currently in progress","El evento de instrumento <*1*> está actualmente en progreso"),
         AUDIT_RECORDS_PENDING_REVISION("instrumentAuditRecordsPendingRevision", "The sample <*1*> has pending sign audit records.", "La muestra <*1*> tiene registros de auditoría sin firmar"),
         AUDIT_RECORD_NOT_FOUND("AuditRecordNotFound", "The audit record <*1*> for sample does not exist", "No encontrado un registro de audit para muestra con id <*1*>"),

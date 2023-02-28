@@ -74,7 +74,7 @@ public class InvTrackingAPIactions extends HttpServlet {
         String lotName=argValues[0].toString();
         String reference=argValues[1].toString();
         String category=argValues[2].toString();
-        DataInventory invL=new DataInventory(lotName, reference, category);
+        DataInventory invL=new DataInventory(lotName, reference, category, null);
         try (PrintWriter out = response.getWriter()) {
             ClassInvTracking clss = new ClassInvTracking(request, endPoint);
             Object[] diagnostic=clss.getDiagnostic();

@@ -71,7 +71,7 @@ public class DataInventory {
     private String category;
     private String[] referenceFieldNames;
     private Object[] referenceFieldValues;
-    private final Boolean hasError;
+    private Boolean hasError;
     private InternalMessage errorDetail;    
     private BigDecimal currentVolume;
     private String currentVolumeUom;
@@ -81,17 +81,35 @@ public class DataInventory {
     private Object[] qualificationFieldValues;
     
     public enum Decisions{ACCEPTED, ACCEPTED_WITH_RESTRICTIONS, REJECTED}
-
-    
-    public DataInventory(String lotName, String reference, String category){
-        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
-        Object[][] invLotInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), 
+    public DataInventory(String lotName, String reference, String category, String externalProcedure){
+        this(lotName, reference, category, externalProcedure, null);
+    }
+    public DataInventory(String lotName, String reference, String category, String externalProcedure, Boolean getLotAvailableForUse){
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);   
+        String procInstanceName="";
+        if (externalProcedure==null)
+            procInstanceName=procReqSession.getProcedureInstance();        
+        else
+            procInstanceName=externalProcedure;
+        Object[][] invLotInfo = null;
+        if (lotName!=null)
+            invLotInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), 
                 new String[]{TblsInvTrackingData.Lot.LOT_NAME.getName(), TblsInvTrackingData.Lot.REFERENCE.getName(), TblsInvTrackingData.Lot.CATEGORY.getName()}, 
                 new Object[]{lotName, reference, category}, getAllFieldNames(TblsInvTrackingData.TablesInvTrackingData.LOT.getTableFields()));
+        else{
+            invLotInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), 
+                new String[]{TblsInvTrackingData.Lot.STATUS.getName(), TblsInvTrackingData.Lot.REFERENCE.getName(), TblsInvTrackingData.Lot.CATEGORY.getName()}, 
+                new Object[]{InvLotStatuses.AVAILABLE_FOR_USE.toString(), reference, category}, getAllFieldNames(TblsInvTrackingData.TablesInvTrackingData.LOT.getTableFields()));            
+            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(invLotInfo[0][0].toString())&&invLotInfo.length>1){
+                this.hasError=true;
+                this.errorDetail=new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.MORE_THAN_ONE_OPEN_REFERENCE_LOT, new Object[]{lotName, TablesInvTrackingData.LOT.getTableName(), LPPlatform.buildSchemaName(externalProcedure, GlobalVariables.Schemas.DATA.getName())}, lotName);                
+                invLotInfo[0][0]=LPPlatform.LAB_FALSE;
+            }
+        }
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(invLotInfo[0][0].toString())){
             this.lotName=null;
             this.hasError=true;
-            this.errorDetail=new InternalMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{lotName, TablesInvTrackingData.LOT.getTableName(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName())}, lotName);
+            this.errorDetail=new InternalMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{lotName, TablesInvTrackingData.LOT.getTableName(), LPPlatform.buildSchemaName(externalProcedure, GlobalVariables.Schemas.DATA.getName())}, lotName);
         }else{
             this.hasError=false;
             this.lotFieldNames=getAllFieldNames(TblsInvTrackingData.TablesInvTrackingData.LOT.getTableFields());
@@ -114,7 +132,7 @@ public class DataInventory {
             this.reference=LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.REFERENCE.getName())]).toString();
             this.category=LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.CATEGORY.getName())]).toString();
             if (this.reference!=null && this.reference.length()>0){
-                Object[][] invReferenceInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName(), 
+                Object[][] invReferenceInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName(), 
                         new String[]{TblsInvTrackingConfig.Reference.NAME.getName(), TblsInvTrackingConfig.Reference.CATEGORY.getName()}, 
                         new Object[]{this.reference, this.category}, getAllFieldNames(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableFields()));
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(invReferenceInfo[0][0].toString())){
@@ -125,21 +143,24 @@ public class DataInventory {
                     referenceFieldValues=invReferenceInfo[0];
                 }
             }
+            this.checkExternalProcedurePermission(externalProcedure);            
             Integer valuePosicInArray = LPArray.valuePosicInArray(referenceFieldNames, TblsInvTrackingConfig.Reference.LOT_REQUIRES_QUALIF.getName());
             if (valuePosicInArray==-1) 
                 this.requiresQualification=true;
             this.requiresQualification=Boolean.valueOf(LPNulls.replaceNull(referenceFieldValues[valuePosicInArray]).toString());
-            lotIsQualified();
+            lotIsQualified(externalProcedure);
         }
     }    
     private void lotIsAvailableForUse(){
         this.availableForUse=InvLotStatuses.AVAILABLE_FOR_USE.toString().equalsIgnoreCase(LPNulls.replaceNull(getLotFieldValues()[LPArray.valuePosicInArray(getLotFieldNames(), TblsInvTrackingData.Lot.STATUS.getName())]).toString());
         if (this.getAvailableForUse()==null) this.availableForUse=false;
     }
-    private void lotIsQualified(){
+    private void lotIsQualified(String externalProcedure){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
+        if (externalProcedure==null)
+            externalProcedure=procReqSession.getProcedureInstance();          
         if (!this.getRequiresQualification()) return;
-        Object[][] invLotCertifInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION.getTableName(), 
+        Object[][] invLotCertifInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(externalProcedure, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION.getTableName(), 
                 new String[]{TblsInvTrackingData.LotCertification.LOT_NAME.getName(), TblsInvTrackingData.LotCertification.CATEGORY.getName(), TblsInvTrackingData.LotCertification.REFERENCE.getName()}, 
                 new Object[]{this.getLotName(), this.getCategory(), this.getReference()}, getAllFieldNames(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION.getTableFields()));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(invLotCertifInfo[0][0].toString())){
@@ -151,17 +172,41 @@ public class DataInventory {
         qualificationFieldValues=invLotCertifInfo[0];
         
         String qualifCompletedDecision = LPNulls.replaceNull(invLotCertifInfo[0][LPArray.valuePosicInArray(getQualificationFieldNames(), TblsInvTrackingData.LotCertification.COMPLETED_DECISION.getName())]).toString();
-        if (qualifCompletedDecision.toUpperCase().contains("ACCEPT"))
-            this.isQualified=true;
-        else
-            this.isQualified=false;
+        this.isQualified = qualifCompletedDecision.toUpperCase().contains("ACCEPT");
+    }
+    private void checkExternalProcedurePermission(String externalProcedure){
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
+        if (externalProcedure==null)
+            return;
+            //externalProcedure=procReqSession.getProcedureInstance();
+        if (this.referenceFieldNames==null){
+            this.hasError=true;
+            this.errorDetail=new InternalMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{lotName, TablesInvTrackingData.LOT.getTableName(), LPPlatform.buildSchemaName(externalProcedure, GlobalVariables.Schemas.DATA.getName())}, lotName);
+            return;
+        }
+        String refAllowProcConsume=LPNulls.replaceNull(this.referenceFieldValues[LPArray.valuePosicInArray(referenceFieldNames, TblsInvTrackingConfig.Reference.ALLOW_PROC_DISCOUNTS.getName())]).toString();
+        if (!Boolean.valueOf(refAllowProcConsume)){
+            this.hasError=true;
+            this.errorDetail=new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.REFERENCE_NOT_ALLOWED_TO_CONSUME_EXTERNALLY, 
+                new Object[]{this.category, this.reference, externalProcedure});
+            return;            
+        }
+        String refAllowedProcs=LPNulls.replaceNull(this.referenceFieldValues[LPArray.valuePosicInArray(referenceFieldNames, TblsInvTrackingConfig.Reference.PROCESSES_LIST.getName())]).toString();
+        String[] refAllowedProcsArr = refAllowedProcs.split("\\|");
+        if (!LPArray.valueInArray(refAllowedProcsArr, procReqSession.getProcedureInstance())){
+            this.hasError=true;
+            this.errorDetail=new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.PROCEDURE_NOT_DECLARED_IN_AUTHORIZED_FOR_CONSUME_EXTERNALLY, 
+                new Object[]{procReqSession.getProcedureInstance(), this.category, this.reference, externalProcedure});
+        }            
     }
     public static Object[] checkVolumeCoherency(DataInventory invLot, EnumIntTableFields[] invReferenceFlds, Object[] invReferenceVls, BigDecimal lotVolume, String lotVolumeUom){        
         String refUOM=null;
         String[] refAllowedUOMS=null;
         String minStockType=LPNulls.replaceNull(invReferenceVls[EnumIntTableFields.getFldPosicInArray(invReferenceFlds, TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE.getName())].toString());
+        if (InvTrackingEnums.InvReferenceStockControlTypes.ITEMS.name().equalsIgnoreCase(minStockType)||lotVolumeUom==null)
+            return new Object[]{new InternalMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.CORRECT, null, null)};
         String minStock=LPNulls.replaceNull(invReferenceVls[EnumIntTableFields.getFldPosicInArray(invReferenceFlds, TblsInvTrackingConfig.Reference.MIN_STOCK.getName())].toString());
-        if (minStockType.equalsIgnoreCase(InvReferenceStockControlTypes.VOLUME.toString())&& LPNulls.replaceNull(minStock).toString().length()>0&&LPNulls.replaceNull(lotVolume).toString().length()==0)
+        if (minStockType.equalsIgnoreCase(InvReferenceStockControlTypes.VOLUME.toString())&& LPNulls.replaceNull(minStock).length()>0&&LPNulls.replaceNull(lotVolume).toString().length()==0)
             return new Object[]{new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.NO_LOT_VOLUME_SPECIFIED_AND_REQUIRED, null, null)};
         if (invLot!=null){
             refUOM=LPNulls.replaceNull(invLot.getReferenceFieldValues()[LPArray.valuePosicInArray(invLot.getReferenceFieldNames(), TblsInvTrackingConfig.Reference.MIN_STOCK_UOM.getName())].toString());
@@ -186,8 +231,10 @@ public class DataInventory {
         }else
             return new Object[]{new InternalMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.CORRECT, null, null)};            
     }       
-    public static InternalMessage createNewInventoryLot(String name, String reference, String category, BigDecimal lotVolume, String lotVolumeUom, String[] fldNames, Object[] fldValues, Integer numEntries){   
+    public static InternalMessage createNewInventoryLot(String name, String reference, String category, BigDecimal lotVolume, String lotVolumeUom, String[] fldNames, Object[] fldValues, Integer numEntries, String externalProcedure){   
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
+        if (externalProcedure==null)
+            externalProcedure=procReqSession.getProcedureInstance();
         ResponseMessages messages = procReqSession.getMessages();
         Token token = procReqSession.getToken();
         if (fldNames==null){
@@ -196,7 +243,7 @@ public class DataInventory {
         }
         Object[][] referenceInfo = null;
         if (reference!=null && reference.length()>0){
-            referenceInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName(), 
+            referenceInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(externalProcedure, GlobalVariables.Schemas.CONFIG.getName()), TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName(), 
                 new String[]{TblsInvTrackingConfig.Reference.NAME.getName(), TblsInvTrackingConfig.Reference.CATEGORY.getName()}, new Object[]{reference, category}, 
                 getAllFieldNames(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableFields()));
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceInfo[0][0].toString())){
@@ -233,7 +280,7 @@ public class DataInventory {
                 fldValues=LPArray.addValueToArray1D(fldValues, newName);                
             }else
                 fldValues[lotNamePosic]=newName;
-            Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT.getTableName(), 
+            Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(externalProcedure, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT.getTableName(), 
                     new String[]{TblsInvTrackingData.Lot.LOT_NAME.getName()}, new Object[]{newName});
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString()))
                 return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.ALREADY_EXISTS, new Object[]{newName}, null);
@@ -388,7 +435,18 @@ public class DataInventory {
         return DataInventoryQualif.reopenInventoryLotQualif(this);
     }
     public InternalMessage consumeInvLotVolume(BigDecimal nwVolume, String nwVolumeUom){
-        return DataInventoryMovements.consumeInventoryLotVolume(this, nwVolume, nwVolumeUom);
+        return DataInventoryMovements.consumeInventoryLotVolume(this, nwVolume, nwVolumeUom, null);
+    }
+    public static InternalMessage consumeInvLotVolumeExternalProcedure(String lotName, String reference, String category, BigDecimal nwVolume, String nwVolumeUom, String externalProcInstanceName, Boolean useOpenReferenceLot){
+        if (lotName==null&&(useOpenReferenceLot==null||!useOpenReferenceLot))
+            return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.REFERENCE_LOT_OR_USE_OPEN_REFERENCE_LOT_SHOULDBESPECIFIED, new Object[]{null}, null);
+        if (lotName==null&&(useOpenReferenceLot)){
+            DataInventory invLot = new DataInventory(null, reference, category, externalProcInstanceName, useOpenReferenceLot);
+        }            
+        DataInventory invLot = new DataInventory(lotName, reference, category, externalProcInstanceName);        
+        if (invLot.getHasError())
+            return invLot.getErrorDetail();
+        return DataInventoryMovements.consumeInventoryLotVolume(invLot, nwVolume, nwVolumeUom, externalProcInstanceName);
     }
     public InternalMessage addInvLotVolume(BigDecimal nwVolume, String nwVolumeUom){
         return DataInventoryMovements.addInventoryLotVolume(this, nwVolume, nwVolumeUom);

@@ -79,7 +79,7 @@ public class DataInventoryMovements {
         return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ADJUST_INV_LOT_VOLUME, new Object[]{invLot.getLotName(), newVolume, newVolumeUom}, invLot.getLotName());        
     }
 
-    public static InternalMessage consumeInventoryLotVolume(DataInventory invLot, BigDecimal newVolume, String newVolumeUom){
+    public static InternalMessage consumeInventoryLotVolume(DataInventory invLot, BigDecimal newVolume, String newVolumeUom, String externalProcInstanceName){
         Boolean requiredConversion=false;
         BigDecimal reducedVolume=null;
         UnitsOfMeasurement myUom = null;
@@ -91,7 +91,7 @@ public class DataInventoryMovements {
         }
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
 
-        if (invLot.getCurrentVolumeUom().equalsIgnoreCase(newVolumeUom)){
+        if (newVolumeUom==null||invLot.getCurrentVolumeUom().equalsIgnoreCase(newVolumeUom)){
             reducedVolume=invLot.getCurrentVolume().subtract(newVolume);            
         }else{
             requiredConversion=true;       
@@ -118,7 +118,7 @@ public class DataInventoryMovements {
         Object[] fldValues=new Object[]{reducedVolume};
         RdbmsObject invLotTurnAvailableDiagn = Rdbms.updateTableRecordFieldsByFilter(TablesInvTrackingData.LOT, 
                 new EnumIntTableFields[]{TblsInvTrackingData.Lot.VOLUME},
-                fldValues, sqlWhere, null);
+                fldValues, sqlWhere, externalProcInstanceName);
         fldNames=new String[]{"new_"+TblsInvTrackingData.Lot.VOLUME.getName(), "new_"+TblsInvTrackingData.Lot.VOLUME_UOM.getName(), 
             "previous_"+TblsInvTrackingData.Lot.VOLUME.getName(), "previous_"+TblsInvTrackingData.Lot.VOLUME_UOM.getName()};
         fldValues=LPArray.addValueToArray1D(fldValues, 
@@ -139,7 +139,7 @@ public class DataInventoryMovements {
         if (!invLotTurnAvailableDiagn.getRunSuccess())
             return new InternalMessage(LPPlatform.LAB_FALSE, invLotTurnAvailableDiagn.getErrorMessageCode(), new Object[]{invLot.getLotName()}, null);
         InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.LOT_VOLUME_CONSUMED, invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(), invLot.getLotName(),
-            fldNames, fldValues); 
+            fldNames, fldValues, externalProcInstanceName); 
         myUom=null;
         messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.CONSUME_INV_LOT_VOLUME, new Object[]{invLot.getLotName(), newVolume, newVolumeUom});
         return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.CONSUME_INV_LOT_VOLUME, new Object[]{invLot.getLotName(), newVolume, newVolumeUom}, invLot.getLotName());        
@@ -209,6 +209,7 @@ public class DataInventoryMovements {
     }
     
     private static InternalMessage isAvailableForMovements(DataInventory invLot, BigDecimal newVolume, String newVolumeUom){
+
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         if (!invLot.getAvailableForUse()){
             messages.addMainForError(InventoryTrackingErrorTrapping.NOT_AVAILABLE, new Object[]{invLot.getLotName()});
