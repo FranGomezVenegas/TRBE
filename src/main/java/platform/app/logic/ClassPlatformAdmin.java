@@ -6,6 +6,9 @@
 package platform.app.logic;
 
 import databases.TblsApp;
+import databases.TblsApp.TablesApp;
+import databases.TblsAppConfig;
+import databases.TblsAppConfig.TablesAppConfig;
 import functionaljavaa.platformadmin.AdminActions;
 import functionaljavaa.platformadmin.PlatformAdminEnums.PlatformAdminAPIActionsEndpoints;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
@@ -17,6 +20,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.ApiErrorTraping;
 import trazit.enums.EnumIntMessages;
+import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
@@ -134,17 +138,42 @@ public class ClassPlatformAdmin {
                 case UPDATE_USER_SHIFT:
                     String newShift =LPNulls.replaceNull(argValues[0]).toString();
                     String userName =LPNulls.replaceNull(argValues[1]).toString();
-                    actionDiagnoses=UserAndRolesViews.updateUserShift(newShift, userName);
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()) && userName.length()>0)    
+                    if (userName.length()==0)
+                        userName=instanceForActions.getToken().getUserName();
+                    EnumIntTableFields[] updFldsN = EnumIntTableFields.getTableFieldsFromString(TablesAppConfig.PERSON, 
+                            new String[]{TblsAppConfig.Person.SHIFT.getName()});
+                    actionDiagnoses=UserAndRolesViews.updateUserPersonFields(userName, updFldsN, new Object[]{newShift});
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()) && userName.length()>0){
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), userName);
-/*                    JSONObject jsonObj = new JSONObject();
-                    rObj=RelatedObjects.getInstanceForActions();
-                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), instanceForActions.getToken().getUserName());
-                    jsonObj = new JSONObject();
-                    jsonObj = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, new Object[0], rObj.getRelatedObject());                
-                    jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, instanceForActions.getToken());
-                    rObj.killInstance();
-                    LPFrontEnd.servletReturnSuccess(request, null, jsonObj);*/
+                        this.messageDynamicData=new Object[]{newShift, userName};                        
+                    }
+                    break;
+
+                case UPDATE_USER_MAIL:
+                    String newMail =LPNulls.replaceNull(argValues[0]).toString();
+                    userName =LPNulls.replaceNull(argValues[1]).toString();
+                    if (userName.length()==0)
+                        userName=instanceForActions.getToken().getUserName();
+                    updFldsN = EnumIntTableFields.getTableFieldsFromString(TablesApp.USERS, 
+                            new String[]{TblsApp.Users.EMAIL.getName()});
+                    actionDiagnoses=UserAndRolesViews.updateUsersFields(userName, updFldsN, new Object[]{newMail});
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()) && userName.length()>0){
+                        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), userName);
+                        this.messageDynamicData=new Object[]{newMail};
+                    }
+                    break;
+                case UPDATE_USER_ALIAS:
+                    String newAlias =LPNulls.replaceNull(argValues[0]).toString();
+                    userName =LPNulls.replaceNull(argValues[1]).toString();
+                    if (userName.length()==0)
+                        userName=instanceForActions.getToken().getUserName();
+                    updFldsN = EnumIntTableFields.getTableFieldsFromString(TablesAppConfig.PERSON, 
+                            new String[]{TblsAppConfig.Person.ALIAS.getName()});
+                    actionDiagnoses=UserAndRolesViews.updateUserPersonFields(userName, updFldsN, new Object[]{newAlias});
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()) && userName.length()>0){
+                        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), userName);
+                        this.messageDynamicData=new Object[]{newAlias};
+                    }
                     break;
 
                 default:
