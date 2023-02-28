@@ -90,10 +90,12 @@ public interface EnumIntTableFields {
         flds=LPArray.getUniquesArray(flds);
         EnumIntTableFields[] custFlds=new EnumIntTableFields[flds.length];
         EnumIntTableFields[] tableFields = tblObj.getTableFields();
-        for (EnumIntTableFields curFld: tableFields){
-            Integer valuePosicInArray = LPArray.valuePosicInArray(flds, curFld.getName());
+        int iFld=0;
+        for (String curFld: flds){
+            Integer valuePosicInArray = getFldPosicInArray(tableFields, curFld);
             if (valuePosicInArray>-1)
-                custFlds[valuePosicInArray]=curFld;                
+                custFlds[iFld]=tableFields[valuePosicInArray];  
+            iFld++;
         }
         return custFlds;
     }
