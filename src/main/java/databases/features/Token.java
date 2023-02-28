@@ -15,6 +15,9 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import databases.Rdbms;
+import databases.SqlStatement;
+import databases.SqlWhere;
+import databases.TblsApp;
 import databases.TblsProcedure;
 import functionaljavaa.user.UserProfile;
 import java.sql.Date;
@@ -22,7 +25,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import static lbplanet.utilities.LPMath.isNumeric;
+import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
+import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
 /**
  *
@@ -35,18 +40,21 @@ public final class Token {
     private static final String TOKEN_PARAM_USERDB="userDB";
     private static final String TOKEN_PARAM_USERPW="userDBPassword";
     private static final String TOKEN_PARAM_INTERNAL_USERID="internalUserID";
+    private static final String TOKEN_PARAM_USERMAIL="userMail";
     private static final String TOKEN_PARAM_USER_ROLE="userRole";
     private static final String TOKEN_PARAM_USER_ESIGN="eSign";
     private static final String TOKEN_PARAM_APP_SESSION_ID="appSessionId";
     private static final String TOKEN_PARAM_PROCS_MODULE_NAME="procsModuleName";
-    private static final String TOKEN_PARAM_APP_SESSION_STARTED_DATE="appSessionStartedDate";
+    private static final String TKNPRM_APP_SESSION_STARTED_DATE="appSessionStartedDate";
     private static final String TOKEN_PARAM_USER_PROCEDURES="user_procedures";
     private static final String TOKEN_PARAM_DB_NAME="dbName";
-    private static final String TOKEN_PARAM_USER_PROCEDURES_VERSIONS_HASHCODES="user_procedure_hashcodes";
+    private static final String TKNPRM_USR_PROCS_VERSIONS_HASHCODES="user_procedure_hashcodes";
+    private static final String TKNPRM_DATETIME_FORMT_AT_PLATFM_LVL="datetimeFormatAtPlatformLevel";
     
     private static final String TOKEN_PARAM_PREFIX = "TOKEN_";
     
     private String userName="";
+    private String userMail="";
     private String usrPw="";
     private String personName="";
     private String userRole="";
@@ -57,6 +65,7 @@ public final class Token {
     private String userProceduresVersionsAndHashCodes="";     
     private String dbName="";
     private String procsModuleNames;
+    private String datetimeFormatAtPlatformLvl;
     /**
      *
      * @param tokenString
@@ -66,15 +75,18 @@ public final class Token {
         String[] tokenParamsValues = getTokenParamValue(tokenString, tokenParams);
 
         this.userName = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USERDB)];
+        this.userMail = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USERMAIL)];
         this.usrPw = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USERPW)];
         this.personName = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_INTERNAL_USERID)];         
         this.userRole = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USER_ROLE)];                             
         this.eSign = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USER_ESIGN)];     
         this.appSessionId = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_APP_SESSION_ID)];    
         this.userProcedures = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USER_PROCEDURES)]; 
-        this.userProceduresVersionsAndHashCodes=tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USER_PROCEDURES_VERSIONS_HASHCODES)]; 
+        this.userProceduresVersionsAndHashCodes=tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TKNPRM_USR_PROCS_VERSIONS_HASHCODES)]; 
         this.dbName = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_DB_NAME)]; 
         this.procsModuleNames = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_PROCS_MODULE_NAME)];
+        this.datetimeFormatAtPlatformLvl = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TKNPRM_DATETIME_FORMT_AT_PLATFM_LVL)];
+        
     }
 
     /**
@@ -87,13 +99,15 @@ public final class Token {
         diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_USERPW);
         diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_INTERNAL_USERID);
         diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_USER_ROLE);
+        diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_USERMAIL);
         diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_APP_SESSION_ID);
-        diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_APP_SESSION_STARTED_DATE);
+        diagnoses = LPArray.addValueToArray1D(diagnoses, TKNPRM_APP_SESSION_STARTED_DATE);
         diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_USER_ESIGN);
         diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_USER_PROCEDURES);
-        diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_USER_PROCEDURES_VERSIONS_HASHCODES);
+        diagnoses = LPArray.addValueToArray1D(diagnoses, TKNPRM_USR_PROCS_VERSIONS_HASHCODES);
         diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_DB_NAME);
         diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_PROCS_MODULE_NAME);
+        diagnoses = LPArray.addValueToArray1D(diagnoses, TKNPRM_DATETIME_FORMT_AT_PLATFM_LVL);
         return diagnoses;
     }  
     
@@ -156,9 +170,10 @@ public final class Token {
      * @param appSessionStartedDate
      * @param eSign
      * @param dbName
+     * @param userMail
      * @return
      */
-    public String  createToken(String userDBId, String userDBPassword, String userId, String userRole, String appSessionId, String appSessionStartedDate, String eSign, String dbName){        
+    public String  createToken(String userDBId, String userDBPassword, String userId, String userRole, String appSessionId, String appSessionStartedDate, String eSign, String dbName, String userMail){        
         Algorithm algorithm = Algorithm.HMAC256(KEY); 
         Map <String, Object> myParams = new HashMap<>();
         myParams.put(TOKEN_PARAM_USERDB, userDBId);
@@ -166,9 +181,10 @@ public final class Token {
         myParams.put(TOKEN_PARAM_INTERNAL_USERID, userId);
         myParams.put(TOKEN_PARAM_USER_ROLE, userRole);
         myParams.put(TOKEN_PARAM_APP_SESSION_ID, appSessionId);
-        myParams.put(TOKEN_PARAM_APP_SESSION_STARTED_DATE, appSessionStartedDate);
+        myParams.put(TKNPRM_APP_SESSION_STARTED_DATE, appSessionStartedDate);
         myParams.put(TOKEN_PARAM_USER_ESIGN, eSign);
         myParams.put(TOKEN_PARAM_DB_NAME, dbName);
+        myParams.put(TOKEN_PARAM_USERMAIL, userMail);
         UserProfile usProf = new UserProfile();
         Object[] allUserProcedurePrefix = usProf.getAllUserProcedurePrefix(userDBId);
         myParams.put(TOKEN_PARAM_USER_PROCEDURES, Arrays.toString(allUserProcedurePrefix));
@@ -197,7 +213,21 @@ public final class Token {
                 }
             }
         }   
-        myParams.put(TOKEN_PARAM_USER_PROCEDURES_VERSIONS_HASHCODES, procHashCodes);
+        SqlWhere sql=new SqlWhere();
+        sql.addConstraint(TblsProcedure.ProcedureBusinessRules.RULE_NAME, 
+                SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{"datetimeFormat"}, null);
+        Object[][] appBusRulesInfo = QueryUtilitiesEnums.getTableData(TblsApp.TablesApp.APP_BUSINESS_RULES, 
+            EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.APP_BUSINESS_RULES, 
+                new String[]{TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()}), 
+                sql, null, "app");
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(appBusRulesInfo[0][0].toString())){
+            myParams.put(TKNPRM_DATETIME_FORMT_AT_PLATFM_LVL, "DISABLED");
+            this.datetimeFormatAtPlatformLvl="DISABLED";
+        }else{
+            myParams.put(TKNPRM_DATETIME_FORMT_AT_PLATFM_LVL, appBusRulesInfo[0][0].toString());
+            this.datetimeFormatAtPlatformLvl=appBusRulesInfo[0][0].toString();
+        }
+        myParams.put(TKNPRM_USR_PROCS_VERSIONS_HASHCODES, procHashCodes);
         this.procsModuleNames=procModulesArr;
         myParams.put(TOKEN_PARAM_PROCS_MODULE_NAME, procModulesArr);
         try{
@@ -307,6 +337,10 @@ public final class Token {
     public String getPersonName() {
         return this.personName;
     }
+    public String getUserMailAddress() {
+        return this.userMail;
+    }
+    
 
     /**
      * @return the userRole
@@ -366,6 +400,13 @@ public final class Token {
         }        
         return "notFound";
         
+    }
+
+    /**
+     * @return the dateFormatAtPlatformLvl
+     */
+    public String getDateFormatAtPlatformLvl() {
+        return datetimeFormatAtPlatformLvl;
     }
     
 }
