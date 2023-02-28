@@ -6,6 +6,7 @@
 package databases;
 
 import static databases.Rdbms.addSuffixIfItIsForTesting;
+import databases.features.DbFieldValueMask;
 import functionaljavaa.parameter.Parameter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -723,9 +724,9 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
                                 if ("DATE".equalsIgnoreCase(curFld.getFieldType()))
                                     fn="to_char("+fn+",'YYYY-MM-DD')";                
                                 else if ("DATETIME".equalsIgnoreCase(curFld.getFieldType()))
-                                    fn="to_char("+fn+",'DD-MON-YY HH:MI')";                
+                                    fn="to_char("+fn+",'"+DbFieldValueMask.datetimeFormat(curFld)+"')";                
                                 else if (curFld.getFieldType().toLowerCase().contains("timestamp"))
-                                    fn="to_char("+fn+",'DD-MON-YY HH:MI')";                
+                                    fn="to_char("+fn+",'"+DbFieldValueMask.datetimeFormat(curFld)+"')";                
                                 else if (fn.toUpperCase().contains(" IN")) {
                                     Integer posicINClause = fn.toUpperCase().indexOf("IN");
                                     fn = fn.substring(0, posicINClause - 1);
