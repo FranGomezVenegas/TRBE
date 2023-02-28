@@ -21,6 +21,7 @@ import databases.RdbmsObject;
 import databases.TblsApp;
 import databases.features.Token;
 import databases.TblsApp.Users;
+import databases.features.DbEncryption;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.io.IOException;
@@ -40,7 +41,6 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lbplanet.utilities.LPAPIArguments;
-import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static lbplanet.utilities.LPSession.frontEndIpChecker;
@@ -124,8 +124,15 @@ public class AuthenticationAPI extends HttpServlet {
                             return;                               
                         }
                     }                                                          
-                    Token token = new Token("");                    
-                    String myToken = token.createToken(dbUserName, dbUserPassword, personName, "Admin", "", "", "", dbName);                    
+                    Token token = new Token("");   
+                    String userMail="";
+                    Object[][] userInfoArr = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), 
+                     new String[]{TblsApp.Users.USER_NAME.getName()}, new String[]{dbUserName}, new String[]{TblsApp.Users.EMAIL.getName()});             
+                    if (!LPPlatform.LAB_FALSE.equals(userInfoArr[0][0].toString())){                                                                                                                                                   
+                        userMail=userInfoArr[0][0].toString();
+                    }
+
+                    String myToken = token.createToken(dbUserName, dbUserPassword, personName, "Admin", "", "", "", dbName, userMail);
 
                     JSONObject jsonObj = new JSONObject();
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_USER_INFO_ID, personName);
@@ -151,8 +158,8 @@ public class AuthenticationAPI extends HttpServlet {
                     }                    
                     JSONArray jArray= new JSONArray();
                     jArray.addAll(Arrays.asList(allUserProcedureRoles));        
+                    Rdbms.closeRdbms();    
                     response.getWriter().write(jArray.toJSONString()); 
-                    // Rdbms.closeRdbms();    
                     return;                                
                 case FINALTOKEN:   
                   if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
@@ -180,8 +187,11 @@ public class AuthenticationAPI extends HttpServlet {
                         LPFrontEnd.servletReturnResponseError(request, response,  AuthenticationErrorTrapping.ESGININFO_NOTAVAILABLE.getErrorCode(), null, language, AuthenticationErrorTrapping.class.getSimpleName());       
                         return;                                                                                
                     }                               
+                    Object[] decryptValue = DbEncryption.decryptValue(userInfo[0][0].toString());
+                    String eSignUncrypted = decryptValue[decryptValue.length-1].toString();
+
                     String myFinalToken = token.createToken(token.getUserName(), token.getUsrPw(), token.getPersonName(), 
-                            userRole, sessionIdStr, nowLocalDate.toString(), userInfo[0][0].toString(), token.getDbName());
+                            userRole, sessionIdStr, nowLocalDate.toString(), eSignUncrypted, token.getDbName(), token.getUserMailAddress());
                     request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, myFinalToken);
                     // Rdbms.closeRdbms();                    
                     jsonObj = new JSONObject();
@@ -203,7 +213,6 @@ public class AuthenticationAPI extends HttpServlet {
                         }
                         jArr.add(jObj);
                     }         
-                    Boolean isForTesting=Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING.toString())));
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_APP_USER_TABS_ON_LOGIN, jArr);
                     request.setAttribute(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myFinalToken);
                     jsonObj.put("header_info", AppHeaderAPI(request, response));
@@ -220,9 +229,10 @@ public class AuthenticationAPI extends HttpServlet {
                     if (sizeValueStr!=null && sizeValueStr.length()>0)
                         sizeValue=Integer.valueOf(sizeValueStr);                    
                     jsonObj.put("platform_settings", AppProcedureListAPI.procModel("platform-settings", sizeValue));
-                    
+                    Rdbms.closeRdbms(); 
                     LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
                     return;                                   
+                                   
                 case TOKEN_VALIDATE_ESIGN_PHRASE:     
                     myToken = argValues[0].toString();
                     String esignPhraseToCheck = argValues[1].toString();
@@ -288,7 +298,7 @@ public class AuthenticationAPI extends HttpServlet {
                             token.getUserRole(), 
                             token.getAppSessionId(), 
                             appStartedDate, 
-                            token.geteSign(), token.getDbName());
+                            token.geteSign(), token.getDbName(), token.getUserMailAddress());
                     Rdbms.closeRdbms();  
                     RelatedObjects rObj=RelatedObjects.getInstanceForActions();
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), token.getUserName());
@@ -325,7 +335,7 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
                             token.getUserRole(), 
                             token.getAppSessionId(), 
                             appStartedDate, 
-                            token.geteSign(), token.getDbName());
+                            token.geteSign(), token.getDbName(), token.getUserMailAddress());
                     Rdbms.closeRdbms();  
                     rObj=RelatedObjects.getInstanceForActions();
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), token.getUserName());
@@ -353,7 +363,7 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
                             token.getUserRole(), 
                             token.getAppSessionId(), 
                             appStartedDate, 
-                            newEsign, token.getDbName());
+                            newEsign, token.getDbName(), token.getUserMailAddress());
                     // Rdbms.closeRdbms();                    
                     jsonObj = new JSONObject();
                     rObj=RelatedObjects.getInstanceForActions();
