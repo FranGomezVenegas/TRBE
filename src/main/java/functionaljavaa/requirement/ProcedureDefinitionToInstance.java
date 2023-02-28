@@ -34,6 +34,7 @@ import databases.TblsProcedureAudit;
 import databases.TblsProcedureAudit.TablesProcedureAudit;
 import databases.TblsProcedureConfig.TablesProcedureConfig;
 import databases.TblsReqs;
+import databases.features.DbEncryption;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.requirement.masterdata.ClassMasterData;
 import java.util.Arrays;
@@ -392,6 +393,14 @@ public class ProcedureDefinitionToInstance {
      * @return
      */
     public static final  JSONObject createDBPersonProfiles(String procedure,  Integer procVersion, String procInstanceName){
+        String defaultMail="info@trazit.net";
+        String pasEsingn="trazit4ever";
+        Object[] encryptValue=DbEncryption.encryptValue(pasEsingn);        
+        String pasEncrypted = encryptValue[encryptValue.length-1].toString();
+        String fakeEsingn="firmademo";
+        encryptValue=DbEncryption.encryptValue(fakeEsingn);        
+        String fakeEsingnEncrypted = encryptValue[encryptValue.length-1].toString();
+
         JSONObject jsonObj = new JSONObject();
         String schemaNameDestinationProcedure=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName());
          Object[][] procUserRolesRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USER_ROLES.getTableName(), 
@@ -421,7 +430,7 @@ public class ProcedureDefinitionToInstance {
                 insertRecordInTable = Rdbms.insertRecordInTable(TblsApp.TablesApp.USERS, 
                         new String[]{TblsApp.Users.USER_NAME.getName(), TblsApp.Users.EMAIL.getName(), TblsApp.Users.ESIGN.getName(),
                             TblsApp.Users.PASSWORD.getName(), TblsApp.Users.PERSON_NAME.getName()},
-                        new Object[]{curUserName, "trazit.info@gmail.com", "firmademo", "trazit4ever", personId});
+                        new Object[]{curUserName, defaultMail, fakeEsingnEncrypted, pasEncrypted, personId});
                 existsAppUser=LPArray.array1dTo2d(insertRecordInTable.getApiMessage(),1);
                 diagnosesForLog=diagnosesForLog+" trying to create, log for creation="+insertRecordInTable.getApiMessage()[0].toString();
 //                insertRecordInTable=Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USER_PROCESS.getTableName(), 
