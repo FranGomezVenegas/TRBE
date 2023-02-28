@@ -16,6 +16,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPDatabase;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.TrazitUtiilitiesEnums;
 import trazit.enums.EnumIntTableFields;
@@ -28,15 +29,16 @@ import trazit.session.ProcedureRequestSession;
  * @author User
  */
 public class DbEncryptionObject {
-    public static Object[] decryptTableFieldArray(EnumIntTables tblObj, EnumIntTableFields[] fieldsToRetrieve, Object[] fieldValue){
+    public static Object[] decryptTableFieldArray(EnumIntTables tblObj, EnumIntTableFields[] fieldsToRetrieve, Object[] fieldValue, Boolean encryptAllFlds){
 //if (1==1) return fieldValue;
         Boolean tableHasEncryptedFlds = tableHasEncryptedFlds(tblObj);
-        if (!tableHasEncryptedFlds) return fieldValue;
+        if (!encryptAllFlds&&!tableHasEncryptedFlds) return fieldValue;
 //if (1==1) return fieldValue;
         String key = DbEncryption.ENCRYPTION_KEY; //"Bar12345Bar12345"; // 128 bit key
         for (int iFields=0;iFields<fieldsToRetrieve.length;iFields++){
             //if (fieldsEncrypted.contains(fieldName[iFields])){
-            if (isEncryptedTableFld(tblObj, fieldsToRetrieve[iFields])){
+            if ((encryptAllFlds&&LPDatabase.string().equalsIgnoreCase(fieldsToRetrieve[iFields].getFieldType()))
+                    ||isEncryptedTableFld(tblObj, fieldsToRetrieve[iFields])){
                 String enc = fieldValue[iFields].toString();
                 if (enc!=null){
                     try{                    
@@ -61,13 +63,14 @@ public class DbEncryptionObject {
         return fieldValue;        
     }    
 
-    public static Object[][] decryptTableFieldArray(EnumIntTables tblObj, EnumIntTableFields[] fieldsToRetrieve, Object[][] fieldValue){
+    public static Object[][] decryptTableFieldArray(EnumIntTables tblObj, EnumIntTableFields[] fieldsToRetrieve, Object[][] fieldValue, Boolean encryptAllFlds){
         Boolean tableHasEncryptedFlds = tableHasEncryptedFlds(tblObj);
-        if (!tableHasEncryptedFlds) return fieldValue;
+        if (!encryptAllFlds&&!tableHasEncryptedFlds) return fieldValue;
         String key = DbEncryption.ENCRYPTION_KEY; //"Bar12345Bar12345"; // 128 bit key
         for (int iFields=0;iFields<fieldsToRetrieve.length;iFields++){
             //if (fieldsEncrypted.contains(fieldName[iFields])){
-            if (isEncryptedTableFld(tblObj, fieldsToRetrieve[iFields])){
+            if ((encryptAllFlds&&LPDatabase.string().equalsIgnoreCase(fieldsToRetrieve[iFields].getFieldType()))
+                    ||isEncryptedTableFld(tblObj, fieldsToRetrieve[iFields])){
                     for (Object[] fieldValue1 : fieldValue) {
                         String enc = fieldValue1[iFields].toString();
                         if (enc!=null){
@@ -93,13 +96,14 @@ public class DbEncryptionObject {
         }        
         return fieldValue;        
     }    
-    public static Object[] encryptTableFieldArray(EnumIntTables tblObj, EnumIntTableFields[] fieldsToRetrieve, Object[] fieldValue){
+    public static Object[] encryptTableFieldArray(EnumIntTables tblObj, EnumIntTableFields[] fieldsToRetrieve, Object[] fieldValue, Boolean encryptAllFlds){
         Boolean tableHasEncryptedFlds = tableHasEncryptedFlds(tblObj);
-        if (!tableHasEncryptedFlds) return fieldValue;
+        if (!tableHasEncryptedFlds&&!encryptAllFlds) return fieldValue;
         String key = DbEncryption.ENCRYPTION_KEY; // 128 bit key
         for (int iFields=0;iFields<fieldsToRetrieve.length;iFields++){
             //if (fieldsEncrypted.contains(fieldName[iFields])){
-            if (isEncryptedTableFld(tblObj, fieldsToRetrieve[iFields])){
+            if ((encryptAllFlds&&LPDatabase.string().equalsIgnoreCase(fieldsToRetrieve[iFields].getFieldType()))
+                    ||isEncryptedTableFld(tblObj, fieldsToRetrieve[iFields])){
                 try{
                     encryptValue(fieldValue[iFields].toString());
                     String text = fieldValue[iFields].toString();
