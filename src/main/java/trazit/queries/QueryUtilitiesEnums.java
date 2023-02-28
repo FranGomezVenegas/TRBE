@@ -123,7 +123,7 @@ public class QueryUtilitiesEnums {
                 icurrLine++;
              }
                 //diagnoses2 = LPArray.decryptTableFieldArray(schemaName, tableName, fieldsToRetrieve, diagnoses2);
-                diagnoses2=DbEncryptionObject.decryptTableFieldArray(tblObj, fieldsToRetrieve, diagnoses2);
+                diagnoses2=DbEncryptionObject.decryptTableFieldArray(tblObj, fieldsToRetrieve, diagnoses2, false);
                 return diagnoses2;
             }else{
                 Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{query, Arrays.toString(whereFieldValues), "schemaName"});
@@ -168,7 +168,7 @@ public class QueryUtilitiesEnums {
                 icurrLine++;
              }
                 //diagnoses2 = LPArray.decryptTableFieldArray(schemaName, tableName, fieldsToRetrieve, diagnoses2);
-                diagnoses2=DbEncryptionObject.decryptTableFieldArray(tblObj, fieldsToRetrieve, diagnoses2);
+                diagnoses2=DbEncryptionObject.decryptTableFieldArray(tblObj, fieldsToRetrieve, diagnoses2, false);
                 return diagnoses2;
             }else{
                 Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{query, Arrays.toString(where.getAllWhereEntriesFldValues()), "schemaName"});
@@ -214,7 +214,9 @@ public class QueryUtilitiesEnums {
                 //diagnoses2 = LPArray.decryptTableFieldArray(schemaName, tableName, fieldsToRetrieve, diagnoses2);
                 return diagnoses2;
             }else{
-                Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{query, Arrays.toString(where.getAllWhereEntriesFldValues()), "schemaName"});
+                Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
+                        Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, 
+                        new Object[]{query, Arrays.toString(where.getAllWhereEntriesFldValues()), "schemaName"});
                 return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);                
             }
         }catch (SQLException er) {
