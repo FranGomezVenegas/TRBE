@@ -5,7 +5,6 @@
  */
 package module.inspectionlot.rawmaterial.definition;
 
-import module.inspectionlot.rawmaterial.apis.InspLotRMAPIactions;
 import databases.Rdbms;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
@@ -28,7 +27,7 @@ public class ClassInspLotRMQueries {
     private Object[] diagnostic=new Object[0];
     private Boolean functionFound=false;
 
-    public ClassInspLotRMQueries(HttpServletRequest request, InspLotRMAPIactions.InspLotRMQueriesAPIEndpoints endPoint){
+    public ClassInspLotRMQueries(HttpServletRequest request, InspLotRMEnums.InspLotRMQueriesAPIEndpoints endPoint){
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         try{

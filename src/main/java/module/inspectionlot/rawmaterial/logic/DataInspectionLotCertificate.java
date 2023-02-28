@@ -5,7 +5,7 @@
  */
 package module.inspectionlot.rawmaterial.logic;
 
-import module.inspectionlot.rawmaterial.apis.InspLotRMAPIactions.InspLotRMAPIactionsEndpoints;
+import module.inspectionlot.rawmaterial.definition.InspLotRMEnums.InspLotRMAPIactionsEndpoints;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMData;
 import databases.Rdbms;
 import databases.RdbmsObject;
@@ -13,11 +13,12 @@ import databases.SqlStatement;
 import databases.SqlWhere;
 import databases.features.Token;
 import functionaljavaa.audit.LotAudit;
-import module.inspectionlot.rawmaterial.logic.ModuleInspLotRMenum.DataInspLotCertificateStatuses;
-import module.inspectionlot.rawmaterial.logic.ModuleInspLotRMenum.DataInspLotCertificateTrackActions;
+import module.inspectionlot.rawmaterial.definition.InspLotRMEnums.DataInspLotCertificateStatuses;
+import module.inspectionlot.rawmaterial.definition.InspLotRMEnums.DataInspLotCertificateTrackActions;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
+import module.inspectionlot.rawmaterial.definition.InspLotRMEnums;
 import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -41,7 +42,7 @@ public class DataInspectionLotCertificate {
             RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInspLotRMData.TablesInspLotRMData.LOT, lotFieldName, lotFieldValue);
             if (!insertRecordInTable.getRunSuccess()){
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, diagnoses[diagnoses.length-2]);
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ModuleInspLotRMenum.DataInspLotErrorTrapping.ERROR_INSERTING_INSPLOT_RECORD, errorDetailVariables);
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.ERROR_INSERTING_INSPLOT_RECORD, errorDetailVariables);
             }                                           
         }else{
             Object[] lotExists=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), 
@@ -57,7 +58,7 @@ public class DataInspectionLotCertificate {
                 RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInspLotRMData.TablesInspLotRMData.LOT, lotFieldName, lotFieldValue);
                 if (!insertRecordInTable.getRunSuccess()){
                     errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, diagnoses[diagnoses.length-2]);
-                    return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ModuleInspLotRMenum.DataInspLotErrorTrapping.ERROR_INSERTING_INSPLOT_RECORD, errorDetailVariables);
+                    return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.ERROR_INSERTING_INSPLOT_RECORD, errorDetailVariables);
                 }                                
             }
         }
@@ -88,7 +89,7 @@ public class DataInspectionLotCertificate {
             RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInspLotRMData.TablesInspLotRMData.LOT_CERTIFICATE_TRACK, lotFieldName, lotFieldValue);
             if (!insertRecordInTable.getRunSuccess()){
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, insertRecordInTable.getApiMessage());
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ModuleInspLotRMenum.DataInspLotErrorTrapping.ERROR_INSERTING_INSPLOT_RECORD, errorDetailVariables);
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.ERROR_INSERTING_INSPLOT_RECORD, errorDetailVariables);
             }                                        
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "lotCertificateTrackEventRecorded", new Object[]{lotName, certifId, eventName, procInstanceName});            
         }catch(Exception e){
