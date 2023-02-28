@@ -8,8 +8,11 @@ package platform.app.apis;
 
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
+import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NUM_DAYS;
 import static com.labplanet.servicios.app.InvestigationAPI.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
+import databases.SqlStatement;
+import databases.SqlWhere;
 import databases.TblsApp;
 import databases.TblsDataAudit;
 import databases.features.Token;
@@ -17,6 +20,8 @@ import static functionaljavaa.audit.AuditUtilities.getUserSessionProceduresList;
 import static functionaljavaa.audit.AuditUtilities.userSessionExistAtProcLevel;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,9 +33,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -54,7 +61,9 @@ public class UserSessionAPIqueries extends HttpServlet {
          */
         USER_SESSIONS("USER_SESSIONS", "",new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_SESSION_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PERSON, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
-            new LPAPIArguments(TblsApp.AppSession.DATE_STARTED.getName().toLowerCase(), LPAPIArguments.ArgumentType.DATE.toString(), true, 7)},
+            new LPAPIArguments(TblsApp.AppSession.DATE_STARTED.getName().toLowerCase(), LPAPIArguments.ArgumentType.DATE.toString(), false, 8),
+            new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 9)            
+            },
             Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
                 .add("table", TblsApp.TablesApp.APP_SESSION.getTableName()).build()).build() ),
         USER_SESSION_INCLUDING_AUDIT_HISTORY("USER_SESSION_INCLUDING_AUDIT_HISTORY", "",new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_SESSION_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),},
@@ -125,6 +134,7 @@ public class UserSessionAPIqueries extends HttpServlet {
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
             return;                   
         }
+    try (PrintWriter out = response.getWriter()) {       
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());   
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}          
 
@@ -142,22 +152,31 @@ public class UserSessionAPIqueries extends HttpServlet {
                     }
                     iVal++;
                 }
+                SqlWhere sW=new SqlWhere();
+                sW.addConstraint(TblsApp.AppSession.PERSON, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{token.getPersonName()}, null);
+
                 String samplingDayStart = request.getParameter(TblsApp.AppSession.DATE_STARTED.getName().toLowerCase()+"_start");
                 String samplingDayEnd = request.getParameter(TblsApp.AppSession.DATE_STARTED.getName().toLowerCase()+"_end");
                 Object[] buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsApp.AppSession.DATE_STARTED.getName().toLowerCase(), samplingDayStart, samplingDayEnd);
-                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString())){
-                    whereFldName=LPArray.addValueToArray1D(whereFldName, buildDateRangeFromStrings[1].toString());
-                    whereFldValue=LPArray.addValueToArray1D(whereFldValue, buildDateRangeFromStrings[2]);
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString())){                    
                     if (buildDateRangeFromStrings.length>3)
-                        whereFldValue=LPArray.addValueToArray1D(whereFldValue, buildDateRangeFromStrings[3]);
+                        sW.addConstraint(TblsApp.AppSession.DATE_STARTED, SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{buildDateRangeFromStrings[2], buildDateRangeFromStrings[3]}, null);
+//                        whereFldValue=LPArray.addValueToArray1D(whereFldValue, buildDateRangeFromStrings[3]);
+                    else
+                        sW.addConstraint(TblsApp.AppSession.DATE_STARTED, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{buildDateRangeFromStrings[2]}, null);
                 }
-                if (whereFldName.length==0){
-                    return;
+                String numDays = LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_NUM_DAYS.toLowerCase()));
+                if (LPNulls.replaceNull(samplingDayStart).length()==0&&numDays.length()==0)
+                    numDays ="7";
+                if (numDays.length()>0){
+                    int numDaysInt=0-Integer.valueOf(numDays);                   
+                    Date refDate=LPNulls.replaceNull(samplingDayStart).length()==0 ? LPDate.getCurrentDateWithNoTime(): (Date) buildDateRangeFromStrings[2];
+                    Date refAgoDays = LPDate.addDays(refDate, numDaysInt);
+                    sW.addConstraint(TblsApp.AppSession.DATE_STARTED, SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{refAgoDays, refDate}, null);
                 }
                 Object[][] userSessionInfo=QueryUtilitiesEnums.getTableData(TblsApp.TablesApp.APP_SESSION, 
                     EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.APP_SESSION, "ALL"),
-                    whereFldName, whereFldValue, 
-                    new String[]{TblsApp.AppSession.SESSION_ID.getName()+" desc"});
+                    sW, new String[]{TblsApp.AppSession.SESSION_ID.getName()+" desc"});
                 JSONArray userSessionArr = new JSONArray();
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(userSessionInfo[0][0].toString())){
                     for (Object[] currUsrSession: userSessionInfo){
@@ -247,6 +266,20 @@ public class UserSessionAPIqueries extends HttpServlet {
                 break;                */
         default: 
         }
+    }catch(Exception e){      
+        Rdbms.closeRdbms();  
+        String[] errObject = new String[]{e.getMessage()};
+        Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
+        LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, errMsg);
+    } finally {
+        // release database resources
+       Rdbms.closeRdbms();  
+        try {
+            // Rdbms.closeRdbms();                    
+            Rdbms.closeRdbms();  
+        } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+        }
+    }           
     }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
