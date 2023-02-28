@@ -220,7 +220,7 @@ public class Parameter {
                     }
                 }
                 if (isTagValueOneOfDisableOnes(ruleValue))
-                    return returnBusinessRuleValue(ruleValue, procInstanceName, ruleRepo, ruleName, callerInfo, false, true);
+                    return returnBusinessRuleValue(ruleValue, procInstanceName, ruleRepo, ruleName, callerInfo, isOptional, true);
             }
         }
 
@@ -437,13 +437,15 @@ public class Parameter {
     }  
     
     public static Boolean isTagValueOneOfEnableOnes(String tagValue){
-        String enableValuesStr=getBusinessRuleAppFile("businessRulesEnableValues", false); 
+        if (tagValue.length()==0)return false;
+        String enableValuesStr=getBusinessRuleAppFile("businessRulesEnableValues", false);         
         String[] enableValues=enableValuesStr.split("\\|");
         return LPArray.valueInArray(enableValues, tagValue);
     }
 
     public static Boolean isTagValueOneOfDisableOnes(String tagValue){
-        String enableValuesStr=getBusinessRuleAppFile("businessRulesDisableValues", false); 
+        if (tagValue.length()==0)return true;
+        String enableValuesStr=getBusinessRuleAppFile("businessRulesDisableValues", false);        
         String[] enableValues=enableValuesStr.split("\\|");
         return LPArray.valueInArray(enableValues, tagValue);
     }
