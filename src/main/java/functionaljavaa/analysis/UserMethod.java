@@ -8,6 +8,7 @@ package functionaljavaa.analysis;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import databases.Rdbms;
+import databases.TblsCnfg;
 import databases.TblsData;
 import databases.features.Token;
 import functionaljavaa.audit.SampleAudit;
@@ -229,11 +230,15 @@ public class UserMethod {
                     if (!fFN.contains("null")){query.append("= ?");}
                 }
                 query.append(") union ");
-            }else
-                if (!"APP".equalsIgnoreCase(currProcInstanceName))
+            }else{
+                Object[] tableUserMethodExistInSchema= Rdbms.dbTableExists(currProcInstanceName, GlobalVariables.Schemas.CONFIG.getName(), TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName());
+                if (!"APP".equalsIgnoreCase(currProcInstanceName) && LPPlatform.LAB_TRUE.equalsIgnoreCase(tableUserMethodExistInSchema[0].toString()))
                     LPPlatform.saveMessageInDbErrorLog("", new Object[]{currProcInstanceName, GlobalVariables.Schemas.DATA.getName(), viewName}, 
-                            new Object[]{viewName, viewName, "getUserAnalysisMethodCerttifByProcess", 290}, "view not exist in this given schema", new Object[0], currProcInstanceName);
-        }       
+                            new Object[]{viewName, viewName, "getUserAnalysisMethodCerttifByProcess", 290}, "view not exist in this given schema", new Object[0], currProcInstanceName);            
+            }
+        }   
+        if (query.length()==0)
+            return null;
         for (int i=0;i<6;i++){query.deleteCharAt(query.length() - 1);}
         
         
