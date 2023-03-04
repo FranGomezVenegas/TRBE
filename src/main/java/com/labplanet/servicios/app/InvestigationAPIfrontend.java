@@ -84,10 +84,11 @@ public class InvestigationAPIfrontend extends HttpServlet {
             JSONArray jArray = new JSONArray(); 
 
             switch (endPoint){
-                case OPEN_INVESTIGATIONS:              
-                    String[] fieldsToRetrieve=getAllFieldNames(TblsProcedure.TablesProcedure.INVESTIGATION.getTableFields());
+                case OPEN_INVESTIGATIONS:             
+                    EnumIntTableFields[] tableFieldsFromString = EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.INVESTIGATION, "ALL");
+                    String[] fieldsToRetrieve=EnumIntTableFields.getAllFieldNames(tableFieldsFromString);
                     Object[][] incidentsNotClosed=QueryUtilitiesEnums.getTableData(TblsProcedure.TablesProcedure.INVESTIGATION, 
-                        EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.INVESTIGATION, "ALL"),
+                        tableFieldsFromString,
                         new String[]{TblsProcedure.Investigation.CLOSED.getName()+"<>"}, 
                         new Object[]{true}, 
                         new String[]{TblsProcedure.Investigation.ID.getName()+" desc"});
@@ -120,6 +121,7 @@ public class InvestigationAPIfrontend extends HttpServlet {
                     instanceForQueries.killIt();                
                     LPFrontEnd.servletReturnSuccess(request, response, investigationJArr);
                     return;                  
+                  
                 case INVESTIGATION_RESULTS_PENDING_DECISION:
                     String statusClosed=DataProgramCorrectiveAction.ProgramCorrectiveActionStatuses.STATUS_CLOSED.getStatusCode();
                     if (!isProgramCorrectiveActionEnable(procInstanceName)){
