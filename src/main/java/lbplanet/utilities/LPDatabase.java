@@ -18,6 +18,7 @@ public class LPDatabase {
     public static final String integer(){ return "integer";}
     public static final String integerNotNull(){ return integer()+" "+notNulllClause();}
     public static final String real(){ return "real";}
+    public static final String realNotNull(){ return "real"+" "+notNulllClause();}
     public static final String json(){ return "json";}
     public static final String string(){ return "character varying COLLATE pg_catalog.\"default\"";}
     public static final String stringNotNull(){ return "character varying COLLATE pg_catalog.\"default\" "+notNulllClause();}
