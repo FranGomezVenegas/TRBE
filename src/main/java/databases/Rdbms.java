@@ -1634,6 +1634,9 @@ if (1==1){Rdbms.transactionId=1; return;}
                     case "class java.lang.Integer":
                         prepsta.setInt(indexval, (Integer)obj);
                         break;
+                    case "class java.lang.Double":
+                        prepsta.setDouble(indexval, Double.valueOf(obj.toString()));                            
+                        break;                           
                     case "class java.math.BigDecimal":
                         prepsta.setObject(indexval, (java.math.BigDecimal) obj, java.sql.Types.NUMERIC);                            
                         break;                           
