@@ -28,7 +28,7 @@ import org.json.simple.JSONObject;
 import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.InternalMessage;
-import static trazit.session.ProcedureRequestSession.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
+import static trazit.session.ProcedureRequestSession.MANDATPRMS_MAIN_SERVLET_PROCEDURE;
 /**
  *
  * @author User
@@ -91,7 +91,7 @@ public class HolidayCalendarAPIactions extends HttpServlet {
         for (LPAPIArguments curArg: arguments){
             argList=LPArray.addValueToArray1D(argList, curArg.getName());
         }
-        argList=LPArray.addValueToArray1D(argList, MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE.split("\\|"));
+        argList=LPArray.addValueToArray1D(argList, MANDATPRMS_MAIN_SERVLET_PROCEDURE.split("\\|"));
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
                 //procReqSession.killIt();

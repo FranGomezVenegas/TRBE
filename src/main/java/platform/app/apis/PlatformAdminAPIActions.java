@@ -6,7 +6,7 @@
 package platform.app.apis;
 
 import platform.app.logic.ClassPlatformAdmin;
-import static trazit.session.ProcedureRequestSession.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
+import static trazit.session.ProcedureRequestSession.MANDATPRMS_MAIN_SERVLET_PROCEDURE;
 import functionaljavaa.platformadmin.PlatformAdminEnums;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.io.IOException;
@@ -66,7 +66,7 @@ public class PlatformAdminAPIActions extends HttpServlet {
         for (LPAPIArguments curArg: arguments){
             argList=LPArray.addValueToArray1D(argList, curArg.getName());
         }
-        argList=LPArray.addValueToArray1D(argList, MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE.split("\\|"));
+        argList=LPArray.addValueToArray1D(argList, MANDATPRMS_MAIN_SERVLET_PROCEDURE.split("\\|"));
         try (PrintWriter out = response.getWriter()) {
             ClassPlatformAdmin clss = new ClassPlatformAdmin(request, endPoint);
             Object[] diagnostic=clss.getDiagnostic();            

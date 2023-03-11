@@ -6,7 +6,7 @@
 package module.instrumentsmanagement.apis;
 
 import module.instrumentsmanagement.definition.ClassInstruments;
-import static trazit.session.ProcedureRequestSession.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
+import static trazit.session.ProcedureRequestSession.MANDATPRMS_MAIN_SERVLET_PROCEDURE;
 import module.instrumentsmanagement.logic.DataInstruments;
 import module.instrumentsmanagement.definition.InstrumentsEnums.InstrumentsAPIactionsEndpoints;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
@@ -64,7 +64,7 @@ public class InstrumentsAPIactions extends HttpServlet {
         for (LPAPIArguments curArg: arguments){
             argList=LPArray.addValueToArray1D(argList, curArg.getName());
         }
-        argList=LPArray.addValueToArray1D(argList, MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE.split("\\|"));
+        argList=LPArray.addValueToArray1D(argList, MANDATPRMS_MAIN_SERVLET_PROCEDURE.split("\\|"));
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  
         String instrName=argValues[0].toString();
         DataInstruments instr=new DataInstruments(instrName);

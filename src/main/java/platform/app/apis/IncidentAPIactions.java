@@ -7,7 +7,7 @@ package platform.app.apis;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NUM_DAYS;
-import static trazit.session.ProcedureRequestSession.MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE;
+import static trazit.session.ProcedureRequestSession.MANDATPRMS_MAIN_SERVLET_PROCEDURE;
 import databases.RdbmsObject;
 import databases.TblsApp;
 import functionaljavaa.incident.AppIncident;
@@ -131,7 +131,7 @@ public class IncidentAPIactions extends HttpServlet {
             for (LPAPIArguments curArg: arguments){
                 argList=LPArray.addValueToArray1D(argList, curArg.getName());
             }
-            argList=LPArray.addValueToArray1D(argList, MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE.split("\\|"));
+            argList=LPArray.addValueToArray1D(argList, MANDATPRMS_MAIN_SERVLET_PROCEDURE.split("\\|"));
 /*            if (IncidentAPIactionsEndpoints.NEW_INCIDENT.toString().equalsIgnoreCase(endPoint.getName())){
                 JSONArray paramJArr=new JSONArray();
                 Enumeration params = request.getParameterNames();

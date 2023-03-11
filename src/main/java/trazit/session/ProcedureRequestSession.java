@@ -30,9 +30,9 @@ import trazit.globalvariables.GlobalVariables;
  * @author User
  */
 public class ProcedureRequestSession {
-    public static final String MANDATORY_PARAMS_MAIN_SERVLET_QUERIES=GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN;
-    public static final String MANDATORY_PARAMS_MAIN_SERVLET_DOCUMENTATION=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN;
-    public static final String MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
+    public static final String MANDATPRMS_MAIN_SERVLET_QUERIES=GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN;
+    public static final String MANDATPRMS_MAIN_SRVLT_DOCUMENTATION=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN;
+    public static final String MANDATPRMS_MAIN_SERVLET_PROCEDURE=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
 
     /**
@@ -96,9 +96,9 @@ public class ProcedureRequestSession {
         
         String finalToken = "";
         Token tokn = null;
-        String dbName = "";
+        String dbNameProp = "";
         
-        dbName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_DB_NAME);            
+        dbNameProp = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_DB_NAME);            
         finalToken = (String) request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN); 
         if (finalToken==null || finalToken.length()==0)
             finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);         
@@ -109,23 +109,23 @@ public class ProcedureRequestSession {
         }
         tokn = new Token(finalToken);
         if (!isForDocumentation){            
-            if ( (!LPNulls.replaceNull(dbName).equalsIgnoreCase(LPNulls.replaceNull(tokn.getDbName()))) ){
+            if ( (!LPNulls.replaceNull(dbNameProp).equalsIgnoreCase(LPNulls.replaceNull(tokn.getDbName()))) ){
                 this.hasErrors=true;
                 this.errorMessage="This dbName does not match the one in the token.";
                 return;            
             }
-            this.dbName=dbName;
+            this.dbName=dbNameProp;
         }
         Object[] areMandatoryParamsInResponse = null;        
         if (!isForTesting){
             if (isPlatform)
                 areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
             else if (isForDocumentation)
-                areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET_DOCUMENTATION.split("\\|"));                                       
+                areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATPRMS_MAIN_SRVLT_DOCUMENTATION.split("\\|"));                                       
             else if (isQuery)
-                areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET_QUERIES.split("\\|"));                                       
+                areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATPRMS_MAIN_SERVLET_QUERIES.split("\\|"));                                       
             else
-                areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET_PROCEDURE.split("\\|"));                       
+                areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATPRMS_MAIN_SRVLT_DOCUMENTATION.split("\\|"));                       
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                 this.hasErrors=true;
                 this.errorMessage=LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode()+areMandatoryParamsInResponse[1].toString();                
@@ -155,18 +155,18 @@ public class ProcedureRequestSession {
         }else
             this.actionName=theActionName;
         String procInstanceName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME);     
-        if (dbName==null || dbName.length()==0)        
+        if (dbNameProp==null || dbNameProp.length()==0)        
             Rdbms.stablishDBConection();
         else
-            Rdbms.stablishDBConection(dbName);       
+            Rdbms.stablishDBConection(dbNameProp);       
         if (!LPFrontEnd.servletStablishDBConection(request, response)){
             this.hasErrors=true;
             this.errorMessage="db connection not stablished";
             return;
         }    
-        this.appEncryptFields=getEncryptFields(dbName, true, null);
+        this.appEncryptFields=getEncryptFields(dbNameProp, true, null);
         if (!isPlatform)
-            this.procedureEncryptFields=getEncryptFields(dbName, false, procInstanceName);
+            this.procedureEncryptFields=getEncryptFields(dbNameProp, false, procInstanceName);
         if (!isPlatform)
             this.busRulesProcInstance= new BusinessRules(procInstanceName, null);        
         
@@ -256,7 +256,7 @@ public class ProcedureRequestSession {
        // if (1==1) return;
 //        if (!this.isForQuery) 
             Rdbms.closeTransaction(); 
-            this.theSession=null;
+            ProcedureRequestSession.theSession=null;
 /*        if (this.getDbLogSummary()!=null){
             Boolean hasAlters=this.getDbLogSummary().hasDbAlterActions();
             if (hasAlters){
