@@ -2365,6 +2365,8 @@ private static final int CLIENT_CODE_STACK_INDEX;
         return insertRecord(tblObj, fieldNames, fieldValues, alternativeProcInstanceName, false);
     }
     public static RdbmsObject insertRecord(EnumIntTables tblObj, String[] fieldNames, Object[] fieldValues, String alternativeProcInstanceName, Boolean encryptAllFlds){
+        String query="";
+        try{
         String schemaName=addSuffixIfItIsForTesting(tblObj.getRepositoryName(), tblObj.getTableName());
         if (fieldNames.length==0)
            return new RdbmsObject(false, "", RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tblObj.getTableName(), schemaName});
@@ -2381,7 +2383,7 @@ private static final int CLIENT_CODE_STACK_INDEX;
                 new SqlWhere(), null, fldNamesObj, fieldValues, null, 
                 null, null, alternativeProcInstanceName);              
         
-        String query= hmQuery.keySet().iterator().next();   
+        query= hmQuery.keySet().iterator().next();   
         fieldValues = DbEncryptionObject.encryptTableFieldArray(tblObj, fldNamesObj, fieldValues, encryptAllFlds);
         RdbmsObject insertRecordDiagnosis = Rdbms.prepUpQueryWithKey(schemaName, tblObj.getTableName(), query, fieldValues, 1);
         fieldValues = DbEncryptionObject.decryptTableFieldArray(tblObj, fldNamesObj, fieldValues, encryptAllFlds);
@@ -2395,6 +2397,9 @@ private static final int CLIENT_CODE_STACK_INDEX;
             return insertRecordDiagnosis;
         }else{
             return insertRecordDiagnosis;                         
+        }
+        }catch(Exception e){
+            return new RdbmsObject(false, query+" "+Arrays.toString(fieldValues), RdbmsErrorTrapping.DB_ERROR, new Object[]{e.getMessage()});         
         }
     }
     public static Object[] updateRecordFieldsByFilter(EnumIntTables tblObj, EnumIntTableFields[] updateFieldNames, Object[] updateFieldValues, SqlWhere whereObj, String alternativeProcInstanceName) {
