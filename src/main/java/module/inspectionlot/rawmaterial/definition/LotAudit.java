@@ -3,12 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package functionaljavaa.audit;
+package module.inspectionlot.rawmaterial.definition;
 
+import functionaljavaa.audit.AuditUtilities;
+import functionaljavaa.audit.GenericAuditFields;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMDataAudit;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
-import java.util.Arrays;
+import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
 /**
@@ -53,22 +55,18 @@ public class LotAudit {
  * @param tableName String - table where the action was performed into the Sample structure
  * @param tableId Integer - Id for the object where the action was performed.
  * @param lotName
- * @param auditlog Object[] - All data that should be stored in the audit as part of the action being performed
- * @param parentAuditId paranet audit id when creating a child-record
+ * @param fldNames
+ * @param fldValues
  * @return  
  */    
-    public Object[] lotAuditAdd(String action, String tableName, String tableId, 
-                        String lotName, Object[] auditlog, Integer parentAuditId) {
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-
-        GenericAuditFields gAuditFlds=new GenericAuditFields(auditlog);
-
+    public Object[] lotAuditAdd(EnumIntAuditEvents action, String tableName, String tableId, 
+                        String lotName, String[] fldNames, Object[] fldValues) {
+        GenericAuditFields gAuditFlds=new GenericAuditFields(action, TblsInspLotRMDataAudit.TablesInspLotRMDataAudit.LOT, fldNames, fldValues);
+        
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();
         String[] fieldNames=gAuditFlds.getFieldNames();
         Object[] fieldValues=gAuditFlds.getFieldValues();
 
-        fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.ACTION_NAME.getName());
-        fieldValues = LPArray.addValueToArray1D(fieldValues, action);
         fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.TABLE_NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableName);
         fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.TABLE_ID.getName());
@@ -76,13 +74,7 @@ public class LotAudit {
         if (lotName!=null){
             fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.LOT_NAME.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, lotName);
-        }    
-        //fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.FIELDS_UPDATED.getName());
-        //fieldValues = LPArray.addValueToArray1D(fieldValues, Arrays.toString(auditlog));
-        if (parentAuditId!=null){
-            fieldNames = LPArray.addValueToArray1D(fieldNames,  TblsInspLotRMDataAudit.Lot.PARENT_AUDIT_ID.getName());
-            fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
-        }    
+        }            
         return AuditUtilities.applyTheInsert(gAuditFlds, TblsInspLotRMDataAudit.TablesInspLotRMDataAudit.LOT, fieldNames, fieldValues);       
     }
 }
