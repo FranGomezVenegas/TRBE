@@ -143,7 +143,7 @@ public class TblsInvTrackingConfig {
     }
 
     public enum Category implements EnumIntTableFields{
-        NAME("name",LPDatabase.stringNotNull(), null, null, null, null),
+        NAME("name",LPDatabase.stringNotNull(), null, null, null, null)
         ;        
         private Category(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
@@ -161,7 +161,8 @@ public class TblsInvTrackingConfig {
         private final String fieldComment;
         private final FldBusinessRules[] fldBusinessRules;
 
-        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getName(){
+            return this.fieldName;}
         @Override        public String getFieldType() {return this.fieldType;}
         @Override        public String getFieldMask() {return this.fieldMask;}
         @Override        public ReferenceFld getReferenceTable() {return this.reference;}
@@ -173,6 +174,7 @@ public class TblsInvTrackingConfig {
         NAME("name",LPDatabase.stringNotNull(), null, null, null, null),
         ACTIVE("active",LPDatabase.booleanFld(false), null, null, null, null),
         CATEGORY("category",LPDatabase.stringNotNull(), null, new ReferenceFld(SCHEMA_NAME, TablesInvTrackingConfig.INV_CATEGORY.getTableName() , Category.NAME.getName()), null, null),
+//        CATEGORY("category",LPDatabase.stringNotNull(), null, null, null, null),
         LOT_REQUIRES_QUALIF("lot_requires_qualif",LPDatabase.booleanFld(false), null, null, null, null),
         MIN_STOCK("min_stock",LPDatabase.real(), null, null, null, null),
         MIN_STOCK_UOM("min_stock_uom",LPDatabase.string(), null, new ReferenceFld(SCHEMA_NAME, TablesConfig.UOM.getTableName() , TblsCnfg.UnitsOfMeasurement.NAME.getName()), null, null),                
@@ -183,10 +185,9 @@ public class TblsInvTrackingConfig {
         REQUIRES_AVAILABLES_FOR_USE("requires_availables_for_use",LPDatabase.booleanFld(false), null, null, null, null),
         MIN_AVAILABLES_FOR_USE("min_availables_for_use",LPDatabase.real(), null, null, null, null),
         MIN_AVAILABLES_FOR_USE_TYPE("min_availables_for_use_type",LPDatabase.string(), null, new ReferenceFld("ITEMS|VOLUME"), "ITEMS/VOLUME. ITEMS means number of available lots, VOLUME means the total quantity from all available lots", null),
-        ALLOW_OPENING_SOME_AT_A_TIME("allow_opening_some_at_a_time",LPDatabase.booleanFld(true), null, null, null, null),
-        
+        ALLOW_OPENING_SOME_AT_A_TIME("allow_opening_some_at_a_time",LPDatabase.booleanFld(true), null, null, null, null),        
         CREATED_BY("created_by",LPDatabase.stringNotNull(), null, null, null, null),
-        CREATED_ON("created_on",LPDatabase.stringNotNull(), null, null, null, null),
+        CREATED_ON("created_on",LPDatabase.stringNotNull(), null, null, null, null)
         ;        
         private Reference(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
@@ -204,7 +205,8 @@ public class TblsInvTrackingConfig {
         private final String fieldComment;
         private final FldBusinessRules[] fldBusinessRules;
 
-        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getName(){
+            return this.fieldName;}
         @Override        public String getFieldType() {return this.fieldType;}
         @Override        public String getFieldMask() {return this.fieldMask;}
         @Override        public ReferenceFld getReferenceTable() {return this.reference;}

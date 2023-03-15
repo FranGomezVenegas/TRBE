@@ -29,11 +29,10 @@ import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import module.instrumentsmanagement.definition.TblsInstrumentsData.TablesInstrumentsData;
-import module.inventorytrack.definition.TblsInvTrackingData;
-import module.inventorytrack.definition.TblsInvTrackingData.TablesInvTrackingData;
 import module.inventorytrack.definition.TblsInvTrackingDataAudit;
 import module.inventorytrack.definition.InvTrackingEnums.InvLotStatuses;
 import module.inventorytrack.definition.InvTrackingEnums.InventoryTrackAPIqueriesEndpoints;
+import module.inventorytrack.definition.TblsInvTrackingData;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
@@ -110,8 +109,8 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     sW.addConstraint(TblsInvTrackingData.Lot.REFERENCE, SqlStatement.WHERECLAUSE_TYPES.IN, reference.split("\\|"), "|");
                     
                 String[] fieldsToRetrieve=getAllFieldNames(TblsInvTrackingData.TablesInvTrackingData.LOT);
-                Object[][] instrumentsInfo=QueryUtilitiesEnums.getTableData(TablesInvTrackingData.LOT,
-                        EnumIntTableFields.getAllFieldNamesFromDatabase(TablesInvTrackingData.LOT),
+                Object[][] instrumentsInfo=QueryUtilitiesEnums.getTableData(TblsInvTrackingData.TablesInvTrackingData.LOT,
+                        EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInvTrackingData.TablesInvTrackingData.LOT),
                         sW,
                         new String[]{TblsInvTrackingData.Lot.LOT_NAME.getName()+" desc"});
                 JSONArray jArr = new JSONArray();
@@ -208,12 +207,16 @@ public class InvTrackingAPIqueries extends HttpServlet {
                 SqlWhere sWhere=new SqlWhere();
                 category = LPNulls.replaceNull(argValues[0]).toString();
                 reference = LPNulls.replaceNull(argValues[1]).toString();
+                lotName = LPNulls.replaceNull(argValues[2]).toString();
                 if (category.length()>0)
                      sWhere.addConstraint(TblsInvTrackingData.ViewExpiredLots.CATEGORY, 
-                        category.contains("*")  ? SqlStatement.WHERECLAUSE_TYPES.LIKE: SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{category}, null);
+                        category.contains("%")  ? SqlStatement.WHERECLAUSE_TYPES.LIKE: SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{category}, null);
                 if (reference.length()>0)
                      sWhere.addConstraint(TblsInvTrackingData.ViewExpiredLots.REFERENCE, 
-                        reference.contains("*")  ? SqlStatement.WHERECLAUSE_TYPES.LIKE: SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{reference}, null);
+                        reference.contains("%")  ? SqlStatement.WHERECLAUSE_TYPES.LIKE: SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{reference}, null);
+                if (lotName.length()>0)
+                     sWhere.addConstraint(TblsInvTrackingData.ViewExpiredLots.LOT_NAME, 
+                        lotName.contains("%")  ? SqlStatement.WHERECLAUSE_TYPES.LIKE: SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{lotName}, null);
 
                 sWhere.addConstraint(TblsInvTrackingData.Lot.LOT_NAME, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, null, null);
                 reference = LPNulls.replaceNull(argValues[0]).toString();
@@ -240,10 +243,15 @@ public class InvTrackingAPIqueries extends HttpServlet {
                 reference = LPNulls.replaceNull(argValues[1]).toString();
                 if (category.length()>0)
                      sWhere.addConstraint(TblsInvTrackingData.ViewReferencesStockUnderMin.CATEGORY, 
-                        category.contains("*")  ? SqlStatement.WHERECLAUSE_TYPES.LIKE: SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{category.split("\\|")}, "|");
-                if (reference.length()>0)
-                     sWhere.addConstraint(TblsInvTrackingData.ViewReferencesStockUnderMin.NAME, 
-                        reference.contains("*")  ? SqlStatement.WHERECLAUSE_TYPES.LIKE: SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{reference.split("\\|")}, "|");
+                        category.contains("%")  ? SqlStatement.WHERECLAUSE_TYPES.LIKE: SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{category.split("\\|")}, "|");
+                if (reference.length()>0){
+                    if (reference.contains("%"))
+                        sWhere.addConstraint(TblsInvTrackingData.ViewReferencesStockUnderMin.NAME, 
+                            SqlStatement.WHERECLAUSE_TYPES.LIKE, new Object[]{reference}, null);
+                    else
+                        sWhere.addConstraint(TblsInvTrackingData.ViewReferencesStockUnderMin.NAME, 
+                            SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{reference.split("\\|")}, "|");                
+                }
                 fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsInvTrackingData.ViewsInvTrackingData.REFERENCES_STOCK_UNDER_MIN.getViewFields());
                 
                 sWhere.addConstraint(TblsInvTrackingData.ViewReferencesStockUnderMin.CURRENT_STOCK, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, null, null);

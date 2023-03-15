@@ -57,7 +57,7 @@ public final class InventoryPlanEntry {
     private final JSONArray errorsjArr;
     private List<InventoryPlanEntryItem> invEntries ;
 
-    public InventoryPlanEntry(String materialName, String specCode, Integer specCodeVersion, Integer quant, Integer numCont) {        
+    public InventoryPlanEntry(String materialName, String specCode, Integer specCodeVersion, Double quant, Integer numCont) {        
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         this.errorsArr=new String[]{};
         this.errorsjArr=new JSONArray();

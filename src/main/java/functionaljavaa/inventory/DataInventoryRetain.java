@@ -11,7 +11,7 @@ import databases.Rdbms;
 import databases.RdbmsObject;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.SqlWhere;
-import functionaljavaa.audit.LotAudit;
+import module.inspectionlot.rawmaterial.definition.LotAudit;
 import functionaljavaa.materialspec.InventoryPlanEntryItem;
 import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement;
 import java.math.BigDecimal;
@@ -19,6 +19,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import module.inspectionlot.rawmaterial.definition.InspLotRMEnums;
+import module.inspectionlot.rawmaterial.definition.InspLotRMEnums.InspectionLotRMAuditEvents;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.InternalMessage;
@@ -171,7 +172,7 @@ public final class DataInventoryRetain {
         if (recIdPosic>-1) recId=whereFldValue[recIdPosic].toString();
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(updateRecordFieldsByFilter[0].toString())){
             LotAudit lotAudit = new LotAudit();            
-            lotAudit.lotAuditAdd(auditActionName, TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN.getTableName(), recId, lotName, 
+            lotAudit.lotAuditAdd(InspectionLotRMAuditEvents.INVENTORY_RETAIN_UPDATED, TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN.getTableName(), recId, lotName, 
                     LPArray.joinTwo1DArraysInOneOf1DString(updFldName, updFldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
             lotAudit=null;
         }

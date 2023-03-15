@@ -293,14 +293,14 @@ public class TblsInvTrackingData {
     }        
 
     public enum ViewReferencesStockUnderMin implements EnumIntViewFields{
-        NAME(TblsInvTrackingConfig.Reference.NAME.getName(), "l."+TblsInvTrackingConfig.Reference.NAME.getName(), TblsInvTrackingConfig.Reference.NAME, null, null, null),
+        NAME("name", "l."+"name", TblsInvTrackingConfig.Reference.NAME, null, null, null),
         MIN_STOCK_TYPE(TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE.getName(), "l."+TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE.getName(), TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE, null, null, null),
         CATEGORY(TblsInvTrackingConfig.Reference.CATEGORY.getName(), "l."+TblsInvTrackingConfig.Reference.CATEGORY.getName(), TblsInvTrackingConfig.Reference.CATEGORY, null, null, null),
         MIN_STOCK(TblsInvTrackingConfig.Reference.MIN_STOCK.getName(), "l."+TblsInvTrackingConfig.Reference.MIN_STOCK.getName(), TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE, null, null, null),
         CURRENT_STOCK("current_stock", "case when ref.min_stock_type='ITEMS' then count(l.*) " +
             "when ref.min_stock_type='VOLUME' then sum(l.volume) " +
             "else null end " +
-            "as current_stock ", Lot.LOCKED_REASON, null, null, null),
+            "as current_stock ", Lot.LOCKED_REASON, null, null, null)
         ;
         private ViewReferencesStockUnderMin(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
 //            try{
