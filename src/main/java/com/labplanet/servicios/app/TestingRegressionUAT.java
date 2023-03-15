@@ -268,7 +268,7 @@ public class TestingRegressionUAT extends HttpServlet {
                         Object[] updFldValues=new Object[]{trapMessage[trapMessage.length-1]};
                         
                         sqlWhere.addConstraint(TblsTesting.Script.SCRIPT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{scriptId}, "");
-                        Rdbms.updateRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPT,
+                        Rdbms.updateTableRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPT,
                         EnumIntTableFields.getTableFieldsFromString(TblsTesting.TablesTesting.SCRIPT, updFldNames), updFldValues, sqlWhere, null);
                         procReqInstance.killIt();  
                         
