@@ -107,13 +107,13 @@ public static void main(String[] args) {
             prop.put("mail.smtp.ssl.trust", propValue.getString("tls.mail.smtp.ssl.trust"));
             prop.put("mail.user", username);
             prop.put("mail.password", password); //TLS
-            Session session = Session.getInstance(prop, new javax.mail.Authenticator() {
+/*            Session session = Session.getInstance(prop, new javax.mail.Authenticator() {
                             @Override
                             protected PasswordAuthentication getPasswordAuthentication() {
                             return new PasswordAuthentication(username, password);
                             }
-            });    
-            buildMailInternal(session, subject, body, toList, ccList, bccList, attachmentUrl);
+            });    */
+            buildMailInternal(subject, body, toList, ccList, bccList, attachmentUrl);
     }
 
     public static void sendMailViaSSL(String subject, String body, String[] toList, String[] ccList, String[] bccList, String[] attachmentUrl) {
@@ -132,16 +132,16 @@ public static void main(String[] args) {
             prop.put("mail.user", username);
             prop.put("mail.password", password); 
             
-            Session session = Session.getInstance(prop, new javax.mail.Authenticator() {
+/*            Session session = Session.getInstance(prop, new javax.mail.Authenticator() {
                             @Override
                             protected PasswordAuthentication getPasswordAuthentication() {
                             return new PasswordAuthentication(username, password);
                             }
-            });    
-            buildMailInternal(session, subject, body, toList, ccList, bccList, attachmentUrl);
+            });    */
+            buildMailInternal(subject, body, toList, ccList, bccList, attachmentUrl);
     }
     
-    private static void buildMailInternal(Session session, String subject, String body, String[] toList, String[] ccList, String[] bccList, String[] attachmentUrl) {
+    private static void buildMailInternal(String subject, String body, String[] toList, String[] ccList, String[] bccList, String[] attachmentUrl) {
       String to = "info.fran.gomez@gmail.com";
 
       // Sender's email ID needs to be mentioned
@@ -159,8 +159,9 @@ public static void main(String[] args) {
       props.put("mail.smtp.port", "465");
 
       // Get the Session object.
-      session = Session.getInstance(props,
+      Session session = Session.getInstance(props,
          new javax.mail.Authenticator() {
+            @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                return new PasswordAuthentication(username, password);
 	   }

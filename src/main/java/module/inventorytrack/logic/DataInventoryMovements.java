@@ -106,7 +106,7 @@ public class DataInventoryMovements {
             }          
             reducedVolume=invLot.getCurrentVolume().subtract(myUom.getConvertedQuantity());
         }
-        if (BigDecimal.ZERO.compareTo(reducedVolume)==1)
+        if (BigDecimal.ZERO.compareTo(reducedVolume)>0)
             return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.INV_LOT_HAS_NOT_ENOUGH_VOLUME, new Object[]{invLot.getLotName(), invLot.getCurrentVolume(), newVolume, newVolumeUom}, invLot.getLotName());                                        
 	
         SqlWhere sqlWhere = new SqlWhere();

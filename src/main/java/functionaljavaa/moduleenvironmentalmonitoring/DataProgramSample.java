@@ -149,7 +149,7 @@ public class DataProgramSample{
             }
             if (numSamplesToLog==null)
                 numSamplesToLog=1;
-            newProjSample = ds.logSample(sampleTemplateCode, Integer.valueOf(sampleTemplateCodeVersion), fieldName, fieldValue, numSamplesToLog, TblsEnvMonitData.TablesEnvMonitData.SAMPLE); 
+            newProjSample = ds.logSample(sampleTemplateCode, sampleTemplateCodeVersion, fieldName, fieldValue, numSamplesToLog, TblsEnvMonitData.TablesEnvMonitData.SAMPLE); 
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newProjSample[0].toString()))
                 return newProjSample; //newProjSample=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "arguments received", LPArray.joinTwo1DArraysInOneOf1DString(fieldName, fieldValue, ":"));
             messages.addMainForSuccess(EnvMonSampleAPIactionsEndpoints.LOGSAMPLE, 
