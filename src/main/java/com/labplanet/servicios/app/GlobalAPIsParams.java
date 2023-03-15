@@ -150,6 +150,7 @@ public class GlobalAPIsParams extends HttpServlet {
     public static final String REQUEST_PARAM_RETAIN_ID = "retainId";   
     public static final String REQUEST_PARAM_NEW_LOCATION_NAME = "newLocationName";   
     public static final String REQUEST_PARAM_NEW_LOCATION_ID = "newLocationId";   
+    public static final String REQUEST_PARAM_NUM_ADHOC_BULKS = "numAdhocBulks";    
     /**
      *
      */
@@ -230,9 +231,7 @@ public class GlobalAPIsParams extends HttpServlet {
      */
     public static final String REQUEST_PARAM_RESULT_ID = "resultId";
 
-    /**
-     *
-     */
+    public static final String REQUEST_PARAM_LOT_AUDIT_FIELD_TO_RETRIEVE = "lotAuditFieldToRetrieve";
     public static final String REQUEST_PARAM_SAMPLE_AUDIT_FIELD_TO_RETRIEVE = "sampleAuditFieldToRetrieve";
 
     /**
