@@ -180,23 +180,36 @@ public class UnitsOfMeasurement {
     public void convertValue(String newUnit){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         String procInstanceName=procReqSession.getProcedureInstance();
+        String schemaName = GlobalVariables.Schemas.CONFIG.getName();
+        schemaName = LPPlatform.buildSchemaName(procInstanceName, schemaName);
+        Object[] conversion = new Object[6];
+        String tableName = TblsCnfg.TablesConfig.UOM.getTableName();
+        String familyFieldNameDataBase = TblsCnfg.UnitsOfMeasurement.MEASUREMENT_FAMILY.getName();
+        BigDecimal valueConverted = this.getOrigQuantity();
+        String[] fieldsToGet = new String[]{TblsCnfg.UnitsOfMeasurement.NAME.getName(), 
+            familyFieldNameDataBase, TblsCnfg.UnitsOfMeasurement.IS_BASE.getName(),
+            TblsCnfg.UnitsOfMeasurement.FACTOR_VALUE.getName(), TblsCnfg.UnitsOfMeasurement.OFFSET_VALUE.getName()};
+        
+        if (LPNulls.replaceNull(this.origQuantityUom).length()==0){
+            Object[][] newUnitInfo = Rdbms.getRecordFieldsByFilter(schemaName, tableName,
+                     new String[]{TblsCnfg.UnitsOfMeasurement.NAME.getName()},  new Object[]{newUnit}, fieldsToGet);           
+            conversion = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, MESSAGE_TRAPPING_CONVERTED_SUCCESS,
+                new Object[]{this.getOrigQuantityUom(), newUnitInfo, this.getOrigQuantity(), valueConverted, procInstanceName,
+                    MESSAGE_LABELS_VALUE_CONVERTED+this.getOrigQuantity()+", "+MESSAGE_LABELS_CURRENT_UNIT+LPNulls.replaceNull(this.getOrigQuantityUom())+", "+MESSAGE_LABELS_NEW_UNIT+LPNulls.replaceNull(newUnit)});            
+            this.convertedFine=true;
+            this.convertedQuantity=this.origQuantity;
+            this.convertedQuantityUom=newUnit;
+            this.conversionErrorDetail=null;
+            this.conversionDetail=conversion;  
+            return;
+        }
+        
         Object[] unitsCompatible = twoUnitsInSameFamily(this.origQuantityUom, newUnit);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(unitsCompatible[0].toString())){
             this.convertedFine=false;
             this.conversionErrorDetail=unitsCompatible;
             return;
         }
-        Object[] conversion = new Object[6];
-        String tableName = TblsCnfg.TablesConfig.UOM.getTableName();
-        String familyFieldNameDataBase = TblsCnfg.UnitsOfMeasurement.MEASUREMENT_FAMILY.getName();
-        BigDecimal valueConverted = this.getOrigQuantity();
-
-        String schemaName = GlobalVariables.Schemas.CONFIG.getName();
-        schemaName = LPPlatform.buildSchemaName(procInstanceName, schemaName);
-
-        String[] fieldsToGet = new String[]{TblsCnfg.UnitsOfMeasurement.NAME.getName(), 
-            familyFieldNameDataBase, TblsCnfg.UnitsOfMeasurement.IS_BASE.getName(),
-            TblsCnfg.UnitsOfMeasurement.FACTOR_VALUE.getName(), TblsCnfg.UnitsOfMeasurement.OFFSET_VALUE.getName()};
         Object[][] currentUnitInfo = Rdbms.getRecordFieldsByFilter(schemaName, tableName,
                  new String[]{TblsCnfg.UnitsOfMeasurement.NAME.getName()},  new Object[]{this.getOrigQuantityUom()}, fieldsToGet );
         Object[][] newUnitInfo = Rdbms.getRecordFieldsByFilter(schemaName, tableName,
