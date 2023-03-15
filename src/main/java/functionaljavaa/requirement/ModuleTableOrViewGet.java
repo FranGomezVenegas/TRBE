@@ -5,7 +5,6 @@
  */
 package functionaljavaa.requirement;
 
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import databases.TblsCnfg;
 import databases.TblsData;
 import databases.TblsDataAudit;
@@ -103,7 +102,6 @@ public class ModuleTableOrViewGet {
                     
                 return;
             default:
-                return;
         }
     }    
 

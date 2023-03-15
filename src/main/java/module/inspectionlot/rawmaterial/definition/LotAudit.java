@@ -7,12 +7,10 @@ package module.inspectionlot.rawmaterial.definition;
 
 import functionaljavaa.audit.AuditUtilities;
 import functionaljavaa.audit.GenericAuditFields;
-import module.inspectionlot.rawmaterial.definition.TblsInspLotRMDataAudit;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntMessages;
-import trazit.session.ProcedureRequestSession;
 /**
  * 
  * @author Fran Gomez

@@ -5,15 +5,6 @@
  */
 package module.inspectionlot.rawmaterial.logic;
 
-import databases.Rdbms;
-import databases.RdbmsObject;
-import lbplanet.utilities.LPDate;
-import lbplanet.utilities.LPPlatform;
-import module.inspectionlot.rawmaterial.definition.InspLotRMEnums;
-import module.inspectionlot.rawmaterial.definition.TblsInspLotRMData;
-import trazit.session.InternalMessage;
-import trazit.session.ProcedureRequestSession;
-
 /**
  *
  * @author User

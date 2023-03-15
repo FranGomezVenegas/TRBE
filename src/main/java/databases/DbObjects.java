@@ -6,8 +6,6 @@
 package databases;
 
 import com.labplanet.servicios.requirements.ProcDeployEnums;
-import static databases.DbObjects.SchemaActions.CREATE;
-import static databases.DbObjects.SchemaActions.DELETE;
 import static databases.Rdbms.insertRecordInTableFromTable;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsApp.TablesApp;
@@ -49,6 +47,7 @@ public class DbObjects {
     
     /**
      *
+     * @param platformName
      * @return one Json Object with the log built after running the script for the platform instance creation.
      */
     public static JSONObject createPlatformSchemasAndBaseTables(String platformName){        
@@ -57,9 +56,6 @@ public class DbObjects {
         EnumIntTables[] tablesToTransferData=new EnumIntTables[]{
             TblsCnfg.TablesConfig.UOM
         };
-        String[] schemaNames = new String[]{GlobalVariables.Schemas.APP_AUDIT.getName(),
-            GlobalVariables.Schemas.CONFIG.getName(), GlobalVariables.Schemas.REQUIREMENTS.getName(), 
-            GlobalVariables.Schemas.APP.getName()};
         String tblCreateScript="";
         JSONObject jsonObj=new JSONObject();
         
@@ -213,8 +209,6 @@ public class DbObjects {
         JSONArray mainLogArr = new JSONArray();
         for (String configSchemaName:schemasNames){
             JSONObject jsonObj = new JSONObject();
-            JSONArray jsSchemaArr = new JSONArray();
-            jsSchemaArr.add(configSchemaName);
             if (configSchemaName.contains("-") && (!configSchemaName.startsWith("\""))){            
                 configSchemaName = "\""+configSchemaName+"\"";}
             Object[] dbSchemaExists = Rdbms.dbSchemaExists(configSchemaName);
