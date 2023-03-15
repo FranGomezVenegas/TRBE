@@ -62,7 +62,7 @@ public class SamplingPlanEntry {
     private List<SamplingPlanEntryItem> spEntries ;
     
     
-    public SamplingPlanEntry(String materialName, String specCode, Integer specCodeVersion, Integer quant, Integer numCont) {        
+    public SamplingPlanEntry(String materialName, String specCode, Integer specCodeVersion, Double quant, Integer numCont) {        
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         this.errorsArr=new String[]{};
         this.errorsjArr=new JSONArray();
@@ -102,7 +102,7 @@ public class SamplingPlanEntry {
                         if (quant==null || quant.toString().length()==0)
                             errorMsg="For the algorithm"+algEntry+" and entry "+curMatSampPlan[0].toString()+" the lot quantity is required but not specified";
                         else{
-                            if (algorithm.equalsIgnoreCase(SamplingPlanAlgorithms.ONE_PER_EACH_QUANTITY.toString())) numSamples=quant;  
+                            if (algorithm.equalsIgnoreCase(SamplingPlanAlgorithms.ONE_PER_EACH_QUANTITY.toString())) numSamples=quant.intValue();  
                             else{
                                 int nth = (int)Math.round(Math.pow(quant, 1.0 / 2.0));                                    
                                 numSamples=Integer.valueOf(nth);
