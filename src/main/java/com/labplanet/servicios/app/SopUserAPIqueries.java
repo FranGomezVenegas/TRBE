@@ -204,9 +204,7 @@ public class SopUserAPIqueries extends HttpServlet {
                 return;          
             }                  
             String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-            String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
             
-            Token token = new Token(finalToken);
             SopUserAPIqueriesEndpoints endPoint = null;
             try{
                 endPoint = SopUserAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
@@ -291,7 +289,6 @@ public class SopUserAPIqueries extends HttpServlet {
             Integer procedureFldPosic = LPArray.valuePosicInArray(fieldsToRetrieve, TblsData.ViewUserAndMetaDataSopView.PROCEDURE.getName());
             if (procedureFldPosic==-1)        
                 fieldsToRetrieve=LPArray.addValueToArray1D(fieldsToRetrieve, TblsData.ViewUserAndMetaDataSopView.PROCEDURE.getName());
-            UserSop userSop = new UserSop();                               
             Object[][] userSops = UserSop.getUserProfileFieldValues( 
                     new String[]{TblsData.ViewUserAndMetaDataSopView.REVIEWER_ID.getName(), TblsData.ViewUserAndMetaDataSopView.PENDING_REVIEW.getName()}, new Object[]{token.getPersonName(), true}, fieldsToRetrieve, allUserProcedurePrefix,
                     Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING))));
@@ -365,7 +362,6 @@ public class SopUserAPIqueries extends HttpServlet {
         Integer procedureFldPosic = LPArray.valuePosicInArray(fieldsToRetrieve, TblsData.ViewUserAndMetaDataSopView.PROCEDURE.getName());
         if (procedureFldPosic==-1)        
             fieldsToRetrieve=LPArray.addValueToArray1D(fieldsToRetrieve, TblsData.ViewUserAndMetaDataSopView.PROCEDURE.getName());
-        UserSop userSop = new UserSop();                               
         Object[][] userSops = UserSop.getUserProfileFieldValues( 
                 new String[]{TblsData.ViewUserAndMetaDataSopView.USER_ID.getName()}, new Object[]{token.getPersonName()}, fieldsToRetrieve, allUserProcedurePrefix,
                 Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING))));
@@ -466,7 +462,6 @@ public class SopUserAPIqueries extends HttpServlet {
     public static JSONArray ProceduresSops(HttpServletRequest request, HttpServletResponse response){
     try{
         String language = LPFrontEnd.setLanguage(request); 
-        String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
         String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);        
         if (finalToken==null || finalToken.length()==0)
             finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
@@ -488,13 +483,11 @@ public class SopUserAPIqueries extends HttpServlet {
         String[] fieldsToRetrieve = new String[]{FIELDNAME_SOP_ID, FIELDNAME_SOP_NAME};
         String sopFieldsToRetrieve = argValues[0].toString(); 
         if (sopFieldsToRetrieve!=null && sopFieldsToRetrieve.length()>0 && !sopFieldsToRetrieve.toUpperCase().contains("LABPLANET_FALSE")) {                
-            String[] sopFieldsToRetrieveArr = sopFieldsToRetrieve.split("\\|");
             for (String fv: EnumIntViewFields.getAllFieldNames(TblsData.ViewUserAndMetaDataSopView.values())){
                 fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, fv);
             }
         }
         JSONArray myPendingSopsByProc = new JSONArray();                 
-        UserSop userSop = new UserSop();      
         for (String currProc: allUserProcedurePrefix) {                   
             Object[][] procSops = Rdbms.getRecordFieldsByFilter(currProc+"-config", TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
                     new String[]{TblsCnfg.SopMetaData.SOP_ID.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, fieldsToRetrieve);
@@ -534,7 +527,6 @@ public class SopUserAPIqueries extends HttpServlet {
         if (finalToken==null || finalToken.length()==0)
             finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
 
-        SopUserAPIqueriesEndpoints endPoint = SopUserAPIqueriesEndpoints.SOP_TREE_LIST_ELEMENT;
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONArray();}           
     
         UserProfile usProf = new UserProfile();
