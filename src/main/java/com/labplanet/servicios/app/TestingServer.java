@@ -98,7 +98,7 @@ public class TestingServer extends HttpServlet {
         response=LPHttp.responsePreparation(response);
     try (PrintWriter out = response.getWriter()) {
         
-        
+if (1==2){        
 Rdbms.stablishDBConection("labplanet");      
             InvTrackingFrontendMasterData mdObj=new InvTrackingFrontendMasterData();
             JSONObject masterDataJsonObject = mdObj.getMasterDataJsonObject("inv-draft");  
@@ -110,8 +110,24 @@ out.println("************ ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE NO t
 out.println(EnumIntViews.getViewScriptCreation(ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE, "inv-draft", false, false, false));
 out.println("************ ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE NO testing. End");  
 
+if (1==2)
+    return;
+}
+
+
+//lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueba", new String[]{"info.fran.gomez@gmail.com"}, 
+//null, null, null);
+out.println(lbplanet.utilities.LPMailing.mailAI("localhost", "25"));
+out.println(lbplanet.utilities.LPMailing.mailAI("localhost", "587"));
+out.println(lbplanet.utilities.LPMailing.mailAI("localhost", "465"));
+out.println(lbplanet.utilities.LPMailing.mailAI("localhost", "2525"));
+out.println(lbplanet.utilities.LPMailing.mailAI("mail.trazit.net", "25"));
+out.println(lbplanet.utilities.LPMailing.mailAI("mail.trazit.net", "587"));
+out.println(lbplanet.utilities.LPMailing.mailAI("mail.trazit.net", "465"));
+out.println(lbplanet.utilities.LPMailing.mailAI("mail.trazit.net", "2525"));
 if (1==1)
     return;
+
 //Map<String, ? extends ServletRegistration> registrations = servletContext.getServletRegistrations();        
 //@Override
             //public int hashCode() {

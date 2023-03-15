@@ -126,8 +126,9 @@ public static void main(String[] args) {
             prop.put("mail.smtp.host", propValue.getString("ssl.mail.smtp.host"));
             prop.put("mail.smtp.port", propValue.getString("ssl.mail.smtp.port"));
             prop.put("mail.smtp.auth", propValue.getString("ssl.mail.smtp.auth"));
-            prop.put("mail.smtp.socketFactory.port", propValue.getString("ssl.mail.smtp.socketFactory.port")); 
-            prop.put("mail.smtp.socketFactory.class", propValue.getString("ssl.mail.smtp.socketFactory.class")); 
+            //prop.put("mail.smtp.socketFactory.port", propValue.getString("ssl.mail.smtp.socketFactory.port")); 
+            //prop.put("mail.smtp.socketFactory.class", propValue.getString("ssl.mail.smtp.socketFactory.class")); 
+            prop.put("javax.net.ssl.trustStoreType", "none");
             prop.put("mail.user", username);
             prop.put("mail.password", password); 
             
@@ -153,9 +154,9 @@ public static void main(String[] args) {
 
       Properties props = new Properties();
       props.put("mail.smtp.auth", "true");
-      props.put("mail.smtp.starttls.enable", "true");
+      //props.put("mail.smtp.starttls.enable", "true");
       props.put("mail.smtp.host", host);
-      props.put("mail.smtp.port", "25");
+      props.put("mail.smtp.port", "465");
 
       // Get the Session object.
       session = Session.getInstance(props,
@@ -232,6 +233,73 @@ public static void main(String[] args) {
             Logger.getLogger(LPMailing.class.getName()).log(Level.SEVERE, null, ex.getMessage());
         }
     }    
+    
+    public static String mailAI(String hostArg, String portArg){
+     // Sender's email ID needs to be mentioned
+      String sender = "fgomez@trazit.net";
+      // Recipient's email ID needs to be mentioned.
+      String to = "info@trazit.net";
+      Address[] toArr=null;
+        try {
+            toArr=new Address[]{new InternetAddress("info@trazit.net"), new InternetAddress("fgomez@trazit.net"),
+            new InternetAddress("ibelmonte@trazit.net"), new InternetAddress("jmallorqui@trazit.net")};
+        } catch (AddressException ex) {
+            Logger.getLogger(LPMailing.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      // Assuming you are sending email from localhost
+      String host = "mail.trazit.net"; // "localhost"; //"mail.trazit.net";
+      
+      final String username = "fgomez";//change accordingly
+      final String password = "fgomeztrazit123";//change accordingly
+      // Get system properties
+      Properties properties = System.getProperties();
+
+      // Setup mail server
+      properties.setProperty("mail.smtp.host", hostArg);
+      //properties.setProperty("mail.smtp.port", "465");
+      properties.setProperty("mail.smtp.port", portArg);
+      //properties.setProperty("mail.smtp.auth", "true");
+      properties.setProperty("mail.smtp.auth", "false");
+      properties.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+
+      properties.setProperty("javax.net.ssl.trustStoreType", "none");
+      // Get the default Session object.
+      Session session = Session.getInstance(properties,
+         new javax.mail.Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+               return new PasswordAuthentication(username, password);
+            }
+         });
+
+      try {
+         // Create a default MimeMessage object.
+         MimeMessage message = new MimeMessage(session);
+
+         // Set From: header field of the header.
+         message.setFrom(new InternetAddress(sender));
+
+         // Set To: header field of the header.
+         //message.addRecipient(Message.RecipientType.TO,
+         //                         new InternetAddress(to));
+         message.addRecipients(Message.RecipientType.TO,toArr);
+
+         // Set Subject: header field
+         message.setSubject("Trazit Backend sent this mail!");
+
+         // Now set the actual message
+         message.setText("Host: "+hostArg+" port: "+portArg+ " Estás recibiendo este correo ... porque ... TRAZIT !!! ");
+    System.setProperty("javax.net.ssl.trustStoreType", "none");
+
+         // Send message
+         Transport.send(message);
+         System.out.println("Host: "+hostArg+" port: "+portArg+ " Sent message successfully....");
+         return "Host: "+hostArg+" port: "+portArg+ "Sent message successfully....";
+      } catch (MessagingException mex) {
+         mex.printStackTrace();
+         return "Host: "+hostArg+" port: "+portArg+" Error:"+ mex.getMessage();
+      }        
+    }
+    
 }      
 
 
