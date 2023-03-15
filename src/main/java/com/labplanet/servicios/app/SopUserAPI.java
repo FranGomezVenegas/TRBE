@@ -119,7 +119,7 @@ public class SopUserAPI extends HttpServlet {
                 String sopName = argValues[0].toString();
                 String userName = token.getUserName();
                 userSopDiagnostic=UserSop.userSopMarkedAsCompletedByUser(procInstanceName, userName, sopName,
-                    Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING.toString()))));
+                    Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING))));
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userSopDiagnostic[0].toString())){  
                     messageDynamicData=new Object[]{sopName, userName, procInstanceName};
                 }else{
@@ -131,7 +131,7 @@ public class SopUserAPI extends HttpServlet {
                 sopName = argValues[0].toString();
                 userName = token.getUserName();
                 userSopDiagnostic=UserSop.userSopMarkedAsCompletedByUserAndReviewerSignPending(procInstanceName, userName, sopName,
-                    Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING.toString()))));
+                    Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING))));
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userSopDiagnostic[0].toString())){  
                     messageDynamicData=new Object[]{sopName, userName, procInstanceName};
                 }else{
@@ -143,7 +143,7 @@ public class SopUserAPI extends HttpServlet {
                 sopName = argValues[0].toString();
                 userName = token.getUserName();
                 userSopDiagnostic=UserSop.userSopSignedByReviewer(procInstanceName, userName, sopName,
-                    Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING.toString()))));
+                    Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING))));
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userSopDiagnostic[0].toString())){  
                     messageDynamicData=new Object[]{sopName, userName, procInstanceName};
                 }else{

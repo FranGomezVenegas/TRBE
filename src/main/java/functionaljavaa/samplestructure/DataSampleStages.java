@@ -89,7 +89,7 @@ Object[][] firstStageData=new Object[0][0];
         @Override        public char getMultiValueSeparator(){return this.multiValueSeparator;}
         @Override        public Boolean getIsOptional() {return isOptional;}
         @Override        public ArrayList<String[]> getPreReqs(){
-            ArrayList<String[]> d = new ArrayList<String[]>();
+            ArrayList<String[]> d = new ArrayList<>();
             if (preReqsBusRules!=null && preReqsBusRules.length()>0){
                 String[] rulesArr=preReqsBusRules.split("\\|");
                 for (String curRule: rulesArr){
@@ -274,7 +274,7 @@ Object[][] firstStageData=new Object[0][0];
             ResponseMessages messages = instanceForActions.getMessages();
             ProcedureSampleStageErrorTrapping smpStgErr=null;
             try{
-                smpStgErr = ProcedureSampleStageErrorTrapping.valueOf(errorCodeArr[0].toString().toUpperCase());
+                smpStgErr = ProcedureSampleStageErrorTrapping.valueOf(errorCodeArr[0].toUpperCase());
                 errorCodeArr[0] = smpStgErr.getErrorCode();
             }catch(Exception e){                
             }

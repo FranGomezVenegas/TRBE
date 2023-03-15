@@ -265,7 +265,7 @@ if (1==1) return;
             procEventJson = LPJson.convertArrayRowToJSONObject(procEventFldNameArray, procEvent1, null);
             procEventSopDetail = AppProcedureListAPI.procEventSops("9", "proc-deploy", procedure, procEventJson, 
                 procEventFldNameArray, procEvent1, 
-                Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING.toString()))));
+                Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING))));
         }
 if (1==1)return;
         out.println("Time to encrypt data ....");

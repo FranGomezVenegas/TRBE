@@ -149,7 +149,7 @@ public class  LPArray {
             String[] rowParse = myStringsArray[i].split("\\*");
             if (rowParse.length!=2){
                 if (rowParse.length==1)
-                    myObjectsArray[i]=myStringsArray[i].toString();
+                    myObjectsArray[i]=myStringsArray[i];
                 else
                 return new Object[]{LPPlatform.LAB_FALSE,
                     new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.OBJECTOFARRAY_WRONGFORMAT, new Object[]{i, myStringsArray[i]})};

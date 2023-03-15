@@ -54,7 +54,7 @@ public class DataInspectionLotDecision {
                 dataLotBulkFlds);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(lotBulksInfo[0][0].toString())) 
             new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.LOT_WITH_NO_BULKS, new Object[]{lotName, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())}, lotName);
-        if (!decision.toString().toUpperCase().contains("REJECT")){       
+        if (!decision.toUpperCase().contains("REJECT")){       
             Integer bulksNoDecision=0;
             for (Object[] curBulk: lotBulksInfo){
                 if (LPNulls.replaceNull(curBulk[1]).toString().length()==0)bulksNoDecision++;
@@ -90,7 +90,7 @@ public class DataInspectionLotDecision {
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn.getDiagnostic())) return diagn;
         }
         InternalMessage lotDecisionRecordCreateOrUpdate = lotDecisionRecordCreateOrUpdate(lotName, decision, true);
-        if (decision.toString().toUpperCase().contains("REJECT")){
+        if (decision.toUpperCase().contains("REJECT")){
             InternalMessage lotClousureDiagn = DataInspectionLot.lotClousure(lotName, InspectionLotRMClousureTypes.BULK_INSPECTION_REJECTED);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(lotClousureDiagn.getDiagnostic()))
                 return lotClousureDiagn;

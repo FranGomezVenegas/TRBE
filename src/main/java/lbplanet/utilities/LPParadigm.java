@@ -44,7 +44,6 @@ public class LPParadigm {
      */
     public static InternalMessage fieldNameValueArrayChecker (String[] fName, Object[] fValue){
         Object[] diagnoses = null;
-        String errorCode ="";
         Object[] errorDetailVariables= new Object[0];
 
         diagnoses = LPArray.checkTwoArraysSameLength(fName, fValue);

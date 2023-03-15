@@ -731,7 +731,7 @@ public class ClassMasterData {
             }
             return new Object[]{fldNames, fldValues};            
         }catch(Exception e){
-            return new Object[]{fldNames, fldValues, curFldName+" "+e.getMessage().toString()}; 
+            return new Object[]{fldNames, fldValues, curFldName+" "+e.getMessage()}; 
         }        
     }
     private void calculateDiagnostic(JSONArray jLogArr){

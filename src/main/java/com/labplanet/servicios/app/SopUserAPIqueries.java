@@ -294,7 +294,7 @@ public class SopUserAPIqueries extends HttpServlet {
             UserSop userSop = new UserSop();                               
             Object[][] userSops = UserSop.getUserProfileFieldValues( 
                     new String[]{TblsData.ViewUserAndMetaDataSopView.REVIEWER_ID.getName(), TblsData.ViewUserAndMetaDataSopView.PENDING_REVIEW.getName()}, new Object[]{token.getPersonName(), true}, fieldsToRetrieve, allUserProcedurePrefix,
-                    Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING.toString()))));
+                    Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING))));
             if (userSops==null)return new JSONObject();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(userSops[0][0]).toString())){
                 LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
@@ -368,7 +368,7 @@ public class SopUserAPIqueries extends HttpServlet {
         UserSop userSop = new UserSop();                               
         Object[][] userSops = UserSop.getUserProfileFieldValues( 
                 new String[]{TblsData.ViewUserAndMetaDataSopView.USER_ID.getName()}, new Object[]{token.getPersonName()}, fieldsToRetrieve, allUserProcedurePrefix,
-                Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING.toString()))));
+                Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING))));
         if (userSops==null)return new JSONArray();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(userSops[0][0]).toString())){
             LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
@@ -436,7 +436,7 @@ public class SopUserAPIqueries extends HttpServlet {
         for (String currProc: allUserProcedurePrefix) {                   
 
             Object[][] userProcSops = userSop.getNotCompletedUserSOP(token.getPersonName(), currProc, fieldsToRetrieve,
-                Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING.toString()))));
+                Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING))));
             if (userProcSops!=null && userProcSops.length>0){
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(userProcSops[0]))){
                     LPFrontEnd.responseError(userProcSops, language, null);
@@ -550,7 +550,7 @@ public class SopUserAPIqueries extends HttpServlet {
         for (String curProc: allUserProcedurePrefix){
             UserSop userSop = new UserSop();  
             Object[][] userProcSops = userSop.getNotCompletedUserSOP(token.getPersonName(), curProc, fieldsToRetrieve,
-                Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING.toString()))));       
+                Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING))));       
             if (userProcSops==null) return new JSONArray();
             if ( (userProcSops.length>0) &&
                (!LPPlatform.LAB_FALSE.equalsIgnoreCase(userProcSops[0][0].toString())) )

@@ -50,9 +50,9 @@ public class TesterFromUploadFile extends HttpServlet {
 
             String ip="192.168.1.139";
             Integer port=3910;
-            if (LPNulls.replaceNull(ipAddr).toString().length()>0)
+            if (LPNulls.replaceNull(ipAddr).length()>0)
                 ip=ipAddr;
-            if (LPNulls.replaceNull(portNum).toString().length()>0)
+            if (LPNulls.replaceNull(portNum).length()>0)
                 port=Integer.valueOf(portNum);
             StringBuilder zplDemoLabel = ZPL.zplDemoLabel(ip, port);
             PrintWriter outZpl = response.getWriter();
