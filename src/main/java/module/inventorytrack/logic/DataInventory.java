@@ -147,7 +147,8 @@ public class DataInventory {
             Integer valuePosicInArray = LPArray.valuePosicInArray(referenceFieldNames, TblsInvTrackingConfig.Reference.LOT_REQUIRES_QUALIF.getName());
             if (valuePosicInArray==-1) 
                 this.requiresQualification=true;
-            this.requiresQualification=Boolean.valueOf(LPNulls.replaceNull(referenceFieldValues[valuePosicInArray]).toString());
+            else
+                this.requiresQualification=Boolean.valueOf(LPNulls.replaceNull(referenceFieldValues[valuePosicInArray]).toString());
             lotIsQualified(externalProcedure);
         }
     }    
@@ -370,10 +371,10 @@ public class DataInventory {
         }        
 	SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsInvTrackingData.Lot.LOT_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{getLotName()}, "");
-        Object[] instUpdateDiagn=Rdbms.updateRecordFieldsByFilter(TablesInvTrackingData.LOT,
+        RdbmsObject instUpdateDiagn=Rdbms.updateTableRecordFieldsByFilter(TablesInvTrackingData.LOT,
                 EnumIntTableFields.getTableFieldsFromString(TablesInvTrackingData.LOT, fldNames), fldValues, sqlWhere, null);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instUpdateDiagn[0].toString()))
-            return new InternalMessage(LPPlatform.LAB_FALSE, instUpdateDiagn[instUpdateDiagn.length-1].toString(), new Object[]{getLotName()}, null);
+        if (!instUpdateDiagn.getRunSuccess())
+            return new InternalMessage(LPPlatform.LAB_FALSE, instUpdateDiagn.getErrorMessageCode(),  instUpdateDiagn.getErrorMessageVariables()); 
         InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.UPDATE_INVENTORY_LOT, this.getLotName(), getReference(), getCategory(), TablesInvTrackingData.LOT.getTableName(), this.getLotName(),
             fldNames, fldValues); 
         messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.UPDATE_LOT, new Object[]{getLotName()});
