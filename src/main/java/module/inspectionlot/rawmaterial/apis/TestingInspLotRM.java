@@ -18,6 +18,7 @@ import functionaljavaa.testingscripts.TestingAssert;
 import functionaljavaa.testingscripts.TestingAssertSummary;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -145,13 +146,17 @@ public class TestingInspLotRM extends HttpServlet {
                     (LPNulls.replaceNull(testingContent[iLines][3]).toString().length()>0) ? "Yes" : "No",
                     (LPNulls.replaceNull(testingContent[iLines][4]).toString().length()>0) ? "Yes" : "No",
                 }));                                     
-                if (numEvaluationArguments==0)
+                BigDecimal SecondsInDateRange = LPDate.SecondsInDateRange(timeStartedStep, LPDate.getCurrentTimeStamp(), true);
+                fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(String.valueOf(SecondsInDateRange)));
+                if (numEvaluationArguments==0){                    
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(Arrays.toString(functionEvaluation)));                     
+                    fileContentTable1Builder.append(LPTestingOutFormat.createLogsTable(scriptId));
+                }                                
                 if (numEvaluationArguments>0){                    
                     Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, functionEvaluation);   
                         
                     Integer stepId=Integer.valueOf(testingContent[iLines][tstOut.getStepIdPosic()].toString());
-                    fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, functionEvaluation, functionRelatedObjects, tstAssert, timeStartedStep));
+                    fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, functionEvaluation, functionRelatedObjects, tstAssert, timeStartedStep));                    
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate));                        
                     if ( tstOut.getStopSyntaxisUnmatchPosic()>-1 && Boolean.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStopSyntaxisUnmatchPosic()]).toString()) &&
                             !TestingAssert.EvalCodes.MATCH.toString().equalsIgnoreCase(tstAssert.getEvalSyntaxisDiagnostic()) ){
@@ -172,18 +177,18 @@ public class TestingInspLotRM extends HttpServlet {
 //                                new String[]{TblsTesting.Script.SCRIPT_ID.getName()}, new Object[]{6}); //testingContent[iLines][tstOut.getScriptIdPosic()]});
                     break;
                 }
-                fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());                                                
+                fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());   
+                instanceForActions.auditActionsKill();
             }    
             fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
-            fileContentTable1Builder.append(LPTestingOutFormat.businessRulesTable());            
+            fileContentTable1Builder.append(LPTestingOutFormat.businessRulesTable());
             fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary, stopPhrase, timeStarted)).append("<br>");
             fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
 
             out.println(fileContentBuilder.toString());            
-            LPTestingOutFormat.createLogFile(tstOut.getFilePathName(), fileContentBuilder.toString());
+            //LPTestingOutFormat.createLogFile(tstOut.getFilePathName(), fileContentBuilder.toString());
             tstAssertSummary=null; 
-        }
-        catch(IOException error){
+        }catch(IOException error){
             tstAssertSummary=null; 
             String exceptionMessage = error.getMessage();     
             LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null, null);                    

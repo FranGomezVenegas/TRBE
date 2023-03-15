@@ -14,6 +14,7 @@ import javax.json.JsonArray;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
+import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;
@@ -23,6 +24,14 @@ import trazit.globalvariables.GlobalVariables;
  * @author User
  */
 public class InspLotRMEnums {
+    
+    public enum InspectionLotRMClousureTypes {
+        BULK_INSPECTION_REJECTED
+    } 
+    public enum InspectionLotRMAuditEvents implements EnumIntAuditEvents{ 
+        LOT_CREATION, LOT_BULK_ADDED, LOT_BULK_ADHOC_ADDED, LOT_BULK_QUANTITY_ADJUSTED, LOT_BULK_SAMPLE_QUANTITY_ADJUSTED, LOT_CERTIFICATE_UPDATED, LOT_CERTIFICATE_INSERTED,
+        LOT_DECISION_TAKEN, LOT_BULK_DECISION_TAKEN, LOT_ALL_BULKS_DECISION_TAKEN, INVENTORY_RETAIN_UPDATED, LOT_QUANTITY_REDUCED_BY_BULK_REJECTION
+    }   
     
     public enum DataLotProperties{ 
         SUFFIX_STATUS_FIRST ("_statusFirst", "First status, to be concatenated to the entity name, example: sample_statusFirst, program_statusFirst etc...", "One of the given statuses"),
@@ -68,7 +77,10 @@ public class InspLotRMEnums {
         LOT_HAS_NOTREVIEWED_SAMPLE("lotHasNotReviewedSample", "", ""),
 
         WRONG_ALGORITHM_DEFINITION("wrongAlgorithmDefinition", "", ""),
-        
+        NO_NUMBER_OF_BULKS_SPECIFIED("noNumberOfBulksSpecified", "", ""),
+        LOT_WITH_NO_BULKS("lotWithNoBulks", "", ""),
+        LOT_BULKS_WITH_NO_DECISION("lotBulksWithNoDecision", "", ""),
+        ADD_ADHOC_BULKS_NOT_ALLOWED("addAdhocBulksNotAllowed", "The material <*1*> does not allow adding adhoc bulks to the lot <*2*>", "El material <*1*> no permite añadir bultos ad-hoc para el lote <*2*>"),
         
         
         ;
@@ -91,7 +103,7 @@ public class InspLotRMEnums {
     public enum DataInspLotCertificateTrackActions{PRINT, OPEN, CHANGE_STATUS, SENT}
     
     public enum InspLotRMAPIactionsEndpoints implements EnumIntEndpoints{
-        NEW_LOT("NEW_LOT", "createNewLot", 
+        NEW_LOT("NEW_LOT", "createNewLot_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MATERIAL_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_TEMPLATE, LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
@@ -104,7 +116,12 @@ public class InspLotRMEnums {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 15),
             }, "NEW_LOT_CREATED", Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
                 .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
-        CREATE_LOT_CERTIFICATE("CREATE_LOT_CERTIFICATE", "createLotCertificate", 
+        LOT_ADD_ADHOC_BULKS("LOT_ADD_ADHOC_BULKS", "createLotCertificate_success", 
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_NUM_ADHOC_BULKS, LPAPIArguments.ArgumentType.STRING.toString(), true, 7) 
+        }, "LOT_ADHOC_BULKS_ADDED", Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
+        CREATE_LOT_CERTIFICATE("CREATE_LOT_CERTIFICATE", "createLotCertificate_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MATERIAL_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_TEMPLATE, LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
@@ -118,10 +135,38 @@ public class InspLotRMEnums {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9),
             },"LOT_DECISION_TAKEN", Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
                 .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
-        LOT_BULK_TAKE_DECISION("LOT_BULK_TAKE_DECISION", "LotBulkTakeDecision", 
+        LOT_ALL_BULKS_TAKE_DECISION("LOT_ALL_BULKS_TAKE_DECISION", "lotAllBulksTakeDecision_success", 
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_BULK_DECISION, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9),
+            },"LOT_ALL_BULKS_DECISION_TAKEN", Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
+        LOT_BULK_ADJUST_QUANTITY("LOT_BULK_ADJUST_QUANTITY", "LotBulkQuantityAdjusted_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BULK_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_BULK_DECISION, LPAPIArguments.ArgumentType.STRING.toString(), true, 8),                
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_QUANTITY, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 8),                
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_QUANTITY_UOM, LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 11)
+        }, "LOT_BULK_QUANTITY_ADJUSTED", Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
+        LOT_BULK_ADJUST_SAMPLE_QUANTITY("LOT_BULK_ADJUST_SAMPLE_QUANTITY", "LotBulkSampleQuantityAdjusted_success", 
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BULK_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_QUANTITY, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 8),                
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_QUANTITY_UOM, LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 11)
+        }, "LOT_BULK_SAMPLE_QUANTITY_ADJUSTED", Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
+                .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
+
+        LOT_BULK_TAKE_DECISION("LOT_BULK_TAKE_DECISION", "LotBulkTakeDecision_success", 
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BULK_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_BULK_DECISION, LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 11)                
         }, "LOT_BULK_DECISION_TAKEN", Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", GlobalVariables.Schemas.DATA.getName())
                 .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
         LOT_RETAIN_UNLOCK("LOT_RETAIN_UNLOCK", "lotRetainUnlock_success", 
@@ -197,6 +242,9 @@ public class InspLotRMEnums {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_SAMPLE_ANALYSIS, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 8),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_SAMPLE_ANALYSIS_RESULTS, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 9)},
                 EndPointsToRequirements.endpointWithNoOutputObjects),
+        GET_LOT_AUDIT("GET_LOT_AUDIT", "",
+            new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_AUDIT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7)}, null),        
         ;
         private InspLotRMQueriesAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;

@@ -120,11 +120,11 @@ public class InstrumentsAPIqueries extends HttpServlet {
                                 SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{token.getUserName()}, null)                    
                     };
                     sW.addOrClauseConstraint(orClauses);
-                }                
-                String[] fieldsToRetrieve=getAllFieldNames(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS);
+                }       
+                EnumIntTableFields[] allFieldNamesFromDatabase = EnumIntTableFields.getAllFieldNamesFromDatabase(TablesInstrumentsData.INSTRUMENTS);
+                String[] fieldsToRetrieve=getAllFieldNames(allFieldNamesFromDatabase);                
                 Object[][] instrumentsInfo=QueryUtilitiesEnums.getTableData(TablesInstrumentsData.INSTRUMENTS,
-                        EnumIntTableFields.getAllFieldNamesFromDatabase(TablesInstrumentsData.INSTRUMENTS),
-                        sW, new String[]{TblsInstrumentsData.Instruments.NAME.getName()+" desc"});
+                    allFieldNamesFromDatabase, sW, new String[]{TblsInstrumentsData.Instruments.NAME.getName()+" desc"});
                 JSONArray jArr = new JSONArray();
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentsInfo[0][0].toString())){
                     for (Object[] currInstr: instrumentsInfo){
@@ -138,6 +138,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
                 return;  
+  
             case INSTRUMENT_AUDIT_FOR_GIVEN_INSTRUMENT:
                 String instrName=LPNulls.replaceNull(argValues[0]).toString();
                 fieldsToRetrieve=getAllFieldNames(TblsInstrumentsDataAudit.TablesInstrumentsDataAudit.INSTRUMENTS);

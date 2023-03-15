@@ -12,7 +12,6 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPArray;
 import org.json.simple.JSONArray;
-import trazit.session.InternalMessage;
 
 /**
  *
@@ -20,7 +19,7 @@ import trazit.session.InternalMessage;
  */
 public class ClassInspLotRMController {
     private StringBuilder rowArgsRows=new StringBuilder(0);
-    private InternalMessage functionDiagn=null;
+    private Object[] functionDiagn=null;
     private JSONArray functionRelatedObjects=new JSONArray();
     private Boolean functionFound=false;
     
@@ -56,7 +55,7 @@ public class ClassInspLotRMController {
     /**
      * @return the functionDiagn
      */
-    public Object getFunctionDiagn() {
+    public Object[] getFunctionDiagn() {
         return functionDiagn;
     }
 

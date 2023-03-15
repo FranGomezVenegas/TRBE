@@ -34,6 +34,8 @@ public class TblsInspLotRMConfig {
         LOT(null, "lot", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Lot.values(), null, new String[]{Lot.CODE.getName(), Lot.CODE_VERSION.getName()}, null, "Lot table"),
         LOT_RULES(null, "lot_rules", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, LotRules.values(), null, new String[]{LotRules.CODE.getName(), LotRules.CODE_VERSION.getName()}, null, "LotRules table"),
         LOT_DECISION_RULES(null, "lot_decision_rules", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, LotDecisionRules.values(), null, new String[]{LotDecisionRules.CODE.getName(), LotDecisionRules.CODE_VERSION.getName()}, null, "LotDecisionRules table"),
+        SPEC(null, "spec", SCHEMA_NAME, true, Spec.values(), null,
+            new String[]{Spec.CODE.getName()}, null, "Spec"),
         ;
         private TablesInspLotRMConfig(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){
@@ -74,7 +76,8 @@ public class TblsInspLotRMConfig {
         INVENTORY_MANAGEMENT("inventory_management", LPDatabase.booleanFld(), null, null, null, null),
         BULK_SAMPLING_DEFAULT_ALGORITHM("bulk_sampling_default_algorithm", LPDatabase.stringNotNull(), null, null, null, null),
         PERFORM_BULK_CONTROL("perform_bulk_control", LPDatabase.booleanFld(), null, null, null, null),
-        
+        ADD_ADHOC_BULK_ADDITION("allow_adhoc_bulk_addition", LPDatabase.booleanFld(), null, null, null, null),
+        SAMPLING_ALGORITHM("sampling_algorithm", LPDatabase.stringNotNull(), null, null, null, null),
         // ...
         
         ;
@@ -277,6 +280,7 @@ public class TblsInspLotRMConfig {
     public enum LotDecisionRules implements EnumIntTableFields{
         CODE("code", LPDatabase.stringNotNull(), null, null, null, null),
         CODE_VERSION("code_version", LPDatabase.integer(), null, null, null, null),
+        BULK_DECISIONS_LIST("bulk_decisions_list", LPDatabase.string(), null, null, null, null),        
         DECISIONS_LIST("decisions_list", LPDatabase.string(), null, null, null, null),
         MINIMUM_ANALYSIS_REQUIRED_LIST("minimum_analysis_required_list", LPDatabase.string(), null, null, null, null),
         SAMPLE_ANALYSIS_REVISION_REQUIRED("sample_analysis_revision_required", LPDatabase.booleanFld(true), null, null, null, null),
@@ -318,5 +322,34 @@ public class TblsInspLotRMConfig {
         @Override        public String getFieldComment(){return this.fieldComment;}
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }
+    public enum Spec implements EnumIntTableFields{
+        CODE("code", LPDatabase.stringNotNull(), null, null, null, null),
+        CONFIG_VERSION("config_version", LPDatabase.integer(), null, null, null, null),
+        CATEGORY("category", LPDatabase.string(), null, null, null, null),
+        ACTIVE_DATE("active_date", "Date", null, null, null, null),
+        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
+        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date(), null, null, null, null),
+        ANALYSES("analyses", LPDatabase.string(), null, null, null, null),
+        VARIATION_NAMES("variation_names", LPDatabase.string(), null, null, null, null),
+        REPORTING_ACCEPTANCE_CRITERIA("reporting_acceptance_criteria", LPDatabase.string(), null, null, null, null),
+        TOTAL_SAMPLE_REQ_Q("total_sample_required_quantity", LPDatabase.realNotNull(), null, null, null, null),
+        TOTAL_SAMPLE_REQ_Q_UOM("total_sample_required_quantity_uom", LPDatabase.stringNotNull(), null, null, null, null),
+        ;
+        private Spec(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName; @Override        public String getName(){return this.fieldName;}
+        private final String fieldType; @Override        public String getFieldType() {return this.fieldType;}
+        private final String fieldMask; @Override        public String getFieldMask() {return this.fieldMask;}
+        private final ReferenceFld reference; @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
+        private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }        
 
 }

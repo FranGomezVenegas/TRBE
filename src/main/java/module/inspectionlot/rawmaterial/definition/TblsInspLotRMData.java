@@ -253,7 +253,7 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         LOT_CONFIG_VERSION("lot_config_version", LPDatabase.integerNotNull(), null, null, null, null),
         MATERIAL_NAME("material_name", LPDatabase.string(), null, null, null, null),
         SPEC_CODE("spec_code", LPDatabase.string(), null, null, null, null),
-        SPEC_CODE_VERSION("spec_code_version", LPDatabase.integer(), null, null, null, null),
+        SPEC_CODE_VERSION("spec_config_version", LPDatabase.integer(), null, null, null, null),
         SAMPLING_PLAN("sampling_plan", LPDatabase.string(), null, null, null, null),
 //        CONFIG_CODE("config_code", LPDatabase.string()),        
 //        CONFIG_CODE_VERSION("config_code_version", LPDatabase.integer()),        
@@ -270,10 +270,63 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
                 
         ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(), null, null, null, null),
         CUSTODIAN("custodian", LPDatabase.string(), null, null, null, null),
+        BULK_DECISION("bulk_decision", LPDatabase.string(), null, null, null, null),
+        BULK_DECISION_ON("bulk_decision_on", LPDatabase.dateTime(), null, null, null, null),
+        BULK_DECISION_BY("bulk_decision_by", LPDatabase.string(), null, null, null, null),
+        CLOSED("closed", LPDatabase.booleanFld(false), null, null, null, null),
+        CLOSED_ON("closed_on", LPDatabase.dateTime(), null, null, null, null),
+        CLOSED_BY("closed_by", LPDatabase.string(), null, null, null, null),
+        CLOSURE_REASON("closure_reason", LPDatabase.string(), null, null, null, null),
+        
         // ...
         
         ;
         private Lot(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }
+    public enum LotParameterManualEntry implements EnumIntTableFields{
+        LOT_NAME("lot_name",  LPDatabase.stringNotNull(100), null, null, null, null),
+        CODE("code", LPDatabase.stringNotNull(), null, null, null, null),
+        CONFIG_VERSION("config_version", LPDatabase.integerNotNull(), null, null, null, null),
+        VARIATION_NAME("variation_name", LPDatabase.string(), null, null, null, null),
+        ANALYSIS("analysis", LPDatabase.stringNotNull(), null, null, null, null),
+        METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, LPDatabase.string(), null, null, null, null),
+        METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, LPDatabase.integer(), null, null, null, null),
+        PARAMETER("parameter", LPDatabase.string(), null, null, null, null),
+        LIMIT_ID("limit_id", LPDatabase.integer(), null, null, null, null),
+        TESTING_GROUP("testing_group",  LPDatabase.string(), null, null, null, null),
+        SPEC_TEXT_EN("spec_text_en",  LPDatabase.string(), null, null, null, null),
+        SPEC_TEXT_RED_AREA_EN("spec_text_red_area_en",  LPDatabase.string(), null, null, null, null),
+        SPEC_TEXT_YELLOW_AREA_EN("spec_text_yellow_area_en",  LPDatabase.string(), null, null, null, null),
+        SPEC_TEXT_GREEN_AREA_EN("spec_text_green_area_en",  LPDatabase.string(), null, null, null, null),
+        SPEC_TEXT_ES("spec_text_es",  LPDatabase.string(), null, null, null, null),
+        SPEC_TEXT_RED_AREA_ES("spec_text_red_area_es",  LPDatabase.string(), null, null, null, null),
+        SPEC_TEXT_YELLOW_AREA_ES("spec_text_yellow_area_es",  LPDatabase.string(), null, null, null, null),
+        SPEC_TEXT_GREEN_AREA_ES("spec_text_green_area_es",  LPDatabase.string(), null, null, null, null),
+        VALUE_EN("value_en", LPDatabase.string(), null, null, null, null),
+        VALUE_ES("value_es", LPDatabase.string(), null, null, null, null),
+        ;
+        private LotParameterManualEntry(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
             this.fieldName=dbObjName;
             this.fieldType=dbObjType;
@@ -391,17 +444,21 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }
     public enum LotBulk implements EnumIntTableFields{
-        BULK_ID("id", LPDatabase.integerNotNull(), null, null, null, null),
+        BULK_ID("id", LPDatabase.integerNotNull(), null, null, null, null),        
         LOT_NAME("lot_name",  LPDatabase.stringNotNull(100), null, null, null, null),
-        CERTIFICATE_VERSION("certificate_version", LPDatabase.integer(), null, null, null, null),
+        BULK_NAME("bulk_name",  LPDatabase.string(100), null, null, null, null),        
+        //CERTIFICATE_VERSION("certificate_version", LPDatabase.integer(), null, null, null, null),
         STATUS("status",LPDatabase.stringNotNull(), null, null, null, null),
         STATUS_PREVIOUS("status_previous",LPDatabase.string(), null, null, null, null),
         CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null),
         CREATED_BY("created_by", LPDatabase.string(), null, null, null, null),
         DECISION("decision", LPDatabase.string(), null, null, null, null),
+        DECISION_TAKEN_BY("decision_taken_by",  LPDatabase.string(), null, null, null, null),
+        DECISION_TAKEN_ON("decision_taken_on",  LPDatabase.dateTime(), null, null, null, null),
         QUANTITY("quantity", LPDatabase.real(), null, null, null, null),
         QUANTITY_UOM("quantity_uom", LPDatabase.string(), null, null, null, null),
-        
+        SAMPLE_QUANTITY("sample_quantity", LPDatabase.real(), null, null, null, null),
+        SAMPLE_QUANTITY_UOM("sample_quantity_uom", LPDatabase.string(), null, null, null, null)        
         ;
         private LotBulk(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
@@ -455,6 +512,7 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         PREVIOUS_STAGE("previous_stage",LPDatabase.string(), null, null, null, null),
         READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld(), null, null, null, null),
         BULK_ID("bulk_id", LPDatabase.integer(), null, null, null, null),
+        BULK_NAME("bulk_name", LPDatabase.string(), null, null, null, null),
         ;
         private Sample(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
@@ -546,7 +604,7 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         REQUIRES_LIMIT("requires_limit", LPDatabase.booleanFld(false), null, null, null, null),
         RAW_VALUE("raw_value", LPDatabase.string(), null, null, null, null),
         PRETTY_VALUE("pretty_value", LPDatabase.string(), null, null, null, null),
-        ENTERED_ON("entered_on", LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        ENTERED_ON("entered_on", LPDatabase.dateTime(), "to_char("+"entered_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
         ENTERED_BY("entered_by", LPDatabase.string(), null, null, null, null),
         REENTERED("reentered", LPDatabase.booleanFld(), null, null, null, null),
         SPEC_EVAL(FIELDS_NAMES_SPEC_EVAL, LPDatabase.string(200), null, null, null, null),
@@ -557,13 +615,14 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         SUBALIQUOT_ID(FIELDS_NAMES_SUBALIQUOT_ID, LPDatabase.integer(), null, null, null, null),
         LIMIT_ID("limit_id", LPDatabase.integer(), null, null, null, null),
         REVIEWED("reviewed", LPDatabase.booleanFld(), null, null, null, null),
-        REVIEWED_ON("reviewed_on", LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        REVIEWED_ON("reviewed_on", LPDatabase.dateTime(), "to_char("+"reviewed_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
         REVIEWED_BY("reviewed_by", LPDatabase.string(), null, null, null, null),
         MAX_DP("max_dp", LPDatabase.integer(), null, null, null, null),
         MIN_ALLOWED("min_allowed", LPDatabase.real(), null, null, null, null),
         MAX_ALLOWED("max_allowed", LPDatabase.real(), null, null, null, null),
         LIST_ENTRY("list_entry", LPDatabase.string(), null, null, null, null),
         ADD_IN_COA("add_in_coa", LPDatabase.booleanFld(true), null, null, null, null),
+        COA_ORDER("coa_order", LPDatabase.real(), null, null, null, null),
         /* Este bloque de campos está a nivel de SampleAnalysis, es posible que pueda ser interesante tb en sample_analysis_result
         , REVIEWER("reviewer", LPDatabase.String())
         , REVIEWER_ASSIGNED_ON("reviewer_assigned_on", LPDatabase.dateTime())        

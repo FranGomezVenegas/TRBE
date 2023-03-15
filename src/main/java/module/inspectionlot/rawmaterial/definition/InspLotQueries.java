@@ -5,8 +5,6 @@
  */
 package module.inspectionlot.rawmaterial.definition;
 
-import module.inspectionlot.rawmaterial.definition.TblsInspLotRMConfig;
-import module.inspectionlot.rawmaterial.definition.TblsInspLotRMData;
 import databases.TblsData;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
@@ -100,26 +98,34 @@ public final class InspLotQueries {
     }
     
     public static JSONArray dataSampleStructure(String lotName, Integer sampleId, String filterFieldsToRetrieve, String[] orderBy,
-            Boolean includeAnalysis, Boolean includeAnalysisResults){
-        String[] whereFldName=new String[]{TblsInspLotRMData.Sample.LOT_NAME.getName()};
-        Object[] whereFldValue=new Object[]{lotName};
-        if ((includeAnalysis==null || includeAnalysis || includeAnalysisResults==null || includeAnalysisResults) && filterFieldsToRetrieve.length()>0 && !filterFieldsToRetrieve.contains(TblsInspLotRMData.Lot.MATERIAL_NAME.getName()))
-            filterFieldsToRetrieve=filterFieldsToRetrieve + "|"+TblsInspLotRMData.Sample.SAMPLE_ID.getName();
-        
-        Object[][] materialInfo=getTableData(GlobalVariables.Schemas.DATA.getName(), TblsInspLotRMData.TablesInspLotRMData.SAMPLE.getTableName(), 
-                    filterFieldsToRetrieve, EnumIntTableFields.getAllFieldNames(TblsInspLotRMData.TablesInspLotRMData.SAMPLE.getTableFields()), whereFldName, whereFldValue, orderBy);        
+        Boolean includeAnalysis, Boolean includeAnalysisResults){
         JSONArray jArr = new JSONArray();
-        String[] fieldsToRetrieve=getFieldsListToRetrieve(filterFieldsToRetrieve, EnumIntTableFields.getAllFieldNames(TblsInspLotRMData.TablesInspLotRMData.SAMPLE.getTableFields()));
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(materialInfo[0][0].toString())) return jArr;
-        for (Object[] currRec: materialInfo){
-            if (sampleId==null){
-                sampleId=Integer.valueOf(currRec[LPArray.valuePosicInArray(fieldsToRetrieve, TblsInspLotRMData.Sample.SAMPLE_ID.getName())].toString());
+        try{
+            String[] whereFldName=new String[]{TblsInspLotRMData.Sample.LOT_NAME.getName()};
+            Object[] whereFldValue=new Object[]{lotName};
+            if ((includeAnalysis==null || includeAnalysis || includeAnalysisResults==null || includeAnalysisResults) && filterFieldsToRetrieve.length()>0 && !filterFieldsToRetrieve.contains(TblsInspLotRMData.Lot.MATERIAL_NAME.getName()))
+                filterFieldsToRetrieve=filterFieldsToRetrieve + "|"+TblsInspLotRMData.Sample.SAMPLE_ID.getName();
+
+            Object[][] materialInfo=getTableData(GlobalVariables.Schemas.DATA.getName(), TblsInspLotRMData.TablesInspLotRMData.SAMPLE.getTableName(), 
+                        filterFieldsToRetrieve, EnumIntTableFields.getAllFieldNames(TblsInspLotRMData.TablesInspLotRMData.SAMPLE.getTableFields()), whereFldName, whereFldValue, orderBy);        
+            
+            String[] fieldsToRetrieve=getFieldsListToRetrieve(filterFieldsToRetrieve, EnumIntTableFields.getAllFieldNames(TblsInspLotRMData.TablesInspLotRMData.SAMPLE.getTableFields()));
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(materialInfo[0][0].toString())) return jArr;
+            for (Object[] currRec: materialInfo){
+                if (sampleId==null){
+                    sampleId=Integer.valueOf(currRec[LPArray.valuePosicInArray(fieldsToRetrieve, TblsInspLotRMData.Sample.SAMPLE_ID.getName())].toString());
+                }
+                JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currRec);
+                if (includeAnalysis==null || includeAnalysis) jObj.put(TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), dataSampleAnalysisStructure(sampleId, null, new String[]{}, includeAnalysisResults));
+                jArr.add(jObj);
             }
-            JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currRec);
-            if (includeAnalysis==null || includeAnalysis) jObj.put(TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), dataSampleAnalysisStructure(sampleId, null, new String[]{}, includeAnalysisResults));
+            return jArr;
+        }catch(Exception e){
+            JSONObject jObj=new JSONObject();
+            jObj.put("error", e.getMessage());
             jArr.add(jObj);
+            return jArr;
         }
-        return jArr;
     }
     public static JSONArray dataSampleAnalysisStructure(Integer sampleId, String filterFieldsToRetrieve, String[] orderBy, 
             Boolean includeAnalysisResults){

@@ -83,7 +83,7 @@ public class InspLotRMAPIactions extends HttpServlet {
         }                        
             ClassInspLotRMactions clss=new ClassInspLotRMactions(request, endPoint);
             
-            InternalMessage diagnostic=clss.getDiagnostic();
+            InternalMessage diagnostic=clss.getDiagnosticObj();
             if (diagnostic!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic.getDiagnostic())){                 
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic.getMessageCodeObj(), diagnostic.getMessageCodeVariables());   
             }else{

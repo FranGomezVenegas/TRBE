@@ -88,8 +88,9 @@ public class ClassInspLotRMQueries {
                         }
                         this.messageDynamicData=new Object[]{lotName};    
                         break;
-                    default:
-                        break;
+                        
+                default:
+                    break;
             }
             this.diagnostic=actionDiagnoses;
             this.relatedObj=rObj;
