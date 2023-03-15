@@ -24,6 +24,7 @@ public class InternalMessage {
     public InternalMessage(String diag, EnumIntMessages msgCode, Object[] msgCodeVars){
         this.diagnostic=diag;
         this.msgCodeObj=msgCode;
+        this.messageCode=msgCode.getErrorCode();
         this.messageCodeVariables=msgCodeVars;
     }
     public InternalMessage(String diag, EnumIntMessages msgCode, Object[] msgCodeVars, Object theNew){
