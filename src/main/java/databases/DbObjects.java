@@ -128,7 +128,8 @@ public class DbObjects {
             {"procedure", "windowOpenableWhenNotSopCertifiedUserSopCertification", "NO", false}};
         for (Object[] curRule: values){
             RdbmsObject insertRecord = Rdbms.insertRecord(TablesApp.APP_BUSINESS_RULES, fields, curRule, "app-business_rules");
-            if (insertRecord.getRunSuccess())
+            
+            if (Boolean.TRUE.equals(insertRecord.getRunSuccess()))
                 jsonObj.put("inserting_business_rule_diagn", curRule[1]+" "+insertRecord.getRunSuccess());
             else
                 jsonObj.put("inserting_business_rule_diagn", curRule[1]+" "+insertRecord.getErrorMessageCode());
@@ -307,7 +308,7 @@ public class DbObjects {
                         curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.ROLE_NAME.getName())]=procRoles[i][0].toString();
                         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS, procEventFldNamesToGet, curProcEvent);
                         multiRolCurEvent.put("inserted?", insertRecordInTable.getRunSuccess());
-                        if (!insertRecordInTable.getRunSuccess())
+                        if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess()))
                             multiRolCurEvent.put("insert error log", 
                                 insertRecordInTable.getErrorMessageCode()+" "+Arrays.toString(insertRecordInTable.getErrorMessageVariables()));
                     }

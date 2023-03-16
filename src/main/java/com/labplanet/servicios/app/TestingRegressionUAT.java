@@ -226,8 +226,6 @@ public class TestingRegressionUAT extends HttpServlet {
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(theProcActionEnabled[0].toString()) && !actionIsOneQuery(curStep[1].toString())){                            
                             actionsList=LPArray.addValueToArray1D(actionsList, "Step "+curStep[0].toString()+", Action:"+curStep[1].toString());
                             Logger.getLogger("In the script "+scriptId+" and step "+LPNulls.replaceNull(curStep[0]).toString()+"the action"+LPNulls.replaceNull(curStep[1]).toString()+" is not enabled"); 
-    //                        LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.REGRESSIONTESTING_ACTIONSNOTALLOWEDFORPROC.getName(), new Object[]{procInstanceName, scriptId, Arrays.toString(actionsList), this.getServletName()}, language);              
-    //                        return;
                         }else{
                             TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
                             if (testingBusinessRulesVisitedObj!=null)
@@ -300,10 +298,7 @@ public class TestingRegressionUAT extends HttpServlet {
                 htmlStyleHdr.append(LPTestingOutFormat.getHtmlStyleHeader(this.getServletName(), "", scriptId, procInstanceName));
                 fileContentBuilder.append(htmlStyleHdr);
 
-                //out.println(fileContentBuilder.toString());        
-
                 StringBuilder fileContentTable1Builder = new StringBuilder(0);
-                //fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(LPArray.convertArrayToString((String[]) mirrorCheckDiagn[1], TESTING_FILES_FIELD_SEPARATOR, ""), 0));
                 for (Object[] curRow:allMismatches){
                     fileContentTable1Builder.append(LPTestingOutFormat.rowStart()).append(rowAddFields(curRow));
                     fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());
@@ -334,13 +329,8 @@ public class TestingRegressionUAT extends HttpServlet {
             if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(mismatchesArr[0][0].toString())){
                 if (allMismatches==null || (allMismatches[0].length==mismatchesArr[0].length)){
                     allMismatches=LPArray.joinTwo2DArrays(allMismatches, new String[][]{{"table_name", "field_name", "counter", "schema"}});
-//                    Object[][] schemaInfoArr2D=new Object[mismatchesArr.length][1];
-//                    schemaInfoArr2D=LPArray.setColumnValueToArray2D(schemaInfoArr2D, 0, curSchToCheck[0]);
                     allMismatches=LPArray.joinTwo2DArrays(allMismatches, LPArray.addColumnToArray2D(mismatchesArr, curSchToCheck[0]));
                 }
-            //}else{
-            //    summaryInfo[0]=mirrorCheckDiagn;
-            //    return LPArray.addValueToArray1D(mirrorCheckDiagn, new Object[][]{{}}); 
             }
         }
         if (allMismatches!=null && allMismatches.length>0){
@@ -356,19 +346,19 @@ public class TestingRegressionUAT extends HttpServlet {
     }
     public static Boolean actionIsOneQuery(String actionName){
         Boolean found=false;
-        if (!found){
+        if (Boolean.FALSE.equals(found)){
             for (EnumIntEndpoints curEnvMonQ: EnvMonAPI.EnvMonQueriesAPIEndpoints.values()){
                 if (actionName.equalsIgnoreCase(curEnvMonQ.getName()))
                     return true;
             }
         }
-        if (!found){
+        if (Boolean.FALSE.equals(found)){
             for (EnumIntEndpoints curEnvMonQ: EnvMonSampleAPIqueriesEndpoints.values()){
                 if (actionName.equalsIgnoreCase(curEnvMonQ.getName()))
                     return true;
             }
         }
-        if (!found){
+        if (Boolean.FALSE.equals(found)){
             for (EnumIntEndpoints curEnvMonQ: SampleAPIqueriesEndpoints.values()){
                 if (actionName.equalsIgnoreCase(curEnvMonQ.getName()))
                     return true;
