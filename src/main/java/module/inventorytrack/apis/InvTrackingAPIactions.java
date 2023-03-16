@@ -23,7 +23,6 @@ import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.ApiErrorTraping;
 import module.inventorytrack.definition.ClassInvTracking;
 import module.inventorytrack.definition.TblsInvTrackingData;
-import module.inventorytrack.logic.DataInventory;
 import module.inventorytrack.definition.InvTrackingEnums.InventoryTrackAPIactionsEndpoints;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
@@ -74,7 +73,6 @@ public class InvTrackingAPIactions extends HttpServlet {
         String lotName=argValues[0].toString();
         String reference=argValues[1].toString();
         String category=argValues[2].toString();
-        DataInventory invL=new DataInventory(lotName, reference, category, null);
         try (PrintWriter out = response.getWriter()) {
             ClassInvTracking clss = new ClassInvTracking(request, endPoint);
             Object[] diagnostic=clss.getDiagnostic();
@@ -93,14 +91,11 @@ public class InvTrackingAPIactions extends HttpServlet {
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, ApiErrorTraping.EXCEPTION_RAISED, new Object[]{e.getMessage()});   
             // Rdbms.closeRdbms();                   
             String[] errObject = new String[]{e.getMessage()};
-            Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
-            response.sendError((int) errMsg[0], (String) errMsg[1]);           
+            LPFrontEnd.responseError(errObject, language, null);
         } finally {
-            invL=null;
             // release database resources
             try {           
                 procReqInstance.killIt();
-                // Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }          

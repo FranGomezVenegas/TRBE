@@ -156,7 +156,6 @@ public class BatchAPI extends HttpServlet {
                 return;                   
             }
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}      
-            //Rdbms.setTransactionId(procInstanceName);
             try (PrintWriter out = response.getWriter()) {
                 BusinessRules bi=new BusinessRules(procInstanceName, null);
                 Object[] actionEnabled = LPPlatform.procActionEnabled(procInstanceName, token, actionName, bi);

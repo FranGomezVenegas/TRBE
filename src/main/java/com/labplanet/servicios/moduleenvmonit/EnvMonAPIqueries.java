@@ -396,9 +396,9 @@ GlobalAPIsParams.
                         }
                         programsJsonArr.add(programJsonObj);
                         JSONObject programDataTemplateDefinition = new JSONObject();
-                        JSONObject templateProgramInfo=EnvMonFrontEndUtilities.dataProgramInfo(procInstanceName, curProgramName, null, null);
+                        JSONObject templateProgramInfo=EnvMonFrontEndUtilities.dataProgramInfo(curProgramName, null, null);
                         programDataTemplateDefinition.put(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM.getTableName(), templateProgramInfo);
-                        JSONArray templateProgramLocationInfo=EnvMonFrontEndUtilities.dataProgramLocationInfo(procInstanceName, curProgramName, null, null);
+                        JSONArray templateProgramLocationInfo=EnvMonFrontEndUtilities.dataProgramLocationInfo(curProgramName, null, null);
                         programDataTemplateDefinition.put(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_LOCATION.getTableName(), templateProgramLocationInfo);
                         programJsonObj.put(JSON_TAG_PROGRAM_DATA_TEMPLATE_DEFINITION, programDataTemplateDefinition); 
                         Object specCode = templateProgramInfo.get(TblsEnvMonitConfig.Program.SPEC_CODE.getName());

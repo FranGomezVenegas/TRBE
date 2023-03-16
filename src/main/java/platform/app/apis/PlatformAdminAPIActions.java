@@ -82,9 +82,8 @@ public class PlatformAdminAPIActions extends HttpServlet {
         }catch(Exception e){   
             procReqInstance.killIt();
             String[] errObject = new String[]{e.getMessage()};
-            Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
+            LPFrontEnd.responseError(errObject, language, null);
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, LPPlatform.ApiErrorTraping.EXCEPTION_RAISED, new Object[]{e.getMessage()});   
-            response.sendError((int) errMsg[0], (String) errMsg[1]);           
         } finally {
             procReqInstance.killIt();
             try {           

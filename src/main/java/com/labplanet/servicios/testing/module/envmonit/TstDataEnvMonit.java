@@ -91,8 +91,7 @@ public class TstDataEnvMonit extends HttpServlet {
             errObject = LPArray.addValueToArray1D(errObject, TAG_NAME_ERROR_STATUS_CODE+": "+HttpServletResponse.SC_BAD_REQUEST);
 
                 errObject = LPArray.addValueToArray1D(errObject, "API Error Message: The token is not valid");                    
-                Object[] errMsg =  LPFrontEnd.responseError(errObject, language, areMandatoryParamsInResponse[1].toString());
-                response.sendError((int) errMsg[0], (String) errMsg[1]);                
+                LPFrontEnd.responseError(errObject, language, areMandatoryParamsInResponse[1].toString());
                 return ;                            
         }
         mandatoryParams = null;                        
@@ -114,8 +113,7 @@ public class TstDataEnvMonit extends HttpServlet {
             errObject = LPArray.addValueToArray1D(errObject, TAG_NAME_ERROR_STATUS_CODE+": "+HttpServletResponse.SC_BAD_REQUEST);
 
             errObject = LPArray.addValueToArray1D(errObject, "API Error Message: db User Name and Password not correct, connection to the database is not possible");                    
-            Object[] errMsg = LPFrontEnd.responseError(errObject, language, "");
-            response.sendError((int) errMsg[0], (String) errMsg[1]);   
+            LPFrontEnd.responseError(errObject, language, "");
             Rdbms.closeRdbms(); 
             return ;               
         }        
@@ -167,14 +165,12 @@ public class TstDataEnvMonit extends HttpServlet {
             errObject = LPArray.addValueToArray1D(errObject, TAG_NAME_ERROR_STATUS_CODE+": "+HttpServletResponse.SC_BAD_REQUEST);
 
                     errObject = LPArray.addValueToArray1D(errObject, "API Error Message: actionName "+actionName+ " not recognized as an action by this API");                                                            
-                    Object[] errMsg = LPFrontEnd.responseError(errObject, language, procInstanceName);
-                    response.sendError((int) errMsg[0], (String) errMsg[1]);    
+                    LPFrontEnd.responseError(errObject, language, procInstanceName);
                     Rdbms.closeRdbms();
                     return;                    
             }    
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dataSample[0].toString())){  
-                Object[] errMsg = LPFrontEnd.responseError(dataSample, language, procInstanceName);
-                response.sendError((int) errMsg[0], (String) errMsg[1]);    
+                LPFrontEnd.responseError(dataSample, language, procInstanceName);
             }else{
                 Response.ok().build();
                 response.getWriter().write(Arrays.toString(dataSample));      
@@ -182,8 +178,7 @@ public class TstDataEnvMonit extends HttpServlet {
             Rdbms.closeRdbms();
         }catch(Exception e){   
             errObject = new String[]{e.getMessage()};
-            Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
-            response.sendError((int) errMsg[0], (String) errMsg[1]);           
+            LPFrontEnd.responseError(errObject, language, null);
             String exceptionMessage = e.getMessage();     
             LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null, null);                    
         } finally {

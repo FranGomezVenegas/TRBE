@@ -148,10 +148,6 @@ public class ModuleDefinitionAPI extends HttpServlet {
             ClassTrazitCodeDoc clss=new ClassTrazitCodeDoc(request, response, endPoint);
             Object[] diagnostic=clss.getDiagnostic();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-/*                Rdbms.rollbackWithSavePoint();
-                if (!con.getAutoCommit()){
-                    con.rollback();
-                    con.setAutoCommit(true);}                */
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clss.getMessageDynamicData());   
             }else{
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
@@ -159,23 +155,11 @@ public class ModuleDefinitionAPI extends HttpServlet {
             }   
             
         }catch(Exception e){   
- /*           try {
-                con.rollback();
-                con.setAutoCommit(true);
-            } catch (SQLException ex) {
-                Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
-            }
-*/            
-            // Rdbms.closeRdbms();                   
-            Object[] errMsg = LPFrontEnd.responseError(new String[]{e.getMessage()}, language, null);
-            response.sendError((int) errMsg[0], (String) errMsg[1]);           
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, LPPlatform.ApiErrorTraping.EXCEPTION_RAISED, new Object[]{e.getMessage()});   
         } finally {
             // release database resources
             try {
                 procReqInstance.killIt();
-                //con.close();
-                // Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }      }

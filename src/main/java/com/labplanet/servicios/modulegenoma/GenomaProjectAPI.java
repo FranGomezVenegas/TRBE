@@ -202,8 +202,7 @@ public class GenomaProjectAPI extends HttpServlet {
         }catch(Exception e){   
             response.setStatus(401);
             errObject = new String[]{e.getMessage()};
-            Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
-            response.sendError((int) errMsg[0], (String) errMsg[1]);           
+            LPFrontEnd.responseError(errObject, language, null);
         } finally {
             // release database resources
             try {

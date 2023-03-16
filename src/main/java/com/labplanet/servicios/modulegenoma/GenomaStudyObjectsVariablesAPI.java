@@ -28,7 +28,6 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.session.ProcedureRequestSession;
-import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 /**
@@ -141,8 +140,6 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
         String procInstanceName=procReqInstance.getProcedureInstance();
 
         String[] errObject = new String[]{"Servlet Genoma StudyObjectsVariablesAPI at " + request.getServletPath()};   
-        //Rdbms.setTransactionId(schemaConfigName);
-        //ResponseEntity<String121> responsew;        
         try (PrintWriter out = response.getWriter()) {
             Object[] diagnostic = null;
             GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endPoint = null;
@@ -201,10 +198,8 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
         }catch(Exception e){   
             procReqInstance.killIt();
             errObject = new String[]{e.getMessage()};
-            Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
+            LPFrontEnd.responseError(errObject, language, null);
         } finally {
-            
-            // release database resources
             try {
                 procReqInstance.killIt();
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);

@@ -10,7 +10,6 @@ import databases.TblsProcedure;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -612,12 +611,8 @@ public class EnvMonAPIStats extends HttpServlet {
         }catch(NumberFormatException e){   
             procReqInstance.killIt();
             String[] errObject = new String[]{e.getMessage()};
-            Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
-            try {           
-                response.sendError((int) errMsg[0], (String) errMsg[1]);
-            } catch (IOException ex) {
-                Logger.getLogger(EnvMonAPIStats.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            LPFrontEnd.responseError(errObject, language, null);
+            Logger.getLogger(EnvMonAPIStats.class.getName()).log(Level.SEVERE, null, e);
         } finally {
             try {
                 procReqInstance.killIt();

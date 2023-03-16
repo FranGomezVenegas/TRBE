@@ -127,10 +127,12 @@ public class HolidayCalendarAPIactions extends HttpServlet {
                     actionDiagnoses = HolidaysCalendar.deleteCalendarDate(argValues[0].toString(), (Integer) argValues[1]);
                     break;
             }    
-            String diagnostic=actionDiagnoses.getDiagnostic();
+            String diagnostic=(actionDiagnoses!=null?actionDiagnoses.getDiagnostic():"no diagn");
 
             if (diagnostic!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic)){  
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, actionDiagnoses.getMessageCodeObj().getErrorCode(), actionDiagnoses.getMessageCodeVariables());   
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, 
+                    (actionDiagnoses!=null?actionDiagnoses.getMessageCodeObj().getErrorCode():"no diagn"), 
+                    (actionDiagnoses!=null?actionDiagnoses.getMessageCodeVariables():null));   
             }else{
 
                 RelatedObjects rObj=RelatedObjects.getInstanceForActions();
@@ -138,32 +140,11 @@ public class HolidayCalendarAPIactions extends HttpServlet {
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, new Object[]{incId}, rObj.getRelatedObject());
                 rObj.killInstance();
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
-                
-/*
-                RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-                
-                //rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TablesAppProcData.INSTRUMENTS.getTableName(), "instruments", instrName);                
-                //JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(endPoint.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{instrName}, rObj.getRelatedObject());
-                JSONObject dataSampleJSONMsg = new JSONObject();
-                rObj.killInstance();
-                LPFrontEnd.responseJSONDiagnosticLPTrue(request, response, dataSampleJSONMsg);*/
             }           
-/*            
-            if (actionDiagnoses!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses[0].toString())){  
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionDiagnoses);   
-            }else{
-                RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.INCIDENT.getTableName(), "incident", incId);                
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(endPoint.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{incId}, rObj.getRelatedObject());
-                rObj.killInstance();
-                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
-            }           */
         }catch(Exception e){   
-            // Rdbms.closeRdbms();                   
             procReqInstance.killIt();
             String[] errObject = new String[]{e.getMessage()};
-            Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
-            response.sendError((int) errMsg[0], (String) errMsg[1]);           
+            LPFrontEnd.responseError(errObject, language, null);
         } finally {
             // release database resources
             try {           

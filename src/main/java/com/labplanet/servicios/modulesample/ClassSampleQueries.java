@@ -93,7 +93,8 @@ public class ClassSampleQueries {
                         sampleAnalysisWhereFieldsNameArr=LPArray.addValueToArray1D(sampleAnalysisWhereFieldsNameArr, sarWhereFieldsName.split("\\|"));
                     String sarWhereFieldsValue = LPNulls.replaceNull(argValues[5]).toString();
                     if ( (sarWhereFieldsValue!=null) && (sarWhereFieldsValue.length()>0) )
-                        sampleAnalysisWhereFieldsValueArr=LPArray.addValueToArray1D(sampleAnalysisWhereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(sampleAnalysisWhereFieldsValue.split("\\|")));
+                        sampleAnalysisWhereFieldsValueArr=LPArray.addValueToArray1D(sampleAnalysisWhereFieldsValueArr, (
+                                sampleAnalysisWhereFieldsValue!=null ?LPArray.convertStringWithDataTypeToObjectArray(sampleAnalysisWhereFieldsValue.split("\\|")) : new Object[]{}));
                     
                     String[] sortFieldsNameArr = null;
                     String sortFieldsName = LPNulls.replaceNull(argValues[6]).toString();
@@ -107,7 +108,6 @@ public class ClassSampleQueries {
                         resultFieldToRetrieveArr=LPArray.addValueToArray1D(resultFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.RAW_VALUE.getName());
                         posicRawValueFld=resultFieldToRetrieveArr.length;
                     }
-                    //EnumIntViewFields[] fldsToGet= EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, resultFieldToRetrieveArr);
                     Integer posicLimitIdFld=EnumIntViewFields.getFldPosicInArray(fldsToGet, TblsData.ViewSampleAnalysisResultWithSpecLimits.LIMIT_ID.getName());
                     
                     Object[][] analysisResultList=QueryUtilitiesEnums.getViewData(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, 
@@ -136,21 +136,16 @@ public class ClassSampleQueries {
                             JSONObject row=new JSONObject();
 
                             Object[] resultLockData=sampleAnalysisResultLockData(EnumIntViewFields.getAllFieldNames(fldsToGet), curRow);
-                            if (resultLockData!=null && resultLockData[0]!=null)
-                                if (resultLockData.length>2)
+                            if (resultLockData!=null && resultLockData[0]!=null){
+                                if (resultLockData.length>2){
                                     row=LPJson.convertArrayRowToJSONObject(LPArray.addValueToArray1D(LPArray.addValueToArray1D(EnumIntViewFields.getAllFieldNames(fldsToGet), (String)resultLockData[2]), (String[]) resultLockData[0]), 
                                             LPArray.addValueToArray1D(LPArray.addValueToArray1D(curRow, (JSONObject) resultLockData[3]), (Object[]) resultLockData[1]));
-                                else
-                                row=LPJson.convertArrayRowToJSONObject(LPArray.addValueToArray1D(EnumIntViewFields.getAllFieldNames(fldsToGet), (String[]) resultLockData[0]), LPArray.addValueToArray1D(curRow, (Object[]) resultLockData[1]));
-                            else        
+                                }else{
+                                    row=LPJson.convertArrayRowToJSONObject(LPArray.addValueToArray1D(EnumIntViewFields.getAllFieldNames(fldsToGet), (String[]) resultLockData[0]), LPArray.addValueToArray1D(curRow, (Object[]) resultLockData[1]));
+                                }
+                            }else{
                                 row=LPJson.convertArrayRowToJSONObject(EnumIntViewFields.getAllFieldNames(fldsToGet), curRow);
-
-//fake warning for FE dev                            
-/*                            JSONObject reasonObj=new JSONObject();
-                            reasonObj.put("message_en", "warning-demo-en");
-                            reasonObj.put("message_es", "warning-demo-es");
-                            row.put("warning_reason", reasonObj);*/
-//fake warning for FE dev                            
+                            }
                             if ((currRowLimitId!=null) && (currRowLimitId.length()>0) ){
                             specRule.specLimitsRule(Integer.valueOf(currRowLimitId) , null);                        
                             row.put(ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_DETAILED, LPNulls.replaceNull(specRule.getRuleRepresentation()).replace(("R"), "R ("+currRowRawValue+")"));
@@ -282,8 +277,7 @@ public class ClassSampleQueries {
             case GET_METHOD_CERTIFIED_USERS_LIST:
                 return;
             default:      
-//                  RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
-//                  rd.forward(request, null);                                   
+                break;
             }    
         this.diagnostic=actionDiagnoses;
         this.relatedObj=rObj;
@@ -423,9 +417,7 @@ public class ClassSampleQueries {
         null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(groupedInfo[0][0].toString())) 
             return false;
-        if (groupedInfo.length>0) return true;
-        
-        return false;
+        return (groupedInfo[0][0].toString().length()>0);        
     }
     
     static Object[] getObjectsId(String[] headerFlds, Object[][] analysisResultList, String separator){

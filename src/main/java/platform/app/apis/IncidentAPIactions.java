@@ -193,7 +193,9 @@ public class IncidentAPIactions extends HttpServlet {
                     break;                    
             }    
         if (actionDiagnoses!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses[0].toString())){  
-            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, actionDiagnObj.getMessageCodeObj(), actionDiagnObj.getMessageCodeVariables());   
+            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, 
+                    (actionDiagnObj!=null?actionDiagnObj.getMessageCodeObj():null), 
+                    (actionDiagnObj!=null?actionDiagnObj.getMessageCodeVariables():null));   
         }else{
             RelatedObjects rObj=RelatedObjects.getInstanceForActions();
             rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.INCIDENT.getTableName(), incId);                
@@ -202,16 +204,12 @@ public class IncidentAPIactions extends HttpServlet {
             LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
         }           
         }catch(Exception e){   
-            // Rdbms.closeRdbms();                   
             procReqInstance.killIt();
             String[] errObject = new String[]{e.getMessage()};
-            Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
-            response.sendError((int) errMsg[0], (String) errMsg[1]);           
+            LPFrontEnd.responseError(errObject, language, null);
         } finally {
-            // release database resources
             try {           
                 procReqInstance.killIt();
-                // Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }          

@@ -114,16 +114,13 @@ public class HolidayCalendarAPIqueries extends HttpServlet {
                 default: 
             }
         }catch(Exception e){   
-            // Rdbms.closeRdbms();                   
             procReqInstance.killIt();
             String[] errObject = new String[]{e.getMessage()};
-            Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
-            response.sendError((int) errMsg[0], (String) errMsg[1]);                   
+            LPFrontEnd.responseError(errObject, language, null);
         } finally {
             // release database resources
             try {           
                 procReqInstance.killIt();
-                // Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }          

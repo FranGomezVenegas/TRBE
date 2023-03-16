@@ -217,10 +217,6 @@ public class EnvMonAPI extends HttpServlet {
             ClassEnvMon clss=new ClassEnvMon(request, endPoint);
             Object[] diagnostic=clss.getDiagnostic();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-/*                Rdbms.rollbackWithSavePoint();
-                if (!con.getAutoCommit()){
-                    con.rollback();
-                    con.setAutoCommit(true);}                */
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clss.getMessageDynamicData());   
             }else{
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
@@ -228,20 +224,11 @@ public class EnvMonAPI extends HttpServlet {
             }   
             
         }catch(Exception e){   
- /*           try {
-                con.rollback();
-                con.setAutoCommit(true);
-            } catch (SQLException ex) {
-                Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
-            }
-*/            
             procReqInstance.killIt();
-            Object[] errMsg = LPFrontEnd.responseError(new String[]{"Servlet "+this.getClass().getSimpleName()+"Error: "+e.getMessage()}, language, null);
-            response.sendError((int) errMsg[0], (String) errMsg[1]);           
+            LPFrontEnd.responseError(new String[]{"Servlet "+this.getClass().getSimpleName()+"Error: "+e.getMessage()}, language, null);
         } finally {
             // release database resources
             try {
-                //con.close();
                 procReqInstance.killIt();
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }

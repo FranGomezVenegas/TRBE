@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
+import lbplanet.utilities.LPMath;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import static lbplanet.utilities.LPPlatform.LAB_FALSE;
@@ -68,12 +69,17 @@ public class TestingRegressionUAT extends HttpServlet {
         StringBuilder fileContentBuilder = new StringBuilder(0);        
         String language = LPFrontEnd.setLanguage(request); 
 
-        Integer scriptId=Integer.valueOf(LPNulls.replaceNull(request.getParameter("scriptId")));
-        if (scriptId==null){
-            procReqInstance.killIt();
+        String scriptIdStr=LPNulls.replaceNull(request.getParameter("scriptId"));
+        if (scriptIdStr.length()==0){
             LPFrontEnd.servletReturnResponseError(request, response, "Argument scriptId not found in the call", null, language, null);
             return;
         }
+        Object[] isScriptNumeric = LPMath.isNumeric(scriptIdStr);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isScriptNumeric[0].toString())){
+            LPFrontEnd.servletReturnResponseError(request, response, "Argument scriptId not numeric", null, language, null);
+            return;            
+        }            
+        Integer scriptId=Integer.valueOf(scriptIdStr);
 
             String saveDirectory="D:\\LP\\"; //TESTING_FILES_PATH;
             Object[][] scriptTblInfo=new Object[0][0];            
@@ -103,9 +109,8 @@ public class TestingRegressionUAT extends HttpServlet {
             }
             procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, true);
             if (procReqInstance==null){
-                procReqInstance.killIt();
                 LPFrontEnd.servletReturnResponseError(request, response, 
-                    "Error", null, procReqInstance.getLanguage(), null);              
+                    "Error", null, "en", null);              
                 return;
             }
             String sessionLang=procReqInstance.getLanguage();
@@ -166,7 +171,6 @@ public class TestingRegressionUAT extends HttpServlet {
             
             if (procInstanceName!=null)
                 request.setAttribute(LPTestingParams.SCHEMA_PREFIX, procInstanceName);
-//            request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, "eyJ1c2VyREIiOiJsYWJwbGFuZXQiLCJlU2lnbiI6ImhvbGEiLCJ1c2VyREJQYXNzd29yZCI6Imxhc2xlY2h1Z2FzIiwidXNlcl9wcm9jZWR1cmVzIjoiW2VtLWRlbW8tYSwgcHJvY2Vzcy11cywgcHJvY2Vzcy1ldSwgZ2Vub21hLTFdIiwidHlwIjoiSldUIiwiYXBwU2Vzc2lvbklkIjoiMjk4NiIsImFwcFNlc3Npb25TdGFydGVkRGF0ZSI6IlR1ZSBNYXIgMTcgMDI6Mzg6MTkgQ0VUIDIwMjAiLCJ1c2VyUm9sZSI6ImNvb3JkaW5hdG9yIiwiYWxnIjoiSFMyNTYiLCJpbnRlcm5hbFVzZXJJRCI6IjEifQ.eyJpc3MiOiJMYWJQTEFORVRkZXN0cmFuZ2lzSW5UaGVOaWdodCJ9.xiT6CxNcoFKAiE2moGhMOsxFwYjeyugdvVISjUUFv0Y");         
             TestingServletsConfig endPoints=null;
             try{
             endPoints = TestingServletsConfig.valueOf(testerName);
@@ -182,35 +186,6 @@ public class TestingRegressionUAT extends HttpServlet {
             // The dispatcher for both is exactly the same, there is not one for regression and another for unit testing.
             switch (endPoints){
             case DB_PLATFORM_INSTRUMENTS:
-/*                Object[][] scriptStepsTblInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.TESTING.getName(), TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(), 
-                        new String[]{TblsTesting.Script.SCRIPT_ID.getName(), TblsTesting.Script.ACTIVE.getName()}, new Object[]{scriptId, true}, 
-                        new String[]{TblsTesting.ScriptSteps.STEP_ID.getName(), TblsTesting.ScriptSteps.ARGUMENT_01.getName()},
-                        new String[]{TblsTesting.ScriptSteps.STEP_ID.getName()});
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptStepsTblInfo[0][0].toString())){
-                    String msgStr=" Not found ANY active step for the script "+scriptId.toString();
-                    Logger.getLogger(msgStr); 
-                    out.println(msgStr);
-                    return;
-                }        
-                String[] actionsList=null;
-                for (Object[] curStep: scriptStepsTblInfo){
-                    Object[] theProcActionEnabled = null;
-                    theProcActionEnabled = isTheProcActionEnabled(token, procInstanceName, (String) LPNulls.replaceNull(curStep[1]), bi);
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(theProcActionEnabled[0].toString())){
-                        actionsList=LPArray.addValueToArray1D(actionsList, "Step "+curStep[0].toString()+", Action:"+curStep[1].toString());
-                        Logger.getLogger("In the script "+scriptId+" and step "+LPNulls.replaceNull(curStep[0]).toString()+"the action"+LPNulls.replaceNull(curStep[0]).toString()+" is not enabled"); 
-//                        LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.REGRESSIONTESTING_ACTIONSNOTALLOWEDFORPROC.getName(), new Object[]{procInstanceName, scriptId, Arrays.toString(actionsList), this.getServletName()}, language);              
-//                        return;
-                    }                            
-                }
-                if (actionsList!=null){
-                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.REGRESSIONTESTING_ACTIONSNOTALLOWEDFORPROC.getName(), new Object[]{procInstanceName, scriptId, Arrays.toString(actionsList), this.getServletName()}, language);              
-                    return;
-                }
-                
-                RequestDispatcher rd = request.getRequestDispatcher(endPoints.getServletUrl());
-                rd.forward(request,response);   
-                return;                       */
             case DB_SCHEMADATA_GENOMA:
             case DB_SCHEMADATA_SAMPLES:
             case DB_SCHEMADATA_ENVMONIT_SAMPLES:
@@ -231,11 +206,9 @@ public class TestingRegressionUAT extends HttpServlet {
                     BusinessRules bi=new BusinessRules(procInstanceName, null);
                     BusinessRules biTesting=new BusinessRules(procInstanceName, scriptId);
                     procReqInstance.setBusinessRulesTesting(biTesting);
-                    try{
+                    
                         LPTestingOutFormat.cleanLastRun(procInstanceName, scriptId);
                         LPTestingOutFormat.getIdsBefore(procInstanceName, scriptId, scriptTblInfo[0]);
-                    }catch(Exception err){
-                    }
                     
                     String userProceduresList=token.getUserProcedures();
                     userProceduresList=userProceduresList.replace("[", "");
@@ -295,9 +268,11 @@ public class TestingRegressionUAT extends HttpServlet {
             }
         }
         catch(Exception e){
+            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), null, language, null);            
         }
         finally{
-            procReqInstance.killIt();
+            if (procReqInstance!=null)
+                procReqInstance.killIt();
         }
     }
     private StringBuilder procedureRepositoryMirrorsTable(String procInstanceName, Integer scriptId){
@@ -319,7 +294,7 @@ public class TestingRegressionUAT extends HttpServlet {
             }
             Object[][] allMismatches= (Object[][])allMismatchesDiagnAll[1];
             if (allMismatches!=null && allMismatches.length>0){
-                fileContentBuilder.append(procInstanceName+" has mirror mismatches, "+allMismatches.length+", further detail below:");    
+                fileContentBuilder.append(procInstanceName).append(" has mirror mismatches, ").append(allMismatches.length).append(", further detail below:");    
 
                 StringBuilder htmlStyleHdr = new StringBuilder(0);
                 htmlStyleHdr.append(LPTestingOutFormat.getHtmlStyleHeader(this.getServletName(), "", scriptId, procInstanceName));

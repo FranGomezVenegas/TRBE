@@ -41,7 +41,7 @@ public class ClassEnvMonSampleFrontendController {
             }
             this.functionFound=true;
             this.rowArgsRows=this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));
-            ClassEnvMonSampleFrontend clss=new ClassEnvMonSampleFrontend(request, response, endPoint);
+            ClassEnvMonSampleFrontend clss=new ClassEnvMonSampleFrontend(request, endPoint);
             if (clss.getIsSuccess())
                 this.functionDiagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "queriesHaveNoMsgCode", null);
             else

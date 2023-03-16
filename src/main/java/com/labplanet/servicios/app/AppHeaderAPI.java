@@ -85,10 +85,10 @@ public class AppHeaderAPI extends HttpServlet {
             LPFrontEnd.servletReturnSuccess(request, response, AppHeaderAPI(request, response));
         }catch(Exception e){            
             String exceptionMessage = e.getMessage();           
-            Object[] errMsg = LPFrontEnd.responseError(new String[]{exceptionMessage}, language, null);
-            response.sendError((int) errMsg[0], (String) errMsg[1]); 
+            LPFrontEnd.responseError(new String[]{exceptionMessage}, language, null);
             Rdbms.closeRdbms(); 
         } finally {
+            Rdbms.closeRdbms(); 
         }                                       
     }
 

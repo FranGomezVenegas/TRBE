@@ -232,9 +232,8 @@ public class SavedQueriesAPI extends HttpServlet {
                     }
                     break;
                 case UPDATE_SAVED_QUERY:
-                    //actionDiagnoses = Investigation.addInvestObjects(token, procInstanceName, Integer.valueOf(argValues[0].toString()), argValues[1].toString(), null);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
-                        String savedQueryIdStr=actionDiagnoses[actionDiagnoses.length-1].toString();
+                        String savedQueryIdStr=(actionDiagnoses!=null?actionDiagnoses[actionDiagnoses.length-1].toString():null);
                         if (savedQueryIdStr!=null && savedQueryIdStr.length()>0) svqQryId=Integer.valueOf(savedQueryIdStr);
                     }
                     break;
@@ -249,12 +248,11 @@ public class SavedQueriesAPI extends HttpServlet {
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
             }           
         }catch(Exception e){   
-            // Rdbms.closeRdbms();                   
             errObject = new String[]{e.getMessage()};
-            Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
-            response.sendError((int) errMsg[0], (String) errMsg[1]);           
+            LPFrontEnd.responseError(errObject, language, null);
         } finally {
-            // release database resources
+            RelatedObjects rObj=RelatedObjects.getInstanceForActions();
+            rObj.killInstance();
             try {                
                 // Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);

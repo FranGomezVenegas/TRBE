@@ -23,14 +23,13 @@ class EnvMonFrontEndUtilities {
 
     /**
      *
-     * @param procInstanceName Procedure prefix
      * @param programConfigId program id
      * @param programVersion program version
      * @param fieldsName fields to retrieve
      * @param sortFields fields for sorting
      * @return ConfigProgram info (field values) for a given program-version
      */
-    public static Object[][] configProgramInfo(String procInstanceName, String programConfigId, Integer programVersion, String[] fieldsName, String[] sortFields){
+    public static Object[][] configProgramInfo(String programConfigId, Integer programVersion, String[] fieldsName, String[] sortFields){
     if (fieldsName==null || fieldsName.length==0){
       for (TblsEnvMonitConfig.Program obj: TblsEnvMonitConfig.Program.values()){
           String objName = obj.name();
@@ -52,7 +51,7 @@ class EnvMonFrontEndUtilities {
      * @param sortFields fields for sorting
      * @return the configProgramLocation info (field values) for a given program-version
      */
-    public static Object[][] configProgramLocationInfo(String procInstanceName, String programConfigId, String[] fieldsName, String[] sortFields){
+    public static Object[][] configProgramLocationInfo(String programConfigId, String[] fieldsName, String[] sortFields){
     if (fieldsName==null || fieldsName.length==0){
       for (TblsEnvMonitConfig.ProgramCalendarDate obj: TblsEnvMonitConfig.ProgramCalendarDate.values()){
           String objName = obj.name();
@@ -69,13 +68,12 @@ class EnvMonFrontEndUtilities {
 
     /**
      *
-     * @param procInstanceName Procedure prefix
      * @param programName program name
      * @param fieldsName fields to retrieve
      * @param sortFields fields for sorting
      * @return dataProgram info (field values) for a given program
      */
-    public static JSONObject dataProgramInfo(String procInstanceName, String programName, String[] fieldsName, String[] sortFields){
+    public static JSONObject dataProgramInfo(String programName, String[] fieldsName, String[] sortFields){
     if (fieldsName==null || fieldsName.length==0){
       for (TblsEnvMonitConfig.Program obj: TblsEnvMonitConfig.Program.values()){
           String objName = obj.name();
@@ -93,13 +91,12 @@ class EnvMonFrontEndUtilities {
 
     /**
      *
-     * @param procInstanceName Procedure Prefix
      * @param programName program name
      * @param fieldsName fields to retrieve
      * @param sortFields fields for sorting
      * @return dataProgramLocation info for a given program
      */
-    public static JSONArray dataProgramLocationInfo(String procInstanceName, String programName, String[] fieldsName, String[] sortFields){
+    public static JSONArray dataProgramLocationInfo(String programName, String[] fieldsName, String[] sortFields){
     if (fieldsName==null || fieldsName.length==0)
         fieldsName=EnumIntTableFields.getAllFieldNames(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_LOCATION.getTableFields());
     Object[][] records=QueryUtilitiesEnums.getTableData(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_LOCATION, 

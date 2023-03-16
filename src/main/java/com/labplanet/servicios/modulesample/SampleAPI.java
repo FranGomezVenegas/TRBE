@@ -56,32 +56,6 @@ public class SampleAPI extends HttpServlet {
         }
         String actionName=procReqInstance.getActionName();
         String language=procReqInstance.getLanguage();
-        
-//        Connection con = Rdbms.createTransactionWithSavePoint();        
- /*       if (con==null){
-             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "The Transaction cannot be created, the action should be aborted");
-             return;
-        }
-*/        
-/*        try {
-            con.rollback();
-            con.setAutoCommit(true);    
-        } catch (SQLException ex) {
-            Logger.getLogger(EnvMonAPI.class.getName()).log(Level.SEVERE, null, ex);
-        }        
-*/ 
-/*        try {
-            con.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(SampleAPI.class.getName()).log(Level.SEVERE, null, ex);        
-/*        try {
-            con.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(SampleAPI.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
-
-//        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());    
-//        Rdbms.setTransactionId(schemaConfigName);
         try (PrintWriter out = response.getWriter()) {
             SampleAPIactionsEndpoints endPoint = null;
             try{
@@ -100,12 +74,7 @@ public class SampleAPI extends HttpServlet {
             ClassSample clss=new ClassSample(request, endPoint);
             Object[] diagnostic=clss.getDiagnostic();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-/*                Rdbms.rollbackWithSavePoint();
-                if (!con.getAutoCommit()){
-                    con.rollback();
-                    con.setAutoCommit(true);}                */
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clss.getMessageDynamicData());   
-                //LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
             }else{
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
@@ -114,13 +83,6 @@ public class SampleAPI extends HttpServlet {
         }catch(Exception e){   
             procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.EXCEPTION_RAISED.getErrorCode(), new Object[]{e.getMessage(), this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());   
- /*           try {
-                con.rollback();
-                con.setAutoCommit(true);
-            } catch (SQLException ex) {
-                Logger.getLogger(SampleAPI.class.getName()).log(Level.SEVERE, null, ex);
-            }
-*/            
         } finally {
             // release database resources
             try {

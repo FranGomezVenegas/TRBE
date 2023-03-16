@@ -90,37 +90,10 @@ public class InspLotRMAPIactions extends HttpServlet {
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, new Object[]{null}, clss.getRelatedObj().getRelatedObject());
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
             }           
-            
-/*            
-            String diagnostic=clss.getDiagnostic();
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clss.getMessageDynamicData());   
-            }else{
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
-                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
-            }    */
-/*            
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clss.getMessageDynamicData());   
-            }else{
-                RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.INCIDENT.getTableName(), "");                
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, new Object[]{}, rObj.getRelatedObject());
-                rObj.killInstance();
-                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
-            }   */
         }catch(Exception e){   
- /*           try {
-                con.rollback();
-                con.setAutoCommit(true);
-            } catch (SQLException ex) {
-                Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
-            }
-*/                     
             procReqInstance.killIt();
             String[] errObject = new String[]{e.getMessage()};
-            Object[] errMsg = LPFrontEnd.responseError(errObject, procReqInstance.getLanguage(), null);
-            response.sendError((int) errMsg[0], (String) errMsg[1]);           
+            LPFrontEnd.responseError(errObject, procReqInstance.getLanguage(), null);
         } finally {            
             try {                
                 procReqInstance.killIt();

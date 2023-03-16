@@ -109,9 +109,6 @@ public class ClassEnvMonSample {
                     String[] fieldNames=null;
                     Object[] fieldValues=null;
                     String smpTmp=LPNulls.replaceNull(argValues[0]).toString();
-                    //if (smpTmp==null || smpTmp.length()==0)
-                    //    smpTmp=Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramSampleBusinessRules.SAMPLE_TEMPLATE.getAreaName(), DataProgramSampleBusinessRules.SAMPLE_TEMPLATE.getTagName());  
-                        //smpTmp=Parameter.getBusinessRuleProcedureFile(procInstanceName, "procedure", "SampleTemplate");  
                     Object smpTmpV=LPNulls.replaceNull(argValues[1]);
                     if (smpTmpV==null || smpTmpV.toString().length()==0)smpTmpV=1;
                     if (LPNulls.replaceNull(argValues[2]).toString().length()>0){
@@ -253,40 +250,6 @@ public class ClassEnvMonSample {
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), resultInfo[0][0]);
                     }
                     break;
-/*                case PLATE_READING_NUMBER:
-                    sampleId = (Integer) argValues[0];
-                    rawValueResult = argValues[1].toString();
-                    Object[][] sampleAnaResultInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
-                        new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName(), TblsData.SampleAnalysisResult.PARAM_NAME.getName()}, 
-                        new Object[]{sampleId, "Recuento"}, 
-                        new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()});
-                    actionDiagnoses=null;
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAnaResultInfo[0][0].toString()))
-                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "No encontrado el parámetro 'Recuento' en la muestra "+sampleId.toString(), null);
-                    if (sampleAnaResultInfo.length!=1)    
-                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Encontrado varios parámetros 'Recuento' en la muestra "+sampleId.toString()+", en este caso se debe entrar resultado por su Id y la acción ENTERRESULT.", null);
-                    if (actionDiagnoses==null){    
-                        resultId=Integer.valueOf(sampleAnaResultInfo[0][0].toString());
-                        diagn = smpAnaRes.sampleAnalysisResultEntry(resultId, rawValueResult, smp);
-                        actionDiagnoses=(Object[]) diagn[0];
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), resultId);
-                        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
-                            if (diagn.length>1){
-                                Object[] auditDiagn=(Object[]) diagn[1];
-                                String pAuditId=(String)auditDiagn[auditDiagn.length-1];
-                                smp.setParentAuditId(Integer.valueOf(pAuditId));
-                            }
-                            Object[][] resultInfo=new Object[0][0];
-                            actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{resultId, rawValueResult, procInstanceName});                    
-                            resultInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
-                                    new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}, new Object[]{resultId}, new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName()});
-                            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(resultInfo[0][0].toString())) sampleId=Integer.valueOf(resultInfo[0][0].toString());
-                            dynamicDataObjects=new Object[]{resultInfo[0][0].toString()};
-                            rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), resultInfo[0][0]);
-                        }
-                    }
-                    break;
-*/
                 case ADD_SAMPLE_MICROORGANISM: 
                 case ADD_ADHOC_SAMPLE_MICROORGANISM:
                     sampleId=(Integer) argValues[0];
