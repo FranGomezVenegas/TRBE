@@ -225,7 +225,6 @@ if (1==1) return fieldValue;
     }    
        
     public static Object[] getEncryptFields(String dbName, Boolean isApp, String procInstanceName){
-        ProcedureRequestSession instanceForQueries = ProcedureRequestSession.getInstanceForQueries(null, null, false);
         Object[] mainObj=new Object[2];
         mainObj[0]=getAllFieldNames(TblsAppConfig.TablesAppConfig.TBL_FLD_ENCRYPT.getTableFields());
         if (!"demoplatform".equalsIgnoreCase(dbName))

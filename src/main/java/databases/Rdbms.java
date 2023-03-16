@@ -208,7 +208,6 @@ public class Rdbms {
      */
     public Boolean startRdbmsTomcatWithNoPool(String user, String pass, String dbName) {   
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
-//        String url = prop.getString(DbConnectionParams.DBURL.getParamValue());
         String dbUrlAndName=prop.getString(DbConnectionParams.DBURL.getParamValue());
         if (dbName==null)
             dbUrlAndName=dbUrlAndName+"/"+prop.getString(DbConnectionParams.DBNAME.getParamValue());        
@@ -540,7 +539,6 @@ if (1==1){Rdbms.transactionId=1; return;}
                             getConnection().commit();
                         else
                             getConnection().rollback();
-                        Integer numIns=dbLogSummary.getNumInserts();
                     }
                 }        
             } catch (SQLException ex) {

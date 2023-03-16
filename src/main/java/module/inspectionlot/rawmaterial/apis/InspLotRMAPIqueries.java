@@ -23,6 +23,7 @@ import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -105,8 +106,6 @@ public class InspLotRMAPIqueries extends HttpServlet {
         }
         String actionName=procReqInstance.getActionName();
         String language=procReqInstance.getLanguage();
-        String procInstanceName = procReqInstance.getProcedureInstance();
-        
 
         try (PrintWriter out = response.getWriter()) {
 
@@ -130,15 +129,23 @@ public class InspLotRMAPIqueries extends HttpServlet {
             if (includesMaterialInfo && fieldsToRetrieveStr.length()>0 && !fieldsToRetrieveStr.contains(TblsInspLotRMData.Lot.MATERIAL_NAME.getName()))
                 fieldsToRetrieveStr=fieldsToRetrieveStr + "|"+TblsInspLotRMData.Lot.MATERIAL_NAME.getName();
 
+            JSONObject lotJsonObj = new JSONObject();
+            JSONArray lotsJsonArr = new JSONArray();
+            
             EnumIntTableFields[] tableFieldsLot = TblsInspLotRMData.TablesInspLotRMData.LOT.getTableFields();
             String[] fieldsToRetrieveLot = EnumIntTableFields.getAllFieldNames(tableFieldsLot);                
             Object[][] lotInfo = QueryUtilitiesEnums.getTableData(TblsInspLotRMData.TablesInspLotRMData.LOT, 
                     tableFieldsLot, new SqlWhere(TblsInspLotRMData.TablesInspLotRMData.LOT, new String[]{TblsInspLotRMData.Lot.NAME.getName()}, new Object[]{lotName}),
                     new String[]{TblsInspLotRMData.Lot.NAME.getName()}, null);        
-
-            JSONArray lotsJsonArr = new JSONArray();            
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(lotInfo[0][0].toString())){
+                lotJsonObj.put("error", Arrays.toString(lotInfo[0])); 
+                lotsJsonArr.add(lotJsonObj);
+                Rdbms.closeRdbms();  
+                LPFrontEnd.servletReturnSuccess(request, response, lotsJsonArr);                
+                return;
+            }
             for (Object[] currLot: lotInfo){
-                JSONObject lotJsonObj = new JSONObject();  
+                  
                 JSONObject jLotInfoObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieveLot, currLot);
                 
                 if (LPArray.valueInArray(fieldsToRetrieveLot, TblsInspLotRMData.Lot.MATERIAL_NAME.getName())){

@@ -15,7 +15,6 @@ import trazit.session.ProcedureRequestSession;
 
 public class DbFieldValueMask {
     public static Object[] getMaskedFields(String dbName, Boolean isApp, String procInstanceName){
-        ProcedureRequestSession instanceForQueries = ProcedureRequestSession.getInstanceForQueries(null, null, false);
         Object[] mainObj=new Object[2];
         mainObj[0]=getAllFieldNames(TblsAppConfig.TablesAppConfig.TBL_FLD_ENCRYPT.getTableFields());
         if (!"demoplatform".equalsIgnoreCase(dbName))
@@ -26,10 +25,7 @@ public class DbFieldValueMask {
                 {"app", "users", "person_name", true},
                 {"app", "ip_black_list", "ip_value1", true},
                 {"app", "ip_black_list", "ip_value2", true},
-            //    {"app", "ip_black_list", "active", true},
             };
-        //else
-        //    fldsArr=new Object[][]{{}};
         mainObj[1]=fldsArr;
         return mainObj;
     }
@@ -69,13 +65,11 @@ public class DbFieldValueMask {
     }
         
     public static String datetimeFormat(EnumIntTableFields curFld){
-        StringBuilder str=new StringBuilder(0);
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(null, null, false, true);
         String dateFormatAtPlatformLvl = procReqInstance.getToken().getDateFormatAtPlatformLvl();
         if (dateFormatAtPlatformLvl!=null&&dateFormatAtPlatformLvl.toUpperCase().contains("YY")){
             return dateFormatAtPlatformLvl;
         }else
             return "DD/MM/YY HH:MI";
-        
     }
 }

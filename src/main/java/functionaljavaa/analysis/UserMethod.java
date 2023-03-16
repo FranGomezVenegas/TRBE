@@ -48,62 +48,18 @@ public class UserMethod {
         private final String defaultValue;
     }
    
-    /**
-     *
-     */
     public static final String TABLENAME_DATA_USER_METHOD="user_method";   
-
-    /**
-     *
-     */
-    public static final String FIELDNAME_DATA_USER_METHOD_ACTIVE="active";
-
-    /**
-     *
-     */
-    public static final String FIELDNAME_DATA_USER_METHOD_ANALYSIS="analysis";
-
-    /**
-     *
-     */
-    public static final String FIELDNAME_DATA_USER_METHOD_LAST_ANALYSIS_ON="last_training_on";
-        
-    /**
-     *
-     */
-    public static final String FIELDNAME_DATA_USER_METHOD_LAST_TRAINING_ON="last_analysis_on";
-
-    /**
-     *
-     */
-    public static final String FIELDNAME_DATA_USER_METHOD_LAST_SAMPLE="last_sample";
-
-    /**
-     *
-     */
-    public static final String FIELDNAME_DATA_USER_METHOD_LAST_SAMPLE_ANALYSIS="last_sample_analysis";
-    public static final String FIELDNAME_DATA_USER_METHOD_METHOD_NAME="method_name";
-
-    /**
-     *
-     */
-    public static final String FIELDNAME_DATA_USER_METHOD_METHOD_VERSION="method_version";
-
-    /**
-     *
-     */
-    public static final String FIELDNAME_DATA_USER_METHOD_TRAIN_INTERVAL="train_interval";
-
-    /**
-     *
-     */
-    public static final String FIELDNAME_DATA_USER_METHOD_USER_ID="user_id";
-
-    /**
-     *
-     */
-    public static final String FIELDNAME_DATA_USER_METHOD_USER_METHOD_ID="user_method_id";
-        
+    public static final String FLDNDATA_USR_METHD_ACTIVE="active";
+    public static final String FLDNDATA_USR_METHD_ANALYSIS="analysis";
+    public static final String FLDNDATA_USR_METHD_LAST_ANALYSIS_ON="last_training_on";
+    public static final String FLDNDATA_USR_METHD_LAST_TRAINING_ON="last_analysis_on";
+    public static final String FLDNDATA_USR_METHD_LAST_SAMPLE="last_sample";
+    public static final String FLDNDATA_USR_METHD_LAST_SMP_ANA="last_sample_analysis";
+    public static final String FLDNDATA_USR_METHD_METHOD_NAME="method_name";
+    public static final String FLDNDATA_USR_METHD_METHOD_VERSION="method_version";
+    public static final String FLDNDATA_USR_METHD_TRAIN_INTERVAL="train_interval";
+    public static final String FLDNDATA_USR_METHD_USER_ID="user_id";
+    public static final String FLDNDATA_USR_METHD_USER_METHOD_ID="user_method_id";
         
  
 /**
@@ -134,11 +90,11 @@ public class UserMethod {
         if (userMethodCertified.length()==0)
             userMethodCertified=UserMethodBusinessRules.CERTIFICATE_CERTIFIED.getDefaultValue();
         
-        String[] whereFieldName = new String[]{FIELDNAME_DATA_USER_METHOD_USER_ID, FIELDNAME_DATA_USER_METHOD_ANALYSIS,
-                FIELDNAME_DATA_USER_METHOD_METHOD_NAME, FIELDNAME_DATA_USER_METHOD_METHOD_VERSION};
+        String[] whereFieldName = new String[]{FLDNDATA_USR_METHD_USER_ID, FLDNDATA_USR_METHD_ANALYSIS,
+                FLDNDATA_USR_METHD_METHOD_NAME, FLDNDATA_USR_METHD_METHOD_VERSION};
         Object[] whereFieldValue = new Object[]{userName, analysis, methodName, methodVersion};
-        String[] getFieldName = new String[]{FIELDNAME_DATA_USER_METHOD_ACTIVE, FIELDNAME_DATA_USER_METHOD_TRAIN_INTERVAL,
-                FIELDNAME_DATA_USER_METHOD_LAST_TRAINING_ON, FIELDNAME_DATA_USER_METHOD_LAST_ANALYSIS_ON};
+        String[] getFieldName = new String[]{FLDNDATA_USR_METHD_ACTIVE, FLDNDATA_USR_METHD_TRAIN_INTERVAL,
+                FLDNDATA_USR_METHD_LAST_TRAINING_ON, FLDNDATA_USR_METHD_LAST_ANALYSIS_ON};
                 
         Object[][] userMethodData = Rdbms.getRecordFieldsByFilter(schemaDataName, TABLENAME_DATA_USER_METHOD, whereFieldName, whereFieldValue, getFieldName);
         if (LPPlatform.LAB_FALSE.equals(userMethodData[0][0].toString())){return userMethodNotAssigned;}    
@@ -163,20 +119,16 @@ public class UserMethod {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String schemaDataName=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
         Object[] diagnoses = new Object[]{LPPlatform.LAB_FALSE};
-        String[] whereFields = new String[]{UserMethod.FIELDNAME_DATA_USER_METHOD_USER_ID, FIELDNAME_DATA_USER_METHOD_ANALYSIS, 
-            FIELDNAME_DATA_USER_METHOD_METHOD_NAME, FIELDNAME_DATA_USER_METHOD_METHOD_VERSION};
+        String[] whereFields = new String[]{UserMethod.FLDNDATA_USR_METHD_USER_ID, FLDNDATA_USR_METHD_ANALYSIS, 
+            FLDNDATA_USR_METHD_METHOD_NAME, FLDNDATA_USR_METHD_METHOD_VERSION};
         Object[] whereFieldsValue = new Object[]{token.getUserName(), analysis, methodName, methodVersion};
-        String[] updFields = new String[]{UserMethod.FIELDNAME_DATA_USER_METHOD_LAST_TRAINING_ON, UserMethod.FIELDNAME_DATA_USER_METHOD_LAST_SAMPLE, FIELDNAME_DATA_USER_METHOD_LAST_SAMPLE_ANALYSIS};
+        String[] updFields = new String[]{UserMethod.FLDNDATA_USR_METHD_LAST_TRAINING_ON, UserMethod.FLDNDATA_USR_METHD_LAST_SAMPLE, FLDNDATA_USR_METHD_LAST_SMP_ANA};
         Object[] updFieldsValue = new Object[]{Rdbms.getLocalDate(), sampleId, testId};
         Object[][] userMethodInfo;
         userMethodInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, UserMethod.TABLENAME_DATA_USER_METHOD, whereFields, whereFieldsValue, 
-                new String[]{FIELDNAME_DATA_USER_METHOD_USER_METHOD_ID, UserMethod.FIELDNAME_DATA_USER_METHOD_USER_ID, FIELDNAME_DATA_USER_METHOD_ANALYSIS, 
-                    FIELDNAME_DATA_USER_METHOD_METHOD_NAME, FIELDNAME_DATA_USER_METHOD_METHOD_VERSION});
+                new String[]{FLDNDATA_USR_METHD_USER_METHOD_ID, UserMethod.FLDNDATA_USR_METHD_USER_ID, FLDNDATA_USR_METHD_ANALYSIS, 
+                    FLDNDATA_USR_METHD_METHOD_NAME, FLDNDATA_USR_METHD_METHOD_VERSION});
         if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(userMethodInfo[0][0].toString()))) {
-// 2022-05-01 esta tabla no está en el sistema.
-//            SqlWhere sqlWhere = new SqlWhere(UserMethod.TABLENAME_DATA_USER_METHOD, whereFields, whereFieldsValue);
-//            Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(UserMethod.TABLENAME_DATA_USER_METHOD,
-//                    EnumIntTableFields.getTableFieldsFromString(UserMethod.TABLENAME_DATA_USER_METHOD, updFields), updFieldsValue, sqlWhere, null);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                 updFields = LPArray.addValueToArray1D(updFields, whereFields);
                 updFieldsValue = LPArray.addValueToArray1D(updFieldsValue, whereFieldsValue);
@@ -215,7 +167,7 @@ public class UserMethod {
                 for(String fRet: fieldsToReturn){
                     if (fRet!=null && fRet.length()>0){
                         if ("procedure_name".equalsIgnoreCase(fRet))
-                            query.append("'"+currProcInstanceName+"'").append(",");
+                            query.append("'").append(currProcInstanceName).append("'").append(",");
                         else
                             query.append(fRet).append(",");
                     }

@@ -6,7 +6,6 @@
 package databases.features;
 
 import databases.Rdbms;
-import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.SqlWhere;
 import databases.TblsProcedure;
@@ -54,10 +53,10 @@ public class dbProcHashcode {
   */      
         
         instanceForActions.setNewProcedureHashCode(String.valueOf(hashCode));
-        RdbmsObject insertRecord = Rdbms.insertRecord(TblsProcedureAudit.TablesProcedureAudit.PROC_HASH_CODES, fieldNames, fieldValues, null);
+        Rdbms.insertRecord(TblsProcedureAudit.TablesProcedureAudit.PROC_HASH_CODES, fieldNames, fieldValues, null);
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsProcedure.ProcedureInfo.NAME, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, "");        
-        Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(TblsProcedure.TablesProcedure.PROCEDURE_INFO,
+        Rdbms.updateRecordFieldsByFilter(TblsProcedure.TablesProcedure.PROCEDURE_INFO,
             EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.PROCEDURE_INFO, new String[]{TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE.getName()}),
             new Object[]{String.valueOf(hashCode)}, sqlWhere, null);
     }

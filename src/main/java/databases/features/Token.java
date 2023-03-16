@@ -189,8 +189,6 @@ public final class Token {
         Object[] allUserProcedurePrefix = usProf.getAllUserProcedurePrefix(userDBId);
         myParams.put(TOKEN_PARAM_USER_PROCEDURES, Arrays.toString(allUserProcedurePrefix));
         String procHashCodes="";  
-        String procModuleName="";
-        //JSONArray procModulesArr=new JSONArray();
         String procModulesArr="";
         for (Object curProcPrefix: allUserProcedurePrefix){            
             if (!"proc_management".equalsIgnoreCase(curProcPrefix.toString())){
@@ -206,10 +204,6 @@ public final class Token {
                     if (procModulesArr.length()>0)
                         procModulesArr=procModulesArr+"|";
                     procModulesArr=procModulesArr+curProcPrefix.toString()+"*"+procInfo[0][2].toString();
-/*                    JSONObject jObj=new JSONObject();
-                    jObj.put(TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName(), curProcPrefix.toString());
-                    jObj.put(TblsProcedure.ProcedureInfo.MODULE_NAME.getName(), LPNulls.replaceNull(procInfo[0][2]).toString());
-                    procModulesArr.add(jObj);*/
                 }
             }
         }   

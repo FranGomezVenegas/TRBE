@@ -29,7 +29,6 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
-import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.globalvariables.GlobalVariables;
@@ -54,9 +53,7 @@ public class ClassReqProcedureActions {
         new Object[]{procName, procVersion, instanceName}, fieldsToRetrieve, fieldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procAndInstanceArr[0][0].toString()))
             return true;
-        if ("true".equalsIgnoreCase(procAndInstanceArr[0][0].toString()))
-            return true;
-        return false;
+        return "true".equalsIgnoreCase(procAndInstanceArr[0][0].toString());
     } 
     public ClassReqProcedureActions(HttpServletRequest request, HttpServletResponse response, ProcedureDefinitionAPIActionsEndpoints endPoint){
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
@@ -100,9 +97,7 @@ public class ClassReqProcedureActions {
                     String propName=argValues[4].toString();
                     String propValue=argValues[5].toString();
                     Parameter parm=new Parameter();
-//                    parm.createPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
-//                    procInstanceName+"-"+suffixName);  
-                    String diagn=parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
+                    parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
                         procInstanceName+"-"+suffixName, propName, propValue);
 
                     break;
@@ -124,7 +119,7 @@ public class ClassReqProcedureActions {
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());                    
                     else
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
-                    JSONObject createDBProcedureUsers = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
+                    functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
                     break;
 
                 case ADD_ROLE_TO_USER:
@@ -151,7 +146,7 @@ public class ClassReqProcedureActions {
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());                    
                     else
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
-                    JSONObject createDBProcedureUserRoles = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
+                    functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
                     break;
 
                 case GET_UOM:

@@ -79,9 +79,6 @@ public class TestingUOMFamilyTable extends HttpServlet {
                 TestingAssert tstAssert = new TestingAssert(csvFileContent[iLines], numEvaluationArguments);
 
                 Integer lineNumCols = csvFileContent[0].length-1;
-                String procInstanceName = null;
-                if (lineNumCols>=numEvaluationArguments)                
-                    procInstanceName = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments]);
                 String familyName = null;
                 if (lineNumCols>=numEvaluationArguments+1)                
                     familyName = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+1]);
@@ -126,7 +123,7 @@ public class TestingUOMFamilyTable extends HttpServlet {
                 String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments, null, null);
                 fileContentBuilder.append(fileContentSummary);
             }
-            fileContentBuilder.append(LPTestingOutFormat.bodyEnd()+LPTestingOutFormat.htmlEnd());
+            fileContentBuilder.append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
             out.println(fileContentBuilder.toString());            
             LPTestingOutFormat.createLogFile(csvPathName, fileContentBuilder.toString());
         }

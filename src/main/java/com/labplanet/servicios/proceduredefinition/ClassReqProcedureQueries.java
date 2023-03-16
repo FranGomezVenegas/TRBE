@@ -113,10 +113,6 @@ public class ClassReqProcedureQueries {
     }
 
     static JSONArray dbRowsToJsonArr(String procInstanceName, String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue, String[] sortFlds, String[] jsonFlds){
-        String demo="";
-        if ("sample-coa-rel1".equalsIgnoreCase(procInstanceName) && tblName.equalsIgnoreCase(TblsReqs.TablesReqs.PROC_MASTER_DATA.getTableName()))
-           demo="1";
-        
         Object[][] procTblRows = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), tblName, 
             whereFldName, whereFldValue, fldsToGet, sortFlds);
         JSONArray jBlockArr = new JSONArray(); 

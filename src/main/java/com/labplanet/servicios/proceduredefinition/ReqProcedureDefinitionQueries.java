@@ -104,7 +104,6 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                     new Object[]{}, 
                     fieldsToRetrieveScripts,
                     fieldsToRetrieveScripts);
-                String curProcName="";
                 JSONArray proceduresList = new JSONArray();
                 for (Object[] curProc: procAndInstanceArr){
                     JSONObject curProcObj= LPJson.convertArrayRowToJSONObject(fieldsToRetrieveScripts, curProc);
@@ -242,7 +241,6 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procAndInstanceArr[0][0].toString()))
                     jMainObj.put(mainObjectName, "no data found");
                 else{    
-                    curProcName="";
                     proceduresList = new JSONArray();
                     for (Object[] curProc: procAndInstanceArr){
                         JSONObject curProcObj= LPJson.convertArrayRowToJSONObject(fieldsToGet, curProc);
@@ -377,7 +375,6 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         String repositoryName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName());
         if (curTest==null){
             fieldsToRetrieveScripts=TblsTesting.getScriptPublicFieldNames(procInstanceName);
-            String[] fieldsToRetrieveScriptSteps=  EnumIntTableFields.getAllFieldNames(TblsTesting.TablesTesting.SCRIPT_STEPS);  
             Object[][] scriptsTblInfo = Rdbms.getRecordFieldsByFilter(repositoryName, TblsTesting.TablesTesting.SCRIPT.getTableName(), 
                 new String[]{TblsTesting.Script.SCRIPT_ID.getName()}, new Object[]{scriptId}, 
                 fieldsToRetrieveScripts, new String[]{TblsTesting.Script.SCRIPT_ID.getName()});
