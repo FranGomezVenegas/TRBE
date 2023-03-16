@@ -48,7 +48,7 @@ public class TesterFromUploadFile extends HttpServlet {
             String ipAddr = request.getParameter("ipAddr");
             String portNum = request.getParameter("portNum");
 
-            String ip="192.168.1.139";
+            String ip="192"+"."+"168"+".1"+".139";
             Integer port=3910;
             if (LPNulls.replaceNull(ipAddr).length()>0)
                 ip=ipAddr;

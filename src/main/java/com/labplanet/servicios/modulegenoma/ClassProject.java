@@ -7,7 +7,6 @@ package com.labplanet.servicios.modulegenoma;
 
 import com.labplanet.servicios.modulegenoma.GenomaProjectAPI.GenomaProjectAPIactionsEndPoints;
 import functionaljavaa.modulegenoma.GenomaDataProject;
-import functionaljavaa.modulegenoma.GenomaDataStudy;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;

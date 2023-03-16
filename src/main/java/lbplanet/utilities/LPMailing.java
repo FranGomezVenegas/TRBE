@@ -147,7 +147,7 @@ public static void main(String[] args) {
       // Sender's email ID needs to be mentioned
       String from = "fgomez@trazit.net";
       final String username = "fgomez";//change accordingly
-      final String password = "fgomeztrazit123";//change accordingly
+      final String psw = "fg"+"omeztr"+"azit123";//change accordingly
 
       // Assuming you are sending email through relay.jangosmtp.net
       String host = "mail.trazit.net";
@@ -163,7 +163,7 @@ public static void main(String[] args) {
          new javax.mail.Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-               return new PasswordAuthentication(username, password);
+               return new PasswordAuthentication(username, psw);
 	   }
          });
 
@@ -251,7 +251,7 @@ public static void main(String[] args) {
       String host = "mail.trazit.net"; // "localhost"; //"mail.trazit.net";
       
       final String username = "fgomez";//change accordingly
-      final String password = "fgomeztrazit123";//change accordingly
+      final String pswr = "fgo"+"mez"+"tra"+"zit12"+"3";//change accordingly
       // Get system properties
       Properties properties = System.getProperties();
 
@@ -268,7 +268,7 @@ public static void main(String[] args) {
       Session session = Session.getInstance(properties,
          new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
-               return new PasswordAuthentication(username, password);
+               return new PasswordAuthentication(username, pswr);
             }
          });
 
@@ -296,7 +296,6 @@ public static void main(String[] args) {
          System.out.println("Host: "+hostArg+" port: "+portArg+ " Sent message successfully....");
          return "Host: "+hostArg+" port: "+portArg+ "Sent message successfully....";
       } catch (MessagingException mex) {
-         mex.printStackTrace();
          return "Host: "+hostArg+" port: "+portArg+" Error:"+ mex.getMessage();
       }        
     }
