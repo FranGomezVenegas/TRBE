@@ -19,31 +19,6 @@ import javax.mail.internet.*;
  */
 public class LPMailing {
     
-    static final String FROM = "info.fran.gomez@gmail.com";
-    static final String FROMNAME = "Sender Name";
-	
-    // Replace recipient@example.com with a "To" address. If your account 
-    // is still in the sandbox, this address must be verified.
-    static final String TO = "info.fran.gomez@gmail.com";
-    
-    // Replace smtp_username with your Amazon SES SMTP user name.
-    static final String SMTP_USERNAME = "smtp_username";
-    
-    // Replace smtp_password with your Amazon SES SMTP password.
-    static final String SMTP_PASSWORD = "smtp_password";
-    
-    // The name of the Configuration Set to use for this message.
-    // If you comment out or remove this variable, you will also need to
-    // comment out or remove the header below.
-    static final String CONFIGSET = "ConfigSet";
-    
-    // Amazon SES SMTP host name. This example uses the EE.UU. Oeste (Oregón) region.
-    // See https://docs.aws.amazon.com/ses/latest/DeveloperGuide/regions.html#region-endpoints
-    // for more information.
-    static final String HOST = "email-smtp.us-west-2.amazonaws.com";
-    
-    // The port you will connect to on the Amazon SES SMTP endpoint. 
-    static final int PORT = 587;
     
     static final String SUBJECT = "Amazon SES test (SMTP interface accessed using Java)";
     
@@ -57,8 +32,8 @@ public class LPMailing {
     
 public static void main(String[] args) {
 
-        final String uname = "fgomezlw@gmail.com";
-        final String pass = "Madrugada20.";
+        final String uname = "";
+        final String pass = "";
 
         Properties prop = new Properties();
 		prop.put("mail.smtp.host", "smtp.gmail.com");
@@ -77,10 +52,10 @@ public static void main(String[] args) {
         try {
 
             Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress("fgomezlw@gmail.com"));
+            message.setFrom(new InternetAddress(""));
             message.setRecipients(
                     Message.RecipientType.TO,
-                    InternetAddress.parse("info.fran.gomez@gmail.com")
+                    InternetAddress.parse("")
             );
             message.setSubject("Testing Gmail main");
             message.setText("Dear Mail Crawler,"
@@ -142,59 +117,7 @@ public static void main(String[] args) {
     }
     
     private static void buildMailInternal(String subject, String body, String[] toList, String[] ccList, String[] bccList, String[] attachmentUrl) {
-      String to = "info.fran.gomez@gmail.com";
-
-      // Sender's email ID needs to be mentioned
-      String from = "fgomez@trazit.net";
-      final String username = "fgomez";//change accordingly
-      final String psw = "fg"+"omeztr"+"azit123";//change accordingly
-
-      // Assuming you are sending email through relay.jangosmtp.net
-      String host = "mail.trazit.net";
-
-      Properties props = new Properties();
-      props.put("mail.smtp.auth", "true");
-      //props.put("mail.smtp.starttls.enable", "true");
-      props.put("mail.smtp.host", host);
-      props.put("mail.smtp.port", "465");
-
-      // Get the Session object.
-      Session session = Session.getInstance(props,
-         new javax.mail.Authenticator() {
-            @Override
-            protected PasswordAuthentication getPasswordAuthentication() {
-               return new PasswordAuthentication(username, psw);
-	   }
-         });
-
-      try {
-	   // Create a default MimeMessage object.
-	   Message message = new MimeMessage(session);
-	
-	   // Set From: header field of the header.
-	   message.setFrom(new InternetAddress(from));
-	
-	   // Set To: header field of the header.
-	   message.setRecipients(Message.RecipientType.TO,
-               InternetAddress.parse(to));
-	
-	   // Set Subject: header field
-	   message.setSubject("Testing Subject");
-	
-	   // Now set the actual message
-	   message.setText("Hello, this is sample for to check send " +
-		"email using JavaMailAPI ");
-
-	   // Send message
-	   Transport.send(message);
-
 	   System.out.println("Sent message successfully....");
-
-      } catch (MessagingException e) {
-         throw new RuntimeException(e);
-      }
-
-
     }
     private static void buildMailInternal2(Session session, String subject, String body, String[] toList, String[] ccList, String[] bccList, String[] attachmentUrl) {
         try {            
@@ -236,68 +159,7 @@ public static void main(String[] args) {
     }    
     
     public static String mailAI(String hostArg, String portArg){
-     // Sender's email ID needs to be mentioned
-      String sender = "fgomez@trazit.net";
-      // Recipient's email ID needs to be mentioned.
-      String to = "info@trazit.net";
-      Address[] toArr=null;
-        try {
-            toArr=new Address[]{new InternetAddress("info@trazit.net"), new InternetAddress("fgomez@trazit.net"),
-            new InternetAddress("ibelmonte@trazit.net"), new InternetAddress("jmallorqui@trazit.net")};
-        } catch (AddressException ex) {
-            Logger.getLogger(LPMailing.class.getName()).log(Level.SEVERE, null, ex);
-        }
-      // Assuming you are sending email from localhost
-      String host = "mail.trazit.net"; // "localhost"; //"mail.trazit.net";
-      
-      final String username = "fgomez";//change accordingly
-      final String pswr = "fgo"+"mez"+"tra"+"zit12"+"3";//change accordingly
-      // Get system properties
-      Properties properties = System.getProperties();
-
-      // Setup mail server
-      properties.setProperty("mail.smtp.host", hostArg);
-      //properties.setProperty("mail.smtp.port", "465");
-      properties.setProperty("mail.smtp.port", portArg);
-      //properties.setProperty("mail.smtp.auth", "true");
-      properties.setProperty("mail.smtp.auth", "false");
-      properties.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
-
-      properties.setProperty("javax.net.ssl.trustStoreType", "none");
-      // Get the default Session object.
-      Session session = Session.getInstance(properties,
-         new javax.mail.Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-               return new PasswordAuthentication(username, pswr);
-            }
-         });
-
-      try {
-         // Create a default MimeMessage object.
-         MimeMessage message = new MimeMessage(session);
-
-         // Set From: header field of the header.
-         message.setFrom(new InternetAddress(sender));
-
-         // Set To: header field of the header.
-         //message.addRecipient(Message.RecipientType.TO,
-         //                         new InternetAddress(to));
-         message.addRecipients(Message.RecipientType.TO,toArr);
-
-         // Set Subject: header field
-         message.setSubject("Trazit Backend sent this mail!");
-
-         // Now set the actual message
-         message.setText("Host: "+hostArg+" port: "+portArg+ " Estás recibiendo este correo ... porque ... TRAZIT !!! ");
-    System.setProperty("javax.net.ssl.trustStoreType", "none");
-
-         // Send message
-         Transport.send(message);
-         System.out.println("Host: "+hostArg+" port: "+portArg+ " Sent message successfully....");
          return "Host: "+hostArg+" port: "+portArg+ "Sent message successfully....";
-      } catch (MessagingException mex) {
-         return "Host: "+hostArg+" port: "+portArg+" Error:"+ mex.getMessage();
-      }        
     }
     
 }      
