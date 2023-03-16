@@ -6,7 +6,6 @@
 package com.labplanet.servicios.proceduredefinition;
 
 import static com.labplanet.servicios.app.AppProcedureListAPI.LABEL_ARRAY_PROCEDURE_INSTANCES;
-import static com.labplanet.servicios.app.AppProcedureListAPI.PROC_FLD_NAME;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.app.TestingRegressionUAT;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
@@ -123,20 +122,16 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
             case ALL_USER_PROCEDURES_DEFINITION:
                 jMainObj = new JSONObject();
                 mainObjectName="all_user_procedures_list";                 
-                JSONObject jsonObj = new JSONObject();
                 Token token = new Token(finalToken);
-                String rolName = token.getUserRole();
                 UserProfile usProf = new UserProfile();
                 Object[] allUserProcedureInstancePrefix = usProf.getAllUserProcedurePrefix(token.getUserName());
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedureInstancePrefix[0].toString())){
                     LPFrontEnd.servletReturnSuccess(request, response, new JSONObject());
                     return;                                                
                 }
-                String[] procFldNameArray = PROC_FLD_NAME.split("\\|");
                 JSONArray procedures = new JSONArray();     
                 for (Object curProcInst: allUserProcedureInstancePrefix){
                     if (!"proc_management".equalsIgnoreCase(curProcInst.toString())){
-                        JSONObject procedure = new JSONObject();
                         JSONObject procInstanceDefinition = procInstanceDefinitionInRequirements(curProcInst.toString());
                         procInstanceDefinition.put("instance_name", curProcInst);
                         procedures.add(procInstanceDefinition);
@@ -149,8 +144,6 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                 return;                                                
             case ALL_PROCEDURE_DEFINITION:
             case ONE_PROCEDURE_DEFINITION:
-                JSONObject schemaContentObj = new JSONObject(); 
-
                 Rdbms.closeRdbms();  
                 JSONObject mainRespDef= new JSONObject();
                 mainRespDef.put("definition", procInstanceDefinitionInRequirements(procInstanceName));
@@ -212,8 +205,6 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                 return;
 
             case PROC_DEPLOY_TESTING_COVERAGE_SUMMARY:
-                String procedureName = argValues[0].toString();
-                Integer procedureVersion = (Integer) argValues[1];  
                 procInstanceName=argValues[2].toString();       
                 jObj = new JSONObject();                
                 jMainObj = new JSONObject();
@@ -221,10 +212,8 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                 Object[] actionDiagnosesAll = TestingRegressionUAT.procedureRepositoryMirrors(procInstanceName);
                 Object[] allMismatchesDiagn=(Object[]) actionDiagnosesAll[0];
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allMismatchesDiagn[0].toString())){
-                    Object[][] allMismatches= (Object[][])actionDiagnosesAll[1];
                     jObj.put("Error_found", "Not mirrors");
                     jArr=new JSONArray();                                        
-                    Object[] fldNamesObj=(Object[]) actionDiagnosesAll[1];
                     Object[][] mismatchTables=(Object[][])actionDiagnosesAll[1];
                     for (int i=1;i<mismatchTables.length;i++){
                         jArr.add(LPJson.convertArrayRowToJSONObject(LPArray.convertObjectArrayToStringArray((Object[]) mismatchTables[0]), (Object[]) mismatchTables[i]));
@@ -336,7 +325,6 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
     }// </editor-fold>
 
     private static JSONObject procInstanceDefinitionInRequirements(String procInstanceName){
-        JSONArray mainArr = new JSONArray(); 
         JSONObject jMainObj=new JSONObject();            
         String[] sectionsArr=new String[]{ProcBusinessRulesQueries.PROCEDURE_MAIN_INFO.toString(), ProcBusinessRulesQueries.PROCEDURE_ACTIONS_AND_ROLES.toString(),
             ProcBusinessRulesQueries.PROCEDURE_SAMPLE_AUDIT_LEVEL.toString(),

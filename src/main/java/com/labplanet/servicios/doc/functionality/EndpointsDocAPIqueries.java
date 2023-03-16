@@ -84,7 +84,6 @@ public class EndpointsDocAPIqueries extends HttpServlet {
         }
         String actionName=procReqInstance.getActionName();
         String language=procReqInstance.getLanguage();
-        String procInstanceName = procReqInstance.getProcedureInstance();
 
         try (PrintWriter out = response.getWriter()) {            
             EndpointsDocAPIqueriesEndpoints endPoint = null;
@@ -176,7 +175,7 @@ public class EndpointsDocAPIqueries extends HttpServlet {
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jMainArr);            
         }catch(Exception e){
-            String eMsg=e.getMessage();
+            procReqInstance.killIt();
         }  
         finally{
             procReqInstance.killIt();

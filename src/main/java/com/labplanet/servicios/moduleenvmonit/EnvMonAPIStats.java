@@ -32,7 +32,6 @@ import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
-import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntViewFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -505,7 +504,6 @@ public class EnvMonAPIStats extends HttpServlet {
             
             if (getInvestigationInfo){
                 Object[][] investigationInfo=new Object[0][0];
-                String[] investigationFieldToRetrieveArr = getAllFieldNames(TblsProcedure.TablesProcedure.INVESTIGATION.getTableFields());
                 
                 String creationDayStart = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_CREATION_DAY_START);
                 String creationDayEnd = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_CREATION_DAY_END);
@@ -517,9 +515,6 @@ public class EnvMonAPIStats extends HttpServlet {
                     else
                         wObj.addConstraint(TblsProcedure.Investigation.CREATED_ON, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{buildDateRangeFromStrings[2]}, null);                    
                 }
-                String closureDayStart = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_CLOSURE_DAY_START);
-                String closureDayEnd = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_CLOSURE_DAY_END);
-
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString())){
                     if (buildDateRangeFromStrings.length==4)
                         wObj.addConstraint(TblsProcedure.Investigation.CLOSED_ON, SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{buildDateRangeFromStrings[2], buildDateRangeFromStrings[3]}, null);                    

@@ -149,14 +149,12 @@ public class ClassReqProcedureQueries {
     static JSONObject dbRowsGroupedToJsonArr(String procInstanceName, String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue, String[] sortFlds){
         Object[][] procTblRows = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), tblName, 
             whereFldName, whereFldValue, fldsToGet, sortFlds);
-        JSONArray jBlockArr = new JSONArray(); 
         JSONObject jBlockObj = new JSONObject();        
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procTblRows[0][0].toString())){
             jBlockObj.put("No Data", "No Data");
             return jBlockObj;
         }else{
             String curSchema="";
-            JSONObject jSchemaObj=new JSONObject();
             JSONArray jSchemaArr=new JSONArray();
             for (Object[] curRow: procTblRows){
                 if (!curSchema.equalsIgnoreCase(LPNulls.replaceNull(curRow[0]).toString())){

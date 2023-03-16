@@ -57,7 +57,6 @@ public class ClassSampleQueries {
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
 
     public ClassSampleQueries(HttpServletRequest request, SampleAPIqueriesEndpoints endPoint){
-        String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
 
         Object[] actionDiagnoses = null;

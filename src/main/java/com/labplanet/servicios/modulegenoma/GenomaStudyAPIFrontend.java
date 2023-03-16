@@ -658,14 +658,13 @@ JSONObject genomaMasterData(){
     
     return masterDataJson;
 }
-JSONArray studyUsersJson(){
+    JSONArray studyUsersJson(){
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
     String schemaName=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName());
     String[] fldsArr=new String[]{TblsProcedure.ViewProcUserAndRoles.USER_NAME.getName()};
     Object[][] procUsers = Rdbms.getRecordFieldsByFilter(schemaName, "proc_user_and_roles", 
         new String[]{TblsProcedure.ViewProcUserAndRoles.ACTIVE.getName()}, 
         new Object[]{true}, fldsArr);
-    JSONObject jBlockObj = new JSONObject();
     JSONArray jBlockArr = new JSONArray(); 
     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procUsers[0][0].toString())){
         for (Object[] curRow: procUsers){
@@ -682,7 +681,6 @@ JSONArray VariableSetList(){
     Object[][] variableSetListInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaConfig.TablesGenomaConfig.VARIABLES_SET.getTableName(), 
         new String[]{TblsProcedure.ViewProcUserAndRoles.ACTIVE.getName()}, 
         new Object[]{true}, fldsArr);
-    JSONObject jBlockObj = new JSONObject();
     JSONArray jBlockArr = new JSONArray(); 
     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(variableSetListInfo[0][0].toString())){
         for (Object[] curRow: variableSetListInfo){
@@ -699,7 +697,6 @@ JSONArray VariablesList(){
     Object[][] variablesListInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableName(), 
         new String[]{TblsProcedure.ViewProcUserAndRoles.ACTIVE.getName()}, 
         new Object[]{true}, fldsArr);
-    JSONObject jBlockObj = new JSONObject();
     JSONArray jBlockArr = new JSONArray(); 
     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(variablesListInfo[0][0].toString())){
         for (Object[] curRow: variablesListInfo){

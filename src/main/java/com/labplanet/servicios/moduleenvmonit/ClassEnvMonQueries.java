@@ -13,7 +13,6 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import trazit.enums.EnumIntTableFields;
-import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
@@ -31,7 +30,6 @@ public class ClassEnvMonQueries {
     private Boolean functionFound=false;
 
     public ClassEnvMonQueries(HttpServletRequest request, EnvMonAPI.EnvMonQueriesAPIEndpoints endPoint){
-        String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         try{
             //Rdbms.stablishDBConection(false);
             RelatedObjects rObj=RelatedObjects.getInstanceForActions();
@@ -40,7 +38,6 @@ public class ClassEnvMonQueries {
             this.functionFound=true;
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments()); 
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
-                String language = ProcedureRequestSession.getInstanceForActions(null, null, null).getLanguage();
                 this.diagnostic=(Object[]) argValues[1];
                 this.messageDynamicData=new Object[]{argValues[2].toString()};
                 return;                        

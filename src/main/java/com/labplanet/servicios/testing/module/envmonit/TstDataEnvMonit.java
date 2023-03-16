@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Response;
-import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author Administrator
@@ -45,7 +44,7 @@ public class TstDataEnvMonit extends HttpServlet {
     /**
      *
      */
-    public static final String PARAMETER_PROGRAM_SAMPLE_TEMPLATE_VERSION="sampleTemplateVersion";       
+    public static final String PARAM_PROGRAM_SAMPLE_TEMPLATE_V="sampleTemplateVersion";       
 
     /**
      *
@@ -120,21 +119,6 @@ public class TstDataEnvMonit extends HttpServlet {
             Rdbms.closeRdbms(); 
             return ;               
         }        
-        
-/*        Connection con = Rdbms.createTransactionWithSavePoint();        
-        if (con==null){
-             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "The Transaction cannot be created, the action should be aborted");
-             return;
-        }
-*/        
-/*        try {
-            con.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
-        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());    
-        //Rdbms.setTransactionId(schemaConfigName);
-        //ResponseEntity<String121> responsew;        
         try (PrintWriter out = response.getWriter()) {
         if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresUserConfirmation[0].toString())) &&     
              (!LPFrontEnd.servletUserToVerify(request, response, token.getUserName(), token.getUsrPw())) ){return;}
@@ -150,7 +134,7 @@ public class TstDataEnvMonit extends HttpServlet {
             switch (actionName.toUpperCase()){
                 case "LOGPROGRAMSAMPLE":
                     String[] mandatoryParamsAction = new String[]{PARAMETER_PROGRAM_SAMPLE_TEMPLATE};
-                    mandatoryParamsAction = LPArray.addValueToArray1D(mandatoryParams, PARAMETER_PROGRAM_SAMPLE_TEMPLATE_VERSION);                    
+                    mandatoryParamsAction = LPArray.addValueToArray1D(mandatoryParams, PARAM_PROGRAM_SAMPLE_TEMPLATE_V);                    
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, mandatoryParamsAction);                       
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                         LPFrontEnd.servletReturnResponseError(request, response, 
@@ -158,7 +142,7 @@ public class TstDataEnvMonit extends HttpServlet {
                         return;          
                     }                               
                     String sampleTemplate=request.getParameter(PARAMETER_PROGRAM_SAMPLE_TEMPLATE);
-                    String sampleTemplateVersionStr = request.getParameter(PARAMETER_PROGRAM_SAMPLE_TEMPLATE_VERSION);                                  
+                    String sampleTemplateVersionStr = request.getParameter(PARAM_PROGRAM_SAMPLE_TEMPLATE_V);                                  
 
                     Integer sampleTemplateVersion = Integer.parseInt(sampleTemplateVersionStr);                  
                     String fieldName=request.getParameter(PARAMETER_PROGRAM_FIELD_NAME);                                        
@@ -189,29 +173,14 @@ public class TstDataEnvMonit extends HttpServlet {
                     return;                    
             }    
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dataSample[0].toString())){  
-/*                Rdbms.rollbackWithSavePoint();
-                con.rollback();
-                con.setAutoCommit(true);
-*/                
                 Object[] errMsg = LPFrontEnd.responseError(dataSample, language, procInstanceName);
                 response.sendError((int) errMsg[0], (String) errMsg[1]);    
             }else{
- //               con.commit();
- //               con.setAutoCommit(true);
-                
                 Response.ok().build();
                 response.getWriter().write(Arrays.toString(dataSample));      
             }            
             Rdbms.closeRdbms();
         }catch(Exception e){   
- /*           try {
-                con.rollback();
-                con.setAutoCommit(true);
-            } catch (SQLException ex) {
-                Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
-            }
-*/            
-            // Rdbms.closeRdbms();                   
             errObject = new String[]{e.getMessage()};
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
             response.sendError((int) errMsg[0], (String) errMsg[1]);           
@@ -220,7 +189,6 @@ public class TstDataEnvMonit extends HttpServlet {
         } finally {
             // release database resources
             try {
-                // Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }       

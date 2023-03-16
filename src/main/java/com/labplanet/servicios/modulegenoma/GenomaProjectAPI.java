@@ -189,10 +189,7 @@ public class GenomaProjectAPI extends HttpServlet {
                     LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
             return;
         }                
-        //Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
         
-        String schemaConfigName = LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName());    
-        //Rdbms.setTransactionId(schemaConfigName);
         try (PrintWriter out = response.getWriter()) {
             ClassProject clss=new ClassProject(request, endPoint);
             Object[] diagnostic=clss.getDiagnostic();

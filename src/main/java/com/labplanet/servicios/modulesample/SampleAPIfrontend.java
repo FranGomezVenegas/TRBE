@@ -91,8 +91,6 @@ public class SampleAPIfrontend extends HttpServlet {
             }
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
 
-//            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
-            
             switch (endPoint){
             case GET_SAMPLETEMPLATES:       
                 String[] filterFieldName = new String[]{TblsCnfg.Sample.JSON_DEFINITION.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()};
@@ -100,7 +98,6 @@ public class SampleAPIfrontend extends HttpServlet {
                 Object[][] datas = Rdbms.getRecordFieldsByFilter(schemaConfigName,TblsCnfg.TablesConfig.SAMPLE.getTableName(), 
                         filterFieldName, filterFieldValue, new String[] { TblsCnfg.Sample.JSON_DEFINITION.getName()});
                 Rdbms.closeRdbms();
-                JSONObject proceduresList = new JSONObject();
                 JSONArray jArray = new JSONArray();
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(datas[0][0].toString())){  
                     Object[] errMsg = LPFrontEnd.responseError(LPArray.array2dTo1d(datas), language, null);
@@ -470,8 +467,6 @@ public class SampleAPIfrontend extends HttpServlet {
                     }else{   
                         sortFieldsNameArr = LPArray.getUniquesArray(SampleAPIParams.MANDATORY_FIELDS_FRONTEND_WHEN_SORT_NULL_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|"));     
                     }  
-                    //resultFieldToRetrieveArr=LPArray.addValueToArray1D(resultFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.LIMIT_ID.getName());
-                    
                     Integer posicLimitIdFld=EnumIntViewFields.getFldPosicInArray(fldsToGet, TblsData.ViewSampleAnalysisResultWithSpecLimits.LIMIT_ID.getName());
                     Object[][] analysisResultList = QueryUtilitiesEnums.getViewData(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW,
                         fldsToGet,
@@ -542,8 +537,6 @@ public class SampleAPIfrontend extends HttpServlet {
                     if (myData==null || myData.contains(LPPlatform.LAB_FALSE)){  
                         LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
                         return;
-//                        Object[] errMsg = LPFrontEnd.responseError(new String[] {myData}, language, null);
-//                        response.sendError((int) errMsg[0], (String) errMsg[1]);                            
                     }else{
                         LPFrontEnd.servletReturnSuccess(request, response, myData);
                     }                             
@@ -580,8 +573,6 @@ public class SampleAPIfrontend extends HttpServlet {
                     if (myData.contains(LPPlatform.LAB_FALSE)){  
                         LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
                         return;
-//                        Object[] errMsg = LPFrontEnd.responseError(new String[] {myData}, language, null);
-//                        response.sendError((int) errMsg[0], (String) errMsg[1]);                            
                     }else{
                         LPFrontEnd.servletReturnSuccess(request, response, myData);
                     }                             
@@ -610,8 +601,6 @@ public class SampleAPIfrontend extends HttpServlet {
                     if (myData.contains(LPPlatform.LAB_FALSE)){  
                         LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
                         return;
-//                        Object[] errMsg = LPFrontEnd.responseError(new String[] {myData}, language, null);
-//                        response.sendError((int) errMsg[0], (String) errMsg[1]);                            
                     }else{
                         LPFrontEnd.servletReturnSuccess(request, response, myData);
                     }                             
@@ -622,12 +611,7 @@ public class SampleAPIfrontend extends HttpServlet {
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                         LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
                         return;
-/*                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                  */
                     }                      
-                    // No implementado aun, seguramente no tiene sentido porque al final la spec está evaluada y guardada en la tabla sample_analysis_result
-                    // Rdbms.closeRdbms();
                     return;  
                 case SAMPLE_ENTIRE_STRUCTURE:
                    sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);                     
@@ -662,8 +646,6 @@ public class SampleAPIfrontend extends HttpServlet {
                         new String[]{TblsDataAudit.Sample.AUDIT_ID.getName()});
                    JSONArray jArr = new JSONArray();
                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditInfo[0][0].toString())){
-                        //jArr.add(sampleAuditInfo[0]);
-                        //LPFrontEnd.responseError(sampleAuditInfo, language, procInstanceName);
                         LPFrontEnd.servletReturnSuccess(request, response, jArr);
                         return;                       
                    }
@@ -725,7 +707,6 @@ public class SampleAPIfrontend extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_NON_AUTHORITATIVE_INFORMATION);     
             LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null, null);      
          } finally {
-            // release database resources
             try {                
                 procReqInstance.killIt();
             } catch (Exception ex) {
@@ -974,7 +955,6 @@ public class SampleAPIfrontend extends HttpServlet {
 
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(null, null, false);        
         String procInstanceName = procReqInstance.getProcedureInstance();
-        String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());    
 
         if (fieldToRetrieveArr==null || fieldToRetrieveArr[0].length()==0)
             fieldToRetrieveArr = new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()};

@@ -114,8 +114,6 @@ out.println(Arrays.toString(configSamplingPlanTestingArray));
 
                 switch (LPNulls.replaceNull((String) actionName).toUpperCase()){
                     case "NEWSAMPLINGDETAIL":
-                        String sampleTemplate=null;
-                        Integer sampleTemplateVersion=null;
                         if (configSamplingPlanTestingArray[i][1]!=null){procInstanceName = (String) configSamplingPlanTestingArray[i][0];}
                         if (configSamplingPlanTestingArray[i][1]!=null){userName = (String) configSamplingPlanTestingArray[i][2];}
                         if (configSamplingPlanTestingArray[i][3]!=null){fieldName = (String[]) configSamplingPlanTestingArray[i][3];}              

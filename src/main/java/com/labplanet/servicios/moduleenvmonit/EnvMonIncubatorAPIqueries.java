@@ -104,7 +104,6 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
         }
     String actionName=procReqInstance.getActionName();
     String language=procReqInstance.getLanguage();
-    String procInstanceName = procReqInstance.getProcedureInstance();
     
 
     try (PrintWriter out = response.getWriter()) {

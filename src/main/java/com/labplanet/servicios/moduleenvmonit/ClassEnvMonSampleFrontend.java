@@ -504,7 +504,6 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                     JSONObject jObjMainObject=new JSONObject();
                     JSONObject jObjPieceOfInfo=new JSONObject();
                     JSONArray jArrPieceOfInfo=new JSONArray();
-                    JSONArray jArrMainPieceOfInfo=new JSONArray();
                     for (int iFlds=0;iFlds<sampleInfo[0].length;iFlds++){                      
                         if (LPArray.valueInArray(sampleToRetrieveArr, sampleTblAllFields[iFlds]))
                             jObjSampleInfo.put(sampleTblAllFields[iFlds], sampleInfo[0][iFlds].toString());
@@ -527,7 +526,6 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                     jObjPieceOfInfo=new JSONObject();
                     DataSampleStages smpStage= new DataSampleStages();
                     String[] sampleStageTimingCaptureAllFlds=getAllFieldNames(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE.getTableFields());
-                    JSONObject jObjMainObject2=new JSONObject();                    
                     
                     if (smpStage.isSampleStagesEnable()){
                         Object[][] sampleStageInfo=QueryUtilitiesEnums.getTableData(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE, 
@@ -541,7 +539,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                         for (Object[] curRec: sampleStageInfo){
                             JSONObject jObj= LPJson.convertArrayRowToJSONObject(sampleStageTimingCaptureAllFlds, curRec);
                             JSONArray jArrMainObj2=new JSONArray();
-                            jArrMainObj2=sampleStageDataJsonArr(procInstanceName, sampleId, sampleTblAllFields, sampleInfo[0], sampleStageTimingCaptureAllFlds, curRec);
+                            jArrMainObj2=sampleStageDataJsonArr(sampleId, sampleTblAllFields, sampleInfo[0], sampleStageTimingCaptureAllFlds, curRec);
                             jObj.put("data", jArrMainObj2);
                             jArrMainObj.add(jObj);
                         }
@@ -1162,8 +1160,6 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                         else 
                             sampleFieldToRetrieveArr=sampleFieldToRetrieve.split("\\|");
                         String sampleAnalysisFieldToRetrieve=argValues[j].toString();j++;
-                        String sampleLastLevel=argValues[j].toString();j++;
-                        String addSampleAnalysis=argValues[j].toString();j++;
                         sampleAnalysisFieldToRetrieve=argValues[j].toString();j++;
                         String[] sampleAnalysisFieldToRetrieveArr=null;
                         if (sampleAnalysisFieldToRetrieve.length()==0 || "ALL".equalsIgnoreCase(sampleAnalysisFieldToRetrieve))
@@ -1172,15 +1168,12 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                             sampleAnalysisFieldToRetrieveArr=sampleAnalysisFieldToRetrieve.split("\\|");
                         sampleAnalysisWhereFieldsName=argValues[j].toString();j++;
                         sampleAnalysisWhereFieldsValue=argValues[j].toString();j++;
-                        String addSampleAnalysisResult=argValues[j].toString();j++;
                         String sampleAnalysisResultFieldToRetrieve=argValues[j].toString();j++;
                         String[] sampleAnalysisResultFieldToRetrieveArr=null;
                         if (sampleAnalysisResultFieldToRetrieve.length()==0 || "ALL".equalsIgnoreCase(sampleAnalysisResultFieldToRetrieve))
                             sampleAnalysisResultFieldToRetrieveArr=EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableFields());
                         else 
                             sampleAnalysisResultFieldToRetrieveArr=sampleAnalysisResultFieldToRetrieve.split("\\|");
-                        String sampleAnalysisResultWhereFieldsName=argValues[j].toString();j++;
-                        String sampleAnalysisResultWhereFieldsValue=argValues[j].toString();j++;
                         sortFieldsName=argValues[j].toString();j++;
                         jArr=new JSONArray();
                         smpArr=QueryUtilitiesEnums.getTableData(TblsEnvMonitData.TablesEnvMonitData.SAMPLE,
@@ -1196,9 +1189,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                                 String incub1PassedStr=LPNulls.replaceNull(curSmp[incub1Passed]).toString();
                                 if (Boolean.valueOf(incub1PassedStr)){
                                     incubRow.put("pending_incub", 2);
-                                    Integer valuePosicInArray = LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsData.Sample.INCUBATION2_PASSED.getName());
                                 }else{
-                                    Integer valuePosicInArray = LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsData.Sample.INCUBATION_PASSED.getName());
                                     incubRow.put("pending_incub", 1);
                                 }
                                 currPendingIncubBatch= curSmp[LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsData.Sample.INCUBATION2_BATCH.getName())].toString();
@@ -1453,7 +1444,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
 }
 
    
-private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sampleId, String[] sampleFldName, Object[] sampleFldValue, String[] sampleStageFldName, Object[] sampleStageFldValue){
+private JSONArray sampleStageDataJsonArr(Integer sampleId, String[] sampleFldName, Object[] sampleFldValue, String[] sampleStageFldName, Object[] sampleStageFldValue){
     if (sampleStageFldValue==null) return null;
     if (!LPArray.valueInArray(sampleStageFldName, TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT.getName())) return null; //new Object[][]{{}};
     String currentStage=sampleStageFldValue[LPArray.valuePosicInArray(sampleStageFldName, TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT.getName())].toString();
@@ -1529,8 +1520,6 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
         try{
             String[] fldNameArr=null;
             Object[] fldValueArr=null;
-            Integer resultFldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.RESULT_ID.getName());
-            Integer resultId=Integer.valueOf(curRow[resultFldPosic].toString());
 
             Object[] lockedByStatus = isLockedByStatus(procInstanceName, resultFieldToRetrieveArr, curRow);
             if (lockedByStatus[0]!=null) return lockedByStatus;
@@ -1543,7 +1532,6 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
 
             return new Object[]{fldNameArr, fldValueArr};
         }catch(NumberFormatException e){
-            String erMsg=e.getMessage();
             return new Object[]{new String[]{"ERROR"}, e.getMessage()};            
         }
     }
@@ -1613,8 +1601,6 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
             fldValueArr=LPArray.addValueToArray1D(fldValueArr, TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName());
             String msgCode = "resultLockedByStatus";
             fldValueArr=LPArray.addValueToArray1D(fldValueArr, msgCode);
-            String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_LOCKING_REASONS, null, msgCode, "en", null, true, null);
-            String errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_LOCKING_REASONS, null, msgCode, "es", null, false, null);
             JSONObject reasonInfo = new JSONObject();
             reasonInfo.put("message_en", resultStatus);
             reasonInfo.put("message_es", resultStatus);
@@ -1630,7 +1616,6 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
         Integer fldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.METHOD_NAME.getName());
         String methodName=curRow[fldPosic].toString();
         fldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.METHOD_VERSION.getName());
-        Integer methodVersion=Integer.valueOf(curRow[fldPosic].toString());
 
         Object[] ifUserCertificationEnabled = AnalysisMethodCertif.isUserCertificationEnabled();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ifUserCertificationEnabled[0].toString())) return new Object[]{null, null};
@@ -1780,8 +1765,6 @@ private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sample
         null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(groupedInfo[0][0].toString())) 
             return false;
-        if (groupedInfo.length>0) return true;
-        
-        return false;
+        return (groupedInfo.length>0);
     }
 }

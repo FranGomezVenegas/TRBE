@@ -100,9 +100,6 @@ public class EnvMonProdLotAPI extends HttpServlet {
         }
         String actionName=procReqInstance.getActionName();
         String language=procReqInstance.getLanguage();
-        String procInstanceName = procReqInstance.getProcedureInstance();
-        
-
         String[] errObject = new String[]{"Servlet programAPI at " + request.getServletPath()};   
 
         String sampleIdStr=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
@@ -214,32 +211,10 @@ public class EnvMonProdLotAPI extends HttpServlet {
         }
         String actionName=procReqInstance.getActionName();
         String language=procReqInstance.getLanguage();
-        String procInstanceName = procReqInstance.getProcedureInstance();
 
         String[] errObject = new String[]{"Servlet programAPI at " + request.getServletPath()};   
         
-//        Connection con = Rdbms.createTransactionWithSavePoint();        
- /*       if (con==null){
-             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "The Transaction cannot be created, the action should be aborted");
-             return;
-        }
-*/        
-/*        try {
-            con.rollback();
-            con.setAutoCommit(true);    
-        } catch (SQLException ex) {
-            Logger.getLogger(EnvMonAPI.class.getName()).log(Level.SEVERE, null, ex);
-        }
-*/                    
-/*        try {
-            con.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
-        }*/
         try (PrintWriter out = response.getWriter()) {
-
-//            String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());    
-//            Rdbms.setTransactionId(schemaConfigName);      
             EnvMonProdLotAPIactionsEndpoints endPoint = null;
             try{
                 endPoint = EnvMonProdLotAPIactionsEndpoints.valueOf(actionName.toUpperCase());
@@ -254,10 +229,7 @@ public class EnvMonProdLotAPI extends HttpServlet {
                 return;
             } 
             Object[] messageDynamicData=new Object[]{};
-            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
             String lotName="";
-
-            
             
             if (diagnostic!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), messageDynamicData);   

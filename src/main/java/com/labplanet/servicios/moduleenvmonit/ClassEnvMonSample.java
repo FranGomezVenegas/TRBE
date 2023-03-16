@@ -9,7 +9,6 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
 import databases.TblsData;
-import databases.features.Token;
 import functionaljavaa.inventory.batch.DataBatchIncubator;
 import static functionaljavaa.moduleenvironmentalmonitoring.ConfigMicroorganisms.adhocMicroorganismAdd;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSample;
@@ -83,13 +82,11 @@ public class ClassEnvMonSample {
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
         Boolean isForTesting = procReqSession.getIsForTesting();
         String procInstanceName = procReqSession.getProcedureInstance();
-        Token token=procReqSession.getToken();
 
         Object[] dynamicDataObjects=new Object[]{}; 
         this.functionFound=true;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
-            //procReqSession.killIt();
             String language=procReqSession.getLanguage();
             this.isSuccess=false;           
             this.diagnostic=(Object[]) argValues[1];
@@ -191,9 +188,6 @@ public class ClassEnvMonSample {
                     actionDiagnoses=(Object[]) diagn[0];
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), resultId);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
-                        if (diagn.length>1){
-                            Object[] auditDiagn=(Object[]) diagn[1];
-                        }
                         messages.addMainForSuccess(endPoint, new Object[]{resultId, procInstanceName});
                         Object[][] resultInfo=new Object[0][0];
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{resultId, rawValueResult, procInstanceName});                    
@@ -248,9 +242,6 @@ public class ClassEnvMonSample {
                     actionDiagnoses=(Object[]) diagn[0];
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT_SECONDENTRY.getTableName(), resultId);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
-                        if (diagn.length>1){
-                            Object[] auditDiagn=(Object[]) diagn[1];
-                        }
                         messages.addMainForSuccess(endPoint, new Object[]{resultId, procInstanceName});
                         Object[][] resultInfo=new Object[0][0];
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{resultId, rawValueResult, procInstanceName});                    

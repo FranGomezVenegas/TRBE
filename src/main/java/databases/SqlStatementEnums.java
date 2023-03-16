@@ -201,7 +201,7 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
         schemaName=LPPlatform.buildSchemaName(schemaName, "");
         String tableName=tblObj.getTableName();
         if (whereFieldNames.length==0){
-           Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});                         
+           ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});                         
            return null;               
         }        
         Object[] whereFieldValuesNew = new Object[0];
@@ -613,7 +613,7 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
         String viewName=viewObj.getViewName();
 
         if (whereObj.getAllWhereEntries().isEmpty()){
-           Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{viewName, schemaName});                         
+           ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{viewName, schemaName});                         
            return null;               
         }
 //        String tableName = setSchemaName(viewObj.getViewName());
@@ -742,8 +742,6 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
             }
             return fieldsToRetrieveStr.toString();
         }catch(Exception e){
-            String errMsg=e.getMessage();
-            String s=fieldsToRetrieveStr.toString()+">"+fieldsToRetrieve.length;  
             return "*";
         }
     }

@@ -1410,8 +1410,6 @@ if (1==1){Rdbms.transactionId=1; return;}
         DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
         int newId=0;
         try (PreparedStatement prep=getConnection().prepareStatement(consultaconinterrogaciones, Statement.RETURN_GENERATED_KEYS)){
-            String pkValue = "";
-            //PreparedStatement prep=getConnection().prepareStatement(consultaconinterrogaciones, Statement.RETURN_GENERATED_KEYS);            
             setTimeout(rdbms.getTimeout());
             buildPreparedStatement(valoresinterrogaciones, prep);         
             prep.executeUpdate();                
@@ -1801,7 +1799,6 @@ if (1==1){Rdbms.transactionId=1; return;}
      }
     
     public static Object[] dbSchemaAndTableList(String procInstanceName){
-        String[] fieldsToRetrieve=new String[]{"table_name"};
         String query="select concat(concat(table_schema,'.'),table_name) from INFORMATION_SCHEMA.tables " +
                     "  where table_schema like ? " + " and table_type =?";
         try{
@@ -1875,7 +1872,6 @@ if (1==1){Rdbms.transactionId=1; return;}
     public static Object[] dbGetIndexLastNumberInUse(String procName, String schemaName, String tableName, String indexName){
         if (tableName==null&&indexName==null)
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, null);                            
-        String schema=schemaName;
         String buildSchemaName = LPPlatform.buildSchemaName(schemaName, procName);
         String query="SELECT last_value, last_value FROM "+buildSchemaName+".";
         if (tableName!=null && tableName.length()>0)

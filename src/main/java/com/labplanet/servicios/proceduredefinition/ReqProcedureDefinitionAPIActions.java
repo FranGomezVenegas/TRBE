@@ -76,7 +76,7 @@ public class ReqProcedureDefinitionAPIActions extends HttpServlet {
             procReqInstance.killIt();
             // Rdbms.closeRdbms();                   
             errObject = new String[]{e.getMessage()};
-            Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
+            LPFrontEnd.responseError(errObject, language, null);
         } finally {
             // release database resources
             try {

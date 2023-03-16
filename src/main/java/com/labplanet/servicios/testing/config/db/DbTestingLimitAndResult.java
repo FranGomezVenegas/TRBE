@@ -283,7 +283,6 @@ if (currentLine==23)
             PrintWriter out = response.getWriter() ;
             out.println(Arrays.toString(testingContent[currentLine])+ error.getMessage()+ currentLine.toString());
             tstAssertSummary=null; resChkSpec=null;
-            String exceptionMessage = error.getMessage();     
         } finally {
             // release database resources
             try {

@@ -35,7 +35,6 @@ public class ClassProject {
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
 
         GenomaDataProject prj = new GenomaDataProject();
-        GenomaDataStudy prjStudy = new GenomaDataStudy();
         String projectName = "";
         
         Object[] actionDiagnoses = null;

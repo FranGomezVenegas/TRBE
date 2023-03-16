@@ -141,7 +141,6 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
         String procInstanceName=procReqInstance.getProcedureInstance();
 
         String[] errObject = new String[]{"Servlet Genoma StudyObjectsVariablesAPI at " + request.getServletPath()};   
-        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());    
         //Rdbms.setTransactionId(schemaConfigName);
         //ResponseEntity<String121> responsew;        
         try (PrintWriter out = response.getWriter()) {
@@ -192,10 +191,6 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
             }    
             
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-/*                Rdbms.rollbackWithSavePoint();
-                if (!con.getAutoCommit()){
-                    con.rollback();
-                    con.setAutoCommit(true);}                */
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), messageDynamicData);   
                 relatedObject.killInstance();
             }else{
@@ -207,7 +202,6 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
             procReqInstance.killIt();
             errObject = new String[]{e.getMessage()};
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
-            response.sendError((int) errMsg[0], (String) errMsg[1]);           
         } finally {
             
             // release database resources

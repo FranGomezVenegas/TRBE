@@ -101,21 +101,7 @@ public class TestingResultCheckSpecQualitative extends HttpServlet {
         StringBuilder fileContentBuilder = new StringBuilder(0);        
         fileContentBuilder.append(tstOut.getHtmlStyleHeader());
         Object[][]  testingContent =tstOut.getTestingContent();
-Integer currentLine=0;
         
-/*        String csvPathName =(String) request.getAttribute(LPTestingParams.UPLOAD_FILE_PARAM_FILE_PATH);
-        String csvFileName =(String) request.getAttribute(LPTestingParams.UPLOAD_FILE_PARAM_FILE_NAME);
-        if ("".equals(csvPathName) || csvPathName==null){
-            csvFileName = LPTestingParams.TestingServletsConfig.NODB_SCHEMACONFIG_SPECQUAL_RESULTCHECK.getTesterFileName();                         
-            csvPathName = LPTestingOutFormat.TESTING_FILES_PATH; }
-        csvPathName = csvPathName+csvFileName; 
-        String csvFileSeparator=LPTestingOutFormat.TESTING_FILES_FIELD_SEPARATOR;
-        
-        Object[][] csvFileContent = LPArray.convertCSVinArray(csvPathName, csvFileSeparator); 
-
-        StringBuilder fileContentBuilder = new StringBuilder(0);
-        fileContentBuilder.append(LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), csvFileName));
-*/
         try (PrintWriter out = response.getWriter()) {
             if (csvHeaderTags.containsKey(LPPlatform.LAB_FALSE)){
                 fileContentBuilder.append("There are missing tags in the file header: ").append(csvHeaderTags.get(LPPlatform.LAB_FALSE));
@@ -130,27 +116,7 @@ Integer currentLine=0;
             
             StringBuilder fileContentTable1Builder = new StringBuilder(0);
             fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
-            LPAPIArguments[] arguments = TestingResultCheckSpecQualitativeArgs.DB_CONFIG_SPEC_TESTING_LIMIT_AND_RESULT.getArguments();
             
-/*            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(csvFileContent[0][0].toString())){
-                fileContentBuilder.append("Problem trying to extract file content for file "+csvPathName+csvFileContent[0][1].toString()); 
-                out.println(fileContentBuilder.toString());
-                return;            
-            }
-            HashMap<String, Object> csvHeaderTags = LPTestingOutFormat.getCSVHeader(LPArray.convertCSVinArray(csvPathName, LPTestingOutFormat.FileHeaderTags.SEPARATOR.toString()));
-            if (csvHeaderTags.containsKey(LPPlatform.LAB_FALSE)){
-                fileContentBuilder.append(LPTestingOutFormat.ERROR_TRAPPING_FILEHEADER_MISSING_TAGS).append(csvHeaderTags.get(LPPlatform.LAB_FALSE));
-                out.println(fileContentBuilder.toString()); 
-                return;
-            }                        
-            Integer numEvaluationArguments = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FileHeaderTags.NUM_EVALUATION_ARGUMENTS.getTagValue().toString()).toString());   
-            Integer numHeaderLines = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FileHeaderTags.NUM_HEADER_LINES.getTagValue().toString()).toString());   
-            String table1Header = csvHeaderTags.get(LPTestingOutFormat.FileHeaderTags.TABLE_NAME.getTagValue().toString()+"1").toString();     
-            StringBuilder fileContentTable1Builder = new StringBuilder(0);
-            fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));       
-*/
-//testingContent.length
-//numHeaderLines=1;
             for (Integer iLines=numHeaderLines;iLines<testingContent.length;iLines++){
                 tstAssertSummary.increaseTotalTests();
                 LocalDateTime timeStartedStep=LPDate.getCurrentTimeStamp();
@@ -190,28 +156,6 @@ Integer currentLine=0;
             fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary, stopPhrase, timeStarted)).append("<br>")
                 .append(fileContentTable1Builder).append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
             
-/*            String summaryPhrase ="";
-            String scriptIdStr=request.getParameter("scriptId");                       
-            Integer scriptId=Integer.valueOf(LPNulls.replaceNull(scriptIdStr));             
-            if (numEvaluationArguments==0) summaryPhrase="COMPLETED ALL STEPS";
-            else{
-                if (tstAssertSummary.getTotalSyntaxisMatch()==testingContent.length){
-                    summaryPhrase="COMPLETED SUCCESSFULLY";
-                    String savePoint= LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_EXECUTION_EVIDENCE_SAVE)).toString();
-                    if (savePoint==null || savePoint.length()==0)
-                        savePoint= LPNulls.replaceNull(request.getParameter(LPTestingParams.SCRIPT_EXECUTION_EVIDENCE_SAVE)).toString();
-                    if (Boolean.valueOf(savePoint))
-                        scriptExecutionEvidenceSave(scriptId, summaryPhrase);
-                }else{
-                    summaryPhrase="COMPLETED WITH UNEXPECTED RESULTS. ";
-                    if (tstAssertSummary.getTotalSyntaxisUnMatch()>0) summaryPhrase=summaryPhrase+"Unmatched="+tstAssertSummary.getTotalSyntaxisUnMatch()+". ";
-                    if (tstAssertSummary.getTotalSyntaxisUndefined()>0) summaryPhrase=summaryPhrase+"Undefined="+tstAssertSummary.getTotalSyntaxisUndefined()+". ";
-                }
-            }
-            
-            
-            fileContentBuilder.append(LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments, summaryPhrase, null)).append(fileContentTable1Builder)
-                    .append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd()); */
             out.println(fileContentBuilder.toString());            
             LPTestingOutFormat.createLogFile(tstOut.getFilePathName(), fileContentBuilder.toString());
         }

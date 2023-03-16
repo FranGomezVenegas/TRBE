@@ -68,12 +68,6 @@ public class PlatformDefinitionToInstance extends HttpServlet {
         }                
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, arguments);                
         String platfName = argValues[0].toString(); 
-        String[][] businessVariablesHeader = new String[][]{{"Business Rule", "Value"}                 
-                            , {"Platform Name", platfName}
-                            , {"CREATE_DATABASE", CREATE_DATABASE.toString()}
-                            , {"CREATE_SCHEMAS_AND_PLATFORM_TBLS", CREATE_SCHEMAS_AND_PLATFORM_TBLS.toString()}
-                            , {"CREATE_CHECKPLATFORM_PROCEDURE", CREATE_CHECKPLATFORM_PROCEDURE.toString()}
-                    };        
         JSONObject mainObj=new JSONObject();
         JSONObject sectionsSettingJobj=new JSONObject();
         JSONObject sectionsDetailObj=new JSONObject();
@@ -94,8 +88,6 @@ public class PlatformDefinitionToInstance extends HttpServlet {
                     GlobalVariables.Schemas.APP.getName(),
                     GlobalVariables.Schemas.APP_BUSINESS_RULES.getName()};
 
-                String tblCreateScript="";
-                JSONObject jsonObj=new JSONObject();
                 JSONArray createSchemas = createSchemas(schemaNames, platfName);        
                 sectionsDetailObj.put("CREATE_DATABASE", createSchemas);
             }   

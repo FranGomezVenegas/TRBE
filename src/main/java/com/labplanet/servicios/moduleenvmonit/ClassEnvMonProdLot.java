@@ -9,7 +9,6 @@ import com.labplanet.servicios.moduleenvmonit.EnvMonProdLotAPI.EnvMonProdLotAPIa
 import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramProductionLot;
-import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSample;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -39,15 +38,11 @@ public class ClassEnvMonProdLot {
 
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
 
-        DataProgramSample prgSmp = new DataProgramSample();     
-        String batchName = "";
-        String incubationName = "";
         
         Object[] actionDiagnoses = null;
         this.functionFound=true;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments()); 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
-            String language = ProcedureRequestSession.getInstanceForActions(null, null, null).getLanguage();
             this.diagnostic=(Object[]) argValues[1];
             this.messageDynamicData=new Object[]{argValues[2].toString()};
             return;                        

@@ -35,7 +35,6 @@ public class xTablesDeployment extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             
-            String schemaNamePrefix="genoma-1";
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");

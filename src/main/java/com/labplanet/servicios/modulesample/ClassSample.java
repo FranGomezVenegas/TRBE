@@ -150,7 +150,6 @@ public class ClassSample {
                             Integer numSamplesToLog=(Integer) argValues[7];
                             diagn = smp.logSample(sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, numSamplesToLog);
                         }
-                        Object[] dynamicDataObjects = new Object[]{diagn[diagn.length-1]};
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), diagn[diagn.length-1]);
                         this.messageDynamicData=new Object[]{diagn[diagn.length-1]};                    
                     }

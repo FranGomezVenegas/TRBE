@@ -25,7 +25,6 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import trazit.enums.EnumIntEndpoints;
 import trazit.session.ProcedureRequestSession;
-import trazit.globalvariables.GlobalVariables;
 import trazit.globalvariables.GlobalVariables.ApiUrls;
 /**
  *
@@ -77,8 +76,6 @@ public class GenomaConfigVariableAPI extends HttpServlet {
         String actionName=procReqInstance.getActionName();
         String language=procReqInstance.getLanguage();
         String[] errObject = new String[]{"Servlet Genoma VariableAPI at " + request.getServletPath()};   
-        String schemaConfigName = LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName());    
-        //Rdbms.setTransactionId(schemaConfigName);
         try (PrintWriter out = response.getWriter()) {
             Object[] dataSample = null;
                     GenomaVariableAPIactionsEndpoints endPoint = null;
