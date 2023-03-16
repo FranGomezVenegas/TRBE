@@ -143,7 +143,8 @@ public final class TestingCoverage {
             String curScriptEndpoint=curStep[1].toString();
             if (curScriptEndpoint!=null && curScriptEndpoint.length()>0){
                 if (calcProcedureActions==null || calcProcedureActions.isEmpty() || !calcProcedureActions.contains(curScriptEndpoint)){
-                    calcProcedureActions.add(curScriptEndpoint);
+                    if (curScriptEndpoint!=null) 
+                        calcProcedureActions.add(curScriptEndpoint);
                     if (LPArray.valueInArray(this.procActionsArr, curScriptEndpoint)){
                         this.endpointsVisitedTotal++;
                         visitedjObj.add(curScriptEndpoint);
@@ -192,7 +193,8 @@ public final class TestingCoverage {
         for (int i=0;i<this.scriptsBusRules.getDataBusinessRules().size();i++){
             String curScriptDataRule=this.scriptsBusRules.getDataBusinessRules().get(i).getRuleName();
             if (calcData==null || calcData.isEmpty() || !calcData.contains(curScriptDataRule)){
-                calcData.add(curScriptDataRule);
+                if (curScriptDataRule!=null)
+                    calcData.add(curScriptDataRule);
                 JSONObject jObj=new JSONObject();
                 jObj.put("area", "data");                
                 jObj.put("rule_name", curScriptDataRule);
@@ -211,7 +213,8 @@ public final class TestingCoverage {
             String curScriptProcedureRule=this.scriptsBusRules.getProcedureBusinessRules().get(i).getRuleName();
             if (calcProcedure==null || calcProcedure.isEmpty() || !calcProcedure.contains(curScriptProcedureRule)){
                 if (!curScriptProcedureRule.contains("AuditReasonPhrase")){
-                    calcProcedure.add(curScriptProcedureRule);
+                    if(curScriptProcedureRule!=null)
+                        calcProcedure.add(curScriptProcedureRule);
                     JSONObject jObj=new JSONObject();
                     jObj.put("area", "procedure");                
                     jObj.put("rule_name", curScriptProcedureRule);
@@ -242,9 +245,6 @@ public final class TestingCoverage {
     }            
     public void calculateCoverageMessageCodes(JsonArray currScriptMessages){
         try{
-            //this.busRuleCoverageDetail=new JSONObject();
-            JSONArray visitedMsgJArr=new JSONArray();
-            JSONArray missingMsgJArr=new JSONArray();
             this.msgCodeVisitedObj=new JSONArray();
             for (int i=0;i<currScriptMessages.size();i++){
                 JsonElement msgCodeObj=currScriptMessages.get(i);
@@ -254,20 +254,7 @@ public final class TestingCoverage {
                 if (!this.msgCodeVisited.contains(curMsgCode))
                     this.msgCodeVisited.add(curMsgCode);
             }
-    /*        JSONArray accVisited = (JSONArray) this.busRuleCoverageDetail.get("visited");
-            if (accVisited==null)
-                accVisited=visitedMsgJArr;
-            else
-                accVisited.addAll(visitedMsgJArr);
-            JSONArray accMissing = (JSONArray) this.busRuleCoverageDetail.get("missing");
-            if (accMissing==null)
-                accMissing=missingMsgJArr;
-            else
-                accMissing.addAll(visitedMsgJArr);
-            this.busRuleCoverageDetail.put("visited", accVisited);
-            this.busRuleCoverageDetail.put("missing", accMissing);*/
-        }catch(Exception e){
-            String errMsg = e.getMessage();
+        }catch(Exception e){           
         }
     }            
     public void saveCoverage(){    
@@ -290,7 +277,7 @@ public final class TestingCoverage {
         final int DECIMAL_PLACES = 2;
         String percExplPatternStr="The <*1*> is <*2*> div <*3*> ";
                
-        double procBusRulesTotal=(double)this.procBusRules.getTotalBusinessRules();
+        double procBusRulesTotal=this.procBusRules.getTotalBusinessRules();
         for (RuleInfo curRule: this.procBusRules.getProcedureBusinessRules()){
             if (curRule.getRuleName().contains("AuditReasonPhrase"))
                 procBusRulesTotal=procBusRulesTotal-1;
@@ -305,8 +292,6 @@ public final class TestingCoverage {
         if (this.coverageBusRulesExcludeList.length>0)
             busRulesPercExplStr=busRulesPercExplStr+" have on mind that the exclusions are "+this.coverageBusRulesExcludeList.length+
                 " what means that the divider is the total ("+procBusRulesTotal+") minus the excluded ("+this.coverageBusRulesExcludeList.length+")";
-//        if(this.busRuleExcludedByExcludeEndpoint.length>0)
-//            busRulesPercExplStr=busRulesPercExplStr+" minus the excluded by exclude the endpoint("+this.busRuleExcludedByExcludeEndpoint.length+")";
         JSONObject busRulesSummaryJObj=new JSONObject();
         busRulesSummaryJObj.put("percentage_explanation", busRulesPercExplStr);        
         busRulesSummaryJObj.put("procedure_total", procBusRulesTotal);
@@ -375,9 +360,7 @@ public final class TestingCoverage {
         }
         if (this.busRuleExcludedByExcludeEndpoint.length>0){
             JSONArray busRuleExcludedByExcludeEndpointJArr=new JSONArray();
-            for (String curRule: busRuleExcludedByExcludeEndpoint){
-                busRuleExcludedByExcludeEndpointJArr.add(curRule);
-            }
+            busRuleExcludedByExcludeEndpointJArr.addAll(Arrays.asList(busRuleExcludedByExcludeEndpoint));
             unCoveredBusRules.put("business_rules_excluded_by_exclude_the_endpoint", busRuleExcludedByExcludeEndpointJArr);
         }
                 
@@ -447,7 +430,6 @@ public final class TestingCoverage {
             try (       io.github.classgraph.ScanResult scanResult = new ClassGraph().enableAllInfo()//.acceptPackages("com.xyz")
             .scan()) {    
                 ClassInfoList classesImplementing = scanResult.getClassesImplementing("trazit.enums.EnumIntMessages");
-                ClassInfoList allEnums = scanResult.getAllEnums();
                 String clssObjName="";
                 for (int iClss=0; iClss<msgClasses.length;iClss++){
                     JSONObject jObj=new JSONObject();
@@ -493,27 +475,14 @@ public final class TestingCoverage {
             msgCodesPercExplStr=msgCodesPercExplStr+" take care that the exclusions are "+this.coverageMsgCodeExcludeList.length+
                 " what means that the divider is the total ("+"this.procActionsArr.length!!!!!"+") minus the excluded ("+this.coverageMsgCodeExcludeList.length+")";
         msgCodesSummaryJObj.put("percentage_explanation", msgCodesPercExplStr);        
-//        msgCodesSummaryJObj.put("procedure_total", this.procActionsArr.length);
         msgCodesSummaryJObj.put("visited_total", this.msgCodeVisited.size());
         msgCodesSummaryJObj.put("message_collections_visited", msgClassAllMessagesJArr);
         this.msgCodeCoverageDetail.put("summary", msgCodesSummaryJObj);
-//        this.endpointsCoverageDetail.put("procedure_endpoints", procActionsJArr);
         
         JSONObject unCoveredMsgCodes=new JSONObject();
         JSONArray excludedMsgCodes=new JSONArray();
         excludedMsgCodes.addAll(Arrays.asList(this.coverageMsgCodeExcludeList));
         unCoveredMsgCodes.put("excluded_list", excludedMsgCodes);
-        JSONArray notCoveredMsgCodes=new JSONArray();
-/*        for (String curEnd: this.procActionsArr){
-            boolean inExclList = LPArray.valueInArray(this.coverageMsgCodeExcludeList, curEnd);
-            JSONArray accVisited = (JSONArray) this.endpointsCoverageDetail.get("visited");            
-            boolean inVisitedList = accVisited.contains(curEnd);
-            if (!inExclList && !inVisitedList)
-            notCoveredMsgCodes.add(curEnd);
-        }
-        unCoveredMsgCodes.put("uncoverage_list", notCoveredMsgCodes);
-        this.endpointsCoverageDetail.put("uncoverage_summary", unCoveredMsgCodes);
-*/        
     }
 
     void initializeCounters(){
@@ -554,7 +523,6 @@ public final class TestingCoverage {
         mainObj.put("Business_Rules_Info", busRulesObj);
 
         JSONObject msgCodeObj=new JSONObject();
-//        msgCodeObj.put("msg_codes_coverage_percentage", this.msgCodeCovPerc);
         msgCodeObj.put("msg_codes_coverage_percentage", "This block cannot provide one coverage percentage, it will provide how many visited messages are: "+this.msgCodeCovPerc);
         msgCodeObj.put("msg_codes_coverage_detail", this.msgCodeCoverageDetail);
         msgCodeObj.put("msg_codes_visited", this.msgCodeVisited);
@@ -574,13 +542,6 @@ public final class TestingCoverage {
         return mainObj;
     }
 
-/*    void removeUnvisitedEndPointsWhenExcluded(){
-        if (this.coverageEndpointsExcludeList==null) return;
-        for (String curExclEndpoint : this.coverageEndpointsExcludeList){
-            this.
-        }
-    }
-  */  
     void removeProcBusRulesByEndpointExclusion(){
         ArrayList<RuleInfo> procedureBusinessRules = this.procBusRules.getProcedureBusinessRules();
         if (this.coverageEndpointsExcludeList==null) return;
@@ -589,7 +550,6 @@ public final class TestingCoverage {
             //boolean remove = this.procBusRules.getProcedureBusinessRules().remove(new RuleInfo(endPointActionEnabledRule, ""));
             this.busRuleExcludedByExcludeEndpoint=LPArray.addValueToArray1D(this.busRuleExcludedByExcludeEndpoint, endPointActionEnabledRule);
         }        
-//        Object[] toArrayObjArr = this.procBusRules.getProcedureBusinessRules().toArray();
         String[] toArray=new String[]{};
         for (RuleInfo curRuleI: procedureBusinessRules){
             toArray=LPArray.addValueToArray1D(toArray, curRuleI.getRuleName());

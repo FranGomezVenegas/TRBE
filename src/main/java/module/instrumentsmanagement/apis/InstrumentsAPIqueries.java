@@ -210,11 +210,6 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 familyName=LPNulls.replaceNull(argValues[1]).toString();
                 String[] whereFldName=new String[]{TblsInstrumentsData.ViewNotDecommInstrumentAndEventData.COMPLETED_BY.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()};
                 Object[] whereFldValue=new Object[]{};
-                String fieldName=LPNulls.replaceNull(argValues[2]).toString();
-                String fieldValue=LPNulls.replaceNull(argValues[3]).toString();
-                if (fieldValue.length()>0){                    
-                    Object[] convertStringWithDataTypeToObjectArray = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
-                }                                
                 sW=new SqlWhere(ViewsInstrumentsData.NOT_DECOM_INSTR_EVENT_DATA_VW, whereFldName, whereFldValue);
                 if (familyName.length()>0)
                     sW.addConstraint(TblsInstrumentsData.ViewNotDecommInstrumentAndEventData.INSTRUMENT_FAMILY, SqlStatement.WHERECLAUSE_TYPES.IN, familyName.split("\\|"), "|");                
@@ -246,7 +241,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
 
             case INSTRUMENT_EVENT_VARIABLES:
                 Integer instrEventId=(Integer)argValues[0];
-                EnumIntTableFields[] tblFieldsToRetrieveObj = (EnumIntTableFields[]) EnumIntTableFields.getAllFieldNamesFromDatabase(TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES);
+                EnumIntTableFields[] tblFieldsToRetrieveObj = EnumIntTableFields.getAllFieldNamesFromDatabase(TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES);
                 String[] tblFieldsToRetrieve = EnumIntTableFields.getAllFieldNames(tblFieldsToRetrieveObj);
                 AppInstrumentsAuditEvents = QueryUtilitiesEnums.getTableData(TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES, 
                     tblFieldsToRetrieveObj,
@@ -274,9 +269,6 @@ public class InstrumentsAPIqueries extends HttpServlet {
                         SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{true}, null);
                 sW.addConstraint(TblsInstrumentsData.Instruments.DECOMMISSIONED_ON, 
                         SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN, new Object[]{LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, null);
-//                sW=new SqlWhere(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS, 
-//                    new String[]{TblsInstrumentsData.Instruments.DECOMMISSIONED.getName(), TblsInstrumentsData.Instruments.DECOMMISSIONED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()},
-//                    new Object[]{true, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)});
                 if (familyName.length()>0)
                     sW.addConstraint(TblsInstrumentsData.Instruments.FAMILY, SqlStatement.WHERECLAUSE_TYPES.IN, familyName.split("\\|"), "|");                
 

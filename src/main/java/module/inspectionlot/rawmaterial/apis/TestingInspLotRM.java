@@ -105,7 +105,7 @@ public class TestingInspLotRM extends HttpServlet {
                 ClassInspLotRMController clssInspLotRMController=new ClassInspLotRMController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
                 if (clssInspLotRMController.getFunctionFound()){
                     functionRelatedObjects=clssInspLotRMController.getFunctionRelatedObjects();
-                    functionEvaluation=(Object[]) clssInspLotRMController.getFunctionDiagn();
+                    functionEvaluation=clssInspLotRMController.getFunctionDiagn();
                     testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                     fileContentTable1Builder.append(clssInspLotRMController.getRowArgsRows());                
                 }else{

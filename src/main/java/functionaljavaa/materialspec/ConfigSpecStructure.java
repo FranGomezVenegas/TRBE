@@ -54,9 +54,9 @@ public class ConfigSpecStructure {
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;
@@ -582,11 +582,6 @@ specialFunctionReturn=DIAGNOSES_SUCCESS;
             RdbmsObject insertDiagn = Rdbms.insertRecordInTable(TblsCnfg.TablesConfig.SPEC, specFieldName, specFieldValue); // , schemaConfigName);
             if (!insertDiagn.getRunSuccess()){
                 return actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
-            
-//            diagnoses = Rdbms.insertRecordInTable(schemaConfigName, TblsCnfg.TablesConfig.SPEC_RULES.getTableName(), 
-//                    new String[]{TblsCnfg.SpecRules.CODE.getName(), TblsCnfg.SpecRules.CONFIG_VERSION.getName(), 
-//                        TblsCnfg.SpecRules.ALLOW_OTHER_ANALYSIS.getName(), TblsCnfg.SpecRules.ALLOW_MULTI_SPEC.getName()}, 
-//                    new Object[]{specCode, specCodeVersion, false, false});       
             }else{
                 ConfigTablesAudit.specAuditAdd(ConfigSpecAuditEvents.SPEC_NEW.toString(), TblsCnfg.TablesConfig.SPEC, specCode, 
                         specCode, specCodeVersion, LPArray.joinTwo1DArraysInOneOf1DString(specFieldName, specFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
@@ -665,7 +660,6 @@ specialFunctionReturn=DIAGNOSES_SUCCESS;
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] mandatoryFieldValue = new String[0];
         StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
-        String errorCode="";
         Object[]  errorDetailVariables= new Object[0];
 
         String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
@@ -685,7 +679,7 @@ specialFunctionReturn=DIAGNOSES_SUCCESS;
         Object[] keyFieldValues=new Object[]{specCode, specCodeVersion, analysis};
         keyFieldNames=LPArray.addValueToArray1D(keyFieldNames, TblsCnfg.SpecLimits.VARIATION_NAME.getName());
         fieldIndex = Arrays.asList(specFieldName).indexOf(TblsCnfg.SpecLimits.VARIATION_NAME.getName());
-        keyFieldValues=LPArray.addValueToArray1D(keyFieldValues, (String) specFieldValue[fieldIndex]);
+        keyFieldValues=LPArray.addValueToArray1D(keyFieldValues, specFieldValue[fieldIndex]);
 
         Integer fieldIndexMethodName = Arrays.asList(specFieldName).indexOf(TblsCnfg.AnalysisMethod.METHOD_NAME.getName());
         Integer fieldIndexMethodVersion = Arrays.asList(specFieldName).indexOf(TblsCnfg.AnalysisMethod.METHOD_VERSION.getName());

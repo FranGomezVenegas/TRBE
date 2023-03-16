@@ -2400,12 +2400,12 @@ private static final int CLIENT_CODE_STACK_INDEX;
         DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
         
         String schemaName=addSuffixIfItIsForTesting(tblObj.getRepositoryName(), tblObj.getTableName());
-        updateFieldValues = DbEncryptionObject.decryptTableFieldArray(tblObj, updateFieldNames, (Object[]) updateFieldValues, false);        
+        updateFieldValues = DbEncryptionObject.decryptTableFieldArray(tblObj, updateFieldNames, updateFieldValues, false);        
         if (whereObj.getAllWhereEntries().isEmpty()){
            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tblObj.getTableName(), schemaName});                         
         }
         SqlStatementEnums sql = new SqlStatementEnums();       
-        updateFieldValues = DbEncryptionObject.encryptTableFieldArray(tblObj, updateFieldNames, (Object[]) updateFieldValues, false);         
+        updateFieldValues = DbEncryptionObject.encryptTableFieldArray(tblObj, updateFieldNames, updateFieldValues, false);         
         HashMap<String, Object[]> hmQuery = sql.buildSqlStatementTable("UPDATE", tblObj,
                 whereObj, null, updateFieldNames, updateFieldValues,
                 null, null, null, alternativeProcInstanceName);         
@@ -2448,13 +2448,13 @@ private static final int CLIENT_CODE_STACK_INDEX;
         DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
 
         String schemaName=addSuffixIfItIsForTesting(tblObj.getRepositoryName(), tblObj.getTableName());
-        updateFieldValues = DbEncryptionObject.decryptTableFieldArray(tblObj, updateFieldNames, (Object[]) updateFieldValues, false);        
+        updateFieldValues = DbEncryptionObject.decryptTableFieldArray(tblObj, updateFieldNames, updateFieldValues, false);        
         if (whereObj.getAllWhereEntries().isEmpty()){
            return new RdbmsObject(false, "no sql yet", RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, 
                    new Object[]{tblObj.getTableName(), schemaName});
         }
         SqlStatementEnums sql = new SqlStatementEnums();       
-        updateFieldValues = DbEncryptionObject.encryptTableFieldArray(tblObj, updateFieldNames, (Object[]) updateFieldValues, false); 
+        updateFieldValues = DbEncryptionObject.encryptTableFieldArray(tblObj, updateFieldNames, updateFieldValues, false); 
         HashMap<String, Object[]> hmQuery = sql.buildSqlStatementTable("UPDATE", tblObj,
                 whereObj, null, updateFieldNames, updateFieldValues,
                 null, null, null, alternativeProcInstanceName);         

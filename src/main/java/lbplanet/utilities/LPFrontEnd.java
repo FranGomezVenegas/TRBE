@@ -403,7 +403,7 @@ public class LPFrontEnd {
             Object[] msgArg3=new Object[]{};
             if (mainMessage[0].length>2)
                 msgArg3=(Object[]) mainMessage[0][2];
-            errorCode=(String) mainMessage[0][1].toString();
+            errorCode=mainMessage[0][1].toString();
             errorMsgEn=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, (String) mainMessage[0][1].toString(), msgArg3, "en", mainMessage[0], true);
             errorMsgEs=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, (String) mainMessage[0][1].toString(), msgArg3, "es", mainMessage[0], false);
             errorTextEn = errorMsgEn[errorMsgEn.length-1].toString(); 
