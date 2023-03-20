@@ -139,7 +139,7 @@ public class TestingPlatformInvTracking extends HttpServlet {
                     
                 }else{    
                     ClassInvTrackingController clssInvTrackingController=new ClassInvTrackingController(request, actionName.toString(), testingContent, iLines, table1NumArgs, tstOut.getAuditReasonPosic());
-                    if (clssInvTrackingController.getFunctionFound()){
+                    if (Boolean.TRUE.equals(clssInvTrackingController.getFunctionFound())){
                         functionRelatedObjects=clssInvTrackingController.getFunctionRelatedObjects();
                         functionEvaluation=(Object[]) clssInvTrackingController.getFunctionDiagn();
                         testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;

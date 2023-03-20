@@ -378,7 +378,7 @@ JSONObject studyFamilyJson(JSONObject curProjStudyJson, String curStudyName, Boo
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
     String[] whereFldNames=new String[]{TblsGenomaData.StudyFamily.STUDY.getName()};
     Object[] whereFldValues=new Object[]{curStudyName};
-    if (getOnlyActiveObjects){
+    if (Boolean.TRUE.equals(getOnlyActiveObjects)){
         whereFldNames=LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyIndividualSample.ACTIVE.getName());
         whereFldValues=LPArray.addValueToArray1D(whereFldValues, true);
     }

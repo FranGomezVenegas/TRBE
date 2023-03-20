@@ -120,28 +120,28 @@ if (iLines==2){
                     new Object[]{iLines-numHeaderLines+1, LPNulls.replaceNull(testingContent[iLines][5]).toString()})); //print actionName
 
                 ClassProjectController clssProjectController=new ClassProjectController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
-                if (clssProjectController.getFunctionFound()){
+                if (Boolean.TRUE.equals(clssProjectController.getFunctionFound())){
                     functionRelatedObjects=clssProjectController.getFunctionRelatedObjects();
                     functionEvaluation=(Object[]) clssProjectController.getFunctionDiagn();
                     testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                     fileContentTable1Builder.append(clssProjectController.getRowArgsRows());                
                 }else{
                     ClassStudyController clssStudyController=new ClassStudyController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
-                if (clssStudyController.getFunctionFound()){
+                if (Boolean.TRUE.equals(clssStudyController.getFunctionFound())){
                     functionRelatedObjects=clssStudyController.getFunctionRelatedObjects();
                     functionEvaluation=(Object[]) clssStudyController.getFunctionDiagn();
                     testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                     fileContentTable1Builder.append(clssStudyController.getRowArgsRows());                
 /*                    }else{                    
                         ClassSampleController clssSampleController=new ClassSampleController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
-                        if (clssSampleController.getFunctionFound()){
+                        if (Boolean.TRUE.equals(clssSampleController.getFunctionFound())){
                             functionRelatedObjects=clssSampleController.getFunctionRelatedObjects();
                             functionEvaluation=(Object[]) clssSampleController.getFunctionDiagn();
                             testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                             fileContentTable1Builder.append(clssSampleController.getRowArgsRows());                
                         }else{
                             ClassSampleQueriesController clssSampleQueriesController=new ClassSampleQueriesController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
-                            if (clssSampleQueriesController.getFunctionFound()){
+                            if (Boolean.TRUE.equals(clssSampleQueriesController.getFunctionFound())){
                                 functionRelatedObjects=clssSampleQueriesController.getFunctionRelatedObjects();
                                 functionEvaluation=(Object[]) clssSampleQueriesController.getFunctionDiagn();
                                 testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
