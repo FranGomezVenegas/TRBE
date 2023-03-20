@@ -245,7 +245,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                 return;                   
             }                
             ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActionsWithEndpoint(request, response, endPoint, false);
-            if (procReqInstance.getHasErrors()){
+            if (Boolean.FALSE.equals(procReqInstance.getHasErrors())){
                 procReqInstance.killIt();
                 LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
                 return;
@@ -262,7 +262,7 @@ public class EnvMonSampleAPI extends HttpServlet {
             }                
         }        
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActionsWithEndpoint(request, response, endPoint, false);
-        if (procReqInstance.getHasErrors()){
+        if (Boolean.FALSE.equals(procReqInstance.getHasErrors())){
             procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
             return;

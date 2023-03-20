@@ -92,7 +92,7 @@ public class SopUserAPI extends HttpServlet {
         
         String procInstanceName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME);  
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, true);
-        if (procReqInstance.getHasErrors()){
+        if (Boolean.TRUE.equals(procReqInstance.getHasErrors())){
             procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
             return;

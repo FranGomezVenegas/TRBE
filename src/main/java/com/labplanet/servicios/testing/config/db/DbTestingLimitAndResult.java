@@ -96,7 +96,7 @@ public class DbTestingLimitAndResult extends HttpServlet {
         Object[] resSpecEvaluation = null;                
 
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForUAT(request, response, true, "");        
-        if (procReqInstance.getHasErrors()){
+        if (Boolean.FALSE.equals(procReqInstance.getHasErrors())){
             procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
             return;

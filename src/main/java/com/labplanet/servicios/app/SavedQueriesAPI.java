@@ -191,7 +191,7 @@ public class SavedQueriesAPI extends HttpServlet {
                return;                   
             }     
         }
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;} 
+        if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return;}
         try (PrintWriter out = response.getWriter()) {
             Object[] actionEnabled = LPPlatform.procActionEnabled(procInstanceName, token, actionName, bi);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){

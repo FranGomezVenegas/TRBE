@@ -77,7 +77,7 @@ public class EndpointsDocAPIqueries extends HttpServlet {
         response=LPHttp.responsePreparation(response);
         String[] endpointDeclarationAllFieldNames = EnumIntTableFields.getAllFieldNames(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION.getTableFields());
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForDocumentation(request, response);
-        if (procReqInstance.getHasErrors()){
+        if (Boolean.TRUE.equals(procReqInstance.getHasErrors())){
             procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
             return;
@@ -130,7 +130,7 @@ public class EndpointsDocAPIqueries extends HttpServlet {
             JSONArray jMainArr = new JSONArray();
             JSONArray jApiArr = new JSONArray();
             JSONObject jApiObj=new JSONObject();
-            if(groupedByAPI){
+            if(Boolean.TRUE.equals(groupedByAPI)){
                 String curApiName="";
                 for (Object[] currEndpoint: reqEndpointInfo){
                     if (!curApiName.equalsIgnoreCase(LPNulls.replaceNull(currEndpoint[LPArray.valuePosicInArray(endpointDeclarationAllFieldNames, TblsTrazitDocTrazit.EndpointsDeclaration.API_NAME.getName())]).toString())){

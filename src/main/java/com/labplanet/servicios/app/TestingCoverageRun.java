@@ -48,7 +48,7 @@ public class TestingCoverageRun extends HttpServlet {
             }
             String sessionLang=procReqInstance.getLanguage();
             String errMsg=procReqInstance.getErrorMessage();
-            if (procReqInstance.getHasErrors()){
+            if (Boolean.TRUE.equals(procReqInstance.getHasErrors())){
                 procReqInstance.killIt();
                 LPFrontEnd.servletReturnResponseError(request, response, errMsg, null, sessionLang,null);
                 return;

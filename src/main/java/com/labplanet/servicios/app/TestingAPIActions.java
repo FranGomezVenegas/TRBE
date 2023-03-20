@@ -105,7 +105,7 @@ public class TestingAPIActions extends HttpServlet {
         response=LPHttp.responsePreparation(response);     
         
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, true);
-        if (procReqInstance.getHasErrors()){
+        if (Boolean.TRUE.equals(procReqInstance.getHasErrors())){
             procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
             return;
@@ -160,7 +160,7 @@ public class TestingAPIActions extends HttpServlet {
 
     public static void scriptExecutionEvidenceSave(Integer scriptId, String comment){
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, false, true);
-        if (procReqInstance.getHasErrors()){
+        if (Boolean.TRUE.equals(procReqInstance.getHasErrors())){
             procReqInstance.killIt();
             //LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
             return;

@@ -128,7 +128,7 @@ public class ModuleDefinitionAPI extends HttpServlet {
                 LPPlatform.ApiErrorTraping.INVALID_TOKEN.getErrorCode(), null, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
             return;                             
         }
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
+        if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return;}
 //        Connection con = Rdbms.createTransactionWithSavePoint();        
         //Rdbms.setTransactionId(schemaConfigName);
         ModuleDefinitionAPIactionsEndpoints endPoint = null;

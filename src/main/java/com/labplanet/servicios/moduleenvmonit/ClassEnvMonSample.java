@@ -174,7 +174,7 @@ public class ClassEnvMonSample {
                                 altAuditEntry="PLATE_READING_REENTERED";
                             }
                             procReqSession = ProcedureRequestSession.getInstanceForActions(request, null, isForTesting);
-                            if (procReqSession.getHasErrors()){
+                            if (Boolean.TRUE.equals(procReqSession.getHasErrors())){
                                 procReqSession.killIt();
                                 actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, procReqSession.getErrorMessage(), new Object[]{resultId.toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
                                 break;
@@ -228,7 +228,7 @@ public class ClassEnvMonSample {
                                 altAuditEntry="PLATE_READING_REENTERED_SECONDENTRY";
                             }
                             procReqSession = ProcedureRequestSession.getInstanceForActions(request, null, isForTesting);
-                            if (procReqSession.getHasErrors()){
+                            if (Boolean.TRUE.equals(procReqSession.getHasErrors())){
                                 procReqSession.killIt();
                                 actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, procReqSession.getErrorMessage(), new Object[]{resultId.toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
                                 break;
@@ -380,7 +380,7 @@ public class ClassEnvMonSample {
             }             
             if (actionDiagnoses!=null && LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
                 DataSampleStages smpStage = new DataSampleStages();
-                if (smpStage.isSampleStagesEnable())
+                if (Boolean.TRUE.equals(smpStage.isSampleStagesEnable()))
                     smpStage.dataSampleActionAutoMoveToNext(endPoint.getName().toUpperCase(), sampleId);
                 
             }           

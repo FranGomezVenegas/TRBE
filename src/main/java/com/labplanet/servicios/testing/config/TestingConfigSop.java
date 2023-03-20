@@ -79,7 +79,7 @@ public class TestingConfigSop extends HttpServlet {
             response = LPTestingOutFormat.responsePreparation(response);        
 
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForUAT(request, response, true, "");        
-        if (procReqInstance.getHasErrors()){
+        if (Boolean.FALSE.equals(procReqInstance.getHasErrors())){
             procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
             return;

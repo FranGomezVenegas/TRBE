@@ -125,7 +125,7 @@ public class AppProcedureListAPI extends HttpServlet {
                     JSONObject procedure = new JSONObject();
                     String schemaNameProcedure=LPPlatform.buildSchemaName(curProc.toString(), GlobalVariables.Schemas.PROCEDURE.getName());
 
-                    if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONObject();}           
+                    if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return new JSONObject();}           
 
                     Object[][] procInfo = Rdbms.getRecordFieldsByFilter(schemaNameProcedure, TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), 
                             new String[]{TblsProcedure.ProcedureInfo.NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null
