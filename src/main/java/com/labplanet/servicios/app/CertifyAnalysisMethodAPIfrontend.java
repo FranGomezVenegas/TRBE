@@ -126,7 +126,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   
             }
-            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
+            if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return;}
              
             switch (endPoint){
             case ALL_MY_ANA_METHOD_CERTIF:    
@@ -168,7 +168,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
         
         CertifyAnalysisMethodAPIqueriesEndpoints endPoint = CertifyAnalysisMethodAPIqueriesEndpoints.ALL_MY_ANA_METHOD_CERTIF;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONArray();}           
+        if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return new JSONArray();}
 
         UserProfile usProf = new UserProfile();
         String[] allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));
@@ -229,9 +229,9 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
 
         CertifyAnalysisMethodAPIqueriesEndpoints endPoint = CertifyAnalysisMethodAPIqueriesEndpoints.MY_PENDING_ANA_METHOD_CERTIF;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONArray();}           
+        if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return new JSONArray();}           
         
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONArray();}  
+        if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return new JSONArray();}  
         UserProfile usProf = new UserProfile();
         
         usProf = new UserProfile();
@@ -294,7 +294,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
 
         CertifyAnalysisMethodAPIqueriesEndpoints endPoint = CertifyAnalysisMethodAPIqueriesEndpoints.PROCEDURE_ANA_METHOD_CERTIF;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONArray();}           
+        if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return new JSONArray();}           
         
         UserProfile usProf = new UserProfile();
         String[] allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));

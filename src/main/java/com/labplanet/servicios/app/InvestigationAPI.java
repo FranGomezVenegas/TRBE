@@ -153,7 +153,7 @@ public class InvestigationAPI extends HttpServlet {
         String[] errObject = new String[]{"Servlet programAPI at " + request.getServletPath()};   
         
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, false);
-        if (procReqInstance.getHasErrors()){
+        if (Boolean.TRUE.equals(procReqInstance.getHasErrors())){
             procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
             return;
@@ -170,7 +170,7 @@ public class InvestigationAPI extends HttpServlet {
                 return;                   
             }
                 ClassInvestigation clssInv=new ClassInvestigation(request, endPoint);
-                if (clssInv.getEndpointExists()){
+                if (Boolean.TRUE.equals(clssInv.getEndpointExists())){
                     Object[] diagnostic=clssInv.getDiagnostic();
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
                         String errorCode =diagnostic[4].toString();

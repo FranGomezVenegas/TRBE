@@ -112,7 +112,7 @@ public class AppHeaderAPI extends HttpServlet {
         }else{
             personFieldsNameArr = personFieldsName.split("\\|");
         }    
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return personInfoJsonObj;}   
+        if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return personInfoJsonObj;}   
         Token token = new Token(finalToken);
         Object[][] personInfoArr = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), 
              new String[]{TblsAppConfig.Person.PERSON_ID.getName()}, new String[]{token.getPersonName()}, personFieldsNameArr);             

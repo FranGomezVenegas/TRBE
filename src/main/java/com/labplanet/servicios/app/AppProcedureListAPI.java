@@ -109,7 +109,7 @@ public class AppProcedureListAPI extends HttpServlet {
             if (sizeValueStr!=null && sizeValueStr.length()>0)
                 sizeValue=Integer.valueOf(sizeValueStr);
 
-            if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONObject();}               
+            if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return new JSONObject();}               
          
             UserProfile usProf = new UserProfile();
             Object[] allUserProcedurePrefix = usProf.getAllUserProcedurePrefix(token.getUserName());
@@ -130,7 +130,7 @@ public class AppProcedureListAPI extends HttpServlet {
                     Object[][] procInfo = Rdbms.getRecordFieldsByFilter(schemaNameProcedure, TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), 
                             new String[]{TblsProcedure.ProcedureInfo.NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null
                             , PROC_FLD_NAME.split("\\|"));
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfo[0][0].toString())){
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfo[0][0].toString()))){
                         procedure = LPJson.convertArrayRowToJSONObject(procFldNameArray, procInfo[0]);
 
                         Object[][] rulesInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(curProc.toString(), GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), 
@@ -143,7 +143,7 @@ public class AppProcedureListAPI extends HttpServlet {
                         }
                         procedure.put(LABEL_PROC_SCHEMA, curProc);
 
-                        if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONObject();}      
+                        if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return new JSONObject();}      
 
                         procedure.put("new_"+LABEL_ARRAY_PROC_EVENTS, newProcedureDefinition(token, curProc,
                             Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING)))));

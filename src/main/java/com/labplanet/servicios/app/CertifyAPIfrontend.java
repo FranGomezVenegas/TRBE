@@ -95,7 +95,7 @@ public class CertifyAPIfrontend extends HttpServlet {
 
         String language = LPFrontEnd.setLanguage(request); 
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false);
-        if (procReqInstance.getHasErrors()){
+        if (Boolean.TRUE.equals(procReqInstance.getHasErrors())){
             procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
             return;
@@ -125,7 +125,7 @@ public class CertifyAPIfrontend extends HttpServlet {
                 return;                   
             }
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());   
-            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}          
+            if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return;}
 
             switch (endPoint){
                 case CERTIFICATIONS_IN_PROGRESS:

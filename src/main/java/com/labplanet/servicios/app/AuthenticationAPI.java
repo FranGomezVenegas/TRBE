@@ -75,7 +75,7 @@ public class AuthenticationAPI extends HttpServlet {
         
         try (PrintWriter out = response.getWriter()) {            
             
-            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
+            if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return;}
             ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
             
             String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
@@ -106,7 +106,7 @@ public class AuthenticationAPI extends HttpServlet {
                     String dbUserName = argValues[0].toString();
                     String dbUserPassword = argValues[1].toString();
                     String userIsCaseSensitive = prop.getString(UserAndRolesViews.UserAndRolesErrorTrapping.BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT.getErrorCode());
-                    if (!Boolean.valueOf(userIsCaseSensitive)) dbUserName=dbUserName.toLowerCase();
+                    if (Boolean.FALSE.equals(Boolean.valueOf(userIsCaseSensitive))) dbUserName=dbUserName.toLowerCase();
                     
                     Object[] personNameObj = UserAndRolesViews.getPersonByUser(dbUserName);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personNameObj[0].toString())){
@@ -162,7 +162,7 @@ public class AuthenticationAPI extends HttpServlet {
                     response.getWriter().write(jArray.toJSONString()); 
                     return;                                
                 case FINALTOKEN:   
-                  if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
+                  if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return;}   
                     firstToken = argValues[0].toString();
                     String userRole = argValues[1].toString();
                         
@@ -171,7 +171,7 @@ public class AuthenticationAPI extends HttpServlet {
                     String[] fieldsName = new String[]{TblsApp.AppSession.PERSON.getName(), TblsApp.AppSession.ROLE_NAME.getName()};
                     Object[] fieldsValue = new Object[]{token.getPersonName(), userRole};
                     RdbmsObject newAppSession = LPSession.newAppSession(fieldsName, fieldsValue, request.getRemoteAddr());                    
-                    if (!newAppSession.getRunSuccess()){   
+                    if (Boolean.FALSE.equals(newAppSession.getRunSuccess())){   
                         LPFrontEnd.servletReturnResponseError(request, response,  AuthenticationErrorTrapping.SESSION_ID_NOTGENERATED.getErrorCode(), null, language, AuthenticationErrorTrapping.class.getSimpleName());              
                         return;                                                         
                     }                    
@@ -264,7 +264,7 @@ public class AuthenticationAPI extends HttpServlet {
                     token = new Token(myToken);
                     String tokenUserName=token.getUserName();
                     userIsCaseSensitive = prop.getString(UserAndRolesViews.UserAndRolesErrorTrapping.BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT.getErrorCode());
-                    if (!Boolean.valueOf(userIsCaseSensitive)){
+                    if (Boolean.FALSE.equals(Boolean.valueOf(userIsCaseSensitive))){
                         userToCheck=userToCheck.toLowerCase();
                         tokenUserName=token.getUserName().toLowerCase();
                     }

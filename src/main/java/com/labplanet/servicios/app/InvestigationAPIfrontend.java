@@ -80,7 +80,7 @@ public class InvestigationAPIfrontend extends HttpServlet {
                 return;                   
             }
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());   
-            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}          
+            if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return;}
             JSONArray jArray = new JSONArray(); 
 
             switch (endPoint){
@@ -124,7 +124,7 @@ public class InvestigationAPIfrontend extends HttpServlet {
                   
                 case INVESTIGATION_RESULTS_PENDING_DECISION:
                     String statusClosed=DataProgramCorrectiveAction.ProgramCorrectiveActionStatuses.STATUS_CLOSED.getStatusCode();
-                    if (!isProgramCorrectiveActionEnable(procInstanceName)){
+                    if (Boolean.FALSE.equals(isProgramCorrectiveActionEnable(procInstanceName))){
                       JSONObject jObj=new JSONObject();
                       jObj.put(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(), "program corrective action not active!");
                       jArray.add(jObj);
@@ -148,7 +148,7 @@ public class InvestigationAPIfrontend extends HttpServlet {
                     LPFrontEnd.servletReturnSuccess(request, response, jArray);
                     break;                
                 case INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION:
-                    if (!isProgramCorrectiveActionEnable(procInstanceName)){
+                    if (Boolean.FALSE.equals(isProgramCorrectiveActionEnable(procInstanceName))){
                       JSONObject jObj=new JSONObject();
                       jObj.put(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(), "program corrective action not active!");
                       jArray.add(jObj);
