@@ -50,7 +50,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response=LPTestingOutFormat.responsePreparation(response);
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
+        if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return;}   
         Object endPointName = request.getAttribute("endPointName");
         Object runAsCheckerAttrValue = LPNulls.replaceNull(request.getAttribute("run_as_checker"));
         ProcedureDefinitionAPIActionsEndpoints endPoint = ProcedureDefinitionAPIActionsEndpoints.valueOf(endPointName.toString());

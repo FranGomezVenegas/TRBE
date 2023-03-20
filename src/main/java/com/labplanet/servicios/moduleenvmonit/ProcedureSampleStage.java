@@ -94,9 +94,9 @@ public class ProcedureSampleStage {
             return "INCUB_INPROGRESS"+"@"+sampleId;
         if ((!incubation2StartIsNull) && (!incubation2Passed))
             return "INCUB_INPROGRESS"+"@"+sampleId;
-        if (!incubationPassed){
+        if (Boolean.FALSE.equals(incubationPassed)){
             return "FIRSTINCUB_MANDATORY"+"@"+sampleId;} //" Pendiente 1a Incubacion para la muestra "+sampleId;}
-        if (!incubation2Passed){
+        if (Boolean.FALSE.equals(incubation2Passed)){
             return "SECONDINCUB_MANDATORY"+"@"+sampleId;} //" Pendiente 2a Incubacion para la muestra "+sampleId;}
         return LPPlatform.LAB_TRUE;
     }  
@@ -114,9 +114,9 @@ public class ProcedureSampleStage {
         Boolean incubationPassed=Boolean.valueOf(incubationPassedStr);
         String incubation2PassedStr=sampleStructure.get("incubation2_passed").getAsString();
         Boolean incubation2Passed=Boolean.valueOf(incubation2PassedStr);
-        if (!incubationPassed){
+        if (Boolean.FALSE.equals(incubationPassed)){
             return "FIRSTINCUB_MANDATORY"+"@"+sampleId;} //" Pendiente 1a Incubacion para la muestra "+sampleId;}
-        if (!incubation2Passed){
+        if (Boolean.FALSE.equals(incubation2Passed)){
             return "SECONDINCUB_MANDATORY"+"@"+sampleId;} //" Pendiente 2a Incubacion para la muestra "+sampleId;}
         return LPPlatform.LAB_TRUE;
     }  

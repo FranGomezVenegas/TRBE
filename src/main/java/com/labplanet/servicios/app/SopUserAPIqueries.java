@@ -212,7 +212,7 @@ public class SopUserAPIqueries extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   
             }
-            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
+            if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return;}   
              
             switch (endPoint){
             case ALL_MY_SOPS:    
@@ -263,7 +263,7 @@ public class SopUserAPIqueries extends HttpServlet {
 
             SopUserAPIqueriesEndpoints endPoint = SopUserAPIqueriesEndpoints.ALL_MY_SOPS;
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
-            if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONObject();}           
+            if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return new JSONObject();}           
 
             UserProfile usProf = new UserProfile();
             String[] allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));
@@ -336,7 +336,7 @@ public class SopUserAPIqueries extends HttpServlet {
         
         SopUserAPIqueriesEndpoints endPoint = SopUserAPIqueriesEndpoints.ALL_MY_SOPS;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONArray();}           
+        if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return new JSONArray();}           
 
         UserProfile usProf = new UserProfile();
         String[] allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));
@@ -405,9 +405,9 @@ public class SopUserAPIqueries extends HttpServlet {
 
         SopUserAPIqueriesEndpoints endPoint = SopUserAPIqueriesEndpoints.MY_PENDING_SOPS;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONArray();}           
+        if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return new JSONArray();}           
         
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONArray();}  
+        if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return new JSONArray();}  
         UserProfile usProf = new UserProfile();
         
         usProf = new UserProfile();
@@ -471,7 +471,7 @@ public class SopUserAPIqueries extends HttpServlet {
 
         SopUserAPIqueriesEndpoints endPoint = SopUserAPIqueriesEndpoints.PROCEDURE_SOPS;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONArray();}           
+        if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return new JSONArray();}           
         
         UserProfile usProf = new UserProfile();
         String[] allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));
@@ -527,7 +527,7 @@ public class SopUserAPIqueries extends HttpServlet {
         if (finalToken==null || finalToken.length()==0)
             finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
 
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return new JSONArray();}           
+        if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return new JSONArray();}           
     
         UserProfile usProf = new UserProfile();
         String[] allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));

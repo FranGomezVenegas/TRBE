@@ -240,7 +240,7 @@ public class EnvMonAPIStats extends HttpServlet {
         try { //try (PrintWriter out = response.getWriter()) {
             SqlWhere wObj=new SqlWhere();
             String prodLotName="";
-            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
+            if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return;}
             String smpTemplate=Parameter.getBusinessRuleProcedureFile(procInstanceName, "procedure", "SampleTemplate");  
             String samplerSmpTemplate=Parameter.getBusinessRuleProcedureFile(procInstanceName, "procedure", "samplerSampleTemplate");  
             Boolean getSampleInfo=false;

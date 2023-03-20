@@ -159,7 +159,7 @@ public class ProcedureRequestSession {
             Rdbms.stablishDBConection();
         else
             Rdbms.stablishDBConection(dbNameProp);       
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){
+        if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){
             this.hasErrors=true;
             this.errorMessage="db connection not stablished";
             return;

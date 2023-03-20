@@ -57,7 +57,7 @@ public class PlatformDefinitionToInstance extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response=LPTestingOutFormat.responsePreparation(response);
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
+        if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return;}   
         PlatformDefinitionAPIactionsEndpoints endPoint = PlatformDefinitionAPIactionsEndpoints.CREATE_PLATFORM_INSTANCE_STRUCTURE;
         LPAPIArguments[] arguments = endPoint.getArguments();
         Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());

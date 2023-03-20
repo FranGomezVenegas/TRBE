@@ -123,7 +123,7 @@ public class TstDataEnvMonit extends HttpServlet {
 
         if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresEsignConfirmation[0].toString())) &&    
              (!LPFrontEnd.servletEsignToVerify(request, response, token.geteSign())) ){return;}
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}     
+        if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return;}     
             
             DataProgramSampleAnalysis dsProgramAna = new DataProgramSampleAnalysis();
             DataSample ds = new DataSample(dsProgramAna);

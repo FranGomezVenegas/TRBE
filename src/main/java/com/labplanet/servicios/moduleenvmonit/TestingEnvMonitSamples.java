@@ -136,56 +136,56 @@ if (iLines==25){
                     
                 }else{    
                 ClassEnvMonSampleController clssEnvMonSampleController=new ClassEnvMonSampleController(request, actionName.toString(), testingContent, iLines, table1NumArgs, tstOut.getAuditReasonPosic());
-                if (clssEnvMonSampleController.getFunctionFound()){
+                if (Boolean.TRUE.equals(clssEnvMonSampleController.getFunctionFound())){
                     functionRelatedObjects=clssEnvMonSampleController.getFunctionRelatedObjects();
                     functionEvaluation=(Object[]) clssEnvMonSampleController.getFunctionDiagn();
                     testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                     fileContentTable1Builder.append(clssEnvMonSampleController.getRowArgsRows());
                 }else{
                     ClassEnvMonSampleFrontendController clssEnvMonSampleFrontendController=new ClassEnvMonSampleFrontendController(request, response, actionName.toString(), testingContent, iLines, table1NumArgs);
-                    if (clssEnvMonSampleFrontendController.getFunctionFound()){
+                    if (Boolean.TRUE.equals(clssEnvMonSampleFrontendController.getFunctionFound())){
                         functionRelatedObjects=clssEnvMonSampleFrontendController.getFunctionRelatedObjects();
                         functionEvaluation=(Object[]) clssEnvMonSampleFrontendController.getFunctionDiagn();
                         testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                         fileContentTable1Builder.append(clssEnvMonSampleFrontendController.getRowArgsRows());                        
                     }else{
                         ClassEnvMonController clssEnvMonController=new ClassEnvMonController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
-                        if (clssEnvMonController.getFunctionFound()){
+                        if (Boolean.TRUE.equals(clssEnvMonController.getFunctionFound())){
                             functionRelatedObjects=clssEnvMonController.getFunctionRelatedObjects();
                             functionEvaluation=(Object[]) clssEnvMonController.getFunctionDiagn();
                             testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                             fileContentTable1Builder.append(clssEnvMonController.getRowArgsRows());
                         }else{                    
                             ClassEnvMonIncubatorController clssEnvMonIncubController=new ClassEnvMonIncubatorController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
-                            if (clssEnvMonIncubController.getFunctionFound()){
+                            if (Boolean.TRUE.equals(clssEnvMonIncubController.getFunctionFound())){
                                 functionRelatedObjects=clssEnvMonIncubController.getFunctionRelatedObjects();
                                 functionEvaluation=(Object[]) clssEnvMonIncubController.getFunctionDiagn();
                                 testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                                 fileContentTable1Builder.append(clssEnvMonIncubController.getRowArgsRows());                
                             }else{                            
                                 ClassEnvMonQueriesController clssEnvMonQueriesController=new ClassEnvMonQueriesController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
-                                if (clssEnvMonQueriesController.getFunctionFound()){
+                                if (Boolean.TRUE.equals(clssEnvMonQueriesController.getFunctionFound())){
                                     functionRelatedObjects=clssEnvMonQueriesController.getFunctionRelatedObjects();
                                     functionEvaluation=(Object[]) clssEnvMonQueriesController.getFunctionDiagn();
                                     testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                                     fileContentTable1Builder.append(clssEnvMonQueriesController.getRowArgsRows());                
                                 }else{
                                     ClassSampleController clssSampleController=new ClassSampleController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
-                                    if (clssSampleController.getFunctionFound()){
+                                    if (Boolean.TRUE.equals(clssSampleController.getFunctionFound())){
                                         functionRelatedObjects=clssSampleController.getFunctionRelatedObjects();
                                         functionEvaluation=(Object[]) clssSampleController.getFunctionDiagn();
                                         testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                                         fileContentTable1Builder.append(clssSampleController.getRowArgsRows());                
                                     }else{
                                         ClassInvestigationController clssInvestigationController=new ClassInvestigationController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
-                                        if (clssInvestigationController.getFunctionFound()){
+                                        if (Boolean.TRUE.equals(clssInvestigationController.getFunctionFound())){
                                             functionRelatedObjects=clssInvestigationController.getFunctionRelatedObjects();
                                             functionEvaluation=(Object[]) clssInvestigationController.getFunctionDiagn();
                                             testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                                             fileContentTable1Builder.append(clssInvestigationController.getRowArgsRows());                
                                         }else{
                                             ClassEnvMonProdLotController clsEnvMonProdLot=new ClassEnvMonProdLotController(request, actionName.toString(), testingContent, iLines, table1NumArgs, tstOut.getAuditReasonPosic());
-                                            if (clsEnvMonProdLot.getFunctionFound()){
+                                            if (Boolean.TRUE.equals(clsEnvMonProdLot.getFunctionFound())){
                                                 functionRelatedObjects=clsEnvMonProdLot.getFunctionRelatedObjects();
                                                 functionEvaluation=(Object[]) clsEnvMonProdLot.getFunctionDiagn();
                                                 testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;

@@ -116,7 +116,7 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
             return;                   
         }
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                   
-        if (!LPFrontEnd.servletStablishDBConection(request, response))return;
+        if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response)))return;
         switch (endPoint){
             case GET_INCUBATORS_LIST_BY_STAGE: 
                 //String[] fieldsToRetrieve=new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.STAGE.getName()};

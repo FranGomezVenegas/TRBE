@@ -98,7 +98,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
             }                
             
             
-            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}          
+            if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return;}          
 
             switch (endPoint){
             case ACTIVE_INSTRUMENTS_LIST:

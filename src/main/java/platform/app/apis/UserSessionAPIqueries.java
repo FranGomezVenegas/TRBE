@@ -136,7 +136,7 @@ public class UserSessionAPIqueries extends HttpServlet {
         }
     try (PrintWriter out = response.getWriter()) {       
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());   
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}          
+        if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return;}          
 
         switch (endPoint){
             case USER_SESSIONS:             

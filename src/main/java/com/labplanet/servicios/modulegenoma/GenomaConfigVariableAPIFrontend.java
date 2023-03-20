@@ -93,7 +93,7 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
             return;                   
         }        
 
-        if (!LPFrontEnd.servletStablishDBConection(request, response))return;
+        if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response)))return;
 
         switch (endPoint){
         case GET_PROCEDURE_USERS:

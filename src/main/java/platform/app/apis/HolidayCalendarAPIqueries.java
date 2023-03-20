@@ -73,7 +73,7 @@ public class HolidayCalendarAPIqueries extends HttpServlet {
                     LPPlatform.ApiErrorTraping.INVALID_TOKEN.getErrorCode(), null, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
             return;                             
         }
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}          
+        if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return;}          
         try{
             switch (endPoint){
                 case GET_ALL_HOLIDAY_DATES_LIST_ALL_CALENDARS:              

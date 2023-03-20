@@ -94,7 +94,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                         LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{argValues[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
                 return;
             }                
-            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}          
+            if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return;}          
 
             switch (endPoint){
             case ALL_INVENTORY_LOTS:
