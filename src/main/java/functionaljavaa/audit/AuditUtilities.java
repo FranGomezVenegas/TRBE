@@ -30,7 +30,7 @@ public final class AuditUtilities {
     }
     public static Object[] applyTheInsert(GenericAuditFields gAuditFlds, EnumIntTables tblObj, String[] fldN, Object[] fldV, String externalProcInstanceName){
         RdbmsObject insertDiagn = Rdbms.insertRecord(tblObj, fldN, fldV, externalProcInstanceName);
-	if (insertDiagn.getRunSuccess()){
+	if (Boolean.TRUE.equals(insertDiagn.getRunSuccess())){
             SessionAuditActions auditActions = ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditActions();
             auditActions.addAuditAction(Integer.valueOf(insertDiagn.getNewRowId().toString()), 
                 gAuditFlds.getActionName(), gAuditFlds.getActionPrettyNameEn(), gAuditFlds.getActionPrettyNameEs());

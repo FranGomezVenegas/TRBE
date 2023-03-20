@@ -100,7 +100,7 @@ public final class Investigation {
         
         RdbmsObject insertDiagn=Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.INVESTIGATION, 
             updFieldName, updFieldValue);
-	if (insertDiagn.getRunSuccess()){
+	if (Boolean.TRUE.equals(insertDiagn.getRunSuccess())){
             String investIdStr=insertDiagn.getNewRowId().toString();
             Object[] investigationAuditAdd = ProcedureInvestigationAudit.investigationAuditAdd(DataInvestigationAuditEvents.NEW_INVESTIGATION_CREATED.toString(), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(), Integer.valueOf(investIdStr), investIdStr,  
                     LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null);

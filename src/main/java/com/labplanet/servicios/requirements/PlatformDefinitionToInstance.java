@@ -75,7 +75,7 @@ public class PlatformDefinitionToInstance extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {     
             Boolean runSection=Boolean.valueOf(argValues[1].toString()) || CREATE_DATABASE;
             sectionsSettingJobj.put("1) CREATE_DATABASE", runSection);
-            if (runSection){
+            if (Boolean.TRUE.equals(runSection)){
                 Rdbms.closeRdbms();
                 Rdbms.stablishDBConection(platfName);
                 String functionCr=" CREATE OR REPLACE FUNCTION public.isnumeric(text) RETURNS boolean LANGUAGE plpgsql";
@@ -93,7 +93,7 @@ public class PlatformDefinitionToInstance extends HttpServlet {
             }   
             runSection=Boolean.valueOf(argValues[2].toString()) || CREATE_SCHEMAS_AND_PLATFORM_TBLS;
             sectionsSettingJobj.put("2) CREATE_SCHEMAS_AND_PLATFORM_TBLS", runSection);
-            if (runSection){
+            if (Boolean.TRUE.equals(runSection)){
                 Rdbms.closeRdbms();
                 Rdbms.stablishDBConection(platfName);                
                 JSONObject createDBPlatformSchemas = DbObjects.createPlatformSchemasAndBaseTables(platfName);
@@ -101,7 +101,7 @@ public class PlatformDefinitionToInstance extends HttpServlet {
             }   
             runSection=Boolean.valueOf(argValues[3].toString()) || CREATE_CHECKPLATFORM_PROCEDURE;
             sectionsSettingJobj.put("3) CREATE_CHECKPLATFORM_PROCEDURE", runSection);
-            if (runSection){
+            if (Boolean.TRUE.equals(runSection)){
                 Rdbms.closeRdbms();
                 Rdbms.stablishDBConection(platfName);                
                 JSONObject createCheckPlatformProcedure = createCheckPlatformProcedure(platfName);
@@ -109,7 +109,7 @@ public class PlatformDefinitionToInstance extends HttpServlet {
             }   
             runSection=Boolean.valueOf(argValues[4].toString()) || REMOVE_CHECKPLATFORM_PROCEDURE;
             sectionsSettingJobj.put("4) REMOVE_CHECKPLATFORM_PROCEDURE", runSection);
-            if (runSection){
+            if (Boolean.TRUE.equals(runSection)){
                 Rdbms.closeRdbms();
                 Rdbms.stablishDBConection(platfName);                
                 JSONObject createCheckPlatformProcedure = removeCheckPlatformProcedure(platfName);

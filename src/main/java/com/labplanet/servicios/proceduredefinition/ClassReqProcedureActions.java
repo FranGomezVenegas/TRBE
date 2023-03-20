@@ -59,7 +59,7 @@ public class ClassReqProcedureActions {
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         String[] mandatArgs=new String[]{};
         for (LPAPIArguments curArg:endPoint.getArguments()){
-            if (curArg.getMandatory())
+            if (Boolean.TRUE.equals(curArg.getMandatory()))
                 mandatArgs=LPArray.addValueToArray1D(mandatArgs, curArg.getName());
         }
         if (mandatArgs.length>0){
@@ -81,7 +81,7 @@ public class ClassReqProcedureActions {
         String procedureName=argValues[0].toString();
         Integer procedureVersion = (Integer) argValues[1];   
         String procInstanceName=argValues[2].toString();
-        if (isProcInstLocked(procedureName, procedureVersion, procInstanceName)){
+        if (Boolean.TRUE.equals(isProcInstLocked(procedureName, procedureVersion, procInstanceName))){
             LPFrontEnd.servletReturnResponseError(request, response, 
                 ReqProcedureDefinitionErrorTraping.INSTANCE_LOCKED_FOR_ACTIONS.getErrorCode(), new Object[]{procedureName, procedureVersion, procInstanceName}, "en", LPPlatform.ApiErrorTraping.class.getSimpleName());
             return;                      
@@ -115,7 +115,7 @@ public class ClassReqProcedureActions {
                     new String[]{TblsReqs.ProcedureUsers.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUsers.PROCEDURE_VERSION.getName(),
                         TblsReqs.ProcedureUsers.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUsers.USER_NAME.getName()},
                     new Object[]{procedureName, procedureVersion, procInstanceName, userName});
-                    if (insertDiagn.getRunSuccess())
+                    if (Boolean.TRUE.equals(insertDiagn.getRunSuccess()))
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());                    
                     else
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
@@ -142,7 +142,7 @@ public class ClassReqProcedureActions {
                     new String[]{TblsReqs.ProcedureUserRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRoles.PROCEDURE_VERSION.getName(),
                         TblsReqs.ProcedureUserRoles.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUserRoles.USER_NAME.getName(), TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()},
                     new Object[]{procedureName, procedureVersion, procInstanceName, userName, roleName});
-                    if (insertDiagn.getRunSuccess())
+                    if (Boolean.TRUE.equals(insertDiagn.getRunSuccess()))
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());                    
                     else
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
@@ -210,7 +210,7 @@ public class ClassReqProcedureActions {
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, null);
                         break;
                     }
-                    if (!continueIfNewExists){
+                    if (Boolean.FALSE.equals(continueIfNewExists)){
                         existsRecord = Rdbms.existsRecord(TablesReqs.PROCEDURE_INFO.getRepositoryName(), TablesReqs.PROCEDURE_INFO.getTableName(), 
                             new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()},
                             new Object[]{procedureName, procedureVersion, newProcInstanceName});
@@ -241,7 +241,7 @@ public class ClassReqProcedureActions {
                                 for (Object[] curTblRec: curTblInfo){
                                     RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(curTbl, 
                                             curTblAllFields, curTblRec);
-                                    if (!insertRecordInTable.getRunSuccess())
+                                    if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess()))
                                         tblsWithErrorArr=LPArray.addValueToArray1D(tblsWithErrorArr, curTbl.getTableName());                                    
                                 }
                             }
