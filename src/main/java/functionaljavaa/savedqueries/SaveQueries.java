@@ -37,7 +37,6 @@ public class SaveQueries {
     }
 
     public static Object[] newSavedQuery(String name, String definition, String[] fldNames, Object[] fldValues){ 
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         try {
             JSONParser parser = new JSONParser(); 
@@ -57,8 +56,6 @@ public class SaveQueries {
         RdbmsObject insertDiagn = Rdbms.insertRecordInTable(TblsData.TablesData.SAVED_QUERIES, updFieldName, updFieldValue);
         if (!insertDiagn.getRunSuccess()) return insertDiagn.getApiMessage();
         
-        //Object[] investigationAuditAdd = ProcedureInvestigationAudit.investigationAuditAdd(procInstanceName, token, DataInvestigationAuditEvents.NEW_INVESTIGATION_CREATED.toString(), TblsData.TablesData.SAVED_QUERIES.getTableName(), Integer.valueOf(investIdStr), investIdStr,  
-        //        LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null);
         return LPArray.addValueToArray1D(insertDiagn.getApiMessage(),insertDiagn.getNewRowId());
     }
 

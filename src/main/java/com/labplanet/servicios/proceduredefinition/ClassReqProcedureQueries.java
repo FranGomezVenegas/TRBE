@@ -84,15 +84,14 @@ public class ClassReqProcedureQueries {
             jObj.put("No Data", "No Data");
             jArr.add(jObj);
         }else{
-            JsonParser parser = new JsonParser();
             JSONObject jObj= new JSONObject();
-            jObj.put("laptop_mode", parser.parse(ruleValue[0][0].toString()).getAsJsonObject());
+            jObj.put("laptop_mode", JsonParser.parseString(ruleValue[0][0].toString()).getAsJsonObject());
             jArr.add(jObj);
             jObj= new JSONObject();
             if (ruleValue[0][1]==null || ruleValue[0][1].toString().length()==0)
                 jObj.put("mobile_mode", "no mobile version");
             else
-                jObj.put("mobile_mode", parser.parse(ruleValue[0][1].toString()).getAsJsonObject());
+                jObj.put("mobile_mode", JsonParser.parseString(ruleValue[0][1].toString()).getAsJsonObject());
             jArr.add(jObj);
             
         }  
@@ -127,10 +126,9 @@ public class ClassReqProcedureQueries {
                     jBlockArr.add(LPJson.convertArrayRowToJSONObject(fldsToGet, curRow));
                 else{
                     JSONObject jObj = new JSONObject();
-                    jObj=(LPJson.convertArrayRowToJSONObject(fldsToGet, curRow, jsonFlds));
-                    JsonParser parser = new JsonParser();
+                    jObj=(LPJson.convertArrayRowToJSONObject(fldsToGet, curRow, jsonFlds));                    
                     for (String curJsonFld: jsonFlds)
-                        jObj.put(TblsReqs.ProcedureMasterData.JSON_OBJ.getName(), parser.parse(curRow[LPArray.valuePosicInArray(fldsToGet, curJsonFld)].toString()).getAsJsonObject());
+                        jObj.put(TblsReqs.ProcedureMasterData.JSON_OBJ.getName(), JsonParser.parseString(curRow[LPArray.valuePosicInArray(fldsToGet, curJsonFld)].toString()).getAsJsonObject());
                     jBlockArr.add(jObj);
                 }
             }
@@ -142,7 +140,7 @@ public class ClassReqProcedureQueries {
         return jBlockArr;        
     }
 
-    static JSONObject dbRowsGroupedToJsonArr(String procInstanceName, String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue, String[] sortFlds){
+    static JSONObject dbRowsGroupedToJsonArr(String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue, String[] sortFlds){
         Object[][] procTblRows = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), tblName, 
             whereFldName, whereFldValue, fldsToGet, sortFlds);
         JSONObject jBlockObj = new JSONObject();        

@@ -134,21 +134,21 @@ if (iLines==25){
                     
                 }else{    
                     ClassSampleController clssSampleController=new ClassSampleController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
-                    if (clssSampleController.getFunctionFound()){
+                    if (Boolean.TRUE.equals(clssSampleController.getFunctionFound())){
                         functionRelatedObjects=clssSampleController.getFunctionRelatedObjects();
                         functionEvaluation=(Object[]) clssSampleController.getFunctionDiagn();
                         testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                         fileContentTable1Builder.append(clssSampleController.getRowArgsRows());                
                     }else{
                         ClassInvestigationController clssInvestigationController=new ClassInvestigationController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
-                        if (clssInvestigationController.getFunctionFound()){
+                        if (Boolean.TRUE.equals(clssInvestigationController.getFunctionFound())){
                             functionRelatedObjects=clssInvestigationController.getFunctionRelatedObjects();
                             functionEvaluation=(Object[]) clssInvestigationController.getFunctionDiagn();
                             testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                             fileContentTable1Builder.append(clssInvestigationController.getRowArgsRows());                
                         }else{
-                            ClassSampleQueriesController clssSmpQueriesController=new ClassSampleQueriesController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
-                            if (clssSmpQueriesController.getFunctionFound()){
+                            ClassSampleQueriesController clssSmpQueriesController=new ClassSampleQueriesController(request, response, actionName.toString(), testingContent, iLines, table1NumArgs);
+                            if (Boolean.TRUE.equals(clssSmpQueriesController.getFunctionFound())){
                                 functionRelatedObjects=clssSmpQueriesController.getFunctionRelatedObjects();
                                 functionEvaluation=(Object[]) clssSmpQueriesController.getFunctionDiagn();
                                 testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;

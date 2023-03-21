@@ -112,19 +112,18 @@ public class LPJson {
     }
     public static Object[] convertToJsonObjectStringedObject(String value, Boolean skipAsteriskSplit){
         try{
-        JsonParser parser = new JsonParser();
         JsonObject asJsonObject=new JsonObject();
         if (Boolean.TRUE.equals(skipAsteriskSplit)){
-            asJsonObject = parser.parse(value).getAsJsonObject();
+            asJsonObject = JsonParser.parseString(value).getAsJsonObject();
             Object[] infoArr=new Object[]{LPPlatform.LAB_TRUE, asJsonObject};
             return infoArr;
         }
         String[] valueArr=value.split("\\*");
         if(valueArr.length==1)
-            asJsonObject = parser.parse(valueArr[0]).getAsJsonObject();
+            asJsonObject = JsonParser.parseString(valueArr[0]).getAsJsonObject();
         else
             // Solo cubre el escenario en el cual el json ref esta en la última posicion del valor.
-            asJsonObject = parser.parse(valueArr[valueArr.length-1]).getAsJsonObject();                    
+            asJsonObject = JsonParser.parseString(valueArr[valueArr.length-1]).getAsJsonObject();                    
         Object[] infoArr=new Object[]{LPPlatform.LAB_TRUE, asJsonObject};
         if (valueArr.length==2) infoArr=LPArray.addValueToArray1D(infoArr, valueArr[1]);        
         return infoArr;
@@ -141,8 +140,7 @@ public class LPJson {
                jArr.add(value);
                return jArr;
             }
-            JsonParser parser = new JsonParser();
-            return parser.parse(value).getAsJsonArray();
+            return JsonParser.parseString(value).getAsJsonArray();
         }catch(JsonSyntaxException e){
            
            JsonArray jArr = new JsonArray();
@@ -164,8 +162,7 @@ public class LPJson {
                jObj.addProperty("TBD", value);
                return jObj;
             }
-            JsonParser parser = new JsonParser();
-            return parser.parse(value).getAsJsonObject();
+            return JsonParser.parseString(value).getAsJsonObject();
         }catch(JsonSyntaxException e){
            JsonObject jObj = new JsonObject();
            jObj.addProperty("error", e.getMessage());

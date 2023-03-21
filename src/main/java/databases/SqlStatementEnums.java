@@ -161,7 +161,7 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
         switch (operation.toUpperCase()) {
             case "SELECT":
                 query = "select ";
-                if (forceDistinct){query=query+ " distinct ";}
+                if (Boolean.TRUE.equals(forceDistinct)){query=query+ " distinct ";}
                 query=query+ " " + fieldsToRetrieveStr + " from " + schemaName + "." + tableName + "   where " + queryWhere + " " + fieldsToGroupStr + " " + fieldsToOrderStr;
                 break;
             case "INSERT":
@@ -210,7 +210,7 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
             queryWhere=(String) whereClauseContent[0];
             whereFieldValuesNew=(Object[]) whereClauseContent[1];
         }
-        String fieldsToRetrieveStr = buildFieldsToRetrieve(tblObj, fieldsToRetrieve, avoidMask);
+        String fieldsToRetrieveStr = buildFieldsToRetrieve(tblObj, fieldsToRetrieve, avoidMask);        
         String fieldsToOrderStr = buildOrderBy(fieldsToOrder);
         String fieldsToGroupStr = buildGroupBy(fieldsToGroup);
         
@@ -221,7 +221,7 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
         switch (operation.toUpperCase()) {
             case "SELECT":
                 query = "select ";
-                if (forceDistinct){query=query+ " distinct ";}
+                if (Boolean.TRUE.equals(forceDistinct)){query=query+ " distinct ";}
                 query=query+ " " + fieldsToRetrieveStr + " from " + schemaName + "." + tableName + "   where " + queryWhere + " " + fieldsToGroupStr + " " + fieldsToOrderStr;
                 break;
             case "INSERT":
@@ -270,7 +270,7 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
         switch (operation.toUpperCase()) {
             case "SELECT":
                 query = "select ";
-                if (forceDistinct){query=query+ " distinct ";}
+                if (Boolean.TRUE.equals(forceDistinct)){query=query+ " distinct ";}
                 query=query+ " " + fieldsToRetrieveStr + " from " + schemaName + "." + tableName + "   where " + queryWhere + " " + fieldsToGroupStr + " " + fieldsToOrderStr;
                 break;
             case "INSERT":
@@ -355,9 +355,9 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
                 }
                 queryWhere.deleteCharAt(queryWhere.length() - 1);
                 queryWhere.append(")");
-            } else if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.NOT_EQUAL.getSqlClause())) {
-                queryWhere.append(caseSenstive ? fn : "lower("+fn+")").append(" ? ");
-                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, caseSenstive ? whereFieldValues[iwhereFieldNames] : whereFieldValues[iwhereFieldNames].toString().toLowerCase());
+            } else if (Boolean.TRUE.equals(fn.toUpperCase().contains(WHERECLAUSE_TYPES.NOT_EQUAL.getSqlClause()))){
+                queryWhere.append(Boolean.TRUE.equals(Boolean.TRUE.equals(caseSenstive)) ? fn : "lower("+fn+")").append(" ? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, Boolean.TRUE.equals(caseSenstive) ? whereFieldValues[iwhereFieldNames] : whereFieldValues[iwhereFieldNames].toString().toLowerCase());
             } else if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.BETWEEN.getSqlClause())) {
                 queryWhere.append(fn.toLowerCase()).append(" ? ").append(" and ").append(" ? ");
                 whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
@@ -369,8 +369,8 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
                 queryWhere.append(fn).append(" ? ");
                 whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
             } else {
-                queryWhere.append(caseSenstive ? fn : "lower("+fn+")").append("=? ");
-                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, caseSenstive ? whereFieldValues[iwhereFieldNames] : whereFieldValues[iwhereFieldNames].toString().toLowerCase());
+                queryWhere.append(Boolean.TRUE.equals(caseSenstive) ? fn : "lower("+fn+")").append("=? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, Boolean.TRUE.equals(caseSenstive) ? whereFieldValues[iwhereFieldNames] : whereFieldValues[iwhereFieldNames].toString().toLowerCase());
             }
         }
         return new Object[]{queryWhere.toString(), whereFieldValuesNew};
@@ -463,6 +463,7 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
             String fn="";      
             Boolean alreadyAdded=false;
             for (EnumIntTableFields curFld : fieldsToRetrieve) {
+            if (curFld==null)continue;
             fn=curFld.getName();
             if (curFld.getReferenceTable()!=null){ 
                 if (GlobalVariables.Schemas.CONFIG.toString().equalsIgnoreCase(curFld.getReferenceTable().getRepository())
@@ -500,7 +501,7 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
                             fieldsToRetrieveStr.append(curFld.getName().toLowerCase()).append(", ");
                         alreadyAdded=true;
                     }            
-                    if (!alreadyAdded)
+                    if (Boolean.FALSE.equals(alreadyAdded))
                         fieldsToRetrieveStr.append(curFld.getName().toLowerCase()).append(", ");
                 }
             }
@@ -634,7 +635,7 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
         
         String query = "";
         query = "select ";
-        if (forceDistinct){query=query+ " distinct ";}
+        if (Boolean.TRUE.equals(forceDistinct)){query=query+ " distinct ";}
         query=query+ " " + fieldsToRetrieveStr + " from " + schemaName + "." + viewName + "   where " + queryWhere + " " + fieldsToGroupStr + " " + fieldsToOrderStr;
         hm.put(query, whereFieldValuesNew);
         return hm;
@@ -795,9 +796,9 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
     private Object[] getSchema(String tblOrVwName, String repoName, Boolean isProcedure, String alternativeProcInstanceName){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForQueries(null, null, false);
         String schemaName=repoName;        
-        if (isProcedure && alternativeProcInstanceName==null)
+        if (Boolean.TRUE.equals(isProcedure) && alternativeProcInstanceName==null)
             schemaName=LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), schemaName);
-        if (isProcedure && alternativeProcInstanceName!=null)
+        if (Boolean.TRUE.equals(isProcedure) && alternativeProcInstanceName!=null)
             schemaName=LPPlatform.buildSchemaName(alternativeProcInstanceName, schemaName);
         String tableName=tblOrVwName;
         schemaName=addSuffixIfItIsForTesting(schemaName, tableName);           
@@ -873,7 +874,7 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
                         textSpecArray=new Object[]{curEntry.getFldValue()[0]};
                 for (Object f : textSpecArray) {
                     queryWhere.append("?,");
-                    if (valuesAreNumbers)
+                    if (Boolean.TRUE.equals(valuesAreNumbers))
                         whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, Integer.valueOf(f.toString()));
                     else
                         whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFldValuesGetCurrArrValue(textSpecs, f.toString()));
@@ -882,8 +883,8 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
                 queryWhere.append(")");
                 break;
             case LIKE:
-                queryWhere.append(caseSensitive ? fn : "lower("+fn+")").append(" like ? ");
-                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, caseSensitive ? fldV[0].toString().replace("*", "%"): fldV[0].toString().replace("*", "%").toLowerCase());                    
+                queryWhere.append(Boolean.TRUE.equals(caseSensitive) ? fn : "lower("+fn+")").append(" like ? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, Boolean.TRUE.equals(caseSensitive) ? fldV[0].toString().replace("*", "%"): fldV[0].toString().replace("*", "%").toLowerCase());                    
                 break;
             case BETWEEN:
                 queryWhere.append(fn).append(" between ? and ? ");
@@ -899,8 +900,8 @@ public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIn
                 whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, fldV[0]);
                 break;
             default:
-                queryWhere.append(caseSensitive ? fn : "lower("+fn+")").append("=? ");
-                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, caseSensitive ? fldV[0]: fldV[0].toString().toLowerCase());
+                queryWhere.append(Boolean.TRUE.equals(caseSensitive) ? fn : "lower("+fn+")").append("=? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, Boolean.TRUE.equals(caseSensitive) ? fldV[0]: fldV[0].toString().toLowerCase());
                 break;
         }
         return new Object[]{queryWhere, whereFieldValuesNew};

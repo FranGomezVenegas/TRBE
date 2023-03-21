@@ -298,7 +298,7 @@ public class SampleAPIParams extends HttpServlet {
             new LPAPIArguments[]{new LPAPIArguments("testingGroup", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),}, null),
         SAMPLES_PENDING_SAMPLE_REVISION("SAMPLES_PENDING_SAMPLE_REVISION", "",
             new LPAPIArguments[]{                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),}, null),                
-        SAMPLES_INPROGRESS_LIST2("SAMPLES_INPROGRESS_LIST", "",
+        SAMPLES_INPROGRESS_LIST("SAMPLES_INPROGRESS_LIST", "",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),

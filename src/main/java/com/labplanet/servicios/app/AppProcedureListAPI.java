@@ -86,7 +86,6 @@ public class AppProcedureListAPI extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {   
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);        
-//            Rdbms.closeRdbms(); 
             LPFrontEnd.servletReturnSuccess(request, response, procedureListInfo(request, response));
     }
     public static JSONObject procedureListInfo(HttpServletRequest request, HttpServletResponse response){
@@ -164,7 +163,6 @@ public class AppProcedureListAPI extends HttpServlet {
                     procedures.add(procedure);
                 }
             }
-            procFldNameArray = LPArray.addValueToArray1D(procFldNameArray, LABEL_PROC_SCHEMA);
             JSONObject proceduresList = new JSONObject();
             proceduresList.put(LABEL_ARRAY_PROCEDURES, procedures);
             return proceduresList;
@@ -182,10 +180,9 @@ public class AppProcedureListAPI extends HttpServlet {
                 new Object[]{procInstanceName, procInstanceName}, 
                 new String[]{TblsReqs.ProcedureFEModel.MODEL_JSON.getName(), TblsReqs.ProcedureFEModel.MODEL_JSON_MOBILE.getName()});            
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString()))return jArr;            
-            JsonParser parser = new JsonParser();
             if (sizeValue<=SIZE_WHEN_CONSIDERED_MOBILE && ruleValue[0][1]!=null && ruleValue[0][1].toString().length()>0)
-                return parser.parse(ruleValue[0][1].toString()).getAsJsonObject();
-            return parser.parse(ruleValue[0][0].toString()).getAsJsonObject();
+                return JsonParser.parseString(ruleValue[0][1].toString()).getAsJsonObject();
+            return JsonParser.parseString(ruleValue[0][0].toString()).getAsJsonObject();
         }catch(JsonSyntaxException e){
             JsonObject jArr = new JsonObject();   
             return jArr;            

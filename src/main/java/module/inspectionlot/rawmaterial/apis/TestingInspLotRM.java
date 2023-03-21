@@ -103,28 +103,28 @@ public class TestingInspLotRM extends HttpServlet {
                     new Object[]{iLines-numHeaderLines+1, LPNulls.replaceNull(testingContent[iLines][5]).toString()})); //print actionName
 
                 ClassInspLotRMController clssInspLotRMController=new ClassInspLotRMController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
-                if (clssInspLotRMController.getFunctionFound()){
+                if (Boolean.TRUE.equals(clssInspLotRMController.getFunctionFound())){
                     functionRelatedObjects=clssInspLotRMController.getFunctionRelatedObjects();
                     functionEvaluation=clssInspLotRMController.getFunctionDiagn();
                     testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                     fileContentTable1Builder.append(clssInspLotRMController.getRowArgsRows());                
                 }else{
-                    ClassInspLotRMQueriesController clssInspLotRMQueriesController=new ClassInspLotRMQueriesController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
-                    if (clssInspLotRMQueriesController.getFunctionFound()){
+                    ClassInspLotRMQueriesController clssInspLotRMQueriesController=new ClassInspLotRMQueriesController(request, response, actionName.toString(), testingContent, iLines, table1NumArgs);
+                    if (Boolean.TRUE.equals(clssInspLotRMQueriesController.getFunctionFound())){
                         functionRelatedObjects=clssInspLotRMQueriesController.getFunctionRelatedObjects();
                         functionEvaluation=(Object[]) clssInspLotRMQueriesController.getFunctionDiagn();
                         testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                         fileContentTable1Builder.append(clssInspLotRMQueriesController.getRowArgsRows());                
                     }else{                    
                         ClassSampleController clssSampleController=new ClassSampleController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
-                        if (clssSampleController.getFunctionFound()){
+                        if (Boolean.TRUE.equals(clssSampleController.getFunctionFound())){
                             functionRelatedObjects=clssSampleController.getFunctionRelatedObjects();
                             functionEvaluation=(Object[]) clssSampleController.getFunctionDiagn();
                             testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                             fileContentTable1Builder.append(clssSampleController.getRowArgsRows());                
                         }else{
-                            ClassSampleQueriesController clssSampleQueriesController=new ClassSampleQueriesController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
-                            if (clssSampleQueriesController.getFunctionFound()){
+                            ClassSampleQueriesController clssSampleQueriesController=new ClassSampleQueriesController(request, response, actionName.toString(), testingContent, iLines, table1NumArgs);
+                            if (Boolean.TRUE.equals(clssSampleQueriesController.getFunctionFound())){
                                 functionRelatedObjects=clssSampleQueriesController.getFunctionRelatedObjects();
                                 functionEvaluation=(Object[]) clssSampleQueriesController.getFunctionDiagn();
                                 testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;

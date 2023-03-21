@@ -329,12 +329,10 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
             ProcBusinessRulesQueries.CHANGE_OF_CUSTODY.toString(), ProcBusinessRulesQueries.SAMPLE_STAGES_TIMING_CAPTURE.toString(),
             ProcBusinessRulesQueries.SAMPLE_INCUBATION.toString(),ProcBusinessRulesQueries.PROCEDURE_ALL_PROC_USERS_ROLES.toString(),
             ProcBusinessRulesQueries.PROCEDURE_SAMPLE_STAGES.toString(),ProcBusinessRulesQueries.PROCEDURE_ENCRYPTION_TABLES_AND_FIELDS.toString()};
-        //for (String currSection: sectionsArr)
-        //    mainArr.add(getProcBusinessRulesQueriesInfo(procInstanceName, currSection));
         jMainObj.put("procedure_info", ClassReqProcedureQueries.dbSingleRowToJsonObj(procInstanceName, TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName(), 
             getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableFields()), new String[]{TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procInstanceName}));
 
-        jMainObj.put("business_rules", ClassReqProcedureQueries.dbRowsGroupedToJsonArr(procInstanceName, TblsReqs.TablesReqs.PROC_BUS_RULES.getTableName(), 
+        jMainObj.put("business_rules", ClassReqProcedureQueries.dbRowsGroupedToJsonArr(TblsReqs.TablesReqs.PROC_BUS_RULES.getTableName(), 
             new String[]{TblsReqs.ProcedureBusinessRules.CATEGORY.getName(), 
                 TblsReqs.ProcedureBusinessRules.RULE_NAME.getName(), TblsReqs.ProcedureBusinessRules.RULE_VALUE.getName(),
                 TblsReqs.ProcedureBusinessRules.EXPLANATION.getName(), TblsReqs.ProcedureBusinessRules.VALUES_ALLOWED.getName()},
@@ -348,7 +346,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
             getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableFields()), new String[]{TblsReqs.ProcedureSopMetaData.PROC_INSTANCE_NAME.getName()}, new Object[]{procInstanceName},
             new String[]{TblsReqs.ProcedureSopMetaData.SOP_NAME.getName()}, null));
 
-        jMainObj.put("tables", ClassReqProcedureQueries.dbRowsGroupedToJsonArr(procInstanceName, TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableName(), 
+        jMainObj.put("tables", ClassReqProcedureQueries.dbRowsGroupedToJsonArr(TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableName(), 
             new String[]{TblsReqs.ProcedureModuleTables.SCHEMA_NAME.getName(), TblsReqs.ProcedureModuleTables.TABLE_NAME.getName()}, 
             new String[]{TblsReqs.ProcedureModuleTables.PROC_INSTANCE_NAME.getName()}, new Object[]{procInstanceName},
             new String[]{TblsReqs.ProcedureModuleTables.SCHEMA_NAME.getName()}));

@@ -48,10 +48,6 @@ public class InvTrackingFrontendMasterData implements FrontendMasterData{
                     new String[]{TblsInvTrackingConfig.Reference.NAME.getName()}, alternativeProcInstanceName);
                 JSONArray jArrLvl2 = new JSONArray();
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(catReferencesInfo[0][0].toString())){
-                    //Object[] childJObj=new Object[]{null, null, "No child", "", "", "", null, "", "", null, null};
-                    //for (int iChild=childJObj.length;iChild<fieldsToRetrieve.length;iChild++)
-                    //    childJObj=LPArray.addValueToArray1D(childJObj, "");                            
-                    //JSONObject jObjLvl2=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, childJObj); 
                     JSONObject jObjLvl2=new JSONObject();
                     jArrLvl2.add(jObjLvl2);
                 }else{
