@@ -437,6 +437,9 @@ public class GlobalAPIsParams extends HttpServlet {
 public static final String LBL_REPOSITORY = "repository"; 
     public static final String LBL_RPT_INFO="report_information";
     public static final String LBL_VALUES="values";
+    public static final String LBL_PREFIX_INCUB1="incub1_";
+    public static final String LBL_PREFIX_INCUB2="incub2_";
+    public static final String LBL_PREFIX_ALLPENDINGANYINCUB="allpendinganyincub_";
     /**
      *
      */
