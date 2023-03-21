@@ -62,10 +62,9 @@ public class CertifyQueries {
         JSONArray jGlobalArr=new JSONArray();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();  
         for (CertifObjects curCertifObj: CertifObjects.values()){                        
-            Boolean tagValueOneOfEnableOnes = false;
             String tagValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName().toLowerCase(), curCertifObj.getPropertyName());
-            tagValueOneOfEnableOnes = Parameter.isTagValueOneOfEnableOnes(tagValue);
-            if (!includeOnlyEnabled || tagValueOneOfEnableOnes){
+            Boolean tagValueOneOfEnableOnes = Parameter.isTagValueOneOfEnableOnes(tagValue);
+            if (Boolean.FALSE.equals(includeOnlyEnabled) || Boolean.TRUE.equals(tagValueOneOfEnableOnes)){
                 JSONObject jObj=new JSONObject();
                 jObj.put("table", curCertifObj.getTable().getTableName());
                 jObj.put("business_rule_to_enable_id", curCertifObj.getPropertyName());
@@ -76,21 +75,22 @@ public class CertifyQueries {
         return jGlobalArr;
     }
     
-    public static JSONArray CertificationsInProgress(String areasToInclude, Boolean includeAuditHistory){
+    public static JSONArray certificationsInProgress(String areasToInclude, Boolean includeAuditHistory){
         String[] fldsName=new String[]{TblsData.CertifUserAnalysisMethod.LIGHT.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_STARTED.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_COMPLETED.getName()};
         Object[] fldsValue=new Object[]{CertifGlobalVariables.CertifLight.RED.toString(), true, false};
-        return CertificationsHistory(areasToInclude, fldsName, fldsValue, includeAuditHistory);
+        return certificationsHistory(areasToInclude, fldsName, fldsValue, includeAuditHistory);
     }
     
-    public static JSONArray CertificationsHistory(String areasToInclude, String[] fldsName, Object[] fldsValue, Boolean includeAuditHistory){
+    public static JSONArray certificationsHistory(String areasToInclude, String[] fldsName, Object[] fldsValue, Boolean includeAuditHistory){
         JSONArray jGlobalArr=new JSONArray();
         String[] areasToIncludeArr=areasToInclude.split("\\|");
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();  
         for (CertifObjects curCertifObj: CertifObjects.values()){
             String[] fieldsToGet=curCertifObj.getFieldsToGet();
             if (includeAuditHistory!=null && includeAuditHistory){
-                if (!LPArray.valueInArray(fieldsToGet, TblsData.CertifUserAnalysisMethod.ID.getName()))
+                if (Boolean.FALSE.equals(LPArray.valueInArray(fieldsToGet, TblsData.CertifUserAnalysisMethod.ID.getName()))){
                     fieldsToGet=LPArray.addValueToArray1D(fieldsToGet, TblsData.CertifUserAnalysisMethod.ID.getName());
+                }    
             }
             if ("ALL".equalsIgnoreCase(areasToInclude) || LPArray.valueInArray(areasToIncludeArr, curCertifObj.toString())){
                 String tagValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, 

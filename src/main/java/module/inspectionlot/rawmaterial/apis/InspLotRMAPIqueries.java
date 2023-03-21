@@ -25,9 +25,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import module.inspectionlot.rawmaterial.definition.ClassInspLotRMQueriesController;
-import module.inspectionlot.rawmaterial.definition.InspLotRMEnums;
 import trazit.enums.EnumIntEndpoints;
-import trazit.enums.EnumIntQueriesEndpoints;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables.ApiUrls;
 /**
@@ -83,21 +81,15 @@ public class InspLotRMAPIqueries extends HttpServlet {
         String language = LPFrontEnd.setLanguage(request); 
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false);
         try (PrintWriter out = response.getWriter()) {
-            //EnumIntQueries[] endPoints=new EnumIntQueries[]{ClassInspLotRMQueriesController, ClassSampleQueriesController};
-            String procInstanceName = procReqInstance.getProcedureInstance();
             String actionName=procReqInstance.getActionName();           
-            EnumIntQueriesEndpoints endpoint=null;
-            InspLotRMEnums.InspLotRMQueriesAPIEndpoints endPoint = null;
             ClassInspLotRMQueriesController clssInspLotRMQueries=new ClassInspLotRMQueriesController(request, response, actionName.toUpperCase(), null, null, null);
             if (Boolean.FALSE.equals(clssInspLotRMQueries.getFunctionFound())){
-                ClassSampleQueriesController clssInspLotRMQueriesController=new ClassSampleQueriesController(request, response, actionName.toString(), null, null, null);
-                if (Boolean.FALSE.equals(clssInspLotRMQueriesController.getFunctionFound()))
+                ClassSampleQueriesController clssInspLotRMQueriesController=new ClassSampleQueriesController(request, response, actionName, null, null, null);
+                if (Boolean.FALSE.equals(clssInspLotRMQueriesController.getFunctionFound())){
                     procReqInstance.killIt();
-                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
+                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());                    
+                }
             }
-            
-            if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response)))return;
-
     }catch(Exception e){      
         String exceptionMessage =e.getMessage();
         if (exceptionMessage==null){exceptionMessage="null exception";}
