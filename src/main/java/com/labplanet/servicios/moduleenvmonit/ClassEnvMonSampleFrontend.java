@@ -419,7 +419,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                         whereFieldsNameArr=LPArray.addValueToArray1D(whereFieldsNameArr, whereFieldsName.split("\\|"));
                         whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(whereFieldsValue.split("\\|")));                                          
                         for (int iFields=0; iFields<whereFieldsNameArr.length; iFields++){
-                            if (LPPlatform.isEncryptedField(procInstanceName, GlobalVariables.Schemas.DATA.getName(), TblsData.TablesData.SAMPLE.getTableName(), whereFieldsNameArr[iFields])){                
+                            if (Boolean.TRUE.equals(LPPlatform.isEncryptedField(procInstanceName, GlobalVariables.Schemas.DATA.getName(), TblsData.TablesData.SAMPLE.getTableName(), whereFieldsNameArr[iFields]))){
                                 HashMap<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsValueArr[iFields].toString());
                                 whereFieldsNameArr[iFields]= hm.keySet().iterator().next();    
                                 if ( hm.get(whereFieldsNameArr[iFields]).length()!=whereFieldsNameArr[iFields].length()){
@@ -526,7 +526,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                     DataSampleStages smpStage= new DataSampleStages();
                     String[] sampleStageTimingCaptureAllFlds=getAllFieldNames(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE.getTableFields());
                     
-                    if (smpStage.isSampleStagesEnable()){
+                    if (Boolean.TRUE.equals(smpStage.isSampleStagesEnable())){
                         Object[][] sampleStageInfo=QueryUtilitiesEnums.getTableData(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE, 
                             EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE, sampleStageTimingCaptureAllFlds),
                             new String[]{TblsProcedure.SampleStageTimingCapture.SAMPLE_ID.getName()}, new Object[]{sampleId}, 
@@ -1067,7 +1067,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                     else
                         whereFieldsValueArr=new Object[]{true};
                     for (int iFields=0; iFields<whereFieldsNameArr.length; iFields++){
-                        if (LPPlatform.isEncryptedField(procInstanceName, GlobalVariables.Schemas.DATA.getName(), TblsData.TablesData.SAMPLE.getTableName(), whereFieldsNameArr[iFields])){                
+                        if (Boolean.TRUE.equals(LPPlatform.isEncryptedField(procInstanceName, GlobalVariables.Schemas.DATA.getName(), TblsData.TablesData.SAMPLE.getTableName(), whereFieldsNameArr[iFields]))){
                             HashMap<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsNameArr[iFields]);
                             whereFieldsNameArr[iFields]= hm.keySet().iterator().next();    
                             if ( hm.get(whereFieldsNameArr[iFields]).length()!=whereFieldsNameArr[iFields].length()){
@@ -1110,7 +1110,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                     jObj.put("samples_stillIncubationStageAndBothIncubCompleted", jArr);
                     
                     String includSplittedByIncubNumber=LPNulls.replaceNull(argValues[0]).toString();
-                    if (Boolean.valueOf(includSplittedByIncubNumber)){
+                    if (Boolean.TRUE.equals(Boolean.valueOf(includSplittedByIncubNumber))){
                         int j=5;
                         for (int i=1;i<3;i++){
                             whereFieldsName=argValues[j].toString();j++;
@@ -1149,7 +1149,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                         } 
                     }
                     String includeAllWithAnyPendingIncubation=LPNulls.replaceNull(argValues[1]).toString();
-                    if (Boolean.valueOf(includeAllWithAnyPendingIncubation)){
+                    if (Boolean.TRUE.equals(Boolean.valueOf(includeAllWithAnyPendingIncubation))){
                         int j=33;
                         whereFieldsName=argValues[j].toString();j++;
                         whereFieldsValue=argValues[j].toString();j++;
@@ -1186,7 +1186,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
                             if (incub1Passed>-1){
                                 String currPendingIncubBatch="";
                                 String incub1PassedStr=LPNulls.replaceNull(curSmp[incub1Passed]).toString();
-                                if (Boolean.valueOf(incub1PassedStr)){
+                                if (Boolean.TRUE.equals(Boolean.valueOf(incub1PassedStr))){
                                     incubRow.put("pending_incub", 2);
                                 }else{
                                     incubRow.put("pending_incub", 1);
@@ -1316,7 +1316,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
         whereFieldsNameArr=LPArray.addValueToArray1D(whereFieldsNameArr, whereFieldsName.split("\\|"));
         whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(whereFieldsValue.split("\\|")));                                          
         for (int iFields=0; iFields<whereFieldsNameArr.length; iFields++){
-            if (LPPlatform.isEncryptedField(procInstanceName, GlobalVariables.Schemas.DATA.getName(), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), whereFieldsNameArr[iFields])){                
+            if (Boolean.TRUE.equals(LPPlatform.isEncryptedField(procInstanceName, GlobalVariables.Schemas.DATA.getName(), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), whereFieldsNameArr[iFields]))){
                 HashMap<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsValueArr[iFields].toString());
                 whereFieldsNameArr[iFields]= hm.keySet().iterator().next();    
                 if ( hm.get(whereFieldsNameArr[iFields]).length()!=whereFieldsNameArr[iFields].length()){
