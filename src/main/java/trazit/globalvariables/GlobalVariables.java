@@ -138,5 +138,4 @@ public enum ApiUrls{
         public String getUrl() {return url;}     
         private final String url;    
     }    
-    //@Override        public String getApiUrl(){return ApiUrls.INSTRUMENTS_QUERIES.getUrl();}
 }
