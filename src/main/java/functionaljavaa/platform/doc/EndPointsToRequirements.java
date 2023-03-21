@@ -78,13 +78,6 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
                     audEvObjStr=getMine.getSimpleName();
                     if ("ReqProcedureDefinitionAPIQueriesEndpoints".equalsIgnoreCase(audEvObjStr))
                         iStr="1";
-/*                    if ("GenomaVariableAPIactionsEndpoints".equalsIgnoreCase(audEvObjStr) ||
-                        "GenomaVariableAPIqueriesEndpoints".equalsIgnoreCase(audEvObjStr) ||
-                        i==34 || i==35 || i==36 || i==37|| i==38|| i==39|| i==40|| i==230
-                        || i==43    ){                        
-                            iStr="1";
-                    }else{
-*/                    
                         List<Object> enumConstantObjects = getMine.getEnumConstantObjects();
                         JSONArray enumsIncomplete = new JSONArray();
                         totalEndpointsVisitedInt=totalEndpointsVisitedInt+enumConstantObjects.size();
@@ -93,8 +86,8 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
                                 iStr="2";
                             EnumIntEndpoints curEndpoint = (EnumIntEndpoints) enumConstantObjects.get(j);                        
                             evName=curEndpoint.getName();
-                            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.API_NAME.getName(),  EndpointsDeclaration.ENDPOINT_NAME.getName()});//,  EndpointsDeclaration.SUCCESS_MESSAGE_CODE.getName()});
-                            Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curEndpoint.getClass().getSimpleName(), curEndpoint.getName()}); //, curEndpoint.getSuccessMessageCode()});
+                            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.API_NAME.getName(),  EndpointsDeclaration.ENDPOINT_NAME.getName()});
+                            Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curEndpoint.getClass().getSimpleName(), curEndpoint.getName()}); 
                             fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.ARGUMENTS_ARRAY.getName()});
                             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curEndpoint.getArguments())});                
                             Integer numEndpointArguments=curEndpoint.getArguments().length;
@@ -103,8 +96,8 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
                             }else{
                                 endpointsNotFound.add(curEndpoint.getClass().getSimpleName()+"-"+curEndpoint.getName());
                             }
-                            if (!summaryOnlyMode){
-                                AddCodeInErrorTrapping(curEndpoint.getClass().getSimpleName(), curEndpoint.getSuccessMessageCode(), "");
+                            if (Boolean.FALSE.equals(summaryOnlyMode)){
+                                addCodeInErrorTrapping(curEndpoint.getClass().getSimpleName(), curEndpoint.getSuccessMessageCode(), "");
                                 try{
                                     declareInDatabase(curEndpoint.getClass().getSimpleName(), curEndpoint.getName(), 
                                             fieldNames, fieldValues, curEndpoint.getOutputObjectTypes(), enumConstantObjects.size(), numEndpointArguments, curEndpoint.getApiUrl());
@@ -133,11 +126,9 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
                 ScanResult.closeAll();
                 JSONArray errorJArr = new JSONArray();
                 errorJArr.add("index:"+totalEndpointsVisitedInjection+audEvObjStr+"_"+evName+":"+e.getMessage());
-//                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, audEvObjStr+"_"+evName+":"+e.getMessage());
                 LPFrontEnd.servletReturnSuccess(request, response, errorJArr);
                 return;
             }
-        // Rdbms.closeRdbms();
         ScanResult.closeAll();        
         JSONObject jMainObj=new JSONObject();
         String summaryDiagnoses="";
@@ -182,9 +173,6 @@ private static JSONArray getEndPointArguments(LPAPIArguments[] arguments){
     }
     return argsJsonArr;
 }
-//private static void declareInDatabase(String apiName, String endpointName, String[] fieldNames, Object[] fieldValues){
-//     declareInDatabase(apiName, endpointName, fieldNames, fieldValues, null);
-//}
 
 private void getEndPointsFromDatabase(){
     this.fldNames=EnumIntTableFields.getAllFieldNames(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION.getTableFields());
@@ -206,7 +194,6 @@ private JSONArray endpointsInDatabaseNoLongerInUse(JSONArray endpointsFound){
     for (String curEntry: this.endpointsApiAndEndpointNamesKey){
         if (endpointsFound.indexOf(curEntry)==-1)
             jArr.add(curEntry);
-    //curEndpoint.getClass().getSimpleName()+"-"+curEndpoint.getName()
     }
     return jArr;
 }
@@ -218,12 +205,8 @@ private Object[] existsEndPointInDatabase(String apiName, String endpointName){
     return this.endpointsFromDatabase[valuePosicInArray];    
 }
 public void declareInDatabase(String apiName, String endpointName, String[] fieldNames, Object[] fieldValues, JsonArray outputObjectTypes, Integer numEndpointsInApi, Integer numEndpointArguments, String apiUrl){
-//if ("InspLotRMQueriesAPIEndpoints".equalsIgnoreCase(apiName) && "GET_LOT_INFO".equalsIgnoreCase(endpointName))
-//    apiName=apiName;
-//    Rdbms.getRecordFieldsByFilter(apiName, apiName, fieldNames, fieldValues, fieldNames)
     try{
     Object[] reqEndpointInfo=existsEndPointInDatabase(apiName, endpointName);
-//    Object[] docInfoForEndPoint = getDocInfoForEndPoint(apiName, endpointName);
     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(reqEndpointInfo[0].toString())){
         String newArgumentsArray=fieldValues[LPArray.valuePosicInArray(fieldNames, EndpointsDeclaration.ARGUMENTS_ARRAY.getName())].toString();
         
@@ -240,17 +223,12 @@ public void declareInDatabase(String apiName, String endpointName, String[] fiel
                 fldValues=LPArray.addValueToArray1D(fldValues, outputObjectTypes.toString());   
             fldNames=LPArray.addValueToArray1D(fldNames, EndpointsDeclaration.API_URL.getName());
             fldValues=LPArray.addValueToArray1D(fldValues, apiUrl);   
-            Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION, 
+            Rdbms.updateRecordFieldsByFilter(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION, 
                     EnumIntTableFields.getTableFieldsFromString(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION,
                         fldNames), fldValues, sqlWhere, null);
         }else{
-            //String[] flds=(String[]) docInfoForEndPoint[0];
             String[] fldNames=new String[]{};
             Object[] fldValues=new Object[]{};
-/*            if (flds.length>0){
-                fldNames=(String[]) docInfoForEndPoint[0];
-                fldValues=(Object[]) docInfoForEndPoint[1];
-            }*/
             fldNames=LPArray.addValueToArray1D(fldNames, EndpointsDeclaration.OUTPUT_OBJECT_TYPES.getName());
             if (outputObjectTypes==null&&"ACTION".equalsIgnoreCase(apiName)) fldValues=LPArray.addValueToArray1D(fldValues, "TBD-To be defined");
             else if (outputObjectTypes==null&&!"ACTION".equalsIgnoreCase(apiName)) fldValues=LPArray.addValueToArray1D(fldValues, "Not Applies for queries");
@@ -272,8 +250,6 @@ public void declareInDatabase(String apiName, String endpointName, String[] fiel
     }else{
         fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.CREATION_DATE.getName(), EndpointsDeclaration.NUM_ENDPOINTS_IN_API.getName()});
         fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{LPDate.getCurrentTimeStamp(), numEndpointsInApi});
-        //fieldNames=LPArray.addValueToArray1D(fieldNames, (String[]) docInfoForEndPoint[0]);
-        //fieldValues=LPArray.addValueToArray1D(fieldValues, (Object[]) docInfoForEndPoint[1]);
         fieldNames=LPArray.addValueToArray1D(fieldNames, EndpointsDeclaration.OUTPUT_OBJECT_TYPES.getName());
         
         if (outputObjectTypes==null) fieldValues=LPArray.addValueToArray1D(fieldValues, "TBD");
@@ -321,7 +297,7 @@ if ("RESULT_CHANGE_UOM".equalsIgnoreCase(endpointName))
         parm=null;
     }
 }
-public void AddCodeInErrorTrapping(String filePrefix, String entryName, String entryValue){
+public void addCodeInErrorTrapping(String filePrefix, String entryName, String entryValue){
     if (LPNulls.replaceNull(entryName).length()==0) return;
     Parameter parm=new Parameter();
     String propFileName=Parameter.PropertyFilesType.ERROR_TRAPING.toString();

@@ -1,7 +1,6 @@
 let sampleStageSamplingNextChecker = function(sampleId, sampleData) {
     let sampleStructure=JSON.parse(sampleData);
     let samplingDate = sampleStructure.sampling_date;
-//	let testId=sampleStructure.sample_analysis[0].analysis	
     if (samplingDate===null){
         return " Fecha de muestreo es obligatoria para la muestra "+sampleId;}
     return "LABPLANET_TRUE";
@@ -30,17 +29,14 @@ let sampleStageIncubationNextChecker = function(sampleId, sampleData) {
 };
 
 let sampleStagePlateReadingPreviousChecker = function(sampleId, sampleData) {
-    // val = val * 2;
     return "LABPLANET_TRUE";
 };
 
 let sampleStagePlateReadingNextChecker = function(sampleId, sampleData) {
-    // val = val * 2;
     return "LABPLANET_TRUE";
 };
 
 let sampleStageMicroorganismIdentificationNextChecker = function(sampleId, sampleData) {
-    // val = val * 2;
     return "LABPLANET_TRUE";
 };
 

@@ -6,7 +6,9 @@
 package trazit.enums;
 
 import databases.Rdbms;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Objects;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
@@ -97,7 +99,10 @@ public interface EnumIntTableFields {
                 custFlds[iFld]=tableFields[valuePosicInArray];  
             iFld++;
         }
-        return custFlds;
+        return Arrays.stream(custFlds)
+                     .filter(Objects::nonNull)
+                     .toArray(EnumIntTableFields[]::new);        
+        //return custFlds;
     }
     public static Integer getFldPosicInArray(EnumIntTableFields[] tblFlds, String fldName){
         for (int i=0;i<tblFlds.length;i++){

@@ -52,9 +52,7 @@ public class ClassSampleQueriesController implements EnumIntQueriesEndpoints{
             if (clss.getIsSuccess())
                 this.functionDiagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "queriesHaveNoMsgCode", null);
             else
-                this.functionDiagn=clss.getDiagnostic(); //LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "queriesHaveNoMsgCode", null);
-            
-             //LPFrontEnd.servletReturnSuccess(request, response, clss.getResponseSuccessJArr()); 
+                this.functionDiagn=clss.getDiagnostic();
         } catch (Exception ex) {            
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
         }

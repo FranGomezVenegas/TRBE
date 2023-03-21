@@ -1677,7 +1677,7 @@ if (1==1){Rdbms.transactionId=1; return;}
      */
     public Connection createTransactionNoTransaction(){
         try {
-            if (this.transactionMode)
+            if (Rdbms.transactionMode)
                 conn.setAutoCommit(false);
             else
                 conn.setAutoCommit(true);
