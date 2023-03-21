@@ -188,6 +188,7 @@ public class InvestigationAPIfrontend extends HttpServlet {
                     Rdbms.closeRdbms();  
                     instanceForQueries.killIt();
                     LPFrontEnd.servletReturnSuccess(request, response, investigationJArr);
+                    break;
             default: 
             }
         }catch(Exception e){      

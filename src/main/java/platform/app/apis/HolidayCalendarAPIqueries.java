@@ -111,6 +111,7 @@ public class HolidayCalendarAPIqueries extends HttpServlet {
                         }
                     }
                     LPFrontEnd.servletReturnSuccess(request, response, jCalendarsArr);
+                    return;
                 default: 
             }
         }catch(Exception e){   

@@ -311,6 +311,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 jArr=instrumentFamiliesList(null);
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                return;
             default: 
             }
         }finally {

@@ -486,6 +486,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                 }
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                return;
             default: 
             }
         }finally {
