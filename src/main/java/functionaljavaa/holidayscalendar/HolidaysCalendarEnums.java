@@ -13,15 +13,12 @@ import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NEW_DAT
 import databases.TblsApp;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
-import java.util.ArrayList;
 import java.util.HashMap;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
-import org.json.simple.JSONArray;
-import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;
@@ -141,36 +138,6 @@ public class HolidaysCalendarEnums {
         }        
         private final String requestName;
     }    
-    public enum CalendarBusinessRules  implements EnumIntBusinessRules{
-        xSTART_MULTIPLE_BATCH_IN_PARALLEL("incubationBatch_startMultipleInParallelPerIncubator", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
-        xSTART_FOR_LOCKED_INCUBATOR_MODE("incubationBatch_startForLockedIncubatorMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null)
-        ;
-        private CalendarBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator
-        , Boolean isOpt, ArrayList<String[]> preReqs){
-            this.tagName=tgName;
-            this.areaName=areaNm;
-            this.valuesList=valuesList;  
-            this.allowMultiValue=allowMulti;
-            this.multiValueSeparator=separator;
-            this.isOptional=isOpt;
-            this.preReqs=preReqs;
-        }       
-        @Override        public String getTagName(){return this.tagName;}
-        @Override        public String getAreaName(){return this.areaName;}
-        @Override        public JSONArray getValuesList(){return this.valuesList;}
-        @Override        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
-        @Override        public char getMultiValueSeparator(){return this.multiValueSeparator;}
-        @Override        public Boolean getIsOptional() {return isOptional;}
-        @Override        public ArrayList<String[]> getPreReqs() {return this.preReqs;}
-        
-        private final String tagName;
-        private final String areaName;
-        private final JSONArray valuesList;  
-        private final Boolean allowMultiValue;
-        private final char multiValueSeparator;        
-        private final Boolean isOptional;
-        private final ArrayList<String[]> preReqs;
-    }  
     public enum CalendarErrorTrapping implements EnumIntMessages{         
         CALENDAR_NOT_EXISTS("calendar_calendarNotExists", "", ""),
         CALENDAR_ALREADY_EXISTS("calendar_calendarAlreadyExists", "", ""),
@@ -182,9 +149,9 @@ public class HolidaysCalendarEnums {
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;

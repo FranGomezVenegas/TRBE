@@ -68,7 +68,7 @@ public class TestingResultCheckSpecQualitative extends HttpServlet {
         }     
         private final String name;
         private final String successMessageCode;       
-        private  LPAPIArguments[] arguments;
+        private final  LPAPIArguments[] arguments;
     }    
 
     /**
