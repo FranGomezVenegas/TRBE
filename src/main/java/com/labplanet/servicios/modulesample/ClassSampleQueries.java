@@ -365,7 +365,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj{
                 }                                
                 sampleAnalysisResultWhereFieldsValue = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE); 
                 includeOnlyWhenResultsInProgress = false;
-                if (argValues.length>14) Boolean.valueOf(LPNulls.replaceNull(argValues[14]).toString());
+                if (argValues.length>14) includeOnlyWhenResultsInProgress=Boolean.valueOf(LPNulls.replaceNull(argValues[14]).toString());
 
                 sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME);  
                 samplesArray = samplesByStageData(sampleLastLevel, sampleFieldToRetrieveArr, whereFieldsName, 
@@ -375,7 +375,6 @@ public class ClassSampleQueries implements EnumIntQueriesObj{
                         sampleAnalysisResultFieldToRetrieveArr, sampleAnalysisResultWhereFieldsName, sampleAnalysisResultWhereFieldsValue,
                         includeOnlyWhenResultsInProgress);
                 this.isSuccess=true;
-//                    Rdbms.closeRdbms();  
                     this.responseSuccessJArr=samplesArray; 
                     //LPFrontEnd.servletReturnSuccess(request, response, samplesArray);                
                     return;                
