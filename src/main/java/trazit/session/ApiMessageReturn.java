@@ -33,6 +33,8 @@ public class ApiMessageReturn {
     public static final String CONFIG_OTRONOMBRE_FILE_NAME = "-otronombre";
     private static final int CLIENT_CODE_STACK_INDEX;
     
+    private static final String javaExtension=".java";
+    
     static{
         int i = 0;
         for (StackTraceElement ste : Thread.currentThread().getStackTrace()){
@@ -52,7 +54,7 @@ public class ApiMessageReturn {
         String classFullName = Thread.currentThread().getStackTrace()[length-1].getClassName();
         String methodName = Thread.currentThread().getStackTrace()[length-1].getMethodName();
         Integer lineNumber = Thread.currentThread().getStackTrace()[length-1].getLineNumber();
-        className = endpoint.getClass().getSimpleName(); //className.replace(".java", "");
+        className = endpoint.getClass().getSimpleName(); //className.replace(javaExtension, "");
         Object[] callerInfo = new Object[]{className, classFullName, methodName, lineNumber};
         
         return trapMessage(evaluation, endpoint.getSuccessMessageCode(), msgVariables, null, callerInfo, false);
@@ -66,7 +68,7 @@ public class ApiMessageReturn {
         String classFullName = Thread.currentThread().getStackTrace()[length-1].getClassName();
         String methodName = Thread.currentThread().getStackTrace()[length-1].getMethodName();
         Integer lineNumber = Thread.currentThread().getStackTrace()[length-1].getLineNumber();
-        className = endpoint.getClass().getSimpleName(); //className.replace(".java", "");
+        className = endpoint.getClass().getSimpleName(); //className.replace(javaExtension, "");
         Object[] callerInfo = new Object[]{className, classFullName, methodName, lineNumber};
         
         return trapMessage(evaluation, endpoint.getErrorCode(), msgVariables, language, callerInfo, false);
@@ -80,7 +82,7 @@ public class ApiMessageReturn {
         String classFullName = Thread.currentThread().getStackTrace()[length-1].getClassName();
         String methodName = Thread.currentThread().getStackTrace()[length-1].getMethodName();
         Integer lineNumber = Thread.currentThread().getStackTrace()[length-1].getLineNumber();
-        className = endpoint.getClass().getSimpleName(); //className.replace(".java", "");
+        className = endpoint.getClass().getSimpleName(); //className.replace(javaExtension, "");
         Object[] callerInfo = new Object[]{className, classFullName, methodName, lineNumber};
         
         return trapMessage(evaluation, endpoint.getErrorCode(), msgVariables, null, callerInfo, false);
@@ -96,7 +98,7 @@ public class ApiMessageReturn {
         String classFullName = Thread.currentThread().getStackTrace()[length-1].getClassName();
         String methodName = Thread.currentThread().getStackTrace()[length-1].getMethodName();
         Integer lineNumber = Thread.currentThread().getStackTrace()[length-1].getLineNumber();
-        className = className.replace(".java", "");
+        className = className.replace(javaExtension, "");
         Object[] callerInfo = new Object[]{className, classFullName, methodName, lineNumber};
         return trapMessage(evaluation, msgCode, msgVariables, null, callerInfo, false);
     }
@@ -110,7 +112,7 @@ public class ApiMessageReturn {
         String classFullName = Thread.currentThread().getStackTrace()[length-1].getClassName();
         String methodName = Thread.currentThread().getStackTrace()[length-1].getMethodName();
         Integer lineNumber = Thread.currentThread().getStackTrace()[length-1].getLineNumber();
-        className = className.replace(".java", "");
+        className = className.replace(javaExtension, "");
         Object[] callerInfo = new Object[]{className, classFullName, methodName, lineNumber};
         return trapMessage(evaluation, msgCode, msgVariables, null, callerInfo, isOptional);
     }
@@ -130,7 +132,7 @@ public class ApiMessageReturn {
         String classFullName = Thread.currentThread().getStackTrace()[length-1].getClassName();
         String methodName = Thread.currentThread().getStackTrace()[length-1].getMethodName();
         Integer lineNumber = Thread.currentThread().getStackTrace()[length-1].getLineNumber();
-        className = className.replace(".java", "");
+        className = className.replace(javaExtension, "");
         Object[] callerInfo = new Object[]{className, classFullName, methodName, lineNumber};
         return trapMessage(evaluation, msgCode, msgVariables, language, callerInfo, false);
     }
@@ -141,7 +143,7 @@ public class ApiMessageReturn {
             String classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName();
             String methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName();
             Integer lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber();
-            className = className.replace(".java", "");
+            className = className.replace(javaExtension, "");
             callerInfo = new Object[]{className, classFullName, methodName, lineNumber};
         }
         String errorDetail = "";

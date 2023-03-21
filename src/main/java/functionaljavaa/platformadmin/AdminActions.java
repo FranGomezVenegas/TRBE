@@ -27,6 +27,7 @@ import trazit.session.ResponseMessages;
  * @author User
  */
 public class AdminActions {
+    static String InsertStatement = "INSERT";
     public static InternalMessage addBlackIp(String val1, String val2, String val3, String val4, String description){   
         String[] fldNames=new String[]{TblsApp.IPWhiteList.IP_VALUE1.getName()};
         Object[] fldValues=new Object[]{val1};
@@ -48,7 +49,7 @@ public class AdminActions {
             extraFldNames=LPArray.addValueToArray1D(extraFldNames, TblsApp.IPWhiteList.DESCRIPTION.getName());
             extraFldValues=LPArray.addValueToArray1D(extraFldValues, description);
         }        
-        return ipActions(TblsApp.TablesApp.IP_BLACK_LIST, "INSERT", null, fldNames, fldValues, extraFldNames, extraFldValues);
+        return ipActions(TblsApp.TablesApp.IP_BLACK_LIST, InsertStatement, null, fldNames, fldValues, extraFldNames, extraFldValues);
     }
     public static InternalMessage addWhiteIp(String val1, String val2, String val3, String val4, String description){   
         String[] fldNames=new String[]{TblsApp.IPWhiteList.IP_VALUE1.getName()};
@@ -71,7 +72,7 @@ public class AdminActions {
             extraFldNames=LPArray.addValueToArray1D(extraFldNames, TblsApp.IPWhiteList.DESCRIPTION.getName());
             extraFldValues=LPArray.addValueToArray1D(extraFldValues, description);
         }        
-        return ipActions(TblsApp.TablesApp.IP_WHITE_LIST, "INSERT", null, fldNames, fldValues, extraFldNames, extraFldValues);
+        return ipActions(TblsApp.TablesApp.IP_WHITE_LIST, InsertStatement, null, fldNames, fldValues, extraFldNames, extraFldValues);
     }
     public static InternalMessage activateBlackIp(Integer id){   
         return ipActions(TblsApp.TablesApp.IP_BLACK_LIST, "UPDATE", id, new String[]{TblsApp.IPWhiteList.ACTIVE.getName()}, new Object[]{true}, null, null);
@@ -139,7 +140,7 @@ public class AdminActions {
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getToken();
         Object[] existsRecord = null;
-        if ("INSERT".equalsIgnoreCase(sqlAction.toUpperCase())){
+        if (InsertStatement.equalsIgnoreCase(sqlAction.toUpperCase())){
             existsRecord = Rdbms.existsRecord(tblObj.getRepositoryName(), tblObj.getTableName(), fldNames, fldValues);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())){
                 messages.addMainForError(TrazitUtilitiesErrorTrapping.RECORD_ALREADY_EXISTS, null);

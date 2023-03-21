@@ -59,6 +59,7 @@ public class AppProcedureListAPI extends HttpServlet {
     public static final String LABEL_SOPS_PASSED="sops_passed";
     public static final String LABEL_SOP_TOTAL="sop_total";
     public static final String LABEL_SOP_NAME="sop_name";
+    public static final String LABEL_ICONS="icons";
     public static final String LABEL_SOP_CERTIFICATION="SopCertification";
     public static final String LBL_VAL_SOP_CERTIF_DISABLE="Disabled";
     public static final String LABEL_SOP_TOTAL_COMPLETED="sop_total_completed";
@@ -67,6 +68,7 @@ public class AppProcedureListAPI extends HttpServlet {
     public static final String LABEL_SOP_TOTAL_NO_SOPS="There are no SOPS for this form";
     public static final String LABEL_PROC_SCHEMA="procInstanceName";
     public static final String FIELD_NAME_SOP="sop";
+    
     public static final String PROC_FLD_NAME=TblsProcedure.ProcedureInfo.NAME.getName()
             +"|"+TblsProcedure.ProcedureInfo.VERSION.getName()+"|label_en|label_es"+"|"+TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName()
             +"|"+TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE.getName();
@@ -75,6 +77,7 @@ public class AppProcedureListAPI extends HttpServlet {
     public static final String PROC_EVENT_ICONS_UP_FLD_NAME="name|lp_frontend_page_name|label_en|label_es|icon_name|type|mode|esign_required|sop|position";
     public static final String PROC_EVENT_ICONS_DOWN_FLD_NAME="name|lp_frontend_page_name|label_en|label_es|icon_name|type|mode|esign_required|sop|position";
     public static final Integer SIZE_WHEN_CONSIDERED_MOBILE=960;
+    
 /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      *
@@ -493,7 +496,7 @@ public class AppProcedureListAPI extends HttpServlet {
                 String curProcEventType=procEvent1[LPArray.valuePosicInArray(procEventFldNameArray, TblsProcedure.ProcedureEvents.TYPE.getName())].toString();
                 if (!curProcEventType.equalsIgnoreCase(elementType.TWOICONS.toString().toLowerCase())){
                     if (!childs.isEmpty()){
-                        procEventJson.put("icons", childs);
+                        procEventJson.put(LABEL_ICONS, childs);
                         procEvents.add(procEventJson);
                         procEventJson = new JSONObject();                        
                     }
@@ -508,7 +511,7 @@ public class AppProcedureListAPI extends HttpServlet {
                     String curProcEventPosition=procEvent1[LPArray.valuePosicInArray(procEventFldNameArray, TblsProcedure.ProcedureEvents.POSITION.getName())].toString();
                     if ("0".equalsIgnoreCase(curProcEventPosition)){
                         if (!childs.isEmpty()){
-                            procEventJson.put("icons", childs);
+                            procEventJson.put(LABEL_ICONS, childs);
                             procEvents.add(procEventJson);
                             procEventJson = new JSONObject();                        
                         }
@@ -528,7 +531,7 @@ public class AppProcedureListAPI extends HttpServlet {
                 }
             }
             if (!childs.isEmpty())
-                procEventJson.put("icons", childs);
+                procEventJson.put(LABEL_ICONS, childs);
             procEvents.add(procEventJson);
         } 
         return procEvents;

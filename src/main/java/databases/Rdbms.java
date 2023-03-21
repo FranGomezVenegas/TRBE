@@ -1267,7 +1267,7 @@ if (1==1){Rdbms.transactionId=1; return;}
         try{ //try(CachedRowSet  crs = RowSetProvider.newFactory().createCachedRowSet()){
             CachedRowSet  crs = RowSetProvider.newFactory().createCachedRowSet();
             
-            if (!rdbms.getIsStarted()){
+            if (Boolean.FALSE.equals(rdbms.getIsStarted())){
                 String dbName=ProcedureRequestSession.getInstanceForActions(null, null, null).getDbName();
                 rdbms.startRdbms(dbName);
             }

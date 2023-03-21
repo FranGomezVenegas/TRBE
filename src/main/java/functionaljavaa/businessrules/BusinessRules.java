@@ -22,6 +22,7 @@ import trazit.session.ProcedureRequestSession;
  * @author User
  */
 public class BusinessRules {
+    static String startsMark=" *** ";
     public BusinessRules(String procedureInstanceName, Integer scriptId, JsonArray busRulesList){
         this.procedureInstanceName=procedureInstanceName;
         this.procedure=new ArrayList<>();
@@ -119,47 +120,42 @@ public class BusinessRules {
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, false);
         BusinessRules bRProcInstance = procReqInstance.getBusinessRulesProcInstance();
         BusinessRules bRTesting = procReqInstance.getBusinessRulesTesting();
-        Object[][] valsArr=new Object[][]{{}};        
         if (bRProcInstance!=null){
             Integer totalRules=bRProcInstance.config.size()+bRProcInstance.data.size()+bRProcInstance.procedure.size();
-            valsArr=new Object[totalRules][2];                        
         }        
         Object[] ruleNameArr=new Object[]{};
-        Object[] ruleValueArr=new Object[]{};
-        int curBusRul=0;
         if (bRTesting!=null){
             for (int i=0;i<bRTesting.config.size();i++){
                 String brValue=bRProcInstance.getProcedureBusinessRule(bRTesting.config.get(i).getRuleName());
                 if (brValue.length()>0){
-                    ruleNameArr=LPArray.addValueToArray1D(ruleNameArr, " *** "+bRTesting.config.get(i).getRuleName());
+                    ruleNameArr=LPArray.addValueToArray1D(ruleNameArr, startsMark+bRTesting.config.get(i).getRuleName());
                     ruleNameArr=LPArray.addValueToArray1D(ruleNameArr, bRTesting.config.get(i).getRuleValue()+" ("+brValue+")");
                 }else{                    
                     ruleNameArr=LPArray.addValueToArray1D(ruleNameArr, bRTesting.config.get(i).getRuleName());
                     ruleNameArr=LPArray.addValueToArray1D(ruleNameArr, bRTesting.config.get(i).getRuleValue());
                 }
-                curBusRul++;
             }
             for (int i=0;i<bRTesting.data.size();i++){
                 String brValue=bRProcInstance.getProcedureBusinessRule(bRTesting.data.get(i).getRuleName());
                 if (brValue.length()>0){
-                    ruleNameArr=LPArray.addValueToArray1D(ruleNameArr, " *** "+bRTesting.data.get(i).getRuleName());
+                    ruleNameArr=LPArray.addValueToArray1D(ruleNameArr, startsMark+bRTesting.data.get(i).getRuleName());
                     ruleNameArr=LPArray.addValueToArray1D(ruleNameArr, bRTesting.data.get(i).getRuleValue()+" ("+brValue+")");
                 }else{              
                     ruleNameArr=LPArray.addValueToArray1D(ruleNameArr, bRTesting.data.get(i).getRuleName());
                     ruleNameArr=LPArray.addValueToArray1D(ruleNameArr, bRTesting.data.get(i).getRuleValue());                    
                 }
-                curBusRul++;
             }
             for (int i=0;i<bRTesting.procedure.size();i++){
-                String brValue=bRProcInstance.getProcedureBusinessRule(bRTesting.procedure.get(i).getRuleName());
+                String brValue="";
+                if (bRProcInstance!=null)
+                    brValue=bRProcInstance.getProcedureBusinessRule(bRTesting.procedure.get(i).getRuleName());
                 if (brValue.length()>0){
-                    ruleNameArr=LPArray.addValueToArray1D(ruleNameArr, " *** "+bRTesting.procedure.get(i).getRuleName());
+                    ruleNameArr=LPArray.addValueToArray1D(ruleNameArr, startsMark+bRTesting.procedure.get(i).getRuleName());
                     ruleNameArr=LPArray.addValueToArray1D(ruleNameArr, bRTesting.procedure.get(i).getRuleValue()+" ("+brValue+")");                    
                 }else{                    
                     ruleNameArr=LPArray.addValueToArray1D(ruleNameArr, bRTesting.procedure.get(i).getRuleName());
                     ruleNameArr=LPArray.addValueToArray1D(ruleNameArr, bRTesting.procedure.get(i).getRuleValue());                    
                 }
-                curBusRul++;
             }
         }
         if (bRProcInstance!=null){
@@ -170,7 +166,6 @@ public class BusinessRules {
                 if (brValue.length()==0){   
                     ruleNameArr=LPArray.addValueToArray1D(ruleNameArr, bRProcInstance.config.get(i).getRuleName());
                     ruleNameArr=LPArray.addValueToArray1D(ruleNameArr, bRProcInstance.config.get(i).getRuleValue());                                        
-                    curBusRul++;
                 }
             }
             for (int i=0;i<bRProcInstance.data.size();i++){
@@ -180,7 +175,6 @@ public class BusinessRules {
                 if (brValue.length()==0){ 
                     ruleNameArr=LPArray.addValueToArray1D(ruleNameArr, bRProcInstance.data.get(i).getRuleName());
                     ruleNameArr=LPArray.addValueToArray1D(ruleNameArr, bRProcInstance.data.get(i).getRuleValue());                                                            
-                    curBusRul++;
                 }
             }
             for (int i=0;i<bRProcInstance.procedure.size();i++){
@@ -190,7 +184,6 @@ public class BusinessRules {
                 if (brValue.length()==0){                
                     ruleNameArr=LPArray.addValueToArray1D(ruleNameArr, bRProcInstance.procedure.get(i).getRuleName());
                     ruleNameArr=LPArray.addValueToArray1D(ruleNameArr, bRProcInstance.procedure.get(i).getRuleValue());                                        
-                    curBusRul++;
                 }
             }
         }

@@ -38,12 +38,8 @@ public InternalMessage createStudySamplesSet(GenomaStudyAPI.GenomaStudyAPIaction
     InternalMessage studyOpenToChanges = GenomaDataStudy.isStudyOpenToChanges2(studyName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(studyOpenToChanges.getDiagnostic())) return studyOpenToChanges;        
    
-    String classVersionProj = "0.1";
     String[] mandatoryFields = null;
     Object[] mandatoryFieldsValue = fieldsValue;
-    String[] javaDocFields = new String[0];
-    Object[] javaDocValues = new Object[0];
-    String javaDocLineName = "";
     DataDataIntegrity labIntChecker = new DataDataIntegrity();
     if (fieldsName==null) fieldsName=new String[0];
     if (fieldsValue==null) fieldsValue=new Object[0];
