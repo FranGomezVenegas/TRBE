@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package functionaljavaa.platform.doc;
+import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.SqlWhere;
@@ -169,7 +170,7 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
     public EndPointsToRequirements() {
         }
     
-    public static JsonArray endpointWithNoOutputObjects=Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", "no output for testing")
+    public static JsonArray endpointWithNoOutputObjects=Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, "no output for testing")
                     .add("table", "no output for testing").build()).build();
 
 private static JSONArray getEndPointArguments(LPAPIArguments[] arguments){

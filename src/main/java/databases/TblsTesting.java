@@ -5,6 +5,7 @@
  */
 package databases;
 
+import com.labplanet.servicios.app.GlobalAPIsParams;
 import java.util.HashMap;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDatabase;
@@ -176,7 +177,7 @@ public class TblsTesting {
     public enum ScriptBusinessRules implements EnumIntTableFields{
         SCRIPT_ID("script_id", LPDatabase.integerNotNull(), null, null, null, null),
         ID("id", LPDatabase.integerNotNull(), null, null, null, null),
-        REPOSITORY("repository", LPDatabase.string(), null, null, null, null),
+        REPOSITORY(GlobalAPIsParams.LBL_REPOSITORY, LPDatabase.string(), null, null, null, null),
         RULE_NAME("rule_name", LPDatabase.string(), null, null, null, null),
         RULE_VALUE("rule_value", LPDatabase.string(), null, null, null, null),
         ACTIVE("active", LPDatabase.booleanFld(true), null, null, null, null),

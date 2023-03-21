@@ -434,7 +434,7 @@ public class GlobalAPIsParams extends HttpServlet {
     public static final String REQUEST_PARAM_GROUPED = "dataGrouped"; 
     public static final String REQUEST_PARAM_FIELDS_TO_RETRIEVE_OR_GROUPING = "fieldsToRetrieveOrGrouping"; 
     
-
+public static final String LBL_REPOSITORY = "repository"; 
     
     /**
      *

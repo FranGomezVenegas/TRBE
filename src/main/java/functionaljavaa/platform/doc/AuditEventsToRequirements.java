@@ -5,6 +5,7 @@
  */
 package functionaljavaa.platform.doc;
 
+import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.SqlWhere;
@@ -50,7 +51,7 @@ public final class AuditEventsToRequirements {
     JSONObject summaryInfo;
     
     public JSONObject getSummaryInfo(){return this.summaryInfo;}
-    public static JsonArray endpointWithNoOutputObjects=Json.createArrayBuilder().add(Json.createObjectBuilder().add("repository", "no output for testing")
+    public static JsonArray endpointWithNoOutputObjects=Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, "no output for testing")
                     .add("table", "no output for testing").build()).build();
 
     public AuditEventsToRequirements(HttpServletRequest request, HttpServletResponse response){
