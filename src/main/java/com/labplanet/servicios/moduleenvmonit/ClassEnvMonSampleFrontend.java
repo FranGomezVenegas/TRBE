@@ -363,16 +363,10 @@ new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB+GlobalAPIsPara
                                     row=LPJson.convertArrayRowToJSONObject(LPArray.addValueToArray1D(LPArray.addValueToArray1D(EnumIntViewFields.getAllFieldNames(fldsToGet), (String)resultLockData[2]), (String[]) resultLockData[0]), 
                                             LPArray.addValueToArray1D(LPArray.addValueToArray1D(curRow, (JSONObject) resultLockData[3]), (Object[]) resultLockData[1]));
                                 else
-                                row=LPJson.convertArrayRowToJSONObject(LPArray.addValueToArray1D(EnumIntViewFields.getAllFieldNames(fldsToGet), (String[]) resultLockData[0]), LPArray.addValueToArray1D(curRow, (Object[]) resultLockData[1]));
+                                    row=LPJson.convertArrayRowToJSONObject(LPArray.addValueToArray1D(EnumIntViewFields.getAllFieldNames(fldsToGet), (String[]) resultLockData[0]), LPArray.addValueToArray1D(curRow, (Object[]) resultLockData[1]));
                             else        
                                 row=LPJson.convertArrayRowToJSONObject(EnumIntViewFields.getAllFieldNames(fldsToGet), curRow);
 
-//fake warning for FE dev                            
-/*                            JSONObject reasonObj=new JSONObject();
-                            reasonObj.put("message_en", "warning-demo-en");
-                            reasonObj.put("message_es", "warning-demo-es");
-                            row.put("warning_reason", reasonObj);*/
-//fake warning for FE dev                            
                             if ((currRowLimitId!=null) && (currRowLimitId.length()>0) ){
                             specRule.specLimitsRule(Integer.valueOf(currRowLimitId) , null);                        
                             row.put(ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_DETAILED, LPNulls.replaceNull(specRule.getRuleRepresentation()).replace(("R"), "R ("+currRowRawValue+")"));

@@ -106,25 +106,18 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
                 fieldsName=LPArray.addValueToArray1D(fieldsName, fieldHeaders);
                 Object[] fieldsValue=new Object[]{instrName, instrEventId, ownerId, variableSetName};
                 fieldsValue=LPArray.addValueToArray1D(fieldsValue, fieldVarProperties);
-/*                Object[][] extraFields=objectFieldExtraFields(insEventId, variableSetName, ownerTable, ownerId);
-                if (extraFields!=null && extraFields.length>0){
-                for (Object[] curFld: extraFields){
-                fieldsName=LPArray.addValueToArray1D(fieldsName, curFld[0].toString());
-                fieldsValue=LPArray.addValueToArray1D(fieldsValue, curFld[1]);
-                }
-                }*/
                 RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES, fieldsName, fieldsValue);            
-                    if (insertRecordInTable.getRunSuccess())
+                    if (insertRecordInTable.getRunSuccess()){
                     instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.START_CALIBRATION, instrName, TablesInstrumentsData.INSTRUMENTS.getTableName(), instrEventId.toString(),
-                        fieldsName, fieldsValue);
+                            fieldsName, fieldsValue);
+                    }
             }
         }        
-        return diagn; //LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "not implemented yet!", null);
+        return diagn;
     }
     public static InternalMessage objectVariableSetValue(String instrName, Integer instrEventId, String variableName, String newValue){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
         String appProcInstance=LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName());
-        Object[] diagn=new Object[0];
         Object[] isStudyOpenToChanges=isEventOpenToChanges(instrEventId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())) 
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES, null,null);

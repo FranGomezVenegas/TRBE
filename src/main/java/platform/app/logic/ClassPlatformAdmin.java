@@ -98,8 +98,9 @@ public class ClassPlatformAdmin {
                     ipVal4=LPNulls.replaceNull(argValues[4]).toString();
                     description=LPNulls.replaceNull(argValues[5]).toString();
                     actionDiagnoses=AdminActions.updateWhiteIp(idInt, ipVal1, ipVal2, ipVal3, ipVal4, description);                               if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))    
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))    
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())){    
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsApp.TablesApp.IP_BLACK_LIST.getTableName(), idInt);
+                    }
                     break;
                 case REMOVE_WHITE_IP:
                     id=LPNulls.replaceNull(argValues[0]).toString();
@@ -183,7 +184,6 @@ public class ClassPlatformAdmin {
         this.diagnostic=ApiMessageReturn.trapMessage(actionDiagnoses.getDiagnostic(),endPoint, actionDiagnoses.getMessageCodeVariables());
         this.relatedObj=rObj;
         this.actionDiagnosesObj=actionDiagnoses;
-        //rObj.killInstance();
     }
     
     /**

@@ -33,7 +33,7 @@ public class ApiMessageReturn {
     public static final String CONFIG_OTRONOMBRE_FILE_NAME = "-otronombre";
     private static final int CLIENT_CODE_STACK_INDEX;
     
-    private static final String javaExtension=".java";
+    private static final String JAVA_EXTENSION=".java";
     
     static{
         int i = 0;
@@ -46,29 +46,25 @@ public class ApiMessageReturn {
         CLIENT_CODE_STACK_INDEX = i;
     }
     public static Object[] trapMessage(String evaluation, EnumIntEndpoints endpoint, Object[] msgVariables) {
-        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         int length = Thread.currentThread().getStackTrace().length;
         if (length>CLIENT_CODE_STACK_INDEX) length=CLIENT_CODE_STACK_INDEX;
         else length=3;
-        String className = Thread.currentThread().getStackTrace()[length-1].getFileName();
         String classFullName = Thread.currentThread().getStackTrace()[length-1].getClassName();
         String methodName = Thread.currentThread().getStackTrace()[length-1].getMethodName();
         Integer lineNumber = Thread.currentThread().getStackTrace()[length-1].getLineNumber();
-        className = endpoint.getClass().getSimpleName(); //className.replace(javaExtension, "");
+        String className = endpoint.getClass().getSimpleName(); 
         Object[] callerInfo = new Object[]{className, classFullName, methodName, lineNumber};
         
         return trapMessage(evaluation, endpoint.getSuccessMessageCode(), msgVariables, null, callerInfo, false);
     }
     public static Object[] trapMessage(String evaluation, EnumIntMessages endpoint, Object[] msgVariables, String language) {
-        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         int length = Thread.currentThread().getStackTrace().length;
         if (length>CLIENT_CODE_STACK_INDEX) length=CLIENT_CODE_STACK_INDEX;
         else length=3;
-        String className = Thread.currentThread().getStackTrace()[length-1].getFileName();
         String classFullName = Thread.currentThread().getStackTrace()[length-1].getClassName();
         String methodName = Thread.currentThread().getStackTrace()[length-1].getMethodName();
         Integer lineNumber = Thread.currentThread().getStackTrace()[length-1].getLineNumber();
-        className = endpoint.getClass().getSimpleName(); //className.replace(javaExtension, "");
+        String className = endpoint.getClass().getSimpleName(); 
         Object[] callerInfo = new Object[]{className, classFullName, methodName, lineNumber};
         
         return trapMessage(evaluation, endpoint.getErrorCode(), msgVariables, language, callerInfo, false);
@@ -78,11 +74,10 @@ public class ApiMessageReturn {
         int length = Thread.currentThread().getStackTrace().length;
         if (length>CLIENT_CODE_STACK_INDEX) length=CLIENT_CODE_STACK_INDEX;
         else length=3;
-        String className = Thread.currentThread().getStackTrace()[length-1].getFileName();
         String classFullName = Thread.currentThread().getStackTrace()[length-1].getClassName();
         String methodName = Thread.currentThread().getStackTrace()[length-1].getMethodName();
         Integer lineNumber = Thread.currentThread().getStackTrace()[length-1].getLineNumber();
-        className = endpoint.getClass().getSimpleName(); //className.replace(javaExtension, "");
+        String className = endpoint.getClass().getSimpleName(); 
         Object[] callerInfo = new Object[]{className, classFullName, methodName, lineNumber};
         
         return trapMessage(evaluation, endpoint.getErrorCode(), msgVariables, null, callerInfo, false);
@@ -90,29 +85,25 @@ public class ApiMessageReturn {
 
     
     public static Object[] trapMessage(String evaluation, String msgCode, Object[] msgVariables) {
-        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         int length = Thread.currentThread().getStackTrace().length;
         if (length>CLIENT_CODE_STACK_INDEX) length=CLIENT_CODE_STACK_INDEX;
         else length=3;
-        String className = Thread.currentThread().getStackTrace()[length-1].getFileName();
         String classFullName = Thread.currentThread().getStackTrace()[length-1].getClassName();
         String methodName = Thread.currentThread().getStackTrace()[length-1].getMethodName();
         Integer lineNumber = Thread.currentThread().getStackTrace()[length-1].getLineNumber();
-        className = className.replace(javaExtension, "");
+        String  className = Thread.currentThread().getStackTrace()[length-1].getFileName().replace(JAVA_EXTENSION, "");
         Object[] callerInfo = new Object[]{className, classFullName, methodName, lineNumber};
         return trapMessage(evaluation, msgCode, msgVariables, null, callerInfo, false);
     }
     
     public static Object[] trapMessage(String evaluation, String msgCode, Object[] msgVariables, Boolean isOptional) {
-        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         int length = Thread.currentThread().getStackTrace().length;
         if (length>CLIENT_CODE_STACK_INDEX) length=CLIENT_CODE_STACK_INDEX;
         else length=3;
-        String className = Thread.currentThread().getStackTrace()[length-1].getFileName();
         String classFullName = Thread.currentThread().getStackTrace()[length-1].getClassName();
         String methodName = Thread.currentThread().getStackTrace()[length-1].getMethodName();
         Integer lineNumber = Thread.currentThread().getStackTrace()[length-1].getLineNumber();
-        className = className.replace(javaExtension, "");
+        String  className = Thread.currentThread().getStackTrace()[length-1].getFileName().replace(JAVA_EXTENSION, "");
         Object[] callerInfo = new Object[]{className, classFullName, methodName, lineNumber};
         return trapMessage(evaluation, msgCode, msgVariables, null, callerInfo, isOptional);
     }
@@ -122,7 +113,6 @@ public class ApiMessageReturn {
     }
 
     public static Object[] trapMessage(String className, String evaluation, String msgCode, Object[] msgVariables, String language) {
-        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         int length = Thread.currentThread().getStackTrace().length;
         if (length>CLIENT_CODE_STACK_INDEX) length=CLIENT_CODE_STACK_INDEX;
         else length=3;
@@ -132,7 +122,7 @@ public class ApiMessageReturn {
         String classFullName = Thread.currentThread().getStackTrace()[length-1].getClassName();
         String methodName = Thread.currentThread().getStackTrace()[length-1].getMethodName();
         Integer lineNumber = Thread.currentThread().getStackTrace()[length-1].getLineNumber();
-        className = className.replace(javaExtension, "");
+        className = className.replace(JAVA_EXTENSION, "");
         Object[] callerInfo = new Object[]{className, classFullName, methodName, lineNumber};
         return trapMessage(evaluation, msgCode, msgVariables, language, callerInfo, false);
     }
@@ -143,7 +133,7 @@ public class ApiMessageReturn {
             String classFullName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName();
             String methodName = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName();
             Integer lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber();
-            className = className.replace(javaExtension, "");
+            className = className.replace(JAVA_EXTENSION, "");
             callerInfo = new Object[]{className, classFullName, methodName, lineNumber};
         }
         String errorDetail = "";
@@ -174,7 +164,7 @@ public class ApiMessageReturn {
             errorCodeText = msgCode;
             errorCodeFromBundle = false;
         }
-        if (!errorCodeFromBundle) {
+        if (Boolean.FALSE.equals(errorCodeFromBundle)){
             errorDetail = errorCodeText + " (*** This errorCode has no entry defined in messages property file, class=" + className + " msgCode=" + msgCode + ") ";
             if (msgVariables != null) {
                 errorDetail = errorDetail + Arrays.toString(msgVariables);
@@ -186,7 +176,6 @@ public class ApiMessageReturn {
             }
         } else {
             errorDetail = errorCodeText;
-            //errorDetail = Parameter.getMessageCodeValue(CONFIG_FILES_FOLDER, CONFIG_FILES_ERRORTRAPING, null, className+"_"+msgCode, language, callerInfo, false);
             if (errorDetail.length() == 0) {
                 errorDetail = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_ERRORTRAPING, null, msgCode, language, callerInfo, true, className);
             }

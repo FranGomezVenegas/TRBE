@@ -64,6 +64,10 @@ String previousStage="";
 Integer sampleId=-999;
 Object[][] firstStageData=new Object[0][0];
 
+static final String LBL_SUFFIX_CHECKER="Checker";
+static final String LBL_PREFIX_SAMPLE_STAGE="sampleStage";
+
+
    public enum SampleStageBusinessRules implements EnumIntBusinessRules {
         SAMPLE_STAGES_FIRST("sampleStagesFirst", GlobalVariables.Schemas.DATA.getName(), null, null, '|', null, "procedure*sampleStagesMode"),
         ACTION_AUTOMOVETONEXT("sampleStagesActionAutoMoveToNext", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, "procedure*sampleStagesMode"),
@@ -109,9 +113,9 @@ Object[][] firstStageData=new Object[0][0];
         private final String preReqsBusRules;
     }
     public enum SampleStageTimingCapturePhases{START, END}
-    public static final String SAMPLE_STAGES_MODE_ENABLING_STATUSES="ENABLE|ENABLED|SI|ACTIVADO|YES";
+    public static final String SAMPLE_STAGES_MODE_ENAB_STATSES="ENABLE|ENABLED|SI|ACTIVADO|YES";
     public enum SampleStagesTypes{JAVA, JAVASCRIPT}
-    public static final String LOD_JAVASCRIPT_FORMULA="procInstanceName-sample-stage.js"; // "WEB-INF/classes/JavaScript/"+"procInstanceName-sample-stage.js";
+    public static final String LOD_JAVASCRIPT_FORMULA="procInstanceName-sample-stage.js"; 
     public static final String LOD_JAVASCRIPT_LOCAL_FORMULA="D:\\LP\\LabPLANETAPI_20200113_beforeRefactoring\\src\\main\\resources\\JavaScript\\"+"procInstanceName-sample-stage.js";
     
 
@@ -123,13 +127,13 @@ Object[][] firstStageData=new Object[0][0];
             this.isSampleStagesEnable=false;  
             return;
         }
-        if (LPArray.valuePosicInArray(SAMPLE_STAGES_MODE_ENABLING_STATUSES.split("\\|"), sampleStagesMode)>-1)
+        if (LPArray.valuePosicInArray(SAMPLE_STAGES_MODE_ENAB_STATSES.split("\\|"), sampleStagesMode)>-1)
             this.isSampleStagesEnable=true;  
         String sampleStagesTimingCaptureMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.SAMPLE_STAGE_TIMING_CAPTURE_MODE.getAreaName(), SampleStageBusinessRules.SAMPLE_STAGE_TIMING_CAPTURE_MODE.getTagName(), SampleStageBusinessRules.SAMPLE_STAGE_TIMING_CAPTURE_MODE.getPreReqs());
-        if (LPArray.valuePosicInArray(SAMPLE_STAGES_MODE_ENABLING_STATUSES.split("\\|"), sampleStagesTimingCaptureMode)>-1)
+        if (LPArray.valuePosicInArray(SAMPLE_STAGES_MODE_ENAB_STATSES.split("\\|"), sampleStagesTimingCaptureMode)>-1)
             this.isSampleStagesTimingCaptureEnable=true;  
         String sampleStagesTimingCaptureStages = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.SAMPLE_STAGE_TIMING_CAPTURE_STAGES.getAreaName(), SampleStageBusinessRules.SAMPLE_STAGE_TIMING_CAPTURE_STAGES.getTagName(), SampleStageBusinessRules.SAMPLE_STAGE_TIMING_CAPTURE_STAGES.getPreReqs());
-        if (LPArray.valuePosicInArray(SAMPLE_STAGES_MODE_ENABLING_STATUSES.split("\\|"), sampleStagesTimingCaptureMode)>-1)
+        if (LPArray.valuePosicInArray(SAMPLE_STAGES_MODE_ENAB_STATSES.split("\\|"), sampleStagesTimingCaptureMode)>-1)
             this.isSampleStagesTimingCaptureStages=sampleStagesTimingCaptureStages;  
         String stageFirst=Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.SAMPLE_STAGES_FIRST.getAreaName(), SampleStageBusinessRules.SAMPLE_STAGES_FIRST.getTagName(), SampleStageBusinessRules.SAMPLE_STAGES_FIRST.getPreReqs());
         this.firstStageData=new Object[][]{{TblsData.Sample.CURRENT_STAGE.getName(), stageFirst}};        
@@ -160,7 +164,7 @@ Object[][] firstStageData=new Object[0][0];
             return new Object[]{LPPlatform.LAB_TRUE, newStageProposedByChecker};
         }
         
-        String sampleStageNextStage = Parameter.getBusinessRuleProcedureFile(procInstanceName, GlobalVariables.Schemas.DATA.getName(), "sampleStage"+currStage+"Next");
+        String sampleStageNextStage = Parameter.getBusinessRuleProcedureFile(procInstanceName, GlobalVariables.Schemas.DATA.getName(), LBL_PREFIX_SAMPLE_STAGE+currStage+"Next");
         if (sampleStageNextStage.length()==0) return new Object[]{LPPlatform.LAB_FALSE, "Next Stage is blank for "+currStage};
 
         String[] nextStageArr=sampleStageNextStage.split("\\|");
@@ -182,7 +186,7 @@ Object[][] firstStageData=new Object[0][0];
         Object[] javaScriptDiagnostic = moveStageChecker(sampleId, currStage, "Previous");
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(javaScriptDiagnostic[0].toString()))return javaScriptDiagnostic;
 
-        String sampleStagePreviousStage = Parameter.getBusinessRuleProcedureFile(procInstanceName, GlobalVariables.Schemas.DATA.getName(), "sampleStage"+currStage+"Previous");
+        String sampleStagePreviousStage = Parameter.getBusinessRuleProcedureFile(procInstanceName, GlobalVariables.Schemas.DATA.getName(), LBL_PREFIX_SAMPLE_STAGE+currStage+"Previous");
         if (sampleStagePreviousStage.length()==0) return new Object[]{LPPlatform.LAB_FALSE, "Previous Stage is blank for "+currStage};
 
         String[] previousStageArr=sampleStagePreviousStage.split("\\|");
@@ -216,7 +220,7 @@ Object[][] firstStageData=new Object[0][0];
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(moveDiagn[0].toString())){
                 SqlWhere sqlWhere = new SqlWhere();
                 sqlWhere.addConstraint(TblsData.Sample.SAMPLE_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sampleId}, "");
-                Object[] diagnoses=Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE,
+                Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE,
                     EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, sampleFieldName), sampleFieldValue, sqlWhere, null);
                 dataSampleStagesTimingCapture(sampleId, moveDiagn[moveDiagn.length-1].toString(), SampleStageTimingCapturePhases.START.toString());
                 SampleAudit smpAudit = new SampleAudit();
@@ -238,20 +242,16 @@ Object[][] firstStageData=new Object[0][0];
         else return moveStageCheckerJavaScript(sampleId, currStage, moveDirection);
     }
     private Object[] moveStageCheckerJava(Integer sampleId, String currStage, String moveDirection){
-    //try {
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
         String procInstanceName=instanceForActions.getProcedureInstance();
         String jsonarrayf=DataSample.sampleEntireStructureData(procInstanceName, sampleId, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, 
                                 DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null, 
                                 null, null);
-//        String sampleStageClassName=procInstanceName+"SampleStage"; 
-        String functionName="sampleStage"+currStage+moveDirection+"Checker";        
+        String functionName=LBL_PREFIX_SAMPLE_STAGE+currStage+moveDirection+LBL_SUFFIX_CHECKER;        
         ProcedureSampleStage procSampleStage=new ProcedureSampleStage();        
         Method method = null;
         try {
-//
             Class<?>[] paramTypes = {String.class, Integer.class, String.class};
-        //    method = getClass().getDeclaredMethod(functionName, paramTypes);
             method = ProcedureSampleStage.class.getDeclaredMethod(functionName, paramTypes);
         } catch (NoSuchMethodException | SecurityException ex) {
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.ERRORTRAPPING_EXCEPTION, new Object[]{ex.getMessage()});
@@ -265,8 +265,7 @@ Object[][] firstStageData=new Object[0][0];
         if ( (specialFunctionReturn==null) || (specialFunctionReturn!=null && specialFunctionReturn.toString().contains("ERROR")) )
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.SPECIAL_FUNCTION_RETURNED_ERROR, new Object[]{functionName, LPNulls.replaceNull(specialFunctionReturn)});                                    
         if ( (specialFunctionReturn==null) || (specialFunctionReturn!=null && !specialFunctionReturn.toString().contains("TRUE")) ){
-            String errorCode=specialFunctionReturn.toString();
-            errorCode=LPNulls.replaceNull(specialFunctionReturn).toString().replace(LPPlatform.LAB_FALSE, "");
+            String errorCode=LPNulls.replaceNull(specialFunctionReturn).toString().replace(LPPlatform.LAB_FALSE, "");
             String[] errorCodeArr=errorCode.split("@");
             Object[] msgVariables=null;
             if (errorCodeArr.length>1)
@@ -276,7 +275,8 @@ Object[][] firstStageData=new Object[0][0];
             try{
                 smpStgErr = ProcedureSampleStageErrorTrapping.valueOf(errorCodeArr[0].toUpperCase());
                 errorCodeArr[0] = smpStgErr.getErrorCode();
-            }catch(Exception e){                
+            }catch(Exception e){   
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "valueNotFound_"+errorCodeArr[0].toUpperCase(), new Object[]{e.getMessage()});
             }
             if (messages.getMainMessage()==null)
                 messages.addMainForError(errorCodeArr[0], msgVariables, null);
@@ -297,7 +297,7 @@ Object[][] firstStageData=new Object[0][0];
                                 DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null);
         String fileName = LOD_JAVASCRIPT_FORMULA.replace(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME, procInstanceName);
         fileName=procInstanceName+"-sample-stage.js"; //"/procedure/"+
-        String functionName="sampleStage"+currStage+moveDirection+"Checker";
+        String functionName=LBL_PREFIX_SAMPLE_STAGE+currStage+moveDirection+LBL_SUFFIX_CHECKER;
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
         try {
           try {                        
@@ -309,7 +309,7 @@ Object[][] firstStageData=new Object[0][0];
         } catch (FileNotFoundException ex) {
           try{
              fileName = LOD_JAVASCRIPT_LOCAL_FORMULA.replace(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME, procInstanceName);
-             functionName="sampleStage"+currStage+moveDirection+"Checker";
+             functionName=LBL_PREFIX_SAMPLE_STAGE+currStage+moveDirection+LBL_SUFFIX_CHECKER;
              engine = new ScriptEngineManager().getEngineByName("nashorn");
             engine.eval(new FileReader(fileName));              
           } catch (FileNotFoundException ex2) {              

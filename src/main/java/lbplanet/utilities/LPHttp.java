@@ -5,7 +5,6 @@
  */
 package lbplanet.utilities;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.logging.Level;
@@ -35,8 +34,6 @@ public class LPHttp {
             request.setCharacterEncoding(LPPlatform.LAB_ENCODER_UTF8);    
             return request;
         } catch (UnsupportedEncodingException ex) {
-            Logger.getLogger(LPHttp.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
             Logger.getLogger(LPHttp.class.getName()).log(Level.SEVERE, null, ex);
         }
         return request;

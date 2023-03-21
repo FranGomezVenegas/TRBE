@@ -109,8 +109,9 @@ public class DataBulk {
         Object[][] lotInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.LOT_BULK.getTableName(), 
             new String[]{TblsInspLotRMData.LotBulk.LOT_NAME.getName(), TblsInspLotRMData.LotBulk.BULK_ID.getName()}, new Object[]{lotName, bulkId}, 
             new String[]{TblsInspLotRMData.LotBulk.QUANTITY.getName(), TblsInspLotRMData.LotBulk.SAMPLE_QUANTITY_UOM.getName()});
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(lotInfo[0][0].toString())) 
-        new InternalMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{lotName, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())}, lotName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(lotInfo[0][0].toString())){
+            new InternalMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{lotName, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())}, lotName);
+        }
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsInspLotRMData.LotBulk.LOT_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{lotName}, "");
         sqlWhere.addConstraint(TblsInspLotRMData.LotBulk.BULK_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{bulkId}, "");
@@ -131,8 +132,9 @@ public class DataBulk {
         Object[][] lotInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.LOT_BULK.getTableName(), 
             new String[]{TblsInspLotRMData.LotBulk.LOT_NAME.getName(), TblsInspLotRMData.LotBulk.BULK_ID.getName()}, new Object[]{lotName, bulkId}, 
             new String[]{TblsInspLotRMData.LotBulk.QUANTITY.getName(), TblsInspLotRMData.LotBulk.SAMPLE_QUANTITY_UOM.getName()});
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(lotInfo[0][0].toString())) 
-        new InternalMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{lotName, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())}, lotName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(lotInfo[0][0].toString())){ 
+            new InternalMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{lotName, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())}, lotName);    
+        }
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsInspLotRMData.LotBulk.LOT_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{lotName}, "");
         sqlWhere.addConstraint(TblsInspLotRMData.LotBulk.BULK_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{bulkId}, "");
@@ -158,16 +160,12 @@ public class DataBulk {
                 TblsInspLotRMData.Lot.NUM_CONTAINERS.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(lotInfo[0][0].toString())) 
             new InternalMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{lotName, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())}, lotName);
-        Double lotQuantity = Double.valueOf(lotInfo[0][3].toString());
-        String lotQuantityUOM = lotInfo[0][4].toString();
         InternalMessage lotContainerDecisionRecordCreateOrUpdate = lotBulkDecisionRecordCreateOrUpdate(lotName, bulkId, decision);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(lotContainerDecisionRecordCreateOrUpdate.getDiagnostic()))
             return lotContainerDecisionRecordCreateOrUpdate;
 
         return new InternalMessage(LPPlatform.LAB_TRUE, 
             InspLotRMEnums.InspLotRMAPIactionsEndpoints.LOT_BULK_TAKE_DECISION, new Object[]{lotName});        
-
-        //return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "NotImplementedYet", null);
     }
     
     public static InternalMessage lotBulkDecisionRecordCreateOrUpdate(String lotName, Integer bulkId, String decision){
