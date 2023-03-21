@@ -33,8 +33,8 @@ import trazit.session.ApiMessageReturn;
 public final class DataBatchIncubatorStructured {
     private DataBatchIncubatorStructured() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
     
-    public static final String BATCHCONTENTSEPARATORSTRUCTUREDBATCH="<>";
-    public static final String POSITIONVALUESEPARATORSTRUCTUREDBATCH="*";
+    public static final String BTCHCNTNT_SEPRTRSTRUCTUREDBATCH="<>";
+    public static final String POSIT_VAL_SEPARTRSTRUCTUREDBATCH="*";
     public static final String BATCHCONTENTEMPTYPOSITIONVALUE="-";
     
     static Boolean batchIsEmptyStructured(String batchName){
@@ -135,12 +135,12 @@ public final class DataBatchIncubatorStructured {
             for (int i=0;i<batchNumCols;i++)
                 batchContent2D=LPArray.convertObjectArrayToStringArray(LPArray.addColumnToArray2D(batchContent2D, BATCHCONTENTEMPTYPOSITIONVALUE));
         }else{
-            String[] batchContent1D=batchContentStr.split(BATCHCONTENTSEPARATORSTRUCTUREDBATCH);
+            String[] batchContent1D=batchContentStr.split(BTCHCNTNT_SEPRTRSTRUCTUREDBATCH);
             batchContent2D=LPArray.array1dTo2d(batchContent1D, batchNumCols);
         }
 
         batchContent2D[row-1][col-1]=buildBatchPositionValue(sampleId, pendingIncubationStage);
-        batchContentStr=LPArray.convertArrayToString(LPArray.array2dTo1d(batchContent2D), BATCHCONTENTSEPARATORSTRUCTUREDBATCH, "");        
+        batchContentStr=LPArray.convertArrayToString(LPArray.array2dTo1d(batchContent2D), BTCHCNTNT_SEPRTRSTRUCTUREDBATCH, "");        
         if (byMovement!=null && !byMovement) batchTotalObjects++;
         String[] updFieldName = new String[]{TblsEnvMonitData.IncubBatch.STRUCT_TOTAL_OBJECTS.getName(), TblsEnvMonitData.IncubBatch.STRUCT_CONTENT.getName()};
         Object[] updFieldValue = new Object[]{batchTotalObjects, batchContentStr};       
@@ -203,14 +203,14 @@ public final class DataBatchIncubatorStructured {
             for (int i=0;i<batchNumCols;i++)
                 batchContent2D=LPArray.convertObjectArrayToStringArray(LPArray.addColumnToArray2D(batchContent2D, BATCHCONTENTEMPTYPOSITIONVALUE));
         }else{
-            String[] batchContent1D=batchContentStr.split(BATCHCONTENTSEPARATORSTRUCTUREDBATCH);
+            String[] batchContent1D=batchContentStr.split(BTCHCNTNT_SEPRTRSTRUCTUREDBATCH);
             batchContent2D=LPArray.array1dTo2d(batchContent1D, batchNumCols);
         }
         
         String posicContent=batchContent2D[row-1][col-1];
         if ((LPNulls.replaceNull(posicContent).length()>0) && (!BATCHCONTENTEMPTYPOSITIONVALUE.equalsIgnoreCase(LPNulls.replaceNull(posicContent))) ){
-            if (!override) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.STRUCTURED_BATCH_POSITIONOCCUPIED
-                , new Object[]{row, col, batchName, procInstanceName});
+            if (Boolean.FALSE.equals(override)) 
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.STRUCTURED_BATCH_POSITIONOCCUPIED, new Object[]{row, col, batchName, procInstanceName});
         }        
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "", null);
     }
@@ -228,7 +228,6 @@ public final class DataBatchIncubatorStructured {
     }
     static Object[] batchRemoveSampleStructured(String batchName, Integer sampleId, Integer pendingIncubationStage, Boolean byMovement) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-
         String[] batchFldsToRetrieve= new String[]{TblsEnvMonitData.IncubBatch.STRUCT_NUM_COLS.getName(), TblsEnvMonitData.IncubBatch.STRUCT_TOTAL_POSITIONS.getName(), 
             TblsEnvMonitData.IncubBatch.STRUCT_TOTAL_OBJECTS.getName(), TblsEnvMonitData.IncubBatch.STRUCT_CONTENT.getName()};
         Object[][] batchInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), 
@@ -243,13 +242,13 @@ public final class DataBatchIncubatorStructured {
         if ((batchContentStr==null) || (batchContentStr.length()==0))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.EMPTY_BATCH, new Object[]{batchName, procInstanceName});
         
-        String[] batchContent1D=batchContentStr.split(BATCHCONTENTSEPARATORSTRUCTUREDBATCH);
+        String[] batchContent1D=batchContentStr.split(BTCHCNTNT_SEPRTRSTRUCTUREDBATCH);
         Integer valuePosition=LPArray.valuePosicInArray(batchContent1D, positionValueToFind);
         if (valuePosition==-1)
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.SAMPLE_NOTFOUND_IN_BATCH, new Object[]{sampleId, batchName, procInstanceName});
         batchContent1D[valuePosition]="";  
         String[][] batchContent2D=LPArray.array1dTo2d(batchContent1D, batchNumCols);
-        batchContentStr=LPArray.convertArrayToString(LPArray.array2dTo1d(batchContent2D), BATCHCONTENTSEPARATORSTRUCTUREDBATCH, "");        
+        batchContentStr=LPArray.convertArrayToString(LPArray.array2dTo1d(batchContent2D), BTCHCNTNT_SEPRTRSTRUCTUREDBATCH, "");        
         if (byMovement!=null && !byMovement) batchTotalObjects--;
         String[] updFieldName=new String[]{TblsEnvMonitData.IncubBatch.STRUCT_TOTAL_OBJECTS.getName(), TblsEnvMonitData.IncubBatch.STRUCT_CONTENT.getName()};
         Object[] updFieldValue=new Object[]{batchTotalObjects, batchContentStr};
@@ -360,12 +359,11 @@ public final class DataBatchIncubatorStructured {
     }
     
     public static String buildBatchPositionValue(Integer sampleId, Integer pendingIncubationStage){
-        if (pendingIncubationStage==null)return sampleId.toString()+POSITIONVALUESEPARATORSTRUCTUREDBATCH;
-        return sampleId.toString()+POSITIONVALUESEPARATORSTRUCTUREDBATCH+pendingIncubationStage.toString();
+        if (pendingIncubationStage==null)return sampleId.toString()+POSIT_VAL_SEPARTRSTRUCTUREDBATCH;
+        return sampleId.toString()+POSIT_VAL_SEPARTRSTRUCTUREDBATCH+pendingIncubationStage.toString();
     }
     public static String setLinesNameNOUSADO(String[] names, Integer numRows){
-        //String[] linesName = new String[numRows];
-        String valuesSeparator=BATCHCONTENTSEPARATORSTRUCTUREDBATCH;
+        String valuesSeparator=BTCHCNTNT_SEPRTRSTRUCTUREDBATCH;
         StringBuilder linesName=new StringBuilder();
         if (names==null){
             char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();            
@@ -381,7 +379,7 @@ public final class DataBatchIncubatorStructured {
                 }
                 //linesName[inumLet]=currPrefixBuilder.toString()+alphabet[inumLetAlphabet];
                 if (linesName.length()>0)linesName.append(valuesSeparator);
-                linesName.append(currPrefixBuilder.toString()+alphabet[inumLetAlphabet]);
+                linesName.append(currPrefixBuilder.toString()).append(alphabet[inumLetAlphabet]);
                 inumLet++;
                 inumLetAlphabet++;
             }            
@@ -396,7 +394,7 @@ public final class DataBatchIncubatorStructured {
     }
     public static String setColumnsNameNOUSADO(String[] names, Integer numCols){
         //String[] columnsName=new String[numCols];
-        String valuesSeparator=BATCHCONTENTSEPARATORSTRUCTUREDBATCH;
+        String valuesSeparator=BTCHCNTNT_SEPRTRSTRUCTUREDBATCH;
         StringBuilder columnsName=new StringBuilder();
         
         if (names==null){                                    
