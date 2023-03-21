@@ -770,7 +770,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj{
     }
 
     @Override    public JSONObject getResponseSuccessJObj() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return this.responseSuccessJObj;
     }
     
 }

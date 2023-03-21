@@ -58,13 +58,6 @@ import trazit.session.DbLogSummary;
  * @author Administrator
  */
 public class Rdbms {    
-/*    static void prepUpQueryWithKey(String configSchemaScript, Object[] object) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    public static void insertRecordInTable(GlobalVariables.Schemas schemas, String tableName, String[] fieldsName, Object[] fieldsValue) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }*/
     public static Boolean transactionMode=false;
     String errorCode = "";
     private static Connection conn = null;

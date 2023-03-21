@@ -104,26 +104,26 @@ public class ClassEnvMonSampleFrontend {
         GET_SAMPLE_STAGES_SUMMARY_REPORT("GET_SAMPLE_STAGES_SUMMARY_REPORT", "", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             }, EndPointsToRequirements.endpointWithNoOutputObjects, 
-            Json.createArrayBuilder().add(Json.createObjectBuilder().add("report_information", "Name: SAMPLE STAGES SUMMARY REPORT v1.0").build()).build()
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_RPT_INFO, "Name: SAMPLE STAGES SUMMARY REPORT v1.0").build()).build()
         ),
         GET_SAMPLE_BY_TESTINGGROUP_SUMMARY_REPORT("GET_SAMPLE_BY_TESTINGGROUP_SUMMARY_REPORT", "", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             }, EndPointsToRequirements.endpointWithNoOutputObjects, 
-            Json.createArrayBuilder().add(Json.createObjectBuilder().add("report_information", "Name: SAMPLE BY TESTING GROUP SUMMARY REPORT v1.0").build()).build()
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_RPT_INFO, "Name: SAMPLE BY TESTING GROUP SUMMARY REPORT v1.0").build()).build()
         ),
         GET_BATCH_REPORT("GET_BATCH_REPORT", "", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_FIELD_TO_DISPLAY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
             }, EndPointsToRequirements.endpointWithNoOutputObjects, 
-            Json.createArrayBuilder().add(Json.createObjectBuilder().add("report_information", "Name: BATCH REPORT v1.0").build()).build()            
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_RPT_INFO, "Name: BATCH REPORT v1.0").build()).build()            
         ),
         GET_PRODLOT_REPORT("GET_PRODLOT_REPORT", "", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_DISPLAY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
             }, EndPointsToRequirements.endpointWithNoOutputObjects, 
-            Json.createArrayBuilder().add(Json.createObjectBuilder().add("report_information", "Name: PRODUCTION LOT REPORT v1.0").build()).build()            
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_RPT_INFO, "Name: PRODUCTION LOT REPORT v1.0").build()).build()            
         ),
         GET_INCUBATOR_REPORT("GET_INCUBATOR_REPORT", "", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
@@ -132,7 +132,7 @@ public class ClassEnvMonSampleFrontend {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DATE_START, LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DATE_END, LPAPIArguments.ArgumentType.STRING.toString(), false, 10),
             }, EndPointsToRequirements.endpointWithNoOutputObjects, 
-            Json.createArrayBuilder().add(Json.createObjectBuilder().add("report_information", "Name: INCUBATOR REPORT v1.0").build()).build()            
+            Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_RPT_INFO, "Name: INCUBATOR REPORT v1.0").build()).build()            
         ),
         STATS_SAMPLES_PER_STAGE("STATS_SAMPLES_PER_STAGE", "", new LPAPIArguments[]{
                 new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),

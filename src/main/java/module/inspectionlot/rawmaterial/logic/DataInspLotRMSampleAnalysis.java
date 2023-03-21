@@ -78,7 +78,7 @@ public class DataInspLotRMSampleAnalysis implements DataSampleAnalysisStrategy {
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "autoSampleAnalysisAdd_caseNotDetected", new String[]{autoAddAnalysisLevel+" not implemented yet."});
         }
 
-        StringBuilder analysisAdded = new StringBuilder();
+        StringBuilder analysisAdded = new StringBuilder(0);
         for (Object[] anaName1 : anaName) {
             String[] fieldsName = new String[]{TblsData.SampleAnalysis.ANALYSIS.getName(), TblsData.SampleAnalysis.METHOD_NAME.getName(), TblsData.SampleAnalysis.METHOD_VERSION.getName(), TblsData.SampleAnalysis.TESTING_GROUP.getName()};
             Object[] fieldsValue = new Object[]{(String) anaName1[0], (String) anaName1[1], (Integer) anaName1[2], (String) anaName1[3]};
@@ -91,7 +91,7 @@ public class DataInspLotRMSampleAnalysis implements DataSampleAnalysisStrategy {
     @Override
     public String specialFieldCheckSampleAnalysisAnalyst(String template, Integer templateVersion, DataSample dataSample) {
         return "";
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
     
 }

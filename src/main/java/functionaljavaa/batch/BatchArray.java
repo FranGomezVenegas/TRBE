@@ -81,26 +81,11 @@ public final class BatchArray extends Batch{
         
         setLinesName(null);
         setColumnsName(null);
-//        this.linesName=linesName;
-//        this.columnsName=columnsName;
         
         dbCreateBatchArray(schemaName);
     }        
-/*
-    public BatchArray() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-*/
-    /**
-     * Give the total number of positions in one array. Example: 30x5 = 150.
-     * @return Integer
-     */
     public Integer getBatchPosicLen(){ return this.batchPosic.length;}
     
-    /**
-     * Return the number of objects contained in the Batch Array
-     * @return Integer
-     */
     public Integer getBatchTotalObjets(){return this.getNumTotalObjects();}
     
     /**
@@ -215,7 +200,6 @@ public final class BatchArray extends Batch{
      */
     public String getBatchPositionContent(Integer row, Integer col) {
         if (batchPosic[row-1][col-1] == null){
-            //throw new RuntimeException("Empty position");
             return "Empty";
         }                
         return batchPosic[row-1][col-1];
@@ -229,7 +213,6 @@ public final class BatchArray extends Batch{
      */
     public ArrayList searchStringContent(String searchPattern) {  
         ArrayList foundPosic = new ArrayList();            
-//    Arrays.sort(batchPosic);        
         for(int i = 0; i < this.getNumRows(); i++){
           for(int j = 0; j < this.getNumCols(); j++){              
             if ((batchPosic[i][j] != null) && (batchPosic[i][j] == null ? searchPattern == null : batchPosic[i][j].equals(searchPattern)) ){
@@ -248,9 +231,6 @@ public final class BatchArray extends Batch{
      */
     public Object[] dbCreateBatchArray(String schemaName)
     {
-        String tableName = "batch_java";
-                 
-        //Integer td[][]= {{4, 17, 28, 38, 43, 58, 69, 77, 83}, {4, 12, 24, 35, 48, 55, 62, 73, 87}, {11,15, 22, 36, 46, 60, 67, 80, 84}};
         List<String> singleDArray = new ArrayList<>();
         for (String[] array :this.batchPosic) {         
               singleDArray.addAll(Arrays.asList(array));
