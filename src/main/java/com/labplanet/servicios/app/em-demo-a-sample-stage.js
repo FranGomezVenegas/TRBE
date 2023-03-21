@@ -1,22 +1,22 @@
-var sampleStageSamplingNextChecker = function(sampleId, sampleData) {
-    var sampleStructure=JSON.parse(sampleData);
-    var samplingDate = sampleStructure.sampling_date;
-//	var testId=sampleStructure.sample_analysis[0].analysis	
+let sampleStageSamplingNextChecker = function(sampleId, sampleData) {
+    let sampleStructure=JSON.parse(sampleData);
+    let samplingDate = sampleStructure.sampling_date;
+//	let testId=sampleStructure.sample_analysis[0].analysis	
     if (samplingDate===null){
         return "stagesCheckerSamplingDataIsMandatory"+"@"+sampleId;} //" Fecha de muestreo es obligatoria para la muestra "+sampleId;}    
-    var reqsTrackingSamplingEnd = sampleStructure.requires_tracking_sampling_end;
+    let reqsTrackingSamplingEnd = sampleStructure.requires_tracking_sampling_end;
     if (reqsTrackingSamplingEnd===null || reqsTrackingSamplingEnd===false)
         return "LABPLANET_TRUE";
-    var samplingDateEnd = sampleStructure.sampling_date_end;
+    let samplingDateEnd = sampleStructure.sampling_date_end;
     if (samplingDateEnd===null){
         return "stagesCheckerSamplingDateEndIsMandatory"+"@"+sampleId;} //" Fecha de muestreo es obligatoria para la muestra "+sampleId;}
     return "LABPLANET_TRUE";
 };
 
-var sampleStageIncubationPreviousChecker = function(sampleId, sampleData) {
-    var sampleStructure=JSON.parse(sampleData);
-    var incubationPassed = sampleStructure.incubation_passed;
-    var incubation2Passed = sampleStructure.incubation2_passed;
+let sampleStageIncubationPreviousChecker = function(sampleId, sampleData) {
+    let sampleStructure=JSON.parse(sampleData);
+    let incubationPassed = sampleStructure.incubation_passed;
+    let incubation2Passed = sampleStructure.incubation2_passed;
     if (incubationPassed!==true){
         return "stagesCheckerPendingFirstIncubation"+"@"+sampleId;} // Pendiente 1a Incubacion para la muestra "+sampleId;}
     if (incubation2Passed!==true){
@@ -24,10 +24,10 @@ var sampleStageIncubationPreviousChecker = function(sampleId, sampleData) {
     return "LABPLANET_TRUE";
 };
 
-var sampleStageIncubationNextChecker = function(sampleId, sampleData) {
-    var sampleStructure=JSON.parse(sampleData);
-    var incubationPassed = sampleStructure.incubation_passed;
-    var incubation2Passed = sampleStructure.incubation2_passed;
+let sampleStageIncubationNextChecker = function(sampleId, sampleData) {
+    let sampleStructure=JSON.parse(sampleData);
+    let incubationPassed = sampleStructure.incubation_passed;
+    let incubation2Passed = sampleStructure.incubation2_passed;
     if (!incubationPassed){
         return "stagesCheckerPendingFirstIncubation"+"@"+sampleId;} //" Pendiente 1a Incubacion para la muestra "+sampleId;}
     if (!incubation2Passed){
@@ -35,17 +35,17 @@ var sampleStageIncubationNextChecker = function(sampleId, sampleData) {
     return "LABPLANET_TRUE";
 };
 
-var sampleStagePlateReadingPreviousChecker = function(sampleId, sampleData) {
+let sampleStagePlateReadingPreviousChecker = function(sampleId, sampleData) {
     return "LABPLANET_TRUE";
 };
 
-var sampleStagePlateReadingNextChecker = function(schema, sampleId, sampleData) {
-    var s=schema;
-    var val = sampleId * 2;
+let sampleStagePlateReadingNextChecker = function(schema, sampleId, sampleData) {
+    let s=schema;
+    let val = sampleId * 2;
     return "LABPLANET_TRUE";
 };
 
-var sampleStageMicroorganismIdentificationNextChecker = function(sampleId, sampleData) {
+let sampleStageMicroorganismIdentificationNextChecker = function(sampleId, sampleData) {
     return "LABPLANET_TRUE";
 };
 

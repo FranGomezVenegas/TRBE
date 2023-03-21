@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-var getValue = function(val) {
+let getValue = function(val) {
 val = val * 2;
 return val;
 };
