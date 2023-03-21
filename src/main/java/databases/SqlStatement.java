@@ -138,7 +138,7 @@ public class SqlStatement {
         switch (operation.toUpperCase()) {
             case "SELECT":
                 query = "select ";
-                if (forceDistinct){query=query+ " distinct ";}
+                if (Boolean.TRUE.equals(forceDistinct)){query=query+ " distinct ";}
                 query=query+ " " + fieldsToRetrieveStr + " from " + schemaName + "." + tableName + "   where " + queryWhere + " " + fieldsToGroupStr + " " + fieldsToOrderStr;
                 break;
             case "INSERT":
@@ -201,8 +201,8 @@ public class SqlStatement {
             if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.NULL.getSqlClause())) {
                 queryWhere.append(fn);
             } else if (fn.toUpperCase().contains(" "+WHERECLAUSE_TYPES.LIKE.getSqlClause())) {
-                queryWhere.append(caseSensitive?fn:"lower("+fn+")").append(" ? ");
-                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, caseSensitive?whereFieldValues[iwhereFieldNames]: whereFieldValues[iwhereFieldNames].toString().toLowerCase());
+                queryWhere.append(Boolean.TRUE.equals(caseSensitive)?fn:"lower("+fn+")").append(" ? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, Boolean.TRUE.equals(caseSensitive)?whereFieldValues[iwhereFieldNames]: whereFieldValues[iwhereFieldNames].toString().toLowerCase());
             } else if (fn.toUpperCase().contains(" "+WHERECLAUSE_TYPES.NOT_IN.getSqlClause())) {
                 String separator = inNotInSeparator(fn);
                 String textSpecs = (String) whereFieldValues[iwhereFieldNames];
@@ -241,8 +241,8 @@ public class SqlStatement {
                 queryWhere.append(fn).append(" ? ");
                 whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
             } else {
-                queryWhere.append(caseSensitive?fn:"lower("+fn+")").append("=? ");
-                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, caseSensitive?whereFieldValues[iwhereFieldNames]: whereFieldValues[iwhereFieldNames].toString().toLowerCase());
+                queryWhere.append(Boolean.TRUE.equals(caseSensitive)?fn:"lower("+fn+")").append("=? ");
+                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, Boolean.TRUE.equals(caseSensitive)?whereFieldValues[iwhereFieldNames]: whereFieldValues[iwhereFieldNames].toString().toLowerCase());
             }
         }
         return new Object[]{queryWhere.toString(), whereFieldValuesNew};

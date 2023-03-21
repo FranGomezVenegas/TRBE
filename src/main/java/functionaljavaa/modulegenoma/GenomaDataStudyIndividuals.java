@@ -46,7 +46,7 @@ public class GenomaDataStudyIndividuals {
         if (fieldsName==null) fieldsName=new String[0];
         if (fieldsValue==null) fieldsValue=new Object[0];
 
-        if (devMode){
+        if (Boolean.TRUE.equals(devMode)){
             StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
             javaDocLineName = "BEGIN";
             javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_LINE_FLDNAME);
@@ -64,7 +64,7 @@ public class GenomaDataStudyIndividuals {
             mandatoryFields = labIntChecker.getTableMandatoryFields(TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName(), actionName);
 
 
-        if (devMode){
+        if (Boolean.TRUE.equals(devMode)){
             StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
             javaDocLineName = "CHECK sampleFieldName and sampleFieldValue match in length";
             javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_LINE_FLDNAME);
@@ -86,7 +86,7 @@ public class GenomaDataStudyIndividuals {
                 return diagnosesProj;
             }
         }    
-        if (devMode){
+        if (Boolean.TRUE.equals(devMode)){
             StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
             javaDocLineName = "CHECK sampleFieldName and sampleFieldValue match in length";
             javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_LINE_FLDNAME);
@@ -205,7 +205,7 @@ public class GenomaDataStudyIndividuals {
             }
             return diagnosesProj;  
         }    
-        if (devMode){
+        if (Boolean.TRUE.equals(devMode)){
             StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
             javaDocLineName = "END";
             Integer specialFieldIndex = Arrays.asList(javaDocFields).indexOf(ApiMessageReturn.JAVADOC_LINE_FLDNAME);

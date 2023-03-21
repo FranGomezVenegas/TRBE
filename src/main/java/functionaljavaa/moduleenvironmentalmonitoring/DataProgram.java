@@ -72,7 +72,7 @@ Object[] createProgram(String projectTemplate, Integer projectTemplateVersion, S
     String javaDocLineNameProj = "";
     DataDataIntegrity labIntChecker = new DataDataIntegrity();
 
-    if (devMode){
+    if (Boolean.TRUE.equals(devMode)){
         StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
         javaDocLineNameProj = "BEGIN";
         javaDocFieldsProj = LPArray.addValueToArray1D(javaDocFieldsProj, ApiMessageReturn.JAVADOC_LINE_FLDNAME);
@@ -93,7 +93,7 @@ Object[] createProgram(String projectTemplate, Integer projectTemplateVersion, S
         mandatoryFieldsProj = labIntChecker.getTableMandatoryFields(tableName, actionName);
         
         
-    if (devMode){
+    if (Boolean.TRUE.equals(devMode)){
         StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
         javaDocLineNameProj = "CHECK sampleFieldName and sampleFieldValue match in length";
         javaDocFieldsProj = LPArray.addValueToArray1D(javaDocFieldsProj, ApiMessageReturn.JAVADOC_LINE_FLDNAME);
@@ -115,7 +115,7 @@ Object[] createProgram(String projectTemplate, Integer projectTemplateVersion, S
             return diagnosesProj;
         }
     }    
-    if (devMode){
+    if (Boolean.TRUE.equals(devMode)){
         StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
         javaDocLineNameProj = "CHECK sampleFieldName and sampleFieldValue match in length";
         javaDocFieldsProj = LPArray.addValueToArray1D(javaDocFieldsProj, ApiMessageReturn.JAVADOC_LINE_FLDNAME);
@@ -211,7 +211,7 @@ Object[] createProgram(String projectTemplate, Integer projectTemplateVersion, S
 
         return insertRecordInTable.getApiMessage();  
     }    
-    if (devMode){
+    if (Boolean.TRUE.equals(devMode)){
         StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
         javaDocLineNameProj = "END";
         Integer specialFieldIndex = Arrays.asList(javaDocFieldsProj).indexOf(ApiMessageReturn.JAVADOC_LINE_FLDNAME);

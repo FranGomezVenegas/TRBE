@@ -66,7 +66,7 @@ public class ConfigSamplingPlanForSpec {
     public Object[] newSamplingPlanDetailRecordDev(String[] fieldsName, Object[] fieldsValue, Boolean devMode) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
-    if (devMode){
+    if (Boolean.TRUE.equals(devMode)){
         StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
         javaDocLineName = "BEGIN";
         javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_LINE_FLDNAME);         javaDocValues = LPArray.addValueToArray1D(javaDocValues, javaDocLineName);         
@@ -75,7 +75,7 @@ public class ConfigSamplingPlanForSpec {
     }  
         String actionName = "Insert";
         tableName = "project";
-    if (devMode){
+    if (Boolean.TRUE.equals(devMode)){
         StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
         javaDocLineName = "CHECK fieldsName and fieldsValue match in length";
         javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_LINE_FLDNAME);         javaDocValues = LPArray.addValueToArray1D(javaDocValues, javaDocLineName);         
@@ -86,7 +86,7 @@ public class ConfigSamplingPlanForSpec {
         diagnoses = LPArray.checkTwoArraysSameLength(fieldsName, fieldsValue);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString())){ return diagnoses;}
     } 
-    if (devMode){
+    if (Boolean.TRUE.equals(devMode)){
         StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
         javaDocLineName = "CHECK MANDATORY FIELDS";
         javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_LINE_FLDNAME);         javaDocValues = LPArray.addValueToArray1D(javaDocValues, javaDocLineName);         
@@ -111,7 +111,7 @@ public class ConfigSamplingPlanForSpec {
             }
         }   
     }  
-    if (devMode){
+    if (Boolean.TRUE.equals(devMode)){
         StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
         javaDocLineName = "CHECK CONFIG OBJECT EXISTS";
         javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_LINE_FLDNAME);         javaDocValues = LPArray.addValueToArray1D(javaDocValues, javaDocLineName);         
@@ -122,7 +122,7 @@ public class ConfigSamplingPlanForSpec {
         diagnoses = LPPlatform.configObjectExists(procInstanceName, fieldsName, fieldsValue, tableName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString())){return diagnoses;}
     }
-    if (devMode){
+    if (Boolean.TRUE.equals(devMode)){
         StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
         javaDocLineName = "CHECK SPECIAL FIELDS";
         javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_LINE_FLDNAME);         javaDocValues = LPArray.addValueToArray1D(javaDocValues, javaDocLineName);         
@@ -134,7 +134,7 @@ public class ConfigSamplingPlanForSpec {
         diagnoses = labPlat.specialFieldsCheck(procInstanceName, GlobalVariables.Schemas.DATA.getName(), fieldsName, fieldsValue, tableName, actionName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString())){return diagnoses;}
     }
-    if (devMode){
+    if (Boolean.TRUE.equals(devMode)){
         StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
         javaDocLineName = "INSERT RECORD IN PROJECT TABLE";
         javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_LINE_FLDNAME);         javaDocValues = LPArray.addValueToArray1D(javaDocValues, javaDocLineName);         
@@ -145,7 +145,7 @@ public class ConfigSamplingPlanForSpec {
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInspLotRMData.TablesInspLotRMData.LOT, fieldsName, fieldsValue);    
         if (!insertRecordInTable.getRunSuccess()){return insertRecordInTable.getApiMessage();}
     }    
-    if (devMode){
+    if (Boolean.TRUE.equals(devMode)){
         StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
         javaDocLineName = "END";
         javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_LINE_FLDNAME);         javaDocValues = LPArray.addValueToArray1D(javaDocValues, javaDocLineName);         

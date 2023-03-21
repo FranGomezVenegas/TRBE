@@ -53,7 +53,7 @@ public InternalMessage createStudyFamily(GenomaStudyAPI.GenomaStudyAPIactionsEnd
     schemaDataName = LPPlatform.buildSchemaName(procInstanceName, schemaDataName);    
     mandatoryFields = labIntChecker.getTableMandatoryFields(TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName(), actionName);
         
-    if (devMode){
+    if (Boolean.TRUE.equals(devMode)){
         StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
         javaDocLineName = "CHECK sampleFieldName and sampleFieldValue match in length";
         javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_LINE_FLDNAME);
