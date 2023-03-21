@@ -407,7 +407,7 @@ JSONObject projectUsersJson(JSONObject curProjJson, String curProjectName, Boole
     String schemaName=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
     String[] whereFldNames=new String[]{TblsGenomaData.ProjectUsers.PROJECT.getName()};
     Object[] whereFldValues=new Object[]{curProjectName};   
-    if (getOnlyActiveObjects){
+    if (Boolean.TRUE.equals(getOnlyActiveObjects)){
         whereFldNames=LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.ProjectUsers.ACTIVE.getName());
         whereFldValues=LPArray.addValueToArray1D(whereFldValues, true);
     }    
@@ -431,7 +431,7 @@ JSONObject studyUsersJson(JSONObject curProjStudyJson, String curStudyName, Bool
     String schemaName=LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
     String[] whereFldNames=new String[]{TblsGenomaData.StudyUsers.STUDY.getName()};
     Object[] whereFldValues=new Object[]{curStudyName};   
-    if (getOnlyActiveObjects){
+    if (Boolean.TRUE.equals(getOnlyActiveObjects)){
         whereFldNames=LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyUsers.ACTIVE.getName());
         whereFldValues=LPArray.addValueToArray1D(whereFldValues, true);
     }    
@@ -469,7 +469,7 @@ JSONObject studyIndividualJson(JSONObject curProjStudyJson, String curStudyName,
         whereFldNames=LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyIndividual.INDIVIDUAL_ID.getName()+" IN|");
         whereFldValues=LPArray.addValueToArray1D(whereFldValues, "INTEGER*"+familyIndivsStr);
     }
-    if (getOnlyActiveObjects){
+    if (Boolean.TRUE.equals(getOnlyActiveObjects)){
         whereFldNames=LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyIndividual.ACTIVE.getName());
         whereFldValues=LPArray.addValueToArray1D(whereFldValues, true);
     }    
@@ -521,7 +521,7 @@ JSONObject studyIndividualSamplesJson(JSONObject curProjStudyJson, String curStu
         whereFldNames=LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyIndividualSample.INDIVIDUAL_ID.getName());
         whereFldValues=LPArray.addValueToArray1D(whereFldValues, individualId);
     }
-    if (getOnlyActiveObjects){
+    if (Boolean.TRUE.equals(getOnlyActiveObjects)){
         whereFldNames=LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyIndividualSample.ACTIVE.getName());
         whereFldValues=LPArray.addValueToArray1D(whereFldValues, true);
     }
@@ -608,7 +608,7 @@ JSONObject studySamplesSetJson(JSONObject curProjStudyJson, String curStudyName,
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
     String[] whereFldNames=new String[]{TblsGenomaData.StudySamplesSet.STUDY.getName()};
     Object[] whereFldValues=new Object[]{curStudyName};
-    if (getOnlyActiveObjects){
+    if (Boolean.TRUE.equals(getOnlyActiveObjects)){
         whereFldNames=LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudySamplesSet.ACTIVE.getName());
         whereFldValues=LPArray.addValueToArray1D(whereFldValues, true);
     }

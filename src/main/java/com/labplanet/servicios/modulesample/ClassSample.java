@@ -290,7 +290,7 @@ public class ClassSample {
                                 procReqSession.killIt();
                                 request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, SampleAPIParams.SampleAPIactionsEndpoints.REENTERRESULT.getName());
                                 procReqSession = ProcedureRequestSession.getInstanceForActions(request, null, isForTesting);
-                                if (procReqSession.getHasErrors()){
+                                if (Boolean.TRUE.equals(procReqSession.getHasErrors())){
                                     procReqSession.killIt();
                                     diagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, procReqSession.getErrorMessage(), new Object[]{resultId.toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
                                     break;
@@ -520,7 +520,7 @@ public class ClassSample {
                 case SAMPLESTAGE_MOVETOPREVIOUS:
                 case SAMPLESTAGE_MOVETONEXT:
                     DataSampleStages smpStage=new DataSampleStages();
-                    if (!smpStage.isSampleStagesEnable()){
+                    if (Boolean.FALSE.equals(smpStage.isSampleStagesEnable())){
                         LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, null,
                                 ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "STAGES_FUNCTIONALITY_NOT_ENABLE", new Object[]{"Samples", procInstanceName}));
                         return;
@@ -591,7 +591,7 @@ public class ClassSample {
             }
             if (diagn!=null &&  LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString())){
                 DataSampleStages smpStage = new DataSampleStages();
-                if (smpStage.isSampleStagesEnable() && sampleId!=null)
+                if (Boolean.TRUE.equals(smpStage.isSampleStagesEnable()) && sampleId!=null)
                     smpStage.dataSampleActionAutoMoveToNext(endPoint.getName().toUpperCase(), sampleId);
             }
             if (diagn!=null &&  LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString()))

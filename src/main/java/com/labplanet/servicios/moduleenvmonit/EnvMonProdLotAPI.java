@@ -128,7 +128,7 @@ public class EnvMonProdLotAPI extends HttpServlet {
                 return;
             }                            
             ClassEnvMonProdLot clss=new ClassEnvMonProdLot(request, endPoint);
-            if (clss.getEndpointExists()){
+            if (Boolean.TRUE.equals(clss.getEndpointExists())){
                 Object[] diagnostic=clss.getDiagnostic();
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
                     String errorCode =diagnostic[4].toString();

@@ -216,13 +216,13 @@ if (currentLine==23)
                             String specUomName=(String) specLimits[0][4];
                             ConfigSpecRule specRule = new ConfigSpecRule();
                             specRule.specLimitsRule(limitId, null);
-                            if (!specRule.getRuleIsQualitative() && !specRule.getRuleIsQuantitative())
+                            if (Boolean.FALSE.equals(specRule.getRuleIsQualitative()) && Boolean.FALSE.equals(specRule.getRuleIsQuantitative()))
                                 resSpecEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, qualitativeRulesErrors.QUALITATIVE_RULE_NOT_RECOGNIZED, null);                    
-                            if (specRule.getRuleIsQualitative()){        
+                            if (Boolean.TRUE.equals(specRule.getRuleIsQualitative())){
                               resSpecEvaluation = resChkSpec.resultCheck((String) resultValue, specRule.getQualitativeRule(), 
                                       specRule.getQualitativeRuleValues(), specRule.getQualitativeRuleSeparator(), specRule.getQualitativeRuleListName());
                             } 
-                            if (specRule.getRuleIsQuantitative()){
+                            if (Boolean.TRUE.equals(specRule.getRuleIsQuantitative())){
                                 Object[] isNumeric = isNumeric(resultValue);
                                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isNumeric[0].toString()))
                                         resSpecEvaluation=isNumeric;
@@ -234,23 +234,23 @@ if (currentLine==23)
                                     resultUomName = LPNulls.replaceNull(resultUomName);
                                     specUomName = LPNulls.replaceNull(specUomName);
                                     if (resultUomName.length()==0 || specUomName.length()==0 || resultUomName.equals(specUomName)){requiresUnitsConversion=false;}
-                                    if (requiresUnitsConversion && specUomName!=null && specUomName.length()>0){
+                                    if (Boolean.TRUE.equals(requiresUnitsConversion) && specUomName!=null && specUomName.length()>0){
                                         uom.convertValue(specUomName);
                                         if (!uom.getConvertedFine()) 
                                             resSpecEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataInvRetErrorTrapping.CONVERTER_FALSE, new Object[]{limitId.toString(), "", schemaDataName});                  
                                         else
                                             resultConverted =  new BigDecimal((String) uom.getConversionErrorDetail()[1]);        
                                     }
-                                    if (!requiresUnitsConversion || (requiresUnitsConversion && uom.getConvertedFine())){
-                                        if (specRule.getQuantitativeHasControl()){
-                                            if (requiresUnitsConversion) {
+                                    if (Boolean.FALSE.equals(requiresUnitsConversion) || (Boolean.TRUE.equals(requiresUnitsConversion) && uom.getConvertedFine())){
+                                        if (Boolean.TRUE.equals(specRule.getQuantitativeHasControl())){
+                                            if (Boolean.TRUE.equals(requiresUnitsConversion)) {
                                                 resSpecEvaluation = resChkSpec.resultCheck(resultConverted, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
                                             } else {
                                                 resSpecEvaluation = resChkSpec.resultCheck((BigDecimal) resultValueBigDecimal, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
                                             }
                                             resSpecEvaluation=LPArray.addValueToArray1D(resSpecEvaluation, "Regla: " +specRule.getQualitativeRuleRepresentation());
                                         } else {
-                                            if (requiresUnitsConversion) {
+                                            if (Boolean.TRUE.equals(requiresUnitsConversion)){
                                                 resSpecEvaluation = resChkSpec.resultCheck(resultConverted, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
                                             } else {
                                                 resSpecEvaluation = resChkSpec.resultCheck((BigDecimal) resultValueBigDecimal, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());

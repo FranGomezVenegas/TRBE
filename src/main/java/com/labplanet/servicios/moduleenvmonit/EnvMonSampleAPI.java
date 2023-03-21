@@ -251,7 +251,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                 return;
             }
             ClassSample clssSmp=new ClassSample(request, endPointSmp);
-            if (clssSmp.getEndpointExists()){
+            if (Boolean.TRUE.equals(clssSmp.getEndpointExists())){
                 Object[] diagnostic=clssSmp.getDiagnostic();
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
                     LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clssSmp.getMessageDynamicData());           
@@ -299,7 +299,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                 return;
             }                            
             ClassEnvMonSample clss=new ClassEnvMonSample(request, endPoint);
-            if (clss.getEndpointExists()){
+            if (Boolean.TRUE.equals(clss.getEndpointExists())){
                 Object[] diagnostic=clss.getDiagnostic();
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
                     String errorCode =diagnostic[4].toString();
@@ -322,7 +322,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                     return;                   
                 }                
                 ClassSample clssSmp=new ClassSample(request, endPointSmp);
-                if (clssSmp.getEndpointExists()){
+                if (Boolean.TRUE.equals(clssSmp.getEndpointExists())){
                     Object[] diagnostic=clssSmp.getDiagnostic();
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
                         LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   

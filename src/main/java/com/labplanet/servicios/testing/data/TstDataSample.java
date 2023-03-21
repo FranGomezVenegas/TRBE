@@ -489,7 +489,7 @@ public class TstDataSample extends HttpServlet {
                     String savePoint= LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_EXECUTION_EVIDENCE_SAVE)).toString();
                     if (savePoint==null || savePoint.length()==0)
                         savePoint= LPNulls.replaceNull(request.getParameter(LPTestingParams.SCRIPT_EXECUTION_EVIDENCE_SAVE));
-                    if (Boolean.valueOf(savePoint))
+                    if (Boolean.TRUE.equals(Boolean.valueOf(savePoint)))
                         scriptExecutionEvidenceSave(scriptId, summaryPhrase);
                 }else{
                     summaryPhrase="COMPLETED WITH UNEXPECTED RESULTS. ";

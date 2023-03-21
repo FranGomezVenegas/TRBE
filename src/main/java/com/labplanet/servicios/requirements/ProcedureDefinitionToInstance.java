@@ -94,7 +94,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                     sectionsDetailObj.put("CREATE_REPOSITORIES_AND_PROC_TBLS", createDBProcedureInfo);
                 }               
             }
-            if (Boolean.valueOf(runAsCheckerAttrValue.toString())){
+            if (Boolean.TRUE.equals(Boolean.valueOf(runAsCheckerAttrValue.toString()))){
                 JSONObject createDBProcedureInfo = ProcDeployCheckerLogic.createDBProcedureInfo(procName, procVersion, procInstanceName);
                 createDBProcedureInfo.put("section_name", "PROCDEPL_PROCEDURE_INFO");
                 createDBProcedureInfo.put("section_label_en", "Procedure Info section creation");
@@ -110,7 +110,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                     sectionsDetailObj.put("PROCDEPL_PROCEDURE_INFO", createDBProcedureInfo);
                 }   
             }
-            if (Boolean.valueOf(runAsCheckerAttrValue.toString())){
+            if (Boolean.TRUE.equals(Boolean.valueOf(runAsCheckerAttrValue.toString()))){
                 JSONObject createDBProcedureUserRoles = ProcDeployCheckerLogic.createDBPersonProfiles(procName, procVersion, procInstanceName);
                 createDBProcedureUserRoles.put("section_name", "PROCDEPL_PROCEDURE_USER_ROLES");
                 createDBProcedureUserRoles.put("section_label_en", "Procedure User and Roles section creation");
@@ -126,7 +126,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                     sectionsDetailObj.put("PROCDEPL_PROCEDURE_USER_ROLES", createDBProcedureUserRoles);
                 } 
             }
-            if (Boolean.valueOf(runAsCheckerAttrValue.toString())){
+            if (Boolean.TRUE.equals(Boolean.valueOf(runAsCheckerAttrValue.toString()))){
                 JSONObject createDBSopMetaDataAndUserSop = ProcDeployCheckerLogic.createDBSopMetaDataAndUserSop(procName, procVersion, procInstanceName);
                 createDBSopMetaDataAndUserSop.put("section_name", "PROCDEPL_PROCEDURE_SOP_META_DATA");
                 createDBSopMetaDataAndUserSop.put("section_label_en", "Procedure SOPs section");
@@ -142,7 +142,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                     sectionsDetailObj.put("PROCDEPL_PROCEDURE_SOP_META_DATA", createDBSopMetaDataAndUserSop);
                 } 
             }
-            if (Boolean.valueOf(runAsCheckerAttrValue.toString())){
+            if (Boolean.TRUE.equals(Boolean.valueOf(runAsCheckerAttrValue.toString()))){
                 JSONObject createDBProcedureUserRoles = ProcDeployCheckerLogic.addProcedureSOPtoUsers(procName, procVersion, procInstanceName);
                 createDBProcedureUserRoles.put("section_name", "PROCDEPL_ASIGN_PROC_SOPS_TO_USERS");
                 createDBProcedureUserRoles.put("section_label_en", "Procedure assignment of SOPs to Users");
@@ -158,7 +158,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                     sectionsDetailObj.put("PROCDEPL_ASIGN_PROC_SOPS_TO_USERS", createDBProcedureUserRoles);
                 } 
             }
-            if (Boolean.valueOf(runAsCheckerAttrValue.toString())){
+            if (Boolean.TRUE.equals(Boolean.valueOf(runAsCheckerAttrValue.toString()))){
                 JSONObject createDBProcedureEvents = ProcDeployCheckerLogic.createDBProcedureEvents(procName, procVersion, procInstanceName);
                 createDBProcedureEvents.put("section_name", "PROCDEPL_PROCEDURE_EVENTS");
                 createDBProcedureEvents.put("section_label_en", "Procedure Events section creation");
@@ -178,7 +178,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                     sectionsDetailObj.put("PROCDEPL_PROCEDURE_EVENTS", jArr);
                 }
             }
-            if (Boolean.valueOf(runAsCheckerAttrValue.toString())){
+            if (Boolean.TRUE.equals(Boolean.valueOf(runAsCheckerAttrValue.toString()))){
                 JSONObject createPropBusinessRules = ProcDeployCheckerLogic.createBusinessRules(procName, procVersion, procInstanceName);
                 createPropBusinessRules.put("section_name", "PROCDEPL_BUSINESS_RULES");
                 createPropBusinessRules.put("section_label_en", "Procedure Business Rules section creation");
@@ -194,7 +194,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                     sectionsDetailObj.put("PROCDEPL_BUSINESS_RULES_PROPTS_FILS", createPropBusinessRules);
                 }
             }
-            if (Boolean.valueOf(runAsCheckerAttrValue.toString())){
+            if (Boolean.TRUE.equals(Boolean.valueOf(runAsCheckerAttrValue.toString()))){
                 JSONObject createDBModuleTablesAndFields = ProcDeployCheckerLogic.createDBModuleTablesAndFields(procName, procVersion, procInstanceName, moduleName);
                 createDBModuleTablesAndFields.put("section_name", "PROCDEPL_MODULE_TABLES_AND_FIELDS");
                 createDBModuleTablesAndFields.put("section_label_en", "Module Tables and Fields section creation");
@@ -210,7 +210,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                     sectionsDetailObj.put("PROCDEPL_MODULE_TABLES_AND_FIELDS", createDBModuleTablesAndFields);
                 }
             }
-            if (Boolean.valueOf(runAsCheckerAttrValue.toString())){
+            if (Boolean.TRUE.equals(Boolean.valueOf(runAsCheckerAttrValue.toString()))){
                 JSONObject createDBModuleTablesAndFields = ProcDeployCheckerLogic.deployMasterData(procName, procVersion, procInstanceName, moduleName);
                 createDBModuleTablesAndFields.put("section_name", "PROCDEPL_MASTER_DATA");
                 createDBModuleTablesAndFields.put("section_label_en", "Master Data section creation");
@@ -226,7 +226,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                     sectionsDetailObj.put("PROCDEPL_MASTER_DATA", createDBModuleTablesAndFields);
                 }
             }
-            if (Boolean.valueOf(runAsCheckerAttrValue.toString())){
+            if (Boolean.TRUE.equals(Boolean.valueOf(runAsCheckerAttrValue.toString()))){
                 JSONObject dataRepositoriesAreMirror = ProcDeployCheckerLogic.dataRepositoriesAreMirror(procInstanceName, null);
                 dataRepositoriesAreMirror.put("section_name", "DATA_REPOSITORIES_MIRROR");
                 dataRepositoriesAreMirror.put("section_label_en", "Procedure Data Repositories are Mirror checker");
@@ -237,7 +237,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
             }
             
             mainObj.put("actions_to_perform_settings", sectionsSettingJobj);
-            if (Boolean.valueOf(runAsCheckerAttrValue.toString()))
+            if (Boolean.TRUE.equals(Boolean.valueOf(runAsCheckerAttrValue.toString())))
                 mainObj.put("sections_log", sectionsDetailCheckerArr);
             else
                 mainObj.put("sections_log", sectionsDetailObj);

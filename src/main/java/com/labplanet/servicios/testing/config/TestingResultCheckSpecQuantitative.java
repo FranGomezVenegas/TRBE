@@ -31,7 +31,7 @@ public class TestingResultCheckSpecQuantitative extends HttpServlet {
         //if (1==1) return "hola";
         if (value==null || value.toString().length()==0) return "";
         String prettyVal=LPNulls.replaceNull(value).toString();
-        if (strictMode)
+        if (Boolean.TRUE.equals(strictMode))
             if ("MIN".equalsIgnoreCase(bound))                
                 prettyVal=prettyVal+" "+QuantSymbols.MIN_STRICT.getSymbol();
             else

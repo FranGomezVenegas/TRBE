@@ -190,7 +190,7 @@ public class Rdbms {
         String dbDriver = prop.getString(DbConnectionParams.DBMANAGER.getParamValue());
         switch (dbDriver.toUpperCase()){
             case "TOMCAT":
-                if (DB_CONNECTIVITY_POOLING_MODE)
+                if (Boolean.TRUE.equals(DB_CONNECTIVITY_POOLING_MODE))
                     return startRdbmsTomcatWithPool(dbName);                
                 else
                     return startRdbmsTomcatWithNoPool(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW, dbName);                
@@ -507,7 +507,7 @@ if (1==1){Rdbms.transactionId=1; return;}
 //if (1==1)return;     
         if(getConnection()!=null){
             try {
-                if (DB_CONNECTIVITY_POOLING_MODE){
+                if (Boolean.TRUE.equals(DB_CONNECTIVITY_POOLING_MODE)){
                     PoolC3P0 pool = PoolC3P0.getInstanceForActions(null);
                     if (pool==null){
                         setIsStarted(Boolean.FALSE);
@@ -534,8 +534,8 @@ if (1==1){Rdbms.transactionId=1; return;}
             if (getConnection().getAutoCommit()) return;
                 if (dbLogSummary!=null){
                     Boolean hasAlters=dbLogSummary.hasDbAlterActions();
-                    if (hasAlters){
-                        if (!dbLogSummary.hadAnyFailure())
+                    if (Boolean.TRUE.equals(hasAlters)){
+                        if (Boolean.FALSE.equals(dbLogSummary.hadAnyFailure()))
                             getConnection().commit();
                         else
                             getConnection().rollback();
@@ -1115,53 +1115,6 @@ if (1==1){Rdbms.transactionId=1; return;}
             Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
             return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
         }                    
-    }
-
-
-
-    /**
-     *
-     * @param schemaName
-     * @param tableName
-     * @param whereFieldNames
-     * @param whereFieldValues
-     * @return
-     */
-    private static Object[] xremoveRecordInTable(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues){
-        schemaName=addSuffixIfItIsForTesting(schemaName, tableName);
-        SqlStatement sql = new SqlStatement(); 
-        HashMap<String, Object[]> hmQuery = sql.buildSqlStatement("DELETE", schemaName, tableName,
-                whereFieldNames, whereFieldValues, null, null, null,
-                null, null);              
-        String query= hmQuery.keySet().iterator().next();   
-        whereFieldValues = DbEncryption.encryptTableFieldArray(schemaName, tableName, whereFieldNames, whereFieldValues);
-        Integer deleteRecordDiagnosis = Rdbms.prepUpQuery(query, whereFieldValues); 
-        if (deleteRecordDiagnosis>0){     
-            dbProcHashcode.procHashCodeHandler(schemaName, tableName);            
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_RecordUpdated", new Object[]{tableName, Arrays.toString(whereFieldValues), schemaName});   
-        }else if(deleteRecordDiagnosis==-999){
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{"The database cannot perform this sql statement: Schema: "+schemaName+". Table: "+tableName+". Statement: "+query+", By the values "+ Arrays.toString(whereFieldValues), query});   
-        }else{   
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{tableName, Arrays.toString(whereFieldValues), schemaName});                         
-        }        
-    }
-    private static RdbmsObject xremoveRecord(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues){
-        schemaName=addSuffixIfItIsForTesting(schemaName, tableName);
-        SqlStatement sql = new SqlStatement(); 
-        HashMap<String, Object[]> hmQuery = sql.buildSqlStatement("DELETE", schemaName, tableName,
-                whereFieldNames, whereFieldValues, null, null, null,
-                null, null);              
-        String query= hmQuery.keySet().iterator().next();   
-        whereFieldValues = DbEncryption.encryptTableFieldArray(schemaName, tableName, whereFieldNames, whereFieldValues);
-        Integer deleteRecordDiagnosis = Rdbms.prepUpQuery(query, whereFieldValues); 
-        if (deleteRecordDiagnosis>0){    
-            dbProcHashcode.procHashCodeHandler(schemaName, tableName);            
-            return new RdbmsObject(true, query+" "+Arrays.toString(whereFieldValues), RdbmsSuccess.RDBMS_RECORD_REMOVED, null, -999);
-        }else if(deleteRecordDiagnosis==-999){
-            return new RdbmsObject(false, query+" "+Arrays.toString(whereFieldValues), RdbmsErrorTrapping.DB_ERROR, new Object[]{"The database cannot perform this sql statement: Schema: "+schemaName+". Table: "+tableName+". Statement: "+query+", By the values "+ Arrays.toString(whereFieldValues), query}); 
-        }else{   
-            return new RdbmsObject(false, query+" "+Arrays.toString(whereFieldValues), RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{tableName, Arrays.toString(whereFieldValues), schemaName});
-        }        
     }
     public static Object[] insertRecordInTableZZZ(String schemaName, String tableName, String[] fieldNames, Object[] fieldValues){
         schemaName=addSuffixIfItIsForTesting(schemaName, tableName);

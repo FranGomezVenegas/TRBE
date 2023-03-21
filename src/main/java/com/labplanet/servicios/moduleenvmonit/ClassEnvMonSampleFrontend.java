@@ -1353,7 +1353,7 @@ new LPAPIArguments("allpendinganyincub_"+GlobalAPIsParams.REQUEST_PARAM_WHERE_FI
             JSONArray mySamplesJSArr = new JSONArray();
             for (Object[] mySample : mySamples) {
                 JSONObject mySampleJSObj = LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, mySample);                
-            if (includeOnlyWhenResultsInProgress && !isThereResultsInProgress(sampleFieldToRetrieveArr, mySample))
+            if (Boolean.TRUE.equals(includeOnlyWhenResultsInProgress) && Boolean.FALSE.equals(isThereResultsInProgress(sampleFieldToRetrieveArr, mySample)))
                 continue;            
 
             if ("TRUE".equalsIgnoreCase(addSampleAnalysis)){
@@ -1541,7 +1541,7 @@ private JSONArray sampleStageDataJsonArr(Integer sampleId, String[] sampleFldNam
         try{
             Integer resultFldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.RESULT_ID.getName());
             Integer resultId=Integer.valueOf(curRow[resultFldPosic].toString());
-            if (!isProgramCorrectiveActionEnable(procInstanceName)) return new Object[]{null, null};
+            if (Boolean.FALSE.equals(isProgramCorrectiveActionEnable(procInstanceName))) return new Object[]{null, null};
             Object[][] notClosedProgramCorrreciveAction=QueryUtilitiesEnums.getTableData(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION, 
                     EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION, SAMPLEANALYSISRESULTLOCKDATA_RETRIEVEDATA_PROGRAMCORRECTIVEACTION),                    
                     new String[]{TblsProcedure.ProgramCorrectiveAction.RESULT_ID.getName(), TblsProcedure.ProgramCorrectiveAction.STATUS.getName()+"<>"}, 
@@ -1620,7 +1620,7 @@ private JSONArray sampleStageDataJsonArr(Integer sampleId, String[] sampleFldNam
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ifUserCertificationEnabled[0].toString())) return new Object[]{null, null};
         
         Object[] userCertified = AnalysisMethodCertif.isUserCertified(methodName, token.getUserName());
-        if (Boolean.valueOf(userCertified[0].toString())) return new Object[]{null, null};
+        if (Boolean.TRUE.equals(Boolean.valueOf(userCertified[0].toString()))) return new Object[]{null, null};
 
         fldNameArr=LPArray.addValueToArray1D(fldNameArr, "is_locked");
         fldValueArr=LPArray.addValueToArray1D(fldValueArr, true);
@@ -1661,7 +1661,7 @@ private JSONArray sampleStageDataJsonArr(Integer sampleId, String[] sampleFldNam
         String viewName="";
         switch (curStage.toUpperCase()){
             case "SAMPLING":
-                if (reqSamplingEnd)
+                if (Boolean.TRUE.equals(reqSamplingEnd))
                     viewName = "SamplePendingSamplingInterval";
                 else
                     viewName = "SamplePendingSampling";

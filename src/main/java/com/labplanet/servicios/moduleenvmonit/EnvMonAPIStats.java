@@ -361,13 +361,13 @@ public class EnvMonAPIStats extends HttpServlet {
                     getSampleInfo=true;
             }
             JSONObject jObj=new JSONObject();
-            if (getRecoveryRate){
+            if (Boolean.TRUE.equals(getRecoveryRate)){
                     JSONObject jObjRecoveryData = getRecoveryRate(RRobjGroupName, RRwhereFieldsName, RRwhereFieldsValue, 
                         showAbsence, showPresence, showIN, showOUT, percNumDecimals, false);
                     jObjMainObject.put("recovery_rate", jObjRecoveryData);
             }
             Object[][] sampleInfo=new Object[0][0];
-            if (getSampleInfo){
+            if (Boolean.TRUE.equals(getSampleInfo)){
                 String programName = request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME);
                 if (programName!=null && programName.length()>0)
                     wObj.addConstraint(TblsData.ViewSampleAnalysisResultWithSpecLimits.PROGRAM_NAME, 
@@ -407,10 +407,10 @@ public class EnvMonAPIStats extends HttpServlet {
                         wObj.addConstraint(TblsData.ViewSampleAnalysisResultWithSpecLimits.LOGGED_ON, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{buildDateRangeFromStrings[2]}, null);                    
                 }
                 String includeSamples = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_SAMPLER_SAMPLES);
-                if (includeSamples!=null && includeSamples.length()>0 && Boolean.valueOf(includeSamples))
+                if (includeSamples!=null && includeSamples.length()>0 && Boolean.TRUE.equals(Boolean.valueOf(includeSamples)))
                     wObj.addConstraint(TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_CONFIG_CODE, SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{smpTemplate}, null);
                 String excludeSamplerSamples = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_SAMPLER_SAMPLES);
-                if (excludeSamplerSamples!=null && excludeSamplerSamples.length()>0 && Boolean.valueOf(excludeSamplerSamples))
+                if (excludeSamplerSamples!=null && excludeSamplerSamples.length()>0 && Boolean.TRUE.equals(Boolean.valueOf(excludeSamplerSamples)))
                     wObj.addConstraint(TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_CONFIG_CODE, SqlStatement.WHERECLAUSE_TYPES.NOT_IN, new Object[]{samplerSmpTemplate}, null);                    
                 String samplerName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLER);
                 if (samplerName!=null && samplerName.length()>0)
@@ -430,10 +430,10 @@ public class EnvMonAPIStats extends HttpServlet {
                 if (readingMax!=null && readingMax.length()>0)
                     wObj.addConstraint(TblsData.ViewSampleAnalysisResultWithSpecLimits.RAW_VALUE_NUM, SqlStatement.WHERECLAUSE_TYPES.LESS_THAN, new Object[]{Integer.valueOf(readingMax)}, null);
                 String excludeReadingNotEntered = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_READING_NOT_ENTERED);
-                if (excludeReadingNotEntered!=null && excludeReadingNotEntered.length()>0 && Boolean.valueOf(excludeReadingNotEntered))
+                if (excludeReadingNotEntered!=null && excludeReadingNotEntered.length()>0 && Boolean.TRUE.equals(Boolean.valueOf(excludeReadingNotEntered)))
                     wObj.addConstraint(TblsData.ViewSampleAnalysisResultWithSpecLimits.RAW_VALUE, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{""}, null);
                 String includeSamplerSamples = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_SAMPLER_SAMPLES);
-                if (includeSamplerSamples!=null && includeSamplerSamples.length()>0 && Boolean.valueOf(includeSamplerSamples)){
+                if (includeSamplerSamples!=null && includeSamplerSamples.length()>0 && Boolean.TRUE.equals(Boolean.valueOf(includeSamplerSamples))){
                     if (!(includeSamples!=null && includeSamples.length()>0 && Boolean.valueOf(includeSamples)))
                         wObj.addConstraint(TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_CONFIG_CODE, SqlStatement.WHERECLAUSE_TYPES.NOT_IN, new Object[]{Integer.valueOf(samplerSmpTemplate)}, null);
                 }            
@@ -457,14 +457,14 @@ public class EnvMonAPIStats extends HttpServlet {
                     }else{                       
                         for (Object[] curRec: sampleInfo){
                             jObj= LPJson.convertArrayRowToJSONObject(EnumIntViewFields.getAllFieldNames(fieldsToGet), curRec);
-                            if (Boolean.valueOf(includeMicroOrganisms)){
+                            if (Boolean.TRUE.equals(Boolean.valueOf(includeMicroOrganisms))){
                                 Integer curSampleId = Integer.valueOf(curRec[LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_ID.getName())].toString());
                                 Object[][] sampleMicroOrgInfo = QueryUtilitiesEnums.getTableData(TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM, 
                                     EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM, new String[]{TblsEnvMonitData.SampleMicroorganism.MICROORG_NAME.getName()}), 
                                     new String[]{TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID.getName()}, new Object[]{curSampleId},
                                     new String[]{TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID.getName()+" desc"} ); 
                                 String microOrgList="";
-                                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleMicroOrgInfo[0][0].toString())){
+                                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleMicroOrgInfo[0][0].toString()))){
                                     for (Object[] curMicroOrg: sampleMicroOrgInfo){
                                         if (microOrgList.length()>0)microOrgList=microOrgList.concat(", ");
                                         microOrgList=microOrgList.concat(curMicroOrg[0].toString());
@@ -501,7 +501,7 @@ public class EnvMonAPIStats extends HttpServlet {
                 jObjMainObject.put("filter_detail", filterJArr);
             }
             
-            if (getInvestigationInfo){
+            if (Boolean.TRUE.equals(getInvestigationInfo)){
                 Object[][] investigationInfo=new Object[0][0];
                 
                 String creationDayStart = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_CREATION_DAY_START);
@@ -521,7 +521,7 @@ public class EnvMonAPIStats extends HttpServlet {
                         wObj.addConstraint(TblsProcedure.Investigation.CLOSED_ON, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{buildDateRangeFromStrings[2]}, null);                    
                 }
                 String excludeNotClosedYet = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_NOT_CLOSED_YET);
-                if (excludeNotClosedYet!=null && excludeNotClosedYet.length()>0 && Boolean.valueOf(excludeNotClosedYet))
+                if (excludeNotClosedYet!=null && excludeNotClosedYet.length()>0 && Boolean.TRUE.equals(Boolean.valueOf(excludeNotClosedYet)))
                     wObj.addConstraint(TblsProcedure.Investigation.CLOSED_ON, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{samplerSmpTemplate}, null);
                 if (wObj.getAllWhereEntries().isEmpty())
                     wObj.addConstraint(TblsProcedure.Investigation.ID, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{samplerSmpTemplate}, null);
