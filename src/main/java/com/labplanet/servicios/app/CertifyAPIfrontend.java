@@ -7,8 +7,8 @@ package com.labplanet.servicios.app;
 
 import databases.TblsData;
 import databases.features.Token;
-import static functionaljavaa.certification.CertifyQueries.CertificationsHistory;
-import static functionaljavaa.certification.CertifyQueries.CertificationsInProgress;
+import static functionaljavaa.certification.CertifyQueries.certificationsHistory;
+import static functionaljavaa.certification.CertifyQueries.certificationsInProgress;
 import static functionaljavaa.certification.CertifyQueries.objectsUponCertificationProcedure;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
@@ -132,7 +132,7 @@ public class CertifyAPIfrontend extends HttpServlet {
                 case CERTIFICATIONS_IN_PROGRESS:
                     String areasToInclude=argValues[0].toString();
                     Boolean includeAuditHistory=Boolean.valueOf(argValues[1].toString());
-                    JSONArray jGlobalArr=CertificationsInProgress(areasToInclude, includeAuditHistory);
+                    JSONArray jGlobalArr=certificationsInProgress(areasToInclude, includeAuditHistory);
                     LPFrontEnd.servletReturnSuccess(request, response, jGlobalArr);
                     return;  
                 case USER_CERTIFICATIONS_HISTORY:
@@ -150,7 +150,7 @@ public class CertifyAPIfrontend extends HttpServlet {
                             whereFldValue=LPArray.addValueToArray1D(whereFldValue, buildDateRangeFromStrings[3]);                        
                     }
                     includeAuditHistory=Boolean.valueOf(LPNulls.replaceNull(argValues[4]).toString());                    
-                    jGlobalArr=CertificationsHistory(areasToInclude, whereFldName, whereFldValue, includeAuditHistory);
+                    jGlobalArr=certificationsHistory(areasToInclude, whereFldName, whereFldValue, includeAuditHistory);
                     procReqInstance.killIt();
                     LPFrontEnd.servletReturnSuccess(request, response, jGlobalArr);
                     return;  
