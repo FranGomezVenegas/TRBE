@@ -13,7 +13,7 @@ public class GlobalVariables {
     
     public enum Schemas{APP("app"), APP_AUDIT("app-audit"),APP_BUSINESS_RULES("app-business-rules"),
         APP_CONFIG("config"), APP_TESTING("app-testing"), 
-        xAPP_PROC_CONFIG("app-proc-config"), APP_PROC_DATA("app-proc-data"), APP_PROC_DATA_AUDIT("app-proc-data-audit"),
+        APP_PROC_DATA("app-proc-data"), APP_PROC_DATA_AUDIT("app-proc-data-audit"),
         CONFIG("config"), CONFIG_AUDIT("config-audit"), REQUIREMENTS("requirements"),
         DATA("data"), DATA_AUDIT("data-audit"), TESTING("testing"), DATA_TESTING("data_testing"), DATA_AUDIT_TESTING("data-audit_testing"),
         PROCEDURE("procedure"), PROCEDURE_CONFIG("procedure-config"), PROCEDURE_TESTING("procedure_testing"), PROCEDURE_AUDIT("procedure-audit"), PROCEDURE_AUDIT_TESTING("procedure-audit_testing"), MODULES_TRAZIT_TRAZIT("trazit")

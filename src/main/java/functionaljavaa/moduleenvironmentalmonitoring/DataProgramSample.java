@@ -23,15 +23,12 @@ import functionaljavaa.samplestructure.DataSample;
 import functionaljavaa.samplestructure.DataSampleStructureEnums;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import module.inventorytrack.logic.DataInventory;
-import org.json.simple.JSONArray;
-import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntViewFields;
 import trazit.session.ProcedureRequestSession;
@@ -45,36 +42,6 @@ import trazit.session.InternalMessage;
  */
 public class DataProgramSample{
     
-    public enum DataProgramSampleBusinessRules implements EnumIntBusinessRules{
-        xSAMPLE_TEMPLATE("samplerSampleTemplate", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
-        xSAMPLER_SAMPLE_TEMPLATE("samplerSampleTemplate", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null)
-        ;
-        private DataProgramSampleBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator
-        , Boolean isOpt, ArrayList<String[]> preReqs){
-            this.tagName=tgName;
-            this.areaName=areaNm;
-            this.valuesList=valuesList;  
-            this.allowMultiValue=allowMulti;
-            this.multiValueSeparator=separator;
-            this.isOptional=isOpt;
-            this.preReqs=preReqs;
-        }       
-        @Override        public String getTagName(){return this.tagName;}
-        @Override        public String getAreaName(){return this.areaName;}
-        @Override        public JSONArray getValuesList(){return this.valuesList;}
-        @Override        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
-        @Override        public char getMultiValueSeparator(){return this.multiValueSeparator;}
-        @Override        public Boolean getIsOptional() {return isOptional;}
-        @Override        public ArrayList<String[]> getPreReqs() {return this.preReqs;}
-        
-        private final String tagName;
-        private final String areaName;
-        private final JSONArray valuesList;  
-        private final Boolean allowMultiValue;
-        private final char multiValueSeparator;        
-        private final Boolean isOptional;
-        private final ArrayList<String[]> preReqs;
-    }
     /**
      *
      * @param programTemplate
@@ -212,9 +179,7 @@ public class DataProgramSample{
      */
     public static Object[] addSampleMicroorganism(Integer sampleId, String microorganismName, Integer items){
         if (items==null)items=1;
-        Object[] diagnostic=null;
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         RdbmsObject insertRecordInTable = null;
         for (int i=0;i<items;i++){
             insertRecordInTable = Rdbms.insertRecordInTable(TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM, 
