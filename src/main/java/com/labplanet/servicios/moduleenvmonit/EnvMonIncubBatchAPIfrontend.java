@@ -26,7 +26,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import static functionaljavaa.inventory.batch.DataBatchIncubatorStructured.BATCHCONTENTSEPARATORSTRUCTUREDBATCH;
+import static functionaljavaa.inventory.batch.DataBatchIncubatorStructured.BTCHCNTNT_SEPRTRSTRUCTUREDBATCH;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.util.HashMap;
@@ -256,9 +256,9 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
         }else if (BatchIncubatorType.STRUCTURED.toString().equalsIgnoreCase(batchValues[LPArray.valuePosicInArray(batchFields, TblsEnvMonitData.IncubBatch.TYPE.getName())].toString())){
             Integer totalRows=(Integer)batchValues[LPArray.valuePosicInArray(batchFields, TblsEnvMonitData.IncubBatch.STRUCT_NUM_ROWS.getName())]; 
             Integer totalCols=(Integer)batchValues[LPArray.valuePosicInArray(batchFields, TblsEnvMonitData.IncubBatch.STRUCT_NUM_COLS.getName())]; 
-            String[] rowsName=batchValues[LPArray.valuePosicInArray(batchFields, TblsEnvMonitData.IncubBatch.STRUCT_ROWS_NAME.getName())].toString().split(DataBatchIncubatorStructured.BATCHCONTENTSEPARATORSTRUCTUREDBATCH);
-            String[] colsName=batchValues[LPArray.valuePosicInArray(batchFields, TblsEnvMonitData.IncubBatch.STRUCT_COLS_NAME.getName())].toString().split(DataBatchIncubatorStructured.BATCHCONTENTSEPARATORSTRUCTUREDBATCH);
-            String[] batchContent1D=batchValues[LPArray.valuePosicInArray(batchFields, TblsEnvMonitData.IncubBatch.STRUCT_CONTENT.getName())].toString().split(BATCHCONTENTSEPARATORSTRUCTUREDBATCH);
+            String[] rowsName=batchValues[LPArray.valuePosicInArray(batchFields, TblsEnvMonitData.IncubBatch.STRUCT_ROWS_NAME.getName())].toString().split(DataBatchIncubatorStructured.BTCHCNTNT_SEPRTRSTRUCTUREDBATCH);
+            String[] colsName=batchValues[LPArray.valuePosicInArray(batchFields, TblsEnvMonitData.IncubBatch.STRUCT_COLS_NAME.getName())].toString().split(DataBatchIncubatorStructured.BTCHCNTNT_SEPRTRSTRUCTUREDBATCH);
+            String[] batchContent1D=batchValues[LPArray.valuePosicInArray(batchFields, TblsEnvMonitData.IncubBatch.STRUCT_CONTENT.getName())].toString().split(BTCHCNTNT_SEPRTRSTRUCTUREDBATCH);
             String[][] batchContent2D=LPArray.array1dTo2d(batchContent1D, totalCols);
 
             if (batchContent2D.length==0) return new Object[]{new JSONArray(), ""};  
