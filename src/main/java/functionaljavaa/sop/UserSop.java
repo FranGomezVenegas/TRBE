@@ -372,7 +372,7 @@ public class UserSop {
             ResultSet res = Rdbms.prepRdQuery(query.toString(), filterFieldValueAllSchemas);         
             res.last();
             Integer numLines=res.getRow();
-            if (numLines==0)return null;
+            if (numLines==0)return new Object[0][0];
                 
             
             Integer numColumns=fieldsToReturn.length;
