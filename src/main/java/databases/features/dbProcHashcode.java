@@ -31,7 +31,7 @@ public class dbProcHashcode {
         if (instanceForActions.getIsPlatform()==null) return;
         if (instanceForActions.getIsForDocumentation()==null) return;
         if (instanceForActions.getNewProcedureHashCodeGenerated()==null) return;
-        if (instanceForActions.getNewProcedureHashCodeGenerated()) return;
+        if (Boolean.TRUE.equals(instanceForActions.getNewProcedureHashCodeGenerated())) return;
         if (LPNulls.replaceNull(instanceForActions.getProcedureInstance()).length()==0) return;
         LocalDateTime currentTimeStamp = LPDate.getCurrentTimeStamp();
         int hashCode=currentTimeStamp.hashCode();

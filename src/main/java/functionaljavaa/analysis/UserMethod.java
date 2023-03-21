@@ -100,7 +100,7 @@ public class UserMethod {
         if (LPPlatform.LAB_FALSE.equals(userMethodData[0][0].toString())){return userMethodNotAssigned;}    
         
         Boolean userMethodActive = (Boolean) userMethodData[0][0];
-        if (!userMethodActive){return userMethodInactive;}
+        if (Boolean.FALSE.equals(userMethodActive)){return userMethodInactive;}
         else{return userMethodCertified;}                
     }    
 

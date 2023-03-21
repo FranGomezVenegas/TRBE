@@ -287,11 +287,11 @@ public class SampleAudit {
             EnumIntTableFields.getTableFieldsFromString(TblsDataAudit.TablesDataAudit.SAMPLE, new String[]{TblsDataAudit.Sample.PERSON.getName(), TblsDataAudit.Sample.REVIEWED.getName()}),                
             new String[]{TblsDataAudit.Sample.AUDIT_ID.getName()}, new Object[]{auditId}, 
             new String[]{TblsDataAudit.Sample.AUDIT_ID.getName()});
-        if (!isTagValueOneOfEnableOnes(auditAuthorCanBeReviewerMode)){//(!"TRUE".equalsIgnoreCase(auditAuthorCanBeReviewerMode)){            
+        if (Boolean.FALSE.equals(isTagValueOneOfEnableOnes(auditAuthorCanBeReviewerMode))){
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(auditInfo[0][0].toString())) return LPArray.array2dTo1d(auditInfo);
             if (personName.equalsIgnoreCase(auditInfo[0][0].toString())) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUTHOR_CANNOT_BE_REVIEWER, new Object[]{});
         }
-        if (Boolean.valueOf(auditInfo[0][1].toString())){
+        if (Boolean.TRUE.equals(Boolean.valueOf(auditInfo[0][1].toString()))){
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUDIT_RECORD_ALREADY_REVIEWED, new Object[]{auditId});              
         }
         String[] updFieldName=new String[]{TblsDataAudit.Sample.REVIEWED.getName(), TblsDataAudit.Sample.REVIEWED_BY.getName(), TblsDataAudit.Sample.REVIEWED_ON.getName()};
@@ -320,13 +320,13 @@ public class SampleAudit {
         for (String curModeRequired: auditRevisionModesRequired){
           if (LPArray.valuePosicInArray(auditRevisionModeArr, curModeRequired)>-1) auditRevisionModeRecognized= true; 
         }
-        if (!auditRevisionModeRecognized)return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.PARAMETER_MISSING,
+        if (Boolean.FALSE.equals(auditRevisionModeRecognized))return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.PARAMETER_MISSING,
                   new Object[]{SampleAuditBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName(), procInstanceName});
         if (LPArray.valuePosicInArray(auditRevisionModeArr, "DISABLE")>-1)return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SampleAuditErrorTrapping.DISABLED, 
                   new Object[]{SampleAuditBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName(), procInstanceName});
         if (LPArray.valuePosicInArray(auditRevisionModeArr, "STAGES")>-1){
             DataSampleStages smpStages = new DataSampleStages();
-            if (!smpStages.isSampleStagesEnable())return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.STAGESDETECTED_BUT_SAMPLESTAGES_NOT_ENABLED, 
+            if (Boolean.FALSE.equals(smpStages.isSampleStagesEnable()))return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.STAGESDETECTED_BUT_SAMPLESTAGES_NOT_ENABLED, 
                 new Object[]{SampleAuditBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName(), procInstanceName});
             Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
                 new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId}, 
@@ -382,7 +382,7 @@ public class SampleAudit {
         for (String curModeRequired: auditRevisionModesRequired){
           if (LPArray.valuePosicInArray(auditRevisionModeArr, curModeRequired)>-1) auditRevisionModeRecognized= true; 
         }
-        if (!auditRevisionModeRecognized)return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.PARAMETER_MISSING, 
+        if (Boolean.FALSE.equals(auditRevisionModeRecognized))return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.PARAMETER_MISSING, 
                   new Object[]{SampleAuditBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName(), procInstanceName});
         Integer isActions=LPArray.valuePosicInArray(auditRevisionModeArr, "ACTIONS");
         Integer actionIsThere=LPArray.valuePosicInArray(auditRevisionModeArr, actionName);

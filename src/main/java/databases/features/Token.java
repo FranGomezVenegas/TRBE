@@ -243,7 +243,7 @@ public final class Token {
     public String getTokenParamValue(String token, String paramName){
        Object[] tokenObj = isValidToken(token);
         
-       if (!Boolean.valueOf(tokenObj[0].toString())) return LPPlatform.LAB_FALSE;
+       if (Boolean.FALSE.equals(Boolean.valueOf(tokenObj[0].toString()))) return LPPlatform.LAB_FALSE;
 
        DecodedJWT jwt = (DecodedJWT) tokenObj[1];
        Claim header1 = jwt.getHeaderClaim(paramName);            

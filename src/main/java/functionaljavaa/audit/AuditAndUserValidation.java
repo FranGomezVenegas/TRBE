@@ -117,7 +117,7 @@ public class AuditAndUserValidation {
         
         String[] mandatoryParams = new String[]{};
         LPAPIArguments[] argsDef=null;
-        if (isPlatform)
+        if (Boolean.TRUE.equals(isPlatform))
             argsDef=new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), false, 7)};
         else{
@@ -131,7 +131,7 @@ public class AuditAndUserValidation {
         String actionName=requestArgValues[0].toString();
         String finalToken=requestArgValues[1].toString();
         String procInstanceName=null;
-        if (!isPlatform)
+        if (Boolean.FALSE.equals(isPlatform))
             procInstanceName=requestArgValues[2].toString();
         //String procInstanceName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME);            
         //String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
@@ -180,7 +180,7 @@ public class AuditAndUserValidation {
 
         if (LPArray.valueInArray(mandatoryParams , GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE)){
             this.auditReasonPhrase=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE); 
-            if (!isValidAuditPhrase(procInstanceName, actionName, this.auditReasonPhrase, busRulesProcInstance)) return;                
+            if (Boolean.FALSE.equals(isValidAuditPhrase(procInstanceName, actionName, this.auditReasonPhrase, busRulesProcInstance))) return;                
         }
 
         if ( (procActionRequiresUserConfirmation[0].toString().contains(LPPlatform.LAB_TRUE)) &&     

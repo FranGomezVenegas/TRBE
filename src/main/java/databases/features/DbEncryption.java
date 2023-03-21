@@ -41,7 +41,7 @@ public class DbEncryption {
     public static Object[] encryptTableFieldArray(String schemaName, String tableName, String[] fieldName, Object[] fieldValue){
 //if (1==1) return fieldValue;
         Boolean tableHasEncryptedFlds = tableHasEncryptedFlds(null, schemaName, tableName);
-        if (!tableHasEncryptedFlds) return fieldValue;
+        if (Boolean.FALSE.equals(tableHasEncryptedFlds)) return fieldValue;
 if (1==1) return fieldValue;
         String key = ENCRYPTION_KEY; // 128 bit key
         //? Should be by procInstanceName? config or data???
@@ -152,7 +152,7 @@ if (1==1) return fieldValue;
     public static Object[][] decryptTableFieldArray(String schemaName, String tableName, String[] fieldName, Object[][] fieldValue){
 //if (1==1) return fieldValue;
         Boolean tableHasEncryptedFlds = tableHasEncryptedFlds(null, schemaName, tableName);
-        if (!tableHasEncryptedFlds) return fieldValue;
+        if (Boolean.FALSE.equals(tableHasEncryptedFlds)) return fieldValue;
 if (1==1) return fieldValue;
         String key = ENCRYPTION_KEY; //"Bar12345Bar12345"; // 128 bit key
         String fieldsEncrypted = Parameter.getBusinessRuleProcedureFile(schemaName.replace("\"", ""), LPArray.LpArrayBusinessRules.ENCRYPTED_PREFIX.getAreaName(), LPArray.LpArrayBusinessRules.ENCRYPTED_PREFIX.getTagName());        
@@ -195,7 +195,7 @@ if (1==1) return fieldValue;
     public static Object[] decryptTableFieldArray(String schemaName, String tableName, String[] fieldName, Object[] fieldValue){
 //if (1==1) return fieldValue;
         Boolean tableHasEncryptedFlds = tableHasEncryptedFlds(null, schemaName, tableName);
-        if (!tableHasEncryptedFlds) return fieldValue;
+        if (Boolean.FALSE.equals(tableHasEncryptedFlds)) return fieldValue;
 if (1==1) return fieldValue;
         String key = ENCRYPTION_KEY;
         String fieldsEncrypted = Parameter.getBusinessRuleProcedureFile(schemaName.replace("\"", ""), LPArray.LpArrayBusinessRules.ENCRYPTED_PREFIX.getAreaName(), LPArray.LpArrayBusinessRules.ENCRYPTED_PREFIX.getTagName());        
@@ -230,7 +230,7 @@ if (1==1) return fieldValue;
         if (!"demoplatform".equalsIgnoreCase(dbName))
             return mainObj;
         Object[][] fldsArr=null;
-        if (isApp)
+        if (Boolean.TRUE.equals(isApp))
             fldsArr=new Object[][]{{"config", "person", "person_id", true},
                 {"app", "users", "person_name", true},
                 {"app", "ip_black_list", "ip_value1", true},
@@ -245,7 +245,7 @@ if (1==1) return fieldValue;
 
     public static Boolean tableHasEncryptedFlds(Boolean isApp, String schemaN, String tblN){
         if (isApp==null){
-            if (isEncryptedTableFld(true, schemaN, tblN, null)) return true;
+            if (Boolean.TRUE.equals(isEncryptedTableFld(true, schemaN, tblN, null))) return true;
             return isEncryptedTableFld(false, schemaN, tblN, null);
         }
         return isEncryptedTableFld(isApp, schemaN, tblN, null);
@@ -254,7 +254,7 @@ if (1==1) return fieldValue;
         if (schemaN==null || tblN==null) return false;
         ProcedureRequestSession instanceForQueries = ProcedureRequestSession.getInstanceForQueries(null, null, false);
         Object[] encrFieldsObj=null;
-        if (isApp)
+        if (Boolean.TRUE.equals(isApp))
             encrFieldsObj=instanceForQueries.getAppEncryptFields();
         else
             encrFieldsObj=instanceForQueries.getProcedureEncryptFields();

@@ -95,7 +95,7 @@ public class ProcedureDeployment extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
              if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return;}           
             
-            if (PROC_DISPLAY_PROC_DEF_REQUIREMENTS){
+            if (Boolean.TRUE.equals(PROC_DISPLAY_PROC_DEF_REQUIREMENTS)){
                 Requirement.getProcedureByProcInstanceName(procName);
             }
             Object[][] procEvent = Rdbms.getRecordFieldsByFilter(procInstanceSchemaProcName, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(),
@@ -114,12 +114,12 @@ public class ProcedureDeployment extends HttpServlet {
                     }
                 }
             }
-            if (PROCDISP_PROCINSTNC_REQUIREMENTS){
+            if (Boolean.TRUE.equals(PROCDISP_PROCINSTNC_REQUIREMENTS)){
                 procEvent = LPArray.joinTwo2DArrays(LPArray.array1dTo2d(PROCDISP_PROCINSTNC_REQS_FLD_NAME.split("\\|"),
                                 PROCDISP_PROCINSTNC_REQS_FLD_NAME.split("\\|").length), procEvent);
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(procEvent);
             }
-            if (PROCDISP_PROCINSTNC_ROLES){
+            if (Boolean.TRUE.equals(PROCDISP_PROCINSTNC_ROLES)){
                 Object[][] procRoles = Rdbms.getRecordFieldsByFilter(procInstanceSchemaProcName, TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(),
                         new String[]{TblsProcedure.PersonProfile.ROLE_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new String[]{""},
                         PROCDISP_PROCINSTNC_ROLES_FLD_NAME.split("\\|"), PROCDISP_PROCINSTNC_ROLES_SORT.split("\\|"), true );
@@ -127,7 +127,7 @@ public class ProcedureDeployment extends HttpServlet {
                         PROCDISP_PROCINSTNC_ROLES_FLD_NAME.split("\\|").length), procRoles);
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(procRoles);
             }
-            if (PROC_DISPLAY_PROC_INSTANCE_USERS){
+            if (Boolean.TRUE.equals(PROC_DISPLAY_PROC_INSTANCE_USERS)){
                 Object[][] procUserPerson = Rdbms.getRecordFieldsByFilter(procInstanceSchemaProcName, TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(),
                         new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new String[]{""}, PROCDISP_PROCINSTNC_USRSPRS_FLDNAME.split("\\|"),
                         PROCDISP_PROCINSTNC_USRSPERS_SRT.split("\\|"), true );
@@ -144,12 +144,12 @@ public class ProcedureDeployment extends HttpServlet {
             Object[][] procSopInMetaData = Rdbms.getRecordFieldsByFilter(procInstanceSchemaConfigName, TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(),
                     new String[]{TblsCnfg.SopMetaData.SOP_ID.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, PROCDISP_PROCINSTNC_SOPS_FLD_NAME.split("\\|"),
                     PROCDISP_PROCINSTNC_SOPS_SORT.split("\\|"), true );
-            if (PROC_DISPLAY_PROC_INSTANCE_SOPS){
+            if (Boolean.TRUE.equals(PROC_DISPLAY_PROC_INSTANCE_SOPS)){
                 procSopInMetaData = LPArray.joinTwo2DArrays(LPArray.array1dTo2d(PROCDISP_PROCINSTNC_SOPS_FLD_NAME.split("\\|"),
                         PROCDISP_PROCINSTNC_SOPS_FLD_NAME.split("\\|").length), procSopInMetaData);            
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(procSopInMetaData);
             }
-            if (PROCCHECKR_INSTNC_REQSOPSINSOPTBL){
+            if (Boolean.TRUE.equals(PROCCHECKR_INSTNC_REQSOPSINSOPTBL)){
                 Object[] procSopMetaDataSopName = LPArray.getColumnFromArray2D(procSopInMetaData, LPArray.valuePosicInArray(PROCDISP_PROCINSTNC_SOPS_FLD_NAME.split("\\|"), TblsCnfg.SopMetaData.SOP_NAME.getName()));
                 String matching=LPTestingOutFormat.TST_ICON_UNDEFINED + " Not Implemented Yet";
                 HashMap<String, Object[]> procSopsInMetaData = LPArray.evaluateValuesAreInArray(
@@ -166,8 +166,8 @@ public class ProcedureDeployment extends HttpServlet {
                         new String[][]{{"PROC_CHECKER_INSTANCE_REQ_SOPS_IN_SOP_TABLE", matching}});
             }
             fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(dataIntegrityInstanceTable);
-            if (PROC_DEPLOYMENT_DB_CREATE_SCHEMAS) ProcedureDefinitionToInstance.createDBProcessSchemas(procInstanceName);            
-            if (PROCDEPLOYT_DB_CREATE_SCHEMA_TABLES) createDBProcessTables(procInstanceName, "", new String[]{});
+            if (Boolean.TRUE.equals(PROC_DEPLOYMENT_DB_CREATE_SCHEMAS)) ProcedureDefinitionToInstance.createDBProcessSchemas(procInstanceName);            
+            if (Boolean.TRUE.equals(PROCDEPLOYT_DB_CREATE_SCHEMA_TABLES)) createDBProcessTables(procInstanceName, "", new String[]{});
             //if (PROC_DEPLOYMENT_ENTIRE_PROCEDURE){reqDep.procedureDeployment(procName, procVersion);}
             //if (PROC_DEPLOYMENT_ASSIGN_USER_SOPS){reqDep.procedureDeployment(procName, procVersion);}
             fileContent=fileContent+LPTestingOutFormat.bodyEnd()+LPTestingOutFormat.htmlEnd();

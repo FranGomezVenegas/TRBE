@@ -32,13 +32,13 @@ public class DbEncryptionObject {
     public static Object[] decryptTableFieldArray(EnumIntTables tblObj, EnumIntTableFields[] fieldsToRetrieve, Object[] fieldValue, Boolean encryptAllFlds){
 //if (1==1) return fieldValue;
         Boolean tableHasEncryptedFlds = tableHasEncryptedFlds(tblObj);
-        if (!encryptAllFlds&&!tableHasEncryptedFlds) return fieldValue;
+        if (Boolean.FALSE.equals(encryptAllFlds)&&Boolean.FALSE.equals(tableHasEncryptedFlds)) return fieldValue;
 //if (1==1) return fieldValue;
         String key = DbEncryption.ENCRYPTION_KEY; //"Bar12345Bar12345"; // 128 bit key
         for (int iFields=0;iFields<fieldsToRetrieve.length;iFields++){
             //if (fieldsEncrypted.contains(fieldName[iFields])){
-            if ((encryptAllFlds&&LPDatabase.string().equalsIgnoreCase(fieldsToRetrieve[iFields].getFieldType()))
-                    ||isEncryptedTableFld(tblObj, fieldsToRetrieve[iFields])){
+            if ((Boolean.TRUE.equals(encryptAllFlds)&&LPDatabase.string().equalsIgnoreCase(fieldsToRetrieve[iFields].getFieldType()))
+                    ||Boolean.FALSE.equals(isEncryptedTableFld(tblObj, fieldsToRetrieve[iFields]))){
                 String enc = fieldValue[iFields].toString();
                 if (enc!=null){
                     try{                    
@@ -69,8 +69,8 @@ public class DbEncryptionObject {
         String key = DbEncryption.ENCRYPTION_KEY; //"Bar12345Bar12345"; // 128 bit key
         for (int iFields=0;iFields<fieldsToRetrieve.length;iFields++){
             //if (fieldsEncrypted.contains(fieldName[iFields])){
-            if ((encryptAllFlds&&LPDatabase.string().equalsIgnoreCase(fieldsToRetrieve[iFields].getFieldType()))
-                    ||isEncryptedTableFld(tblObj, fieldsToRetrieve[iFields])){
+            if ((Boolean.TRUE.equals(encryptAllFlds)&&LPDatabase.string().equalsIgnoreCase(fieldsToRetrieve[iFields].getFieldType()))
+                    ||Boolean.TRUE.equals(isEncryptedTableFld(tblObj, fieldsToRetrieve[iFields]))){
                     for (Object[] fieldValue1 : fieldValue) {
                         String enc = fieldValue1[iFields].toString();
                         if (enc!=null){
@@ -98,7 +98,7 @@ public class DbEncryptionObject {
     }    
     public static Object[] encryptTableFieldArray(EnumIntTables tblObj, EnumIntTableFields[] fieldsToRetrieve, Object[] fieldValue, Boolean encryptAllFlds){
         Boolean tableHasEncryptedFlds = tableHasEncryptedFlds(tblObj);
-        if (!tableHasEncryptedFlds&&!encryptAllFlds) return fieldValue;
+        if (Boolean.FALSE.equals(tableHasEncryptedFlds)&&Boolean.FALSE.equals(encryptAllFlds)) return fieldValue;
         String key = DbEncryption.ENCRYPTION_KEY; // 128 bit key
         for (int iFields=0;iFields<fieldsToRetrieve.length;iFields++){
             //if (fieldsEncrypted.contains(fieldName[iFields])){
@@ -137,7 +137,7 @@ public class DbEncryptionObject {
         if (tblObj.getRepositoryName()==null || tblObj.getTableName()==null) return false;
         ProcedureRequestSession instanceForQueries = ProcedureRequestSession.getInstanceForQueries(null, null, false);
         Object[] encrFieldsObj=null;
-        if (!tblObj.getIsProcedureInstance())
+        if (Boolean.FALSE.equals(tblObj.getIsProcedureInstance()))
             encrFieldsObj=instanceForQueries.getAppEncryptFields();
         else
             encrFieldsObj=instanceForQueries.getProcedureEncryptFields();

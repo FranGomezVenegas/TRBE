@@ -20,7 +20,7 @@ public class DbFieldValueMask {
         if (!"demoplatform".equalsIgnoreCase(dbName))
             return mainObj;
         Object[][] fldsArr=null;
-        if (isApp)
+        if (Boolean.TRUE.equals(isApp))
             fldsArr=new Object[][]{{"config", "person", "person_id", true},
                 {"app", "users", "person_name", true},
                 {"app", "ip_black_list", "ip_value1", true},
@@ -32,7 +32,7 @@ public class DbFieldValueMask {
 
     public static Boolean tableHasMaskedFlds(Boolean isApp, String schemaN, String tblN){
         if (isApp==null){
-            if (isMaskedTableFld(true, schemaN, tblN, null)) return true;
+            if (Boolean.TRUE.equals(isMaskedTableFld(true, schemaN, tblN, null))) return true;
             return isMaskedTableFld(false, schemaN, tblN, null);
         }
         return isMaskedTableFld(isApp, schemaN, tblN, null);
@@ -41,7 +41,7 @@ public class DbFieldValueMask {
         if (schemaN==null || tblN==null) return false;
         ProcedureRequestSession instanceForQueries = ProcedureRequestSession.getInstanceForQueries(null, null, false);
         Object[] encrFieldsObj=null;
-        if (isApp)
+        if (Boolean.TRUE.equals(isApp))
             encrFieldsObj=instanceForQueries.getAppEncryptFields();
         else
             encrFieldsObj=instanceForQueries.getProcedureEncryptFields();
