@@ -37,12 +37,8 @@ public class PoolC3P0 {
  private PoolC3P0(String dbName) {
      cpds = new ComboPooledDataSource();
      try {
-         // Configuramos la conexion a base de datos
-         // Creamos la fuente de datos         
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         
-         // Que driver de base de datos usaremos
-         cpds.setDriverClass("java.sql.Driver"); // prop.getString(BUNDLE_PARAMETER_DBDRIVER);
-         // La url de la base de datos a la que nos conectaremos
+         cpds.setDriverClass("java.sql.Driver"); 
         String dbUrlAndName=prop.getString(DbConnectionParams.DBURL.getParamValue());
         if (dbName==null)
             dbUrlAndName=dbUrlAndName+"/"+prop.getString(DbConnectionParams.DBNAME.getParamValue());
@@ -50,39 +46,17 @@ public class PoolC3P0 {
             dbUrlAndName=dbUrlAndName+"/"+dbName;
                     
         cpds.setJdbcUrl(dbUrlAndName);        
-        //cpds.setJdbcUrl("jdbc:postgresql://51.75.202.142:5555/labplanet"); // prop.getString(BUNDLE_PARAMETER_DBURL);
-        //cpds.setJdbcUrl(Rdbms.DbConnectionParams.DBURL.getParamValue()); // prop.getString(BUNDLE_PARAMETER_DBURL);
-        //cpds.setJdbcUrl("jdbc:postgresql://51.75.202.142:5555/trazit"); // prop.getString(BUNDLE_PARAMETER_DBURL);
-        // Usuario de esa base de datos
         cpds.setUser(LPTestingOutFormat.TESTING_USER);
-        // Contraseña de la base de datos
         cpds.setPassword(LPTestingOutFormat.TESTING_PW);
 
-        // Configuramos el pool
-        // Numero de conexiones con las que iniciara el pool
-//disabled on:20210720        cpds.setInitialPoolSize(110);//0
         cpds.setInitialPoolSize(0);//0
-        // Minimo de conexiones que tendra el pool
-//disabled on:20210720        cpds.setMinPoolSize(100);//0
         cpds.setMinPoolSize(0);//0
-//setMaxIdleTime added 20210720
         cpds.setMaxIdleTime(180);
-        // Numero de conexiones a crear cada incremento
-//disabled on:20210720        cpds.setAcquireIncrement(5);//1
         cpds.setAcquireIncrement(5);//1
-        // Maximo numero de conexiones
-//disabled on:20210720        cpds.setMaxPoolSize(1000);//50
         cpds.setMaxPoolSize(20);//50
-        // Maximo de consultas
         cpds.setMaxStatements(1580);//180
-//disabled on:20210720                cpds.setMaxStatements(180);//180
-        // Maximo numero de reintentos para conectar a base de datos
         cpds.setAcquireRetryAttempts(5);//2
-        // Que se genere una excepcion si no se puede conectar
         cpds.setBreakAfterAcquireFailure(true); 
-//Added the ones below 20210720        
-//        cpds.setMaxStatementsPerConnection(250);
-//        cpds.setTestConnectionOnCheckout(true);
         cpds.setPreferredTestQuery("select 1");        
      } catch (PropertyVetoException ex) {
          Logger.getLogger(PoolC3P0.class.getName()).log(Level.SEVERE, null, ex);
@@ -92,6 +66,7 @@ public class PoolC3P0 {
  /**
   * Nos regresa la instancia actual del pool, en caso que no halla una instancia
   * crea una nueva y la regresa
+  * @param dbName
   * @return
   */
  public static PoolC3P0 getInstanceForActions(String dbName) {
@@ -113,12 +88,8 @@ public class PoolC3P0 {
      try {
          Logger.getLogger(PoolC3P0.class.getName()).log(Level.INFO, null, "getConnection called");
          datasource = getInstanceForActions(null);
-         //this.cpds.setConnectionPoolDataSource(this.cpds);
-         //this.cpds.setConnectionPoolDataSource(this.cpds);
-         //return this.datasource.cpds.setConnectionPoolDataSource(this.cpds);
          return datasource.cpds.getConnection();
      } catch (SQLException ex) {
-         //killConnection();         
          Logger.getLogger(PoolC3P0.class.getName()).log(Level.SEVERE, null, ex);
          return null;
      }

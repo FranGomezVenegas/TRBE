@@ -229,7 +229,7 @@ public class TestingRegressionUAT extends HttpServlet {
                         }else{
                             TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
                             if (testingBusinessRulesVisitedObj!=null)
-                            testingBusinessRulesVisitedObj.AddObject(procInstanceName, "procedure", "ND", LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName()+LPNulls.replaceNull(curStep[1]).toString(), "ND");
+                            testingBusinessRulesVisitedObj.addObject(procInstanceName, "procedure", "ND", LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName()+LPNulls.replaceNull(curStep[1]).toString(), "ND");
                         }                            
                     }
                     if (actionsList!=null){

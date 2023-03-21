@@ -20,11 +20,7 @@ public class TblsInspLotRMConfig {
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.CONFIG.getName();
     private static final Boolean IS_PRODEDURE_INSTANCE = true;
 
-    public static class TablesInspLotRMConig {
 
-        public TablesInspLotRMConig() {
-        }
-    }
     public enum TablesInspLotRMConfig implements EnumIntTables{        
         MATERIAL(null, "material", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Material.values(), null, new String[]{Material.NAME.getName()}, null, "Material table"),
         MATERIAL_INVENTORY_PLAN(null, "material_inventory_plan", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, MaterialInventoryPlan.values(), null, new String[]{MaterialInventoryPlan.MATERIAL.getName(), MaterialInventoryPlan.ENTRY_NAME.getName()}, null, "MaterialInventoryPlan table"),

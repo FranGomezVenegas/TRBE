@@ -38,7 +38,7 @@ public class TestingAuditIds {
     public Integer getMinAudit(){return this.minAuditId;}
     public Integer getMaxAudit(){return this.maxAuditId;}
     public JSONArray getJsonContent(){return jsonContent;}
-    public void AddObject(String schemaName, String tableName, Integer auditId, String[] fldName, Object[] fldValue){
+    public void addObject(String schemaName, String tableName, Integer auditId, String[] fldName, Object[] fldValue){
         JSONObject jObj=new JSONObject();
         jObj.put("schemaName", schemaName);
         jObj.put("tableName", tableName);
@@ -46,7 +46,7 @@ public class TestingAuditIds {
         jObj.put("fldName", Arrays.toString(fldName));
         jObj.put("fldValue", Arrays.toString(fldValue));
         jObj.put("fieldsPretty", Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(fldName, fldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR)));
-        if (this.jsonContent.size()==0)
+        if (this.jsonContent.isEmpty())
             this.minAuditId=auditId;
         this.maxAuditId=auditId;
         this.jsonContent.add(jObj);

@@ -83,7 +83,7 @@ public class ResponseMessages {
         TestingMessageCodeVisited testingMessageCodeVisitedObj = procReqSession.getTestingMessageCodeVisitedObj();
         String procName=procReqSession.getProcedureInstance();
         if (testingMessageCodeVisitedObj!=null)
-            testingMessageCodeVisitedObj.AddObject(procName, "", endpoint.getSuccessMessageCode(), endpoint.getSuccessMessageCode(), endpoint.getClass().getSimpleName());        
+            testingMessageCodeVisitedObj.addObject(procName, "", endpoint.getSuccessMessageCode(), endpoint.getSuccessMessageCode(), endpoint.getClass().getSimpleName());        
         this.setIsSuccess((Boolean) true);
         mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{endpoint.getClass().getSimpleName(), endpoint.getSuccessMessageCode(), msgCodeVariables}, 3);
     }    
@@ -92,7 +92,7 @@ public class ResponseMessages {
         TestingMessageCodeVisited testingMessageCodeVisitedObj = procReqSession.getTestingMessageCodeVisitedObj();
         String procName=procReqSession.getProcedureInstance();
         if (testingMessageCodeVisitedObj!=null)
-            testingMessageCodeVisitedObj.AddObject(procName, "", messageCode, messageCode, className);        
+            testingMessageCodeVisitedObj.addObject(procName, "", messageCode, messageCode, className);        
         this.setIsSuccess((Boolean) true);
         this.setIsSuccess((Boolean) false);
         mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{messageCode, msgCodeVariables, new Object[]{}}, 3);
@@ -104,7 +104,7 @@ public class ResponseMessages {
         TestingMessageCodeVisited testingMessageCodeVisitedObj = procReqSession.getTestingMessageCodeVisitedObj();
         String procName=procReqSession.getProcedureInstance();
         if (testingMessageCodeVisitedObj!=null)
-            testingMessageCodeVisitedObj.AddObject(procName, "", messageCode.getErrorCode(), messageCode.getErrorCode(), messageCode.getClass().getSimpleName());        
+            testingMessageCodeVisitedObj.addObject(procName, "", messageCode.getErrorCode(), messageCode.getErrorCode(), messageCode.getClass().getSimpleName());        
         this.setIsSuccess((Boolean) true);
         this.setIsSuccess((Boolean) false);
         mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{messageCode.getErrorCode(), msgCodeVariables, new Object[]{}}, 3);
@@ -117,7 +117,7 @@ public class ResponseMessages {
         TestingMessageCodeVisited testingMessageCodeVisitedObj = procReqSession.getTestingMessageCodeVisitedObj();
         String procName=procReqSession.getProcedureInstance();
         if (testingMessageCodeVisitedObj!=null)
-            testingMessageCodeVisitedObj.AddObject(procName, "", messageCode, messageCode, className);        
+            testingMessageCodeVisitedObj.addObject(procName, "", messageCode, messageCode, className);        
         this.messages=LPArray.addColumnToArray2D(this.messages, LPArray.array1dTo2d(new Object[]{messageCode, msgCodeVariables, new Object[]{}}, 3));
     }
     
@@ -126,7 +126,7 @@ public class ResponseMessages {
         TestingMessageCodeVisited testingMessageCodeVisitedObj = procReqSession.getTestingMessageCodeVisitedObj();
         String procName=procReqSession.getProcedureInstance();
         if (testingMessageCodeVisitedObj!=null)
-            testingMessageCodeVisitedObj.AddObject(procName, "", messageCode.getErrorCode(), messageCode.getErrorCode(), messageCode.getClass().getSimpleName());        
+            testingMessageCodeVisitedObj.addObject(procName, "", messageCode.getErrorCode(), messageCode.getErrorCode(), messageCode.getClass().getSimpleName());        
         this.messages=LPArray.addColumnToArray2D(this.messages, LPArray.array1dTo2d(new Object[]{messageCode.getErrorCode(), msgCodeVariables, new Object[]{}}, 3));
     }    
     

@@ -32,7 +32,7 @@ public class TestingMessageCodeVisited {
         jsonContent=new JSONArray();
     }
     public JSONArray getJsonContent(){return jsonContent;}
-    public void AddObject(String procName, String suffix, String messageCode, String messageValue, String className){
+    public void addObject(String procName, String suffix, String messageCode, String messageValue, String className){
         JSONObject jObj=new JSONObject();
         jObj.put("procName", procName);
         jObj.put("suffix", suffix);

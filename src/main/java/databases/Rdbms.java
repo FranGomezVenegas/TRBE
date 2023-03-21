@@ -1129,7 +1129,7 @@ if (1==1){Rdbms.transactionId=1; return;}
             if (schemaName.toUpperCase().contains("AUDIT")){
                 TestingAuditIds tstAuditId = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingAuditObj();
                 if (tstAuditId!=null)
-                    tstAuditId.AddObject(schemaName, tableName, Integer.valueOf(insertRecordDiagnosis[1]), fieldNames, fieldValues);
+                    tstAuditId.addObject(schemaName, tableName, Integer.valueOf(insertRecordDiagnosis[1]), fieldNames, fieldValues);
             }
             Object[] diagnosis =  ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.RDBMS_RECORD_CREATED, new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(fieldValues), schemaName});
             diagnosis = LPArray.addValueToArray1D(diagnosis, insertRecordDiagnosis[1]);
@@ -1161,7 +1161,7 @@ if (1==1){Rdbms.transactionId=1; return;}
             if (schemaName.toUpperCase().contains("AUDIT")){
                 TestingAuditIds tstAuditId = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingAuditObj();
                 if (tstAuditId!=null)
-                    tstAuditId.AddObject(schemaName, tableName, Integer.valueOf(insertRecordDiagnosis.getNewRowId().toString()), fieldNames, fieldValues);
+                    tstAuditId.addObject(schemaName, tableName, Integer.valueOf(insertRecordDiagnosis.getNewRowId().toString()), fieldNames, fieldValues);
             }
             dbProcHashcode.procHashCodeHandler(schemaName, tableName);
             return insertRecordDiagnosis;
@@ -2331,7 +2331,7 @@ private static final int CLIENT_CODE_STACK_INDEX;
             if (schemaName.toUpperCase().contains("AUDIT")){
                 TestingAuditIds tstAuditId = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingAuditObj();
                 if (tstAuditId!=null)
-                    tstAuditId.AddObject(schemaName, tblObj.getTableName(), Integer.valueOf(insertRecordDiagnosis.getNewRowId().toString()), getAllFieldNames(fldNamesObj), fieldValues);
+                    tstAuditId.addObject(schemaName, tblObj.getTableName(), Integer.valueOf(insertRecordDiagnosis.getNewRowId().toString()), getAllFieldNames(fldNamesObj), fieldValues);
             }
             dbProcHashcode.procHashCodeHandler(schemaName, tblObj.getTableName());
             return insertRecordDiagnosis;

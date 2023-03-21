@@ -92,13 +92,13 @@ public class Parameter {
                         parameterName, reportMissingProp);
                 TestingMessageCodeVisited testingMessageCodeVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingMessageCodeVisitedObj();
                 if (testingMessageCodeVisitedObj!=null)
-                    testingMessageCodeVisitedObj.AddObject(propFilePrefix, schemaSuffix, parameterName, "Not found!", className);
+                    testingMessageCodeVisitedObj.addObject(propFilePrefix, schemaSuffix, parameterName, "Not found!", className);
                 return "";
             } else {
                 String parameterValue = prop.getString(parameterName);
                 TestingMessageCodeVisited testingMessageCodeVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingMessageCodeVisitedObj();
                 if (testingMessageCodeVisitedObj!=null)
-                    testingMessageCodeVisitedObj.AddObject(propFilePrefix, schemaSuffix, parameterName, parameterValue, className);
+                    testingMessageCodeVisitedObj.addObject(propFilePrefix, schemaSuffix, parameterName, parameterValue, className);
                 return parameterValue;
             }
         } catch (Exception e) {            
@@ -112,7 +112,7 @@ public class Parameter {
                     parameterName, reportMissingProp);
             TestingMessageCodeVisited testingMessageCodeVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingMessageCodeVisitedObj();
             if (testingMessageCodeVisitedObj!=null)
-                testingMessageCodeVisitedObj.AddObject(propFilePrefix, schemaSuffix, parameterName, "ERROR: Not Found!", className);            
+                testingMessageCodeVisitedObj.addObject(propFilePrefix, schemaSuffix, parameterName, "ERROR: Not Found!", className);            
             return "";
         }
     }
@@ -164,7 +164,7 @@ public class Parameter {
 //                parameterName=parameterName;
             TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
             if (testingBusinessRulesVisitedObj!=null)
-                testingBusinessRulesVisitedObj.AddObject(procInstanceName, area, callerInfo[0].toString(), parameterName, valueToReturn);        
+                testingBusinessRulesVisitedObj.addObject(procInstanceName, area, callerInfo[0].toString(), parameterName, valueToReturn);        
         }
         return valueToReturn;
     }

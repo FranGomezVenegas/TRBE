@@ -32,7 +32,7 @@ public class TestingBusinessRulesVisited {
     }
     public JSONArray getJsonContent(){return jsonContent;}
     
-    public void AddObject(String schemaName, String suffix, String className, String ruleName, String ruleValue){
+    public void addObject(String schemaName, String suffix, String className, String ruleName, String ruleValue){
         JSONObject jObj=new JSONObject();
         jObj.put("schemaName", schemaName);
         jObj.put("suffix", suffix);

@@ -166,8 +166,8 @@ public class AuditAndUserValidation {
         if (procActionRequiresJustificationPhrase[0].toString().contains(LPPlatform.LAB_TRUE)){      
             if (!procActionRequiresJustificationPhrase[0].toString().equalsIgnoreCase(LPPlatform.LAB_TRUE))
                 mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE);
-            String auditReasonPhrase = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE);      
-            isValidAuditPhrase(procInstanceName, actionName, auditReasonPhrase, busRulesProcInstance);
+            String auditReasonPhraseParam = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE);      
+            isValidAuditPhrase(procInstanceName, actionName, auditReasonPhraseParam, busRulesProcInstance);
         }        
         
         Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, mandatoryParams);                       

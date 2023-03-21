@@ -243,7 +243,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         if (ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting()){
             TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
             if (testingBusinessRulesVisitedObj!=null)
-                testingBusinessRulesVisitedObj.AddObject(procInstanceName, "procedure", "TestingRegresssionUAT", LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName(), Arrays.toString(procedureActions));        
+                testingBusinessRulesVisitedObj.addObject(procInstanceName, "procedure", "TestingRegresssionUAT", LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName(), Arrays.toString(procedureActions));        
         }
         
         if (LPArray.valueInArray(procedureActions, "ALL")){
@@ -270,7 +270,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         if (ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting()){
             TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
             if (testingBusinessRulesVisitedObj!=null)
-                testingBusinessRulesVisitedObj.AddObject(procInstanceName, "procedure", "TestingRegresssionUAT", LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName()+actionName, Arrays.toString(procedureActionsUserRoles));        
+                testingBusinessRulesVisitedObj.addObject(procInstanceName, "procedure", "TestingRegresssionUAT", LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName()+actionName, Arrays.toString(procedureActionsUserRoles));        
         }
 
         //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "actionEnabled"+actionName).split("\\|");
@@ -300,7 +300,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         if (ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting()){
             TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
             if (testingBusinessRulesVisitedObj!=null)
-                testingBusinessRulesVisitedObj.AddObject(procInstanceName, "procedure", "TestingRegresssionUAT", LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName()+actionName, Arrays.toString(actionRequiresUserConfirmationRuleValue));        
+                testingBusinessRulesVisitedObj.addObject(procInstanceName, "procedure", "TestingRegresssionUAT", LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName()+actionName, Arrays.toString(actionRequiresUserConfirmationRuleValue));        
         }
 
         //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "verifyUserRequired").split("\\|");        
@@ -331,7 +331,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         if (ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting()){
             TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
             if (testingBusinessRulesVisitedObj!=null)
-                testingBusinessRulesVisitedObj.AddObject(procInstanceName, "procedure", "TestingRegresssionUAT", LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()+actionName, Arrays.toString(procedureActions));        
+                testingBusinessRulesVisitedObj.addObject(procInstanceName, "procedure", "TestingRegresssionUAT", LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()+actionName, Arrays.toString(procedureActions));        
         }
                 //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "eSignRequired").split("\\|");
         
@@ -351,7 +351,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
         if (ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting()){
             TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
             if (testingBusinessRulesVisitedObj!=null)
-                testingBusinessRulesVisitedObj.AddObject(procInstanceName, "procedure", "TestingRegresssionUAT", LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()+actionName, Arrays.toString(procedureActions));        
+                testingBusinessRulesVisitedObj.addObject(procInstanceName, "procedure", "TestingRegresssionUAT", LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()+actionName, Arrays.toString(procedureActions));        
         }
                 //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "eSignRequired").split("\\|");
         
