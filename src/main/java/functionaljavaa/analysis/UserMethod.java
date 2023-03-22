@@ -190,7 +190,7 @@ public class UserMethod {
             }
         }   
         if (query.length()==0)
-            return null;
+            return new Object[0][0];
         for (int i=0;i<6;i++){query.deleteCharAt(query.length() - 1);}
         
         
@@ -206,7 +206,7 @@ public class UserMethod {
             ResultSet res = Rdbms.prepRdQuery(query.toString(), filterFieldValueAllSchemas);         
             res.last();
             Integer numLines=res.getRow();
-            if (numLines==0)return null;
+            if (numLines==0)return new Object[0][0];
                 
             
             Integer numColumns=fieldsToReturn.length;
