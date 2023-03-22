@@ -6,9 +6,14 @@
 package module.inventorytrack.definition;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
+import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_CATEGORY;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE;
+import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_LOT_NAME;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NUM_DAYS;
+import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_REFERENCE;
+import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_VOLUME;
+import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_VOLUME_UOM;
 import module.instrumentsmanagement.definition.TblsInstrumentsData.TablesInstrumentsData;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
@@ -46,26 +51,26 @@ public class InvTrackingEnums {
         NOT_AVAILABLEFOR_USE,         AVAILABLE_FOR_USE,         CANCELED
         ;
         public static String getStatusFirstCode(EnumIntTableFields[] invReferenceFlds, Object[] invReferenceVls){
-            ArrayList<String[]> preReqs = new ArrayList<String[]>();
+            ArrayList<String[]> preReqs = new ArrayList<>();
             preReqs.add(0, new String[]{"data","sampleStatusesByBusinessRules"});                
-            if (Boolean.valueOf(
-                    invReferenceVls[EnumIntTableFields.getFldPosicInArray(invReferenceFlds, TblsInvTrackingConfig.Reference.LOT_REQUIRES_QUALIF.getName())].toString()))
+            if (Boolean.TRUE.equals(Boolean.valueOf(
+                    invReferenceVls[EnumIntTableFields.getFldPosicInArray(invReferenceFlds, TblsInvTrackingConfig.Reference.LOT_REQUIRES_QUALIF.getName())].toString())))
                 return QUARANTINE.toString();        
             else
                 return NEW.toString();
         }       
     }
-      
+    public static final String INVENTORY_LOT_CAT="inventoryLot";
     public enum InventoryTrackAPIactionsEndpoints implements EnumIntEndpoints{
-        NEW_INVENTORY_LOT("NEW_INVENTORY_LOT", "inventoryLot", "", "invTrackingNewLotCreated_success",  
-            new LPAPIArguments[]{ new LPAPIArguments("lotName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
-                new LPAPIArguments("category", LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
-                new LPAPIArguments("reference", LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),
+        NEW_INVENTORY_LOT("NEW_INVENTORY_LOT", INVENTORY_LOT_CAT, "", "invTrackingNewLotCreated_success",  
+            new LPAPIArguments[]{ new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
+                new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
+                new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),
                 new LPAPIArguments("expiryDate", LPAPIArguments.ArgumentType.STRING.toString(), false, 9 ),
                 new LPAPIArguments("expiryDateInUse", LPAPIArguments.ArgumentType.STRING.toString(), false, 10 ),
                 new LPAPIArguments("retestDate", LPAPIArguments.ArgumentType.STRING.toString(), false, 11 ),
-                new LPAPIArguments("volume", LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), false, 12 ),
-                new LPAPIArguments("volumeUom", LPAPIArguments.ArgumentType.STRING.toString(), false, 13 ),
+                new LPAPIArguments(REQUEST_PARAM_VOLUME, LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), false, 12 ),
+                new LPAPIArguments(REQUEST_PARAM_VOLUME_UOM, LPAPIArguments.ArgumentType.STRING.toString(), false, 13 ),
                 new LPAPIArguments("vendor", LPAPIArguments.ArgumentType.STRING.toString(), false, 14 ),
                 new LPAPIArguments("vendorLot", LPAPIArguments.ArgumentType.STRING.toString(), false, 15 ),
                 new LPAPIArguments("vendorReference", LPAPIArguments.ArgumentType.STRING.toString(), false, 16 ),
@@ -77,66 +82,62 @@ public class InvTrackingEnums {
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                 .add("table", TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build()
         ),        
-        TURN_LOT_AVAILABLE("TURN_LOT_AVAILABLE", "inventoryLot", "", "invTrackingLotTurnAvailable_success",  
-            new LPAPIArguments[]{ new LPAPIArguments("lotName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
-                new LPAPIArguments("category", LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
-                new LPAPIArguments("reference", LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),                
+        TURN_LOT_AVAILABLE("TURN_LOT_AVAILABLE", INVENTORY_LOT_CAT, "", "invTrackingLotTurnAvailable_success",  
+            new LPAPIArguments[]{ new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
+                new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
+                new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),                
                 new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9 ),
                 new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 10 ),},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                 .add("table", TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build()
         ),                
-        TURN_LOT_UNAVAILABLE("TURN_LOT_UNAVAILABLE", "inventoryLot", "", "invTrackingLotTurnUnavailable_success",  
-            new LPAPIArguments[]{ new LPAPIArguments("lotName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
-                new LPAPIArguments("category", LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
-                new LPAPIArguments("reference", LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),
+        TURN_LOT_UNAVAILABLE("TURN_LOT_UNAVAILABLE", INVENTORY_LOT_CAT, "", "invTrackingLotTurnUnavailable_success",  
+            new LPAPIArguments[]{ new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
+                new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
+                new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),
                 new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 19 ),
                 new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 20 ),},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                 .add("table", TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build()
         ),                
-        UPDATE_LOT("UPDATE_LOT", "lotName", "", "inventoryLotUpdated_success",  
-            new LPAPIArguments[]{ new LPAPIArguments("lotName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
-                new LPAPIArguments("modelNumber", LPAPIArguments.ArgumentType.STRING.toString(), false, 7 ),
-                new LPAPIArguments("serialNumber", LPAPIArguments.ArgumentType.STRING.toString(), false, 8 ),
-                new LPAPIArguments("supplierName", LPAPIArguments.ArgumentType.STRING.toString(), false, 9 ),
-                new LPAPIArguments("manufacturerName", LPAPIArguments.ArgumentType.STRING.toString(), false, 10 ),
+        UPDATE_LOT("UPDATE_LOT", REQUEST_PARAM_LOT_NAME, "", "inventoryLotUpdated_success",  
+            new LPAPIArguments[]{ new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
                 new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 11 ),
                 new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 11 ),},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                 .add("table", TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build()
         ),
-        RETIRE_LOT("RETIRE_LOT", "lotName", "", "inventoryLotRetired_success",  
-            new LPAPIArguments[]{ new LPAPIArguments("lotName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
-                new LPAPIArguments("category", LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
-                new LPAPIArguments("reference", LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),
+        RETIRE_LOT("RETIRE_LOT", REQUEST_PARAM_LOT_NAME, "", "inventoryLotRetired_success",  
+            new LPAPIArguments[]{ new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
+                new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
+                new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),
                 new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 19 ),
                 new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 20 ),},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                 .add("table", TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build()
         ), 
-        UNRETIRE_LOT("UNRETIRE_LOT", "lotName", "", "inventoryLotUnRetired_success",  
-            new LPAPIArguments[]{ new LPAPIArguments("lotName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
-                new LPAPIArguments("category", LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
-                new LPAPIArguments("reference", LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),
+        UNRETIRE_LOT("UNRETIRE_LOT", REQUEST_PARAM_LOT_NAME, "", "inventoryLotUnRetired_success",  
+            new LPAPIArguments[]{ new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
+                new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
+                new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),
                 new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9 ),
                 new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 10 ),},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                 .add("table", TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build()
         ),
-        START_QUALIFICATION("START_QUALIFICATION", "lotName", "", "inventoryLotQualificationStarted_success",  
-            new LPAPIArguments[]{ new LPAPIArguments("lotName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
-                new LPAPIArguments("category", LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
-                new LPAPIArguments("reference", LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),
+        START_QUALIFICATION("START_QUALIFICATION", REQUEST_PARAM_LOT_NAME, "", "inventoryLotQualificationStarted_success",  
+            new LPAPIArguments[]{ new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
+                new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
+                new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),
                 new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9 ),
                 new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 10 ),},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                 .add("table", TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build()
         ),
-        COMPLETE_QUALIFICATION("COMPLETE_QUALIFICATION", "lotName", "", "inventoryLotQualificationCompleted_success",  
-            new LPAPIArguments[]{ new LPAPIArguments("lotName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
-                new LPAPIArguments("category", LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
-                new LPAPIArguments("reference", LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),
+        COMPLETE_QUALIFICATION("COMPLETE_QUALIFICATION", REQUEST_PARAM_LOT_NAME, "", "inventoryLotQualificationCompleted_success",  
+            new LPAPIArguments[]{ new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
+                new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
+                new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),
                 new LPAPIArguments("decision", LPAPIArguments.ArgumentType.STRING.toString(), true, 9 ),
                 new LPAPIArguments("turn_available_lot", LPAPIArguments.ArgumentType.STRING.toString(), false, 10 ),
                 new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 11 ),
@@ -144,42 +145,42 @@ public class InvTrackingEnums {
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                 .add("table", TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build()
         ),     
-        REOPEN_QUALIFICATION("REOPEN_QUALIFICATION", "lotName", "", "inventoryLotQualificationReopened_success",  
-            new LPAPIArguments[]{ new LPAPIArguments("lotName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
-                new LPAPIArguments("category", LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
-                new LPAPIArguments("reference", LPAPIArguments.ArgumentType.STRING.toString(), true, 8 )},
+        REOPEN_QUALIFICATION("REOPEN_QUALIFICATION", REQUEST_PARAM_LOT_NAME, "", "inventoryLotQualificationReopened_success",  
+            new LPAPIArguments[]{ new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
+                new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
+                new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                 .add("table", TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build()
         ),
-        CONSUME_INV_LOT_VOLUME("CONSUME_INV_LOT", "lotName", "", "inventoryLotConsumed_success",  
-            new LPAPIArguments[]{ new LPAPIArguments("lotName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
-                new LPAPIArguments("category", LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
-                new LPAPIArguments("reference", LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),
-                new LPAPIArguments("volume", LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), false, 9 ),
-                new LPAPIArguments("volumeUom", LPAPIArguments.ArgumentType.STRING.toString(), false, 10 )},
+        CONSUME_INV_LOT_VOLUME("CONSUME_INV_LOT", REQUEST_PARAM_LOT_NAME, "", "inventoryLotConsumed_success",  
+            new LPAPIArguments[]{ new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
+                new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
+                new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),
+                new LPAPIArguments(REQUEST_PARAM_VOLUME, LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), false, 9 ),
+                new LPAPIArguments(REQUEST_PARAM_VOLUME_UOM, LPAPIArguments.ArgumentType.STRING.toString(), false, 10 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                 .add("table", TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build()
         ),
-        ADD_INV_LOT_VOLUME("ADD_INV_LOT_VOLUME", "lotName", "", "inventoryLotadded_success",  
-            new LPAPIArguments[]{ new LPAPIArguments("lotName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
-                new LPAPIArguments("category", LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
-                new LPAPIArguments("reference", LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),
-                new LPAPIArguments("volume", LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), false, 9 ),
-                new LPAPIArguments("volumeUom", LPAPIArguments.ArgumentType.STRING.toString(), false, 10 )},
+        ADD_INV_LOT_VOLUME("ADD_INV_LOT_VOLUME", REQUEST_PARAM_LOT_NAME, "", "inventoryLotadded_success",  
+            new LPAPIArguments[]{ new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
+                new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
+                new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),
+                new LPAPIArguments(REQUEST_PARAM_VOLUME, LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), false, 9 ),
+                new LPAPIArguments(REQUEST_PARAM_VOLUME_UOM, LPAPIArguments.ArgumentType.STRING.toString(), false, 10 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                 .add("table", TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build()
         ),
-        ADJUST_INV_LOT_VOLUME("ADJUST_INV_LOT", "lotName", "", "inventoryLotAdjusted_success",  
-            new LPAPIArguments[]{ new LPAPIArguments("lotName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
-                new LPAPIArguments("category", LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
-                new LPAPIArguments("reference", LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),
-                new LPAPIArguments("volume", LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), false, 9 ),
-                new LPAPIArguments("volumeUom", LPAPIArguments.ArgumentType.STRING.toString(), false, 10 )},
+        ADJUST_INV_LOT_VOLUME("ADJUST_INV_LOT", REQUEST_PARAM_LOT_NAME, "", "inventoryLotAdjusted_success",  
+            new LPAPIArguments[]{ new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
+                new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
+                new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),
+                new LPAPIArguments(REQUEST_PARAM_VOLUME, LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), false, 9 ),
+                new LPAPIArguments(REQUEST_PARAM_VOLUME_UOM, LPAPIArguments.ArgumentType.STRING.toString(), false, 10 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                 .add("table", TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build()
         ),
         ENTER_EVENT_RESULT("ENTER_EVENT_RESULT", "instrumentName", "", "eventValueEntered_success", 
-                new LPAPIArguments[]{new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
+                new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
                 new LPAPIArguments("eventId", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
                 new LPAPIArguments("variableName", LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
                 new LPAPIArguments("newValue", LPAPIArguments.ArgumentType.STRING.toString(), true, 9),},
@@ -187,15 +188,15 @@ public class InvTrackingEnums {
                 .add("table", TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build()
         ), 
         REENTER_EVENT_RESULT("REENTER_EVENT_RESULT", "instrumentName", "", "eventValueReentered_success", 
-                new LPAPIArguments[]{new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
+                new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
                 new LPAPIArguments("eventId", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
                 new LPAPIArguments("variableName", LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
                 new LPAPIArguments("newValue", LPAPIArguments.ArgumentType.STRING.toString(), true, 9),},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                 .add("table", TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build()
         ),
-        LOTAUDIT_SET_AUDIT_ID_REVIEWED("LOTAUDIT_SET_AUDIT_ID_REVIEWED", "lotName", "", "lotAuditIdReviewed_success", 
-                new LPAPIArguments[]{new LPAPIArguments("lotName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),                
+        LOTAUDIT_SET_AUDIT_ID_REVIEWED("LOTAUDIT_SET_AUDIT_ID_REVIEWED", REQUEST_PARAM_LOT_NAME, "", "lotAuditIdReviewed_success", 
+                new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),                
                 new LPAPIArguments("auditId", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7)},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                 .add("table", TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build()
@@ -237,34 +238,34 @@ public class InvTrackingEnums {
     
     public enum InventoryTrackAPIqueriesEndpoints implements EnumIntEndpoints{
         ALL_INVENTORY_LOTS("ALL_INVENTORY_LOTS", "",
-            new LPAPIArguments[]{new LPAPIArguments("category", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
-                new LPAPIArguments("reference", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7)}, EndPointsToRequirements.endpointWithNoOutputObjects),
+            new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
+                new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7)}, EndPointsToRequirements.endpointWithNoOutputObjects),
         RETIRED_INVENTORY_LOTS_LAST_N_DAYS("RETIRED_INVENTORY_LOTS_LAST_N_DAYS","",
             new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6),
-                new LPAPIArguments("category", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
-                new LPAPIArguments("reference", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8)},
+                new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
+                new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8)},
             EndPointsToRequirements.endpointWithNoOutputObjects),
         AUDIT_FOR_GIVEN_INVENTORY_LOT("AUDIT_FOR_GIVEN_INVENTORY_LOT", "",
-            new LPAPIArguments[]{new LPAPIArguments("lotName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
+            new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
         INV_LOT_QUALIF_INPROGRESS("INV_LOT_QUALIF_INPROGRESS","", new LPAPIArguments[]{
             new LPAPIArguments("fieldName", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
             new LPAPIArguments("fielValue", LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 7)}, EndPointsToRequirements.endpointWithNoOutputObjects),
         EXPIRED_LOTS("EXPIRED_LOTS","", 
-            new LPAPIArguments[]{new LPAPIArguments("category", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
-                new LPAPIArguments("reference", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
-                new LPAPIArguments("lotName", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9),
+            new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
+                new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
+                new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9),
                 new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 10),}, EndPointsToRequirements.endpointWithNoOutputObjects),
         REFERENCES_UNDER_MIN_STOCK("REFERENCES_UNDER_MIN_STOCK","",
-            new LPAPIArguments[]{new LPAPIArguments("category", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
-                new LPAPIArguments("reference", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8)}, EndPointsToRequirements.endpointWithNoOutputObjects),
+            new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
+                new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8)}, EndPointsToRequirements.endpointWithNoOutputObjects),
         REFERENCES_AVAILABLE_FOR_USE_UNDER_MIN_STOCK("REFERENCES_AVAILABLE_FOR_USE_UNDER_MIN_STOCK","",
-            new LPAPIArguments[]{new LPAPIArguments("category", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
-                new LPAPIArguments("reference", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8)}, EndPointsToRequirements.endpointWithNoOutputObjects),
+            new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
+                new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8)}, EndPointsToRequirements.endpointWithNoOutputObjects),
         REFERENCE_WITH_CONTROL_ISSUES("REFERENCE_WITH_CONTROL_ISSUES","",
-            new LPAPIArguments[]{new LPAPIArguments("category", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
-                new LPAPIArguments("reference", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8)}, EndPointsToRequirements.endpointWithNoOutputObjects),
+            new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
+                new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8)}, EndPointsToRequirements.endpointWithNoOutputObjects),
         LOT_PRINT_LABEL("LOT_PRINT_LABEL", "",
-            new LPAPIArguments[]{new LPAPIArguments("lotName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
+            new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
 
         GET_INSTRUMENT_FAMILY_LIST("GET_INSTRUMENT_FAMILY_LIST", "",new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects),
         INSTRUMENT_EVENTS_FOR_GIVEN_INSTRUMENT("INSTRUMENT_EVENTS_FOR_GIVEN_INSTRUMENT", "",new LPAPIArguments[]{new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),

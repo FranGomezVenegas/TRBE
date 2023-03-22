@@ -18,11 +18,10 @@ import javax.servlet.http.HttpServletResponse;
  * @author Administrator
  */
 public class GlobalAPIsParams extends HttpServlet {
-    
-    public static final String REQUEST_PARAM_IGNORE_ARGUMENT_WORD = "IGNORE";
-    
-    // Por favor, agregar ordenado alfabeticamente para evitar duplicados
 
+    public static final String REQUEST_PARAM_IGNORE_ARGUMENT_WORD = "IGNORE";
+
+    // Por favor, agregar ordenado alfabeticamente para evitar duplicados
     /**
      *
      */
@@ -55,7 +54,7 @@ public class GlobalAPIsParams extends HttpServlet {
     /**
      *
      */
-    public static final String REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT_FIELD_TO_RETRIEVE = "addSampleAnalysisResultFieldToRetrieve";    
+    public static final String REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT_FIELD_TO_RETRIEVE = "addSampleAnalysisResultFieldToRetrieve";
     public static final String REQUEST_PARAM_ANALYSIS_NAME = "analysisName";
     public static final String REQUEST_PARAM_ANALYSIS = "analysis";
 
@@ -84,16 +83,16 @@ public class GlobalAPIsParams extends HttpServlet {
     /**
      *
      */
-    public static final String REQUEST_PARAM_CANCEL_CHANGE_COMMENT = "cancelChangeComment"; 
+    public static final String REQUEST_PARAM_CANCEL_CHANGE_COMMENT = "cancelChangeComment";
 
     /**
      *
      */
-    public static final String REQUEST_PARAM_CONFIG_VERSION = "config_version";     
-    public static final String REQUEST_PARAM_SPEC_FIELD_NAME = "specFieldName";     
-    public static final String REQUEST_PARAM_SPEC_FIELD_VALUE = "specFieldValue";     
+    public static final String REQUEST_PARAM_CONFIG_VERSION = "config_version";
+    public static final String REQUEST_PARAM_SPEC_FIELD_NAME = "specFieldName";
+    public static final String REQUEST_PARAM_SPEC_FIELD_VALUE = "specFieldValue";
 
-    public static final String REQUEST_PARAM_CONFIRM_CHANGE_COMMENT = "confirmChangeComment"; 
+    public static final String REQUEST_PARAM_CONFIRM_CHANGE_COMMENT = "confirmChangeComment";
 
     /**
      *
@@ -108,55 +107,38 @@ public class GlobalAPIsParams extends HttpServlet {
     /**
      *
      */
-    public static final String REQUEST_PARAM_DB_PSSWD = "dbUserPassword";    
+    public static final String REQUEST_PARAM_DB_PSSWD = "dbUserPassword";
 
-    /**
-     *
-     */
-    public static final String REQUEST_PARAM_ESIGN_TO_CHECK = "esignPhraseToCheck"; 
-    public static final String REQUEST_PARAM_AUDIT_REASON_PHRASE = "auditReasonPhrase"; 
-    
-    /**
-     *
-     */
-
-    /**
-     *
-     */
+    public static final String REQUEST_PARAM_ESIGN_TO_CHECK = "esignPhraseToCheck";
+    public static final String REQUEST_PARAM_AUDIT_REASON_PHRASE = "auditReasonPhrase";
     public static final String REQUEST_PARAM_FIELD_NAME = "fieldName";
-
-    /**
-     *
-     */
     public static final String REQUEST_PARAM_FIELD_VALUE = "fieldValue";
+    public static final String REQUEST_PARAM_FINAL_TOKEN = "finalToken";
+    public static final String REQUEST_PARAM_INCLUDE_PROC_MODEL_INFO = "includeProcModelInfo";
 
     /**
      *
      */
-    public static final String REQUEST_PARAM_FINAL_TOKEN = "finalToken";    
-    public static final String REQUEST_PARAM_INCLUDE_PROC_MODEL_INFO = "includeProcModelInfo";    
+    public static final String REQUEST_PARAM_INCUBATOR_NAME = "incubatorName";
 
+    public static final String REQUEST_PARAM_CATEGORY = "category";
+    public static final String REQUEST_PARAM_REFERENCE = "reference";
+    public static final String REQUEST_PARAM_VOLUME= "volume";
+    public static final String REQUEST_PARAM_VOLUME_UOM = "volumeUom";
+    
+    public static final String REQUEST_PARAM_INCLUDE_MATERIAL = "includesMaterial";
+    public static final String REQUEST_PARAM_LOT_NAME = "lotName";
+    public static final String REQUEST_PARAM_LOT_DECISION = "lotDecision";
+    public static final String REQUEST_PARAM_RETAIN_ID = "retainId";
+    public static final String REQUEST_PARAM_NEW_LOCATION_NAME = "newLocationName";
+    public static final String REQUEST_PARAM_NEW_LOCATION_ID = "newLocationId";
+    public static final String REQUEST_PARAM_NUM_ADHOC_BULKS = "numAdhocBulks";
     /**
      *
      */
-    public static final String REQUEST_PARAM_INCUBATOR_NAME = "incubatorName";        
-
-    /**
-     *
-     */
-    public static final String REQUEST_PARAM_INCLUDE_MATERIAL = "includesMaterial";   
-    public static final String REQUEST_PARAM_LOT_NAME = "lotName";    
-    public static final String REQUEST_PARAM_LOT_DECISION = "lotDecision";    
-    public static final String REQUEST_PARAM_RETAIN_ID = "retainId";   
-    public static final String REQUEST_PARAM_NEW_LOCATION_NAME = "newLocationName";   
-    public static final String REQUEST_PARAM_NEW_LOCATION_ID = "newLocationId";   
-    public static final String REQUEST_PARAM_NUM_ADHOC_BULKS = "numAdhocBulks";    
-    /**
-     *
-     */
-    public static final String REQUEST_PARAM_MATERIAL_NAME = "materialName";    
+    public static final String REQUEST_PARAM_MATERIAL_NAME = "materialName";
     public static final String REQUEST_PARAM_BULK_ID = "bulkId";
-        public static final String REQUEST_PARAM_LOT_BULK_DECISION = "lotBulkDecision";    
+    public static final String REQUEST_PARAM_LOT_BULK_DECISION = "lotBulkDecision";
 
     public static final String REQUEST_PARAM_MY_TOKEN = "myToken";
 
@@ -215,10 +197,9 @@ public class GlobalAPIsParams extends HttpServlet {
 
     /**
      *
-     */    
+     */
     public static final String REQUEST_PARAM_PARAMETER = "parameter";
     public static final String REQUEST_PARAM_PERSON_FIELDS_NAME = "passwdToCheck";
-    
 
     /**
      *
@@ -260,41 +241,40 @@ public class GlobalAPIsParams extends HttpServlet {
      */
     public static final String REQUEST_PARAM_ANA_METH_CERTIF_FIELD_TO_DISPLAY = "analysisMethodCertifFieldsToDisplay";
     public static final String REQUEST_PARAM_CERTIF_OBJECTS_LEVEL = "certification_level";
-    
-    
+
     public static final String REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE = "sampleFieldToRetrieve";
     public static final String REQUEST_PARAM_SAMPLE_FIELD_TO_DISPLAY = "sampleFieldsToDisplay";
-    public static final String REQUEST_PARAM_SAMPLE_WHERE_FIELDS_NAME = "sampleWhereFieldsName"; 
-    public static final String REQUEST_PARAM_SAMPLE_WHERE_FIELDS_VALUE = "sampleWhereFieldsValue";  
-    public static final String REQUEST_PARAM_INVESTIGATION_GROUPS = "investigationGroups";  
-    public static final String REQUEST_PARAM_SAMPLE_GROUPS = "sampleGroups";  
-    public static final String REQUEST_PARAM_INCLUDE_SAMPLES = "includeSamples";  
-    public static final String REQUEST_PARAM_INCLUDE_SAMPLE_ANALYSIS = "includeSampleAnalysis";  
-    public static final String REQUEST_PARAM_INCLUDE_SAMPLE_ANALYSIS_RESULTS = "includeSampleAnalysisResults";  
-    public static final String REQUEST_PARAM_INCLUDE_SAMPLER_SAMPLES = "includeSamplerSamples";  
-    public static final String REQUEST_PARAM_EXCLUDE_SAMPLER_SAMPLES = "excludeSamplerSamples";  
-    public static final String REQUEST_PARAM_EXCLUDE_READING_NOT_ENTERED = "excludeReadingNotEntered";  
-    public static final String REQUEST_PARAM_READING_EQUAL = "readingEqual";  
-    public static final String REQUEST_PARAM_READING_MIN = "readingMin";  
-    public static final String REQUEST_PARAM_READING_MAX = "readingMax";  
-    public static final String REQUEST_PARAM_INCLUDE_MICROORGANISMS = "includeMicroorganisms";      
-    public static final String REQUEST_PARAM_METHOD_NAME = "methodName";      
-    public static final String REQUEST_PARAM_METHOD_VERSION = "methodVersion";      
-    public static final String REQUEST_PARAM_TRAINING_ID = "trainingId";      
-    public static final String REQUEST_PARAM_MICROORGANISMS_TO_FIND = "MicroorganismsToFind";      
-    public static final String REQUEST_PARAM_CREATION_DAY_START = "creationDayStart";  
-    public static final String REQUEST_PARAM_CREATION_DAY_END = "creationDayEnd";  
-    public static final String REQUEST_PARAM_CLOSURE_DAY_START = "closureDayStart";  
-    public static final String REQUEST_PARAM_CLOSURE_DAY_END = "closureDayEnd";  
-    public static final String REQUEST_PARAM_EXCLUDE_NOT_CLOSED_YET = "excludeNotClosedYet";  
+    public static final String REQUEST_PARAM_SAMPLE_WHERE_FIELDS_NAME = "sampleWhereFieldsName";
+    public static final String REQUEST_PARAM_SAMPLE_WHERE_FIELDS_VALUE = "sampleWhereFieldsValue";
+    public static final String REQUEST_PARAM_INVESTIGATION_GROUPS = "investigationGroups";
+    public static final String REQUEST_PARAM_SAMPLE_GROUPS = "sampleGroups";
+    public static final String REQUEST_PARAM_INCLUDE_SAMPLES = "includeSamples";
+    public static final String REQUEST_PARAM_INCLUDE_SAMPLE_ANALYSIS = "includeSampleAnalysis";
+    public static final String REQUEST_PARAM_INCLUDE_SAMPLE_ANALYSIS_RESULTS = "includeSampleAnalysisResults";
+    public static final String REQUEST_PARAM_INCLUDE_SAMPLER_SAMPLES = "includeSamplerSamples";
+    public static final String REQUEST_PARAM_EXCLUDE_SAMPLER_SAMPLES = "excludeSamplerSamples";
+    public static final String REQUEST_PARAM_EXCLUDE_READING_NOT_ENTERED = "excludeReadingNotEntered";
+    public static final String REQUEST_PARAM_READING_EQUAL = "readingEqual";
+    public static final String REQUEST_PARAM_READING_MIN = "readingMin";
+    public static final String REQUEST_PARAM_READING_MAX = "readingMax";
+    public static final String REQUEST_PARAM_INCLUDE_MICROORGANISMS = "includeMicroorganisms";
+    public static final String REQUEST_PARAM_METHOD_NAME = "methodName";
+    public static final String REQUEST_PARAM_METHOD_VERSION = "methodVersion";
+    public static final String REQUEST_PARAM_TRAINING_ID = "trainingId";
+    public static final String REQUEST_PARAM_MICROORGANISMS_TO_FIND = "MicroorganismsToFind";
+    public static final String REQUEST_PARAM_CREATION_DAY_START = "creationDayStart";
+    public static final String REQUEST_PARAM_CREATION_DAY_END = "creationDayEnd";
+    public static final String REQUEST_PARAM_CLOSURE_DAY_START = "closureDayStart";
+    public static final String REQUEST_PARAM_CLOSURE_DAY_END = "closureDayEnd";
+    public static final String REQUEST_PARAM_EXCLUDE_NOT_CLOSED_YET = "excludeNotClosedYet";
 
-    public static final String REQUEST_PARAM_SAMPLING_DAY_START = "samplingDayStart";  
-    public static final String REQUEST_PARAM_SAMPLING_DAY_END = "samplingDayEnd";  
-    public static final String REQUEST_PARAM_SAMPLER = "samplerName";  
-    public static final String REQUEST_PARAM_SAMPLER_AREA = "samplerArea";  
-    
-    public static final String REQUEST_PARAM_LOGIN_DAY_START = "loginDayStart";  
-    public static final String REQUEST_PARAM_LOGIN_DAY_END = "loginDayEnd";  
+    public static final String REQUEST_PARAM_SAMPLING_DAY_START = "samplingDayStart";
+    public static final String REQUEST_PARAM_SAMPLING_DAY_END = "samplingDayEnd";
+    public static final String REQUEST_PARAM_SAMPLER = "samplerName";
+    public static final String REQUEST_PARAM_SAMPLER_AREA = "samplerArea";
+
+    public static final String REQUEST_PARAM_LOGIN_DAY_START = "loginDayStart";
+    public static final String REQUEST_PARAM_LOGIN_DAY_END = "loginDayEnd";
 
     public static final String REQUEST_PARAM_BATCH_FIELD_TO_RETRIEVE = "batchFieldToRetrieve";
     public static final String REQUEST_PARAM_BATCH_FIELD_TO_DISPLAY = "batchFieldsToDisplay";
@@ -302,23 +282,23 @@ public class GlobalAPIsParams extends HttpServlet {
     public static final String REQUEST_PARAM_INCUBATOR_FIELD_TO_DISPLAY = "incubatorFieldsToDisplay";
     public static final String REQUEST_PARAM_NAME = "name";
     public static final String REQUEST_PARAM_OUTPUT_IS_FILE = "outputIsFile";
-    
+
     public static final String REQUEST_PARAM_PRODLOT_FIELD_TO_RETRIEVE = "prodLotFieldToRetrieve";
     public static final String REQUEST_PARAM_PRODLOT_FIELD_TO_SORT = "prodLotFieldToSort";
     public static final String REQUEST_PARAM_PRODLOT_FIELD_TO_DISPLAY = "prodLotFieldsToDisplay";
 
-    public static final String REQUEST_PARAM_QUANTITY = "quantity";  
-    public static final String REQUEST_PARAM_QUANTITY_UOM = "quantityUom";  
-    public static final String REQUEST_PARAM_NUM_CONTAINERS = "numContainers";  
-    public static final String REQUEST_PARAM_NUM_BULKS = "numBulks";  
-    public static final String REQUEST_PARAM_NUM_DAYS = "numDays";  
+    public static final String REQUEST_PARAM_QUANTITY = "quantity";
+    public static final String REQUEST_PARAM_QUANTITY_UOM = "quantityUom";
+    public static final String REQUEST_PARAM_NUM_CONTAINERS = "numContainers";
+    public static final String REQUEST_PARAM_NUM_BULKS = "numBulks";
+    public static final String REQUEST_PARAM_NUM_DAYS = "numDays";
 
     public static final String INCUBATION_REPORT_JSON_TAG_NAME_FIELD_TO_RETRIEVE = "incubatorFieldToRetrieve";
-    public static final String INCUBATION_REPORT_JSON_TAG_NAME_FIELD_TO_DISPLAY = "incubatorFieldsToDisplay";    
-    public static final String INCUBATION_REPORT_JSON_TAG_NAME_LAST_N_TEMP_READINGS = "lastTemperatureReadings";    
-    public static final String JSON_TAG_NAME_SAMPLE_RESULTS = "sample_results";    
-    
-    public static final String BATCH_REPORT_JSON_TAG_NAME_TEMP_READINGS = "lastTemperatureReadings";    
+    public static final String INCUBATION_REPORT_JSON_TAG_NAME_FIELD_TO_DISPLAY = "incubatorFieldsToDisplay";
+    public static final String INCUBATION_REPORT_JSON_TAG_NAME_LAST_N_TEMP_READINGS = "lastTemperatureReadings";
+    public static final String JSON_TAG_NAME_SAMPLE_RESULTS = "sample_results";
+
+    public static final String BATCH_REPORT_JSON_TAG_NAME_TEMP_READINGS = "lastTemperatureReadings";
 
     public static final String REQUEST_PARAM_DATE_START = "startDate";
     public static final String REQUEST_PARAM_DATE_END = "endDate";
@@ -389,7 +369,7 @@ public class GlobalAPIsParams extends HttpServlet {
     /**
      *
      */
-    public static final String REQUEST_PARAM_PROCINSTANCENAME = "procInstanceName";    
+    public static final String REQUEST_PARAM_PROCINSTANCENAME = "procInstanceName";
 
     /**
      *
@@ -407,7 +387,7 @@ public class GlobalAPIsParams extends HttpServlet {
     public static final String REQUEST_PARAM_USER_NAME = "userName";
     public static final String REQUEST_PARAM_USER_ROLE = "userRole";
     public static final String REQUEST_PARAM_USER_SESSION_ID = "userSessionId";
-    public static final String REQUEST_PARAM_PERSON= "person";
+    public static final String REQUEST_PARAM_PERSON = "person";
 
     /**
      *
@@ -421,33 +401,31 @@ public class GlobalAPIsParams extends HttpServlet {
     public static final String REQUEST_PARAM_TABLE_CATEGORY = "tableCategory";
     public static final String REQUEST_PARAM_TABLE_NAME = "tableName";
 
-    public static final String REQUEST_PARAM_FIELD_TO_RETRIEVE = "fieldToRetrieve"; 
-    public static final String REQUEST_PARAM_UPDATE_FIELDS_NAME = "updateFieldsName"; 
+    public static final String REQUEST_PARAM_FIELD_TO_RETRIEVE = "fieldToRetrieve";
+    public static final String REQUEST_PARAM_UPDATE_FIELDS_NAME = "updateFieldsName";
     public static final String REQUEST_PARAM_UPDATE_FIELDS_VALUE = "updateFieldsValue";
-    public static final String REQUEST_PARAM_WHERE_FIELDS_NAME = "whereFieldsName"; 
+    public static final String REQUEST_PARAM_WHERE_FIELDS_NAME = "whereFieldsName";
     public static final String REQUEST_PARAM_WHERE_FIELDS_VALUE = "whereFieldsValue";
-    public static final String REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_NAME = "sampleAnalysisWhereFieldsName"; 
+    public static final String REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_NAME = "sampleAnalysisWhereFieldsName";
     public static final String REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_VALUE = "sampleAnalysisWhereFieldsValue";
-    public static final String REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME = "sampleAnalysisResultWhereFieldsName"; 
+    public static final String REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME = "sampleAnalysisResultWhereFieldsName";
     public static final String REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE = "sampleAnalysisResultWhereFieldsValue";
-    
-    public static final String REQUEST_PARAM_GROUPED = "dataGrouped"; 
-    public static final String REQUEST_PARAM_FIELDS_TO_RETRIEVE_OR_GROUPING = "fieldsToRetrieveOrGrouping"; 
-    
-public static final String LBL_REPOSITORY = "repository"; 
-    public static final String LBL_RPT_INFO="report_information";
-    public static final String LBL_VALUES="values";
-    public static final String LBL_PREFIX_INCUB1="incub1_";
-    public static final String LBL_PREFIX_INCUB2="incub2_";
-    public static final String LBL_PREFIX_ALLPENDINGANYINCUB="allpendinganyincub_";
 
+    public static final String REQUEST_PARAM_GROUPED = "dataGrouped";
+    public static final String REQUEST_PARAM_FIELDS_TO_RETRIEVE_OR_GROUPING = "fieldsToRetrieveOrGrouping";
 
+    public static final String LBL_REPOSITORY = "repository";
+    public static final String LBL_RPT_INFO = "report_information";
+    public static final String LBL_VALUES = "values";
+    public static final String LBL_PREFIX_INCUB1 = "incub1_";
+    public static final String LBL_PREFIX_INCUB2 = "incub2_";
+    public static final String LBL_PREFIX_ALLPENDINGANYINCUB = "allpendinganyincub_";
 
+    public static final String REQUEST_PARAM_VALUE_UNDEFINED = "undefined";
 
-    public static final String REQUEST_PARAM_VALUE_UNDEFINED="undefined";
-    
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
      *
      * @param request servlet request
      * @param response servlet response
@@ -461,7 +439,7 @@ public static final String LBL_REPOSITORY = "repository";
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet globalAPIsParams</title>");            
+            out.println("<title>Servlet globalAPIsParams</title>");
             out.println("</head>");
             out.println("<body>");
             out.println("<h1>Servlet globalAPIsParams at " + request.getContextPath() + "</h1>");
@@ -478,10 +456,10 @@ public static final String LBL_REPOSITORY = "repository";
      * @param response servlet response
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)  {
-        try{
-        processRequest(request, response);
-        }catch(ServletException|IOException e){
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            processRequest(request, response);
+        } catch (ServletException | IOException e) {
             LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null, null);
         }
     }
@@ -493,10 +471,10 @@ public static final String LBL_REPOSITORY = "repository";
      * @param response servlet response
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)  {
-        try{
-        processRequest(request, response);
-        }catch(ServletException|IOException e){
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            processRequest(request, response);
+        } catch (ServletException | IOException e) {
             LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null, null);
         }
     }
