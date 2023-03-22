@@ -399,7 +399,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
 
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jSummaryObj);              
-                return;
+                break;
             case LOT_PRINT_LABEL:
                 lotName=LPNulls.replaceNull(argValues[0]).toString();
                 JSONObject jObj = new JSONObject();
@@ -447,6 +447,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                 jObj.put("zpl_code", zplCode);
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jObj);
+                break;
             default: 
             }
         }finally {
