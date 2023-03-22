@@ -9,6 +9,7 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NUM_DAYS;
 import databases.Rdbms;
 import databases.SqlStatement;
+import databases.SqlStatementEnums;
 import functionaljavaa.instruments.incubator.DataIncubatorNoteBook;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
@@ -171,7 +172,7 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
                         EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, "ALL"),
                         new String[]{TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName(), TblsEnvMonitConfig.InstrIncubator.LAST_DEACTIVATION_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()}, 
                         new Object[]{false, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
-                        new String[]{TblsEnvMonitConfig.InstrIncubator.LAST_DEACTIVATION_ON.getName()+" desc"});
+                        new String[]{TblsEnvMonitConfig.InstrIncubator.LAST_DEACTIVATION_ON.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                     jArr = new JSONArray();
                     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(prodLotsDeactivatedLastDays[0][0].toString())){
                         for (Object[] currIncident: prodLotsDeactivatedLastDays){

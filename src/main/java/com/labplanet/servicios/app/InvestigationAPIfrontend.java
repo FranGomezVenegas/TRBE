@@ -8,6 +8,7 @@ package com.labplanet.servicios.app;
 import com.labplanet.servicios.app.InvestigationAPI.InvestigationAPIqueriesEndpoints;
 import static com.labplanet.servicios.app.InvestigationAPI.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
+import databases.SqlStatementEnums;
 import databases.TblsProcedure;
 import databases.features.Token;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
@@ -91,7 +92,7 @@ public class InvestigationAPIfrontend extends HttpServlet {
                         tableFieldsFromString,
                         new String[]{TblsProcedure.Investigation.CLOSED.getName()+"<>"}, 
                         new Object[]{true}, 
-                        new String[]{TblsProcedure.Investigation.ID.getName()+" desc"});
+                        new String[]{TblsProcedure.Investigation.ID.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                     JSONArray investigationJArr = new JSONArray();
                     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString())){
                         for (Object[] currInvestigation: incidentsNotClosed){
@@ -163,7 +164,7 @@ public class InvestigationAPIfrontend extends HttpServlet {
                         EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.INVESTIGATION, "ALL"),
                         new String[]{TblsProcedure.Investigation.ID.getName()}, 
                         new Object[]{investigationId}, 
-                        new String[]{TblsProcedure.Investigation.ID.getName()+" desc"});
+                        new String[]{TblsProcedure.Investigation.ID.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                     investigationJArr = new JSONArray();
                     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString())){
                         for (Object[] currInvestigation: incidentsNotClosed){

@@ -38,7 +38,18 @@ public class SqlStatementEnums {
     public enum WHERE_FLDVALUES_ARRAY_TYPES {
         NUMBER, INTEGER, BOOLEAN, STRING
     }
+    public enum SORT_DIRECTION {
+        ASC(" asc"), DESC(" desc");
+        private final String clause;
 
+        SORT_DIRECTION(String cl) {
+            this.clause = cl;
+        }
+
+        public String getSqlClause() {
+            return clause;
+        }
+    }
     public enum WHERECLAUSE_TYPES {
         IS_NULL(" is null"), IS_NOT_NULL(" is not null"), NULL("NULL"), IN("IN"), NOT_IN("NOT IN"), EQUAL("="), NOT_EQUAL("<>"), LIKE("LIKE"), BETWEEN("BETWEEN"),
         LESS_THAN_STRICT("<"), LESS_THAN("<="), GREATER_THAN_STRICT(">"), GREATER_THAN(">="),
@@ -213,21 +224,18 @@ public class SqlStatementEnums {
         String queryWhere = "";
         Object[] schemaDiag = getTableSchema(tblObj, alternativeProcInstanceName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(schemaDiag[0].toString())) {
-            return null;
+            return hm;
         }
         String schemaName = schemaDiag[0].toString();
         schemaName = LPPlatform.buildSchemaName(schemaName, "");
         String tableName = tblObj.getTableName();
-        if (whereFieldNames.length == 0) {
+        if (whereFieldNames == null || whereFieldNames.length == 0) {
             ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});
             return hm;
         }
-        Object[] whereFieldValuesNew = new Object[0];
-        if (whereFieldNames != null) {
-            Object[] whereClauseContent = buildWhereClause(whereFieldNames, whereFieldValues, true);
-            queryWhere = (String) whereClauseContent[0];
-            whereFieldValuesNew = (Object[]) whereClauseContent[1];
-        }
+        Object[] whereClauseContent = buildWhereClause(whereFieldNames, whereFieldValues, true);
+        queryWhere = (String) whereClauseContent[0];
+        Object[] whereFieldValuesNew = (Object[]) whereClauseContent[1];
         String fieldsToRetrieveStr = buildTableFieldsToRetrieve(fieldsToRetrieve, avoidMask);
         String fieldsToOrderStr = buildOrderBy(fieldsToOrder);
         String fieldsToGroupStr = buildGroupBy(fieldsToGroup);

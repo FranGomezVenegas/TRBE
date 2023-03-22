@@ -251,9 +251,12 @@ public class InvTrackingEnums {
             EndPointsToRequirements.endpointWithNoOutputObjects),
         AUDIT_FOR_GIVEN_INVENTORY_LOT("AUDIT_FOR_GIVEN_INVENTORY_LOT", "",
             new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
-        INV_LOT_QUALIF_INPROGRESS("INV_LOT_QUALIF_INPROGRESS","", new LPAPIArguments[]{
+        QUALIFICATIONS_INPROGRESS("QUALIFICATIONS_INPROGRESS","", new LPAPIArguments[]{
             new LPAPIArguments("fieldName", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
             new LPAPIArguments("fielValue", LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 7)}, EndPointsToRequirements.endpointWithNoOutputObjects),
+        QUALIFIFICATION_EVENT_VARIABLES("QUALIFIFICATION_EVENT_VARIABLES", "",new LPAPIArguments[]{            
+            new LPAPIArguments("lotCertifId", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6), }, EndPointsToRequirements.endpointWithNoOutputObjects),
+        
         EXPIRED_LOTS("EXPIRED_LOTS","", 
             new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
                 new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
@@ -270,14 +273,6 @@ public class InvTrackingEnums {
                 new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8)}, EndPointsToRequirements.endpointWithNoOutputObjects),
         LOT_PRINT_LABEL("LOT_PRINT_LABEL", "",
             new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
-
-        GET_INSTRUMENT_FAMILY_LIST("GET_INSTRUMENT_FAMILY_LIST", "",new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects),
-        INSTRUMENT_EVENTS_FOR_GIVEN_INSTRUMENT("INSTRUMENT_EVENTS_FOR_GIVEN_INSTRUMENT", "",new LPAPIArguments[]{new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects),
-        INSTRUMENT_EVENT_VARIABLES("INSTRUMENT_EVENT_VARIABLES", "",new LPAPIArguments[]{            
-            new LPAPIArguments("eventId", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6), }, EndPointsToRequirements.endpointWithNoOutputObjects),
-        COMPLETED_EVENTS_LAST_N_DAYS("COMPLETED_EVENTS_LAST_N_DAYS","",
-            new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6)}, 
-            EndPointsToRequirements.endpointWithNoOutputObjects),
         ;
         private InventoryTrackAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;

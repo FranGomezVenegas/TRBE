@@ -11,6 +11,7 @@ import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
 import databases.RdbmsObject;
 import databases.SqlStatement;
+import databases.SqlStatementEnums;
 import databases.SqlWhere;
 import functionaljavaa.instruments.incubator.ConfigIncubator.ConfigIncubatorBusinessRules;
 import functionaljavaa.instruments.incubator.ConfigIncubator.ConfigIncubatorErrorTrapping;
@@ -256,11 +257,11 @@ public class DataIncubatorNoteBook {
         if (withMask)
             instrNotebook=QueryUtilitiesEnums.getTableData(TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK, 
                 fieldsToRetrieveObj, whereFieldName, whereFieldValue, 
-                new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.ID.getName()+ " desc"});
+                new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.ID.getName()+ SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
         else
             instrNotebook=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK.getTableName(), 
                 whereFieldName, whereFieldValue, 
-                fieldsToRetrieve, new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.ID.getName()+ " desc"});         
+                fieldsToRetrieve, new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.ID.getName()+ SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});         
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrNotebook[0][0].toString())){
             Object[] errDiagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataIncubatorNoteBookErrorTrapping.NO_READINGS_LOGGED_YET, new Object[0]);
             return LPArray.array1dTo2d(errDiagn, errDiagn.length);            

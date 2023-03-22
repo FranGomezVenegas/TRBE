@@ -12,6 +12,7 @@ import databases.Rdbms;
 import static databases.Rdbms.dbTableExists;
 import databases.RdbmsObject;
 import databases.SqlStatement;
+import databases.SqlStatementEnums;
 import databases.SqlWhere;
 import databases.TblsData;
 import databases.features.Token;
@@ -207,13 +208,12 @@ public class DataProgramSample{
     public static Object[] removeSampleMicroorganism(Integer sampleId, String microorganismName, Integer items){
         if (items==null)items=1;
         RdbmsObject removeRecordInTable=null;
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[][] sampleMicroOrgRow=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM.getTableName(),
                 new String[]{TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID.getName(), TblsEnvMonitData.SampleMicroorganism.MICROORG_NAME.getName()},
                 new Object[]{sampleId, microorganismName},
                 new String[]{TblsEnvMonitData.SampleMicroorganism.ID.getName()},
-                new String[]{TblsEnvMonitData.SampleMicroorganism.ID.getName()+" desc"});
+                new String[]{TblsEnvMonitData.SampleMicroorganism.ID.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleMicroOrgRow[0][0].toString())) 
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE,  EnvMonitErrorTrapping.MICROORGANISM_FOUND, new  Object[]{microorganismName, sampleId});
         for (int i=0;i<items;i++){
@@ -319,7 +319,7 @@ public class DataProgramSample{
                 new String[]{TblsEnvMonitData.Sample.SAMPLE_ID.getName()},
                 new Object[]{sampleId},
                 new String[]{TblsEnvMonitData.Sample.SAMPLE_ID.getName(), TblsEnvMonitData.Sample.CULTURE_MEDIA.getName()},
-                new String[]{TblsEnvMonitData.Sample.CULTURE_MEDIA.getName()+" desc"});
+                new String[]{TblsEnvMonitData.Sample.CULTURE_MEDIA.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) 
             return new InternalMessage(LPPlatform.LAB_FALSE,  DataSampleStructureEnums.DataSampleErrorTrapping.SAMPLE_NOT_FOUND, new  Object[]{sampleInfo[0][1], sampleId});
         if (LPNulls.replaceNull(sampleInfo[0][1]).toString().length()>0) 

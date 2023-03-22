@@ -12,6 +12,7 @@ import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NUM_DAY
 import static com.labplanet.servicios.app.InvestigationAPI.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import databases.SqlStatement;
+import databases.SqlStatementEnums;
 import databases.SqlWhere;
 import databases.TblsApp;
 import databases.TblsDataAudit;
@@ -176,7 +177,7 @@ public class UserSessionAPIqueries extends HttpServlet {
                 }
                 Object[][] userSessionInfo=QueryUtilitiesEnums.getTableData(TblsApp.TablesApp.APP_SESSION, 
                     EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.APP_SESSION, "ALL"),
-                    sW, new String[]{TblsApp.AppSession.SESSION_ID.getName()+" desc"});
+                    sW, new String[]{TblsApp.AppSession.SESSION_ID.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                 JSONArray userSessionArr = new JSONArray();
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(userSessionInfo[0][0].toString())){
                     for (Object[] currUsrSession: userSessionInfo){
@@ -192,7 +193,7 @@ public class UserSessionAPIqueries extends HttpServlet {
                 userSessionInfo=QueryUtilitiesEnums.getTableData(TblsApp.TablesApp.APP_SESSION, 
                     EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.APP_SESSION, "ALL"),
                     new String[]{TblsApp.AppSession.SESSION_ID.getName()}, new Object[]{argValues[0]},
-                    new String[]{TblsApp.AppSession.SESSION_ID.getName()+" desc"});
+                    new String[]{TblsApp.AppSession.SESSION_ID.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                 userSessionArr = new JSONArray();
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(userSessionInfo[0][0].toString())){
                     JSONArray procAuditArr = new JSONArray();

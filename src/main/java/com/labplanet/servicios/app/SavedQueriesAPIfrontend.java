@@ -8,6 +8,7 @@ package com.labplanet.servicios.app;
 import com.labplanet.servicios.app.SavedQueriesAPI.SavedQueriesAPIqueriesEndpoints;
 import static com.labplanet.servicios.app.InvestigationAPI.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
+import databases.SqlStatementEnums;
 import databases.TblsData;
 import databases.features.Token;
 import java.io.IOException;
@@ -82,7 +83,7 @@ public class SavedQueriesAPIfrontend extends HttpServlet {
                     EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAVED_QUERIES, "ALL"),
                     new String[]{TblsData.SavedQueries.ID.getName()+">"}, 
                     new Object[]{0}, 
-                    new String[]{TblsData.SavedQueries.ID.getName()+" desc"});
+                    new String[]{TblsData.SavedQueries.ID.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                 JSONArray savedQryJArr = new JSONArray();
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(savedQueriesInfo[0][0].toString())){
                     for (Object[] currSavedQry: savedQueriesInfo){

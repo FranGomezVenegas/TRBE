@@ -9,6 +9,7 @@ import platform.app.apis.IncidentAPIactions.IncidentAPIqueriesEndpoints;
 import static platform.app.apis.IncidentAPIactions.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import databases.SqlStatement;
+import databases.SqlStatementEnums;
 import databases.SqlWhere;
 import databases.TblsApp;
 import databases.TblsAppAudit;
@@ -89,7 +90,6 @@ public class IncidentAPIqueries extends HttpServlet {
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
             return;                   
         }
-        //ProcedureRequestSession.getInstanceForActions(request, response, false);
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());   
         if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return;}          
 
@@ -100,7 +100,7 @@ public class IncidentAPIqueries extends HttpServlet {
                         EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.INCIDENT, "ALL"),
                         new String[]{TblsApp.Incident.STATUS.getName()+"<>", TblsApp.Incident.PERSON_CREATION.getName()}, 
                         new Object[]{AppIncident.IncidentStatuses.CLOSED.toString(), token.getPersonName()}, 
-                        new String[]{TblsApp.Incident.ID.getName()+" desc"});
+                        new String[]{TblsApp.Incident.ID.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                 JSONArray jArr = new JSONArray();
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsClosedLastDays[0][0].toString())){
                     for (Object[] currIncident: incidentsClosedLastDays){
@@ -120,7 +120,7 @@ public class IncidentAPIqueries extends HttpServlet {
                 incidentsClosedLastDays=QueryUtilitiesEnums.getTableData(TblsAppAudit.TablesAppAudit.INCIDENT, 
                     EnumIntTableFields.getTableFieldsFromString(TblsAppAudit.TablesAppAudit.INCIDENT, "ALL"),
                     new String[]{TblsAppAudit.Incident.INCIDENT_ID.getName()}, new Object[]{incId}, 
-                    new String[]{TblsAppAudit.Incident.DATE.getName()+" desc"});
+                    new String[]{TblsAppAudit.Incident.DATE.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                 jArr = new JSONArray();
                 Integer actionPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsAppAudit.Incident.ACTION_NAME.getName());
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsClosedLastDays[0][0].toString())){
@@ -143,7 +143,7 @@ public class IncidentAPIqueries extends HttpServlet {
                                         EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.INCIDENT, 
                                             new String[]{TblsApp.Incident.TITLE.getName(), TblsApp.Incident.DETAIL.getName()}),
                                         where,                                        
-                                        new String[]{TblsApp.Incident.ID.getName()+" desc"});
+                                        new String[]{TblsApp.Incident.ID.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                                 jObj.put("note", incidentsInfo[0][0].toString() +": "+incidentsInfo[0][1].toString());
                             }
                         }
@@ -162,7 +162,7 @@ public class IncidentAPIqueries extends HttpServlet {
                     EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.INCIDENT, "ALL"),
                     new String[]{TblsApp.Incident.STATUS.getName(), TblsApp.Incident.DATE_RESOLUTION.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()}, 
                     new Object[]{AppIncident.IncidentStatuses.CLOSED.toString(), LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
-                    new String[]{TblsApp.Incident.DATE_RESOLUTION.getName()+" desc"});
+                    new String[]{TblsApp.Incident.DATE_RESOLUTION.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                 jArr = new JSONArray();
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsClosedLastDays[0][0].toString())){
                     for (Object[] currIncident: incidentsClosedLastDays){
@@ -172,14 +172,11 @@ public class IncidentAPIqueries extends HttpServlet {
                 }
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
-                return;
             default: 
             }
         }finally {
-            // release database resources
             try {           
                 procReqInstance.killIt();
-                // Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }          

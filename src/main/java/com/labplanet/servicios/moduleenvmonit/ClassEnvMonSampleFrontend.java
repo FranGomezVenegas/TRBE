@@ -13,6 +13,7 @@ import databases.Rdbms;
 import databases.Rdbms.RdbmsErrorTrapping;
 import databases.SqlStatement;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
+import databases.SqlStatementEnums;
 import databases.SqlWhere;
 import databases.TblsCnfg;
 import databases.TblsData;
@@ -772,14 +773,13 @@ new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB+GlobalAPIsPara
                     Object[] sampleWhereFieldsValueArr=new Object[0];
                     if (sampleWhereFieldsValue!=null && sampleWhereFieldsValue.length()>0)
                         sampleWhereFieldsValueArr=LPArray.convertStringWithDataTypeToObjectArray(sampleWhereFieldsValue.split("\\|"));
-                    //String[] sampleWhereFieldsNameArr=sampleWhereFieldsName.split("\\|");
                     if (!LPArray.valueInArray(sampleWhereFieldsNameArr, TblsEnvMonitData.Sample.PRODUCTION_LOT.getName())){
                         sampleWhereFieldsNameArr=LPArray.addValueToArray1D(sampleWhereFieldsNameArr, TblsEnvMonitData.Sample.PRODUCTION_LOT.getName());
                         sampleWhereFieldsValueArr=LPArray.addValueToArray1D(sampleWhereFieldsValueArr, lotName);
                     }
                     sampleInfo = QueryUtilitiesEnums.getTableData(TblsEnvMonitData.TablesEnvMonitData.SAMPLE,
                         EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.SAMPLE, sampleFieldToRetrieveArr),
-                        sampleWhereFieldsNameArr, sampleWhereFieldsValueArr, new String[]{TblsEnvMonitData.Sample.SAMPLE_ID.getName()+" desc"} ); 
+                        sampleWhereFieldsNameArr, sampleWhereFieldsValueArr, new String[]{TblsEnvMonitData.Sample.SAMPLE_ID.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()} ); 
                     JSONObject jObj=new JSONObject();
                     JSONArray sampleJsonArr = new JSONArray();
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())){
@@ -975,7 +975,7 @@ new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB+GlobalAPIsPara
                         Object[][] programLastResults=QueryUtilitiesEnums.getViewData(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, 
                                 EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, prodLotfieldToRetrieveArr),
                                 new SqlWhere(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, whereFieldNames, whereFieldValues), 
-                                new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.ENTERED_ON.getName()+" desc"});  
+                                new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.ENTERED_ON.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});  
                         if (numTotalRecords>programLastResults.length) numTotalRecords=programLastResults.length;
                         jArr=new JSONArray();
                         for (int i=0;i<numTotalRecords;i++){
@@ -1018,7 +1018,7 @@ new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB+GlobalAPIsPara
                             Object[][] programLastResults=QueryUtilitiesEnums.getViewData(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW,
                                 EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, prodLotfieldToRetrieveArr),
                                 new SqlWhere(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, whereFieldNames, whereFieldValues), 
-                                new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.ENTERED_ON.getName()+" desc"});
+                                new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.ENTERED_ON.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                             JSONArray jArrSampleResults=new JSONArray();
                             if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(programLastResults[0][0].toString())){
                                 if (numTotalRecords>programLastResults.length) numTotalRecords=programLastResults.length;

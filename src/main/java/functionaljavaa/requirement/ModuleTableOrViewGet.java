@@ -86,7 +86,6 @@ public class ModuleTableOrViewGet {
                     try{
                         this.tableObj=TblsInvTrackingData.TablesInvTrackingData.valueOf(tblName.toUpperCase());                        
                         this.found=true;
-                        return;
                     }catch(Exception e1){
                         try{
                             this.tableObj=TblsData.TablesData.valueOf(tblName.toUpperCase());                        
@@ -98,6 +97,7 @@ public class ModuleTableOrViewGet {
                         }
                     }
                 }
+                break;
             default:
         }
     }    

@@ -10,6 +10,7 @@ import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NUM_DAY
 import com.labplanet.servicios.modulegenoma.TblsGenomaData.TablesGenomaData;
 import databases.Rdbms;
 import databases.SqlStatement;
+import databases.SqlStatementEnums;
 import databases.TblsProcedure;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
@@ -284,7 +285,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                                 EnumIntTableFields.getAllFieldNamesFromDatabase(TablesGenomaData.PROJECT_USERS),
                                 new String[]{TblsGenomaData.ProjectUsers.PROJECT.getName(), TblsGenomaData.ProjectUsers.ACTIVE.getName(), TblsGenomaData.ProjectUsers.DEACTIVATED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()},
                                 new Object[]{studyName, false, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
-                                new String[]{TblsGenomaData.ProjectUsers.DEACTIVATED_ON.getName()+" desc"});
+                                new String[]{TblsGenomaData.ProjectUsers.DEACTIVATED_ON.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                             break;
                         case DEACTIVATED_STUDY_USERS_LAST_N_DAYS:
                             fieldsToRetrieve = getAllFieldNames(TblsGenomaData.TablesGenomaData.STUDY_USERS);
@@ -292,7 +293,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                                 EnumIntTableFields.getAllFieldNamesFromDatabase(TablesGenomaData.STUDY_USERS),
                                 new String[]{TblsGenomaData.StudyUsers.STUDY.getName(), TblsGenomaData.StudyUsers.ACTIVE.getName(), TblsGenomaData.StudyUsers.DEACTIVATED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()},
                                 new Object[]{studyName, false, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
-                                new String[]{TblsGenomaData.StudyUsers.DEACTIVATED_ON.getName()+" desc"});
+                                new String[]{TblsGenomaData.StudyUsers.DEACTIVATED_ON.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                             break;
                         case DEACTIVATED_STUDY_INDIVIDUALS_LAST_N_DAYS:
                             fieldsToRetrieve = getAllFieldNames(TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL);
@@ -300,7 +301,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                                 EnumIntTableFields.getAllFieldNamesFromDatabase(TablesGenomaData.STUDY_INDIVIDUAL),
                                 new String[]{TblsGenomaData.StudyIndividual.STUDY.getName(), TblsGenomaData.StudyIndividual.ACTIVE.getName(), TblsGenomaData.StudyIndividual.DEACTIVATED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()},
                                 new Object[]{studyName, false, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
-                                new String[]{TblsGenomaData.StudyIndividual.DEACTIVATED_ON.getName()+" desc"});
+                                new String[]{TblsGenomaData.StudyIndividual.DEACTIVATED_ON.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                             break;
                         case DEACTIVATED_STUDY_INDIVIDUAL_SAMPLES_LAST_N_DAYS:                            
                             fieldsToRetrieve = getAllFieldNames(TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE);
@@ -308,7 +309,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                                 EnumIntTableFields.getAllFieldNamesFromDatabase(TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE),
                                 new String[]{TblsGenomaData.StudyIndividualSample.STUDY.getName(), TblsGenomaData.StudyIndividual.ACTIVE.getName(), TblsGenomaData.StudyIndividualSample.DEACTIVATED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()},
                                 new Object[]{studyName, false, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
-                                new String[]{TblsGenomaData.StudyIndividualSample.DEACTIVATED_ON.getName()+" desc"});
+                                new String[]{TblsGenomaData.StudyIndividualSample.DEACTIVATED_ON.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                             break;
                         case DEACTIVATED_STUDY_SAMPLES_SET_LAST_N_DAYS:
                             fieldsToRetrieve = getAllFieldNames(TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET);
@@ -316,7 +317,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                                 EnumIntTableFields.getAllFieldNamesFromDatabase(TablesGenomaData.STUDY_SAMPLES_SET),
                                 new String[]{TblsGenomaData.StudySamplesSet.STUDY.getName(), TblsGenomaData.StudySamplesSet.ACTIVE.getName(), TblsGenomaData.StudySamplesSet.DEACTIVATED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()},
                                 new Object[]{studyName, false, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
-                                new String[]{TblsGenomaData.StudySamplesSet.DEACTIVATED_ON.getName()+" desc"});
+                                new String[]{TblsGenomaData.StudySamplesSet.DEACTIVATED_ON.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                             break;
                         case DEACTIVATED_STUDY_FAMILIES_LAST_N_DAYS:
                             fieldsToRetrieve = getAllFieldNames(TblsGenomaData.TablesGenomaData.STUDY_FAMILY);
@@ -324,7 +325,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                                 EnumIntTableFields.getAllFieldNamesFromDatabase(TablesGenomaData.STUDY_FAMILY),
                                 new String[]{TblsGenomaData.StudyFamily.STUDY.getName(), TblsGenomaData.StudyFamily.ACTIVE.getName(), TblsGenomaData.StudyFamily.DEACTIVATED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()},
                                 new Object[]{studyName, false, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
-                                new String[]{TblsGenomaData.StudyFamily.DEACTIVATED_ON.getName()+" desc"});
+                                new String[]{TblsGenomaData.StudyFamily.DEACTIVATED_ON.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                             break;
                     }
                     JSONArray jArr = new JSONArray();

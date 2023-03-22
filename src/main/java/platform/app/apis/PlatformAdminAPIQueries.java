@@ -9,6 +9,7 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import static platform.app.apis.IncidentAPIactions.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import databases.SqlStatement;
+import databases.SqlStatementEnums;
 import databases.SqlWhere;
 import databases.TblsApp;
 import databases.TblsProcedure;
@@ -119,7 +120,7 @@ public class PlatformAdminAPIQueries extends HttpServlet {
                     String[] fieldsToRetrieve=getAllFieldNames(curTbl.getTableFields());
                     Object[][] ipBlackLists=QueryUtilitiesEnums.getTableData(curTbl,
                             EnumIntTableFields.getTableFieldsFromString(curTbl, "ALL"),
-                            w, new String[]{curTbl.getPrimaryKey()[0]+" desc"}, alternativeProcedureInstanceName);
+                            w, new String[]{curTbl.getPrimaryKey()[0]+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()}, alternativeProcedureInstanceName);
                     JSONArray jArr = new JSONArray();
                     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(ipBlackLists[0][0].toString())){
                         for (Object[] currInstr: ipBlackLists){

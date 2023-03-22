@@ -3,6 +3,7 @@ package com.labplanet.servicios.moduleenvmonit;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import databases.SqlStatement;
+import databases.SqlStatementEnums;
 import databases.SqlWhere;
 import databases.SqlWhereEntry;
 import databases.TblsData;
@@ -291,7 +292,7 @@ public class EnvMonAPIStats extends HttpServlet {
                         Object[][] prodLotInfo = QueryUtilitiesEnums.getTableData(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT,
                             EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT, "ALL"),
                             new String[]{TblsEnvMonitData.ProductionLot.LOT_NAME.getName()}, new Object[]{prodLotName},
-                            new String[]{TblsEnvMonitData.ProductionLot.CREATED_ON.getName()+" desc"} ); 
+                            new String[]{TblsEnvMonitData.ProductionLot.CREATED_ON.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()} ); 
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(prodLotInfo[0][0].toString())){
                              jObj= LPFrontEnd.responseJSONDiagnosticLPFalse(Rdbms.RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);                    
                              jArr.add(jObj);
@@ -451,7 +452,7 @@ public class EnvMonAPIStats extends HttpServlet {
                     sampleInfo = QueryUtilitiesEnums.getViewData(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW,
                         fieldsToGet,
                         wObj, //new SqlWhere(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, filterFieldName, filterFieldValue),
-                        new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_ID.getName()+" desc"}, false ); 
+                        new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_ID.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()}, false ); 
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())){
                         jObj= LPFrontEnd.responseJSONDiagnosticLPFalse(Rdbms.RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);                    
                     }else{                       
@@ -462,7 +463,7 @@ public class EnvMonAPIStats extends HttpServlet {
                                 Object[][] sampleMicroOrgInfo = QueryUtilitiesEnums.getTableData(TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM, 
                                     EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM, new String[]{TblsEnvMonitData.SampleMicroorganism.MICROORG_NAME.getName()}), 
                                     new String[]{TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID.getName()}, new Object[]{curSampleId},
-                                    new String[]{TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID.getName()+" desc"} ); 
+                                    new String[]{TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()} ); 
                                 String microOrgList="";
                                 if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleMicroOrgInfo[0][0].toString()))){
                                     for (Object[] curMicroOrg: sampleMicroOrgInfo){
@@ -529,7 +530,7 @@ public class EnvMonAPIStats extends HttpServlet {
                 investigationInfo = QueryUtilitiesEnums.getTableData(TblsProcedure.TablesProcedure.INVESTIGATION, 
                     fieldsToGet,
                     wObj, //filterFieldName, filterFieldValue,
-                    new String[]{TblsProcedure.Investigation.ID.getName()+" desc"} ); 
+                    new String[]{TblsProcedure.Investigation.ID.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()} ); 
                 jObj=new JSONObject();
                 JSONArray investigationJsonArr = new JSONArray();
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationInfo[0][0].toString())){
