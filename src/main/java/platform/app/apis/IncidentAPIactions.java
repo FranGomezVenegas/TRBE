@@ -159,7 +159,7 @@ public class IncidentAPIactions extends HttpServlet {
                         procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, true);
 
                     RdbmsObject diagnostic = AppIncident.newIncident(argValues[0].toString(), argValues[1].toString(), jsonObject);
-                    if (diagnostic.getRunSuccess()){
+                    if (Boolean.TRUE.equals(diagnostic.getRunSuccess())){
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, diagnostic.getErrorMessageCode(), diagnostic.getErrorMessageVariables());
                         incId=Integer.valueOf(diagnostic.getNewRowId().toString());
                     }else
