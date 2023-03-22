@@ -233,8 +233,8 @@ public class GlobalAPIsParams extends HttpServlet {
     /**
      *
      */
-    public static final String REQUEST_PARAM_SAMPLE_FIELD_NAME = "fieldName";
-    public static final String REQUEST_PARAM_SAMPLE_FIELD_VALUE = "fieldValue";
+    public static final String REQUEST_PARAM_SAMPLE_FIELD_NAME = GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME;
+    public static final String REQUEST_PARAM_SAMPLE_FIELD_VALUE = GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE;
 
     /**
      *

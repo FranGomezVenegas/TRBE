@@ -54,12 +54,12 @@ public class TstDataEnvMonit extends HttpServlet {
     /**
      *
      */
-    public static final String PARAMETER_PROGRAM_FIELD_NAME="fieldName";
+    public static final String PARAMETER_PROGRAM_FIELD_NAME=GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME;
 
     /**
      *
      */
-    public static final String PARAMETER_PROGRAM_FIELD_VALUE="fieldValue";    
+    public static final String PARAMETER_PROGRAM_FIELD_VALUE=GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE;    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      *
