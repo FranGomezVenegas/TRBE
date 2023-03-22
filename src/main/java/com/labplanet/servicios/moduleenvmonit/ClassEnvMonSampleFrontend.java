@@ -503,8 +503,8 @@ new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB+GlobalAPIsPara
                     for (String sampleToDisplayArr1 : sampleToDisplayArr) {
                         if (LPArray.valueInArray(sampleTblAllFields, sampleToDisplayArr1)) {
                             jObjPieceOfInfo=new JSONObject();
-                            jObjPieceOfInfo.put("field_name", sampleToDisplayArr1);
-                            jObjPieceOfInfo.put("field_value", sampleInfo[0][LPArray.valuePosicInArray(sampleTblAllFields, sampleToDisplayArr1)].toString());
+                            jObjPieceOfInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, sampleToDisplayArr1);
+                            jObjPieceOfInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, sampleInfo[0][LPArray.valuePosicInArray(sampleTblAllFields, sampleToDisplayArr1)].toString());
                             jArrPieceOfInfo.add(jObjPieceOfInfo);
                     }
             }
@@ -663,8 +663,8 @@ new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB+GlobalAPIsPara
                     for (String fieldToDisplayArr1 : fieldToDisplayArr) {
                         if (LPArray.valueInArray(batchTblAllFields, fieldToDisplayArr1)) {
                             jObjPieceOfInfo=new JSONObject();
-                            jObjPieceOfInfo.put("field_name", fieldToDisplayArr1);
-                            jObjPieceOfInfo.put("field_value", batchInfo[0][LPArray.valuePosicInArray(batchTblAllFields, fieldToDisplayArr1)].toString());
+                            jObjPieceOfInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, fieldToDisplayArr1);
+                            jObjPieceOfInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, batchInfo[0][LPArray.valuePosicInArray(batchTblAllFields, fieldToDisplayArr1)].toString());
                             jArrPieceOfInfo.add(jObjPieceOfInfo);
                         }
                     }
@@ -743,8 +743,8 @@ new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB+GlobalAPIsPara
                     for (String fieldToDisplayArr1 : prodLotfieldToDisplayArr) {
                         if (LPArray.valueInArray(prodLotTblAllFields, fieldToDisplayArr1)) {
                             jObjPieceOfInfo=new JSONObject();
-                            jObjPieceOfInfo.put("field_name", fieldToDisplayArr1);
-                            jObjPieceOfInfo.put("field_value", prodLotInfo[0][LPArray.valuePosicInArray(prodLotTblAllFields, fieldToDisplayArr1)].toString());
+                            jObjPieceOfInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, fieldToDisplayArr1);
+                            jObjPieceOfInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, prodLotInfo[0][LPArray.valuePosicInArray(prodLotTblAllFields, fieldToDisplayArr1)].toString());
                             jArrPieceOfInfo.add(jObjPieceOfInfo);
                         }
                     }
@@ -796,7 +796,7 @@ new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB+GlobalAPIsPara
                     sampleJsonArr = new JSONArray();
                     for (String fieldToDisplayArr1 : sampleFieldToRetrieveArr) {
                         jObjPieceOfInfo=new JSONObject();
-                        jObjPieceOfInfo.put("field_name", fieldToDisplayArr1);
+                        jObjPieceOfInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, fieldToDisplayArr1);
                         sampleJsonArr.add(jObjPieceOfInfo);
                     }                    
                     jObjMainObject.put(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_DISPLAY, sampleJsonArr);
@@ -865,8 +865,8 @@ new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB+GlobalAPIsPara
                     for (String fieldToDisplayArr1 : prodLotfieldToDisplayArr) {
                         if (LPArray.valueInArray(incubTblAllFields, fieldToDisplayArr1)) {
                             jObjPieceOfInfo=new JSONObject();
-                            jObjPieceOfInfo.put("field_name", fieldToDisplayArr1);
-                            jObjPieceOfInfo.put("field_value", incubInfo[0][LPArray.valuePosicInArray(incubTblAllFields, fieldToDisplayArr1)].toString());
+                            jObjPieceOfInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, fieldToDisplayArr1);
+                            jObjPieceOfInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, incubInfo[0][LPArray.valuePosicInArray(incubTblAllFields, fieldToDisplayArr1)].toString());
                             jArrPieceOfInfo.add(jObjPieceOfInfo);
                         }
                     }
@@ -1445,8 +1445,8 @@ private JSONArray sampleStageDataJsonArr(Integer sampleId, String[] sampleFldNam
     switch (currentStage.toUpperCase()){
         case "SAMPLING":
             //jObj.put(TblsEnvMonitData.Sample.SAMPLING_DATE.getName(), sampleFldValue[LPArray.valuePosicInArray(sampleFldName, TblsEnvMonitData.Sample.SAMPLING_DATE.getName())].toString());
-            jObj.put("field_name", TblsEnvMonitData.Sample.SAMPLING_DATE.getName());
-            jObj.put("field_value", sampleFldValue[LPArray.valuePosicInArray(sampleFldName, TblsEnvMonitData.Sample.SAMPLING_DATE.getName())].toString());
+            jObj.put(GlobalAPIsParams.LBL_FIELD_NAME, TblsEnvMonitData.Sample.SAMPLING_DATE.getName());
+            jObj.put(GlobalAPIsParams.LBL_FIELD_VALUE, sampleFldValue[LPArray.valuePosicInArray(sampleFldName, TblsEnvMonitData.Sample.SAMPLING_DATE.getName())].toString());
             jArrMainObj.add(jObj);
             return jArrMainObj; 
         case "INCUBATION":
@@ -1460,8 +1460,8 @@ private JSONArray sampleStageDataJsonArr(Integer sampleId, String[] sampleFldNam
                     //jObj.put(curFld, sampleFldValue[fldPosic].toString());
                     //jArrMainObj.add(jObj);
                     JSONObject jObjSampleStageInfo=new JSONObject();
-                    jObjSampleStageInfo.put("field_name", curFld);
-                    jObjSampleStageInfo.put("field_value", sampleFldValue[fldPosic].toString());
+                    jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, curFld);
+                    jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, sampleFldValue[fldPosic].toString());
                     jArrMainObj.add(jObjSampleStageInfo);
                 }               
                 curFld=curFld.replace("incubation", "incubation2");
@@ -1471,8 +1471,8 @@ private JSONArray sampleStageDataJsonArr(Integer sampleId, String[] sampleFldNam
                     //jObj.put(curFld, sampleFldValue[fldPosic].toString());
                     //jArrMainObj2.add(jObj);
                     JSONObject jObjSampleStageInfo=new JSONObject();
-                    jObjSampleStageInfo.put("field_name", curFld);
-                    jObjSampleStageInfo.put("field_value", sampleFldValue[fldPosic].toString());
+                    jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, curFld);
+                    jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, sampleFldValue[fldPosic].toString());
                     jArrMainObj2.add(jObjSampleStageInfo);
                 }                
             }
@@ -1495,8 +1495,8 @@ private JSONArray sampleStageDataJsonArr(Integer sampleId, String[] sampleFldNam
             for (int iFlds=0;iFlds<sampleStageInfo[0].length;iFlds++){ 
                 //jObj2.put(tblAllFlds[iFlds], sampleStageInfo[0][iFlds].toString());
                 JSONObject jObjSampleStageInfo=new JSONObject();
-                jObjSampleStageInfo.put("field_name", tblAllFlds[iFlds]);
-                jObjSampleStageInfo.put("field_value", sampleStageInfo[0][iFlds].toString());
+                jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, tblAllFlds[iFlds]);
+                jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, sampleStageInfo[0][iFlds].toString());
                 jArrMainObj.add(jObjSampleStageInfo);
             }
             //jObj.put("counting", jObj2);

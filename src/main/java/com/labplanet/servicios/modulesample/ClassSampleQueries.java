@@ -562,8 +562,8 @@ public class ClassSampleQueries implements EnumIntQueriesObj{
     switch (currentStage.toUpperCase()){
         case "SAMPLING":
             jObj.put(TblsEnvMonitData.Sample.SAMPLING_DATE.getName(), sampleFldValue[LPArray.valuePosicInArray(sampleFldName, TblsEnvMonitData.Sample.SAMPLING_DATE.getName())].toString());
-            jObj.put("field_name", TblsEnvMonitData.Sample.SAMPLING_DATE.getName());
-            jObj.put("field_value", sampleFldValue[LPArray.valuePosicInArray(sampleFldName, TblsEnvMonitData.Sample.SAMPLING_DATE.getName())].toString());
+            jObj.put(GlobalAPIsParams.LBL_FIELD_NAME, TblsEnvMonitData.Sample.SAMPLING_DATE.getName());
+            jObj.put(GlobalAPIsParams.LBL_FIELD_VALUE, sampleFldValue[LPArray.valuePosicInArray(sampleFldName, TblsEnvMonitData.Sample.SAMPLING_DATE.getName())].toString());
             jArrMainObj.add(jObj);
             return jArrMainObj; 
         case "INCUBATION":
@@ -577,8 +577,8 @@ public class ClassSampleQueries implements EnumIntQueriesObj{
                     jObj.put(curFld, sampleFldValue[fldPosic].toString());
                     jArrMainObj.add(jObj);
                     JSONObject jObjSampleStageInfo=new JSONObject();
-                    jObjSampleStageInfo.put("field_name", curFld);
-                    jObjSampleStageInfo.put("field_value", sampleFldValue[fldPosic].toString());
+                    jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, curFld);
+                    jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, sampleFldValue[fldPosic].toString());
                     jArrMainObj.add(jObjSampleStageInfo);
                 }               
                 curFld=curFld.replace("incubation", "incubation2");
@@ -588,8 +588,8 @@ public class ClassSampleQueries implements EnumIntQueriesObj{
                     jObj.put(curFld, sampleFldValue[fldPosic].toString());
                     jArrMainObj2.add(jObj);
                     JSONObject jObjSampleStageInfo=new JSONObject();
-                    jObjSampleStageInfo.put("field_name", curFld);
-                    jObjSampleStageInfo.put("field_value", sampleFldValue[fldPosic].toString());
+                    jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, curFld);
+                    jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, sampleFldValue[fldPosic].toString());
                     jArrMainObj2.add(jObjSampleStageInfo);
                 }                
             }
@@ -611,8 +611,8 @@ public class ClassSampleQueries implements EnumIntQueriesObj{
             for (int iFlds=0;iFlds<sampleStageInfo[0].length;iFlds++){ 
                 jObj2.put(tblAllFlds[iFlds], sampleStageInfo[0][iFlds].toString());
                 JSONObject jObjSampleStageInfo=new JSONObject();
-                jObjSampleStageInfo.put("field_name", tblAllFlds[iFlds]);
-                jObjSampleStageInfo.put("field_value", sampleStageInfo[0][iFlds].toString());
+                jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, tblAllFlds[iFlds]);
+                jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, sampleStageInfo[0][iFlds].toString());
                 jArrMainObj.add(jObjSampleStageInfo);
             }
             jObj.put("counting", jObj2);

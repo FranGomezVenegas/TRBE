@@ -302,8 +302,8 @@ public class EnvMonAPIStats extends HttpServlet {
                                 JSONObject jObjPieceOfInfo=new JSONObject();
                                 for (int i=0;i<prodLotFieldToRetrieveArr.length;i++){
                                        jObjPieceOfInfo=new JSONObject();
-                                       jObjPieceOfInfo.put("field_name", prodLotFieldToRetrieveArr[i]);
-                                       jObjPieceOfInfo.put("field_value", curRec[i].toString());
+                                       jObjPieceOfInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, prodLotFieldToRetrieveArr[i]);
+                                       jObjPieceOfInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, curRec[i].toString());
                                        jArr.add(jObjPieceOfInfo);
                                 }
                            }

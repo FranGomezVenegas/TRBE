@@ -5,6 +5,7 @@
  */
 package databases;
 
+import com.labplanet.servicios.app.GlobalAPIsParams;
 import lbplanet.utilities.LPDatabase;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
@@ -88,7 +89,7 @@ public class TblsAppConfig {
     public enum TblFldsEncrypt implements EnumIntTableFields{
         SCHEMA_NAME("schema_name", LPDatabase.stringNotNull(), null, null, null, null),
         TABLE_NAME("table_name", LPDatabase.stringNotNull(), null, null, null, null),
-        FIELD_NAME("field_name", LPDatabase.string(), null, null, null, null),
+        FIELD_NAME(GlobalAPIsParams.LBL_FIELD_NAME, LPDatabase.string(), null, null, null, null),
         ACTIVE("active", LPDatabase.booleanFld(true), null, null, null, null),
         ;
         private TblFldsEncrypt(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
@@ -111,7 +112,7 @@ public class TblsAppConfig {
     public enum TblFldsDateFormat implements EnumIntTableFields{
         SCHEMA_NAME("schema_name", LPDatabase.stringNotNull(), null, null, null, null),
         TABLE_NAME("table_name", LPDatabase.stringNotNull(), null, null, null, null),
-        FIELD_NAME("field_name", LPDatabase.string(), null, null, null, null),
+        FIELD_NAME(GlobalAPIsParams.LBL_FIELD_NAME, LPDatabase.string(), null, null, null, null),
         MASK("mask", LPDatabase.string(), null, null, null, null),
         ACTIVE("active", LPDatabase.booleanFld(true), null, null, null, null),
         ;

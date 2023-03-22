@@ -5,6 +5,7 @@
  */
 package databases;
 
+import com.labplanet.servicios.app.GlobalAPIsParams;
 import lbplanet.utilities.LPDatabase;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
@@ -380,7 +381,7 @@ public class TblsReqs {
         SCHEMA_NAME("schema_name", LPDatabase.stringNotNull(), null, null, null, null),
         TABLE_NAME("table_name", LPDatabase.string(), null, null, null, null),
         IS_VIEW("is_view", LPDatabase.booleanNotNull(false), null, null, null, null),
-        FIELD_NAME("field_name", LPDatabase.string(), null, null, null, null),
+        FIELD_NAME(GlobalAPIsParams.LBL_FIELD_NAME, LPDatabase.string(), null, null, null, null),
         ACTIVE("active", LPDatabase.booleanFld(), null, null, null, null),
         ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, null, null),        
         ;
