@@ -232,7 +232,6 @@ public class ProcedureRequestSession {
             this.msgCodeVisited = TestingMessageCodeVisited.getInstance();
             this.testingMainInfo = new TestingMainInfo();
         }
-        //this.isForQuery=isForQuery;
         this.hasErrors=false;
         if (this.tokenStr==null)
             this.tokenStr=finalToken;

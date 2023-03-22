@@ -26,7 +26,7 @@ public class ModuleTableOrViewGet {
     private String errorMsg;
     
     public ModuleTableOrViewGet(Boolean isView, String moduleName, String curSchemaName, String tblName){
-        if (!isView){
+        if (Boolean.FALSE.equals(isView)){
             getModuleTableObj(moduleName, curSchemaName, tblName);
             return;
         }
@@ -97,10 +97,7 @@ public class ModuleTableOrViewGet {
                             this.tableObj=null;
                         }
                     }
-                    return;
                 }
-                    
-                return;
             default:
         }
     }    

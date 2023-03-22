@@ -532,7 +532,8 @@ public class AppProcedureListAPI extends HttpServlet {
             }
             if (!childs.isEmpty())
                 procEventJson.put(LABEL_ICONS, childs);
-            procEvents.add(procEventJson);
+            if (Boolean.FALSE.equals(procEventJson.isEmpty()))
+                procEvents.add(procEventJson);
         } 
         return procEvents;
     }

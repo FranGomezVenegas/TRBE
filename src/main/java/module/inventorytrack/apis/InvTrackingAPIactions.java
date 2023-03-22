@@ -40,7 +40,7 @@ public class InvTrackingAPIactions extends HttpServlet {
         response=LPHttp.responsePreparation(response);     
         
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, false);
-        if (Boolean.FALSE.equals(procReqInstance.getHasErrors())){
+        if (Boolean.TRUE.equals(procReqInstance.getHasErrors())){
             procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
             return;

@@ -5,7 +5,6 @@
  */
 package module.inspectionlot.rawmaterial.definition;
 
-//import com.labplanet.servicios.moduleenvmonit.*;
 import functionaljavaa.analysis.ConfigAnalysisStructure;
 import static functionaljavaa.inventory.DataInventoryRetain.*;
 import module.inspectionlot.rawmaterial.logic.DataInspectionLot;

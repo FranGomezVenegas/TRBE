@@ -273,7 +273,7 @@ new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB+GlobalAPIsPara
         String reportInfoTagNAme="report_info";
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, null);
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        if (Boolean.FALSE.equals(procReqInstance.getHasErrors())){
+        if (Boolean.TRUE.equals(procReqInstance.getHasErrors())){
             procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseError(request, null, procReqInstance.getErrorMessage(), 
                 new Object[]{procReqInstance.getErrorMessage(), this.getClass().getSimpleName()}, procReqInstance.getLanguage(), null);                   

@@ -39,7 +39,7 @@ public class InstrumentsAPIactions extends HttpServlet {
         response=LPHttp.responsePreparation(response);     
         
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, false);
-        if (Boolean.FALSE.equals(procReqInstance.getHasErrors())){
+        if (Boolean.TRUE.equals(procReqInstance.getHasErrors())){
             procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
             return;
@@ -78,14 +78,12 @@ public class InstrumentsAPIactions extends HttpServlet {
         }catch(Exception e){  
             procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, ApiErrorTraping.EXCEPTION_RAISED, new Object[]{e.getMessage()});   
-            // Rdbms.closeRdbms();                   
             String[] errObject = new String[]{e.getMessage()};
             LPFrontEnd.responseError(errObject, language, null);
         } finally {
             // release database resources
             try {           
                 procReqInstance.killIt();
-                // Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }          

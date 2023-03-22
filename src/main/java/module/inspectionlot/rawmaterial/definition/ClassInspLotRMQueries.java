@@ -55,7 +55,7 @@ public class ClassInspLotRMQueries  implements EnumIntQueriesObj{
         String actionName=procReqInstance.getActionName();
         String language=procReqInstance.getLanguage();
         try{
-            if (Boolean.FALSE.equals(procReqInstance.getHasErrors())){
+            if (Boolean.TRUE.equals(procReqInstance.getHasErrors())){
                 procReqInstance.killIt();
                 LPFrontEnd.servletReturnResponseError(request, null, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), ClassInspLotRMQueries.class.getSimpleName()}, procReqInstance.getLanguage(), null);                   
                 return;

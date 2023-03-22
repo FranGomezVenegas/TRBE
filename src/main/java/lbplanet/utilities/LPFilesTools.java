@@ -34,41 +34,34 @@ public final class LPFilesTools {
     private LPFilesTools() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
     
     public static List<String[]> fromCsvToArray (String fileName, char separator)  {
-        //if (separator==null) separator="|";
-        //String fileName = "D:\\LP\\testingRepository-20200203\\spec_limits.csv"; //"src/main/resources/numbers.csv";
         Path myPath = Paths.get(fileName);
 
         CSVParser parser = new CSVParserBuilder().withSeparator(separator).build();
-
+List<String[]> rows=new ArrayList<>();
         try (BufferedReader br = Files.newBufferedReader(myPath,  StandardCharsets.UTF_8);
              CSVReader reader = new CSVReaderBuilder(br).withCSVParser(parser)
                      .build()) {
-            List<String[]> rows;
+            
             rows = reader.readAll();
             rows.stream().map((row) -> {
                 for (String e : row) {
                     System.out.format("%s ", e);
                 }
                 return row;
-            }).forEachOrdered((_item) -> {
-                System.out.println();
             });
             return rows;
         } catch (IOException|CsvException ex) {
             Logger.getLogger(LPFilesTools.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
+        return rows;
     }    
     
     public static void toCsvFromArray(Boolean cleanFileIfExist, String fileName, String[] entries) {
-        //String[] entries = { "book", "coin", "pencil", "cup", "book", "coin", "pencil", "cup", "book", "coin", "pencil", "cup" };
-        //String fileName = "D:\\LP\\Postgresql Backups\\toCsvFromArray.csv"; //"src/main/resources/items.csv";
         List<String[]> fileContent=null;
-        if (!cleanFileIfExist)
+        if (Boolean.FALSE.equals(cleanFileIfExist))
             fileContent=fromCsvToArray(fileName, ','); 
-        if (fileContent==null) fileContent=new ArrayList<String[]>();
+        if (fileContent==null) fileContent=new ArrayList<>();
         fileContent.add(entries);
-        //entries=LPArray.addValueToArray1D(fileContent, entries);
         try (FileOutputStream fos = new FileOutputStream(fileName); 
              OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
              CSVWriter writer = new CSVWriter(osw)) {

@@ -23,6 +23,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.ApiErrorTraping;
 import lbplanet.utilities.TrazitUtiilitiesEnums;
+import module.instrumentsmanagement.definition.InstrumentsEnums.InstrumentsErrorTrapping;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.queries.QueryUtilitiesEnums;
@@ -45,28 +46,22 @@ public class ClassInstruments {
     public ClassInstruments(HttpServletRequest request, InstrumentsAPIactionsEndpoints endPoint){
         
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        String procInstanceName = procReqSession.getProcedureInstance();
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         InternalMessage actionDiagnoses = null;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
         
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
-        //procReqSession.killIt();
-            String language = ProcedureRequestSession.getInstanceForActions(null, null, null).getLanguage();
             this.diagnostic=(Object[]) argValues[1];
             this.messageDynamicData=new Object[]{argValues[2].toString()};
             return; 
         }
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
-            //this.diagnostic=argValues;
             this.diagnostic=ApiMessageReturn.trapMessage(argValues[0].toString(), argValues[1].toString(), new Object[]{argValues[2].toString()});
             this.relatedObj=rObj;
             rObj.killInstance();
             return;
         }
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
-            //procReqSession.killIt();
-            String language=procReqSession.getLanguage();
             this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
                     argValues[1].toString(), new Object[]{argValues[2].toString()});
             this.messageDynamicData=new Object[]{argValues[2].toString()};
@@ -127,12 +122,33 @@ public class ClassInstruments {
                             fieldNames=LPArray.addValueToArray1D(fieldNames, TblsInstrumentsData.Instruments.INSTALLATION_DATE.getName());
                             fieldValues=LPArray.addValueToArray1D(fieldValues, LPDate.stringFormatToDate(installationDateStr));
                         }
+                        Integer fldPosic=LPArray.valuePosicInArray(fieldNames, TblsInstrumentsData.Instruments.RESPONSIBLE.getName());
+                        if (fldPosic>-1){
+                            Object[] personByUser = UserAndRolesViews.getPersonByUser(fieldValues[fldPosic].toString());
+                            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUser[0].toString())){
+                                diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.USER_NOT_FOUND_TOBE_RESPONSIBLE, new Object[]{fieldValues[fldPosic].toString()});
+                                this.actionDiagnosesObj=new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.USER_NOT_FOUND_TOBE_RESPONSIBLE, new Object[]{fieldValues[fldPosic].toString()});
+                                this.messageDynamicData=new Object[]{fieldValues[fldPosic].toString()};
+                                return; 
+                            }else    
+                                fieldValues[fldPosic]= personByUser[0];
+                        }
+                        fldPosic=LPArray.valuePosicInArray(fieldNames, TblsInstrumentsData.Instruments.RESPONSIBLE_BACKUP.getName());
+                        if (fldPosic>-1){
+                            Object[] personByUser = UserAndRolesViews.getPersonByUser(fieldValues[fldPosic].toString());
+                            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUser[0].toString())){
+                                diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.USER_NOT_FOUND_TOBE_RESPONSIBLE_BACKUP, new Object[]{fieldValues[fldPosic].toString()});
+                                this.actionDiagnosesObj=new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.USER_NOT_FOUND_TOBE_RESPONSIBLE_BACKUP, new Object[]{fieldValues[fldPosic].toString()});
+                                this.messageDynamicData=new Object[]{fieldValues[fldPosic].toString()};
+                                return; 
+                            }else    
+                                fieldValues[fldPosic]= personByUser[0];
+                        }
                         actionDiagnoses=DataInstruments.createNewInstrument(instrName, familyName, fieldNames, fieldValues);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()),TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
                     break;
                 case CHANGE_INSTRUMENT_FAMILY:
-                    //this.actionDiagnosesObj=instr.getErrorDetail();
                     diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
                     this.relatedObj=rObj;
                     rObj.killInstance();
@@ -406,8 +422,6 @@ public class ClassInstruments {
                     instrEventId=(Integer)argValues[1];
                     String variableName=argValues[2].toString();
                     String newValue=argValues[3].toString();
-                    //instr=new DataInstruments(instrName);
-                    //actionDiagnoses=instr.startCalibration();
                     actionDiagnoses=objectVariableSetValue(instrName, instrEventId, variableName, newValue);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
@@ -416,17 +430,11 @@ public class ClassInstruments {
                     instrEventId=(Integer)argValues[1];
                     variableName=argValues[2].toString();
                     newValue=argValues[3].toString();
-                    //instr=new DataInstruments(instrName);
-                    //actionDiagnoses=instr.startCalibration();
                     actionDiagnoses=objectVariableChangeValue(instrName, instrEventId, variableName, newValue);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic()))                        
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
                     break;
                 case INSTRUMENTAUDIT_SET_AUDIT_ID_REVIEWED:
-//                    ResponseMessages message=ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
-//                    message.addMainForError(TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
-//                    actionDiagnoses=new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null,null);
-//if (1==2){
                     String instrumentName=LPNulls.replaceNull(argValues[0]).toString();
                     Integer auditId = Integer.valueOf(LPNulls.replaceNull(argValues[1]).toString());
                     Object[][] auditInfo=QueryUtilitiesEnums.getTableData(TblsInstrumentsDataAudit.TablesInstrumentsDataAudit.INSTRUMENTS,
@@ -438,8 +446,7 @@ public class ClassInstruments {
                         instrumentName=null;
                     }else{
                         actionDiagnoses=instrumentAuditSetAuditRecordAsReviewed(auditId, ProcedureRequestSession.getInstanceForActions(null, null, null).getToken().getPersonName());
-//                    }
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInstrumentsDataAudit.TablesInstrumentsDataAudit.INSTRUMENTS.getTableName(), auditId);
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInstrumentsDataAudit.TablesInstrumentsDataAudit.INSTRUMENTS.getTableName(), auditId);
                     this.messageDynamicData=new Object[]{auditId, instrumentName};
                     break;
                     }

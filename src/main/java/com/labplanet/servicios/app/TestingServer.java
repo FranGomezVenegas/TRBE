@@ -354,10 +354,11 @@ if (1==1)return;
                     out.println("enum name:"+classesImplementing.get(i).getName());
                     ClassInfo getMine = classesImplementing.get(i);  
                     List<Object> enumConstantObjects = getMine.getEnumConstantObjects();
-                    //getMine.getFieldInfo().getNames();
                     for (i=0;i<enumConstantObjects.size();i++) {
-                        out.println(((EnumIntBusinessRules)enumConstantObjects.get(i)).getTagName());
-                        out.println(((EnumIntBusinessRules)enumConstantObjects.get(i)).getAreaName());
+                        String name = ((EnumIntBusinessRules)enumConstantObjects.get(i)).getTagName();
+                        out.println(name);
+                        name = ((EnumIntBusinessRules)enumConstantObjects.get(i)).getAreaName();
+                        out.println(name);
                         out.println(enumConstantObjects.get(i).getClass().getName());
                     }
 /*                    

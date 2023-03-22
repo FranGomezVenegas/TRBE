@@ -108,8 +108,6 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 if (familyName.length()>0)
                     sW.addConstraint(TblsInstrumentsData.Instruments.FAMILY, SqlStatement.WHERECLAUSE_TYPES.IN, familyName.split("\\|"), "|");                
                 sW.addConstraint(TblsInstrumentsData.Instruments.DECOMMISSIONED, SqlStatement.WHERECLAUSE_TYPES.NOT_EQUAL, new Object[]{true}, null);
-//                TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS, 
-//                    new String[]{+"<>"}, );
                 if (filterByResponsible){
                     SqlWhereEntry[] orClauses=new SqlWhereEntry[]{
                         new SqlWhereEntry(TblsInstrumentsData.ViewNotDecommInstrumentAndEventData.RESPONSIBLE, 

@@ -380,7 +380,9 @@ public class InstrumentsEnums {
         DISABLED("instrumentAuditRevisionMode_Disable", "", ""),
         VARIABLE_TYPE_NOT_RECOGNIZED("variableTypeNotRecognized", "", ""),
         INSTR_ALREADY_HAS_RESPONSIBLE("instrumentAlreadyHasResponsible", "", ""),
-        INSTR_ALREADY_HAS_RESPONSIBLE_BACKUP("instrumentAlreadyHasResponsibleBackup", "", "")
+        INSTR_ALREADY_HAS_RESPONSIBLE_BACKUP("instrumentAlreadyHasResponsibleBackup", "", ""),
+        USER_NOT_FOUND_TOBE_RESPONSIBLE("instruments_userNotFoundToBeResponsible", "The user <*1*> is not part of this procedure therefore cannot be assigned as responsible", "No encontrado el usuario <*1*> asignado a este proceso, por lo tanto no puede ser el responsable de un instrumento"),
+        USER_NOT_FOUND_TOBE_RESPONSIBLE_BACKUP("instruments_userNotFoundToBeResponsibleBackup", "The user <*1*> is not part of this procedure therefore cannot be assigned as responsible backup", "No encontrado el usuario <*1*> asignado a este proceso, por lo tanto no puede ser el segundo responsable de un instrumento"),
         ;
         private InstrumentsErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;

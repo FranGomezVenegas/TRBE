@@ -53,7 +53,7 @@ public class ClassReqProcedureActions {
         new Object[]{procName, procVersion, instanceName}, fieldsToRetrieve, fieldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procAndInstanceArr[0][0].toString()))
             return true;
-        return "true".equalsIgnoreCase(procAndInstanceArr[0][0].toString());
+        return Boolean.TRUE.equals(Boolean.valueOf(procAndInstanceArr[0][0].toString()));
     } 
     public ClassReqProcedureActions(HttpServletRequest request, HttpServletResponse response, ProcedureDefinitionAPIActionsEndpoints endPoint){
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
