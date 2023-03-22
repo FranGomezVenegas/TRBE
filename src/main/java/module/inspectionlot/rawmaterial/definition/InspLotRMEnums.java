@@ -115,33 +115,33 @@ public class InspLotRMEnums {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 14),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 15),
             }, "NEW_LOT_CREATED", Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
         LOT_ADD_ADHOC_BULKS("LOT_ADD_ADHOC_BULKS", "createLotCertificate_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_NUM_ADHOC_BULKS, LPAPIArguments.ArgumentType.STRING.toString(), true, 7) 
         }, "LOT_ADHOC_BULKS_ADDED", Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
         CREATE_LOT_CERTIFICATE("CREATE_LOT_CERTIFICATE", "createLotCertificate_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MATERIAL_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_TEMPLATE, LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_TEMPLATE_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 9), 
         }, "LOT_CERTIFICATE_CREATED", Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
         LOT_TAKE_DECISION("LOT_TAKE_DECISION", "lotTakeDecision_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_DECISION, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9),
             },"LOT_DECISION_TAKEN", Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
         LOT_ALL_BULKS_TAKE_DECISION("LOT_ALL_BULKS_TAKE_DECISION", "lotAllBulksTakeDecision_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_BULK_DECISION, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9),
             },"LOT_ALL_BULKS_DECISION_TAKEN", Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
         LOT_BULK_ADJUST_QUANTITY("LOT_BULK_ADJUST_QUANTITY", "LotBulkQuantityAdjusted_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BULK_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
@@ -150,7 +150,7 @@ public class InspLotRMEnums {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 11)
         }, "LOT_BULK_QUANTITY_ADJUSTED", Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
         LOT_BULK_ADJUST_SAMPLE_QUANTITY("LOT_BULK_ADJUST_SAMPLE_QUANTITY", "LotBulkSampleQuantityAdjusted_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BULK_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
@@ -159,7 +159,7 @@ public class InspLotRMEnums {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 11)
         }, "LOT_BULK_SAMPLE_QUANTITY_ADJUSTED", Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
 
         LOT_BULK_TAKE_DECISION("LOT_BULK_TAKE_DECISION", "LotBulkTakeDecision_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
@@ -168,36 +168,36 @@ public class InspLotRMEnums {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 11)                
         }, "LOT_BULK_DECISION_TAKEN", Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
         LOT_RETAIN_UNLOCK("LOT_RETAIN_UNLOCK", "lotRetainUnlock_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RETAIN_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),
             }, "LOT_RETAIN_UNLOCKED", Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
         LOT_RETAIN_LOCK("LOT_RETAIN_LOCK", "lotRetainLock_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RETAIN_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),
             }, "LOT_RETAIN_LOCKED", Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
         LOT_RETAIN_RECEPTION("LOT_RETAIN_RECEPTION", "lotRetainReception_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RETAIN_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),
             }, "LOT_RETAIN_RECEIVED", Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),        
+                .add(GlobalAPIsParams.LBL_TABLE, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),        
         LOT_RETAIN_MOVEMENT("LOT_RETAIN_MOVEMENT", "lotRetainMoved_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RETAIN_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_NEW_LOCATION_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_NEW_LOCATION_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 9),
             }, "LOT_RETAIN_MOVED", Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
         LOT_RETAIN_EXTRACT("LOT_RETAIN_EXTRACT", "lotRetainMoved_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RETAIN_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_QUANTITY, LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), true, 8),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_QUANTITY_UOM, LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
             }, "LOT_RETAIN_EXTRACTED", Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build()),
         ;
         private InspLotRMAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, String actNameForAudit, JsonArray outputObjectTypes){
             this.name=name;

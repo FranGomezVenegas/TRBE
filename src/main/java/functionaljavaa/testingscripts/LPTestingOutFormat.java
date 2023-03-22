@@ -7,6 +7,7 @@ package functionaljavaa.testingscripts;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.labplanet.servicios.app.GlobalAPIsParams;
 import static com.labplanet.servicios.app.TestingAPIActions.scriptExecutionEvidenceSave;
 import databases.Rdbms;
 import static databases.Rdbms.dbGetIndexLastNumberInUse;
@@ -355,7 +356,7 @@ public class LPTestingOutFormat {
     public enum FileHeaderTags{NUM_HEADER_LINES("NUMHEADERLINES"), MAX_NUM_HEADER_LINES(25), SEPARATOR("="),
         NUM_TABLES("NUMTABLES"), TESTER_NAME("TESTERNAME"), NUM_EVALUATION_ARGUMENTS("NUMEVALUATIONARGUMENTS"),
         NUM_ARGUMENTS("NUMARGUMENTS"), EVALUATION_POSITION("EVALUATIONPOSITION"),
-        TABLE_NAME("TABLE"), TOKEN("TOKEN")
+        TABLE_NAME(GlobalAPIsParams.LBL_TABLE), TOKEN("TOKEN")
         ;
         private FileHeaderTags(Object value){
             this.tagValue=value;

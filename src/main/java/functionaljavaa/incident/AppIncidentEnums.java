@@ -28,35 +28,35 @@ public class AppIncidentEnums {
             new LPAPIArguments[]{ new LPAPIArguments(IncidentAPIactions.ParamsList.INCIDENT_TITLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
                 new LPAPIArguments(IncidentAPIactions.ParamsList.INCIDENT_DETAIL.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ), },
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
-                .add("table", TblsApp.TablesApp.INCIDENT.getTableName()).build()).build()
+                .add(GlobalAPIsParams.LBL_TABLE, TblsApp.TablesApp.INCIDENT.getTableName()).build()).build()
                 ),
 /*                new JSONArray()
                     .add(new JSONObject(GlobalAPIsParams.LBL_REPOSITORY,GlobalVariables.Schemas.APP.getName()))
-                    .add(new JSONObject("table",TblsApp.TablesApp.INCIDENT.getTableName()))),*/
+                    .add(new JSONObject(GlobalAPIsParams.LBL_TABLE,TblsApp.TablesApp.INCIDENT.getTableName()))),*/
         CONFIRM_INCIDENT("CONFIRM_INCIDENT", COMMON_PARAMS, "", "incidentConfirmIncident_success",  
             new LPAPIArguments[]{ new LPAPIArguments(IncidentAPIactions.ParamsList.INCIDENT_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments(IncidentAPIactions.ParamsList.NOTE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
-                .add("table", TblsApp.TablesApp.INCIDENT.getTableName()).build()).build()
+                .add(GlobalAPIsParams.LBL_TABLE, TblsApp.TablesApp.INCIDENT.getTableName()).build()).build()
                 ),
         CLOSE_INCIDENT("CLOSE_INCIDENT", COMMON_PARAMS, "", "incidentClosedIncident_success",  
             new LPAPIArguments[]{ new LPAPIArguments(IncidentAPIactions.ParamsList.INCIDENT_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments(IncidentAPIactions.ParamsList.NOTE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
-                .add("table", TblsApp.TablesApp.INCIDENT.getTableName()).build()).build()
+                .add(GlobalAPIsParams.LBL_TABLE, TblsApp.TablesApp.INCIDENT.getTableName()).build()).build()
                 ),
         REOPEN_INCIDENT("REOPEN_INCIDENT", COMMON_PARAMS, "", "incidentReopenIncident_success",  
             new LPAPIArguments[]{ new LPAPIArguments(IncidentAPIactions.ParamsList.INCIDENT_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments(IncidentAPIactions.ParamsList.NOTE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
-                .add("table", TblsApp.TablesApp.INCIDENT.getTableName()).build()).build()
+                .add(GlobalAPIsParams.LBL_TABLE, TblsApp.TablesApp.INCIDENT.getTableName()).build()).build()
                 ),
         ADD_NOTE_INCIDENT("ADD_NOTE_INCIDENT", COMMON_PARAMS, "", "incidentAddNoteToIncident_success",  
             new LPAPIArguments[]{ new LPAPIArguments(IncidentAPIactions.ParamsList.INCIDENT_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments(IncidentAPIactions.ParamsList.NOTE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
             new LPAPIArguments(IncidentAPIactions.ParamsList.NEW_STATUS.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 7)},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
-                .add("table", TblsApp.TablesApp.INCIDENT.getTableName()).build()).build()
+                .add(GlobalAPIsParams.LBL_TABLE, TblsApp.TablesApp.INCIDENT.getTableName()).build()).build()
                 ),
         ;
         private IncidentAPIactionsEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){

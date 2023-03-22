@@ -52,7 +52,7 @@ public final class AuditEventsToRequirements {
     
     public JSONObject getSummaryInfo(){return this.summaryInfo;}
     public static JsonArray endpointWithNoOutputObjects=Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, "no output for testing")
-                    .add("table", "no output for testing").build()).build();
+                    .add(GlobalAPIsParams.LBL_TABLE, "no output for testing").build()).build();
 
     public AuditEventsToRequirements(HttpServletRequest request, HttpServletResponse response){
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         

@@ -66,10 +66,10 @@ public class UserSessionAPIqueries extends HttpServlet {
             new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 9)            
             },
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsApp.TablesApp.APP_SESSION.getTableName()).build()).build() ),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsApp.TablesApp.APP_SESSION.getTableName()).build()).build() ),
         USER_SESSION_INCLUDING_AUDIT_HISTORY("USER_SESSION_INCLUDING_AUDIT_HISTORY", "",new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_SESSION_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsApp.TablesApp.APP_SESSION.getTableName()).build()).build() ),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsApp.TablesApp.APP_SESSION.getTableName()).build()).build() ),
         ;
         private UserSessionAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
             this.name=name;
@@ -225,7 +225,7 @@ public class UserSessionAPIqueries extends HttpServlet {
                                                 auditCurTableArr.add(procAuditTablesJson);
                                             }
                                             procAuditCurTableJson.put("audit_records", auditCurTableArr);
-                                            procAuditCurTableJson.put("table", curTable);
+                                            procAuditCurTableJson.put(GlobalAPIsParams.LBL_TABLE, curTable);
                                             procAuditCurTableArr.add(procAuditCurTableJson);
                                             procAuditJson.put("proc_audit_records", procAuditCurTableArr);
                                         }

@@ -5,6 +5,8 @@
  */
 package trazit.enums;
 
+import com.labplanet.servicios.app.GlobalAPIsParams;
+
 /**
  *
  * @author User
@@ -18,7 +20,7 @@ public class ReferenceFld {
     private String values;
     
     public ReferenceFld(String repo, String tbl, String fld){
-        this.type="table";
+        this.type=GlobalAPIsParams.LBL_TABLE;
         this.repository=repo;
         this.tableName=tbl;
         this.fieldName=fld;

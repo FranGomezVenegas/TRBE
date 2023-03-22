@@ -430,7 +430,7 @@ lbplanet.utilities.LPMailing.sendMailViaTLS("prueba", "esto es una prueba", new 
                                  .build();
              out.println(empObject); 
             JsonArray build = Json.createArrayBuilder().add(Json.createObjectBuilder()//.add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
-                    .add("table", TblsApp.TablesApp.INCIDENT.getTableName()).build()).build();
+                    .add(GlobalAPIsParams.LBL_TABLE, TblsApp.TablesApp.INCIDENT.getTableName()).build()).build();
             out.println(build); 
 
                 

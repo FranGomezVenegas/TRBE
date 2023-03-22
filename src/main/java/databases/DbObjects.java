@@ -5,6 +5,7 @@
  */
 package databases;
 
+import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.requirements.ProcDeployEnums;
 import static databases.Rdbms.insertRecordInTableFromTable;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
@@ -68,7 +69,7 @@ public class DbObjects {
             
             JSONObject scriptLog=new JSONObject();
             scriptLog.put("script", tblCreateScript);
-            if (!tblCreateScript.toLowerCase().startsWith("table") && !tblCreateScript.toLowerCase().contains("already"))            
+            if (!tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE) && !tblCreateScript.toLowerCase().contains("already"))            
                 scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
             if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains("error"))
                 errorsOnlyObj.put("app."+curTbl.getTableName(), scriptLog);
@@ -83,7 +84,7 @@ public class DbObjects {
             Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
             JSONObject scriptLog=new JSONObject();
             scriptLog.put("script", tblCreateScript);
-            if (!tblCreateScript.toLowerCase().startsWith("table") && !tblCreateScript.toLowerCase().contains("already"))            
+            if (!tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE) && !tblCreateScript.toLowerCase().contains("already"))            
                 scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
             if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains("error"))
                 errorsOnlyObj.put("app_audit."+curTbl.getTableName(), scriptLog);
@@ -98,7 +99,7 @@ public class DbObjects {
             Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
             JSONObject scriptLog=new JSONObject();
             scriptLog.put("script", tblCreateScript);
-            if (!tblCreateScript.toLowerCase().startsWith("table") && !tblCreateScript.toLowerCase().contains("already"))        
+            if (!tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE) && !tblCreateScript.toLowerCase().contains("already"))        
                 scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
             if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains("error"))
                 errorsOnlyObj.put("config."+curTbl.getTableName(), scriptLog);
@@ -112,7 +113,7 @@ public class DbObjects {
 
         JSONObject scriptLog=new JSONObject();
         scriptLog.put("script", tblCreateScript);
-        if (!tblCreateScript.toLowerCase().startsWith("table") && !tblCreateScript.toLowerCase().contains("already"))            
+        if (!tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE) && !tblCreateScript.toLowerCase().contains("already"))            
             scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
         if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains("error"))
             errorsOnlyObj.put("app."+TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), scriptLog);
@@ -143,7 +144,7 @@ public class DbObjects {
             prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
             scriptLog=new JSONObject();
             scriptLog.put("script", tblCreateScript);
-            if (!tblCreateScript.toLowerCase().startsWith("table") && !tblCreateScript.toLowerCase().contains("already"))        
+            if (!tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE) && !tblCreateScript.toLowerCase().contains("already"))        
                 scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
             if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains("error"))
                 errorsOnlyObj.put("requirements."+curTbl.getTableName(), scriptLog);
@@ -186,7 +187,7 @@ public class DbObjects {
             //Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
             JSONObject scriptLog=new JSONObject();
             scriptLog.put("script", tblCreateScript);
-            if (!tblCreateScript.toLowerCase().startsWith("table") && !tblCreateScript.toLowerCase().contains("already"))            
+            if (!tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE) && !tblCreateScript.toLowerCase().contains("already"))            
                 scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
             if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains("error"))
                 errorsOnlyObj.put(curTbl.getRepositoryName()+"."+curTbl.getTableName(), scriptLog);

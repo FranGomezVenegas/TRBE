@@ -59,61 +59,61 @@ public class GenomaProjectAPI extends HttpServlet {
                 new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_NAMES.getParamName(), LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
                 new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_VALUES.getParamName(), LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 8)}, 
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsGenomaData.TablesGenomaData.PROJECT.getTableName()).build()).build(), DataGenomaProjectAuditEvents.NEW_PROJECT),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsGenomaData.TablesGenomaData.PROJECT.getTableName()).build()).build(), DataGenomaProjectAuditEvents.NEW_PROJECT),
         PROJECT_ACTIVATE("PROJECT_ACTIVATE", "projectActivated_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.PROJECT_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}, 
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsGenomaData.TablesGenomaData.PROJECT.getTableName()).build()).build(), DataGenomaProjectAuditEvents.ACTIVATE_PROJECT),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsGenomaData.TablesGenomaData.PROJECT.getTableName()).build()).build(), DataGenomaProjectAuditEvents.ACTIVATE_PROJECT),
         PROJECT_DEACTIVATE("PROJECT_DEACTIVATE", "projectDeactivated_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.PROJECT_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}, 
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsGenomaData.TablesGenomaData.PROJECT.getTableName()).build()).build(), DataGenomaProjectAuditEvents.DEACTIVATE_PROJECT),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsGenomaData.TablesGenomaData.PROJECT.getTableName()).build()).build(), DataGenomaProjectAuditEvents.DEACTIVATE_PROJECT),
         PROJECT_UPDATE("PROJECT_UPDATE", "projectUpdated_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.PROJECT_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_NAMES.getParamName(), LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
                 new LPAPIArguments(GenomaProjectAPIParamsList.FIELDS_VALUES.getParamName(), LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 8)}, 
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsGenomaData.TablesGenomaData.PROJECT.getTableName()).build()).build(), DataGenomaProjectAuditEvents.UPDATED_PROJECT),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsGenomaData.TablesGenomaData.PROJECT.getTableName()).build()).build(), DataGenomaProjectAuditEvents.UPDATED_PROJECT),
         PROJECT_ADD_USER("PROJECT_ADD_USER", "userAddedToProject_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.PROJECT_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
                 new LPAPIArguments(GenomaProjectAPIParamsList.USER_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GenomaProjectAPIParamsList.USER_ROLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, 
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsGenomaData.TablesGenomaData.PROJECT.getTableName()).build()).
+                .add(GlobalAPIsParams.LBL_TABLE, TblsGenomaData.TablesGenomaData.PROJECT.getTableName()).build()).
                 add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName()).build()).build(), DataGenomaProjectAuditEvents.PROJECT_ADD_USER),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName()).build()).build(), DataGenomaProjectAuditEvents.PROJECT_ADD_USER),
         PROJECT_REMOVE_USER("PROJECT_REMOVE_USER", "userRemovedToProject_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.PROJECT_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
                 new LPAPIArguments(GenomaProjectAPIParamsList.USER_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GenomaProjectAPIParamsList.USER_ROLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, 
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsGenomaData.TablesGenomaData.PROJECT.getTableName()).build()).
+                .add(GlobalAPIsParams.LBL_TABLE, TblsGenomaData.TablesGenomaData.PROJECT.getTableName()).build()).
                 add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName()).build()).build(), DataGenomaProjectAuditEvents.PROJECT_REMOVE_USER),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName()).build()).build(), DataGenomaProjectAuditEvents.PROJECT_REMOVE_USER),
         PROJECT_CHANGE_USER_ROLE("PROJECT_CHANGE_USER_ROLE", "projectUserRoleChanged_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.PROJECT_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
                 new LPAPIArguments(GenomaProjectAPIParamsList.USER_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GenomaProjectAPIParamsList.USER_ROLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, 
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsGenomaData.TablesGenomaData.PROJECT.getTableName()).build()).
+                .add(GlobalAPIsParams.LBL_TABLE, TblsGenomaData.TablesGenomaData.PROJECT.getTableName()).build()).
                 add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName()).build()).build(), DataGenomaProjectAuditEvents.PROJECT_CHANGE_USER_ROLE),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName()).build()).build(), DataGenomaProjectAuditEvents.PROJECT_CHANGE_USER_ROLE),
         PROJECT_USER_ACTIVATE("PROJECT_USER_ACTIVATE", "userProjectActivated_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.PROJECT_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
                 new LPAPIArguments(GenomaProjectAPIParamsList.USER_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GenomaProjectAPIParamsList.USER_ROLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 8)}, 
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsGenomaData.TablesGenomaData.PROJECT.getTableName()).build()).
+                .add(GlobalAPIsParams.LBL_TABLE, TblsGenomaData.TablesGenomaData.PROJECT.getTableName()).build()).
                 add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName()).build()).build(), DataGenomaProjectAuditEvents.PROJECT_USER_ACTIVATE),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName()).build()).build(), DataGenomaProjectAuditEvents.PROJECT_USER_ACTIVATE),
         PROJECT_USER_DEACTIVATE("PROJECT_USER_DEACTIVATE", "userProjectDeactivated_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.PROJECT_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                
                 new LPAPIArguments(GenomaProjectAPIParamsList.USER_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GenomaProjectAPIParamsList.USER_ROLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, 
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsGenomaData.TablesGenomaData.PROJECT.getTableName()).build()).
+                .add(GlobalAPIsParams.LBL_TABLE, TblsGenomaData.TablesGenomaData.PROJECT.getTableName()).build()).
                 add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName()).build()).build(), DataGenomaProjectAuditEvents.PROJECT_USER_DEACTIVATE),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName()).build()).build(), DataGenomaProjectAuditEvents.PROJECT_USER_DEACTIVATE),
 /*        STUDY_NEW("STUDY_NEW", "newStudyCreated_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.PROJECT_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),

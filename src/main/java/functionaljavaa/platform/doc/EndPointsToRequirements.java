@@ -162,7 +162,7 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
         }
     
     public static JsonArray endpointWithNoOutputObjects=Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, "no output for testing")
-                    .add("table", "no output for testing").build()).build();
+                    .add(GlobalAPIsParams.LBL_TABLE, "no output for testing").build()).build();
 
 private static JSONArray getEndPointArguments(LPAPIArguments[] arguments){
     String[] argHeader=new String[]{"name", "type", "is_mandatory?","testing arg posic"};

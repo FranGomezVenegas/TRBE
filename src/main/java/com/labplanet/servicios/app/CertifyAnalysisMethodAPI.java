@@ -41,31 +41,31 @@ public class CertifyAnalysisMethodAPI extends HttpServlet {
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 9 ),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TRAINING_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 10 ),},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName()).build()).build()),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName()).build()).build()),
         CERTIFY_START_USER_METHOD("CERTIFY_START_USER_METHOD", "startCertification_success", "CERTIF_STARTED", new LPAPIArguments[]{ 
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7 ),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName()).build()).build()),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName()).build()).build()),
         CERTIFY_COMPLETE_CERTIFIED_USER_METHOD("CERTIFY_COMPLETE_CERTIFIED_USER_METHOD", "completeCertifiedCertification_success", "CERTIF_COMPLETED", new LPAPIArguments[]{ 
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7 ),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName()).build()).build()),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName()).build()).build()),
         CERTIFY_COMPLETE_NOT_CERTIFIED_USER_METHOD("CERTIFY_COMPLETE_NOT_CERTIFIED_USER_METHOD", "completeNotCertifiedCertification_success", "CERTIF_COMPLETED", new LPAPIArguments[]{ 
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7 ),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName()).build()).build()),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName()).build()).build()),
         CERTIFY_REVOKE_USER_METHOD("CERTIFY_REVOKE_USER_METHOD", "revokeCertification_success", "CERTIF_REVOKED", new LPAPIArguments[]{ 
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7 ),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
-                .add("table", TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName()).build()).build()),
+                .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName()).build()).build()),
         USER_MARKIT_AS_COMPLETED("USER_MARKIT_AS_COMPLETED", "appAnaMethCertifUser_markAsCompleted_success","",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
             //    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_METHOD_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7)

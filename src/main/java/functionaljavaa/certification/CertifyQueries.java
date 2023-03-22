@@ -5,6 +5,7 @@
  */
 package functionaljavaa.certification;
 
+import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.TblsData;
 import databases.TblsDataAudit;
 import functionaljavaa.certification.AnalysisMethodCertif.CertificationAnalysisMethodBusinessRules;
@@ -66,7 +67,7 @@ public class CertifyQueries {
             Boolean tagValueOneOfEnableOnes = Parameter.isTagValueOneOfEnableOnes(tagValue);
             if (Boolean.FALSE.equals(includeOnlyEnabled) || Boolean.TRUE.equals(tagValueOneOfEnableOnes)){
                 JSONObject jObj=new JSONObject();
-                jObj.put("table", curCertifObj.getTable().getTableName());
+                jObj.put(GlobalAPIsParams.LBL_TABLE, curCertifObj.getTable().getTableName());
                 jObj.put("business_rule_to_enable_id", curCertifObj.getPropertyName());
                 jObj.put("business_rule_value", tagValue);
                 jGlobalArr.add(jObj);
