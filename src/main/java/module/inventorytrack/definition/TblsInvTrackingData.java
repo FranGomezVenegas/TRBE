@@ -26,15 +26,15 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class TblsInvTrackingData {
     
-    private static final String FIELDS_NAMES_LOCATION_NAME = "location_name";
-    private static final String FIELDS_NAMES_PROGRAM_NAME = "program_name";
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.DATA.getName();
     private static final Boolean IS_PRODEDURE_INSTANCE = true;
     public enum TablesInvTrackingData implements EnumIntTables{        
         LOT(null, "lot", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsInvTrackingData.Lot.values(), null,
             new String[]{Lot.LOT_NAME.getName(), Lot.REFERENCE.getName(), Lot.CATEGORY.getName()}, null, "lot table"),
         LOT_CERTIFICATION(null, "lot_certification", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsInvTrackingData.LotCertification.values(), 
-            TblsInvTrackingData.LotCertification.ID.getName(),new String[]{TblsInvTrackingData.LotCertification.ID.getName()}, null, ""),
+            TblsInvTrackingData.LotCertification.CERTIF_ID.getName(),new String[]{TblsInvTrackingData.LotCertification.CERTIF_ID.getName()}, null, ""),
+        LOT_CERTIFICATION_VARIABLE_VALUES(null, "lot_certification_variable_values", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, LotCertificationVariableValues.values(), 
+            LotCertificationVariableValues.ID.getName(), new String[]{LotCertificationVariableValues.ID.getName()}, null, ""),
 
         ;
         ;private TablesInvTrackingData(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
@@ -195,7 +195,7 @@ public class TblsInvTrackingData {
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }            
     public enum LotCertification implements EnumIntTableFields{
-        ID("id", LPDatabase.integerNotNull(), null, null, null, null),
+        CERTIF_ID("certif_id", LPDatabase.integerNotNull(), null, null, null, null),
         LOT_NAME(Lot.LOT_NAME.getName(), LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.DATA.getName(), TablesInvTrackingData.LOT.getTableName(), Lot.LOT_NAME.getName()), null, null),
         CATEGORY(Lot.CATEGORY.getName(), LPDatabase.stringNotNull(), null, null, null, null),         
         REFERENCE(Lot.REFERENCE.getName(), LPDatabase.stringNotNull(), null, null, null, null),         
@@ -206,8 +206,51 @@ public class TblsInvTrackingData {
         COMPLETED_BY("completed_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         COMPLETED_DECISION("completed_decision", LPDatabase.string(), null, null, null, null),
         ATTACHMENT("attachment", LPDatabase.string(), null, null, null, null),         
+        VARIABLES_SET("variables_set", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsInvTrackingConfig.TablesInvTrackingConfig.VARIABLES_SET.getTableName(), TblsInvTrackingConfig.VariablesSet.NAME.getName()), null, null),
         ;
         private LotCertification(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }            
+    public enum LotCertificationVariableValues implements EnumIntTableFields{
+        ID("id", LPDatabase.integerNotNull(), null, null, null, null),
+        LOT_NAME(Lot.LOT_NAME.getName(), LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.DATA.getName(), TablesInvTrackingData.LOT.getTableName(), Lot.LOT_NAME.getName()), null, null),
+        CERTIF_ID(LotCertification.CERTIF_ID.getName(), LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.DATA.getName(), TablesInvTrackingData.LOT_CERTIFICATION.getTableName(), LotCertification.CERTIF_ID.getName()), null, null),
+        CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null),
+        CREATED_BY("created_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
+        DESCRIPTION("description", LPDatabase.string(), null, null, null, null),
+        VARIABLE_SET("variable_set", LPDatabase.stringNotNull(), null, null, null, null),
+        PARAM_NAME("param_name", LPDatabase.stringNotNull(), null, null, null, null),
+        VALUE("value", LPDatabase.string(), null, null, null, null),
+        ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(), null, null, null, null),
+        PARAM_TYPE("param_type", LPDatabase.string(), null, null, null, null),
+        REQUIRED("required", LPDatabase.string(), null, null, null, null),
+        ALLOWED_VALUES("allowed_values", LPDatabase.string(), null, null, null, null),
+        OWNER_ID("owner_id", LPDatabase.stringNotNull(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
+        ENTERED_ON("entered_on", LPDatabase.dateTime(), null, null, null, null),
+        ENTERED_BY("entered_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
+        REENTERED("reentered", LPDatabase.booleanFld(false), null, null, null, null),        
+        ;
+        private LotCertificationVariableValues(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
             this.fieldName=dbObjName;
             this.fieldType=dbObjType;
@@ -303,19 +346,12 @@ public class TblsInvTrackingData {
             "as current_stock ", Lot.LOCKED_REASON, null, null, null)
         ;
         private ViewReferencesStockUnderMin(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
-//            try{
-//            this.fldName="";
             this.fldName=name;
             this.fldAliasInView=vwAliasName;
             this.fldMask=fldMask;
             this.fldComment=comment;
             this.fldBusinessRules=busRules;
             this.fldObj=fldObj;
-/*            }catch(Exception e){
-                String s= e.getMessage();
-                //String s2=name;
-                this.fldName="";
-            }*/
         }
         private final String fldName;
         private final String fldAliasInView;
@@ -343,19 +379,12 @@ public class TblsInvTrackingData {
             "as current_stock_available_for_use ", Lot.LOCKED_REASON, null, null, null),
         ;
         private ViewReferencesAvailableForUseUnderMin(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
-//            try{
-//            this.fldName="";
             this.fldName=name;
             this.fldAliasInView=vwAliasName;
             this.fldMask=fldMask;
             this.fldComment=comment;
             this.fldBusinessRules=busRules;
             this.fldObj=fldObj;
-/*            }catch(Exception e){
-                String s= e.getMessage();
-                //String s2=name;
-                this.fldName="";
-            }*/
         }
         private final String fldName;
         private final String fldAliasInView;
@@ -378,19 +407,12 @@ public class TblsInvTrackingData {
         COUNT("count", "(select count(*) from #PROC_INSTANCE_NAME-#SCHEMA_DATA.lot l where l.category=ref.category and l.reference=ref.name and l.status='AVAILABLE_FOR_USE') as count ", Lot.LOCKED_REASON, null, null, null),
         ;
         private ViewAvailableLotsPerReference(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
-//            try{
-//            this.fldName="";
             this.fldName=name;
             this.fldAliasInView=vwAliasName;
             this.fldMask=fldMask;
             this.fldComment=comment;
             this.fldBusinessRules=busRules;
             this.fldObj=fldObj;
-/*            }catch(Exception e){
-                String s= e.getMessage();
-                //String s2=name;
-                this.fldName="";
-            }*/
         }
         private final String fldName;
         private final String fldAliasInView;

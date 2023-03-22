@@ -307,8 +307,8 @@ public class DataInventory {
             myUom=null;
             String reqCertification = referenceInfo[0][EnumIntTableFields.getFldPosicInArray(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableFields(),
                     TblsInvTrackingConfig.Reference.LOT_REQUIRES_QUALIF.getName())].toString();
-            if (reqCertification==null||Boolean.valueOf(reqCertification))
-                DataInventoryQualif.createInventoryLotQualif(newName, category, reference, false);
+            if (reqCertification==null||Boolean.TRUE.equals(Boolean.valueOf(reqCertification)))
+                DataInventoryQualif.createInventoryLotQualif(newName, category, reference, Boolean.valueOf(reqCertification));
         }
         messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.NEW_INVENTORY_LOT, new Object[]{name, category, reference});
         
