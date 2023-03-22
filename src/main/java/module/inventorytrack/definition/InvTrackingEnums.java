@@ -42,7 +42,7 @@ public class InvTrackingEnums {
     public enum AppInventoryTrackingAuditEvents implements EnumIntAuditEvents{ 
         CREATION, UOM_CONVERSION_ON_CREATION, TURN_AVAILABLE, TURN_UNAVAILABLE, 
         RETIRED, UNRETIRED,
-        CREATED_QUALIFICATION, COMPLETE_QUALIFICATION, REOPEN_QUALIFICATION, UNLOCK_LOT_ONCE_QUALIFIED, TURN_AVAILABLE_ONCE_QUALIFIED,
+        CREATED_QUALIFICATION, ADDED_VARIABLE, COMPLETE_QUALIFICATION, REOPEN_QUALIFICATION, UNLOCK_LOT_ONCE_QUALIFIED, TURN_AVAILABLE_ONCE_QUALIFIED,
         LOT_VOLUME_ADJUSTED, LOT_VOLUME_CONSUMED, LOT_VOLUME_ADDITION,
         UPDATE_INVENTORY_LOT,
         VALUE_ENTERED, VALUE_REENTERED
@@ -181,17 +181,21 @@ public class InvTrackingEnums {
         ),
         ENTER_EVENT_RESULT("ENTER_EVENT_RESULT", "instrumentName", "", "eventValueEntered_success", 
                 new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
-                new LPAPIArguments("eventId", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
-                new LPAPIArguments("variableName", LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
-                new LPAPIArguments("newValue", LPAPIArguments.ArgumentType.STRING.toString(), true, 9),},
+                new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
+                new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),
+                new LPAPIArguments("certifId", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 9),
+                new LPAPIArguments("variableName", LPAPIArguments.ArgumentType.STRING.toString(), true, 10),
+                new LPAPIArguments("newValue", LPAPIArguments.ArgumentType.STRING.toString(), true, 11),},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                 .add("table", TablesInvTrackingData.LOT.getTableName()).build()).build()
         ), 
         REENTER_EVENT_RESULT("REENTER_EVENT_RESULT", "instrumentName", "", "eventValueReentered_success", 
                 new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
-                new LPAPIArguments("eventId", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
-                new LPAPIArguments("variableName", LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
-                new LPAPIArguments("newValue", LPAPIArguments.ArgumentType.STRING.toString(), true, 9),},
+                new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
+                new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),
+                new LPAPIArguments("certifId", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 9),
+                new LPAPIArguments("variableName", LPAPIArguments.ArgumentType.STRING.toString(), true, 10),
+                new LPAPIArguments("newValue", LPAPIArguments.ArgumentType.STRING.toString(), true, 11),},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                 .add("table", TablesInvTrackingData.LOT.getTableName()).build()).build()
         ),

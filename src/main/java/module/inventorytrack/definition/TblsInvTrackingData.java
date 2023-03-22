@@ -234,7 +234,7 @@ public class TblsInvTrackingData {
     public enum LotCertificationVariableValues implements EnumIntTableFields{
         ID("id", LPDatabase.integerNotNull(), null, null, null, null),
         LOT_NAME(Lot.LOT_NAME.getName(), LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.DATA.getName(), TablesInvTrackingData.LOT.getTableName(), Lot.LOT_NAME.getName()), null, null),
-        CERTIF_ID(LotCertification.CERTIF_ID.getName(), LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.DATA.getName(), TablesInvTrackingData.LOT_CERTIFICATION.getTableName(), LotCertification.CERTIF_ID.getName()), null, null),
+        CERTIF_ID(LotCertification.CERTIF_ID.getName(), LPDatabase.integerNotNull(), null, new ReferenceFld(GlobalVariables.Schemas.DATA.getName(), TablesInvTrackingData.LOT_CERTIFICATION.getTableName(), LotCertification.CERTIF_ID.getName()), null, null),
         CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null),
         CREATED_BY("created_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         DESCRIPTION("description", LPDatabase.string(), null, null, null, null),

@@ -81,7 +81,7 @@ public class DataInventoryQualif {
         return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.NEW_INVENTORY_LOT, new Object[]{lotName}, lotName);
     }
 
-    public static InternalMessage completeInventoryLotQualif(DataInventory invLot, String decision, Boolean turnLotAvailable){   
+    public static InternalMessage completeInventoryLotQualif(DataInventory invLot, String category, String reference, String decision, Boolean turnLotAvailable){   
         InternalMessage decisionValueIsCorrect = decisionValueIsCorrect(decision);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(decisionValueIsCorrect.getDiagnostic())) return decisionValueIsCorrect;
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
@@ -194,13 +194,20 @@ public static Object[][] getVariableSetVariablesProperties(String variableSetNam
     return LPArray.array1dTo2d(variablesProperties1D, fieldsToRetrieve.length);
 }
     
-public static Object[] isCertificationOpenToChanges(Integer lotCertifId){
-    ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
+public static Object[] isCertificationOpenToChanges(Integer lotCertifId, String lotName, String category, String ref){
+    ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);      
+    String[] wFldName=new String[]{};
+    Object[] wFldValue=new Object[]{};
+    if (lotCertifId!=null){
+wFldName=new String[]{TblsInvTrackingData.LotCertification.CERTIF_ID.getName()};        
+wFldValue=new Object[]{lotCertifId};
+    }else{
+wFldName=new String[]{TblsInvTrackingData.LotCertification.LOT_NAME.getName(), TblsInvTrackingData.LotCertification.CATEGORY.getName(), TblsInvTrackingData.LotCertification.REFERENCE.getName()};
+wFldValue=new Object[]{lotName, category, ref};
+    }
     String appProcInstance=LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName());
         Object[][] eventInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION.getTableName(),
-            new String[]{TblsInvTrackingData.LotCertification.CERTIF_ID.getName()}, 
-            new Object[]{lotCertifId}, 
-            new String[]{TblsInvTrackingData.LotCertification.COMPLETED_BY.getName()});
+            wFldName, wFldValue, new String[]{TblsInvTrackingData.LotCertification.COMPLETED_BY.getName()});
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(eventInfo[0][0].toString()))
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.NOT_FOUND, new Object[]{lotCertifId, appProcInstance});
     if (LPNulls.replaceNull(eventInfo[0][0]).toString().length()>0)
@@ -210,7 +217,7 @@ public static Object[] isCertificationOpenToChanges(Integer lotCertifId){
     
     public static Object[] addVariableSetToObject(String lotName, Integer lotCertifId, String variableSetName, String ownerId){
         Object[] diagn=new Object[0];
-        Object[] isStudyOpenToChanges=isCertificationOpenToChanges(lotCertifId);
+        Object[] isStudyOpenToChanges=isCertificationOpenToChanges(lotCertifId, null, null, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())) return isStudyOpenToChanges;
         if (variableSetName==null) return new Object[]{};
         Object[][] variableSetContent=getVariableSetVariablesProperties(variableSetName);
@@ -239,17 +246,17 @@ public static Object[] isCertificationOpenToChanges(Integer lotCertifId){
                 }
                 }*/
                 RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES, fieldsName, fieldsValue);            
-                /*if (insertRecordInTable.getRunSuccess())
-                    InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.CREATED_QUALIFICATION, lotName, TblsInvTrackingData.TablesInvTrackingData.LOT.getTableName(), lotCertifId.toString(),
-                        fieldsName, fieldsValue);*/
+                if (insertRecordInTable.getRunSuccess())
+                    InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.ADDED_VARIABLE, lotName, null, null, TblsInvTrackingData.TablesInvTrackingData.LOT.getTableName(), lotCertifId.toString(),
+                        fieldsName, fieldsValue);
             }
         }        
         return diagn; 
     }
-    public static InternalMessage objectVariableSetValue(String lotName, Integer lotCertifId, String variableName, String newValue){
+    public static InternalMessage objectVariableSetValue(String lotName, String category, String reference, Integer lotCertifId, String variableName, String newValue){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
         String appProcInstance=LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName());
-        Object[] isStudyOpenToChanges=isCertificationOpenToChanges(lotCertifId);
+        Object[] isStudyOpenToChanges=isCertificationOpenToChanges(lotCertifId, lotName, category, reference);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())) 
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES, null,null);
         
@@ -268,10 +275,10 @@ public static Object[] isCertificationOpenToChanges(Integer lotCertifId){
                     new String[]{TblsInvTrackingData.LotCertificationVariableValues.CERTIF_ID.getName()}, new Object[]{lotCertifId}, fieldsToRetrieve);            
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instEvVariables[0][0].toString()))
                 return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.VARIABLE_NOT_EXISTS_EVENT_WITHNOVARIABLES, null);
-            else{
+            /*else{
                 return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.VARIABLE_NOT_EXISTS, 
                 new Object[]{Arrays.toString(LPArray.getColumnFromArray2D(instEvVariables, 1))});
-            }
+            }*/
         }
         if (objectVariablePropInfo.length!=1) return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.MORE_THAN_ONE_VARIABLE, 
             new Object[]{objectVariablePropInfo.length, Arrays.toString(fieldsName), appProcInstance});
@@ -284,7 +291,7 @@ public static Object[] isCertificationOpenToChanges(Integer lotCertifId){
         if (DataStudyObjectsVariableValues.VariableTypes.LIST.toString().equalsIgnoreCase(fieldType)){
             String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
             if (!LPArray.valueInArray(allowedValuesArr, newValue)) 
-                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.MORE_THAN_ONE_VARIABLE, 
+                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.VARIABLE_VALUE_NOTONEOFTHEEXPECTED, 
                     new Object[]{newValue, Arrays.toString(allowedValuesArr), variableName, appProcInstance});
         }else if (DataStudyObjectsVariableValues.VariableTypes.REAL.toString().equalsIgnoreCase(fieldType)){
             Object[] isNumeric = isNumeric(newValue);
@@ -303,16 +310,16 @@ public static Object[] isCertificationOpenToChanges(Integer lotCertifId){
 	sqlWhere.addConstraint(TblsInvTrackingData.LotCertificationVariableValues.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{Integer.valueOf(objectVariablePropInfo[0][0].toString())}, "");
 	Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES,
 		EnumIntTableFields.getTableFieldsFromString(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES, updFieldsName), updFieldsValue, sqlWhere, null);
-        /*if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) 
-            InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.VALUE_ENTERED, lotName, TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION.getTableName(), lotCertifId.toString(),
-                updFieldsName, updFieldsValue);*/
+        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) 
+            InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.VALUE_ENTERED, lotName, null, null, TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION.getTableName(), lotCertifId.toString(),
+                updFieldsName, updFieldsValue);
         return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ENTER_EVENT_RESULT, new Object[]{lotName, lotCertifId, variableName, newValue}, null);        
     }
 
-    public static InternalMessage objectVariableChangeValue(String lotName, Integer instrEventId, String variableName, String newValue){
+    public static InternalMessage objectVariableChangeValue(String lotName, String category, String reference, Integer lotCertifId, String variableName, String newValue){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
         String appProcInstance=LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName());
-        Object[] isStudyOpenToChanges=isCertificationOpenToChanges(instrEventId);
+        Object[] isStudyOpenToChanges=isCertificationOpenToChanges(lotCertifId, lotName, category, reference);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())) 
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES, null,null);
         
@@ -321,12 +328,12 @@ public static Object[] isCertificationOpenToChanges(Integer lotCertifId){
         
         String[] fieldsName=new String[]{TblsInvTrackingData.LotCertificationVariableValues.CERTIF_ID.getName(),
             TblsInvTrackingData.LotCertificationVariableValues.PARAM_NAME.getName()};
-        Object[] fieldsValue=new Object[]{instrEventId, variableName};
+        Object[] fieldsValue=new Object[]{lotCertifId, variableName};
         Object[][] objectVariablePropInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES.getTableName(),
                 fieldsName, fieldsValue, fieldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objectVariablePropInfo[0][0].toString())){
             Object[][] instEvVariables=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES.getTableName(),
-                    new String[]{TblsInvTrackingData.LotCertificationVariableValues.CERTIF_ID.getName()}, new Object[]{instrEventId}, fieldsToRetrieve);            
+                    new String[]{TblsInvTrackingData.LotCertificationVariableValues.CERTIF_ID.getName()}, new Object[]{lotCertifId}, fieldsToRetrieve);            
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instEvVariables[0][0].toString()))
                 return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.VARIABLE_NOT_EXISTS_EVENT_WITHNOVARIABLES, null);
             else{
@@ -368,15 +375,15 @@ public static Object[] isCertificationOpenToChanges(Integer lotCertifId){
 	sqlWhere.addConstraint(TblsInvTrackingData.LotCertificationVariableValues.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{Integer.valueOf(objectVariablePropInfo[0][0].toString())}, "");
 	Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES,
 		EnumIntTableFields.getTableFieldsFromString(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES, updFieldsName), updFieldsValue, sqlWhere, null);
-        /*if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) 
-            InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.VALUE_REENTERED, lotName, TblsInvTrackingData.TablesInvTrackingData.LOT.getTableName(), instrEventId.toString(),
-                updFieldsName, updFieldsValue);*/
-        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ENTER_EVENT_RESULT, new Object[]{lotName, instrEventId, variableName, newValue}, null);        
+        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) 
+            InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.VALUE_REENTERED, lotName, null, null, TblsInvTrackingData.TablesInvTrackingData.LOT.getTableName(), lotCertifId.toString(),
+                updFieldsName, updFieldsValue);
+        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ENTER_EVENT_RESULT, new Object[]{lotName, lotCertifId, variableName, newValue}, null);        
     }
     public static InternalMessage eventHasNotEnteredVariables(String lotName, Integer lotCertifId){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
         String appProcInstance=LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName());
-        Object[] isStudyOpenToChanges=isCertificationOpenToChanges(lotCertifId);
+        Object[] isStudyOpenToChanges=isCertificationOpenToChanges(lotCertifId, null, null, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())){ 
             ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();
             messages.addMainForError(InstrumentsEnums.InstrEventsErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES, new Object[]{lotCertifId});

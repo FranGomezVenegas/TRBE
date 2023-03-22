@@ -67,8 +67,6 @@ public class InvTrackingAPIactions extends HttpServlet {
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, errLog[errLog.length-1].toString(), null);
         }         
         String lotName=argValues[0].toString();
-        String reference=argValues[1].toString();
-        String category=argValues[2].toString();
         try (PrintWriter out = response.getWriter()) {
             ClassInvTracking clss = new ClassInvTracking(request, endPoint);
             Object[] diagnostic=clss.getDiagnostic();
@@ -85,7 +83,6 @@ public class InvTrackingAPIactions extends HttpServlet {
         }catch(Exception e){  
             procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, ApiErrorTraping.EXCEPTION_RAISED, new Object[]{e.getMessage()});   
-            // Rdbms.closeRdbms();                   
             String[] errObject = new String[]{e.getMessage()};
             LPFrontEnd.responseError(errObject, language, null);
         } finally {
