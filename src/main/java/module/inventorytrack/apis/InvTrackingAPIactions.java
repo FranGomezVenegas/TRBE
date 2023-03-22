@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.json.JsonObject;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -47,8 +46,6 @@ public class InvTrackingAPIactions extends HttpServlet {
         }
         String actionName=procReqInstance.getActionName();
         String language=procReqInstance.getLanguage();
-        InternalMessage actionDiagnoses=null;
-
         InventoryTrackAPIactionsEndpoints endPoint = null;
         try{
             endPoint = InventoryTrackAPIactionsEndpoints.valueOf(actionName.toUpperCase());
@@ -57,7 +54,6 @@ public class InvTrackingAPIactions extends HttpServlet {
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
             return;                   
         }
-        JsonObject jsonObject=null;
         String[] argList=new String[]{};
         LPAPIArguments[] arguments = endPoint.getArguments();
         for (LPAPIArguments curArg: arguments){
