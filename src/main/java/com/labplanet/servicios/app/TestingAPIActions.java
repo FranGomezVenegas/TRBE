@@ -143,7 +143,7 @@ public class TestingAPIActions extends HttpServlet {
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
             }           
         }catch(Exception e){   
-            // Rdbms.closeRdbms();                   
+                               
             procReqInstance.killIt();
             String[] errObject = new String[]{e.getMessage()};
             LPFrontEnd.responseError(errObject, language, null);
@@ -151,7 +151,7 @@ public class TestingAPIActions extends HttpServlet {
             // release database resources
             try {           
                 procReqInstance.killIt();
-                // Rdbms.closeRdbms();   
+                   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }          

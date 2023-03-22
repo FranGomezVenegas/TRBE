@@ -254,7 +254,7 @@ public class SavedQueriesAPI extends HttpServlet {
             RelatedObjects rObj=RelatedObjects.getInstanceForActions();
             rObj.killInstance();
             try {                
-                // Rdbms.closeRdbms();   
+                   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }          

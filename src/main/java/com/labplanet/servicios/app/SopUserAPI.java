@@ -172,7 +172,7 @@ public class SopUserAPI extends HttpServlet {
             procReqInstance.killIt();
             // release database resources
             try {
-                // Rdbms.closeRdbms();   
+                   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }                                       

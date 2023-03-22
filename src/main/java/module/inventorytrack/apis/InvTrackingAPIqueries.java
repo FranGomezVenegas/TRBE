@@ -447,14 +447,13 @@ public class InvTrackingAPIqueries extends HttpServlet {
                 jObj.put("zpl_code", zplCode);
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jObj);
-                return;
             default: 
             }
         }finally {
             // release database resources
             try {           
                 procReqInstance.killIt();
-                // Rdbms.closeRdbms();   
+                   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }         

@@ -193,7 +193,7 @@ public class AuthenticationAPI extends HttpServlet {
                     String myFinalToken = token.createToken(token.getUserName(), token.getUsrPw(), token.getPersonName(), 
                             userRole, sessionIdStr, nowLocalDate.toString(), eSignUncrypted, token.getDbName(), token.getUserMailAddress());
                     request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, myFinalToken);
-                    // Rdbms.closeRdbms();                    
+                                        
                     jsonObj = new JSONObject();
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myFinalToken);
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_APP_SESSION_ID, sessionIdStr);
@@ -364,7 +364,7 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
                             token.getAppSessionId(), 
                             appStartedDate, 
                             newEsign, token.getDbName(), token.getUserMailAddress());
-                    // Rdbms.closeRdbms();                    
+                                        
                     jsonObj = new JSONObject();
                     rObj=RelatedObjects.getInstanceForActions();
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), token.getUserName());
@@ -404,7 +404,7 @@ lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueb
             // release database resources
             try {
                 Rdbms.closeRdbms();
-                // Rdbms.closeRdbms();   
+                   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }                                       

@@ -121,7 +121,7 @@ public class ErrorMessageCodesToRequirements {
                     LPFrontEnd.servletReturnSuccess(request, response, errorJArr);
                     return;
                 }
-            // Rdbms.closeRdbms();
+            
             ScanResult.closeAll();        
             JSONObject jMainObj=new JSONObject();
             if (msgCodesNotFound.isEmpty())

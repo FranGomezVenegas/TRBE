@@ -74,7 +74,7 @@ public class ReqProcedureDefinitionAPIActions extends HttpServlet {
             
         }catch(Exception e){   
             procReqInstance.killIt();
-            // Rdbms.closeRdbms();                   
+                               
             errObject = new String[]{e.getMessage()};
             LPFrontEnd.responseError(errObject, language, null);
         } finally {
@@ -82,7 +82,7 @@ public class ReqProcedureDefinitionAPIActions extends HttpServlet {
             try {
                 procReqInstance.killIt();
                 //con.close();
-                // Rdbms.closeRdbms();   
+                   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }      }

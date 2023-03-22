@@ -507,13 +507,12 @@ public class SqlStatementEnums {
     private String buildTableFieldsToRetrieve(EnumIntTableFields[] fieldsToRetrieve, Boolean avoidMask) {
         StringBuilder fieldsToRetrieveStr = new StringBuilder(0);
         if (fieldsToRetrieve != null) {
-            StringBuilder fn = new StringBuilder(0);
             Boolean alreadyAdded = false;
             for (EnumIntTableFields curFld : fieldsToRetrieve) {
                 if (curFld == null) {
                     continue;
                 }
-                fn = new StringBuilder(0);
+                StringBuilder fn = new StringBuilder(0);
                 if (curFld.getReferenceTable() != null) {
                     fn.append(DbFieldValueMask.getFieldMaskedByReferenceTableForTable(curFld));
                     /*                if (GlobalVariables.Schemas.CONFIG.toString().equalsIgnoreCase(curFld.getReferenceTable().getRepository())

@@ -175,7 +175,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                         new String[]{TblsGenomaData.Project.ACTIVE.getName()}, new Object[]{true}, 
                         EnumIntTableFields.getAllFieldNames(TblsGenomaData.TablesGenomaData.PROJECT.getTableFields()), new String[]{TblsGenomaData.Project.NAME.getName()});
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projectInfo[0][0].toString())){
-                        // Rdbms.closeRdbms();        
+                                
                         procReqInstance.killIt();
                         LPFrontEnd.responseError(projectInfo, language, null);
                         return;

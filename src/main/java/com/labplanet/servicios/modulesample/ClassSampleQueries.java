@@ -120,7 +120,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj{
                         new SqlWhere(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsValueArr),
                         sortFieldsNameArr);     
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisResultList[0][0].toString())){  
-                        // Rdbms.closeRdbms();   
+                           
                         this.isSuccess=true;
                         this.responseSuccessJArr=new JSONArray();                       
                     }else{    

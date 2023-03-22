@@ -149,7 +149,7 @@ public class HolidayCalendarAPIactions extends HttpServlet {
             // release database resources
             try {           
                 procReqInstance.killIt();
-                // Rdbms.closeRdbms();   
+                   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }          

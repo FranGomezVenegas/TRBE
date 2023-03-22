@@ -121,7 +121,7 @@ public final class AuditEventsToRequirements {
                 LPFrontEnd.servletReturnSuccess(request, response, errorJArr);
                 return;
             }
-        // Rdbms.closeRdbms();
+        
         ScanResult.closeAll();        
         JSONObject jMainObj=new JSONObject();
         if (eventsNotFound.isEmpty())

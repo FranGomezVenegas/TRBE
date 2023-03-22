@@ -144,7 +144,7 @@ public class InvestigationAPIfrontend extends HttpServlet {
                         jArray.add(jObj);
                       }
                     }
-                    // Rdbms.closeRdbms();       
+                           
                     instanceForQueries.killIt();                
                     LPFrontEnd.servletReturnSuccess(request, response, jArray);
                     break;                
@@ -200,7 +200,7 @@ public class InvestigationAPIfrontend extends HttpServlet {
         } finally {
             // release database resources
             try {
-                // Rdbms.closeRdbms();                    
+                                    
                 instanceForQueries.killIt();
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }

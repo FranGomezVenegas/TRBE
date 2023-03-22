@@ -262,7 +262,7 @@ public class UserSessionAPIqueries extends HttpServlet {
                     jArray.add(jObj);
                   }
                 }
-                // Rdbms.closeRdbms();                    
+                                    
                 LPFrontEnd.servletReturnSuccess(request, response, jArray);
                 break;                */
         default: 
@@ -276,7 +276,7 @@ public class UserSessionAPIqueries extends HttpServlet {
         // release database resources
        Rdbms.closeRdbms();  
         try {
-            // Rdbms.closeRdbms();                    
+                                
             Rdbms.closeRdbms();  
         } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
         }

@@ -109,7 +109,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 if (familyName.length()>0)
                     sW.addConstraint(TblsInstrumentsData.Instruments.FAMILY, SqlStatement.WHERECLAUSE_TYPES.IN, familyName.split("\\|"), "|");                
                 sW.addConstraint(TblsInstrumentsData.Instruments.DECOMMISSIONED, SqlStatement.WHERECLAUSE_TYPES.NOT_EQUAL, new Object[]{true}, null);
-                if (filterByResponsible){
+                if (Boolean.TRUE.equals(filterByResponsible)){
                     SqlWhereEntry[] orClauses=new SqlWhereEntry[]{
                         new SqlWhereEntry(TblsInstrumentsData.ViewNotDecommInstrumentAndEventData.RESPONSIBLE, 
                                 SqlStatement.WHERECLAUSE_TYPES.IS_NULL, new Object[]{""}, null),
@@ -310,14 +310,14 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 jArr=instrumentFamiliesList(null);
                 Rdbms.closeRdbms();  
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
-                return;
+                break;
             default: 
             }
         }finally {
             // release database resources
             try {           
                 procReqInstance.killIt();
-                // Rdbms.closeRdbms();   
+                   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }         
