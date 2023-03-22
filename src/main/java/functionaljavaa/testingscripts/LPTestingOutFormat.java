@@ -721,17 +721,12 @@ public class LPTestingOutFormat {
         String fileContentSummary =rowStart();
         
         fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Logs detail created by running this script")+headerEnd();
-        //fileContentSummary=fileContentSummary+rowStart()+rowAddField("Audit Ids");
         String msgStr="Audit Ids";
-        if (procReqInstance!=null&&procReqInstance.getTestingMainInfo()!=null)
+        if (procReqInstance!=null&&procReqInstance.getTestingAuditObj().getMinAudit()!=null)
             msgStr=msgStr+" (First: "+LPNulls.replaceNull(procReqInstance.getTestingAuditObj().getMinAudit()).toString()
                 +", Last: "+LPNulls.replaceNull(procReqInstance.getTestingAuditObj().getMaxAudit()).toString()+")";
-/*            fileContentSummary = fileContentSummary
-                +rowAddField(LPNulls.replaceNull(procReqInstance.getTestingAuditObj().getMinAudit()).toString())
-                +" - "+rowAddField(LPNulls.replaceNull(procReqInstance.getTestingAuditObj().getMaxAudit()).toString())
-                +rowEnd();*/
         else            
-            msgStr=msgStr+" "+LPTestingOutFormat.TST_ICON_UNDEFINED+" No Audit Ids found";
+            msgStr=msgStr+" "+LPTestingOutFormat.TST_ICON_UNDEFINED+" No Audit records created by this script";
         fileContentSummary=fileContentSummary+rowStart()+rowAddField(msgStr);
         
         msgStr="DB Errors Ids";
