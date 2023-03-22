@@ -28,7 +28,7 @@ public class ClassSampleQueriesController implements EnumIntQueriesEndpoints{
     private JSONArray functionRelatedObjects=new JSONArray();
     private Boolean functionFound=false;
     private Boolean isSuccess=false;
-    ClassSampleQueries clss=null;
+    ClassSampleQueries clssObj=null;
     public ClassSampleQueriesController(HttpServletRequest request, HttpServletResponse response, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
         Object[] argsForLogFiles=new Object[0];
         SampleAPIParams.SampleAPIqueriesEndpoints endPoint = null;
@@ -45,11 +45,11 @@ public class ClassSampleQueriesController implements EnumIntQueriesEndpoints{
                 this.rowArgsRows=this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));
             }
             ClassSampleQueries clss=new ClassSampleQueries(request, response, endPoint);
-            this.clss=clss;
+            this.clssObj=clss;
             this.functionDiagn=clss.getDiagnostic();
             this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject();   
             
-            if (clss.getIsSuccess())
+            if (Boolean.TRUE.equals(clss.getIsSuccess()))
                 this.functionDiagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "queriesHaveNoMsgCode", null);
             else
                 this.functionDiagn=clss.getDiagnostic();
@@ -75,7 +75,7 @@ public class ClassSampleQueriesController implements EnumIntQueriesEndpoints{
 
     @Override
     public EnumIntQueriesObj getQueryRunObj() {
-        return this.clss;
+        return this.clssObj;
     }
 }
 

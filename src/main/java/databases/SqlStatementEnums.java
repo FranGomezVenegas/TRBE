@@ -920,7 +920,7 @@ public class SqlStatementEnums {
                 }
                 Object[] textSpecArray = textSpecs.split("\\" + separator);
                 queryWhere.append(fn).append(" ").append(symbol.toLowerCase()).append("(");
-                if (!valuesAreNumbers) {
+                if (Boolean.FALSE.equals(valuesAreNumbers)){
                     if (curEntry.getFldValue()[0] instanceof Object[]) {
                         textSpecArray = (Object[]) curEntry.getFldValue()[0];
                     } else if (curEntry.getFldValue()[0] instanceof String[]) {

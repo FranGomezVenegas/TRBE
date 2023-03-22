@@ -30,10 +30,8 @@ import trazit.session.ProcedureRequestSession;
  */
 public class DbEncryptionObject {
     public static Object[] decryptTableFieldArray(EnumIntTables tblObj, EnumIntTableFields[] fieldsToRetrieve, Object[] fieldValue, Boolean encryptAllFlds){
-//if (1==1) return fieldValue;
         Boolean tableHasEncryptedFlds = tableHasEncryptedFlds(tblObj);
         if (Boolean.FALSE.equals(encryptAllFlds)&&Boolean.FALSE.equals(tableHasEncryptedFlds)) return fieldValue;
-//if (1==1) return fieldValue;
         String key = DbEncryption.ENCRYPTION_KEY; //"Bar12345Bar12345"; // 128 bit key
         for (int iFields=0;iFields<fieldsToRetrieve.length;iFields++){
             //if (fieldsEncrypted.contains(fieldName[iFields])){
@@ -65,7 +63,8 @@ public class DbEncryptionObject {
 
     public static Object[][] decryptTableFieldArray(EnumIntTables tblObj, EnumIntTableFields[] fieldsToRetrieve, Object[][] fieldValue, Boolean encryptAllFlds){
         Boolean tableHasEncryptedFlds = tableHasEncryptedFlds(tblObj);
-        if (!encryptAllFlds&&!tableHasEncryptedFlds) return fieldValue;
+        if (Boolean.FALSE.equals(encryptAllFlds)&&Boolean.FALSE.equals(tableHasEncryptedFlds))
+            return fieldValue;
         String key = DbEncryption.ENCRYPTION_KEY; //"Bar12345Bar12345"; // 128 bit key
         for (int iFields=0;iFields<fieldsToRetrieve.length;iFields++){
             //if (fieldsEncrypted.contains(fieldName[iFields])){

@@ -99,10 +99,6 @@ public class TestingSamples extends HttpServlet {
                 TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);                
 
                 Object actionName = LPNulls.replaceNull(testingContent[iLines][5]).toString();
-/*out.println(iLines+" "+actionName);      
-if (iLines==25){
-    out.println("stop here");
-}*/
                 request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, actionName);
                 instanceForActions.setActionNameForTesting(scriptId, iLines, actionName.toString());                
                 if (tstOut.getAuditReasonPosic()!=-1)
@@ -121,8 +117,6 @@ if (iLines==25){
                     String propValue=LPNulls.replaceNull(testingContent[iLines][9]).toString();
                     fileContentTable1Builder.append(propValue);                    
                     Parameter parm=new Parameter();
-//                    parm.createPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
-//                    procInstanceName+"-"+suffixName);  
                     String diagn=parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
                         procInstanceName+"-"+suffixName, propName, propValue);
                     functionRelatedObjects=new JSONArray();                      
@@ -184,23 +178,17 @@ if (iLines==25){
                     Integer stepId=Integer.valueOf(testingContent[iLines][tstOut.getStepIdPosic()].toString());
                     fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, functionEvaluation, functionRelatedObjects, tstAssert, timeStartedStep));                    
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate));                        
-                    if ( tstOut.getStopSyntaxisUnmatchPosic()>-1 && Boolean.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStopSyntaxisUnmatchPosic()]).toString()) &&
+                    if ( tstOut.getStopSyntaxisUnmatchPosic()>-1 && Boolean.TRUE.equals(Boolean.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStopSyntaxisUnmatchPosic()]).toString())) &&
                             !TestingAssert.EvalCodes.MATCH.toString().equalsIgnoreCase(tstAssert.getEvalSyntaxisDiagnostic()) ){
                         out.println(fileContentBuilder.toString()); 
                         stopPhrase="Interrupted by evaluation not matching in step "+(iLines+1)+" of "+testingContent.length;
-//                        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName.toString(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT.getTableName(), 
-//                                new String[]{TblsTesting.Script.RUN_SUMMARY.getName()}, new Object[]{"Interrupted by evaluation not matching in step "+(iLines+1)+" of "+testingContent.length}, 
-//                                new String[]{TblsTesting.Script.SCRIPT_ID.getName()}, new Object[]{6}); //testingContent[iLines][tstOut.getScriptIdPosic()]});
                         break;      
                     }
                 }
-                if (tstOut.getStopSyntaxisFalsePosic()>-1 && Boolean.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStopSyntaxisFalsePosic()]).toString())
+                if (tstOut.getStopSyntaxisFalsePosic()>-1 && Boolean.TRUE.equals(Boolean.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStopSyntaxisFalsePosic()]).toString()))
                     && LPPlatform.LAB_FALSE.equalsIgnoreCase(functionEvaluation[0].toString())){
                         out.println(fileContentBuilder.toString()); 
                         stopPhrase="Interrupted by evaluation returning false in step "+(iLines+1)+" of "+testingContent.length;
-//                        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName.toString(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT.getTableName(), 
-//                                new String[]{TblsTesting.Script.RUN_SUMMARY.getName()}, new Object[]{"Interrupted by evaluation returning false "+(iLines+1)+" of "+testingContent.length}, 
-//                                new String[]{TblsTesting.Script.SCRIPT_ID.getName()}, new Object[]{6}); //testingContent[iLines][tstOut.getScriptIdPosic()]});
                     break;
                 }
                 fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());   
@@ -212,7 +200,6 @@ if (iLines==25){
             fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
 
             out.println(fileContentBuilder.toString());            
-            //LPTestingOutFormat.createLogFile(tstOut.getFilePathName(), fileContentBuilder.toString());
             tstAssertSummary=null; 
         }
         catch(IOException error){
@@ -223,7 +210,6 @@ if (iLines==25){
             // release database resources
             try {
                 ProcedureRequestSession.getInstanceForActions(request, response, Boolean.TRUE).killIt();
-                   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }               

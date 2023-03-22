@@ -236,7 +236,7 @@ if (currentLine==23)
                                     if (resultUomName.length()==0 || specUomName.length()==0 || resultUomName.equals(specUomName)){requiresUnitsConversion=false;}
                                     if (Boolean.TRUE.equals(requiresUnitsConversion) && specUomName!=null && specUomName.length()>0){
                                         uom.convertValue(specUomName);
-                                        if (!uom.getConvertedFine()) 
+                                        if (Boolean.FALSE.equals(uom.getConvertedFine())) 
                                             resSpecEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataInvRetErrorTrapping.CONVERTER_FALSE, new Object[]{limitId.toString(), "", schemaDataName});                  
                                         else
                                             resultConverted =  new BigDecimal((String) uom.getConversionErrorDetail()[1]);        

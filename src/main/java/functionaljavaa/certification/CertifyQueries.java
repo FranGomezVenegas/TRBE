@@ -96,7 +96,7 @@ public class CertifyQueries {
             if ("ALL".equalsIgnoreCase(areasToInclude) || LPArray.valueInArray(areasToIncludeArr, curCertifObj.toString())){
                 String tagValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, 
                         GlobalVariables.Schemas.PROCEDURE.getName().toLowerCase(), curCertifObj.getPropertyName());
-                if (Parameter.isTagValueOneOfEnableOnes(tagValue)){
+                if (Boolean.TRUE.equals(Parameter.isTagValueOneOfEnableOnes(tagValue))){
                     Object[][] certifRowExpDateInfo=QueryUtilitiesEnums.getTableData(curCertifObj.getTable(),
                         EnumIntTableFields.getTableFieldsFromString(curCertifObj.getTable(), fieldsToGet),
                         fldsName, fldsValue, new String[]{TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName()});

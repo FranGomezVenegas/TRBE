@@ -70,7 +70,8 @@ public class AppIncident {
             new String[]{TblsApp.Incident.ID.getName()}, new Object[]{incidentId}, 
             new String[]{TblsApp.Incident.ID.getName()});
         this.fieldValues=dbInfo[0];
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(dbInfo[0][0].toString())) this.fieldValuesCorrect=true;
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(dbInfo[0][0].toString())))
+            this.fieldValuesCorrect=true;
         else{
             this.fieldNames=null;
             this.fieldValues=null;
@@ -88,7 +89,7 @@ public class AppIncident {
                 token.getUserName(), token.getUserRole(), token.getPersonName(), 
                 IncidentStatuses.LOGGED.toString(), sessionInfo};
         RdbmsObject diagnostic = Rdbms.insertRecordInTable(TblsApp.TablesApp.INCIDENT, updFieldName, updFieldValue);
-        if (diagnostic.getRunSuccess()){
+        if (Boolean.TRUE.equals(diagnostic.getRunSuccess())){
             String incIdStr=diagnostic.getNewRowId().toString();
             AppIncidentAudit.incidentAuditAdd(DataIncidentAuditEvents.NEW_INCIDENT_CREATED.toString(), TblsAppAudit.TablesAppAudit.INCIDENT.getTableName(), Integer.valueOf(incIdStr),   
                         LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null);
@@ -114,11 +115,11 @@ public class AppIncident {
         sqlWhere.addConstraint(TblsApp.Incident.ID, null, new Object[]{incidentId}, "");
         RdbmsObject diagnostic=Rdbms.updateTableRecordFieldsByFilter(TblsApp.TablesApp.INCIDENT,
             EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.INCIDENT, updFieldName), updFieldValue, sqlWhere, null);
-        if (diagnostic.getRunSuccess()){
+        if (Boolean.TRUE.equals(diagnostic.getRunSuccess())){
             AppIncidentAudit.incidentAuditAdd(DataIncidentAuditEvents.CONFIRMED_INCIDENT.toString(), TblsAppAudit.TablesAppAudit.INCIDENT.getTableName(), incidentId, 
                         LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, note);
         }
-        if (diagnostic.getRunSuccess())
+        if (Boolean.TRUE.equals(diagnostic.getRunSuccess()))
             return new InternalMessage(LPPlatform.LAB_TRUE, diagnostic.getErrorMessageCode(), diagnostic.getErrorMessageVariables());
         else
             return new InternalMessage(LPPlatform.LAB_FALSE, diagnostic.getErrorMessageCode(), diagnostic.getErrorMessageVariables());
@@ -139,11 +140,11 @@ public class AppIncident {
         sqlWhere.addConstraint(TblsApp.Incident.ID, null, new Object[]{incidentId}, "");
         RdbmsObject diagnostic=Rdbms.updateTableRecordFieldsByFilter(TblsApp.TablesApp.INCIDENT,
             EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.INCIDENT, updFieldName), updFieldValue, sqlWhere, null);
-        if (diagnostic.getRunSuccess()){
+        if (Boolean.TRUE.equals(diagnostic.getRunSuccess())){
             AppIncidentAudit.incidentAuditAdd(DataIncidentAuditEvents.CLOSED_INCIDENT.toString(), TblsAppAudit.TablesAppAudit.INCIDENT.getTableName(), incidentId, 
                         LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, note);
         }
-        if (diagnostic.getRunSuccess())
+        if (Boolean.TRUE.equals(diagnostic.getRunSuccess()))
             return new InternalMessage(LPPlatform.LAB_TRUE, diagnostic.getErrorMessageCode(), diagnostic.getErrorMessageVariables());
         else
             return new InternalMessage(LPPlatform.LAB_FALSE, diagnostic.getErrorMessageCode(), diagnostic.getErrorMessageVariables());
@@ -164,12 +165,12 @@ public class AppIncident {
         sqlWhere.addConstraint(TblsApp.Incident.ID, null, new Object[]{incidentId}, "");
         RdbmsObject diagnostic=Rdbms.updateTableRecordFieldsByFilter(TblsApp.TablesApp.INCIDENT,
             EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.INCIDENT, updFieldName), updFieldValue, sqlWhere, null);
-        if (diagnostic.getRunSuccess()){
+        if (Boolean.TRUE.equals(diagnostic.getRunSuccess())){
             updFieldValue[updFieldValue.length-2]="null";updFieldValue[updFieldValue.length-1]="null";
             AppIncidentAudit.incidentAuditAdd(DataIncidentAuditEvents.REOPENED_INCIDENT.toString(), TblsAppAudit.TablesAppAudit.INCIDENT.getTableName(), incidentId, 
                         LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, note);
         }
-        if (diagnostic.getRunSuccess())
+        if (Boolean.TRUE.equals(diagnostic.getRunSuccess()))
             return new InternalMessage(LPPlatform.LAB_TRUE, diagnostic.getErrorMessageCode(), diagnostic.getErrorMessageVariables());
         else
             return new InternalMessage(LPPlatform.LAB_FALSE, diagnostic.getErrorMessageCode(), diagnostic.getErrorMessageVariables());
@@ -195,13 +196,13 @@ public class AppIncident {
         sqlWhere.addConstraint(TblsApp.Incident.ID, null, new Object[]{incidentId}, "");
         RdbmsObject diagnostic=Rdbms.updateTableRecordFieldsByFilter(TblsApp.TablesApp.INCIDENT,
             EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.INCIDENT, updFieldName), updFieldValue, sqlWhere, null);
-        if (diagnostic.getRunSuccess()){
+        if (Boolean.TRUE.equals(diagnostic.getRunSuccess())){
             String auditStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.STATUS.getName())].toString();
             if (newStatus!=null) auditStatus=newStatus;
             AppIncidentAudit.incidentAuditAdd(DataIncidentAuditEvents.ADD_NOTE_INCIDENT.toString(), TblsAppAudit.TablesAppAudit.INCIDENT.getTableName(), incidentId, 
                         LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, note);
         }
-        if (diagnostic.getRunSuccess())
+        if (Boolean.TRUE.equals(diagnostic.getRunSuccess()))
             return new InternalMessage(LPPlatform.LAB_TRUE, diagnostic.getErrorMessageCode(), diagnostic.getErrorMessageVariables());
         else
             return new InternalMessage(LPPlatform.LAB_FALSE, diagnostic.getErrorMessageCode(), diagnostic.getErrorMessageVariables());

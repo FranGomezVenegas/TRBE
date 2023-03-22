@@ -39,7 +39,7 @@ public class FromInstanceToInstance {
         int numRecsTransferred=0;
         for (Object[] curRow: recordsInSourceDB){            
             RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(tblObj, tableFldsInfoColumns, curRow);
-            if (!insertRecordInTable.getRunSuccess()) 
+            if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess())) 
                 break;
             numRecsTransferred++;
         }
