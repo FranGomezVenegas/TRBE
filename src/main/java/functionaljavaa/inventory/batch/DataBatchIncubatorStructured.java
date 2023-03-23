@@ -103,7 +103,7 @@ public final class DataBatchIncubatorStructured {
             fldValue = LPArray.addValueToArray1D(fldValue, 0);
         }                 
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH, fldName, fldValue);
-        if (!insertRecordInTable.getRunSuccess())
+        if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess()))
             IncubBatchAudit.incubBatchAuditAdd(DataBatchIncubator.DataBatchAuditEvents.BATCH_CREATED.toString(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), bName, LPArray.joinTwo1DArraysInOneOf1DString(fldName, fldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);       
         return insertRecordInTable.getApiMessage();
     }
@@ -364,7 +364,7 @@ public final class DataBatchIncubatorStructured {
     }
     public static String setLinesNameNOUSADO(String[] names, Integer numRows){
         String valuesSeparator=BTCHCNTNT_SEPRTRSTRUCTUREDBATCH;
-        StringBuilder linesName=new StringBuilder();
+        StringBuilder linesName=new StringBuilder(0);
         if (names==null){
             char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();            
             //Integer numLet=alphabet.length;
@@ -395,7 +395,7 @@ public final class DataBatchIncubatorStructured {
     public static String setColumnsNameNOUSADO(String[] names, Integer numCols){
         //String[] columnsName=new String[numCols];
         String valuesSeparator=BTCHCNTNT_SEPRTRSTRUCTUREDBATCH;
-        StringBuilder columnsName=new StringBuilder();
+        StringBuilder columnsName=new StringBuilder(0);
         
         if (names==null){                                    
             Integer inumLet=1;

@@ -72,7 +72,7 @@ public class DataIncubatorNoteBook {
                 new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS, new Object[]{instName, procInstanceName});
-        if (!Boolean.valueOf(instrInfo[0][1].toString()))
+        if (Boolean.FALSE.equals(Boolean.valueOf(instrInfo[0][1].toString())))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.CURRENTLY_DEACTIVE, new Object[]{instName, procInstanceName});
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK, 
                 new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.EVENT_TYPE.getName(),
@@ -151,7 +151,7 @@ public class DataIncubatorNoteBook {
                 new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS, new Object[]{instName, procInstanceName});
-        if (!Boolean.valueOf(instrInfo[0][1].toString()))
+        if (Boolean.FALSE.equals(Boolean.valueOf(instrInfo[0][1].toString())))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.CURRENTLY_DEACTIVE, new Object[]{instName, procInstanceName});
         String[] insFldsName=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.EVENT_TYPE.getName(),
                     TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_BY.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName(),
@@ -182,7 +182,8 @@ public class DataIncubatorNoteBook {
             insFldsValue=LPArray.addValueToArray1D(insFldsValue, new Object[]{specEval, specEvalDetail});
         }        
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK, insFldsName, insFldsValue);
-        if (!insertRecordInTable.getRunSuccess()) return insertRecordInTable.getApiMessage();
+        if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess()))
+            return insertRecordInTable.getApiMessage();
         
         incubatorLocking(instName, new Object[]{specEval, specEvalDetail}, fieldsToRetrieve, instrInfo[0]);
         
@@ -223,7 +224,7 @@ public class DataIncubatorNoteBook {
         String procInstanceName=ProcedureRequestSession.getInstanceForQueries(null, null, null).getProcedureInstance();
         if (procInstanceName==null) return LPArray.array1dTo2d(new String[]{LPPlatform.LAB_FALSE},1);
         Object[][] instrInfo=null;
-        if (withMask)
+        if (Boolean.TRUE.equals(withMask))
             instrInfo=QueryUtilitiesEnums.getTableData(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, 
                 fieldsToRetrieveObj,
                 new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()}, new Object[]{instName},
@@ -235,7 +236,7 @@ public class DataIncubatorNoteBook {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString())) return instrInfo;
         
         Integer activeFldPosic=EnumIntTableFields.getFldPosicInArray(fieldsToRetrieveObj, TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName());
-        if (!Boolean.valueOf(instrInfo[0][activeFldPosic].toString())){
+        if (Boolean.FALSE.equals(Boolean.valueOf(instrInfo[0][activeFldPosic].toString()))){
             Object[] errDiagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, " ", new Object[0]);
             return LPArray.array1dTo2d(errDiagn, errDiagn.length);
         }
@@ -254,7 +255,7 @@ public class DataIncubatorNoteBook {
         fieldsToRetrieveObj=EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK, 
             fieldsToRetrieve);        
         Object[][] instrNotebook=null;
-        if (withMask)
+        if (Boolean.TRUE.equals(withMask))
             instrNotebook=QueryUtilitiesEnums.getTableData(TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK, 
                 fieldsToRetrieveObj, whereFieldName, whereFieldValue, 
                 new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.ID.getName()+ SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});

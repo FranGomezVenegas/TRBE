@@ -43,9 +43,9 @@ public enum ConfigIncubatorErrorTrapping  implements EnumIntMessages{
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;
@@ -189,7 +189,7 @@ public enum ConfigIncubatorErrorTrapping  implements EnumIntMessages{
                 new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS, new Object[]{instName, procInstanceName});
-        if (Boolean.valueOf(instrInfo[0][1].toString()))
+        if (Boolean.TRUE.equals(Boolean.valueOf(instrInfo[0][1].toString())))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.ALREADY_ACTIVE, new Object[]{instName, procInstanceName}); 
         String[] updFieldName=new String[]{TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()};
         Object[] updFieldValue=new Object[]{true};             
@@ -216,7 +216,7 @@ public enum ConfigIncubatorErrorTrapping  implements EnumIntMessages{
                 new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS, new Object[]{instName, procInstanceName});
-        if (!Boolean.valueOf(instrInfo[0][1].toString()))
+        if (Boolean.FALSE.equals(Boolean.valueOf(instrInfo[0][1].toString())))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.CURRENTLY_DEACTIVE, new Object[]{instName, procInstanceName}); 
         String[] updFieldName=new String[]{TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName(), TblsEnvMonitConfig.InstrIncubator.LAST_DEACTIVATION_ON.getName()};
         Object[] updFieldValue=new Object[]{false, LPDate.getCurrentTimeStamp()};             

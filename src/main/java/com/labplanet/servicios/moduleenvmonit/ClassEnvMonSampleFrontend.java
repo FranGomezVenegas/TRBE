@@ -82,7 +82,6 @@ public class ClassEnvMonSampleFrontend {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 11),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 12),
-                //new LPAPIArguments(EnvMonitAPIParams., LPAPIArguments.ArgumentType.STRING.toString(), false, 7)
                 }, EndPointsToRequirements.endpointWithNoOutputObjects, null),
         GET_SAMPLE_ANALYSIS_RESULT_LIST_SECONDENTRY("GET_SAMPLE_ANALYSIS_RESULT_LIST_SECONDENTRY", "", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
@@ -92,7 +91,6 @@ public class ClassEnvMonSampleFrontend {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 11),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
-                //new LPAPIArguments(EnvMonitAPIParams., LPAPIArguments.ArgumentType.STRING.toString(), false, 7)
                 }, EndPointsToRequirements.endpointWithNoOutputObjects, null),
         GET_MICROORGANISM_LIST("GET_MICROORGANISM_LIST", "", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
@@ -455,7 +453,6 @@ new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB+GlobalAPIsPara
                                 new Object[]{curSmpId}, new String[]{TblsEnvMonitData.SampleMicroorganism.MICROORG_NAME.getName()});
                             if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(grouper[0][0].toString()))
                                 for (Object[] curMic:grouper){
-                                    //jMicArr.add(curMic);
                                     JSONObject jmicObj=new JSONObject();
                                     jmicObj.put("name", curMic[0]);
                                     jmicObj.put("items", curMic[1]);
@@ -490,7 +487,6 @@ new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB+GlobalAPIsPara
                         this.isSuccess=false;
                         this.responseError=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, 
                             new Object[]{sampleId, TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName()});
-                        //LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", new Object[]{Arrays.toString(sampleInfo[0]), procInstanceName}));              
                         return;}  
                     JSONObject jObjSampleInfo=new JSONObject();
                     JSONObject jObjMainObject=new JSONObject();
@@ -540,7 +536,6 @@ new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB+GlobalAPIsPara
                     
                     this.isSuccess=true;
                     this.responseSuccessJObj=jObjMainObject;
-//                    LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
                     return;
                 case GET_SAMPLE_BY_TESTINGGROUP_SUMMARY_REPORT:
                     sampleId = (Integer) argValues[0];
@@ -650,7 +645,6 @@ new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB+GlobalAPIsPara
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchInfo[0][0].toString())){
                         this.isSuccess=false;
                         this.responseError=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{batchName, TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName()});
-                        //LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", new Object[]{Arrays.toString(batchInfo[0]), procInstanceName}));              
                         return;}  
                     JSONObject jObjBatchInfo=new JSONObject();
                     jObjMainObject=new JSONObject();
@@ -967,8 +961,6 @@ new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB+GlobalAPIsPara
                         if (programName!=null){
                             whereFieldNames=LPArray.addValueToArray1D(whereFieldNames, TblsData.ViewSampleAnalysisResultWithSpecLimits.PROGRAM_NAME.getName());
                             whereFieldValues=LPArray.addValueToArray1D(whereFieldValues, programName);
-                            //whereLimitsFieldNames=LPArray.addValueToArray1D(whereFieldNames, TblsData.ViewSampleAnalysisResultWithSpecLimits.PROGRAM_NAME.getName());
-                            //whereLimitsFieldValues=LPArray.addValueToArray1D(whereFieldValues, programName);                        
                         }
                         whereFieldNames = LPArray.addValueToArray1D(whereFieldNames, TblsData.ViewSampleAnalysisResultWithSpecLimits.RAW_VALUE.getName()+ WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause());
 
@@ -988,7 +980,6 @@ new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB+GlobalAPIsPara
 
                         if (whereLimitsFieldNames==null || whereLimitsFieldNames.length==0)
                             whereLimitsFieldNames=new String[]{TblsCnfg.SpecLimits.LIMIT_ID.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()};
-//                        
                         String[] fieldToRetrieveLimitsArr=new String[]{TblsCnfg.SpecLimits.CODE.getName(), TblsCnfg.SpecLimits.VARIATION_NAME.getName(), TblsCnfg.SpecLimits.ANALYSIS.getName(), TblsCnfg.SpecLimits.METHOD_NAME.getName(), TblsCnfg.SpecLimits.PARAMETER.getName(), TblsCnfg.SpecLimits.RULE_TYPE.getName(),
                             TblsCnfg.SpecLimits.RULE_VARIABLES.getName(), TblsCnfg.SpecLimits.UOM.getName()};
                         String[] limitsFieldNamesToFilter=new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.SPEC_CODE.getName(), TblsData.ViewSampleAnalysisResultWithSpecLimits.SPEC_VARIATION_NAME.getName(), TblsData.ViewSampleAnalysisResultWithSpecLimits.ANALYSIS.getName(), TblsData.ViewSampleAnalysisResultWithSpecLimits.METHOD_NAME.getName(), TblsData.ViewSampleAnalysisResultWithSpecLimits.PARAMETER.getName()};
@@ -1034,7 +1025,6 @@ new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB+GlobalAPIsPara
                     }
                     this.isSuccess=true;
                     this.responseSuccessJArr=jArr;  
-//                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     return; 
                 case GET_PENDING_INCUBATION_SAMPLES_AND_ACTIVE_BATCHES:                    
                     fieldsToRetrieve=new String[]{};
@@ -1137,7 +1127,7 @@ new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB+GlobalAPIsPara
                                     whereFieldsValue, sortFieldsName,
                                     addSampleAnalysis, sampleAnalysisFieldToRetrieveArr, sampleAnalysisWhereFieldsName, sampleAnalysisWhereFieldsValue,
                                     addSampleAnalysisResult, sampleAnalysisResultFieldToRetrieveArr, sampleAnalysisResultWhereFieldsName, sampleAnalysisResultWhereFieldsValue, false);
-                            jObj.put("incub_"+String.valueOf(i), samplesArray);                    
+                            jObj.put("incub_"+i, samplesArray);                    
                         } 
                     }
                     String includeAllWithAnyPendingIncubation=LPNulls.replaceNull(argValues[1]).toString();
@@ -1186,30 +1176,9 @@ new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB+GlobalAPIsPara
                                 currPendingIncubBatch= curSmp[LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsData.Sample.INCUBATION2_BATCH.getName())].toString();
                                 incubRow.put("current_pending_incub_batch",currPendingIncubBatch);
                             }
-                            
-                            
-/*                            
-                            if (valuePosicInArray>-1 &&                                                                 
-                                (Boolean.valueOf(curSmp[valuePosicInArray].toString())))
-                                    
-                            valuePosicInArray = LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsData.Sample.INCUBATION_PASSED.getName());                            
-                            if (valuePosicInArray>-1 &&                                                                 
-                                (Boolean.valueOf(curSmp[valuePosicInArray].toString())))
-                                    currPendingIncubBatch= curSmp[LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsData.Sample.INCUBATION_BATCH.getName())].toString();                                                                    
-                            
-*/                            
-                            
-                            
                             jArr.add(incubRow);
                         }
                         jObj.put("samplesWithAnyPendingIncubation", jArr);
-                        
-/*                        
-                        JSONArray samplesArray = samplesByStageData(sampleLastLevel, sampleFieldToRetrieveArr, whereFieldsName, 
-                                whereFieldsValue, sortFieldsName,
-                                addSampleAnalysis, sampleAnalysisFieldToRetrieveArr, sampleAnalysisWhereFieldsName, sampleAnalysisWhereFieldsValue,
-                                addSampleAnalysisResult, sampleAnalysisResultFieldToRetrieveArr, sampleAnalysisResultWhereFieldsName, sampleAnalysisResultWhereFieldsValue);
-                        jObj.put("samplesWithAnyPendingIncubation", samplesArray);                    */
                     }
                     
                     this.isSuccess=true;
@@ -1273,8 +1242,6 @@ new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB+GlobalAPIsPara
                 return;                         
                          
             default:      
-//                  RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
-//                  rd.forward(request, null);                                   
             }    
         this.diagnostic=actionDiagnoses;
         this.relatedObj=rObj;
@@ -1437,14 +1404,13 @@ new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB+GlobalAPIsPara
    
 private JSONArray sampleStageDataJsonArr(Integer sampleId, String[] sampleFldName, Object[] sampleFldValue, String[] sampleStageFldName, Object[] sampleStageFldValue){
     if (sampleStageFldValue==null) return null;
-    if (!LPArray.valueInArray(sampleStageFldName, TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT.getName())) return null; //new Object[][]{{}};
+    if (!LPArray.valueInArray(sampleStageFldName, TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT.getName())) return null; 
     String currentStage=sampleStageFldValue[LPArray.valuePosicInArray(sampleStageFldName, TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT.getName())].toString();
     JSONObject jObj= new JSONObject();
     JSONArray jArrMainObj=new JSONArray();
     JSONArray jArrMainObj2=new JSONArray();
     switch (currentStage.toUpperCase()){
         case "SAMPLING":
-            //jObj.put(TblsEnvMonitData.Sample.SAMPLING_DATE.getName(), sampleFldValue[LPArray.valuePosicInArray(sampleFldName, TblsEnvMonitData.Sample.SAMPLING_DATE.getName())].toString());
             jObj.put(GlobalAPIsParams.LBL_FIELD_NAME, TblsEnvMonitData.Sample.SAMPLING_DATE.getName());
             jObj.put(GlobalAPIsParams.LBL_FIELD_VALUE, sampleFldValue[LPArray.valuePosicInArray(sampleFldName, TblsEnvMonitData.Sample.SAMPLING_DATE.getName())].toString());
             jArrMainObj.add(jObj);
@@ -1457,8 +1423,6 @@ private JSONArray sampleStageDataJsonArr(Integer sampleId, String[] sampleFldNam
                 Integer fldPosic=LPArray.valuePosicInArray(sampleFldName, curFld);
                 if (fldPosic>-1){
                     jObj= new JSONObject();
-                    //jObj.put(curFld, sampleFldValue[fldPosic].toString());
-                    //jArrMainObj.add(jObj);
                     JSONObject jObjSampleStageInfo=new JSONObject();
                     jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, curFld);
                     jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, sampleFldValue[fldPosic].toString());
@@ -1468,8 +1432,6 @@ private JSONArray sampleStageDataJsonArr(Integer sampleId, String[] sampleFldNam
                 fldPosic=LPArray.valuePosicInArray(sampleFldName, curFld);
                 if (fldPosic>-1){
                     jObj= new JSONObject();
-                    //jObj.put(curFld, sampleFldValue[fldPosic].toString());
-                    //jArrMainObj2.add(jObj);
                     JSONObject jObjSampleStageInfo=new JSONObject();
                     jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, curFld);
                     jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, sampleFldValue[fldPosic].toString());
@@ -1491,15 +1453,12 @@ private JSONArray sampleStageDataJsonArr(Integer sampleId, String[] sampleFldNam
                 new SqlWhere(TblsEnvMonitData.ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW, new String[]{TblsEnvMonitData.ViewSampleMicroorganismList.SAMPLE_ID.getName()}, new Object[]{sampleId}), 
                 new String[]{TblsEnvMonitData.ViewSampleMicroorganismList.TEST_ID.getName(), TblsEnvMonitData.ViewSampleMicroorganismList.RESULT_ID.getName()});                    
             jObj= new JSONObject();
-            //jObj2= new JSONObject();
             for (int iFlds=0;iFlds<sampleStageInfo[0].length;iFlds++){ 
-                //jObj2.put(tblAllFlds[iFlds], sampleStageInfo[0][iFlds].toString());
                 JSONObject jObjSampleStageInfo=new JSONObject();
                 jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, tblAllFlds[iFlds]);
                 jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, sampleStageInfo[0][iFlds].toString());
                 jArrMainObj.add(jObjSampleStageInfo);
             }
-            //jObj.put("counting", jObj2);
             jArrMainObj.add(jObj);
             return jArrMainObj;
         default: 
@@ -1673,19 +1632,11 @@ private JSONArray sampleStageDataJsonArr(Integer sampleId, String[] sampleFldNam
             default:
                 viewName = "";
         }
-        // SamplePendingSamplingInterval SamplingSMP SamplingPERS
-        // SampleIncubation
-        // SamplePlateReading PlateReadingSMP PlateReadingPERS
-        // SamplePlateReadingSecondEntry PlateReadingSMP PlateReadingPERS
-        // SampleMicroorganism MicroOrganismSMP MicroOrganismPERS
         jObj.put("viewName", "SamplePendingSampling");
         jObj.put("filterName", filterName);
         jObj.put("objectId", sampleId);
         return jObj;
     }
-    /**
-     * @return the messageDynamicData
-     */
     public Object[] getMessageDynamicData() {
         return messageDynamicData;
     }

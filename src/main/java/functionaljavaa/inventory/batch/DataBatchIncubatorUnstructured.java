@@ -162,7 +162,7 @@ public final class DataBatchIncubatorUnstructured {
                 Object[] auditInfo=(Object[]) setSampleIncubStarted[1];
                 setSampleIncubStarted=(Object[]) setSampleIncubStarted[0];
                 DataSampleStages smpStage=new DataSampleStages();
-                if (smpStage.isSampleStagesEnable() && (sampleId!=null))
+                if (Boolean.TRUE.equals(smpStage.isSampleStagesEnable()) && (sampleId!=null))
                     smpStage.dataSampleActionAutoMoveToNext(EnvMonAPI.EnvMonAPIactionsEndpoints.EM_BATCH_INCUB_START.getName(), sampleId);
             }
         }
@@ -194,7 +194,7 @@ public final class DataBatchIncubatorUnstructured {
                 return setSampleIncubEnded;
             }else{
                 DataSampleStages smpStage=new DataSampleStages();
-                if (smpStage.isSampleStagesEnable() && (sampleId!=null))
+                if (Boolean.TRUE.equals(smpStage.isSampleStagesEnable()) && (sampleId!=null))
                     smpStage.dataSampleActionAutoMoveToNext(EnvMonAPI.EnvMonAPIactionsEndpoints.EM_BATCH_INCUB_END.getName(), sampleId);
             }
         }
@@ -234,7 +234,7 @@ public final class DataBatchIncubatorUnstructured {
             fldValue = LPArray.addValueToArray1D(fldValue, true);
         }         
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH, fldName, fldValue);
-        if (insertRecordInTable.getRunSuccess())
+        if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess()))
             IncubBatchAudit.incubBatchAuditAdd(DataBatchIncubator.DataBatchAuditEvents.BATCH_CREATED.toString(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), bName, LPArray.joinTwo1DArraysInOneOf1DString(fldName, fldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);        
         return insertRecordInTable.getApiMessage();
     }

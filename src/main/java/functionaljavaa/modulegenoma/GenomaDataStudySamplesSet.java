@@ -153,10 +153,10 @@ public InternalMessage createStudySamplesSet(GenomaStudyAPI.GenomaStudyAPIaction
         fieldsValue = LPArray.addValueToArray1D(fieldsValue, projectTemplateVersion); 
 */
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET, fieldsName, fieldsValue);
-        if (insertRecordInTable.getRunSuccess())
+        if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess()))
             for (String currSample: samples)
                 studySamplesSetAddSample(endpoint, studyName, sampleSetName, currSample);
-        if (insertRecordInTable.getRunSuccess()){
+        if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())){
             GenomaDataAudit.studyAuditAdd(endpoint, TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), sampleSetName, 
                 studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
             return new InternalMessage(LPPlatform.LAB_TRUE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), insertRecordInTable.getNewRowId());

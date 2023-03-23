@@ -209,7 +209,7 @@ public class AppIncident {
     }    
     
     private InternalMessage isIncidentActive(Integer incidentId){
-        if (!this.fieldValuesCorrect)
+        if (Boolean.FALSE.equals(this.fieldValuesCorrect))
             return  new InternalMessage(LPPlatform.LAB_FALSE, IncidentAPIErrorMessages.INCIDENT_NOT_FOUND, new Object[]{incidentId});
         String currentStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.STATUS.getName())].toString();
         if (IncidentStatuses.CLOSED.toString().equalsIgnoreCase(currentStatus)) 

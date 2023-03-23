@@ -246,7 +246,7 @@ wFldValue=new Object[]{lotName, category, ref};
                 }
                 }*/
                 RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES, fieldsName, fieldsValue);            
-                if (insertRecordInTable.getRunSuccess())
+                if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess()))
                     InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.ADDED_VARIABLE, lotName, null, null, TblsInvTrackingData.TablesInvTrackingData.LOT.getTableName(), lotCertifId.toString(),
                         fieldsName, fieldsValue);
             }

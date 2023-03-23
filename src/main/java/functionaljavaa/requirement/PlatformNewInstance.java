@@ -51,7 +51,7 @@ public class PlatformNewInstance {
             new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName(), TblsProcedure.PersonProfile.ROLE_NAME.getName(), 
                 TblsProcedure.PersonProfile.ACTIVE.getName(), TblsProcedure.PersonProfile.USER_TITLE.getName()}, 
             new Object[]{personId, "testing", true, "Testing user access / Testeo acceso usuario"}, fakeProcName);
-        if (insertRecordInTable.getRunSuccess())
+        if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess()))
             actionLog="success";
         else{
             Object[] trapMessage = ApiMessageReturn.trapMessage("", insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables());            
@@ -64,7 +64,7 @@ public class PlatformNewInstance {
             new String[]{TblsProcedure.ProcedureInfo.NAME.getName(), TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName(), TblsProcedure.ProcedureInfo.VERSION.getName(), TblsProcedure.ProcedureInfo.LABEL_EN.getName(), 
                 TblsProcedure.ProcedureInfo.LABEL_ES.getName(), TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE.getName()}, 
             new Object[]{fakeProcName, fakeProcName, 1, fakeProcName, fakeProcName, String.valueOf(hashCode)}, fakeProcName);
-        if (insertRecordInTable.getRunSuccess())
+        if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess()))
             actionLog="success";
         else{
             Object[] trapMessage = ApiMessageReturn.trapMessage("", insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables());            
@@ -76,7 +76,7 @@ public class PlatformNewInstance {
                 new String[]{TblsApp.Users.USER_NAME.getName(), TblsApp.Users.EMAIL.getName(), TblsApp.Users.ESIGN.getName(),
                     TblsApp.Users.PASSWORD.getName(), TblsApp.Users.PERSON_NAME.getName()},
                 new Object[]{fakeProcUserName, defaultMail, fakeEsingnEncrypted, fakeProcUserName+fakeProcUserName, personId}, null);
-        if (insertRecordInTable.getRunSuccess())
+        if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess()))
             actionLog="success";
         else{
             Object[] trapMessage = ApiMessageReturn.trapMessage("", insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables());            
@@ -87,7 +87,7 @@ public class PlatformNewInstance {
         insertRecordInTable=Rdbms.insertRecord(TblsApp.TablesApp.USER_PROCESS, 
             new String[]{TblsApp.UserProcess.USER_NAME.getName(), TblsApp.UserProcess.PROC_NAME.getName(), TblsApp.UserProcess.ACTIVE.getName()}, 
             new Object[]{fakeProcUserName, fakeProcName, true}, null);
-        if (insertRecordInTable.getRunSuccess())
+        if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess()))
             actionLog="success";
         else{
             Object[] trapMessage = ApiMessageReturn.trapMessage("", insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables());            
@@ -99,7 +99,7 @@ public class PlatformNewInstance {
             new String[]{TblsAppConfig.Person.PERSON_ID.getName(), TblsAppConfig.Person.FIRST_NAME.getName(), 
                 TblsAppConfig.Person.LAST_NAME.getName(), TblsAppConfig.Person.PHOTO.getName()}, 
             new Object[]{personId, "I'm a user demo", "for demos "+platfName, "https://hasta-pronto.ru/wp-content/uploads/2014/09/chibcha.jpg"}, null);
-        if (insertRecordInTable.getRunSuccess())
+        if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess()))
             actionLog="success";
         else{
             Object[] trapMessage = ApiMessageReturn.trapMessage("", insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables());            

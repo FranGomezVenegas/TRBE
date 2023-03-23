@@ -100,9 +100,8 @@ public class DbEncryptionObject {
         if (Boolean.FALSE.equals(tableHasEncryptedFlds)&&Boolean.FALSE.equals(encryptAllFlds)) return fieldValue;
         String key = DbEncryption.ENCRYPTION_KEY; // 128 bit key
         for (int iFields=0;iFields<fieldsToRetrieve.length;iFields++){
-            //if (fieldsEncrypted.contains(fieldName[iFields])){
             if ((encryptAllFlds&&LPDatabase.string().equalsIgnoreCase(fieldsToRetrieve[iFields].getFieldType()))
-                    ||isEncryptedTableFld(tblObj, fieldsToRetrieve[iFields])){
+                    ||Boolean.TRUE.equals(isEncryptedTableFld(tblObj, fieldsToRetrieve[iFields]))){
                 try{
                     encryptValue(fieldValue[iFields].toString());
                     String text = fieldValue[iFields].toString();

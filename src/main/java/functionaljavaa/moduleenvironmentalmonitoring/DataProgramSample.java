@@ -187,7 +187,7 @@ public class DataProgramSample{
                     new String[]{TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID.getName(), TblsEnvMonitData.SampleMicroorganism.MICROORG_NAME.getName(),
                         TblsEnvMonitData.SampleMicroorganism.CREATED_BY.getName(), TblsEnvMonitData.SampleMicroorganism.CREATED_ON.getName()}, 
                     new Object[]{sampleId, microorganismName, token.getPersonName(), LPDate.getCurrentTimeStamp()});
-            if (insertRecordInTable.getRunSuccess()){
+            if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())){
               SampleAudit smpAudit = new SampleAudit();
               String[] fieldsForAudit=new String[]{"Added microorganism "+microorganismName};
               smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.MICROORGANISM_ADDED, TblsData.TablesData.SAMPLE.getTableName(), 

@@ -66,7 +66,6 @@ public final class DataInventoryRetain {
         return updateRetainRecordWithAuditInsert(lotName, updFldName, updFldValue, fldName, fldValue, InspLotRMAPIactionsEndpoints.LOT_RETAIN_RECEPTION.getAuditActionName());
     }    
     public static InternalMessage retainMovement(String lotName, Integer id, String newLocation){
-        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         Object[] isRetAvailable=isRetainAvailable(lotName, id, null, null, null);
         InternalMessage retAvDiagn=(InternalMessage) isRetAvailable[0];
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(retAvDiagn.getDiagnostic())) return (InternalMessage)isRetAvailable[0];
@@ -81,7 +80,6 @@ public final class DataInventoryRetain {
         return updateRetainRecordWithAuditInsert(lotName, updFldName, updFldValue, fldName, fldValue, InspLotRMAPIactionsEndpoints.LOT_RETAIN_MOVEMENT.getAuditActionName());
     }    
     public static InternalMessage retainMovement(String lotName, Integer id, Integer newLocationId){
-        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         Object[] isRetAvailable=isRetainAvailable(lotName, id, null, null, null);
         InternalMessage retAvDiagn=(InternalMessage) isRetAvailable[0];
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(retAvDiagn.getDiagnostic())) return (InternalMessage)isRetAvailable[0];
@@ -108,8 +106,6 @@ public final class DataInventoryRetain {
         }        
         String[] updFldName=new String[]{TblsInspLotRMData.InventoryRetain.LOCKED.getName(), TblsInspLotRMData.InventoryRetain.LOCKED_BY.getName(), TblsInspLotRMData.InventoryRetain.LOCKED_ON.getName()};
         Object[] updFldValue=new Object[]{false, procReqSession.getToken().getPersonName(), LPDate.getCurrentTimeStamp()};
-//        String[] updFldName=new String[]{TblsInspLotRMData.InventoryRetain.LOCKED.getName(), TblsInspLotRMData.InventoryRetain.LOCKED_BY.getName(), TblsInspLotRMData.InventoryRetain.LOCKED_ON.getName()};
-//        Object[] updFldValue=new Object[]{false, "NULL>>>STRING", "NULL>>>DATE"};
         return updateRetainRecordWithAuditInsert(lotName, updFldName, updFldValue, fldName, fldValue, InspLotRMAPIactionsEndpoints.LOT_RETAIN_UNLOCK.getAuditActionName());
     }
     public static InternalMessage retainLock(String lotName, Integer id){
@@ -149,9 +145,8 @@ public final class DataInventoryRetain {
         if ((newAmountUom.length()>0) && (!newAmountUom.equalsIgnoreCase(qUom)) ) {
             if ((!qUom.equalsIgnoreCase(newAmountUom)) && (conversionMode == null || conversionMode.equalsIgnoreCase("DISABLED") || ((!conversionMode.contains(qUom)) && !conversionMode.equalsIgnoreCase("ALL")))) 
                 return new InternalMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.CONVERSION_NOT_ALLOWED, new Object[]{conversionMode, newAmountUom, qUom,  id.toString(), procReqSession.getProcedureInstance()});            
-            //Boolean requiresUnitsConversion = true;
             uom.convertValue(newAmountUom);
-            if (!uom.getConvertedFine()) 
+            if (Boolean.FALSE.equals(uom.getConvertedFine()))
                 return new InternalMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.CONVERTER_FALSE, new Object[]{id.toString(), uom.getConversionErrorDetail()[3].toString(), procReqSession.getProcedureInstance()});
             resultConverted = uom.getConvertedQuantity();
         }        

@@ -167,7 +167,7 @@ public InternalMessage createProject(GenomaProjectAPI.GenomaProjectAPIactionsEnd
         fieldsValue = LPArray.addValueToArray1D(fieldsValue, projectTemplateVersion); 
 */
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsGenomaData.TablesGenomaData.PROJECT, fieldsName, fieldsValue);
-        if (insertRecordInTable.getRunSuccess()){
+        if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())){
             GenomaDataAudit.projectAuditAdd(endpoint, tableName, projectName, 
                 projectName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
             return new InternalMessage(LPPlatform.LAB_TRUE, GenomaSuccess.PROJECT_CREATED, insertRecordInTable.getErrorMessageVariables(), insertRecordInTable.getNewRowId());

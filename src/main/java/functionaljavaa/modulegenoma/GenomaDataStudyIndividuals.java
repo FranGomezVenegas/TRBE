@@ -198,7 +198,7 @@ public class GenomaDataStudyIndividuals {
     */
             RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL, fieldsName, fieldsValue);
             diagnosesProj = insertRecordInTable.getApiMessage();
-            if (insertRecordInTable.getRunSuccess()){
+            if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())){
                 GenomaDataAudit.studyAuditAdd(endpoint, TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName(), indivName, 
                     studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
                 diagnosesProj=LPArray.addValueToArray1D(diagnosesProj, insertRecordInTable.getNewRowId());

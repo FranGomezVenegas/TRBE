@@ -107,7 +107,7 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
                 Object[] fieldsValue=new Object[]{instrName, instrEventId, ownerId, variableSetName};
                 fieldsValue=LPArray.addValueToArray1D(fieldsValue, fieldVarProperties);
                 RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES, fieldsName, fieldsValue);            
-                    if (insertRecordInTable.getRunSuccess()){
+                    if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())){
                     instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.START_CALIBRATION, instrName, TablesInstrumentsData.INSTRUMENTS.getTableName(), instrEventId.toString(),
                             fieldsName, fieldsValue);
                     }

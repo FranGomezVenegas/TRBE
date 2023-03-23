@@ -119,7 +119,7 @@ public class ProcedureDefinitionToInstance {
                     }
                     RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_INFO, fldName, fldValue); //, schemaNameDestinationProc
                     jsonObj = new JSONObject();
-                    if (insertRecordInTable.getRunSuccess()) {
+                    if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
                         jsonObj.put("Record inserted in the new instance?", true);
                         return jsonObj;
                     } else {
@@ -290,7 +290,7 @@ public class ProcedureDefinitionToInstance {
                 LPPlatform.LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName(), allProcActionsInOne};
             RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, fldNames, fldValues);
             JSONObject jObj = new JSONObject();
-            if (insertRecordInTable.getRunSuccess()) {
+            if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
                 jObj.put(LPPlatform.LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName(), allProcActionsInOne + " " + "Added");
             } else {
                 jObj.put(LPPlatform.LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName(), allProcActionsInOne + " " + "error adding" + insertRecordInTable.getErrorMessageCode());
@@ -309,7 +309,7 @@ public class ProcedureDefinitionToInstance {
                             LPPlatform.LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName() + curAction[0].toString(), curRole};
                         insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, fldNames, fldValues);
                         jObj = new JSONObject();
-                        if (insertRecordInTable.getRunSuccess()) {
+                        if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
                             jObj.put(LPPlatform.LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName() + curAction[0].toString(), curRole + " " + "Added");
                         } else {
                             jObj.put(LPPlatform.LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName() + curAction[0].toString(), curRole + " " + "error adding" + insertRecordInTable.getErrorMessageCode());
@@ -350,7 +350,7 @@ public class ProcedureDefinitionToInstance {
                             actionName + LPPlatform.LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName(), confirmDialogPhrase};
                         insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, fldNames, fldValues);
                         jObj = new JSONObject();
-                        if (insertRecordInTable.getRunSuccess()) {
+                        if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
                             jObj.put(actionName + LPPlatform.LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName(), confirmDialogPhrase + " " + "Added");
                         } else {
                             jObj.put(actionName + LPPlatform.LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName(), confirmDialogPhrase + " " + "error adding" + insertRecordInTable.getErrorMessageCode());
@@ -364,7 +364,7 @@ public class ProcedureDefinitionToInstance {
                     LPPlatform.LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName(), esigns};
                 insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, fldNames, fldValues);
                 jObj = new JSONObject();
-                if (insertRecordInTable.getRunSuccess()) {
+                if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
                     jObj.put(LPPlatform.LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName(), esigns + " " + "Added");
                 } else {
                     jObj.put(LPPlatform.LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName(), esigns + " " + "error adding" + insertRecordInTable.getErrorMessageCode());
@@ -376,7 +376,7 @@ public class ProcedureDefinitionToInstance {
                     LPPlatform.LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName(), verifUsers};
                 insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, fldNames, fldValues);
                 jObj = new JSONObject();
-                if (insertRecordInTable.getRunSuccess()) {
+                if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
                     jObj.put(LPPlatform.LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName(), verifUsers + " " + "Added");
                 } else {
                     jObj.put(LPPlatform.LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName(), verifUsers + " " + "error adding" + insertRecordInTable.getErrorMessageCode());
@@ -388,7 +388,7 @@ public class ProcedureDefinitionToInstance {
                     LPPlatform.LpPlatformBusinessRules.ACTIONCONFIRM_REQUIRED.getTagName(), actionConfirm};
                 insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, fldNames, fldValues);
                 jObj = new JSONObject();
-                if (insertRecordInTable.getRunSuccess()) {
+                if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
                     jObj.put(LPPlatform.LpPlatformBusinessRules.ACTIONCONFIRM_REQUIRED.getTagName(), actionConfirm + " " + "Added");
                 } else {
                     jObj.put(LPPlatform.LpPlatformBusinessRules.ACTIONCONFIRM_REQUIRED.getTagName(), actionConfirm + " " + "error adding" + insertRecordInTable.getErrorMessageCode());
@@ -400,7 +400,7 @@ public class ProcedureDefinitionToInstance {
                     LPPlatform.LpPlatformBusinessRules.AUDIT_JUSTIF_REASON_REQUIRED.getTagName(), justifReason};
                 insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, fldNames, fldValues);
                 jObj = new JSONObject();
-                if (insertRecordInTable.getRunSuccess()) {
+                if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
                     jObj.put(LPPlatform.LpPlatformBusinessRules.AUDIT_JUSTIF_REASON_REQUIRED.getTagName(), justifReason + " " + "Added");
                 } else {
                     jObj.put(LPPlatform.LpPlatformBusinessRules.AUDIT_JUSTIF_REASON_REQUIRED.getTagName(), justifReason + " " + "error adding" + insertRecordInTable.getErrorMessageCode());

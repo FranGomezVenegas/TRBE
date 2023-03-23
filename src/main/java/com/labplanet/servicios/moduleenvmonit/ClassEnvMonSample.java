@@ -87,7 +87,6 @@ public class ClassEnvMonSample {
         this.functionFound=true;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
-            String language=procReqSession.getLanguage();
             this.isSuccess=false;           
             this.diagnostic=(Object[]) argValues[1];
             this.responseError=this.diagnostic;

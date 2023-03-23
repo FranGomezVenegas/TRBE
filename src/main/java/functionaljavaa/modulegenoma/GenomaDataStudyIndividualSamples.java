@@ -156,7 +156,7 @@ public InternalMessage createStudyIndividualSample(GenomaStudyAPI.GenomaStudyAPI
             fieldsValue = LPArray.addValueToArray1D(fieldsValue, projectTemplateVersion); 
     */
             RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE, fieldsName, fieldsValue);            
-            if (insertRecordInTable.getRunSuccess()){
+            if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())){
                 GenomaDataAudit.studyAuditAdd(endpoint, TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName(), 
                         insertRecordInTable.getNewRowId().toString(), 
                     studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
