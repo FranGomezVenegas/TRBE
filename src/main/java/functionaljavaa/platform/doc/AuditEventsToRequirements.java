@@ -103,7 +103,7 @@ public final class AuditEventsToRequirements {
                             }
                         }
                     }
-                    if (enumsIncomplete.size()>0){
+                    if (!enumsIncomplete.isEmpty()){
                         LPFrontEnd.servletReturnSuccess(request, response, enumsIncomplete);
                         return;
                     }else{
@@ -138,7 +138,6 @@ public final class AuditEventsToRequirements {
         jMainObj.put("06_found_total", eventsFound.size());
         jMainObj.put("07_not_found_total", eventsNotFound.size());
         this.summaryInfo=jMainObj;
-        //LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
     }    
 
 
@@ -152,9 +151,6 @@ private static JSONArray getEndPointArguments(LPAPIArguments[] arguments){
     }
     return argsJsonArr;
 }
-//private static void declareInDatabase(String apiName, String endpointName, String[] fieldNames, Object[] fieldValues){
-//     declareInDatabase(apiName, endpointName, fieldNames, fieldValues, null);
-//}
 private static void declareInDatabase(String objectName, String eventName){
     Object[][] reqEvAuditInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.TablesTrazitDocTrazit.AUDIT_EVENTS_DECLARATION.getTableName(), 
             new String[]{AuditEventsDeclaration.AUDIT_OBJECT.getName(), AuditEventsDeclaration.EVENT_NAME.getName()},

@@ -152,7 +152,7 @@ public class ClassReqProcedureQueries {
             JSONArray jSchemaArr=new JSONArray();
             for (Object[] curRow: procTblRows){
                 if (!curSchema.equalsIgnoreCase(LPNulls.replaceNull(curRow[0]).toString())){
-                    if (jSchemaArr.size()>0){
+                    if (!jSchemaArr.isEmpty()){
                         if (curSchema.length()==0) curSchema="-";
                         jBlockObj.put(curSchema, jSchemaArr);
                     }
@@ -178,9 +178,8 @@ public class ClassReqProcedureQueries {
                         jSchemaArr.add(jObj);
                     }
                 }
-                //jBlockArr.add(LPJson.convertArrayRowToJSONObject(fldsArr, curRow));
             }
-            if (jSchemaArr.size()>0){
+            if (!jSchemaArr.isEmpty()){            
                 if (curSchema.length()==0) curSchema="-";                
                 jBlockObj.put(curSchema, jSchemaArr);
             }

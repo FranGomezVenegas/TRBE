@@ -57,7 +57,7 @@ public class ErrorMessageCodesToRequirements {
             getErrorTrappingFileContent();
             getMessageCodesFromDatabase();
             Boolean summaryOnlyMode= Boolean.valueOf(request.getParameter("summaryOnly"));
-            if (!summaryOnlyMode)
+            if (Boolean.FALSE.equals(summaryOnlyMode))
                 summaryOnlyMode=Boolean.valueOf(LPNulls.replaceNull(request.getAttribute("summaryOnly")).toString());
             
             if (this.fldNames==null) return;
@@ -90,7 +90,7 @@ public class ErrorMessageCodesToRequirements {
                                 msgCodesFound.add(curBusRul.getClass().getSimpleName()+"-"+curBusRul.getErrorCode());
                             else
                                 msgCodesNotFound.add(curBusRul.getClass().getSimpleName()+"-"+curBusRul.getErrorCode());
-                            if (!summaryOnlyMode){
+                            if (Boolean.FALSE.equals(summaryOnlyMode)){
                                 AddCodeInErrorTrapping(curBusRul.getErrorCode(), "");
                                 try{                                    
                                     declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul.getErrorCode(), fieldNames, fieldValues);
@@ -103,7 +103,7 @@ public class ErrorMessageCodesToRequirements {
                                 }
                             }
                         }
-                        if (enumsIncomplete.size()>0){
+                        if (!enumsIncomplete.isEmpty()){
                             LPFrontEnd.servletReturnSuccess(request, response, enumsIncomplete);
                             return;
                         }else{

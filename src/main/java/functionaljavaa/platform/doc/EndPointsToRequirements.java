@@ -110,8 +110,8 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
                                 }
                             }
                             totalEndpointsVisitedInjection++;
-                        }                    
-                        if (enumsIncomplete.size()>0){
+                        }      
+                        if (!enumsIncomplete.isEmpty()){
                             LPFrontEnd.servletReturnSuccess(request, response, enumsIncomplete);
                             return;
                         }else{
@@ -137,7 +137,7 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
         else
             summaryDiagnoses="WITH ERRORS";
         JSONArray endpointsInDatabaseNoLongerInUse = endpointsInDatabaseNoLongerInUse(endpointsFound);
-        if (endpointsInDatabaseNoLongerInUse.size()>0)
+        if (!endpointsInDatabaseNoLongerInUse.isEmpty())
             summaryDiagnoses=summaryDiagnoses+" There are endpoints in db no longer in use";
         
         jMainObj.put("summary", summaryDiagnoses);
@@ -151,11 +151,10 @@ public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse r
         jMainObj.put("06_found_total", endpointsFound.size());
         jMainObj.put("07_not_found", endpointsNotFound);        
         jMainObj.put("07_not_found_total", endpointsNotFound.size());
-        if (endpointsInDatabaseNoLongerInUse.size()>0)
+        if (!endpointsInDatabaseNoLongerInUse.isEmpty())
             jMainObj.put("08_Endpoints_in_db_no_longer_in_use", endpointsInDatabaseNoLongerInUse);
         
         this.summaryInfo=jMainObj;
-        //LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
     }    
     
     public EndPointsToRequirements() {

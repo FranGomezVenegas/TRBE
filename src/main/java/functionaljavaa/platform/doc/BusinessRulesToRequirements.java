@@ -107,7 +107,7 @@ public class BusinessRulesToRequirements {
                             }
                         }
                     }
-                    if (enumsIncomplete.size()>0){
+                    if (!enumsIncomplete.isEmpty()){
                         LPFrontEnd.servletReturnSuccess(request, response, enumsIncomplete);
                         return;
                     }else{
