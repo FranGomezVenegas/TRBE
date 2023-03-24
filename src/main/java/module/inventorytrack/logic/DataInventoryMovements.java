@@ -24,6 +24,9 @@ import trazit.session.ResponseMessages;
 public class DataInventoryMovements {
     public static InternalMessage adjustInventoryLotVolume(DataInventory invLot, BigDecimal newVolume, String newVolumeUom){
         InternalMessage availableForMovements = isAvailableForMovements(invLot, newVolume, newVolumeUom);
+        if ((invLot.getCurrentVolume().equals(newVolume))&&(invLot.getCurrentVolumeUom().equals(newVolumeUom)))
+            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.VOLUME_IS_ALREADY_THIS, new Object[]{newVolume, newVolumeUom, invLot.getLotName()}, null);
+            
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(availableForMovements.getDiagnostic()))
             return availableForMovements;
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
@@ -75,8 +78,8 @@ public class DataInventoryMovements {
                 updateFieldNames, updateFieldValues); 
         }
         myUom=null;
-        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ADJUST_INV_LOT_VOLUME, new Object[]{invLot.getLotName(), newVolume, newVolumeUom});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ADJUST_INV_LOT_VOLUME, new Object[]{invLot.getLotName(), newVolume, newVolumeUom}, invLot.getLotName());        
+        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ADJUST_INV_LOT_VOLUME, new Object[]{newVolume, newVolumeUom, invLot.getLotName()});
+        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ADJUST_INV_LOT_VOLUME, new Object[]{newVolume, newVolumeUom, invLot.getLotName()}, invLot.getLotName());        
     }
 
     public static InternalMessage consumeInventoryLotVolume(DataInventory invLot, BigDecimal newVolume, String newVolumeUom, String externalProcInstanceName){
@@ -141,8 +144,8 @@ public class DataInventoryMovements {
         InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.LOT_VOLUME_CONSUMED, invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(), invLot.getLotName(),
             fldNames, fldValues, externalProcInstanceName); 
         myUom=null;
-        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.CONSUME_INV_LOT_VOLUME, new Object[]{invLot.getLotName(), newVolume, newVolumeUom});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.CONSUME_INV_LOT_VOLUME, new Object[]{invLot.getLotName(), newVolume, newVolumeUom}, invLot.getLotName());        
+        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.CONSUME_INV_LOT_VOLUME, new Object[]{newVolume, newVolumeUom, invLot.getLotName()});
+        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.CONSUME_INV_LOT_VOLUME, new Object[]{newVolume, newVolumeUom}, invLot.getLotName());        
     }
        
     public static InternalMessage addInventoryLotVolume(DataInventory invLot, BigDecimal newVolume, String newVolumeUom){
@@ -204,8 +207,8 @@ public class DataInventoryMovements {
         InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.LOT_VOLUME_ADDITION, invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(), invLot.getLotName(),
             fldNames, fldValues); 
         myUom=null;
-        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ADD_INV_LOT_VOLUME, new Object[]{invLot.getLotName(), newVolume, newVolumeUom});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ADD_INV_LOT_VOLUME, new Object[]{invLot.getLotName(), newVolume, newVolumeUom}, invLot.getLotName());        
+        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ADD_INV_LOT_VOLUME, new Object[]{newVolume, newVolumeUom, invLot.getLotName()});
+        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ADD_INV_LOT_VOLUME, new Object[]{newVolume, newVolumeUom, invLot.getLotName()}, invLot.getLotName());        
     }
     
     private static InternalMessage isAvailableForMovements(DataInventory invLot, BigDecimal newVolume, String newVolumeUom){
