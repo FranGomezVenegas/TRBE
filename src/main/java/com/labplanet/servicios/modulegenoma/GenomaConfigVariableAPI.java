@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import trazit.enums.EnumIntEndpoints;
 import trazit.session.ProcedureRequestSession;
@@ -35,14 +36,18 @@ public class GenomaConfigVariableAPI extends HttpServlet {
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
             
     public enum GenomaVariableAPIactionsEndpoints implements EnumIntEndpoints{
-          VARIABLE_SET_ADD_VARIABLE("VARIABLE_SET_ADD_VARIABLE", "variableSetName|variableName", new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects), 
-          VARIABLE_SET_REMOVE_VARIABLE("VARIABLE_SET_REMOVE_VARIABLE", "variableSetName|variableName", new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects)
+          VARIABLE_SET_ADD_VARIABLE("VARIABLE_SET_ADD_VARIABLE", "variableSetName|variableName", new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects
+                  , null, null),
+          VARIABLE_SET_REMOVE_VARIABLE("VARIABLE_SET_REMOVE_VARIABLE", "variableSetName|variableName", new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects
+                  , null, null)
           ;
-        private GenomaVariableAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private GenomaVariableAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
             this.outputObjectTypes=outputObjectTypes;            
+            this.devComment = LPNulls.replaceNull(devComment);
+            this.devCommentTag = LPNulls.replaceNull(devCommentTag);
         } 
         @Override        public String getName(){return this.name;}
         @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
@@ -53,6 +58,10 @@ public class GenomaConfigVariableAPI extends HttpServlet {
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
         private final JsonArray outputObjectTypes;
+        @Override public String getDeveloperComment() { return this.devComment;}
+        @Override        public String getDeveloperCommentTag() {            return this.devCommentTag;        }
+        private final String devComment;
+        private final String devCommentTag;
     }
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>

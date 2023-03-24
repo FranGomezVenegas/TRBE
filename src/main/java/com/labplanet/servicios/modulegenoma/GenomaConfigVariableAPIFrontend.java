@@ -21,6 +21,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntAuditEvents;
@@ -35,16 +36,21 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
     
             
     public enum  GenomaVariableAPIqueriesEndpoints implements EnumIntEndpoints{
-            GET_PROCEDURE_USERS("GET_PROCEDURE_USERS", "", new LPAPIArguments[]{}, null, null),
-            GET_VARIABLE_SET_VARIABLES_ID("GET_VARIABLE_SET_VARIABLES_ID", "variableSetName", new LPAPIArguments[]{}, null, null),
-            GET_ACTIVE_CONFIG_VARIABLE_SET("GET_ACTIVE_CONFIG_VARIABLE_SET", "", new LPAPIArguments[]{}, null, null)
+            GET_PROCEDURE_USERS("GET_PROCEDURE_USERS", "", new LPAPIArguments[]{}, null, null
+                    , null, null),
+            GET_VARIABLE_SET_VARIABLES_ID("GET_VARIABLE_SET_VARIABLES_ID", "variableSetName", new LPAPIArguments[]{}, null, null
+                    , null, null),
+            GET_ACTIVE_CONFIG_VARIABLE_SET("GET_ACTIVE_CONFIG_VARIABLE_SET", "", new LPAPIArguments[]{}, null, null
+                    , null, null)
           ;
-        private GenomaVariableAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, EnumIntAuditEvents actionEventObj){
+        private GenomaVariableAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, EnumIntAuditEvents actionEventObj, String devComment, String devCommentTag) {
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums; 
             this.outputObjectTypes=outputObjectTypes;            
             this.actionEventObj=actionEventObj;
+            this.devComment = LPNulls.replaceNull(devComment);
+            this.devCommentTag = LPNulls.replaceNull(devCommentTag);
         } 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
@@ -68,6 +74,10 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
         private final  LPAPIArguments[] arguments;
         private final JsonArray outputObjectTypes;   
         private final EnumIntAuditEvents actionEventObj;
+        @Override public String getDeveloperComment() { return this.devComment;}
+        @Override        public String getDeveloperCommentTag() {            return this.devCommentTag;        }
+        private final String devComment;
+        private final String devCommentTag;
     }
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {

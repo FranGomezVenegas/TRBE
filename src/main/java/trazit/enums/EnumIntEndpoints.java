@@ -18,6 +18,8 @@ public interface EnumIntEndpoints {
     String getSuccessMessageCode();
     JsonArray getOutputObjectTypes();
     LPAPIArguments[] getArguments();
+    String getDeveloperComment();
+    String getDeveloperCommentTag();
 }
 
 

@@ -22,30 +22,49 @@ public class LPAPIArguments {
     private String type=ArgumentType.STRING.toString();
     private final Boolean mandatory;
     private final Integer testingArgPosic;
+    private final String argComment;
+    private final String argCommentTag;
+
+    public LPAPIArguments(String nme, String tpe, Boolean mandatory, Integer tstArg, String developerComment, String developerTag){
+        this.name=nme;
+        if (tpe!=null) this.type=tpe;
+        this.mandatory=mandatory;
+        this.testingArgPosic=tstArg;
+        this.argComment=developerComment;
+        this.argCommentTag=developerTag;
+    }
 
     public LPAPIArguments(String nme, String tpe, Boolean mandatory, Integer tstArg){
         this.name=nme;
         if (tpe!=null) this.type=tpe;
         this.mandatory=mandatory;
         this.testingArgPosic=tstArg;
+        this.argComment="";
+        this.argCommentTag="";        
     }
     public LPAPIArguments(String nme){
         this.name=nme;
         this.type=ArgumentType.STRING.toString();
         this.mandatory=true;
         this.testingArgPosic=-1;
+        this.argComment="";
+        this.argCommentTag="";        
     }
     public LPAPIArguments(String nme, String tpe){
         this.name=nme;
         if (tpe!=null) this.type=tpe;
         this.mandatory=true;
         this.testingArgPosic=-1;
+        this.argComment="";
+        this.argCommentTag="";        
     }   
     public LPAPIArguments(String nme, String tpe, Boolean mandatry){
         this.name=nme;
         this.type=tpe;
         this.mandatory=mandatry;
         this.testingArgPosic=-1;
+        this.argComment="";
+        this.argCommentTag="";        
     }
         
             

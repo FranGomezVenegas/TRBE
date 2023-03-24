@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPNulls;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables.ApiUrls;
@@ -31,48 +32,61 @@ public class AuthenticationAPIParams extends HttpServlet {
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PSWD_NEW, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), false, 9)}, EndPointsToRequirements.endpointWithNoOutputObjects ),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), false, 9)}, EndPointsToRequirements.endpointWithNoOutputObjects 
+                , null, null),
         USER_CHANGE_PSWD_SEND_MAIL("USER_CHANGE_PSWD_SEND_MAIL", "userChangePswd_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PSWD_NEW, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),}, EndPointsToRequirements.endpointWithNoOutputObjects ),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PSWD_NEW, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),}, EndPointsToRequirements.endpointWithNoOutputObjects 
+                , null, null),
         AUTHENTICATE("AUTHENTICATE", "userAuthentication_success", 
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DB_USERNAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DB_PSSWD, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, EndPointsToRequirements.endpointWithNoOutputObjects),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DB_PSSWD, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, EndPointsToRequirements.endpointWithNoOutputObjects
+                , null, null),
         GETUSERROLE("GETUSERROLE", "getUserRoles_success", 
-                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MY_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}, EndPointsToRequirements.endpointWithNoOutputObjects ),
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MY_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}, EndPointsToRequirements.endpointWithNoOutputObjects 
+                , null, null),
         FINALTOKEN("FINALTOKEN", "finalToken_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MY_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_ROLE, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, EndPointsToRequirements.endpointWithNoOutputObjects ),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_ROLE, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, EndPointsToRequirements.endpointWithNoOutputObjects 
+                , null, null),
         TOKEN_VALIDATE_USER_CREDENTIALS("TOKEN_VALIDATE_USER_CREDENTIALS", "tokenValidateUserCredentials_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, EndPointsToRequirements.endpointWithNoOutputObjects ),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, EndPointsToRequirements.endpointWithNoOutputObjects 
+                , null, null),
         TOKEN_VALIDATE_USER_CREDENTIALS_UNLOCKSESSION("TOKEN_VALIDATE_USER_CREDENTIALS_UNLOCKSESSION", "tokenValidateUserCredentialsUnlockedSession_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, EndPointsToRequirements.endpointWithNoOutputObjects ),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), true, 8)}, EndPointsToRequirements.endpointWithNoOutputObjects 
+                , null, null),
         TOKEN_VALIDATE_ESIGN_PHRASE("TOKEN_VALIDATE_ESIGN_PHRASE", "tokenValdidateEsignPhrase_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, EndPointsToRequirements.endpointWithNoOutputObjects ),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, EndPointsToRequirements.endpointWithNoOutputObjects 
+                , null, null),
         USER_CHANGE_PSWD_BY_MAIL("USER_CHANGE_PSWD_BY_MAIL", "userChangePswd_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PSWD_NEW, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), false, 9)}, EndPointsToRequirements.endpointWithNoOutputObjects ),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), false, 9)}, EndPointsToRequirements.endpointWithNoOutputObjects 
+                , null, null),
         USER_CHANGE_ESIGN("USER_CHANGE_ESIGN", "userChangeEsign_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_ESIGN_NEW, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), false, 9)}, EndPointsToRequirements.endpointWithNoOutputObjects),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), false, 9)}, EndPointsToRequirements.endpointWithNoOutputObjects
+                , null, null),
         SET_DEFAULT_TABS_ON_LOGIN("SET_DEFAULT_TABS_ON_LOGIN", "defaultTabsOnLogin_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TABS_STRING, LPAPIArguments.ArgumentType.STRING.toString(), false, 7)}, EndPointsToRequirements.endpointWithNoOutputObjects),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TABS_STRING, LPAPIArguments.ArgumentType.STRING.toString(), false, 7)}, EndPointsToRequirements.endpointWithNoOutputObjects
+                , null, null)
         ;      
-        private AuthenticationAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private AuthenticationAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
-            this.outputObjectTypes=outputObjectTypes;                        
+            this.outputObjectTypes=outputObjectTypes;
+            this.devComment = LPNulls.replaceNull(devComment);
+            this.devCommentTag = LPNulls.replaceNull(devCommentTag);            
         } 
 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
@@ -94,6 +108,10 @@ public class AuthenticationAPIParams extends HttpServlet {
         private final String successMessageCode;  
         private final  LPAPIArguments[] arguments;
         private final JsonArray outputObjectTypes;
+        @Override public String getDeveloperComment() { return this.devComment;}
+        @Override        public String getDeveloperCommentTag() {            return this.devCommentTag;        }
+        private final String devComment;
+        private final String devCommentTag;        
     }
 public enum AuthenticationErrorTrapping  implements EnumIntMessages{ 
         IP_IN_BLACK_LIST("IPinBlackList", "", ""),

@@ -19,6 +19,7 @@ import javax.json.JsonArray;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPNulls;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;
@@ -39,7 +40,7 @@ public class HolidaysCalendarEnums {
                 new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 8 ),},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                 .add(GlobalAPIsParams.LBL_TABLE, TblsApp.TablesApp.HOLIDAYS_CALENDAR.getTableName()).build()).build()
-        ),        
+, null, null),                
         ADD_DATE_TO_CALENDAR("ADD_DATE_TO_CALENDAR", "name", "", "calendarDateAdded_success",  
             new LPAPIArguments[]{ new LPAPIArguments("name", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
                 new LPAPIArguments(REQUEST_PARAM_NEW_DATE, LPAPIArguments.ArgumentType.DATE.toString(), true, 7 ),
@@ -48,21 +49,23 @@ public class HolidaysCalendarEnums {
                 new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 10 ),},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                 .add(GlobalAPIsParams.LBL_TABLE, TblsApp.TablesApp.HOLIDAYS_CALENDAR.getTableName()).build()).build()
-        ),
+, null, null),                
         DELETE_DATE_FROM_GIVEN_CALENDAR("DELETE_DATE_FROM_GIVEN_CALENDAR", "", "", "calendarDateDeleted_success",  
             new LPAPIArguments[]{ new LPAPIArguments("calendar", LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
                 new LPAPIArguments("date_id", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                 .add(GlobalAPIsParams.LBL_TABLE, TblsApp.TablesApp.HOLIDAYS_CALENDAR_DATE.getTableName()).build()).build()
-        )
+, null, null)
         ;
-        private CalendarAPIactionsEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private CalendarAPIactionsEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
             this.name=name;
             this.mandatoryParams=mandatoryParams;
             this.optionalParams=optionalParams;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;
             this.outputObjectTypes=outputObjectTypes;
+            this.devComment = LPNulls.replaceNull(devComment);
+            this.devCommentTag = LPNulls.replaceNull(devCommentTag);
         } 
         @Override        public String getName(){return this.name;}
         public String getMandatoryParams(){return this.mandatoryParams;}
@@ -93,18 +96,24 @@ public class HolidaysCalendarEnums {
         private final String successMessageCode;       
         private final LPAPIArguments[] arguments;
         private final JsonArray outputObjectTypes;
+        @Override public String getDeveloperComment() { return this.devComment;}
+        @Override        public String getDeveloperCommentTag() {            return this.devCommentTag;        }
+        private final String devComment;
+        private final String devCommentTag;
     }
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
     
     public enum CalendarAPIqueriesEndpoints implements EnumIntEndpoints{
-        GET_ALL_HOLIDAY_DATES_LIST_ALL_CALENDARS("GET_ALL_HOLIDAY_DATES_LIST_ALL_CALENDARS", "",new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects),
-        
+        GET_ALL_HOLIDAY_DATES_LIST_ALL_CALENDARS("GET_ALL_HOLIDAY_DATES_LIST_ALL_CALENDARS", "",new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects
+                , null, null),                
         ;
-        private CalendarAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private CalendarAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
             this.outputObjectTypes=outputObjectTypes;            
+            this.devComment = LPNulls.replaceNull(devComment);
+            this.devCommentTag = LPNulls.replaceNull(devCommentTag);
         } 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
@@ -125,7 +134,10 @@ public class HolidaysCalendarEnums {
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
         private final JsonArray outputObjectTypes;
-    }
+        @Override public String getDeveloperComment() { return this.devComment;}
+        @Override        public String getDeveloperCommentTag() {            return this.devCommentTag;        }
+        private final String devComment;
+        private final String devCommentTag;    }
 
     public enum ParamsList{INCIDENT_ID("incidentId"),INCIDENT_TITLE("incidentTitle"),INCIDENT_DETAIL("incidentDetail"),
         NOTE("note"),NEW_STATUS("newStatus"),

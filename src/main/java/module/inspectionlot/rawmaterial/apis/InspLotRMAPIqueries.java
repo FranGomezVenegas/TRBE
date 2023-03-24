@@ -23,6 +23,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import module.inspectionlot.rawmaterial.definition.ClassInspLotRMQueriesController;
 import trazit.enums.EnumIntEndpoints;
@@ -36,10 +37,12 @@ public class InspLotRMAPIqueries extends HttpServlet {
 
     public enum InspLotRMAPIqueriesEndpoints implements EnumIntEndpoints{
         ;
-        private InspLotRMAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+        private InspLotRMAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, String devComment, String devCommentTag) {
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
+                        this.devComment = LPNulls.replaceNull(devComment);
+            this.devCommentTag = LPNulls.replaceNull(devCommentTag);
         } 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
@@ -58,6 +61,10 @@ public class InspLotRMAPIqueries extends HttpServlet {
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
+        @Override public String getDeveloperComment() { return this.devComment;}
+        @Override        public String getDeveloperCommentTag() {            return this.devCommentTag;        }
+        private final String devComment;
+        private final String devCommentTag;
 
         @Override        public JsonArray getOutputObjectTypes() {return EndPointsToRequirements.endpointWithNoOutputObjects;}
     }

@@ -45,7 +45,8 @@ public class CertifyAPIfrontend extends HttpServlet {
             new LPAPIArguments("areasToInclude", LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6),
             new LPAPIArguments("includeCertificationDetail", LPAPIArguments.ArgumentType.BOOLEAN.toString(), true, 7)},
             new LPAPIEndPointdocumentation(LABEL_CERTIF_FRONTEND, "CERTIFICATIONS_IN_PROGRESS", "", -1,""),
-            EndPointsToRequirements.endpointWithNoOutputObjects),        
+            EndPointsToRequirements.endpointWithNoOutputObjects,        
+                null, null),
         USER_CERTIFICATIONS_HISTORY("USER_CERTIFICATIONS_HISTORY", "",new LPAPIArguments[]{
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
             new LPAPIArguments("areasToInclude", LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
@@ -53,20 +54,25 @@ public class CertifyAPIfrontend extends HttpServlet {
             new LPAPIArguments(TblsData.CertifUserAnalysisMethod.CERTIFICATION_DATE.getName().toLowerCase()+"_end", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9),
             new LPAPIArguments("includeCertificationDetail", LPAPIArguments.ArgumentType.BOOLEAN.toString(), true, 10)},
             new LPAPIEndPointdocumentation(LABEL_CERTIF_FRONTEND, "USER_CERTIFICATIONS_HISTORY", "", -1,""),
-            EndPointsToRequirements.endpointWithNoOutputObjects),
+            EndPointsToRequirements.endpointWithNoOutputObjects,
+                null, null),
         OBJECTS_UPON_CERTIFICATION("OBJECTS_UPON_CERTIFICATION", "",new LPAPIArguments[]{},
             new LPAPIEndPointdocumentation(LABEL_CERTIF_FRONTEND, "OBJECTS_UPON_CERTIFICATION", "", -1,""),
-            EndPointsToRequirements.endpointWithNoOutputObjects),
+            EndPointsToRequirements.endpointWithNoOutputObjects
+                , null, null),
         OBJECTS_ENABLED_CERTIFICATION("OBJECTS_ENABLED_CERTIFICATION", "",new LPAPIArguments[]{},
             new LPAPIEndPointdocumentation(LABEL_CERTIF_FRONTEND, "OBJECTS_ENABLED_CERTIFICATION", "", -1,""),
-            EndPointsToRequirements.endpointWithNoOutputObjects),
+            EndPointsToRequirements.endpointWithNoOutputObjects
+                    , null, null),;
         ;
-        private CertifyAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, LPAPIEndPointdocumentation docInfo, JsonArray outputObjectTypes){
+        private CertifyAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, LPAPIEndPointdocumentation docInfo, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
             this.endPointDocumentation=docInfo;
             this.outputObjectTypes=outputObjectTypes;                        
+            this.devComment = LPNulls.replaceNull(devComment);
+            this.devCommentTag = LPNulls.replaceNull(devCommentTag);            
         } 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
@@ -83,11 +89,15 @@ public class CertifyAPIfrontend extends HttpServlet {
         @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
         @Override        public LPAPIArguments[] getArguments() {return arguments;}
         @Override        public String getApiUrl(){return ApiUrls.CERTIFY_QUERIES.getUrl();}
+        @Override public String getDeveloperComment() { return this.devComment;}
+        @Override        public String getDeveloperCommentTag() {            return this.devCommentTag;        }
         private final String name;
-        private final String successMessageCode;  
+        private final String successMessageCode;
         private final LPAPIArguments[] arguments;
+        private final JsonArray outputObjectTypes;
+        private final String devComment;
+        private final String devCommentTag;
         private final LPAPIEndPointdocumentation endPointDocumentation;
-        private final JsonArray outputObjectTypes;        
     }
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {

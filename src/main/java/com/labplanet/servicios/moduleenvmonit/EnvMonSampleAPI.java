@@ -27,6 +27,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
@@ -53,7 +54,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_NUM_SAMPLES_TO_LOG, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 12)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
                 .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE.getTableName()).build()).build()
-        ),
+, null, null),
         ENTERRESULT("ENTERRESULT", "enterResult_success",   
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 )},
@@ -61,7 +62,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                 .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE.getTableName()).build())
                 .add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
                 .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName()).build()).build()
-        ),
+, null, null),
         REENTERRESULT("REENTERRESULT", "reEnterResult_success",   
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 )},
@@ -69,7 +70,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                 .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE.getTableName()).build())
                 .add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
                 .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName()).build()).build()
-        ),        
+, null, null),
         ENTER_PLATE_READING("ENTER_PLATE_READING", "enterPlateReading_success",   
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 )},
@@ -77,7 +78,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                 .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE.getTableName()).build())
                 .add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
                 .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName()).build()).build()
-        ),
+, null, null),
         REENTER_PLATE_READING("REENTER_PLATE_READING", "reEnterPlateReading_success",   
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 )},
@@ -85,7 +86,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                 .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE.getTableName()).build())
                 .add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
                 .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName()).build()).build()
-        ),
+, null, null),
         ENTER_PLATE_READING_SECONDENTRY("ENTER_PLATE_READING_SECONDENTRY", "enterPlateReadingSecondEntry_success",   
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 )},
@@ -93,7 +94,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                 .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE.getTableName()).build())
                 .add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
                 .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName()).build()).build()
-        ),
+, null, null),
         REENTER_PLATE_READING_SECONDENTRY("REENTER_PLATE_READING_SECONDENTRY", "reEnterPlateReadingSecondEntry_success",   
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7 )},
@@ -101,28 +102,28 @@ public class EnvMonSampleAPI extends HttpServlet {
                 .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE.getTableName()).build())
                 .add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
                 .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName()).build()).build()
-        ),                
+, null, null),
         ADD_SAMPLE_MICROORGANISM("ADD_SAMPLE_MICROORGANISM", "MigroorganismAdded_success",  
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISM_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7 ),
                 new LPAPIArguments("numItems", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 8)},                
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
                 .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE.getTableName()).build()).build()
-        ),
+, null, null),
         ADD_ADHOC_SAMPLE_MICROORGANISM("ADD_ADHOC_SAMPLE_MICROORGANISM", "MigroorganismAdded_success",  
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISM_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7 ),
                 new LPAPIArguments("numItems", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 8)},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
                 .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE.getTableName()).build()).build()
-        ),
+, null, null),
         REMOVE_SAMPLE_MICROORGANISM("REMOVE_SAMPLE_MICROORGANISM", "MigroorganismRemoved_success",  
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISM_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7 ),
                 new LPAPIArguments("numItems", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 8)},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
                 .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE.getTableName()).build()).build()
-        ),
+, null, null),
         EM_BATCH_INCUB_ADD_SMP("EM_BATCH_INCUB_ADD_SMP", "batchIncubator_sampleAdded_success", 
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7), 
@@ -135,7 +136,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                 .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE.getTableName()).build())
                 .add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
                 .add(GlobalAPIsParams.LBL_TABLE, TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName()).build()).build()
-        ),
+, null, null),
         EM_BATCH_INCUB_MOVE_SMP("EM_BATCH_INCUB_MOVE_SMP", "batchIncubator_sampleMoved_success", 
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7), 
@@ -148,7 +149,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                 .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE.getTableName()).build())
                 .add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
                 .add(GlobalAPIsParams.LBL_TABLE, TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName()).build()).build()
-        ),
+, null, null),
         EM_BATCH_INCUB_REMOVE_SMP("EM_BATCH_INCUB_REMOVE_SMP", "batchIncubator_sampleRemoved_success", 
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7), 
@@ -158,17 +159,17 @@ public class EnvMonSampleAPI extends HttpServlet {
                 .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE.getTableName()).build())
                 .add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
                 .add(GlobalAPIsParams.LBL_TABLE, TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName()).build()).build()
-        ),
+, null, null),
         SINGLE_SAMPLE_INCUB_START("SINGLE_SAMPLE_INCUB_START", "SampleIncubationStartedSuccessfully",  
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
                 .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE.getTableName()).build()).build()
-        ),
+, null, null),
         SINGLE_SAMPLE_INCUB_END("SINGLE_SAMPLE_INCUB_END", "SampleIncubationEndedSuccessfully",  
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 )},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
                 .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE.getTableName()).build()).build()
-        ),        
+, null, null),
         ASSIGN_SAMPLE_CULTURE_MEDIA("ASSIGN_SAMPLE_CULTURE_MEDIA", "CultureMediaAssigned_success",  
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments("inventoryTrackinProcInstanceName", LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
@@ -178,14 +179,16 @@ public class EnvMonSampleAPI extends HttpServlet {
                 new LPAPIArguments("useOpenReferenceLot", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 11)},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
                 .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE.getTableName()).build()).build()
-        ),
+, null, null)
         
         ;      
-        private EnvMonSampleAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private EnvMonSampleAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums; 
             this.outputObjectTypes=outputObjectTypes;            
+            this.devComment = LPNulls.replaceNull(devComment);
+            this.devCommentTag = LPNulls.replaceNull(devCommentTag);
         } 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex, Integer auditReasonPosic){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
@@ -208,7 +211,10 @@ public class EnvMonSampleAPI extends HttpServlet {
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
         private final JsonArray outputObjectTypes;
-    }
+        @Override public String getDeveloperComment() { return this.devComment;}
+        @Override        public String getDeveloperCommentTag() {            return this.devCommentTag;        }
+        private final String devComment;
+        private final String devCommentTag;    }
 
     public static final String PARAMETER_PROGRAM_SAMPLE_TEMPLATE="sampleTemplate";
     public static final String PARAMETER_PROGRAM_SMP_TMP_VERSION="sampleTemplateVersion";       

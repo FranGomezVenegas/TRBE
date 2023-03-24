@@ -50,13 +50,16 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8) 
-            }, EndPointsToRequirements.endpointWithNoOutputObjects)        
+            }, EndPointsToRequirements.endpointWithNoOutputObjects
+                , null, null)
         ;
-        private EnvMonIncubBatchAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes){
+        private EnvMonIncubBatchAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums; 
             this.outputObjectTypes=outputObjectTypes;            
+            this.devComment = LPNulls.replaceNull(devComment);
+            this.devCommentTag = LPNulls.replaceNull(devCommentTag);
         } 
         public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
@@ -77,6 +80,10 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
         private final JsonArray outputObjectTypes;
+        @Override public String getDeveloperComment() { return this.devComment;}
+        @Override        public String getDeveloperCommentTag() {            return this.devCommentTag;        }
+        private final String devComment;
+        private final String devCommentTag;
     }
     
     /**
