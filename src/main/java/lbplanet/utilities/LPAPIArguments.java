@@ -90,7 +90,7 @@ public class LPAPIArguments {
                         case INTEGER:
                             Integer valueConverted=null;
                             try{
-                                if (requestArgValue.length()>0) valueConverted = Integer.parseInt(requestArgValue);
+                                if (Boolean.FALSE.equals("UNDEFINED".equalsIgnoreCase(requestArgValue))&&requestArgValue.length()>0) valueConverted = Integer.parseInt(requestArgValue);
                             }catch(NumberFormatException e){
                                 return new Object[]{LPPlatform.LAB_FALSE, ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.VALUE_NOT_NUMERIC, new Object[]{requestArgValue}), requestArgValue};
                             }
