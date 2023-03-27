@@ -578,25 +578,21 @@ public class SqlStatementEnums {
                     fn = curFld.getName();
                     if (curFld.getTableField() != null && curFld.getTableField().getReferenceTable() != null) {
                         fn = DbFieldValueMask.getFieldMaskedByReferenceTableForView(curFld).toString();
-                        /*                        if (GlobalVariables.Schemas.CONFIG.toString().equalsIgnoreCase(curFld.getTableField().getReferenceTable().getRepository())
-                           && "person".equalsIgnoreCase(curFld.getTableField().getReferenceTable().getTableName())
-                           && "person_id".equalsIgnoreCase(curFld.getTableField().getReferenceTable().getFieldName()))
-                        fn="(select alias from config.person where person_id="+curFld.getName()+")";*/
                     }
                     if (curFld.getFieldMask() != null) {
                         fn = curFld.getFieldMask();
                     } else {
                         if (curFld.getTableField() != null) {
                             if ("DATE".equalsIgnoreCase(curFld.getTableField().getFieldType())) {
-                                fn = "to_date(to_char(" + curFld.getName() + ",'yyyy-mon-dd'), 'YYYY MON DD')"+", ";
+                                fn = "to_date(to_char(" + curFld.getName() + ",'yyyy-mon-dd'), 'YYYY MON DD')";
                             } else if ("DATETIME".equalsIgnoreCase(curFld.getTableField().getFieldType())) {
-                                fn = "to_char(" + curFld.getName() + ",'" + DbFieldValueMask.datetimeFormatViews(curFld) + "')"+", ";
+                                fn = "to_char(" + curFld.getName() + ",'" + DbFieldValueMask.datetimeFormatViews(curFld) + "')";
                             } else if (curFld.getTableField().getFieldType().toLowerCase().contains("timestamp")) {
-                                fn = "to_char(" + curFld.getName() + ",'" + DbFieldValueMask.datetimeFormatViews(curFld) + "')"+", ";
+                                fn = "to_char(" + curFld.getName() + ",'" + DbFieldValueMask.datetimeFormatViews(curFld) + "')";
                             } else if (fn.toUpperCase().contains(" IN")) {
                                 Integer posicINClause = fn.toUpperCase().indexOf("IN");
                                 fn = fn.substring(0, posicINClause - 1);
-                                fieldsToRetrieveStr.append(fn.toLowerCase()).append(", ");
+                                fieldsToRetrieveStr.append(fn.toLowerCase());
                             }
                         }
                     }
