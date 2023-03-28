@@ -92,13 +92,12 @@ public class AppHeaderAPI extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request = LPHttp.requestPreparation(request);
         response = LPHttp.responsePreparation(response);
-        String language = LPFrontEnd.setLanguage(request);
 
         try (PrintWriter out = response.getWriter()) {
             LPFrontEnd.servletReturnSuccess(request, response, AppHeaderAPI(request, response));
         } catch (Exception e) {
             String exceptionMessage = e.getMessage();
-            LPFrontEnd.responseError(new String[]{exceptionMessage}, language, null);
+            LPFrontEnd.responseError(new String[]{exceptionMessage});
             Rdbms.closeRdbms();
         } finally {
             Rdbms.closeRdbms();

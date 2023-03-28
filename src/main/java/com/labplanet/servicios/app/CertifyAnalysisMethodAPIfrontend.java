@@ -154,7 +154,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
             String[] errObject = new String[0];
             errObject = LPArray.addValueToArray1D(errObject, ERRORMSG_ERROR_STATUS_CODE+": "+HttpServletResponse.SC_BAD_REQUEST);
             errObject = LPArray.addValueToArray1D(errObject, "This call raised one unhandled exception. Error:"+errMessage);     
-            LPFrontEnd.responseError(errObject, language, null);
+            LPFrontEnd.responseError(errObject);
         }                                      
     }
 
@@ -173,7 +173,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
         UserProfile usProf = new UserProfile();
         String[] allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedurePrefix[0])){
-            LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
+            LPFrontEnd.responseError(allUserProcedurePrefix);
             Rdbms.closeRdbms(); 
             return new JSONArray();
         }
@@ -191,7 +191,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
                 new String[]{TblsData.ViewUserAndAnalysisMethodCertificationView.USER_NAME.getName()}, new Object[]{token.getUserName()}, fieldsToRetrieve, allUserProcedurePrefix);
         if (userAnaMethCertifByProcess==null)return new JSONArray();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(userAnaMethCertifByProcess[0][0]).toString())){
-            LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
+            LPFrontEnd.responseError(allUserProcedurePrefix);
             Rdbms.closeRdbms();
             return new JSONArray();
         }
@@ -237,7 +237,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
         usProf = new UserProfile();
         String[] allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedurePrefix[0])){
-            LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
+            LPFrontEnd.responseError(allUserProcedurePrefix);
             Rdbms.closeRdbms();
             return new JSONArray();
         }
@@ -257,7 +257,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
             Object[][] userProcAnaMethCertif = UserMethod.getNotCertifAnaMethCertif(token.getUserName(), currProc, fieldsToRetrieve);
             if (userProcAnaMethCertif!=null && userProcAnaMethCertif.length>0){
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(userProcAnaMethCertif[0]))){
-                    LPFrontEnd.responseError(userProcAnaMethCertif, language, null);
+                    LPFrontEnd.responseError(userProcAnaMethCertif);
                     Rdbms.closeRdbms();
                     return new JSONArray(); 
                 }
@@ -299,7 +299,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
         UserProfile usProf = new UserProfile();
         String[] allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedurePrefix[0])){
-            LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
+            LPFrontEnd.responseError(allUserProcedurePrefix);
             Rdbms.closeRdbms();
             return new JSONArray();
         }
@@ -316,7 +316,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
             Object[][] procAnaMethCertif = Rdbms.getRecordFieldsByFilter(currProc+"-config", TblsCnfg.TablesConfig.METHODS.getTableName(), 
                     new String[]{TblsCnfg.Methods.CODE.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, fieldsToRetrieve);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(procAnaMethCertif[0]))){
-                LPFrontEnd.responseError(procAnaMethCertif, language, null);
+                LPFrontEnd.responseError(procAnaMethCertif);
                 Rdbms.closeRdbms();
                 return new JSONArray();
             }

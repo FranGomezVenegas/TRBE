@@ -246,12 +246,12 @@ public class SavedQueriesAPI extends HttpServlet {
             }
         }
         if ((LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresUserConfirmation[0].toString()))
-                && (!LPFrontEnd.servletUserToVerify(request, response, token.getUserName(), token.getUsrPw()))) {
+                && (!LPFrontEnd.servletUserToVerify(request, token.getUserName(), token.getUsrPw()))) {
             return;
         }
 
         if ((LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresEsignConfirmation[0].toString()))
-                && (!LPFrontEnd.servletEsignToVerify(request, response, token.geteSign()))) {
+                && (!LPFrontEnd.servletEsignToVerify(request, token.geteSign()))) {
             return;
         }
 
@@ -328,7 +328,7 @@ public class SavedQueriesAPI extends HttpServlet {
             }
         } catch (Exception e) {
             errObject = new String[]{e.getMessage()};
-            LPFrontEnd.responseError(errObject, language, null);
+            LPFrontEnd.responseError(errObject);
         } finally {
             RelatedObjects rObj = RelatedObjects.getInstanceForActions();
             rObj.killInstance();

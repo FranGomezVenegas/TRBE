@@ -287,7 +287,7 @@ public class SopUserAPIqueries extends HttpServlet {
             String[] errObject = new String[0];
             errObject = LPArray.addValueToArray1D(errObject, ERRORMSG_ERROR_STATUS_CODE + ": " + HttpServletResponse.SC_BAD_REQUEST);
             errObject = LPArray.addValueToArray1D(errObject, "This call raised one unhandled exception. Error:" + errMessage);
-            LPFrontEnd.responseError(errObject, language, null);
+            LPFrontEnd.responseError(errObject);
 
         } finally {
             try {
@@ -315,7 +315,7 @@ public class SopUserAPIqueries extends HttpServlet {
             UserProfile usProf = new UserProfile();
             String[] allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedurePrefix[0])) {
-                LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
+                LPFrontEnd.responseError(allUserProcedurePrefix);
                 Rdbms.closeRdbms();
                 return new JSONObject();
             }
@@ -346,7 +346,7 @@ public class SopUserAPIqueries extends HttpServlet {
                 return new JSONObject();
             }
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(userSops[0][0]).toString())) {
-                LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
+                LPFrontEnd.responseError(allUserProcedurePrefix);
                 Rdbms.closeRdbms();
                 return new JSONObject();
             }
@@ -397,7 +397,7 @@ public class SopUserAPIqueries extends HttpServlet {
             UserProfile usProf = new UserProfile();
             String[] allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedurePrefix[0])) {
-                LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
+                LPFrontEnd.responseError(allUserProcedurePrefix);
                 Rdbms.closeRdbms();
                 return new JSONArray();
             }
@@ -428,7 +428,7 @@ public class SopUserAPIqueries extends HttpServlet {
                 return new JSONArray();
             }
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(userSops[0][0]).toString())) {
-                LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
+                LPFrontEnd.responseError(allUserProcedurePrefix);
                 Rdbms.closeRdbms();
                 return new JSONArray();
             }
@@ -482,7 +482,7 @@ public class SopUserAPIqueries extends HttpServlet {
             usProf = new UserProfile();
             String[] allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedurePrefix[0])) {
-                LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
+                LPFrontEnd.responseError(allUserProcedurePrefix);
                 Rdbms.closeRdbms();
                 return new JSONArray();
             }
@@ -505,7 +505,7 @@ public class SopUserAPIqueries extends HttpServlet {
                         Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING))));
                 if (userProcSops != null && userProcSops.length > 0) {
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(userProcSops[0]))) {
-                        LPFrontEnd.responseError(userProcSops, language, null);
+                        LPFrontEnd.responseError(userProcSops);
                         Rdbms.closeRdbms();
                         return new JSONArray();
                     }
@@ -551,7 +551,7 @@ public class SopUserAPIqueries extends HttpServlet {
             UserProfile usProf = new UserProfile();
             String[] allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedurePrefix[0])) {
-                LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
+                LPFrontEnd.responseError(allUserProcedurePrefix);
                 Rdbms.closeRdbms();
                 return new JSONArray();
             }
@@ -567,7 +567,7 @@ public class SopUserAPIqueries extends HttpServlet {
                 Object[][] procSops = Rdbms.getRecordFieldsByFilter(currProc + "-config", TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(),
                         new String[]{TblsCnfg.SopMetaData.SOP_ID.getName() + WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, fieldsToRetrieve);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(procSops[0]))) {
-                    LPFrontEnd.responseError(procSops, language, null);
+                    LPFrontEnd.responseError(procSops);
                     Rdbms.closeRdbms();
                     return new JSONArray();
                 }
@@ -615,7 +615,7 @@ public class SopUserAPIqueries extends HttpServlet {
                 return new JSONArray();
             }
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedurePrefix[0])) {
-                LPFrontEnd.responseError(allUserProcedurePrefix, language, null);
+                LPFrontEnd.responseError(allUserProcedurePrefix);
                 Rdbms.closeRdbms();
                 return new JSONArray();
             }

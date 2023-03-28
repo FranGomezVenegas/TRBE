@@ -195,7 +195,7 @@ public class InvestigationAPIfrontend extends HttpServlet {
         }catch(Exception e){      
             instanceForQueries.killIt();
             String[] errObject = new String[]{e.getMessage()};
-            Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
+            Object[] errMsg = LPFrontEnd.responseError(errObject);
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, errMsg);
         } finally {
             // release database resources
