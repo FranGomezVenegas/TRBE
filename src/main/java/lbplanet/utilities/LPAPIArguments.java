@@ -140,32 +140,11 @@ public class LPAPIArguments {
         if (value.contains(tagName)) value=value.replace(tagName, LPDate.getCurrentTimeStamp().toString());
         return value;
     }
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * @return the type
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
-     * @return the mandatory
-     */
-    public Boolean getMandatory() {
-        return mandatory;
-    }
-
-    /**
-     * @return the testingArgPosic
-     */
-    public Integer getTestingArgPosic() {
-        return testingArgPosic;
-    }
+    public String getName() {        return name;    }
+    public String getType() {        return type;    }
+    public Boolean getMandatory() {        return mandatory;    }
+    public Integer getTestingArgPosic() {        return testingArgPosic;    }
+    public String getDevComment() {        return this.argComment;    }
+    public String getDevCommentTags() {        return this.argCommentTag;    }
     
 }
