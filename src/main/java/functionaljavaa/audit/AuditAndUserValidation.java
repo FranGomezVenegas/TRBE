@@ -184,13 +184,13 @@ public class AuditAndUserValidation {
         }
 
         if ( (procActionRequiresUserConfirmation[0].toString().contains(LPPlatform.LAB_TRUE)) &&     
-             (!LPFrontEnd.servletUserToVerify(request, response, token.getUserName(), token.getUsrPw())) ){
+             (!LPFrontEnd.servletUserToVerify(request, token.getUserName(), token.getUsrPw())) ){
             this.checkUserValidationPassesDiag= ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.INVALID_USER_VERIFICATION, new Object[]{});                             
             return;            
         }
         
         if ( (procActionRequiresEsignConfirmation[0].toString().contains(LPPlatform.LAB_TRUE)) &&    
-             (!LPFrontEnd.servletEsignToVerify(request, response, token.geteSign())) ){
+             (!LPFrontEnd.servletEsignToVerify(request, token.geteSign())) ){
             this.checkUserValidationPassesDiag= ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.INVALID_ESIGN, new Object[]{});                             
             return;
         }
@@ -198,13 +198,11 @@ public class AuditAndUserValidation {
         this.checkUserValidationPassesDiag= ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.AUDIT_AND_USER_VALIDATION_CHECK_SUCCESS, null);
     }
     private Boolean isValidAuditPhrase(String procInstanceName, String actionName, String auditReasonPhrase, BusinessRules busRulesProcInstance){
-//        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();        
         if (procInstanceName==null){
             this.checkUserValidationPassesDiag= ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AuditAndUserValidationErrorTrapping.PROC_INSTANCE_NAME_NULL, null);
             return false;
         }
         String[] actionAuditReasonInfo = busRulesProcInstance.getProcedureBusinessRule(actionName+AuditAndUserValidationBusinessRules.PREFIX_AUDITREASONPHRASE.getTagName()).split("\\|");
-        //String[] actionAuditReasonInfo = Parameter.getBusinessRuleProcedureFile(procInstanceName.replace("\"", ""), AuditAndUserValidationBusinessRules.PREFIX_AUDITREASONPHRASE.getAreaName(), actionName+AuditAndUserValidationBusinessRules.PREFIX_AUDITREASONPHRASE.getTagName()).split("\\|");
         if ( ("LIST".equalsIgnoreCase(actionAuditReasonInfo[0])) && (!LPArray.valueInArray(actionAuditReasonInfo, auditReasonPhrase)) ){
             this.checkUserValidationPassesDiag= ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AuditAndUserValidationErrorTrapping.WRONG_PHRASE, new Object[]{auditReasonPhrase, Arrays.toString(actionAuditReasonInfo)});
             return false;

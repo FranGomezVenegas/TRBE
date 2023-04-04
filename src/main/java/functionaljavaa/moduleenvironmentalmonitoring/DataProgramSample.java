@@ -313,7 +313,6 @@ public class DataProgramSample{
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, this.getClass().getName()+" not implemented yet!", new Object[]{});
     }
     public static InternalMessage assignCultureMedia(Integer sampleId, String referenceLot, String reference, String category, BigDecimal nwVolume, String nwVolumeUom, String externalProcInstanceName, Boolean useOpenReferenceLot){
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(),
                 new String[]{TblsEnvMonitData.Sample.SAMPLE_ID.getName()},
@@ -333,7 +332,7 @@ public class DataProgramSample{
                 new String[]{TblsEnvMonitData.Sample.CULTURE_MEDIA.getName()});
         SqlWhere sWhere = new SqlWhere();
         sWhere.addConstraint(TblsEnvMonitData.Sample.SAMPLE_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sampleId}, null);
-        RdbmsObject updateTableRecordFieldsByFilter = Rdbms.updateTableRecordFieldsByFilter(TblsEnvMonitData.TablesEnvMonitData.SAMPLE, updateFieldNames, new Object[]{referenceLot}, 
+        Rdbms.updateTableRecordFieldsByFilter(TblsEnvMonitData.TablesEnvMonitData.SAMPLE, updateFieldNames, new Object[]{referenceLot}, 
                 sWhere, null);
         return consumeInvLotVolumeExternalProcedure;
 

@@ -304,7 +304,7 @@ public class EnvMonAPI extends HttpServlet {
 
         } catch (Exception e) {
             procReqInstance.killIt();
-            LPFrontEnd.responseError(new String[]{"Servlet " + this.getClass().getSimpleName() + "Error: " + e.getMessage()}, language, null);
+            LPFrontEnd.responseError(new String[]{"Servlet " + this.getClass().getSimpleName() + "Error: " + e.getMessage()});
         } finally {
             // release database resources
             try {
