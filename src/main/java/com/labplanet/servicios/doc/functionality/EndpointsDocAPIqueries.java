@@ -112,11 +112,11 @@ public class EndpointsDocAPIqueries extends HttpServlet {
 
             Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
 
-            String apiName = argValues[0].toString();//"IncidentAPIactionsEndpoints";
-            String endpointName = argValues[1].toString();//"NEW_INCIDENT";
+            String apiName = argValues[0].toString();
+            String endpointName = argValues[1].toString();
             Boolean groupedByAPI = Boolean.valueOf(LPNulls.replaceNull(argValues[2]).toString());
-            String[] whereFldName = new String[]{TblsTrazitDocTrazit.EndpointsDeclaration.API_NAME.getName()};
-            Object[] whereFldValue = new Object[]{apiName};
+            String[] whereFldName = new String[]{TblsTrazitDocTrazit.EndpointsDeclaration.API_NAME.getName(), TblsTrazitDocTrazit.EndpointsDeclaration.DISABLED.getName()};
+            Object[] whereFldValue = new Object[]{apiName, false};
             if ("ALL".equalsIgnoreCase(apiName)) {
                 whereFldName[0] = whereFldName[0] + SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause();
                 whereFldValue[0] = "ZZZ";
