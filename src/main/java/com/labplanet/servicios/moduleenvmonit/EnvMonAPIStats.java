@@ -684,7 +684,7 @@ public class EnvMonAPIStats extends HttpServlet {
         } catch (NumberFormatException e) {
             procReqInstance.killIt();
             String[] errObject = new String[]{e.getMessage()};
-            LPFrontEnd.responseError(errObject, language, null);
+            LPFrontEnd.responseError(errObject);
             Logger.getLogger(EnvMonAPIStats.class.getName()).log(Level.SEVERE, null, e);
         } finally {
             try {
