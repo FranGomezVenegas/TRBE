@@ -192,7 +192,7 @@ public class EnvMonProdLotAPI extends HttpServlet {
         } catch (Exception e) {
             procReqInstance.killIt();
             errObject = new String[]{e.getMessage()};
-            LPFrontEnd.responseError(errObject, language, null);
+            LPFrontEnd.responseError(errObject);
         } finally {
             // release database resources
             try {
@@ -253,7 +253,7 @@ public class EnvMonProdLotAPI extends HttpServlet {
             rObj.killInstance();
             procReqInstance.killIt();
             errObject = new String[]{e.getMessage()};
-            Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
+            Object[] errMsg = LPFrontEnd.responseError(errObject);
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, errMsg);
         } finally {
             // release database resources
