@@ -93,7 +93,7 @@ public class InspLotRMAPIactions extends HttpServlet {
         }catch(Exception e){   
             procReqInstance.killIt();
             String[] errObject = new String[]{e.getMessage()};
-            LPFrontEnd.responseError(errObject, procReqInstance.getLanguage(), null);
+            LPFrontEnd.responseError(errObject);
         } finally {            
             try {                
                 procReqInstance.killIt();
