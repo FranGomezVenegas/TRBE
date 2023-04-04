@@ -79,7 +79,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
                     EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS, updateFldNames), updateFldValues, sqlWhere, null);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                 SampleAudit smpAudit = new SampleAudit();
-                Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_REVIEWED, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), testId, sampleId, testId, null, updateFldNames, updateFldValues);
+                smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_REVIEWED, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), testId, sampleId, testId, null, updateFldNames, updateFldValues);
                 sampleAnalysisEvaluateStatusAutomatismForReview(sampleId, testId);
             }
             return diagnoses;
@@ -250,34 +250,20 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
     
     public static void sampleAnalysisEvaluateStatusAutomatismForAutoApprove(Integer sampleId, Integer testId){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        String auditActionName = SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_AUTOAPPROVE.toString();
         Object[] isSampleAnalysisGenericAutoApproveEnabled = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_GENERICAUTOAPPROVEENABLED.getAreaName(), DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_GENERICAUTOAPPROVEENABLED.getTagName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isSampleAnalysisGenericAutoApproveEnabled[0].toString()))
             return;
         DataModuleSampleAnalysisResult moduleSmpAnaRes = new DataModuleSampleAnalysisResult();   
         DataSampleAnalysisResult smpAnaRes = new functionaljavaa.samplestructure.DataSampleAnalysisResult(moduleSmpAnaRes);   
         smpAnaRes.sampleAnalysisResultReview(null, testId, null, DataSample.AUTO_APPROVE_USER);
-/*        String sampleAnalysisStatusReviewed = SampleAnalysisStatuses.REVIEWED.getStatusCode("");
-        String[] updFldsNames=new String[]{TblsData.SampleAnalysis.STATUS.getName()};
-        Object[] updFldsValues=new Object[]{sampleAnalysisStatusReviewed};
-        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
-        updFldsNames, updFldsValues,
-        new String[]{TblsData.SampleAnalysis.TEST_ID.getName()}, new Object[]{testId});
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
-        String[] fieldsForAudit = new String[0];
-        fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysis.STATUS.getName() +LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR+ sampleAnalysisStatusReviewed);
-        SampleAudit smpAudit = new SampleAudit();
-        smpAudit.sampleAuditAdd(auditActionName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), testId, sampleId, testId, null, fieldsForAudit, parentAuditId);
-        }        */
     }
     /**
      *
      * @param testId
      * @param newAnalyst
-     * @param dataSample
      * @return
      */
-    public static Object[] sampleAnalysisAssignAnalyst(Integer testId, String newAnalyst, DataSample dataSample) {
+    public static Object[] sampleAnalysisAssignAnalyst(Integer testId, String newAnalyst) {
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
@@ -334,11 +320,11 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
             String userCertifiedModes = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_ANALYSTASSIGNMENTMODE.getAreaName(), DataSampleAnalysisBusinessRules.SAMPLEANALYSIS_ANALYSTASSIGNMENTMODE.getTagName()+testAssignmentMode);
             String[] userMethodModesArr = userCertifiedModes.split("\\|");
             assignTestAnalyst = LPArray.valueInArray(userMethodModesArr, userMethodCertificationMode);
-            if (!assignTestAnalyst) {
+            if (Boolean.FALSE.equals(assignTestAnalyst)) {
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLEANALYSISASSIGNED_MODENOTIMPLEMENTED, new Object[]{testAssignmentMode, Arrays.toString(userMethodModesArr), userMethodCertificationMode, schemaDataName});
             }
         }
-        if (assignTestAnalyst) {
+        if (Boolean.TRUE.equals(assignTestAnalyst)){
             String[] updateFieldName = new String[]{TblsData.SampleAnalysis.ANALYST.getName(), TblsData.SampleAnalysis.ANALYST_ASSIGNED_ON.getName(), TblsData.SampleAnalysis.ANALYST_ASSIGNED_BY.getName()};
             Object[] updateFieldValue = new Object[]{newAnalyst, LPDate.getCurrentTimeStamp(), token.getUserName()};
             SqlWhere sqlWhere = new SqlWhere();
@@ -476,7 +462,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(specRules[0][0].toString())) {
                     return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SPECRULE_NOTFOUND, new Object[]{sampleSpecCode, sampleSpecCodeVersion, schemaDataName});
                 }
-                if (!Boolean.valueOf(specRules[0][0].toString())) {
+                if (Boolean.FALSE.equals(Boolean.valueOf(specRules[0][0].toString()))){
                     String[] specAnalysisFieldName = new String[]{TblsCnfg.SpecLimits.ANALYSIS.getName(), TblsCnfg.SpecLimits.METHOD_NAME.getName(), TblsCnfg.SpecLimits.METHOD_VERSION.getName()};
                     Object[] specAnalysisFieldValue = new Object[0];
                     for (String iFieldN : specAnalysisFieldName) {
