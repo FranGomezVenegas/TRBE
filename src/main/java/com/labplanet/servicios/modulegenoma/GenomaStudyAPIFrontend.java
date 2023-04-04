@@ -212,7 +212,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projectInfo[0][0].toString())) {
 
                         procReqInstance.killIt();
-                        LPFrontEnd.responseError(projectInfo, language, null);
+                        LPFrontEnd.responseError(projectInfo);
                         return;
                     }
                     JSONArray programsJsonArr = new JSONArray();
@@ -258,7 +258,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                             new String[]{TblsGenomaConfig.Variables.ACTIVE.getName()}, new Object[]{true},
                             EnumIntTableFields.getAllFieldNames(TblsGenomaConfig.Variables.values()), new String[]{TblsGenomaConfig.Variables.NAME.getName()});
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(variablesInfo[0][0].toString())) {
-                        LPFrontEnd.responseError(variablesInfo, language, null);
+                        LPFrontEnd.responseError(variablesInfo);
                         return;
                     }
                     JSONArray variablesArr = new JSONArray();
@@ -272,7 +272,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                             new String[]{TblsGenomaConfig.VariablesSet.ACTIVE.getName()}, new Object[]{true},
                             EnumIntTableFields.getAllFieldNames(TblsGenomaConfig.VariablesSet.values()), new String[]{TblsGenomaConfig.VariablesSet.NAME.getName()});
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(variablesSetInfo[0][0].toString())) {
-                        LPFrontEnd.responseError(variablesSetInfo, language, null);
+                        LPFrontEnd.responseError(variablesSetInfo);
                         return;
                     }
                     variablesArr = new JSONArray();
@@ -382,7 +382,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
         } catch (Exception e) {
             procReqInstance.killIt();
             String[] errObject = new String[]{e.getMessage()};
-            Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
+            Object[] errMsg = LPFrontEnd.responseError(errObject);
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, errMsg);
         } finally {
             // release database resources

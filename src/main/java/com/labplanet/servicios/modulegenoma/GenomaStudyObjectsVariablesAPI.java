@@ -198,7 +198,7 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
         }catch(Exception e){   
             procReqInstance.killIt();
             errObject = new String[]{e.getMessage()};
-            LPFrontEnd.responseError(errObject, language, null);
+            LPFrontEnd.responseError(errObject);
         } finally {
             try {
                 procReqInstance.killIt();
