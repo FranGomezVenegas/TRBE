@@ -172,14 +172,15 @@ public class EnvMonSampleAPI extends HttpServlet {
 , null, null),
         ASSIGN_SAMPLE_CULTURE_MEDIA("ASSIGN_SAMPLE_CULTURE_MEDIA", "CultureMediaAssigned_success",  
             new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
-                new LPAPIArguments("inventoryTrackinProcInstanceName", LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
+                new LPAPIArguments("inventoryTrackingProcInstanceName", LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ),
                 new LPAPIArguments("category", LPAPIArguments.ArgumentType.STRING.toString(), true, 8 ),
                 new LPAPIArguments("reference", LPAPIArguments.ArgumentType.STRING.toString(), true, 9 ),
-                new LPAPIArguments("referenceLot", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 10),
+                new LPAPIArguments("referenceLot", LPAPIArguments.ArgumentType.STRING.toString(), false, 10),
                 new LPAPIArguments("useOpenReferenceLot", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 11)},
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
                 .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE.getTableName()).build()).build()
-, null, null)
+, "The culture media are items managed through the inventory module procedure(s) then inventoryTrackingProcInstanceName is to indicate in which warehouse the reference lot resides."
++"The second point to consider is that it requires specify the referenceLot to consume, in case there is only one available for use at a time then not use the referenceLot argument and use the useOpenReferenceLot one set to true, this one only works when there is only one available for use reference lot", null)
         
         ;      
         private EnvMonSampleAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
@@ -341,7 +342,7 @@ public class EnvMonSampleAPI extends HttpServlet {
         }catch(Exception e){   
             procReqInstance.killIt();
             errObject = new String[]{e.getMessage()};
-            LPFrontEnd.responseError(errObject, language, null);
+            LPFrontEnd.responseError(errObject);
         } finally {
             // release database resources
             try {
