@@ -196,17 +196,17 @@ public class TblsInvTrackingData {
     }            
     public enum LotCertification implements EnumIntTableFields{
         CERTIF_ID("certif_id", LPDatabase.integerNotNull(), null, null, null, null),
-        LOT_NAME(Lot.LOT_NAME.getName(), LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.DATA.getName(), TablesInvTrackingData.LOT.getTableName(), Lot.LOT_NAME.getName()), null, null),
+        LOT_NAME(Lot.LOT_NAME.getName(), LPDatabase.string(), null, null, null, null),//, null, new ReferenceFld(GlobalVariables.Schemas.DATA.getName(), TablesInvTrackingData.LOT.getTableName(), Lot.LOT_NAME.getName()), null, null),
         CATEGORY(Lot.CATEGORY.getName(), LPDatabase.stringNotNull(), null, null, null, null),         
         REFERENCE(Lot.REFERENCE.getName(), LPDatabase.stringNotNull(), null, null, null, null),         
         EVENT_TYPE("event_type", LPDatabase.string(), null, null, null, null),
         CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null),
-        CREATED_BY("created_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
+        CREATED_BY("created_by", LPDatabase.string(), null, null, null, null),//, null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         COMPLETED_ON("completed_on", LPDatabase.dateTime(), null, null, null, null),
-        COMPLETED_BY("completed_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
+        COMPLETED_BY("completed_by", LPDatabase.string(), null, null, null, null),//, null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         COMPLETED_DECISION("completed_decision", LPDatabase.string(), null, null, null, null),
         ATTACHMENT("attachment", LPDatabase.string(), null, null, null, null),         
-        VARIABLES_SET("variables_set", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsInvTrackingConfig.TablesInvTrackingConfig.VARIABLES_SET.getTableName(), TblsInvTrackingConfig.VariablesSet.NAME.getName()), null, null),
+        VARIABLES_SET("variables_set", LPDatabase.string(), null, null, null, null)//, null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsInvTrackingConfig.TablesInvTrackingConfig.VARIABLES_SET.getTableName(), TblsInvTrackingConfig.VariablesSet.NAME.getName()), null, null),
         ;
         private LotCertification(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
