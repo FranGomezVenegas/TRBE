@@ -310,7 +310,7 @@ public class UserSessionAPIqueries extends HttpServlet {
         } catch (Exception e) {
             Rdbms.closeRdbms();
             String[] errObject = new String[]{e.getMessage()};
-            Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
+            Object[] errMsg = LPFrontEnd.responseError(errObject);
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, errMsg);
         } finally {
             // release database resources
