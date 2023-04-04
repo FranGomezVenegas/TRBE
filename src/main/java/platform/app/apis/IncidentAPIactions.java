@@ -249,7 +249,7 @@ public class IncidentAPIactions extends HttpServlet {
         } catch (Exception e) {
             procReqInstance.killIt();
             String[] errObject = new String[]{e.getMessage()};
-            LPFrontEnd.responseError(errObject, language, null);
+            LPFrontEnd.responseError(errObject);
         } finally {
             try {
                 procReqInstance.killIt();

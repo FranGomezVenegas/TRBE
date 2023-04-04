@@ -73,7 +73,6 @@ public class ClassSample {
         ResponseMessages messages = procReqSession.getMessages();
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
         String schemaDataName="";
-        String language="";
         DataModuleSampleAnalysis smpAna = new DataModuleSampleAnalysis();
         DataModuleSampleAnalysisResult moduleSmpAnaRes = new DataModuleSampleAnalysisResult();
         DataSample smp = new DataSample(smpAna);
@@ -85,8 +84,6 @@ public class ClassSample {
             this.functionFound=true;
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());            
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
-                //procReqSession.killIt();
-                language=procReqSession.getLanguage();
                 this.isSuccess=false;           
                 this.diagnostic=(Object[]) argValues[1];                
                 this.responseError=(Object[]) argValues[1];
@@ -425,7 +422,7 @@ public class ClassSample {
                 case TESTASSIGNMENT:
                     testId = (Integer) argValues[0];
                     String newAnalyst = argValues[1].toString();
-                    diagn = DataSampleAnalysis.sampleAnalysisAssignAnalyst(testId, newAnalyst, smp);
+                    diagn = DataSampleAnalysis.sampleAnalysisAssignAnalyst(testId, newAnalyst);
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), testId);
                     this.messageDynamicData=new Object[]{sampleId};
                     break;
@@ -445,7 +442,7 @@ public class ClassSample {
                     String diagnStr = Rdbms.getRecordFieldsByFilterJSON(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(),
                             new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId}, sampleFieldToRetrieveArr, sortFieldsNameArr);
                     if (diagnStr.contains(LPPlatform.LAB_FALSE)){
-                        LPFrontEnd.responseError(diagnStr.split("\\|"), language, procInstanceName);
+                        LPFrontEnd.responseError(diagnStr.split("\\|"));
                     }else{
                         LPFrontEnd.servletReturnSuccess(request, null, diagnStr);
                     }
@@ -568,7 +565,6 @@ public class ClassSample {
                     }else
                         this.messageDynamicData=new Object[]{diagn[diagn.length-1].toString()};
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
-                    //this.messageDynamicData=new Object[]{};
                     break;
                 case SAMPLEAUDIT_SET_AUDIT_ID_REVIEWED:
                     Integer auditId = (Integer) argValues[0];
@@ -602,10 +598,6 @@ public class ClassSample {
             rObj.killInstance();
         }
         finally{
-/*            smpAna = null;
-            moduleSmpAnaRes = null;
-            smp = null;
-            smpAnaRes = null;    */
         }
         }
 }

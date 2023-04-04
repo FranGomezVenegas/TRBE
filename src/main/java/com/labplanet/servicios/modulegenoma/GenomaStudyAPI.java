@@ -411,7 +411,7 @@ public class GenomaStudyAPI extends HttpServlet {
             response.setStatus(401);
             procReqInstance.killIt();
             errObject = new String[]{e.getMessage()};
-            LPFrontEnd.responseError(errObject, language, null);
+            LPFrontEnd.responseError(errObject);
         } finally {
             // release database resources
             try {
