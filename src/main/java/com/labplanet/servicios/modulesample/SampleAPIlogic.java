@@ -31,15 +31,12 @@ public final class SampleAPIlogic {
         String objectIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_TEST_ID);
         int testId = Integer.parseInt(objectIdStr);     
                     String newAnalyst = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_NEW_ANALYST);
-        Object[] dataSample = DataSampleAnalysis.sampleAnalysisAssignAnalyst(testId, newAnalyst, smp);
+        Object[] dataSample = DataSampleAnalysis.sampleAnalysisAssignAnalyst(testId, newAnalyst);
         Object sampleId=null;
                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);                            
         Object[] messageDynamicData = new Object[]{sampleId}; 
-                    //break;                               
         JSONObject dataSampleJSONMsg=new JSONObject();
-
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dataSample[0].toString())){  
-        }else{
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(dataSample[0].toString()))){  
             dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, messageDynamicData, rObj.getRelatedObject());
         }
         rObj.killInstance();
