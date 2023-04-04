@@ -100,7 +100,7 @@ public class SampleAPIfrontend extends HttpServlet {
                 Rdbms.closeRdbms();
                 JSONArray jArray = new JSONArray();
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(datas[0][0].toString())){  
-                    LPFrontEnd.responseError(LPArray.array2dTo1d(datas), language, null);
+                    LPFrontEnd.responseError(LPArray.array2dTo1d(datas));
                     return;
                 }else{                   
                    jArray.addAll(Arrays.asList(LPArray.array2dTo1d(datas)));    
@@ -388,7 +388,7 @@ public class SampleAPIfrontend extends HttpServlet {
                             new String[]{"code is not null"},new Object[]{true}, fieldToRetrieveArr, sortFieldsNameArr);
                     Rdbms.closeRdbms();
                     if (myData.contains(LPPlatform.LAB_FALSE)){  
-                        LPFrontEnd.responseError(new String[] {myData}, language, null);
+                        LPFrontEnd.responseError(new String[] {myData});
                     }else{
                         LPFrontEnd.servletReturnSuccess(request, response, myData);
                     }
@@ -422,7 +422,7 @@ public class SampleAPIfrontend extends HttpServlet {
                             new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName()},new Object[]{sampleId}, sampleAnalysisFieldToRetrieveArr, sortFieldsNameArr);
                     Rdbms.closeRdbms();
                     if (myData.contains(LPPlatform.LAB_FALSE)){  
-                        LPFrontEnd.responseError(new String[] {myData}, language, null);
+                        LPFrontEnd.responseError(new String[] {myData});
                     }else{
                         LPFrontEnd.servletReturnSuccess(request, response, myData);
                     }
