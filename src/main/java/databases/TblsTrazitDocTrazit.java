@@ -17,11 +17,11 @@ public class TblsTrazitDocTrazit {
         ENDPOINTS_DECLARATION(null, "endpoints_declaration", SCHEMA_NAME, true, EndpointsDeclaration.values(), EndpointsDeclaration.ID.getName(),
             new String[]{EndpointsDeclaration.ID.getName()}, null, "EndpointsDeclaration"),
         BUSINESS_RULES_DECLARATION(null, "business_rules_declaration", SCHEMA_NAME, true, BusinessRulesDeclaration.values(), BusinessRulesDeclaration.ID.getName(),
-            new String[]{EndpointsDeclaration.ID.getName()}, null, "EndpointsDeclaration"),
+            new String[]{EndpointsDeclaration.ID.getName()}, null, "business_rules_declaration"),
         MESSAGE_CODES_DECLARATION(null, "message_codes_declaration", SCHEMA_NAME, true, MessageCodeDeclaration.values(), MessageCodeDeclaration.ID.getName(),
-            new String[]{EndpointsDeclaration.ID.getName()}, null, "EndpointsDeclaration"),
+            new String[]{EndpointsDeclaration.ID.getName()}, null, "message_codes_declaration"),
         AUDIT_EVENTS_DECLARATION(null, "audit_events_declaration", SCHEMA_NAME, true, AuditEventsDeclaration.values(), AuditEventsDeclaration.ID.getName(),
-            new String[]{EndpointsDeclaration.ID.getName()}, null, "EndpointsDeclaration"),
+            new String[]{EndpointsDeclaration.ID.getName()}, null, "audit_events_declaration"),
         ;
         private TablesTrazitDocTrazit(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){
@@ -61,7 +61,9 @@ public class TblsTrazitDocTrazit {
         API_VERSION("api_version", LPDatabase.integer(), null, null, null, null),
         API_URL("api_url", LPDatabase.string(), null, null, null, null),
         ENDPOINT_NAME("endpoint_name", LPDatabase.stringNotNull(), null, null, null, null),
-        ENDPOINT_VERSION("endpoint_version", LPDatabase.integer(), null, null, null, null),
+        ENDPOINT_VERSION("endpoint_version", LPDatabase.integer(), null, null, null, null),        
+        DEV_NOTES("dev_notes", LPDatabase.string(), null, null, null, null),
+        DEV_NOTES_TAGS("dev_notes_tags", LPDatabase.string(), null, null, null, null),
         ARGUMENTS("arguments", LPDatabase.stringNotNull(), null, null, null, null),
         ARGUMENTS_ARRAY("arguments_array", LPDatabase.string(), null, null, null, null),
         NUM_ARGUMENTS("num_arguments", LPDatabase.integer(), null, null, null, null),
@@ -78,7 +80,7 @@ public class TblsTrazitDocTrazit {
         DOC_CHAPTER_ID_ES("doc_chapter_id_es", LPDatabase.string(), null, null, null, null),
         NUM_ENDPOINTS_IN_API("num_endpoints_in_api", LPDatabase.integer(), null, null, null, null),
         SUCCESS_MESSAGE_CODE("success_message_code", LPDatabase.string(), null, null, null, null),
-        
+        DISABLED("disabled", LPDatabase.booleanFld(false), null, null, null, null),
         ;
         private EndpointsDeclaration(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
