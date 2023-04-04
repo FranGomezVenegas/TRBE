@@ -117,7 +117,7 @@ public class HolidayCalendarAPIqueries extends HttpServlet {
         }catch(Exception e){   
             procReqInstance.killIt();
             String[] errObject = new String[]{e.getMessage()};
-            LPFrontEnd.responseError(errObject, language, null);
+            LPFrontEnd.responseError(errObject);
         } finally {
             // release database resources
             try {           
