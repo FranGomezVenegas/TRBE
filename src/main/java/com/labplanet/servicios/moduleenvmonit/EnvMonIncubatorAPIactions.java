@@ -199,7 +199,7 @@ public class EnvMonIncubatorAPIactions extends HttpServlet {
         } catch (Exception e) {
             procReqInstance.killIt();
             errObject = new String[]{e.getMessage()};
-            Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
+            Object[] errMsg = LPFrontEnd.responseError(errObject);
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, errMsg);
         } finally {
             // release database resources

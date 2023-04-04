@@ -79,7 +79,7 @@ public class InstrumentsAPIactions extends HttpServlet {
             procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, ApiErrorTraping.EXCEPTION_RAISED, new Object[]{e.getMessage()});   
             String[] errObject = new String[]{e.getMessage()};
-            LPFrontEnd.responseError(errObject, language, null);
+            LPFrontEnd.responseError(errObject);
         } finally {
             // release database resources
             try {           
