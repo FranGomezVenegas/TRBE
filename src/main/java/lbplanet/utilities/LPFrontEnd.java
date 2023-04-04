@@ -33,8 +33,6 @@ import trazit.session.ProcedureRequestSession;
  * @author Administrator
  */
 public class LPFrontEnd {
-//    public static final String ERROR_TRAPPING_TABLE_NO_RECORDS="tableWithNoRecords";
-
     public enum ResponseTags{
         DIAGNOSTIC("diagnostic"), CATEGORY("category"), MESSAGE_CODE("messageCode"), MESSAGE("message"), RELATED_OBJECTS("related_objects"), IS_ERROR("is_error");
         private ResponseTags(String labelName){
@@ -96,7 +94,7 @@ public class LPFrontEnd {
      * @param dbUserPassword
      * @return
      */
-    public static final Boolean servletUserToVerify(HttpServletRequest request, HttpServletResponse response, String dbUserName, String dbUserPassword){    
+    public static final Boolean servletUserToVerify(HttpServletRequest request, String dbUserName, String dbUserPassword){    
         String userToVerify = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK); 
             if (userToVerify==null) userToVerify=LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK)).toString();
         String passwordToVerify = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK);    
@@ -111,7 +109,7 @@ public class LPFrontEnd {
      * @param eSign
      * @return
      */
-    public static final Boolean servletEsignToVerify(HttpServletRequest request, HttpServletResponse response, String eSign){    
+    public static final Boolean servletEsignToVerify(HttpServletRequest request, String eSign){    
         String eSignToVerify = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK);      
             if (eSignToVerify==null) eSignToVerify=LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK)).toString();
         return eSignToVerify.equalsIgnoreCase(eSign);
@@ -126,7 +124,6 @@ public class LPFrontEnd {
     private static JSONObject responseJSONError(String errorPropertyName, Object[] errorPropertyValue, String className){
         JSONObject errJsObj = new JSONObject();
         errJsObj.put(ResponseTags.MESSAGE.getLabelName(), errorPropertyName);
-        //String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_ERRORTRAPING, null, errorPropertyName+"_detail", null);
         String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_ERRORTRAPING, null, errorPropertyName, null, true, className);
         if (errorTextEn==null || errorTextEn.length()==0)
             errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, "api-platform", null, errorPropertyName, "en", true, null);
@@ -136,7 +133,6 @@ public class LPFrontEnd {
             }        
         }
         errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", errorTextEn);
-//        String errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_ERRORTRAPING, null, errorPropertyName+"_detail", "es");
         String errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_ERRORTRAPING, null, errorPropertyName, "es", false, className);
         if (errorTextEs==null || errorTextEs.length()==0)
             errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, "api-platform", null, errorPropertyName, "es", false , null);
@@ -154,11 +150,9 @@ public class LPFrontEnd {
     /**
      * En mucho uso
      * @param errorStructure
-     * @param language
-     * @param procInstanceName
      * @return
      */
-    public static Object[] responseError(Object[] errorStructure, String language, String procInstanceName){
+    public static Object[] responseError(Object[] errorStructure){
         Object[] responseObj = new Object[0];
         responseObj = LPArray.addValueToArray1D(responseObj, HttpServletResponse.SC_NON_AUTHORITATIVE_INFORMATION);
         if (errorStructure.length>0){
@@ -182,7 +176,6 @@ public class LPFrontEnd {
   
     
     private static void servetInvokeResponseErrorServlet(HttpServletRequest request, HttpServletResponse response){
-        //Rdbms.closeRdbms();      
         RequestDispatcher rd = request.getRequestDispatcher(GlobalVariables.ServletsResponse.ERROR.getServletName());
         try {   
             rd.forward(request,response);
@@ -191,8 +184,6 @@ public class LPFrontEnd {
         }
     }
     private static void servetInvokeResponseSuccessServlet(HttpServletRequest request, HttpServletResponse response){
-        //Rdbms.closeRdbms();      
-        
         RequestDispatcher rd = request.getRequestDispatcher(GlobalVariables.ServletsResponse.SUCCESS.getServletName());
         try {           
             rd.forward(request,response);
