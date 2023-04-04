@@ -91,7 +91,7 @@ public class TstDataEnvMonit extends HttpServlet {
             errObject = LPArray.addValueToArray1D(errObject, TAG_NAME_ERROR_STATUS_CODE+": "+HttpServletResponse.SC_BAD_REQUEST);
 
                 errObject = LPArray.addValueToArray1D(errObject, "API Error Message: The token is not valid");                    
-                LPFrontEnd.responseError(errObject, language, areMandatoryParamsInResponse[1].toString());
+                LPFrontEnd.responseError(errObject);
                 return ;                            
         }
         mandatoryParams = null;                        
@@ -113,16 +113,16 @@ public class TstDataEnvMonit extends HttpServlet {
             errObject = LPArray.addValueToArray1D(errObject, TAG_NAME_ERROR_STATUS_CODE+": "+HttpServletResponse.SC_BAD_REQUEST);
 
             errObject = LPArray.addValueToArray1D(errObject, "API Error Message: db User Name and Password not correct, connection to the database is not possible");                    
-            LPFrontEnd.responseError(errObject, language, "");
+            LPFrontEnd.responseError(errObject);
             Rdbms.closeRdbms(); 
             return ;               
         }        
         try (PrintWriter out = response.getWriter()) {
         if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresUserConfirmation[0].toString())) &&     
-             (!LPFrontEnd.servletUserToVerify(request, response, token.getUserName(), token.getUsrPw())) ){return;}
+             (!LPFrontEnd.servletUserToVerify(request, token.getUserName(), token.getUsrPw())) ){return;}
 
         if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresEsignConfirmation[0].toString())) &&    
-             (!LPFrontEnd.servletEsignToVerify(request, response, token.geteSign())) ){return;}
+             (!LPFrontEnd.servletEsignToVerify(request, token.geteSign())) ){return;}
         if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return;}     
             
             DataProgramSampleAnalysis dsProgramAna = new DataProgramSampleAnalysis();
@@ -161,16 +161,15 @@ public class TstDataEnvMonit extends HttpServlet {
                     }
                     break;
                 default:      
-                    //errObject = frontEnd.APIHandler.actionNotRecognized(errObject, actionName, response);
             errObject = LPArray.addValueToArray1D(errObject, TAG_NAME_ERROR_STATUS_CODE+": "+HttpServletResponse.SC_BAD_REQUEST);
 
                     errObject = LPArray.addValueToArray1D(errObject, "API Error Message: actionName "+actionName+ " not recognized as an action by this API");                                                            
-                    LPFrontEnd.responseError(errObject, language, procInstanceName);
+                    LPFrontEnd.responseError(errObject);
                     Rdbms.closeRdbms();
                     return;                    
             }    
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dataSample[0].toString())){  
-                LPFrontEnd.responseError(dataSample, language, procInstanceName);
+                LPFrontEnd.responseError(dataSample);
             }else{
                 Response.ok().build();
                 response.getWriter().write(Arrays.toString(dataSample));      
@@ -178,7 +177,7 @@ public class TstDataEnvMonit extends HttpServlet {
             Rdbms.closeRdbms();
         }catch(Exception e){   
             errObject = new String[]{e.getMessage()};
-            LPFrontEnd.responseError(errObject, language, null);
+            LPFrontEnd.responseError(errObject);
             String exceptionMessage = e.getMessage();     
             LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null, null);                    
         } finally {

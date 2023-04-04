@@ -342,7 +342,7 @@ public class TstDataSample extends HttpServlet {
                                         newAnalyst=LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);
                                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                                         new Object[]{"testId, userName, newAnalyst", testId.toString()+", "+userName+", "+newAnalyst}));                              
-                                    dataSample = DataSampleAnalysis.sampleAnalysisAssignAnalyst(testId, newAnalyst, smp);
+                                    dataSample = DataSampleAnalysis.sampleAnalysisAssignAnalyst(testId, newAnalyst);
                                     break;   
                                 case GETSAMPLEINFO:                            
                                     String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());                     
