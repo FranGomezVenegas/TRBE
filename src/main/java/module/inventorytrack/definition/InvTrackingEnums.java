@@ -466,8 +466,8 @@ public class InvTrackingEnums {
         PROCEDURE_NOT_DECLARED_IN_AUTHORIZED_FOR_CONSUME_EXTERNALLY("InventoryLotProcedureNotDeclaredAsReferenceConsumableExternally", "", ""),
         REFERENCE_LOT_OR_USE_OPEN_REFERENCE_LOT_SHOULDBESPECIFIED("InventoryLotReferenceLotNameOrUseOpenReferenceLotShouldBeSpecified", "", ""),
         MORE_THAN_ONE_OPEN_REFERENCE_LOT("InventoryLotMoreThanOneOpenReferenceLots", "", ""),
-        VOLUME_IS_ALREADY_THIS("InventoryLotVolumeIsAlreadyThis", "", "");
-
+        VOLUME_IS_ALREADY_THIS("InventoryLotVolumeIsAlreadyThis", "", "")        
+        ;
         private InventoryTrackingErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs) {
             this.errorCode = errCode;
             this.defaultTextWhenNotInPropertiesFileEn = defaultTextEn;
