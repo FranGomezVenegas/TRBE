@@ -110,9 +110,25 @@ public class ClassReqProcedureQueries {
             return jObj;
         }
     }
-
-    static JSONArray dbRowsToJsonArr(String procInstanceName, String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue, String[] sortFlds, String[] jsonFlds){
+    static JSONArray dbSingleRowToJsonFldNameAndValueArr(String procInstanceName, String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue){
         Object[][] procTblRows = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), tblName, 
+            whereFldName, whereFldValue, fldsToGet);        
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procTblRows[0][0].toString())){
+            JSONObject jObj= new JSONObject();
+            jObj.put("No Data", "No Data");
+            JSONArray jArr= new JSONArray();
+            jArr.add(jObj);
+            return jArr;
+        }else{       
+            JSONArray jArr= new JSONArray();
+            jArr=LPJson.convertArrayRowToJSONFieldNameAndValueObject(fldsToGet, procTblRows[0], null);                    
+            return jArr;
+        }
+    }
+    
+    
+    static JSONArray dbRowsToJsonArr(String procInstanceName, String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue, String[] sortFlds, String[] jsonFlds){
+        Object[][] procTblRows = Rdbms.getRecordFieldsByFilter(procInstanceName, tblName, 
             whereFldName, whereFldValue, fldsToGet, sortFlds);
         JSONArray jBlockArr = new JSONArray(); 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procTblRows[0][0].toString())){

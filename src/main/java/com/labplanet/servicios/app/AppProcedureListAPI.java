@@ -123,7 +123,7 @@ public class AppProcedureListAPI extends HttpServlet {
             
             JSONArray procedures = new JSONArray();     
             for (Object curProc: allUserProcedurePrefix){
-                if (!"proc_management".equalsIgnoreCase(curProc.toString())){
+                if (Boolean.FALSE.equals(GlobalVariables.PROC_MANAGEMENT_SPECIAL_ROLE.equalsIgnoreCase(curProc.toString()))){
                     JSONObject procedure = new JSONObject();
                     String schemaNameProcedure=LPPlatform.buildSchemaName(curProc.toString(), GlobalVariables.Schemas.PROCEDURE.getName());
 
@@ -189,6 +189,20 @@ public class AppProcedureListAPI extends HttpServlet {
         }catch(JsonSyntaxException e){
             JsonObject jArr = new JsonObject();   
             return jArr;            
+        }
+    }
+    public static com.google.gson.JsonArray procModelArray(String procInstanceName, Integer sizeValue){
+        try{            
+            Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_FE_MODEL.getTableName(), 
+                new String[]{TblsReqs.ProcedureFEModel.PROCEDURE_NAME.getName(), SqlStatement.WHERECLAUSE_TYPES.OR.getSqlClause()+" "+TblsReqs.ProcedureFEModel.PROC_INSTANCE_NAME.getName()},
+                new Object[]{procInstanceName, procInstanceName}, 
+                new String[]{TblsReqs.ProcedureFEModel.MODEL_JSON.getName(), TblsReqs.ProcedureFEModel.MODEL_JSON_MOBILE.getName()});            
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString()))return null;            
+            if (sizeValue<=SIZE_WHEN_CONSIDERED_MOBILE && ruleValue[0][1]!=null && ruleValue[0][1].toString().length()>0)
+                return JsonParser.parseString(ruleValue[0][1].toString()).getAsJsonArray();
+            return JsonParser.parseString(ruleValue[0][0].toString()).getAsJsonArray();
+        }catch(JsonSyntaxException e){
+            return null;
         }
     }
 
