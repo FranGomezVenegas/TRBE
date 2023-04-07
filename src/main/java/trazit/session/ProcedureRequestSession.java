@@ -463,21 +463,17 @@ public class ProcedureRequestSession {
 
     public static ProcedureRequestSession getInstanceForActions(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting) {
         ProcedureRequestSession instanceForActions = getInstanceForActions(req, resp, null, isTesting, false);
-//        //SchedProcedures.schedProcesses(instanceForActions.getToken(), instanceForActions.getProcedureInstance());
         return instanceForActions;
     }
 
     public static ProcedureRequestSession getInstanceForActionsWithEndpoint(HttpServletRequest req, HttpServletResponse resp, EnumIntEndpoints endPoint, Boolean isTesting) {
         ProcedureRequestSession instanceForActions = getInstanceForActions(req, resp, endPoint, isTesting, false);
-//        //SchedProcedures.schedProcesses(instanceForActions.getToken(), instanceForActions.getProcedureInstance());
         return instanceForActions;
-
     }
 
     public static ProcedureRequestSession getInstanceForActions(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting, Boolean isPlatform) {
         if (theSession == null || theSession.getTokenString() == null) {
             theSession = new ProcedureRequestSession(req, resp, null, isTesting, false, false, null, isPlatform, false);
-//            SchedProcedures.schedProcesses(theSession.getToken(), theSession.getProcedureInstance());
         }
         return theSession;
     }
@@ -506,39 +502,18 @@ public class ProcedureRequestSession {
     }
 
     public static Object[] isTheProcActionEnabled(Token tokn, String procInstanceName, String actionNm, BusinessRules procBusinessRules) {
-        Boolean passCheckers = true;
-//        String actionNm = req.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-//        String procInstanceName = req.getParameter(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME);            
-//        String finalToken = req.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
-//        Token tokn = null;
-//        if (finalToken!=null){
-//            tokn = new Token(finalToken);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(tokn.getUserName())) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.INVALID_TOKEN, null);
         }
-        /*            {
-                    LPFrontEnd.servletReturnResponseError(req, resp, 
-                            LPPlatform.ApiErrorTraping.INVALID_TOKEN.getErrorCode(), null, LPFrontEnd.setLanguage(req));              
-                    return null;                             
-            }*/
-//        }
 
         Object[] actionEnabled = LPPlatform.procActionEnabled(procInstanceName, tokn, actionNm, procBusinessRules);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) {
             return actionEnabled;
         }
-        /*        {
-            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(req, resp, actionEnabled);
-            return null;                             
-        }            */
         actionEnabled = LPPlatform.procUserRoleActionEnabled(procInstanceName, tokn.getUserRole(), actionNm, procBusinessRules);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) {
             return actionEnabled;
         }
-        /*        {            
-            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(req, null, actionEnabled);
-            return null;                             
-        }                        */
 
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_FINE, null);
     }
@@ -568,6 +543,9 @@ public class ProcedureRequestSession {
     public void setMainToken() {
         this.token = new Token(this.tokenStr);
         this.previousToken = new Token(this.tokenStr);
+    }
+    public void setProcInstanceName(String newProcInstanceName) {
+        this.procedureInstance = newProcInstanceName;
     }
 
     public void setNewProcedureHashCode(String newHashCode) {
