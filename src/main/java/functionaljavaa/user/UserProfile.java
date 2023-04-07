@@ -95,7 +95,7 @@ public class UserProfile {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "personNameIsEmpty", new Object[]{});
         }               
         for (Object procInstanceName1 : procInstanceName) {
-            if ("proc_management".equalsIgnoreCase(procInstanceName1.toString())){
+            if (Boolean.TRUE.equals(GlobalVariables.PROC_MANAGEMENT_SPECIAL_ROLE.equalsIgnoreCase(procInstanceName1.toString()))){
                 totalProcUserProfiles = LPArray.addValueToArray1D(totalProcUserProfiles, procInstanceName1.toString());
             }else{
                 String currProcPrefix = procInstanceName1.toString();
