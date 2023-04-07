@@ -38,6 +38,38 @@ public class LPJson {
         return convertArrayRowToJSONObject(header, row, null);
     }
 
+    public static JSONArray convertArrayRowToJSONFieldNameAndValueObject(String[] header, Object[] row, String[] fieldsToExclude) {
+        JSONArray jArr = new JSONArray();
+        if (header.length == 0) {
+            return jArr;
+        }
+        for (int iField = 0; iField < header.length; iField++) {
+            JSONObject jObj = new JSONObject();
+            if (row[iField] == null) {
+                jObj.put("field_name", header[iField]);
+                jObj.put("field_value", "");
+            } else {
+                if (fieldsToExclude == null || !LPArray.valueInArray(fieldsToExclude, header[iField])) {
+                    String clase = row[iField].getClass().toString();
+                    if ((clase.toUpperCase().equalsIgnoreCase("class java.sql.Date"))
+                            || (clase.toUpperCase().equalsIgnoreCase("class java.time.LocalDateTime"))
+                            || (clase.toUpperCase().equalsIgnoreCase("class java.time.LocalDate"))
+                            || (clase.toUpperCase().equalsIgnoreCase("class java.sql.Timestamp"))) {
+                        jObj.put(setAlias(header[iField]), row[iField].toString());
+                    } else {
+                        if (row[iField].toString().toUpperCase().contains("NULL")) {
+                            row[iField] = "null";
+                        }
+                        jObj.put("field_name", setAlias(header[iField]));
+                        jObj.put("field_value", row[iField]);
+                    }
+                }
+            }
+            jArr.add(jObj);
+        }
+        return jArr;
+    }
+
     public static JSONObject convertArrayRowToJSONObject(String[] header, Object[] row, String[] fieldsToExclude) {
         JSONObject jObj = new JSONObject();
         if (header.length == 0) {
