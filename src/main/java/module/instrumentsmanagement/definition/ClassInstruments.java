@@ -69,7 +69,7 @@ public class ClassInstruments {
         }        
         DataInstruments instr=null;
         String instrName=argValues[0].toString();
-        if (!"NEW_INSTRUMENT".equalsIgnoreCase(endPoint.getName())){
+        if (Boolean.FALSE.equals("NEW_INSTRUMENT".equalsIgnoreCase(endPoint.getName()))){
             instr=new DataInstruments(instrName);
             if (instr.getHasError()){
                 this.actionDiagnosesObj=instr.getErrorDetail();
@@ -77,6 +77,19 @@ public class ClassInstruments {
                 this.relatedObj=rObj;
                 rObj.killInstance();
                 return;
+            }
+            String[] responsiblesArr=new String[]{};
+            if (instr.getResponsible()!=null)
+                responsiblesArr=LPArray.addValueToArray1D(responsiblesArr, instr.getResponsible());
+            if (instr.getResponsibleBackup()!=null)
+                responsiblesArr=LPArray.addValueToArray1D(responsiblesArr, instr.getResponsibleBackup());                    
+            if (responsiblesArr.length>0&&Boolean.FALSE.equals(LPArray.valueInArray(responsiblesArr, procReqSession.getToken().getPersonName()))){
+                this.actionDiagnosesObj=instr.getErrorDetail();
+                this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ONLY_RESPONSIBLE_OR_BACKUP, new Object[]{});
+                this.actionDiagnosesObj=new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ONLY_RESPONSIBLE_OR_BACKUP, new Object[]{});
+                this.relatedObj=rObj;
+                rObj.killInstance();
+                return;                
             }
         }
         this.functionFound=true;
