@@ -191,7 +191,7 @@ public final class Token {
         String procHashCodes="";  
         String procModulesArr="";
         for (Object curProcPrefix: allUserProcedurePrefix){            
-            if (!"proc_management".equalsIgnoreCase(curProcPrefix.toString())){
+            if (Boolean.FALSE.equals(GlobalVariables.PROC_MANAGEMENT_SPECIAL_ROLE.equalsIgnoreCase(curProcPrefix.toString()))){
                 if (procHashCodes.length()>0)procHashCodes=procHashCodes+"|";
                 Object[][] procInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(curProcPrefix.toString(), GlobalVariables.Schemas.PROCEDURE.getName()), 
                     TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), 
