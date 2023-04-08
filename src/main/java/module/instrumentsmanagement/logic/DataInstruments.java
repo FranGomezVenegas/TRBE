@@ -548,7 +548,7 @@ public class DataInstruments {
             fldNames=LPArray.addValueToArray1D(fldNames, TblsInstrumentsData.Instruments.NEXT_PM.getName());
             fldValues=LPArray.addValueToArray1D(fldValues, nextEventDate);
         }
-        if (!this.onLine  && Boolean.TRUE.equals(decisionAndFamilyRuleToTurnOn(decision, TblsInstrumentsConfig.InstrumentsFamily.PM_TURN_ON_WHEN_COMPLETED.getName())) ){
+        if (Boolean.FALSE.equals(this.onLine)  && Boolean.TRUE.equals(decisionAndFamilyRuleToTurnOn(decision, TblsInstrumentsConfig.InstrumentsFamily.PM_TURN_ON_WHEN_COMPLETED.getName())) ){
             turnOnLine(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_PREVENTIVE_MAINTENANCE.toString());
         }else{
             updateInstrument(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_PREVENTIVE_MAINTENANCE.toString(), InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_PREVENTIVE_MAINTENANCE);            

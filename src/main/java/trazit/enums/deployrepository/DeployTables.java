@@ -53,13 +53,12 @@ public static String createTableScript(EnumIntTables tableObj, String procInstan
             if (valuePosicInArray>-1){
                 Object[][] fldValues = dbTableGetFieldDefinition.get(fldName);
                 Object[] tbldFldsArrObj = LPArray.getColumnFromArray2D(fldValues, valuePosicInArray);
-                String[] tbldFldsArr = LPArray.convertObjectArrayToStringArray(tbldFldsArrObj);    
                 Boolean fieldToAdd=false;
                 for (EnumIntTableFields curFld: tableObj.getTableFields()){
                     if (Boolean.FALSE.equals(LPArray.valueInArray(tbldFldsArrObj, curFld.getName()))){
                         if (seqScript.length()>0)seqScript=seqScript.append(", ");
                         StringBuilder currFieldDefBuilder = new StringBuilder(curFld.getFieldType());
-                        seqScript=seqScript.append(" add column "+curFld.getName()+" "+currFieldDefBuilder);
+                        seqScript=seqScript.append(" add column ").append(curFld.getName()).append(" ").append(currFieldDefBuilder);
                         fieldToAdd=true;
                     }
                 }
