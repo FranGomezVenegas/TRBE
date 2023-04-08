@@ -84,7 +84,7 @@ public class TestingRegressionUAT extends HttpServlet {
         Integer scriptId = Integer.valueOf(scriptIdStr);
         String procInstanceName = request.getParameter("procInstanceName");
         String isProcManagementStr = LPNulls.replaceNull(request.getParameter("procManagement"));
-        Boolean isProcManagement = Boolean.TRUE.equals(Boolean.valueOf(LPNulls.replaceNull(isProcManagementStr).toString()));
+        Boolean isProcManagement = Boolean.TRUE.equals(Boolean.valueOf(LPNulls.replaceNull(isProcManagementStr)));
         if (Boolean.TRUE.equals(isProcManagement)) {
             request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME, procInstanceName);
         }

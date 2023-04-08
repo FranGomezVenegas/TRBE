@@ -431,22 +431,18 @@ public class LPTestingOutFormat {
         return response;
     }
 
-    /**
-     *
-     * @return
-     */
-    public static String HTML_START="<html>";
-    public static String HTML_END= "</html>";
-    public static String BODY_START="<body>";
-    public static String BODY_END="</body>";
+    public static final String HTML_START="<html>";
+    public static final String HTML_END= "</html>";
+    public static final String BODY_START="<body>";
+    public static final String BODY_END="</body>";
     public static String tableStart(String cssClassName){        return "<table class=\""+ cssClassName+"\">";    }
-    public static String TABLE_END="</table>";    
-    public static String HEADER_START="<th>";
-    public static String HEADER_END="</th>";
-    public static String ROW_START="<tr>";
-    public static String ROW_END="</tr>";
-    public static String FIELD_START="<td>";
-    public static String FIELD_END="</td>";
+    public static final String TABLE_END="</table>";    
+    public static final String HEADER_START="<th>";
+    public static final String HEADER_END="</th>";
+    public static final String ROW_START="<tr>";
+    public static final String ROW_END="</tr>";
+    public static final String FIELD_START="<td>";
+    public static final String FIELD_END="</td>";
 
     /**
      *
@@ -495,7 +491,6 @@ public class LPTestingOutFormat {
         String[] newFields = new String[]{"Test #"};
         newFields=LPArray.addValueToArray1D(newFields, fields);
         newFields = LPArray.addValueToArray1D(newFields, "Time(s)");
-//        newFields=LPArray.addValueToArray1D(newFields, LPNulls.replaceNull(timeConsume).toString());
         if (numEvaluationArguments>0){
             newFields=LPArray.addValueToArray1D(newFields, "Syntaxis");
             if (numEvaluationArguments>1) newFields=LPArray.addValueToArray1D(newFields, "Code");
