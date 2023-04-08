@@ -123,7 +123,7 @@ public class UserAndRolesViews {
         String userIsCaseSensitive = prop.getString(UserAndRolesErrorTrapping.BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT.getErrorCode());
         if (Boolean.FALSE.equals(Boolean.valueOf(userIsCaseSensitive))) user=user.toLowerCase();
 	SqlWhere sqlWhere = new SqlWhere();
-        if (isEnctrypted){
+        if (Boolean.TRUE.equals(isEnctrypted)){
             Object[] encryptValue=DbEncryption.encryptValue(newValue);        
             newValue=encryptValue[encryptValue.length-1].toString();
         }
