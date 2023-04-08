@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.labplanet.servicios.proceduredefinition;
 
 import com.google.gson.JsonArray;
@@ -172,44 +167,18 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                     JSONObject jObj = new JSONObject();
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptsTblInfo[0][0].toString())) {
                         jObj.put("status", "Not found ANY script");
-                        //return;
                     } else {
                         JSONArray scriptsList = new JSONArray();
                         Integer scriptIdPosic = LPArray.valuePosicInArray(fieldsToRetrieveScripts, TblsTesting.Script.SCRIPT_ID.getName());
                         for (Object[] curTest : scriptsTblInfo) {
                             JSONObject curTestObj = getScriptWithSteps(Integer.valueOf(curTest[scriptIdPosic].toString()), procInstanceName, fieldsToRetrieveScripts, curTest);
-                            /*                        JSONObject curTestObj= LPJson.convertArrayRowToJSONObject(fieldsToRetrieveScripts, curTest);
-                        Integer scriptIdPosic=LPArray.valuePosicInArray(fieldsToRetrieveScripts, TblsTesting.Script.SCRIPT_ID.getName());
-                        if (scriptIdPosic>-1){
-                            Object[][] scriptStepsTblInfo = Rdbms.getRecordFieldsByFilter(repositoryName, TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(), 
-                                new String[]{TblsTesting.ScriptSteps.SCRIPT_ID.getName()}, 
-                                new Object[]{Integer.valueOf(curTest[scriptIdPosic].toString())},
-                                fieldsToRetrieveScriptSteps,
-                                new String[]{TblsTesting.ScriptSteps.STEP_ID.getName()});
-                            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptStepsTblInfo[0][0].toString())){                    
-                                JSONArray scriptStepsList = new JSONArray();
-                                for (Object[] curStep: scriptStepsTblInfo){
-                                    JSONObject curStepObj= LPJson.convertArrayRowToJSONObject(fieldsToRetrieveScriptSteps, curStep);
-                                    Integer actionPosic=LPArray.valuePosicInArray(fieldsToRetrieveScriptSteps, TblsTesting.ScriptSteps.ARGUMENT_01.getName());
-                                    if (actionPosic>-1)
-                                        actionsList=LPArray.addValueToArray1D(actionsList, LPNulls.replaceNull(curStep[actionPosic]).toString());
-                                    scriptStepsList.add(curStepObj);
-                                }
-                                curTestObj.put("steps", scriptStepsList);
-                            }
-                        }
-                             */
                             scriptsList.add(curTestObj);
                         }
-                        //actionsList=LPArray.getUniquesArray(actionsList);
-
                         jMainObj.put("scripts_list", scriptsList);
                     }
                     if (!jObj.isEmpty()) {
                         jMainObj.put("proc_testing_script_summary", jObj);
                     }
-//                if (jMainObj.isEmpty())
-//                    jMainObj.put("proc_testing_script_summary", "");
                     LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
                     return;
 
@@ -228,7 +197,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                             jArr.add(LPJson.convertArrayRowToJSONObject(LPArray.convertObjectArrayToStringArray((Object[]) mismatchTables[0]), (Object[]) mismatchTables[i]));
                         }
                         JSONArray jTblColsArr = new JSONArray();
-                        for (Object curCol : (Object[]) mismatchTables[0]) {
+                        for (Object curCol : mismatchTables[0]) {
                             jTblColsArr.add(curCol.toString());
                         }
                         jObj = new JSONObject();
@@ -342,11 +311,6 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         
         fieldsArr= ClassReqProcedureQueries.dbSingleRowToJsonFldNameAndValueArr(procInstanceName, TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName(),
                 getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableFields()), new String[]{TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procInstanceName});
-/*
-        JSONObject fldObj=new JSONObject();
-        fldObj.put("field_name", "description");
-        fldObj.put("field_value", "procInstanceName");
-        fieldsArr.add(fldObj);*/
         mainObj.put("fields", fieldsArr);
         JSONArray summaryArr=new JSONArray();
         JSONObject summaryObj=new JSONObject();
