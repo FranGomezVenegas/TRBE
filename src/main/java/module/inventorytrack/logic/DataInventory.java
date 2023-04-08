@@ -16,6 +16,7 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
+import lbplanet.utilities.TrazitUtiilitiesEnums;
 import module.inventorytrack.definition.TblsInvTrackingConfig;
 import module.inventorytrack.definition.TblsInvTrackingData;
 import module.inventorytrack.definition.TblsInvTrackingData.TablesInvTrackingData;
@@ -104,7 +105,7 @@ public class DataInventory {
             invLotInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(),
                     new String[]{TblsInvTrackingData.Lot.STATUS.getName(), TblsInvTrackingData.Lot.REFERENCE.getName(), TblsInvTrackingData.Lot.CATEGORY.getName()},
                     new Object[]{InvLotStatuses.AVAILABLE_FOR_USE.toString(), reference, category}, getAllFieldNames(TblsInvTrackingData.TablesInvTrackingData.LOT.getTableFields()));
-            if (Boolean.TRUE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(invLotInfo[0][0].toString()))&&invLotInfo.length > 1) {
+            if (Boolean.TRUE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(invLotInfo[0][0].toString())) && invLotInfo.length > 1) {
                 this.hasError = true;
                 this.errorDetail = new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.MORE_THAN_ONE_OPEN_REFERENCE_LOT, new Object[]{lotName, TablesInvTrackingData.LOT.getTableName(), LPPlatform.buildSchemaName(externalProcedure, GlobalVariables.Schemas.DATA.getName())}, lotName);
                 invLotInfo[0][0] = LPPlatform.LAB_FALSE;
@@ -207,7 +208,7 @@ public class DataInventory {
             return;
         }
         String refAllowProcConsume = LPNulls.replaceNull(this.referenceFieldValues[LPArray.valuePosicInArray(referenceFieldNames, TblsInvTrackingConfig.Reference.ALLOW_PROC_DISCOUNTS.getName())]).toString();
-        if (Boolean.FALSE.equals(Boolean.valueOf(refAllowProcConsume))){
+        if (Boolean.FALSE.equals(Boolean.valueOf(refAllowProcConsume))) {
             this.hasError = true;
             this.errorDetail = new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.REFERENCE_NOT_ALLOWED_TO_CONSUME_EXTERNALLY,
                     new Object[]{this.category, this.reference, externalProcedure});
@@ -215,7 +216,7 @@ public class DataInventory {
         }
         String refAllowedProcs = LPNulls.replaceNull(this.referenceFieldValues[LPArray.valuePosicInArray(referenceFieldNames, TblsInvTrackingConfig.Reference.PROCESSES_LIST.getName())]).toString();
         String[] refAllowedProcsArr = refAllowedProcs.split("\\|");
-        if (Boolean.FALSE.equals(LPArray.valueInArray(refAllowedProcsArr, procReqSession.getProcedureInstance()))){
+        if (Boolean.FALSE.equals(LPArray.valueInArray(refAllowedProcsArr, procReqSession.getProcedureInstance()))) {
             this.hasError = true;
             this.errorDetail = new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.PROCEDURE_NOT_DECLARED_IN_AUTHORIZED_FOR_CONSUME_EXTERNALLY,
                     new Object[]{procReqSession.getProcedureInstance(), this.category, this.reference, externalProcedure});
@@ -250,7 +251,7 @@ public class DataInventory {
             }
             UnitsOfMeasurement uom = new UnitsOfMeasurement(lotVolume, lotVolumeUom);
             uom.convertValue(refUOM);
-            if (Boolean.FALSE.equals(uom.getConvertedFine())){
+            if (Boolean.FALSE.equals(uom.getConvertedFine())) {
                 return new Object[]{new InternalMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.CONVERSION_FAILED, null, null), uom};
             }
             uom.getConvertedQuantity();
@@ -261,6 +262,11 @@ public class DataInventory {
     }
 
     public static InternalMessage createNewInventoryLot(String name, String reference, String category, BigDecimal lotVolume, String lotVolumeUom, String[] fldNames, Object[] fldValues, Integer numEntries, String externalProcedure) {
+        InternalMessage volumeIsPositive = volumeIsPositive(lotVolume);
+        if (LPPlatform.LAB_FALSE.equals(volumeIsPositive.getDiagnostic())) return volumeIsPositive;
+        volumeIsPositive = volumeIsPositive(BigDecimal.valueOf(numEntries));
+        if (LPPlatform.LAB_FALSE.equals(volumeIsPositive.getDiagnostic())) return volumeIsPositive;
+        
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         if (externalProcedure == null) {
             externalProcedure = procReqSession.getProcedureInstance();
@@ -295,7 +301,7 @@ public class DataInventory {
         UnitsOfMeasurement myUom = null;
         if (checkVolumeCoherencyDiagn.length > 1) {
             myUom = (UnitsOfMeasurement) checkVolumeCoherencyDiagn[1];
-            if (Boolean.FALSE.equals(myUom.getConvertedFine())){
+            if (Boolean.FALSE.equals(myUom.getConvertedFine())) {
                 return new InternalMessage(LPPlatform.LAB_FALSE, myUom.getConversionErrorDetail()[0].toString(), new Object[]{name}, null);
             }
         }
@@ -320,7 +326,7 @@ public class DataInventory {
             }
 
             RdbmsObject invLotCreationDiagn = Rdbms.insertRecordInTable(TablesInvTrackingData.LOT, fldNames, fldValues);
-            if (Boolean.FALSE.equals(invLotCreationDiagn.getRunSuccess())){
+            if (Boolean.FALSE.equals(invLotCreationDiagn.getRunSuccess())) {
                 return new InternalMessage(LPPlatform.LAB_FALSE, invLotCreationDiagn.getErrorMessageCode(), new Object[]{newName}, null);
             }
             InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.CREATION, newName, reference, category, TablesInvTrackingData.LOT.getTableName(), newName,
@@ -366,7 +372,7 @@ public class DataInventory {
         RdbmsObject invLotTurnAvailableDiagn = Rdbms.updateTableRecordFieldsByFilter(TablesInvTrackingData.LOT,
                 new EnumIntTableFields[]{TblsInvTrackingData.Lot.STATUS, TblsInvTrackingData.Lot.STATUS_PREVIOUS},
                 fldValues, sqlWhere, null);
-        if (Boolean.FALSE.equals(invLotTurnAvailableDiagn.getRunSuccess())){
+        if (Boolean.FALSE.equals(invLotTurnAvailableDiagn.getRunSuccess())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, invLotTurnAvailableDiagn.getErrorMessageCode(), new Object[]{this.getLotName()}, null);
         }
         InventoryLotAuditAdd(auditEventObj, this.getLotName(), getReference(), getCategory(), TablesInvTrackingData.LOT.getTableName(), this.getLotName(),
@@ -415,7 +421,7 @@ public class DataInventory {
         sqlWhere.addConstraint(TblsInvTrackingData.Lot.LOT_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{getLotName()}, "");
         RdbmsObject instUpdateDiagn = Rdbms.updateTableRecordFieldsByFilter(TablesInvTrackingData.LOT,
                 EnumIntTableFields.getTableFieldsFromString(TablesInvTrackingData.LOT, fldNames), fldValues, sqlWhere, null);
-        if (Boolean.FALSE.equals(instUpdateDiagn.getRunSuccess())){
+        if (Boolean.FALSE.equals(instUpdateDiagn.getRunSuccess())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, instUpdateDiagn.getErrorMessageCode(), instUpdateDiagn.getErrorMessageVariables());
         }
         InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.UPDATE_INVENTORY_LOT, this.getLotName(), getReference(), getCategory(), TablesInvTrackingData.LOT.getTableName(), this.getLotName(),
@@ -467,7 +473,7 @@ public class DataInventory {
     }
 
     public InternalMessage unRetireInventoryLot(String[] fldNames, Object[] fldValues) {
-        if (Boolean.FALSE.equals(InvLotStatuses.RETIRED.toString().equalsIgnoreCase(this.status))){
+        if (Boolean.FALSE.equals(InvLotStatuses.RETIRED.toString().equalsIgnoreCase(this.status))) {
             return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.NOT_RETIRED, new Object[]{getLotName()}, null);
         }
         return updateLotTransaction(this.getStatusPrevious(), InvTrackingEnums.InventoryTrackAPIactionsEndpoints.UNRETIRE_LOT,
@@ -483,7 +489,17 @@ public class DataInventory {
     }
 
     public InternalMessage consumeInvLotVolume(BigDecimal nwVolume, String nwVolumeUom) {
+        InternalMessage volumeIsPositive = volumeIsPositive(nwVolume);
+        if (LPPlatform.LAB_FALSE.equals(volumeIsPositive.getDiagnostic())) return volumeIsPositive;
         return DataInventoryMovements.consumeInventoryLotVolume(this, nwVolume, nwVolumeUom, null);
+    }
+
+    private static InternalMessage volumeIsPositive(BigDecimal nwVolume) {
+        if (BigDecimal.ZERO.compareTo(nwVolume) < 0) {
+            return new InternalMessage(LPPlatform.LAB_TRUE, InventoryTrackingErrorTrapping.REFERENCE_LOT_OR_USE_OPEN_REFERENCE_LOT_SHOULDBESPECIFIED, new Object[]{null}, null);
+        } else {
+            return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.VOLUME_NOT_ZERO_OR_NEGATIVE, new Object[]{nwVolume}, null);
+        }
     }
 
     public static InternalMessage consumeInvLotVolumeExternalProcedure(String lotName, String reference, String category, BigDecimal nwVolume, String nwVolumeUom, String externalProcInstanceName, Boolean useOpenReferenceLot) {
@@ -496,17 +512,21 @@ public class DataInventory {
         } else {
             invLot = new DataInventory(lotName, reference, category, externalProcInstanceName);
         }
-        if (Boolean.TRUE.equals(invLot.getHasError())){
+        if (Boolean.TRUE.equals(invLot.getHasError())) {
             return invLot.getErrorDetail();
         }
         return DataInventoryMovements.consumeInventoryLotVolume(invLot, nwVolume, nwVolumeUom, externalProcInstanceName);
     }
 
     public InternalMessage addInvLotVolume(BigDecimal nwVolume, String nwVolumeUom) {
+        InternalMessage volumeIsPositive = volumeIsPositive(nwVolume);
+        if (LPPlatform.LAB_FALSE.equals(volumeIsPositive.getDiagnostic())) return volumeIsPositive;
         return DataInventoryMovements.addInventoryLotVolume(this, nwVolume, nwVolumeUom);
     }
 
     public InternalMessage adjustInvLotVolume(BigDecimal nwVolume, String nwVolumeUom) {
+        InternalMessage volumeIsPositive = volumeIsPositive(nwVolume);
+        if (LPPlatform.LAB_FALSE.equals(volumeIsPositive.getDiagnostic())) return volumeIsPositive;
         return DataInventoryMovements.adjustInventoryLotVolume(this, nwVolume, nwVolumeUom);
     }
 

@@ -52,7 +52,7 @@ public class ClassInvTracking {
         String lotName = argValues[0].toString();
         String category = argValues[1].toString();
         String reference = argValues[2].toString();
-        if (!"NEW_INVENTORY_LOT".equalsIgnoreCase(endPoint.getName())) {
+        if (Boolean.FALSE.equals("NEW_INVENTORY_LOT".equalsIgnoreCase(endPoint.getName()))){
             invLot = new DataInventory(lotName, reference, category, null);
             if (invLot.getHasError()) {
                 this.actionDiagnosesObj = invLot.getErrorDetail();
@@ -62,6 +62,9 @@ public class ClassInvTracking {
                 invLot = null;
                 return;
             }
+        }
+        if (invLot==null){
+            return;
         }
         this.functionFound = true;
         switch (endPoint) {
