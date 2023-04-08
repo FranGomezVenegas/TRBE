@@ -267,17 +267,12 @@ public Object[] studyFamilyRemoveIndividual(GenomaStudyAPI.GenomaStudyAPIactions
     where.addConstraint(TblsGenomaData.StudyFamilyIndividual.FAMILY_NAME, null, new Object[]{familyName}, null);
     where.addConstraint(TblsGenomaData.StudyFamilyIndividual.INDIVIDUAL_ID, null, new Object[]{Integer.valueOf(individualId)}, null);
     RdbmsObject removeDiagn=Rdbms.removeRecordInTable(TblsGenomaData.TablesGenomaData.STUDY_FAMILY_INDIVIDUAL, where, null); 
-    /*RdbmsObject removeDiagn=Rdbms.removeRecordInTable(.DATA.getName()), TblsGenomaData.TablesGenomaData.STUDY_FAMILY_INDIVIDUAL.getTableName(),
-            new SqlWhere(, new String[]{TblsGenomaData.StudyFamilyIndividual.FLD_STUDY.getName(), TblsGenomaData.StudyFamilyIndividual.FLD_FAMILY_NAME.getName(),
-                TblsGenomaData.StudyFamilyIndividual.FLD_INDIVIDUAL_ID.getName()}, 
-            new Object[]{studyName, familyName, Integer.valueOf(individualId)}));*/
-    
-    if (removeDiagn.getRunSuccess()) {
+    if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
         GenomaDataAudit.studyAuditAdd(endpoint, TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName(), familyName, 
             studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(new String[]{TblsGenomaData.StudyFamily.UNSTRUCT_CONTENT.getName()}, 
                     new Object[]{removeDiagn.getErrorMessageCode()}, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
     }
-            if (removeDiagn.getRunSuccess())
+            if (Boolean.TRUE.equals(removeDiagn.getRunSuccess()))
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE,"", null);
             else
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());

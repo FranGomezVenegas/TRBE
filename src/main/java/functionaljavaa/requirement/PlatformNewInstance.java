@@ -115,17 +115,12 @@ public class PlatformNewInstance {
         String fakeProcUserName = "demo";
         String personId="d1m2";
         String[] schemaNames = new String[]{LPPlatform.buildSchemaName(fakeProcName, GlobalVariables.Schemas.PROCEDURE.getName())};
-        String tblCreateScript="";
         JSONObject jsonObj=new JSONObject();
         String actionLog="";
-/*    SqlWhere where =new SqlWhere();
-    where.addConstraint(TblsEnvMonitData.IncubBatch.NAME, null, new Object[]{bName}, null);
-    Object[] familyAndIndividualUnLinked=Rdbms.removeRecordInTable(TblsEnvMonitConfig.TablesEnvMonitConfig.INCUB_BATCH, where, null); 
-*/        
         RdbmsObject removeRecord = Rdbms.removeRecordInTable(TblsProcedure.TablesProcedure.PERSON_PROFILE, 
             new SqlWhere(TblsProcedure.TablesProcedure.PERSON_PROFILE, new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName(), TblsProcedure.PersonProfile.ROLE_NAME.getName()},
             new Object[]{personId, "testing"}), fakeProcName);        
-        if (removeRecord.getRunSuccess())
+        if (Boolean.TRUE.equals(removeRecord.getRunSuccess()))
             actionLog="success";
         else{
             Object[] trapMessage = ApiMessageReturn.trapMessage("", removeRecord.getErrorMessageCode(), removeRecord.getErrorMessageVariables());            
@@ -135,7 +130,7 @@ public class PlatformNewInstance {
         
         removeRecord = Rdbms.removeRecordInTable(TblsApp.TablesApp.USERS, 
             new SqlWhere(TblsApp.TablesApp.USERS, new String[]{TblsApp.Users.USER_NAME.getName()}, new Object[]{fakeProcUserName}), null);
-        if (removeRecord.getRunSuccess())
+        if (Boolean.TRUE.equals(removeRecord.getRunSuccess()))
             actionLog="success";
         else{
             Object[] trapMessage = ApiMessageReturn.trapMessage("", removeRecord.getErrorMessageCode(), removeRecord.getErrorMessageVariables());            
@@ -146,7 +141,7 @@ public class PlatformNewInstance {
         removeRecord=Rdbms.removeRecordInTable(TblsApp.TablesApp.USER_PROCESS, 
             new SqlWhere(TblsApp.TablesApp.USER_PROCESS, new String[]{TblsApp.UserProcess.USER_NAME.getName(), TblsApp.UserProcess.PROC_NAME.getName()}, 
             new Object[]{fakeProcUserName, fakeProcName}), null);
-        if (removeRecord.getRunSuccess())
+        if (Boolean.TRUE.equals(removeRecord.getRunSuccess()))
             actionLog="success";
         else{
             Object[] trapMessage = ApiMessageReturn.trapMessage("", removeRecord.getErrorMessageCode(), removeRecord.getErrorMessageVariables());            
@@ -157,7 +152,7 @@ public class PlatformNewInstance {
         removeRecord=Rdbms.removeRecordInTable(TblsAppConfig.TablesAppConfig.PERSON, 
             new SqlWhere(TblsAppConfig.TablesAppConfig.PERSON, new String[]{TblsAppConfig.Person.PERSON_ID.getName()}, 
             new Object[]{personId}), null);
-        if (removeRecord.getRunSuccess())
+        if (Boolean.TRUE.equals(removeRecord.getRunSuccess()))
             actionLog="success";
         else{
             Object[] trapMessage = ApiMessageReturn.trapMessage("", removeRecord.getErrorMessageCode(), removeRecord.getErrorMessageVariables());            

@@ -1027,12 +1027,12 @@ public class ProcedureDefinitionToInstance {
                             ModuleTableOrViewGet tblDiagn = new ModuleTableOrViewGet(Boolean.valueOf(curIsView), moduleName, curSchemaName, curTableName.toUpperCase());
                             if (curIsView == null || !Boolean.valueOf(curIsView)) {
                                 //EnumIntTables moduleTableObj = getModuleTableObj(moduleName, curSchemaName, curTableName.toUpperCase());
-                                if (!tblDiagn.getFound()) {
+                                if (Boolean.FALSE.equals(tblDiagn.getFound())) {
                                     curTblJsonObj.put("error", tblDiagn.getErrorMsg());
                                     //curTblJsonObj.put("error", tableCreationScriptTable);
                                 } else {
                                     tblCreateScript = createTableScript(tblDiagn.getTableObj(), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
-                                    if (tblDiagn.getMirrorForTesting()) {
+                                    if (Boolean.TRUE.equals(tblDiagn.getMirrorForTesting())) {
                                         tblCreateScriptTesting = createTableScript(tblDiagn.getTableObj(), schemaForTesting, false, true);
                                     }
                                 }
@@ -1054,7 +1054,7 @@ public class ProcedureDefinitionToInstance {
                                     scriptLog.put("1) creator_diagn", prepUpQuery[prepUpQuery.length - 1]);
                                 }
                                 scriptLog.put("1) script", tblCreateScript);
-                                if (tblDiagn.getMirrorForTesting()) {
+                                if (Boolean.TRUE.equals(tblDiagn.getMirrorForTesting())) {
                                     schemaForTesting = Rdbms.suffixForTesting(LPPlatform.buildSchemaName(procInstanceName, curSchemaName), curTableName);
                                     curTblJsonObj.put("requires_testing_clone", true);
                                     Object[] prepUpQueryTesting = Rdbms.prepUpQueryWithDiagn(curSchemaName, curTableName, tblCreateScriptTesting, new Object[]{});

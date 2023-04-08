@@ -160,7 +160,7 @@ public class AdminActions {
                 fldNames=LPArray.addValueToArray1D(fldNames, new String[]{TblsApp.IPWhiteList.ACTIVE.getName()});
                 fldValues=LPArray.addValueToArray1D(fldValues, new Object[]{true});
                 RdbmsObject removeDiagn = Rdbms.insertRecord(tblObj, fldNames, fldValues, null); 
-                if (removeDiagn.getRunSuccess())
+                if (Boolean.TRUE.equals(removeDiagn.getRunSuccess()))
                     dbActionDiagn= ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE,"", null);
                 else
                     dbActionDiagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
@@ -185,7 +185,7 @@ public class AdminActions {
                 sqlW=new SqlWhere();
                 sqlW.addConstraint(TblsApp.IPWhiteList.ID, null, new Object[]{id}, null);
                 removeDiagn=Rdbms.removeRecordInTable(tblObj, sqlW, null);
-                if (removeDiagn.getRunSuccess())
+                if (Boolean.TRUE.equals(removeDiagn.getRunSuccess()))
                     dbActionDiagn= ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE,"", null);
                 else
                     dbActionDiagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
