@@ -226,8 +226,6 @@ public Object[] studyFamilyIndividualUpdate(GenomaStudyAPI.GenomaStudyAPIactions
 } 
 
 public Object[] studyFamilyAddIndividual(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, String familyName, String individualId) {
-    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-
     Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
     
@@ -244,8 +242,8 @@ public Object[] studyFamilyAddIndividual(GenomaStudyAPI.GenomaStudyAPIactionsEnd
                 new String[]{TblsGenomaData.StudyFamilyIndividual.STUDY.getName(), TblsGenomaData.StudyFamilyIndividual.FAMILY_NAME.getName(),
                     TblsGenomaData.StudyFamilyIndividual.INDIVIDUAL_ID.getName(), TblsGenomaData.StudyFamilyIndividual.LINKED_ON.getName()}, 
                 new Object[]{studyName, familyName, Integer.valueOf(curIndiv), LPDate.getCurrentTimeStamp()});
-        if (!curFamilyAndIndividualLinked.getRunSuccess()) return curFamilyAndIndividualLinked.getApiMessage();
-        if (curFamilyAndIndividualLinked.getRunSuccess()){
+        if (Boolean.FALSE.equals(curFamilyAndIndividualLinked.getRunSuccess())) return curFamilyAndIndividualLinked.getApiMessage();
+        if (Boolean.TRUE.equals(curFamilyAndIndividualLinked.getRunSuccess())){
             GenomaDataAudit.studyAuditAdd(endpoint, TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName(), familyName, 
                 studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(new String[]{TblsGenomaData.StudyFamily.UNSTRUCT_CONTENT.getName()}, 
                         new Object[]{curFamilyAndIndividualLinked.getNewRowId()}, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
@@ -255,8 +253,6 @@ public Object[] studyFamilyAddIndividual(GenomaStudyAPI.GenomaStudyAPIactionsEnd
 }
 
 public Object[] studyFamilyRemoveIndividual(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, String familyName, String individualId) {
-    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-
     Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(studyName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
     
@@ -285,8 +281,6 @@ public Object[] studyFamilyRemoveIndividual(GenomaStudyAPI.GenomaStudyAPIactions
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE,"", null);
             else
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
-
-//    return familyAndIndividualUnLinked;
 }
 
 public static Object[] isStudyFamilyOpenToChanges(String studyName, String familyName){
@@ -295,7 +289,7 @@ public static Object[] isStudyFamilyOpenToChanges(String studyName, String famil
             new String[]{TblsGenomaData.StudyFamily.STUDY.getName(), TblsGenomaData.StudyFamily.NAME.getName()}, new Object[]{studyName, familyName}, new String[]{TblsGenomaData.StudyFamily.ACTIVE.getName()});
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString()))
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "The study family <*1*> does not exist in procedure <*2*>", new Object[]{studyName, procInstanceName});
-    if (!Boolean.valueOf(LPNulls.replaceNull(sampleInfo[0][0]).toString()))
+    if (Boolean.FALSE.equals(Boolean.valueOf(LPNulls.replaceNull(sampleInfo[0][0]).toString())))
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "The study family <*1*> is already inactive in procedure <*2*>", new Object[]{studyName, procInstanceName});
     return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "<*1*> is open to changes in procedure <*2*>", new Object[]{studyName, procInstanceName});
 }

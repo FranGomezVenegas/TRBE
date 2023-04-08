@@ -222,7 +222,7 @@ public class DataProgramSample{
             where.addConstraint(TblsEnvMonitData.SampleMicroorganism.MICROORG_NAME, null, new Object[]{microorganismName}, null);
             where.addConstraint(TblsEnvMonitData.SampleMicroorganism.ID, null, new Object[]{Integer.valueOf(sampleMicroOrgRow[i][0].toString())}, null);
             removeRecordInTable = Rdbms.removeRecordInTable(TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM, where, null);            
-            if (removeRecordInTable.getRunSuccess()){
+            if (Boolean.TRUE.equals(removeRecordInTable.getRunSuccess())){
                 SampleAudit smpAudit = new SampleAudit();
                 String[] fieldsForAudit=new String[]{"Removed microorganism "+microorganismName};
                 smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.MICROORGANISM_REMOVED, TblsData.TablesData.SAMPLE.getTableName(), sampleId, sampleId, null, null, fieldsForAudit, fieldsForAudit);

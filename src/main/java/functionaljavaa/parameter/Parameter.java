@@ -159,9 +159,7 @@ public class Parameter {
         if ((valueToReturn==null || valueToReturn.length()==0) && (!isOptional))
             LPPlatform.saveParameterPropertyInDbErrorLog("", procInstanceName+"-"+area, 
                 callerInfo, parameterName, isOptional);
-        if (ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting() && (!disabledByPreReq) ){
-//            if (parameterName.toUpperCase().contains("STATUS"))
-//                parameterName=parameterName;
+        if (Boolean.TRUE.equals(ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting()) && (!disabledByPreReq) ){
             TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
             if (testingBusinessRulesVisitedObj!=null)
                 testingBusinessRulesVisitedObj.addObject(procInstanceName, area, callerInfo[0].toString(), parameterName, valueToReturn);        
