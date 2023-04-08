@@ -86,7 +86,7 @@ public class TblsInstrumentsData {
 " where i.family=fam.name \n" +
 "   and fam.calib_system_create_new_event_when_expires\n" +
 "   and (fam.calib_sched_create_offset_days is null and \n" +
-" (i.next_calibration is null or (i.next_calibration is not null and date(i.next_calibration) < date(now())) ) )   		\n" +
+" (i.next_calibration is null or (i.next_calibration is not null and date(i.next_calibration) < date(now())) ) ) \n" +
 "union\n" +
 "select 'CALIBRATION_OFFSET' as type, DATE(now()) as now, i.name as name, i.family as family, i.next_calibration as next_date, fam.calib_system_create_new_event_when_expires as system_create_new_event_when_expires, fam.calib_sched_create_offset_days as sched_create_offset_days\n" +
 "  ,(select count(*) from \"app-proc-data\".instrument_event ev where event_type='CALIBRATION' and completed_on is null ) as events_in_progress \n" +

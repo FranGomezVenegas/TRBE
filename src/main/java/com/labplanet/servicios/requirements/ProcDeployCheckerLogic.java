@@ -71,7 +71,7 @@ public class ProcDeployCheckerLogic {
         String[] moduleBaseTablesArr=new String[]{};
         for (EnumIntTables curTbl: moduleBaseTables)
             moduleBaseTablesArr=LPArray.addValueToArray1D(moduleBaseTablesArr, 
-                LPPlatform.buildSchemaName(procInstanceName, curTbl.getRepositoryName()).replaceAll("\"", "")+"."+curTbl.getTableName());
+                LPPlatform.buildSchemaName(procInstanceName, curTbl.getRepositoryName()).replace("\"", "")+"."+curTbl.getTableName());
         detailsObj.put("expected_and_checked_tables", LPJson.convertToJSON(moduleBaseTablesArr));
         Object[] dbSchemasTablesList = Rdbms.dbSchemaAndTableList(procInstanceName);
         dbSchemasTablesList=LPArray.getUniquesArray(dbSchemasTablesList);
@@ -463,12 +463,9 @@ public class ProcDeployCheckerLogic {
                     jsonRowArr.add(jsonRowObj);
                 }            
             }
-//            jsonObjSummary.put("summary", jsonRowArr);
-//            return jsonObjSummary;
             return publishJson(null, null, null);
         }catch(Exception e){
             return publishJson(null, null, null);
-//            return (JSONObject) jsonObjSummary.put("error", e.getMessage());
         }
     }
 

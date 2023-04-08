@@ -217,9 +217,9 @@ public class ConfigProgramCalendar {
       int projRecursiveId = Integer.valueOf(newProjSchedRecursive.getNewRowId().toString());
       StringBuilder datesStr =new StringBuilder(0);
       for (Object[] holidaysCalendarDate : holidaysCalendarDates) {
-          SimpleDateFormat format1 = new SimpleDateFormat("yyyy MMM dd HH:mm:ss"); //yyyy-MM-dd
+          SimpleDateFormat format1 = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
           String s;
-          Date calDate = (Date) holidaysCalendarDate[1]; //String s = cal.getTime().toString();
+          Date calDate = (Date) holidaysCalendarDate[1];
           s = format1.format(calDate.getTime());            
           datesStr.append(s).append("|");
           Rdbms.insertRecordInTable(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_CALENDAR_DATE, 
@@ -307,11 +307,11 @@ public class ConfigProgramCalendar {
         RdbmsObject newProjSchedRecursive = Rdbms.insertRecordInTable(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_CALENDAR_RECURSIVE_ENTRY, 
                 new String[]{TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.PROGRAM_CONFIG_ID.getName(), TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.CALENDAR_ID.getName(), TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.RULE.getName(), TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.START_DATE.getName(), TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.END_DATE.getName()},
                 new Object[]{pName, programCalendarId, daysOfWeek, (Date) projectInfo[0][1], (Date) projectInfo[0][2]});
-      int projRecursiveId = Integer.valueOf(newProjSchedRecursive.getNewRowId().toString());
+      Integer projRecursiveId = Integer.valueOf(newProjSchedRecursive.getNewRowId().toString());
       for (Object daysInRange1 : daysInRange) {
-          SimpleDateFormat format1 = new SimpleDateFormat("yyyy MMM dd HH:mm:ss"); //yyyy-MM-dd
+          SimpleDateFormat format1 = new SimpleDateFormat("yyyy MMM dd HH:mm:ss");
           String s;
-          Date cale = (Date) daysInRange1; //String s = cal.getTime().toString();
+          Date cale = (Date) daysInRange1;
           s = format1.format(cale.getTime());            
           datesStr.append(s).append("|");
           Object[] isHolidays = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_CALENDAR_DATE.getTableName(), 
