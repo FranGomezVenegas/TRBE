@@ -400,7 +400,7 @@ group by s.sample_id, s.current_stage, s.program_name, s.location_name, s.incuba
         MICROORGANISM_COUNT("microorganism_count", "count(distinct sorg.id) as microorganism_count", SampleAnalysisResult.RESULT_ID,  null, null, null),
         MICROORGANISM_LIST("microorganism_list", "array_to_string(array_agg(distinct sorg.microorganism_name), ', ') AS microorganism_list ", SampleAnalysisResult.RAW_VALUE, null, null, null),
         IDENTIFICATION_PROGRESS_PERCENTAGE("identification_progress_percentage","case when sar.raw_value='0' then '0' else\n" +
-"	to_char((count(DISTINCT sorg.id) /sar.raw_value::real)*100, 'FM999.99') end as identification_progress_percentage", SampleAnalysisResult.RAW_VALUE, null, null, null),
+" to_char((count(DISTINCT sorg.id) /sar.raw_value::real)*100, 'FM999.99') end as identification_progress_percentage", SampleAnalysisResult.RAW_VALUE, null, null, null),
        ;
         private ViewSampleMicroorganismList(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
             this.fldName=name;

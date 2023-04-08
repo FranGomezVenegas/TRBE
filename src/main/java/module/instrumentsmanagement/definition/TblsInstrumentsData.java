@@ -86,7 +86,7 @@ public class TblsInstrumentsData {
 " where i.family=fam.name \n" +
 "   and fam.calib_system_create_new_event_when_expires\n" +
 "   and (fam.calib_sched_create_offset_days is null and \n" +
-"		(i.next_calibration is null or (i.next_calibration is not null and date(i.next_calibration) < date(now())) ) )   		\n" +
+" (i.next_calibration is null or (i.next_calibration is not null and date(i.next_calibration) < date(now())) ) )   		\n" +
 "union\n" +
 "select 'CALIBRATION_OFFSET' as type, DATE(now()) as now, i.name as name, i.family as family, i.next_calibration as next_date, fam.calib_system_create_new_event_when_expires as system_create_new_event_when_expires, fam.calib_sched_create_offset_days as sched_create_offset_days\n" +
 "  ,(select count(*) from \"app-proc-data\".instrument_event ev where event_type='CALIBRATION' and completed_on is null ) as events_in_progress \n" +
@@ -94,8 +94,8 @@ public class TblsInstrumentsData {
 " where i.family=fam.name \n" +
 "   and fam.calib_system_create_new_event_when_expires\n" +
 "   and (fam.calib_sched_create_offset_days is not null and \n" +
-"		(i.next_calibration is null or \n" +
-" 	(i.next_calibration is not null and (date(i.next_calibration)-fam.calib_sched_create_offset_days) < date(now()) ))) \n" +
+" (i.next_calibration is null or \n" +
+" (i.next_calibration is not null and (date(i.next_calibration)-fam.calib_sched_create_offset_days) < date(now()) ))) \n" +
 "union\n" +
 "select 'PM' as type, DATE(now()) as now, i.name as name, i.family as family, i.next_prev_maint as next_date, fam.pm_system_create_new_event_when_expires as system_create_new_event_when_expires, fam.pm_sched_create_offset_days as sched_create_offset_days\n" +
 "  ,(select count(*) from \"app-proc-data\".instrument_event ev where event_type='PREVENTIVE_MAINTENANCE' and completed_on is null ) as events_in_progress\n" +
@@ -103,7 +103,7 @@ public class TblsInstrumentsData {
 " where i.family=fam.name \n" +
 "   and fam.pm_system_create_new_event_when_expires\n" +
 "   and (fam.pm_sched_create_offset_days is null and \n" +
-"		(i.next_prev_maint is null or (i.next_prev_maint is not null and date(i.next_prev_maint) < date(now())) ) )\n" +
+" (i.next_prev_maint is null or (i.next_prev_maint is not null and date(i.next_prev_maint) < date(now())) ) )\n" +
 "union\n" +
 "select 'PM_OFFSET' as type, DATE(now()) as now, i.name as name, i.family as family, i.next_prev_maint as next_date, fam.pm_system_create_new_event_when_expires as system_create_new_event_when_expires, fam.pm_sched_create_offset_days as sched_create_offset_days\n" +
 "  ,(select count(*) from \"app-proc-data\".instrument_event ev where event_type='PREVENTIVE_MAINTENANCE' and completed_on is null ) as events_in_progress\n" +
@@ -111,8 +111,8 @@ public class TblsInstrumentsData {
 " where i.family=fam.name \n" +
 "   and fam.pm_system_create_new_event_when_expires\n" +
 "   and (fam.pm_sched_create_offset_days is not null and \n" +
-"		(i.next_prev_maint is null or \n" +
-" 	(i.next_prev_maint is not null and (date(i.next_prev_maint)-fam.pm_sched_create_offset_days) < date(now()) ))) ",
+" (i.next_prev_maint is null or \n" +
+" (i.next_prev_maint is not null and (date(i.next_prev_maint)-fam.pm_sched_create_offset_days) < date(now()) ))) ",
             null, "calib_pm_expired_or_expiring", SCHEMA_NAME, true, TblsInstrumentsData.CalibPmExpiredOrExpiring.values(), "pr_scheduled_locations", 
         new EnumIntTablesJoin[]{
             new EnumIntTablesJoin(TablesInstrumentsData.INSTRUMENTS, "i", TablesInstrumentsData.INSTRUMENT_EVENT, "ie", true,
