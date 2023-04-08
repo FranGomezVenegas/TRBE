@@ -19,45 +19,54 @@ import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
+
 /**
  * Create one new app.app_session
+ *
  * @author Administrator
  */
 public class LPSession {
-    private LPSession(){    throw new IllegalStateException("Utility class");}    
-   
-    public static Object[] frontEndIpChecker(String remoteAddr){
+
+    private LPSession() {
+        throw new IllegalStateException("Utility class");
+    }
+
+    public static Object[] frontEndIpChecker(String remoteAddr) {
         String[] remoteAddrParts = remoteAddr.split("\\.");
-        if (remoteAddrParts.length==1)
-        remoteAddrParts = remoteAddr.split("\\:");
-        if (remoteAddrParts.length<4)
+        if (remoteAddrParts.length == 1) {
+            remoteAddrParts = remoteAddr.split("\\:");
+        }
+        if (remoteAddrParts.length < 4) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AuthenticationErrorTrapping.WRONG_IP, new Object[]{remoteAddr});
-        Object[] existRecordBlackList = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TablesApp.IP_BLACK_LIST.getTableName(), 
-                new String[]{TblsApp.IPBlackList.ACTIVE.getName(), TblsApp.IPBlackList.IP_VALUE1.getName(), 
-                    "("+TblsApp.IPBlackList.IP_VALUE2.getName(), "OR "+TblsApp.IPBlackList.IP_VALUE2.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()+" )",
-                    "("+TblsApp.IPBlackList.IP_VALUE3.getName(), "OR "+TblsApp.IPBlackList.IP_VALUE3.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()+" )", 
-                    "("+TblsApp.IPBlackList.IP_VALUE4.getName(), "OR "+TblsApp.IPBlackList.IP_VALUE4.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()+" )"}, 
+        }
+        Object[] existRecordBlackList = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TablesApp.IP_BLACK_LIST.getTableName(),
+                new String[]{TblsApp.IPBlackList.ACTIVE.getName(), TblsApp.IPBlackList.IP_VALUE1.getName(),
+                    "(" + TblsApp.IPBlackList.IP_VALUE2.getName(), "OR " + TblsApp.IPBlackList.IP_VALUE2.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause() + " )",
+                    "(" + TblsApp.IPBlackList.IP_VALUE3.getName(), "OR " + TblsApp.IPBlackList.IP_VALUE3.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause() + " )",
+                    "(" + TblsApp.IPBlackList.IP_VALUE4.getName(), "OR " + TblsApp.IPBlackList.IP_VALUE4.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause() + " )"},
                 new Object[]{true, remoteAddrParts[0], remoteAddrParts[1], null, remoteAddrParts[2], null, remoteAddrParts[3]});
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existRecordBlackList[0].toString()))
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existRecordBlackList[0].toString())) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AuthenticationErrorTrapping.IP_IN_BLACK_LIST, new Object[]{remoteAddr});
-        
-        Object[] existRecordWhiteList = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TablesApp.IP_WHITE_LIST.getTableName(), 
-                new String[]{TblsApp.IPWhiteList.ACTIVE.getName()}, 
-                new Object[]{true});        
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existRecordWhiteList[0].toString())){
-            existRecordWhiteList = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TablesApp.IP_WHITE_LIST.getTableName(), 
-                new String[]{TblsApp.IPWhiteList.ACTIVE.getName(), TblsApp.IPWhiteList.IP_VALUE1.getName(), 
-                    "("+TblsApp.IPWhiteList.IP_VALUE2.getName(), "OR "+TblsApp.IPWhiteList.IP_VALUE2.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()+" )",
-                    "("+TblsApp.IPWhiteList.IP_VALUE3.getName(), "OR "+TblsApp.IPWhiteList.IP_VALUE3.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()+" )", 
-                    "("+TblsApp.IPWhiteList.IP_VALUE4.getName(), "OR "+TblsApp.IPWhiteList.IP_VALUE4.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()+" )"}, 
-                new Object[]{true, remoteAddrParts[0], remoteAddrParts[1], null, remoteAddrParts[2], null, remoteAddrParts[3]});
-            if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(existRecordWhiteList[0].toString())) ){
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AuthenticationErrorTrapping.IP_NOTIN_WHITE_LIST, new Object[]{remoteAddr});
+        }
+
+        Object[] existRecordWhiteList = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TablesApp.IP_WHITE_LIST.getTableName(),
+                new String[]{TblsApp.IPWhiteList.ACTIVE.getName()},
+                new Object[]{true});
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existRecordWhiteList[0].toString())) {
+            existRecordWhiteList = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TablesApp.IP_WHITE_LIST.getTableName(),
+                    new String[]{TblsApp.IPWhiteList.ACTIVE.getName(), TblsApp.IPWhiteList.IP_VALUE1.getName(),
+                        "(" + TblsApp.IPWhiteList.IP_VALUE2.getName(), "OR " + TblsApp.IPWhiteList.IP_VALUE2.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause() + " )",
+                        "(" + TblsApp.IPWhiteList.IP_VALUE3.getName(), "OR " + TblsApp.IPWhiteList.IP_VALUE3.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause() + " )",
+                        "(" + TblsApp.IPWhiteList.IP_VALUE4.getName(), "OR " + TblsApp.IPWhiteList.IP_VALUE4.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause() + " )"},
+                    new Object[]{true, remoteAddrParts[0], remoteAddrParts[1], null, remoteAddrParts[2], null, remoteAddrParts[3]});
+            if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(existRecordWhiteList[0].toString()))) {
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AuthenticationErrorTrapping.IP_NOTIN_WHITE_LIST, new Object[]{remoteAddr});
             }
         }
-            
+
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "OK", new Object[]{remoteAddr});
     }
+
     /**
      *
      * @param fieldsName
@@ -65,112 +74,123 @@ public class LPSession {
      * @param remoteAddr
      * @return
      */
-    public static RdbmsObject newAppSession( String[] fieldsName, Object[] fieldsValue, String remoteAddr){        
-        LocalDateTime localDateTime=LPDate.getCurrentTimeStamp();
+    public static RdbmsObject newAppSession(String[] fieldsName, Object[] fieldsValue, String remoteAddr) {
+        LocalDateTime localDateTime = LPDate.getCurrentTimeStamp();
         fieldsName = LPArray.addValueToArray1D(fieldsName, TblsApp.AppSession.DATE_STARTED.getName());
         fieldsValue = LPArray.addValueToArray1D(fieldsValue, localDateTime);
         fieldsName = LPArray.addValueToArray1D(fieldsName, TblsApp.AppSession.IP_ADDRESS.getName());
         fieldsValue = LPArray.addValueToArray1D(fieldsValue, remoteAddr);
-        return Rdbms.insertRecordInTable(TblsApp.TablesApp.APP_SESSION, fieldsName, fieldsValue);            
+        return Rdbms.insertRecordInTable(TblsApp.TablesApp.APP_SESSION, fieldsName, fieldsValue);
         //return insertRecordInTable.getApiMessage();
     }
-    
+
     /**
-     *  get App Session and get record field values by appSessionId
+     * get App Session and get record field values by appSessionId
+     *
      * @param appSessionId
      * @param fieldsToRetrieve
      * @return
      */
-    public static Object[] getAppSession( Integer appSessionId, String[] fieldsToRetrieve){
+    public static Object[] getAppSession(Integer appSessionId, String[] fieldsToRetrieve) {
         String tableName = TblsApp.TablesApp.APP_SESSION.getTableName();
-        if (fieldsToRetrieve==null){
+        if (fieldsToRetrieve == null) {
             fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, TblsApp.AppSession.SESSION_ID.getName());
             fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, TblsApp.AppSession.DATE_STARTED.getName());
         }
-        
-        Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), tableName, 
+
+        Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), tableName,
                 new String[]{TblsApp.AppSession.SESSION_ID.getName()}, new Object[]{appSessionId}, fieldsToRetrieve);
         return LPArray.array2dTo1d(recordFieldsBySessionId);
     }
-    
+
     /**
-     * PendingList! - Trap errorsInDatabase for DataIntegrity
-     * IdeaList!       - Let the AppSession know in which procedures any action was performed by adding one field to concatenate the procedureNames
-     * When the user authenticates then one appSession is created but no ProcessSessions yet due to no action performed yet.<br>
-     * This function will replicate to the ProcessSession the session once one action is audited in order to let that any action
-     * on this procedure was performed as part of this given appSession.
+     * PendingList! - Trap errorsInDatabase for DataIntegrity IdeaList! - Let
+     * the AppSession know in which procedures any action was performed by
+     * adding one field to concatenate the procedureNames When the user
+     * authenticates then one appSession is created but no ProcessSessions yet
+     * due to no action performed yet.<br>
+     * This function will replicate to the ProcessSession the session once one
+     * action is audited in order to let that any action on this procedure was
+     * performed as part of this given appSession.
+     *
      * @param appSessionId
      * @param fieldsNamesToInsert
      * @return
      */
-    public static Object[] addProcessSession(Integer appSessionId, String[] fieldsNamesToInsert){
+    public static Object[] addProcessSession(Integer appSessionId, String[] fieldsNamesToInsert) {
         addProcessToAppSession(appSessionId);
         String tableName = TblsDataAudit.TablesDataAudit.SESSION.getTableName();
-        String processName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();        
-        String schemaAuditName = LPPlatform.buildSchemaName(processName, GlobalVariables.Schemas.DATA_AUDIT.getName());       
-        
-        Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(schemaAuditName, tableName, 
+        String processName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        String schemaAuditName = LPPlatform.buildSchemaName(processName, GlobalVariables.Schemas.DATA_AUDIT.getName());
+
+        Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(schemaAuditName, tableName,
                 new String[]{TblsDataAudit.Session.SESSION_ID.getName()}, new Object[]{appSessionId}, fieldsNamesToInsert);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsBySessionId[0][0].toString())){
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsBySessionId[0][0].toString())) {
             Object[] appSession = getAppSession(appSessionId, fieldsNamesToInsert);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(appSession[0].toString())) 
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(appSession[0].toString())) {
                 return appSession;
-            if (Boolean.FALSE.equals(LPArray.valueInArray(fieldsNamesToInsert, TblsDataAudit.Session.SESSION_ID.getName()))){
+            }
+            if (Boolean.FALSE.equals(LPArray.valueInArray(fieldsNamesToInsert, TblsDataAudit.Session.SESSION_ID.getName()))) {
                 fieldsNamesToInsert = LPArray.addValueToArray1D(fieldsNamesToInsert, TblsDataAudit.Session.SESSION_ID.getName());
                 appSession = LPArray.addValueToArray1D(appSession, appSessionId);
             }
             RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsDataAudit.TablesDataAudit.SESSION, fieldsNamesToInsert, appSession);
             return insertRecordInTable.getApiMessage();
         }
-        
+
         return LPArray.array2dTo1d(recordFieldsBySessionId);
     }
-    
+
     /**
-     * One user can be assigned to multiple processes, keep the track about which are the processes for which the user
-     *  performed any action at the app_session level is useful to simplify the way to get data across the procedures and audits.
+     * One user can be assigned to multiple processes, keep the track about
+     * which are the processes for which the user performed any action at the
+     * app_session level is useful to simplify the way to get data across the
+     * procedures and audits.
+     *
      * @param appSessionId
      * @return
-     */    
-    public static Object[] addProcessToAppSession(Integer appSessionId){
+     */
+    public static Object[] addProcessToAppSession(Integer appSessionId) {
         String processName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         //String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.APP_SESSION.getTableName(), 
-                new String[]{TblsApp.AppSession.SESSION_ID.getName()}, new Object[]{appSessionId}, 
+        Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.APP_SESSION.getTableName(),
+                new String[]{TblsApp.AppSession.SESSION_ID.getName()}, new Object[]{appSessionId},
                 new String[]{TblsApp.AppSession.PROCEDURES.getName()});
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsBySessionId[0][0].toString()))        
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsBySessionId[0][0].toString())) {
             return LPArray.array2dTo1d(recordFieldsBySessionId);
-        String procListValue=LPNulls.replaceNull(recordFieldsBySessionId[0][0]).toString();
-        Boolean addProcess=false;
-        if (procListValue==null || procListValue.length()==0){
-            procListValue=processName.replace("-"+GlobalVariables.Schemas.DATA_AUDIT.getName(), "").replace("\"", "");
-            addProcess=true;
-        }else{
-            String[] sessionProcsArr=LPNulls.replaceNull(recordFieldsBySessionId[0][0]).toString().split("\\,");
-            processName=processName.replace("-"+GlobalVariables.Schemas.DATA_AUDIT.getName(), "").replace("\"", "");
-            if (Boolean.FALSE.equals(LPArray.valueInArray(sessionProcsArr, processName))){
-                if (procListValue.length()>0)
-                    procListValue=procListValue+","+processName;
-                addProcess=true;
-            }            
         }
-        if (Boolean.TRUE.equals(addProcess)){
+        String procListValue = LPNulls.replaceNull(recordFieldsBySessionId[0][0]).toString();
+        Boolean addProcess = false;
+        if (procListValue == null || procListValue.length() == 0) {
+            procListValue = processName.replace("-" + GlobalVariables.Schemas.DATA_AUDIT.getName(), "").replace("\"", "");
+            addProcess = true;
+        } else {
+            String[] sessionProcsArr = LPNulls.replaceNull(recordFieldsBySessionId[0][0]).toString().split("\\,");
+            processName = processName.replace("-" + GlobalVariables.Schemas.DATA_AUDIT.getName(), "").replace("\"", "");
+            if (Boolean.FALSE.equals(LPArray.valueInArray(sessionProcsArr, processName))) {
+                if (procListValue.length() > 0) {
+                    procListValue = procListValue + "," + processName;
+                }
+                addProcess = true;
+            }
+        }
+        if (Boolean.TRUE.equals(addProcess)) {
             SqlWhere sqlWhere = new SqlWhere();
             sqlWhere.addConstraint(TblsApp.AppSession.SESSION_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{appSessionId}, "");
             return Rdbms.updateRecordFieldsByFilter(TblsApp.TablesApp.APP_SESSION,
-                EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.APP_SESSION, new String[]{TblsApp.AppSession.PROCEDURES.getName()}), new Object[]{procListValue}, sqlWhere, null);            
+                    EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.APP_SESSION, new String[]{TblsApp.AppSession.PROCEDURES.getName()}), new Object[]{procListValue}, sqlWhere, null);
         }
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "The procedure<*1*>already exists for the session<*2*>",new Object[]{processName, appSessionId} );
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "The procedure<*1*>already exists for the session<*2*>", new Object[]{processName, appSessionId});
     }
 
-    public static Object[] addAppSession(Integer appSessionId, String[] fieldsNamesToInsert){
-        String tableName = TblsAppAudit.TablesAppAudit.SESSION.getTableName();        
-        
-        Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_AUDIT.getName(), tableName, 
+    public static Object[] addAppSession(Integer appSessionId, String[] fieldsNamesToInsert) {
+        String tableName = TblsAppAudit.TablesAppAudit.SESSION.getTableName();
+
+        Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_AUDIT.getName(), tableName,
                 new String[]{TblsAppAudit.Session.SESSION_ID.getName()}, new Object[]{appSessionId}, fieldsNamesToInsert);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsBySessionId[0][0].toString())){
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsBySessionId[0][0].toString())) {
             Object[] appSession = getAppSession(appSessionId, fieldsNamesToInsert);
-            if (Boolean.FALSE.equals(LPArray.valueInArray(fieldsNamesToInsert, TblsAppAudit.Session.SESSION_ID.getName()))){
+            if (Boolean.FALSE.equals(LPArray.valueInArray(fieldsNamesToInsert, TblsAppAudit.Session.SESSION_ID.getName()))) {
                 fieldsNamesToInsert = LPArray.addValueToArray1D(fieldsNamesToInsert, TblsAppAudit.Session.SESSION_ID.getName());
                 appSession = LPArray.addValueToArray1D(appSession, appSessionId);
             }
@@ -180,7 +200,4 @@ public class LPSession {
         return LPArray.array2dTo1d(recordFieldsBySessionId);
     }
 
-    
-    
-    
 }
