@@ -59,7 +59,7 @@ public final class AuditEventsToRequirements {
         String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
         Rdbms.getRdbms().startRdbms(dbTrazitModules);
         Boolean summaryOnlyMode= Boolean.valueOf(request.getParameter("summaryOnly"));
-        if (!summaryOnlyMode)
+        if (Boolean.FALSE.equals(summaryOnlyMode))
             summaryOnlyMode=Boolean.valueOf(LPNulls.replaceNull(request.getAttribute("summaryOnly")).toString());
         
         getAuditEventsFromDatabase();
@@ -91,7 +91,7 @@ public final class AuditEventsToRequirements {
                             eventsFound.add(curAudEv.getClass().getSimpleName()+"-"+curAudEv.toString());
                         else
                             eventsNotFound.add(curAudEv.getClass().getSimpleName()+"-"+curAudEv.toString());
-                        if (!summaryOnlyMode){
+                        if (Boolean.FALSE.equals(summaryOnlyMode)){
                             try{
                                 declareInDatabase(curAudEv.getClass().getSimpleName(), curAudEv.toString());
                             }catch(Exception e){

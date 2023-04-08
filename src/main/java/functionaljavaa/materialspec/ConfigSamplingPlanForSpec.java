@@ -82,7 +82,7 @@ public class ConfigSamplingPlanForSpec {
         javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_CLASS_FLDNAME);         javaDocValues = LPArray.addValueToArray1D(javaDocValues, classVersion);         
         LPPlatform.addJavaClassDoc(javaDocFields, javaDocValues, elementsDev);
     }    
-    if (!devMode){
+    if (Boolean.FALSE.equals(devMode)){
         diagnoses = LPArray.checkTwoArraysSameLength(fieldsName, fieldsValue);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString())){ return diagnoses;}
     } 
@@ -93,7 +93,7 @@ public class ConfigSamplingPlanForSpec {
         javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_CLASS_FLDNAME);         javaDocValues = LPArray.addValueToArray1D(javaDocValues, classVersion);         
         LPPlatform.addJavaClassDoc(javaDocFields, javaDocValues, elementsDev);
     }  
-    if (!devMode){
+    if (Boolean.FALSE.equals(devMode)){
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());         
         Object[][] mandatoryFieldsCheck = LPPlatform.mandatoryFieldsCheck(procInstanceName, GlobalVariables.Schemas.DATA.getName(), fieldsName, fieldsValue, tableName, actionName);                
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(mandatoryFieldsCheck[0][0].toString())){ return mandatoryFieldsCheck;}
@@ -118,7 +118,7 @@ public class ConfigSamplingPlanForSpec {
         javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_CLASS_FLDNAME);         javaDocValues = LPArray.addValueToArray1D(javaDocValues, classVersion);         
         LPPlatform.addJavaClassDoc(javaDocFields, javaDocValues, elementsDev);
     } 
-    if (!devMode){
+    if (Boolean.FALSE.equals(devMode)){
         diagnoses = LPPlatform.configObjectExists(procInstanceName, fieldsName, fieldsValue, tableName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString())){return diagnoses;}
     }
@@ -129,7 +129,7 @@ public class ConfigSamplingPlanForSpec {
         javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_CLASS_FLDNAME);         javaDocValues = LPArray.addValueToArray1D(javaDocValues, classVersion);         
         LPPlatform.addJavaClassDoc(javaDocFields, javaDocValues, elementsDev);
     }  
-    if (!devMode){
+    if (Boolean.FALSE.equals(devMode)){
         LPPlatform labPlat = new LPPlatform();
         diagnoses = labPlat.specialFieldsCheck(procInstanceName, GlobalVariables.Schemas.DATA.getName(), fieldsName, fieldsValue, tableName, actionName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString())){return diagnoses;}
@@ -141,7 +141,7 @@ public class ConfigSamplingPlanForSpec {
         javaDocFields = LPArray.addValueToArray1D(javaDocFields, ApiMessageReturn.JAVADOC_CLASS_FLDNAME);         javaDocValues = LPArray.addValueToArray1D(javaDocValues, classVersion);         
         LPPlatform.addJavaClassDoc(javaDocFields, javaDocValues, elementsDev);
     }  
-    if (!devMode){
+    if (Boolean.FALSE.equals(devMode)){
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInspLotRMData.TablesInspLotRMData.LOT, fieldsName, fieldsValue);    
         if (!insertRecordInTable.getRunSuccess()){return insertRecordInTable.getApiMessage();}
     }    

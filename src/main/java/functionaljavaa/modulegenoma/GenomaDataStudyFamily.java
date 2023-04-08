@@ -62,13 +62,12 @@ public InternalMessage createStudyFamily(GenomaStudyAPI.GenomaStudyAPIactionsEnd
         javaDocValues = LPArray.addValueToArray1D(javaDocValues, classVersionProj);
         LPPlatform.addJavaClassDoc(javaDocFields, javaDocValues, elementsDev);
     }    
-    if (!devMode){
+    if (Boolean.FALSE.equals(devMode)){
         InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldsName, fieldsValue);
         if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))
             return fieldNameValueArrayChecker;
     }    
-    InternalMessage diagnosesProj = null;
-    if (!devMode){        
+    if (Boolean.FALSE.equals(devMode)){        
         StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
         for (Integer inumLines=0;inumLines<mandatoryFields.length;inumLines++){
             String currField = mandatoryFields[inumLines];

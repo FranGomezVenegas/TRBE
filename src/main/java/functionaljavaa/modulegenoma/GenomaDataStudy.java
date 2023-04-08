@@ -53,13 +53,13 @@ public InternalMessage createStudy(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints
     String schemaDataName = GlobalVariables.Schemas.DATA.getName();
     schemaDataName = LPPlatform.buildSchemaName(procInstanceName, schemaDataName);    
     mandatoryFieldsProj = labIntChecker.getTableMandatoryFields(TblsGenomaData.TablesGenomaData.STUDY.getTableName(), actionName);
-    if (!devMode){
+    if (Boolean.FALSE.equals(devMode)){
             InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldsName, fieldsValue);
             if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))
                 return fieldNameValueArrayChecker;
     }    
     Object[] diagnosesProj = new Object[0];
-    if (!devMode){        
+    if (Boolean.FALSE.equals(devMode)){        
         StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
         for (Integer inumLines=0;inumLines<mandatoryFieldsProj.length;inumLines++){
             String currField = mandatoryFieldsProj[inumLines];

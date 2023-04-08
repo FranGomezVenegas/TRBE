@@ -73,7 +73,7 @@ public class GenomaDataStudyIndividuals {
             javaDocValues = LPArray.addValueToArray1D(javaDocValues, classVersionProj);
             LPPlatform.addJavaClassDoc(javaDocFields, javaDocValues, elementsDev);
         }    
-        if (!devMode){
+        if (Boolean.FALSE.equals(devMode)){
             Object[] diagnosesProj = LPArray.checkTwoArraysSameLength(fieldsName, fieldsValue);
             if (fieldsName.length!=fieldsValue.length){
                 StackTraceElement[] elements = Thread.currentThread().getStackTrace();
@@ -96,7 +96,7 @@ public class GenomaDataStudyIndividuals {
             LPPlatform.addJavaClassDoc(javaDocFields, javaDocValues, elementsDev);
         }    
         Object[] diagnosesProj = new Object[0];
-        if (!devMode){        
+        if (Boolean.FALSE.equals(devMode)){
             if (LPArray.duplicates(fieldsName)){
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Detected any field duplicated in FieldName, the values are: <*1*>", new String[]{Arrays.toString(fieldsName)});
             }

@@ -40,7 +40,7 @@ public static String createTableScript(EnumIntTables tableObj, String procInstan
     Object[] dbTableExists = Rdbms.dbTableExists(schemaName, tableObj.getTableName());
     StringBuilder seqScript=new StringBuilder(0);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())){
-        if (!run && !refreshTableIfExists){
+        if (Boolean.FALSE.equals(run) && !refreshTableIfExists){
             if (isView)
                 return "view "+tableObj.getTableName()+" already exists";        
             else
@@ -63,7 +63,7 @@ public static String createTableScript(EnumIntTables tableObj, String procInstan
                         fieldToAdd=true;
                     }
                 }
-                if (!fieldToAdd)
+                if (Boolean.FALSE.equals(fieldToAdd))
                     if (isView)
                         return "view "+tableObj.getTableName()+" already exists and up to date";
                     else
@@ -154,10 +154,10 @@ private static String alterTableScript(EnumIntTables tableObj, String procInstan
     String script=""; 
     String schemaName=tableObj.getRepositoryName();
     schemaName=LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), schemaName);   
-    if (!getAlterTableOnly)
+    if (Boolean.FALSE.equals(getAlterTableOnly))
         script=script+LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace();
     script=script+"  ALTER TABLE  #SCHEMA.#TBL";
-    if (!getAlterTableOnly)
+    if (Boolean.FALSE.equals(getAlterTableOnly))
         script=script+LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";";
     script=script.replace("#SCHEMA", schemaName).replace("#TBL", tableObj.getTableName())
         .replace("#OWNER", DbObjects.POSTGRES_DB_OWNER).replace("#TABLESPACE", DbObjects.POSTGRES_DB_TABLESPACE);        

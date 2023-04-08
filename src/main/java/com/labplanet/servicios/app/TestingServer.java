@@ -475,7 +475,7 @@ startDate=LocalDateTime.now();
 int[] plusDays=new int[]{0, 1, 2, 200, 400};
 for (int curPlusDays: plusDays){
     endDate=LocalDateTime.now().plusDays(curPlusDays);
-    out.println("Days difference="+String.valueOf(curPlusDays)+" "+SecondsInDateRange(startDate, endDate, false));
+    out.println("Days difference="+curPlusDays+" "+SecondsInDateRange(startDate, endDate, false));
     long[] intervals=new long[]{-1, 0, 172000, 173000, 15280008, 18280008, 24560009, 34560009, 94560009};
     for (long interval:intervals){
         out.println("interval:"+interval+" "+Arrays.toString(IntervalsUtilities.isTheIntervalIntoTheDatesRange(interval, startDate, endDate)));

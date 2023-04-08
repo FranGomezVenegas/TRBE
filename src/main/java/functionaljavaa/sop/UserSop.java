@@ -182,7 +182,6 @@ public class UserSop {
     private Object[] userSopCertifiedBySopInternalLogic( String procInstanceName, String userInfoId, String sopIdFieldName, String sopIdFieldValue , Boolean isForTesting) {
         Object[] procedureSopEnable = isProcedureSopEnable(procInstanceName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureSopEnable[0].toString())) return LPArray.array1dTo2d(procedureSopEnable, 1);                        
-        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
         
         UserProfile usProf = new UserProfile();
         Object[] userSchemas = usProf.getAllUserProcedurePrefix(userInfoId);
@@ -193,7 +192,7 @@ public class UserSop {
         for (String us: (String[]) userSchemas){
             if (us.equalsIgnoreCase(procInstanceName)){schemaIsCorrect=true;break;}            
         }
-        if (!schemaIsCorrect){
+        if (Boolean.FALSE.equals(schemaIsCorrect)){
             Object[] diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.USER_WITHNOROLE_FORGIVENSCHEMA, new Object[]{userInfoId, procInstanceName});
             diagnoses = LPArray.addValueToArray1D(diagnoses, DIAGNOSES_ERROR_CODE);
             diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getBusinessRuleProcedureFile(procInstanceName, UserSopBusinessRules.CERTIF_LEVEL_IMAGE_ERROR.getAreaName(), UserSopBusinessRules.CERTIF_LEVEL_IMAGE_ERROR.getTagName()));
@@ -332,7 +331,7 @@ public class UserSop {
                 }
                 query.deleteCharAt(query.length() - 1);
                 if (currProcInstanceName.contains(GlobalVariables.Schemas.DATA.getName())){
-                    if (!isForTesting)
+                    if (Boolean.FALSE.equals(isForTesting))
                         query.append(" from \"").append(currProcInstanceName).append("\".").append(viewName).append(" where 1=1");
                     else{
                         if (currProcInstanceName.contains(GlobalVariables.Schemas.TESTING.getName()))

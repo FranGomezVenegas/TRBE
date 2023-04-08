@@ -330,7 +330,7 @@ static final String LBL_PREFIX_SAMPLE_STAGE="sampleStage";
     }
     public Object[] dataSampleStagesTimingCapture(Integer sampleId, String currStage, String phase) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        if (!this.isSampleStagesTimingCaptureEnable)
+        if (Boolean.FALSE.equals(this.isSampleStagesTimingCaptureEnable))
            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "The business rule <*1*> is not enable therefore stage change timing capture is not enabled for procedure <*2*>", new Object[]{SampleStageBusinessRules.SAMPLE_STAGE_TIMING_CAPTURE_MODE.getTagName(), procInstanceName});
         if ( (!("ALL".equalsIgnoreCase(this.isSampleStagesTimingCaptureStages))) && (LPArray.valuePosicInArray(this.isSampleStagesTimingCaptureStages.split("\\|"), currStage)==-1) )
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "The stage <*1*> is not declared for timing capture for procedure <*2*>", new Object[]{currStage, procInstanceName});

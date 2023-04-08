@@ -60,7 +60,7 @@ public final class EndPointsToRequirements {
         Rdbms.getRdbms().startRdbms(dbTrazitModules);
         getEndPointsFromDatabase();
         Boolean summaryOnlyMode = Boolean.valueOf(request.getParameter("summaryOnly"));
-        if (!summaryOnlyMode) {
+        if (Boolean.FALSE.equals(summaryOnlyMode)) {
             summaryOnlyMode = Boolean.valueOf(LPNulls.replaceNull(request.getAttribute("summaryOnly")).toString());
         }
         if (this.fldNames == null) {

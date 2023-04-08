@@ -284,7 +284,7 @@ public class Parameter {
                 return prop.getString(parameterName);
             }
         } catch (Exception e) {
-            if (!reportMissingProp)return"";
+            if (Boolean.FALSE.equals(reportMissingProp))return"";
             if (parameterName.toLowerCase().contains("encrypted_")) return "";
             LPPlatform.saveParameterPropertyInDbErrorLog("", configFile, 
                     new Object[]{}, parameterName, reportMissingProp);

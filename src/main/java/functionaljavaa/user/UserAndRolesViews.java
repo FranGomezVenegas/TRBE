@@ -60,7 +60,7 @@ public class UserAndRolesViews {
     public static final String getUserByPerson(String person){
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
         String userIsCaseSensitive = prop.getString(UserAndRolesErrorTrapping.BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT.getErrorCode());
-        if (!Boolean.valueOf(userIsCaseSensitive)) person=person.toLowerCase();        
+        if (Boolean.FALSE.equals(Boolean.valueOf(userIsCaseSensitive))) person=person.toLowerCase();        
         Object[][] userByPerson = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), 
                 new String[]{Users.PERSON_NAME.getName()}, new String[]{person}, new String[]{TblsApp.Users.USER_NAME.getName()}, new String[]{TblsApp.Users.USER_NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userByPerson[0][0].toString())){return LPPlatform.LAB_FALSE;}
@@ -75,7 +75,7 @@ public class UserAndRolesViews {
     public static final Object[] getPersonByUser(String userName){ 
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
         String userIsCaseSensitive = prop.getString(UserAndRolesErrorTrapping.BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT.getErrorCode());
-        if (!Boolean.valueOf(userIsCaseSensitive)) userName=userName.toLowerCase();
+        if (Boolean.FALSE.equals(Boolean.valueOf(userIsCaseSensitive))) userName=userName.toLowerCase();
         Object[][] personByUser = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), 
                 new String[]{TblsApp.Users.USER_NAME.getName()}, new String[]{userName}, new String[]{Users.PERSON_NAME.getName()}, new String[]{Users.PERSON_NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUser[0][0].toString()))
@@ -94,9 +94,7 @@ public class UserAndRolesViews {
     public static final Object[] isValidUserPassword(String user, String pass) {
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
         String userIsCaseSensitive = prop.getString(UserAndRolesErrorTrapping.BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT.getErrorCode());
-        if (!Boolean.valueOf(userIsCaseSensitive)) user=user.toLowerCase();
-        //Object[] encryptValue = DbEncryption.encryptValue(pass);
-        //pass=encryptValue[encryptValue.length-1].toString();
+        if (Boolean.FALSE.equals(Boolean.valueOf(userIsCaseSensitive))) user=user.toLowerCase();
         
         SqlWhere sW=new SqlWhere();
         sW.addConstraint(Users.USER_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{user}, null);        
@@ -112,8 +110,6 @@ public class UserAndRolesViews {
             return new Object[]{LPPlatform.LAB_TRUE};
         else
             return new Object[]{LPPlatform.LAB_FALSE};
-//        return Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), 
-//                new String[]{Users.USER_NAME.getName(), Users.PASSWORD.getName()}, new Object[]{user, pass});
     }
 
     public static final Object[] setUserNewPassword(String user, String newPass) {
@@ -125,7 +121,7 @@ public class UserAndRolesViews {
     public static final Object[] setUserProperty(String user, String fieldName, String newValue, Boolean isEnctrypted) {
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
         String userIsCaseSensitive = prop.getString(UserAndRolesErrorTrapping.BUNDLEPARAM_CREDNTUSR_IS_CASESENSIT.getErrorCode());
-        if (!Boolean.valueOf(userIsCaseSensitive)) user=user.toLowerCase();
+        if (Boolean.FALSE.equals(Boolean.valueOf(userIsCaseSensitive))) user=user.toLowerCase();
 	SqlWhere sqlWhere = new SqlWhere();
         if (isEnctrypted){
             Object[] encryptValue=DbEncryption.encryptValue(newValue);        

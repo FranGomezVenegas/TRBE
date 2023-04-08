@@ -360,13 +360,13 @@ public class DataSampleIncubation {
                 }
             }else
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "sampleIncubationTempReadingBusinessRule procedure property value is <*1*> and is not a recognized value for procedure <*2*>", new Object[]{sampleIncubationTempReadingBusinessRulevalue, procInstanceName} );
-            if (!currDiagn){
+            if (Boolean.FALSE.equals(currDiagn)){
                 String curLevel=currSampleIncubationTempReadingBusinessRulevalueArr[currSampleIncubationTempReadingBusinessRulevalueArr.length-1];
                 Boolean currLevelExists=false;
                 for (TempReadingBusinessRulesLevel currBusRuleLvl: TempReadingBusinessRulesLevel.values()){
                     if (curLevel.equalsIgnoreCase(currBusRuleLvl.toString())) currLevelExists=true;
                 }
-                if (!currLevelExists) curLevel=TempReadingBusinessRulesLevel.STOP.toString();
+                if (Boolean.FALSE.equals(currLevelExists)) curLevel=TempReadingBusinessRulesLevel.STOP.toString();
                 if (TempReadingBusinessRulesLevel.STOP.toString().equalsIgnoreCase(curLevel)){
                     stoppables++;
                     stoppablesDiagn=currDiagnoses;

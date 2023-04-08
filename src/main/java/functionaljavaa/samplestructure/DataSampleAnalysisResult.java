@@ -254,7 +254,7 @@ public class DataSampleAnalysisResult {
         Object[] ifUserCertificationEnabled = AnalysisMethodCertif.isUserCertificationEnabled();
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(ifUserCertificationEnabled[0].toString())){
             Object[] userCertified = AnalysisMethodCertif.isUserCertified(methodName, token.getUserName());
-            if (!Boolean.valueOf(userCertified[0].toString())) return (Object[]) new Object[]{userCertified[1]};
+            if (Boolean.FALSE.equals(Boolean.valueOf(userCertified[0].toString()))) return (Object[]) new Object[]{userCertified[1]};
         }        
         if (resultStatusReviewed.equalsIgnoreCase(currResultStatus) || resultStatusCanceled.equalsIgnoreCase(currResultStatus)){
             messages.addMainForError(DataSampleAnalysisResultErrorTrapping.RESULT_LOCKED, new Object[]{currResultStatus, resultId.toString(), schemaConfigName});
@@ -537,7 +537,7 @@ public class DataSampleAnalysisResult {
         Object[] ifUserCertificationEnabled = AnalysisMethodCertif.isUserCertificationEnabled();
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(ifUserCertificationEnabled[0].toString())){
             Object[] userCertified = AnalysisMethodCertif.isUserCertified(methodName, token.getUserName());
-            if (!Boolean.valueOf(userCertified[0].toString())) return (Object[]) new Object[]{userCertified[1]};
+            if (Boolean.FALSE.equals(Boolean.valueOf(userCertified[0].toString()))) return (Object[]) new Object[]{userCertified[1]};
         }        
         if (resultStatusReviewed.equalsIgnoreCase(currResultStatus) || resultStatusCanceled.equalsIgnoreCase(currResultStatus)){
             messages.addMainForError(DataSampleAnalysisResultErrorTrapping.RESULT_LOCKED, new Object[]{currResultStatus, resultId.toString(), schemaConfigName});

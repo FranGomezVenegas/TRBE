@@ -73,13 +73,13 @@ public InternalMessage createProject(GenomaProjectAPI.GenomaProjectAPIactionsEnd
     schemaDataName = LPPlatform.buildSchemaName(procInstanceName, schemaDataName);    
     mandatoryFieldsProj = labIntChecker.getTableMandatoryFields(tableName, actionName);
         
-    if (!devMode){
+    if (Boolean.FALSE.equals(devMode)){
         InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldsName, fieldsValue);
         if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))
             return fieldNameValueArrayChecker;
     }    
     Object[] diagnosesProj = new Object[0];
-    if (!devMode){        
+    if (Boolean.FALSE.equals(devMode)){        
         StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
         for (Integer inumLines=0;inumLines<mandatoryFieldsProj.length;inumLines++){
             String currField = mandatoryFieldsProj[inumLines];

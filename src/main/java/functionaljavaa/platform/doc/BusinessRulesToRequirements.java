@@ -62,7 +62,7 @@ public class BusinessRulesToRequirements {
         JSONArray eventsFound = new JSONArray();
         JSONArray eventsNotFound = new JSONArray();        
         Boolean summaryOnlyMode= Boolean.valueOf(request.getParameter("summaryOnly"));
-        if (!summaryOnlyMode)
+        if (Boolean.FALSE.equals(summaryOnlyMode))
             summaryOnlyMode=Boolean.valueOf(LPNulls.replaceNull(request.getAttribute("summaryOnly")).toString());
         
         getMessageCodesFromDatabase();
@@ -92,7 +92,7 @@ public class BusinessRulesToRequirements {
                         }else{
                             eventsNotFound.add(curBusRul.getAreaName()+"-"+curBusRul.getTagName());
                         }
-                        if (!summaryOnlyMode){
+                        if (Boolean.FALSE.equals(summaryOnlyMode)){
                             try{
                                 declareBusinessRuleInDatabaseWithValuesList(curBusRul.getClass().getSimpleName(), 
                                 curBusRul.getAreaName(), curBusRul.getTagName(), 

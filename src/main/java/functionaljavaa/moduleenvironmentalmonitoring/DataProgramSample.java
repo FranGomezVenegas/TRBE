@@ -141,7 +141,7 @@ public class DataProgramSample{
                 new String[]{TblsEnvMonitConfig.ProgramLocation.REQUIRES_PERSON_ANA.getName(), TblsEnvMonitConfig.ProgramLocation.PERSON_ANA_DEFINITION.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programLocationPersonalInfo[0][0].toString())) return new Object[]{LPPlatform.LAB_TRUE};
         Boolean requiresPersonalAnalysis=Boolean.valueOf(LPNulls.replaceNull(programLocationPersonalInfo[0][0]).toString());
-        if (!requiresPersonalAnalysis) return new Object[]{LPPlatform.LAB_TRUE};
+        if (Boolean.FALSE.equals(requiresPersonalAnalysis)) return new Object[]{LPPlatform.LAB_TRUE};
         
         String samplerArea = programLocationPersonalInfo[0][1].toString();
         if ((samplerArea==null) || (samplerArea!=null && samplerArea.length()==0) ) 

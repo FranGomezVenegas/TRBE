@@ -229,7 +229,7 @@ public class LPDate {
     public static BigDecimal SecondsInDateRange(LocalDateTime startDate, LocalDateTime endDate, Boolean includeMilis){
         //Period between = Period.between(startDate.toLocalDate(), endDate.toLocalDate());
         BigDecimal durSecs = new BigDecimal(Duration.between(startDate, endDate).getSeconds());
-        if (!includeMilis) return durSecs;
+        if (Boolean.FALSE.equals(includeMilis)) return durSecs;
         BigDecimal durMillis=new BigDecimal(Duration.between(startDate, endDate).getNano());
         durMillis=durMillis.divide(new BigDecimal(1000000));
         durMillis=durMillis.divide(new BigDecimal(1000));

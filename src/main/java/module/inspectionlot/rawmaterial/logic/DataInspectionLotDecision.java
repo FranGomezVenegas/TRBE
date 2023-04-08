@@ -190,7 +190,7 @@ public class DataInspectionLotDecision {
         String auditAction=null;
         EnumIntAuditEvents auditEvObj=null;
         SqlWhere sqlWhere = new SqlWhere();
-        if (!forBulks){
+        if (Boolean.FALSE.equals(forBulks)){
             sqlWhere.addConstraint(TblsInspLotRMData.LotDecision.LOT_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{lotName}, "");
             tblObj=TblsInspLotRMData.TablesInspLotRMData.LOT_DECISION;
             endpointObj=InspLotRMAPIactionsEndpoints.LOT_TAKE_DECISION;

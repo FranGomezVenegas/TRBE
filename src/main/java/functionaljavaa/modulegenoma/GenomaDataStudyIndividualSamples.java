@@ -51,15 +51,13 @@ public InternalMessage createStudyIndividualSample(GenomaStudyAPI.GenomaStudyAPI
 
         String actionName = "Insert";
         String schemaDataName = GlobalVariables.Schemas.DATA.getName();
-        schemaDataName = LPPlatform.buildSchemaName(procInstanceName, schemaDataName);    
         mandatoryFields = labIntChecker.getTableMandatoryFields(TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName(), actionName);
-        if (!devMode){
+        if (Boolean.FALSE.equals(devMode)){
             InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldsName, fieldsValue);
             if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))
                 return fieldNameValueArrayChecker;
         }    
-        InternalMessage diagnosesProj = null;
-        if (!devMode){        
+        if (Boolean.FALSE.equals(devMode)){        
             StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
             for (Integer inumLines=0;inumLines<mandatoryFields.length;inumLines++){
                 String currField = mandatoryFields[inumLines];

@@ -698,7 +698,7 @@ public enum LpPlatformErrorTrapping implements EnumIntMessages{
                         }    
                     }
                 }
-                if (!addIt){
+                if (Boolean.FALSE.equals(addIt)){
                     if (mandatoryFieldsMissing.length()>0){mandatoryFieldsMissing = mandatoryFieldsMissing.append(",");}
                     mandatoryFieldsMissing = mandatoryFieldsMissing.append(currField);
                 }

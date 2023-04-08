@@ -186,7 +186,7 @@ public class DataSpec {
                     String[] textSpecArray = values.split(separator);
                     if (textSpecArray.length==0) textSpecArray=values.split("\\"+separator);
                     Boolean contained=result.contains("\\"+separator);
-                    if (!contained) contained=result.contains(separator);
+                    if (Boolean.FALSE.equals(contained)) contained=result.contains(separator);
                     if (contained) 
                         return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrorsErrorTrapping.SEPARATOR_FOUND_IN_RESULT, new Object[]{separator, result});
                     if (textSpecArray.length==0 || !(values.contains("\\"+separator))) 
@@ -211,7 +211,7 @@ public class DataSpec {
                     return diagnoses;
                 }else{
                     Boolean contained=result.contains("\\"+separator);
-                    if (!contained) contained=result.contains(separator);
+                    if (Boolean.FALSE.equals(contained)) contained=result.contains(separator);
                     if (contained) 
                         return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrorsErrorTrapping.SEPARATOR_FOUND_IN_RESULT, new Object[]{separator, result});                    
                     values=values.toUpperCase();
@@ -359,7 +359,7 @@ public class DataSpec {
 
         if (minControl!=null){
             if (minControl.equals(minSpec)) {                
-                if (!minStrict || minStrict==null){
+                if (Boolean.FALSE.equals(minStrict) || minStrict==null){
                     errorVariables = LPArray.addValueToArray1D(errorVariables, new Object[]{DataSampleStructureSuccess.OUT_SPEC_MIN, minSpec, "Min Strict  is set to false."});
                     Object[] diagnoses =  ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, ResultCheckErrorsErrorTrapping.STRICT_DOES_NOT_ALLOW_EQUALS, errorVariables);
                     diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrorsErrorTrapping.EVALUATION_WRONG_RULE);

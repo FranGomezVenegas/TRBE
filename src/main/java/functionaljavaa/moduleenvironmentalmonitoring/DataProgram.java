@@ -102,7 +102,7 @@ Object[] createProgram(String projectTemplate, Integer projectTemplateVersion, S
         javaDocValuesProj = LPArray.addValueToArray1D(javaDocValuesProj, classVersionProj);
         LPPlatform.addJavaClassDoc(javaDocFieldsProj, javaDocValuesProj, elementsDev);
     }    
-    if (!devMode){
+    if (Boolean.FALSE.equals(devMode)){
         Object[] diagnosesProj = LPArray.checkTwoArraysSameLength(sampleFieldName, sampleFieldValue);
         if (sampleFieldName.length!=sampleFieldValue.length){
             StackTraceElement[] elements = Thread.currentThread().getStackTrace();
@@ -125,7 +125,7 @@ Object[] createProgram(String projectTemplate, Integer projectTemplateVersion, S
         LPPlatform.addJavaClassDoc(javaDocFieldsProj, javaDocValuesProj, elementsDev);
     }    
     Object[] diagnosesProj = new Object[0];
-    if (!devMode){        
+    if (Boolean.FALSE.equals(devMode)){        
         if (LPArray.duplicates(sampleFieldName)){
             StackTraceElement[] elements = Thread.currentThread().getStackTrace();
             diagnosesProj[0]= elements[1].getClassName() + "." + elements[1].getMethodName();

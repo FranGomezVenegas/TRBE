@@ -33,7 +33,7 @@ public class ProcedureSampleStages {
                 SampleStageBusinessRules.SAMPLE_STAGE_TIMING_PROCEDURE_CONFIG_ENABLED.getAreaName(), 
                 SampleStageBusinessRules.SAMPLE_STAGE_TIMING_PROCEDURE_CONFIG_ENABLED.getTagName());        
         Boolean businessRuleIsEnable = Parameter.isTagValueOneOfEnableOnes(tagValue);
-        if (!businessRuleIsEnable)
+        if (Boolean.FALSE.equals(businessRuleIsEnable))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "ruleDisabled", null);
         Object[][] sampleStageTimingCaptureInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE.getTableName(), 
             new String[]{TblsProcedure.SampleStageTimingCapture.SAMPLE_ID.getName(), TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT.getName()},    
@@ -59,14 +59,13 @@ public class ProcedureSampleStages {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleStageProcInfo[0][0].toString()))
             return sampleStageProcInfo;
         String isStageMarkedAsEnabled=LPNulls.replaceNull(sampleStageProcInfo[0][LPArray.valuePosicInArray(getAllFieldNames(TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL.getTableFields()), TblsProcedureConfig.StageTimingInterval.ENABLED.getName())]).toString();
-        if (!Boolean.valueOf(isStageMarkedAsEnabled)) 
+        if (Boolean.FALSE.equals(Boolean.valueOf(isStageMarkedAsEnabled)))
            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "stageMarkedAsDisabled", null);
         String intvValue=LPNulls.replaceNull(sampleStageProcInfo[0][LPArray.valuePosicInArray(getAllFieldNames(TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL.getTableFields()), TblsProcedureConfig.StageTimingInterval.INTERVAL_SECONDS.getName())]).toString();
         stageProcedureDeviationShouldBeCreated(sampleId, stageStartDate, LocalDateTime.now(), configCode, configVersion, stage, Integer.valueOf(intvValue));
         return new Object[]{LPPlatform.LAB_TRUE, Integer.valueOf(intvValue)};
     }
     private static void stageProcedureDeviationShouldBeCreated(Integer sampleId, LocalDateTime stageStartDate, LocalDateTime stageEndDate, String configCode, Integer configVersion, String stage, Integer interval){
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] isTheIntervalIntoTheDatesRange = IntervalsUtilities.isTheIntervalIntoTheDatesRange(interval, stageStartDate, stageEndDate);        
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isTheIntervalIntoTheDatesRange[0].toString())){
             String[] insFldNames=new String[]{TblsProcedure.SampleStageTimingIntervalDeviation.SAMPLE_ID.getName(), TblsProcedure.SampleStageTimingIntervalDeviation.STAGE.getName(),
