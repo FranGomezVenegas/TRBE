@@ -127,12 +127,11 @@ public class DataInspectionLotDecision {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn.getDiagnostic())) return diagn;
         
         return lotDecisionRecordCreateOrUpdate(lotName, decision, false);
-        //return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "NotImplementedYet", null);
     } 
     
     public InternalMessage decisionTypePasses(String lotName, String decision, String[] dataLotFlds, Object[] lotInfo, String[] configLotDecFlds, Object[] configLotDecInfo, Boolean isBulk){
         String decisionsList=null;
-        if (isBulk)
+        if (Boolean.TRUE.equals(isBulk))
             decisionsList=configLotDecInfo[LPArray.valuePosicInArray(configLotDecFlds, TblsInspLotRMConfig.LotDecisionRules.BULK_DECISIONS_LIST.getName())].toString();
         else
             decisionsList=configLotDecInfo[LPArray.valuePosicInArray(configLotDecFlds, TblsInspLotRMConfig.LotDecisionRules.DECISIONS_LIST.getName())].toString();
@@ -160,14 +159,14 @@ public class DataInspectionLotDecision {
                     sampleAndSampleAnalysisFlds);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAndSampleAnalysisInfo[0][0].toString())) 
                 return new InternalMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{lotName, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())}, lotName);
-            if (Boolean.valueOf(testRevisionRequired)){            
+            if (Boolean.TRUE.equals(Boolean.valueOf(testRevisionRequired))){
                 Object[] sampleAnalysisStatuses = LPArray.getColumnFromArray2D(sampleAndSampleAnalysisInfo, LPArray.valuePosicInArray(sampleAndSampleAnalysisFlds, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.TEST_STATUS.getName()));
                 for (Object curSmpAnaStatus: sampleAnalysisStatuses){
                     if (curSmpAnaStatus==null || curSmpAnaStatus.toString().length()==0) return new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.LOT_HAS_ONE_SAMPLE_ANALYSIS_WITH_NO_STATUS, null);
                     if (!sampleStatusReviewed.equalsIgnoreCase(curSmpAnaStatus.toString())) return new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.LOT_HAS_NOTREVIEWED_SAMPLEANALYSIS, new Object[]{lotName, procInstanceName});
                 }
             }
-            if (Boolean.valueOf(sampleRevisionRequired)){            
+            if (Boolean.TRUE.equals(Boolean.valueOf(sampleRevisionRequired))){
                 Object[] sampleStatuses = LPArray.getColumnFromArray2D(sampleAndSampleAnalysisInfo, LPArray.valuePosicInArray(sampleAndSampleAnalysisFlds, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_STATUS.getName()));
                 for (Object curSmpStatus: sampleStatuses){
                     if (curSmpStatus==null || curSmpStatus.toString().length()==0) return new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.LOT_HAS_ONE_SAMPLE_ANALYSIS_WITH_NO_STATUS, null);

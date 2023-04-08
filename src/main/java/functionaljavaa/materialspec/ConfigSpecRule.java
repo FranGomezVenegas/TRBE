@@ -547,12 +547,12 @@ public class ConfigSpecRule {
           }   
           StringBuilder ruleRepr = new StringBuilder(0);
           if (this.minSpec!=null){
-            if (this.minSpecIsStrict)ruleRepr.append("<");
+            if (Boolean.TRUE.equals(this.minSpecIsStrict)) ruleRepr.append("<");
             ruleRepr.append(this.minSpec);
           }
           if (this.minControl!=null){
             ruleRepr.append(" ");
-            if (this.minControlIsStrict)ruleRepr.append("<");
+            if (Boolean.TRUE.equals(this.minControlIsStrict)) ruleRepr.append("<");
             ruleRepr.append(this.minControl);
           }
 
@@ -560,12 +560,12 @@ public class ConfigSpecRule {
 
           if (this.maxControl!=null){
             ruleRepr.append(" ");
-            if (this.maxControlIsStrict)ruleRepr.append(">");
+            if (Boolean.TRUE.equals(this.maxControlIsStrict)) ruleRepr.append(">");
             ruleRepr.append(this.maxControl);
           }
           if (this.maxSpec!=null){
             ruleRepr.append(" ");            
-            if (this.maxSpecIsStrict)ruleRepr.append(">");
+            if (Boolean.TRUE.equals(this.maxSpecIsStrict)) ruleRepr.append(">");
             ruleRepr.append(this.maxSpec);
           }
           this.quantitativeRuleRepresentation=ruleRepr.toString();
@@ -718,7 +718,7 @@ public class ConfigSpecRule {
     return ruleRepresentation;
   }
   public Object[][] getRuleData(){
-        if (ruleIsQuantitative){
+        if (Boolean.TRUE.equals(ruleIsQuantitative)){
             Object[][] quantiRuleInfo = new Object[9][2];
             quantiRuleInfo[0]=new Object[]{"minSpec", minSpec};
             quantiRuleInfo[1]=new Object[]{"minSpecIsStrict", minSpecIsStrict};
@@ -731,7 +731,7 @@ public class ConfigSpecRule {
             quantiRuleInfo[8]=new Object[]{"ruleRepresentation", ruleRepresentation};
             return quantiRuleInfo;
         }
-        if (ruleIsQualitative){
+        if (Boolean.TRUE.equals(ruleIsQualitative)){
             Object[][] qualitRuleInfo = new Object[5][2];
             qualitRuleInfo[0]=new Object[]{"qualitativeRule", qualitativeRule};
             qualitRuleInfo[1]=new Object[]{"qualitativeRuleValues", qualitativeRuleValues};

@@ -212,7 +212,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 sW=new SqlWhere(ViewsInstrumentsData.NOT_DECOM_INSTR_EVENT_DATA_VW, whereFldName, whereFldValue);
                 if (familyName.length()>0)
                     sW.addConstraint(TblsInstrumentsData.ViewNotDecommInstrumentAndEventData.INSTRUMENT_FAMILY, SqlStatement.WHERECLAUSE_TYPES.IN, familyName.split("\\|"), "|");                
-                if (filterByResponsible){
+                if (Boolean.TRUE.equals(filterByResponsible)){
                     SqlWhereEntry[] orClauses=new SqlWhereEntry[]{
                         new SqlWhereEntry(TblsInstrumentsData.ViewNotDecommInstrumentAndEventData.RESPONSIBLE, 
                                 SqlStatement.WHERECLAUSE_TYPES.IS_NULL, new Object[]{""}, null),

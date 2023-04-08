@@ -89,7 +89,7 @@ public class LPHttp {
                 if (curParamValue==null){notPresent=true;}
                 if ("undefined".equals(curParamValue)){notPresent=true;}
                 if ("".equals(curParamValue)){notPresent=true;}
-                if (notPresent){
+                if (Boolean.TRUE.equals(notPresent)){
                     paramsNotPresent.append(curParam).append(", ");
                 }
             }
@@ -120,7 +120,7 @@ public class LPHttp {
                     if (curParamValue==null){notPresent=true;}
                     if ("undefined".equals(curParamValue)){notPresent=true;}
                     if ("".equals(curParamValue)){notPresent=true;}
-                    if (notPresent)
+                    if (Boolean.TRUE.equals(notPresent))
                         paramsNotPresent.append(curParam.getName()).append(", ");
                 }
             }

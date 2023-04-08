@@ -382,7 +382,7 @@ public class DataSampleIncubation {
                 finalDiagn=false;                
             }
         }
-        if (finalDiagn) return new Object[]{LPPlatform.LAB_TRUE};  
+        if (Boolean.TRUE.equals(finalDiagn)) return new Object[]{LPPlatform.LAB_TRUE};  
 
         if (deviationAndStop>0){
             Rdbms.insertRecordInTable(TblsEnvMonitProcedure.TablesEnvMonitProcedure.INCUB_TEMP_READING_VIOLATIONS, 

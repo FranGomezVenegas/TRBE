@@ -187,7 +187,7 @@ public class DataSpec {
                     if (textSpecArray.length==0) textSpecArray=values.split("\\"+separator);
                     Boolean contained=result.contains("\\"+separator);
                     if (Boolean.FALSE.equals(contained)) contained=result.contains(separator);
-                    if (contained) 
+                    if (Boolean.TRUE.equals(contained)) 
                         return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrorsErrorTrapping.SEPARATOR_FOUND_IN_RESULT, new Object[]{separator, result});
                     if (textSpecArray.length==0 || !(values.contains("\\"+separator))) 
                         textSpecArray=LPArray.addValueToArray1D(textSpecArray, values);
@@ -212,7 +212,7 @@ public class DataSpec {
                 }else{
                     Boolean contained=result.contains("\\"+separator);
                     if (Boolean.FALSE.equals(contained)) contained=result.contains(separator);
-                    if (contained) 
+                    if (Boolean.TRUE.equals(contained)) 
                         return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrorsErrorTrapping.SEPARATOR_FOUND_IN_RESULT, new Object[]{separator, result});                    
                     values=values.toUpperCase();
                     result=result.toUpperCase();
@@ -386,7 +386,7 @@ public class DataSpec {
         }
         if (minControl!=null){    
             int comparingMIN = result.compareTo(minControl);
-            if (minControlStrict){
+            if (Boolean.TRUE.equals(minControlStrict)){
                 if ( comparingMIN<1) {
                     errorVariables = LPArray.addValueToArray1D(errorVariables, new Object[]{minSpec.toString(), " > "+result.toString()+" > ", minSpec.toString()});
                     Object[] diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleStructureSuccess.QUANTITATIVE_IN_ALERT_MIN_STRICT, errorVariables);
@@ -419,7 +419,7 @@ public class DataSpec {
         }
         if (maxControl!=null){
             int comparingMAX = result.compareTo(maxControl);
-            if (maxControlStrict){
+            if (Boolean.TRUE.equals(maxControlStrict)){
                 if (comparingMAX>-1) {
                     errorVariables = LPArray.addValueToArray1D(errorVariables, new Object[]{maxControl.toString(), " > "+result.toString()+" > ", maxSpec});
                     Object[] diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleStructureSuccess.QUANTITATIVE_IN_ALERT_MAX_STRICT, errorVariables);

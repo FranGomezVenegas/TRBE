@@ -707,7 +707,7 @@ public class ProcedureDefinitionToInstance {
                                 cont = false;
                                 curTblJsonObj.put("unexpected_error", e.getMessage());
                             }
-                            if (cont) {
+                            if (Boolean.TRUE.equals(cont)){
                                 Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curSchemaName, curTableName, tblCreateScript, new Object[]{});
                                 if ("-999".equalsIgnoreCase(prepUpQuery[0].toString())) {
                                     diagn = diagn + " and not created, " + prepUpQuery[prepUpQuery.length - 1];
@@ -847,7 +847,7 @@ public class ProcedureDefinitionToInstance {
                                 cont = false;
                                 curTblJsonObj.put("unexpected_error", e.getMessage());
                             }
-                            if (cont) {
+                            if (Boolean.TRUE.equals(cont)){
                                 Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curSchemaName, curTableName, tblCreateScript, new Object[]{});
                                 if ("-999".equalsIgnoreCase(prepUpQuery[0].toString())) {
                                     diagn = diagn + " and not created, " + prepUpQuery[prepUpQuery.length - 1];
@@ -959,7 +959,7 @@ public class ProcedureDefinitionToInstance {
                                 cont = false;
                                 curTblJsonObj.put("unexpected_error", e.getMessage());
                             }
-                            if (cont) {
+                            if (Boolean.TRUE.equals(cont)){
                                 Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curSchemaName, curTableName, tblCreateScript, new Object[]{});
                                 if ("-999".equalsIgnoreCase(prepUpQuery[0].toString())) {
                                     diagn = diagn + " and not created, " + prepUpQuery[prepUpQuery.length - 1];

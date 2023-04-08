@@ -256,7 +256,7 @@ public class DataInspectionLot {
 
         Boolean inventoryManagement=Boolean.valueOf(LPNulls.replaceNull(materialInfo[0][2]).toString());
         InventoryPlanEntry invPlanEntry=null;
-        if (inventoryManagement){
+        if (Boolean.TRUE.equals(inventoryManagement)){
             invPlanEntry=new InventoryPlanEntry(materialName, specCode, specCodeVersion, quant, numCont);
             if (invPlanEntry.getHasErrors())
                 return new InternalMessage(LPPlatform.LAB_FALSE, DataInspLotErrorTrapping.INVENTORYPLAN_CHECKER_ERROR, 
@@ -297,7 +297,7 @@ public class DataInspectionLot {
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(applyContainerPlan.getDiagnostic())) 
                     return applyContainerPlan;                
             }
-            if (inventoryManagement){
+            if (Boolean.TRUE.equals(inventoryManagement)){
                 InternalMessage applyInventoryPlan = applyInventoryPlan(lotName, materialName, specCode, specCodeVersion, quant, numCont, lotFieldName, lotFieldValue, invPlanEntry);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(applyInventoryPlan.getDiagnostic())) 
                     return applyInventoryPlan;

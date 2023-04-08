@@ -40,13 +40,13 @@ public static String createTableScript(EnumIntTables tableObj, String procInstan
     Object[] dbTableExists = Rdbms.dbTableExists(schemaName, tableObj.getTableName());
     StringBuilder seqScript=new StringBuilder(0);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())){
-        if (Boolean.FALSE.equals(run) && !refreshTableIfExists){
-            if (isView)
+        if (Boolean.FALSE.equals(run) && Boolean.FALSE.equals(refreshTableIfExists)){
+            if (Boolean.TRUE.equals(isView))
                 return "view "+tableObj.getTableName()+" already exists";        
             else
                 return "table "+tableObj.getTableName()+" already exists";        
         }
-        if (refreshTableIfExists){
+        if (Boolean.TRUE.equals(refreshTableIfExists)){
             HashMap<String[], Object[][]> dbTableGetFieldDefinition = Rdbms.dbTableGetFieldDefinition(schemaName, tableObj.getTableName());
             String[] fldName= dbTableGetFieldDefinition.keySet().iterator().next();   
             Integer valuePosicInArray = LPArray.valuePosicInArray(fldName, "column_name");
@@ -64,7 +64,7 @@ public static String createTableScript(EnumIntTables tableObj, String procInstan
                     }
                 }
                 if (Boolean.FALSE.equals(fieldToAdd))
-                    if (isView)
+                    if (Boolean.TRUE.equals(isView))
                         return "view "+tableObj.getTableName()+" already exists and up to date";
                     else
                         return "table "+tableObj.getTableName()+" already exists and up to date";
@@ -72,12 +72,13 @@ public static String createTableScript(EnumIntTables tableObj, String procInstan
             }
         }        
     }else{
-        if (run){
+        if (Boolean.TRUE.equals(run)){
             seqScript=seqScript.append(sequenceScript(tableObj, procInstanceName));
-            Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(schemaName, tableObj.getTableName(), seqScript.toString(), new Object[]{});
-        }else
+            Rdbms.prepUpQueryWithDiagn(schemaName, tableObj.getTableName(), seqScript.toString(), new Object[]{});
+        }else{
             seqScript=new StringBuilder(0);
             seqScript=seqScript.append(sequenceScript(tableObj, procInstanceName));
+        }
         seqScript=seqScript.append(createTableBeginScript(tableObj, procInstanceName));
         seqScript=seqScript.append(primaryKeyScript(tableObj));
         seqScript=seqScript.append(foreignKeyScript(tableObj, procInstanceName));
@@ -87,9 +88,8 @@ public static String createTableScript(EnumIntTables tableObj, String procInstan
         seqScript=seqScript.append(tableCommentScript(tableObj, procInstanceName));
         seqScript=seqScript.append(fieldCommentScript(tableObj, procInstanceName));
         Object[] prepUpQuery;
-        if (run)
+        if (Boolean.TRUE.equals(run))
             prepUpQuery = Rdbms.prepUpQueryWithDiagn(schemaName, tableObj.getTableName(), seqScript.toString(), new Object[]{});
-
     }    
      return seqScript.toString();
 }

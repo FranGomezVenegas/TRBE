@@ -59,7 +59,7 @@ public class DataBulk {
             return new InternalMessage(LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), null);
         LotAudit lotAudit = new LotAudit();  
         EnumIntAuditEvents audEvObj=null;
-        if (isAdhoc)
+        if (Boolean.TRUE.equals(isAdhoc))
             audEvObj=InspectionLotRMAuditEvents.LOT_BULK_ADHOC_ADDED;
         else
             audEvObj=InspectionLotRMAuditEvents.LOT_BULK_ADDED;           

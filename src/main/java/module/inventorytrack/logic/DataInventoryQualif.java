@@ -51,7 +51,7 @@ public class DataInventoryQualif {
         Object[] fldValues = new Object[]{};
         Object[][] referenceInfo = null;
         String[] allFieldNames = getAllFieldNames(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableFields());
-        if (requiresConfigChecks) {
+        if (Boolean.TRUE.equals(requiresConfigChecks)){
             if (reference != null && reference.length() > 0) {
                 referenceInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName(),
                         new String[]{TblsInvTrackingConfig.Reference.NAME.getName(), TblsInvTrackingConfig.Reference.CATEGORY.getName()}, new Object[]{reference, category},
@@ -475,7 +475,7 @@ public class DataInventoryQualif {
                 return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.AUTHOR_CANNOT_BE_REVIEWER, new Object[]{});
             }
         }
-        if (Boolean.valueOf(auditInfo[0][1].toString())) {
+        if (Boolean.TRUE.equals(Boolean.valueOf(auditInfo[0][1].toString()))){
             messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.AUDIT_RECORD_ALREADY_REVIEWED, new Object[]{auditId});
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.AUDIT_RECORD_ALREADY_REVIEWED, new Object[]{auditId});
         }

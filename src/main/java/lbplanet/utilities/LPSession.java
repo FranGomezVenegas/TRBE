@@ -154,7 +154,7 @@ public class LPSession {
                 addProcess=true;
             }            
         }
-        if (addProcess){
+        if (Boolean.TRUE.equals(addProcess)){
             SqlWhere sqlWhere = new SqlWhere();
             sqlWhere.addConstraint(TblsApp.AppSession.SESSION_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{appSessionId}, "");
             return Rdbms.updateRecordFieldsByFilter(TblsApp.TablesApp.APP_SESSION,

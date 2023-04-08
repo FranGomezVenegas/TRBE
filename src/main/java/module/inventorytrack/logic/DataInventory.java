@@ -382,7 +382,7 @@ public class DataInventory {
     }
 
     public InternalMessage turnAvailable(String[] fldNames, Object[] fldValues) {
-        if (this.getRequiresQualification() && !this.getIsQualified()) {
+        if (Boolean.TRUE.equals(this.getRequiresQualification()) && !this.getIsQualified()) {
             return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.LOT_NOTQUALIFIED_YET, new Object[]{this.getLotName()}, null);
         }
         return updateLotTransaction(InvLotStatuses.AVAILABLE_FOR_USE.toString(), InvTrackingEnums.InventoryTrackAPIactionsEndpoints.TURN_LOT_AVAILABLE,
@@ -399,7 +399,7 @@ public class DataInventory {
     }
 
     public InternalMessage updateInventoryLot(String[] fldNames, Object[] fldValues, String actionName) {
-        if (this.getIsRetired()) {
+        if (Boolean.TRUE.equals(this.getIsRetired())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.ALREADY_RETIRED, new Object[]{this.getLotName()}, null);
         }
         String[] reservedFldsNotUpdatable = new String[]{TblsInvTrackingData.Lot.LOT_NAME.getName()};

@@ -288,7 +288,7 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
                 return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.AUTHOR_CANNOT_BE_REVIEWER, new Object[]{});                
             }
         }
-        if (Boolean.valueOf(auditInfo[0][1].toString())){
+        if (Boolean.TRUE.equals(Boolean.valueOf(auditInfo[0][1].toString()))){
             messages.addMainForError(InstrumentsErrorTrapping.AUDIT_RECORD_ALREADY_REVIEWED, new Object[]{auditId});
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.AUDIT_RECORD_ALREADY_REVIEWED, new Object[]{auditId});
         }

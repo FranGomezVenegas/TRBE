@@ -131,7 +131,7 @@ public class DataInventoryMovements {
         fldValues=LPArray.addValueToArray1D(fldValues, "The new volume is "+reducedVolume+" as reducing "+newVolume+" "+newVolumeUom+" to the current volume "+invLot.getCurrentVolume()+" "+invLot.getCurrentVolumeUom());
         fldNames=LPArray.addValueToArray1D(fldNames, "operation_es");
         fldValues=LPArray.addValueToArray1D(fldValues, "The nuevo volumen es "+reducedVolume+" al reducir "+newVolume+" "+newVolumeUom+" del volume actual "+invLot.getCurrentVolume()+" "+invLot.getCurrentVolumeUom());
-        if (requiredConversion){
+        if (Boolean.TRUE.equals(requiredConversion)){
             fldNames=LPArray.addValueToArray1D(fldNames, "required_conversion");
             fldValues=LPArray.addValueToArray1D(fldValues, true);
             fldNames=LPArray.addValueToArray1D(fldNames, "conversion_en");
@@ -194,7 +194,7 @@ public class DataInventoryMovements {
         fldValues=LPArray.addValueToArray1D(fldValues, "The new volume is "+increasedVolume+" as adding "+newVolume+" "+newVolumeUom+" to the current volume "+invLot.getCurrentVolume()+" "+invLot.getCurrentVolumeUom());
         fldNames=LPArray.addValueToArray1D(fldNames, "operation_es");
         fldValues=LPArray.addValueToArray1D(fldValues, "The nuevo volumen es "+increasedVolume+" al añadir "+newVolume+" "+newVolumeUom+" del volume actual "+invLot.getCurrentVolume()+" "+invLot.getCurrentVolumeUom());
-        if (requiredConversion){
+        if (Boolean.TRUE.equals(requiredConversion)){
             fldNames=LPArray.addValueToArray1D(fldNames, "required_conversion");
             fldValues=LPArray.addValueToArray1D(fldValues, true);
             fldNames=LPArray.addValueToArray1D(fldNames, "conversion_en");

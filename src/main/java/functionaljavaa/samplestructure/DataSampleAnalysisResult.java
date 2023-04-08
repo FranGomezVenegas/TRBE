@@ -298,7 +298,7 @@ public class DataSampleAnalysisResult {
                 new Object[]{TblsCnfg.SampleRules.ANALYST_ASSIGNMENT_MODE.getName(), sampleConfigCode, sampleConfigCodeVersion, schemaConfigName})};
         Boolean analystRequired=false;
         if (sampleRulesData[0][0]!=null){analystRequired = Boolean.valueOf(sampleRulesData[0][0].toString());}
-        if (analystRequired) {
+        if (Boolean.TRUE.equals(analystRequired)) {
             Object[][] testData = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
                     new String[]{TblsData.SampleAnalysis.TEST_ID.getName()}, new Object[]{testId}, 
                     new String[]{TblsData.SampleAnalysis.TEST_ID.getName(), TblsData.SampleAnalysis.ANALYST.getName(), TblsData.SampleAnalysis.ANALYST_ASSIGNED_ON.getName()});
@@ -436,13 +436,13 @@ public class DataSampleAnalysisResult {
                     return new Object[]{ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.NOT_NUMERIC_VALUE, new Object[]{resultValue, specRule.getRuleRepresentation(), specLimitId.toString(), schemaDataName})};            
                 }
                 if (specRule.getQuantitativeHasControl()){
-                    if (requiresUnitsConversion) {
+                    if (Boolean.TRUE.equals(requiresUnitsConversion)){
                         resSpecEvaluation = resChkSpec.resultCheck(resultConverted, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
                     } else {
                         resSpecEvaluation = resChkSpec.resultCheck((BigDecimal) resultValue, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
                     }
                 } else {
-                    if (requiresUnitsConversion) {
+                    if (Boolean.TRUE.equals(requiresUnitsConversion)) {
                         resSpecEvaluation = resChkSpec.resultCheck(resultConverted, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
                     } else {
                         resSpecEvaluation = resChkSpec.resultCheck((BigDecimal) resultValue, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
@@ -454,7 +454,7 @@ public class DataSampleAnalysisResult {
                 EnumIntMessages checkMsgCode=(EnumIntMessages) resSpecEvaluation[resSpecEvaluation.length - 1];
                 String specEval = checkMsgCode.getErrorCode();
                 String specEvalDetail = (String) resSpecEvaluation[resSpecEvaluation.length - 2];
-                if (requiresUnitsConversion) specEvalDetail = specEvalDetail + " in " + specUomName;
+                if (Boolean.TRUE.equals(requiresUnitsConversion)) specEvalDetail = specEvalDetail + " in " + specUomName;
 
                 fieldsName = LPArray.addValueToArray1D(fieldsName, new String[]{TblsData.SampleAnalysisResult.SPEC_EVAL.getName(), TblsData.SampleAnalysisResult.SPEC_EVAL_DETAIL.getName()
                     , TblsData.SampleAnalysisResult.ENTERED_BY.getName(), TblsData.SampleAnalysisResult.ENTERED_ON.getName(), TblsData.SampleAnalysisResult.STATUS.getName()});
@@ -581,7 +581,7 @@ public class DataSampleAnalysisResult {
                 new Object[]{TblsCnfg.SampleRules.ANALYST_ASSIGNMENT_MODE.getName(), sampleConfigCode, sampleConfigCodeVersion, schemaConfigName})};
         Boolean analystRequired=false;
         if (sampleRulesData[0][0]!=null){analystRequired = Boolean.valueOf(sampleRulesData[0][0].toString());}
-        if (analystRequired) {
+        if (Boolean.TRUE.equals(analystRequired)) {
             Object[][] testData = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
                     new String[]{TblsData.SampleAnalysis.TEST_ID.getName()}, new Object[]{testId}, 
                     new String[]{TblsData.SampleAnalysis.TEST_ID.getName(), TblsData.SampleAnalysis.ANALYST.getName(), TblsData.SampleAnalysis.ANALYST_ASSIGNED_ON.getName()});
@@ -719,13 +719,13 @@ public class DataSampleAnalysisResult {
                     return new Object[]{ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.NOT_NUMERIC_VALUE, new Object[]{resultValue, specRule.getRuleRepresentation(), specLimitId.toString(), schemaDataName})};            
                 }
                 if (specRule.getQuantitativeHasControl()){
-                    if (requiresUnitsConversion) {
+                    if (Boolean.TRUE.equals(requiresUnitsConversion)) {
                         resSpecEvaluation = resChkSpec.resultCheck(resultConverted, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
                     } else {
                         resSpecEvaluation = resChkSpec.resultCheck((BigDecimal) resultValue, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
                     }
                 } else {
-                    if (requiresUnitsConversion) {
+                    if (Boolean.TRUE.equals(requiresUnitsConversion)) {
                         resSpecEvaluation = resChkSpec.resultCheck(resultConverted, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
                     } else {
                         resSpecEvaluation = resChkSpec.resultCheck((BigDecimal) resultValue, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
@@ -737,7 +737,7 @@ public class DataSampleAnalysisResult {
                 EnumIntMessages checkMsgCode=(EnumIntMessages) resSpecEvaluation[resSpecEvaluation.length - 1];
                 String specEval = checkMsgCode.getErrorCode();
                 String specEvalDetail = (String) resSpecEvaluation[resSpecEvaluation.length - 2];
-                if (requiresUnitsConversion) specEvalDetail = specEvalDetail + " in " + specUomName;
+                if (Boolean.TRUE.equals(requiresUnitsConversion)) specEvalDetail = specEvalDetail + " in " + specUomName;
 
                 fieldsName = LPArray.addValueToArray1D(fieldsName, new String[]{TblsData.SampleAnalysisResult.SPEC_EVAL.getName(), TblsData.SampleAnalysisResult.SPEC_EVAL_DETAIL.getName()
                     , TblsData.SampleAnalysisResult.ENTERED_BY.getName(), TblsData.SampleAnalysisResult.ENTERED_ON.getName(), TblsData.SampleAnalysisResult.STATUS.getName()});

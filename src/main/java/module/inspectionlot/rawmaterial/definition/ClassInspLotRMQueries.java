@@ -98,9 +98,9 @@ public class ClassInspLotRMQueries  implements EnumIntQueriesObj{
 
                     if (LPArray.valueInArray(fieldsToRetrieveLot, TblsInspLotRMData.Lot.MATERIAL_NAME.getName())){
                         String currMaterial=currLot[LPArray.valuePosicInArray(fieldsToRetrieveLot, TblsInspLotRMData.Lot.MATERIAL_NAME.getName())].toString();
-                        if (includesSamplesInfo && currMaterial!=null && currMaterial.length()>0)
+                        if (Boolean.TRUE.equals(includesSamplesInfo) && currMaterial!=null && currMaterial.length()>0)
                             jLotInfoObj.put(TblsData.TablesData.SAMPLE.getTableName(), dataSampleStructure(lotName, null, null, new String[]{TblsInspLotRMData.Sample.SAMPLE_ID.getName()}, true, true));
-                        if (includesMaterialInfo && currMaterial!=null && currMaterial.length()>0)
+                        if (Boolean.TRUE.equals(includesMaterialInfo) && currMaterial!=null && currMaterial.length()>0)
                             jLotInfoObj.put(TblsInspLotRMConfig.TablesInspLotRMConfig.MATERIAL.getTableName(), configMaterialStructure(currMaterial, null, new String[]{TblsInspLotRMConfig.Material.NAME.getName()}, true, true, true));
                     }
                     lotJsonObj.put("lot_info", jLotInfoObj);

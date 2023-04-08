@@ -46,7 +46,7 @@ public final class LPKPIs {
 
             if (curgrouperName.length()==0)curgrouperName="grouper_"+i;
             Object[][] dataInfo = new Object[][]{{}};
-            if (Boolean.valueOf(curdataGrouped)){
+            if (Boolean.TRUE.equals(Boolean.valueOf(curdataGrouped))){
                 dataInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), curtblCategory), curtblName, 
                     curFldsToRetrieveArr, curWhereFieldsNameArr, curWhereFieldsValueArr, 
                     null);
@@ -84,28 +84,28 @@ public final class LPKPIs {
         Object[] wherefldsValues=new Object[]{};
         subQry=subQry+", COUNT(sample_id) FILTER (WHERE raw_value_num is not null) as "+alias;
         fldToRetrieve=LPArray.addValueToArray1D(fldToRetrieve, alias);
-        if (showAbsence){
+        if (Boolean.TRUE.equals(showAbsence)){
             alias="absence";
             qry=qry+","+alias+", round(100*("+subQryAlias+"."+alias+"::numeric/row_total::numeric),"+numDecPlaces.toString()+") as "+alias+"_perc";
             subQry=subQry+", COUNT(sample_id) FILTER (WHERE raw_value_num =0) as "+alias;
             fldToRetrieve=LPArray.addValueToArray1D(fldToRetrieve, alias);
             fldToRetrieve=LPArray.addValueToArray1D(fldToRetrieve, alias+"_perc");
         }
-        if (showPresence){
+        if (Boolean.TRUE.equals(showPresence)){
             alias="presence";
             qry=qry+","+alias+", round(100*("+subQryAlias+"."+alias+"::numeric/row_total::numeric),"+numDecPlaces.toString()+") as "+alias+"_perc";
             subQry=subQry+", COUNT(sample_id) FILTER (WHERE raw_value_num >0) as "+alias;
             fldToRetrieve=LPArray.addValueToArray1D(fldToRetrieve, alias);
             fldToRetrieve=LPArray.addValueToArray1D(fldToRetrieve, alias+"_perc");
         }
-        if (showIN){
+        if (Boolean.TRUE.equals(showIN)){
             alias="in_range";
             qry=qry+","+alias+", round(100*("+subQryAlias+"."+alias+"::numeric/row_total::numeric),"+numDecPlaces.toString()+") as "+alias+"_perc";
             subQry=subQry+", COUNT(sample_id) FILTER (WHERE upper(spec_eval) not like 'OUT_SPEC%' and upper(spec_eval) not Like 'OUTOFSPEC%') as "+alias;
             fldToRetrieve=LPArray.addValueToArray1D(fldToRetrieve, alias);
             fldToRetrieve=LPArray.addValueToArray1D(fldToRetrieve, alias+"_perc");
         }
-        if (showOUT){
+        if (Boolean.TRUE.equals(showOUT)){
             alias="out_range";
             qry=qry+","+alias+", round(100*("+subQryAlias+"."+alias+"::numeric/row_total::numeric),"+numDecPlaces.toString()+") as "+alias+"_perc";
             subQry=subQry+", COUNT(sample_id) FILTER (WHERE upper(spec_eval) like 'OUT_SPEC%' OR upper(spec_eval) like 'OUTOFSPEC%') as "+alias;

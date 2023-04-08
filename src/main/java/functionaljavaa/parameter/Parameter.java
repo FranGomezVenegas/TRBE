@@ -219,7 +219,7 @@ public class Parameter {
                             break;
                     }
                 }
-                if (isTagValueOneOfDisableOnes(ruleValue))
+                if (Boolean.TRUE.equals(isTagValueOneOfDisableOnes(ruleValue)))
                     return returnBusinessRuleValue(ruleValue, procInstanceName, ruleRepo, ruleName, callerInfo, isOptional, true);
             }
         }

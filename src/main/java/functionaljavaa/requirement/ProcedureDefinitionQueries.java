@@ -90,7 +90,7 @@ public class ProcedureDefinitionQueries {
     }
     
     private static JSONObject attributesToJsonObj(String procInstanceName, ProcBusinessRulesQueries bsnRuleQry, JSONObject mainObj){ 
-        if (bsnRuleQry.getIncludeRunAttributesToJsonObj()){        
+        if (Boolean.TRUE.equals(bsnRuleQry.getIncludeRunAttributesToJsonObj())){
             for (String curProp: bsnRuleQry.getPropertiesList()){
                 for (String currFileNameSuffix: bsnRuleQry.getFileNameSuffix()){
                     String propValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, currFileNameSuffix, curProp);

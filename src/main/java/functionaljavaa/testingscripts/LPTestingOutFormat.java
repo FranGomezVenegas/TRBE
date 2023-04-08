@@ -227,7 +227,7 @@ public class LPTestingOutFormat {
                             String savePoint= LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_EXECUTION_EVIDENCE_SAVE)).toString();
                             if (savePoint==null || savePoint.length()==0)
                                 savePoint= LPNulls.replaceNull(request.getParameter(LPTestingParams.SCRIPT_EXECUTION_EVIDENCE_SAVE));
-                            if (Boolean.valueOf(savePoint))
+                            if (Boolean.TRUE.equals(Boolean.valueOf(savePoint)))
                                 scriptExecutionEvidenceSave(scriptId, summaryPhrase);
                         }else{
                             summaryPhrase="COMPLETED WITH UNEXPECTED RESULTS. ";
@@ -681,7 +681,7 @@ public class LPTestingOutFormat {
         if (csvContent.length<maxHeaderLines){maxHeaderLines=csvContent.length-1;}
         Integer iLineParsed = 0;
         Boolean continueParsing=true;
-        while (continueParsing){
+        while (Boolean.TRUE.equals(continueParsing)){
             String getLineKey = LPNulls.replaceNull(csvContent[iLineParsed][0]).toUpperCase();
             String getLineValue = LPNulls.replaceNull(csvContent[iLineParsed][1]);
 

@@ -75,7 +75,7 @@ public class LPAPIArguments {
             String requestArgValue=(String) request.getAttribute(currArg.getName());
             if (requestArgValue==null) requestArgValue=LPNulls.replaceNull(request.getParameter(currArg.getName()));
             if (LPNulls.replaceNull(requestArgValue).length()==0){
-                if (currArg.getMandatory())
+                if (Boolean.TRUE.equals(currArg.getMandatory()))
                     return new Object[]{LPPlatform.LAB_FALSE, ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{currArg.getName()}), currArg.getName()};
                 else
                     returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, "");

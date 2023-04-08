@@ -276,7 +276,7 @@ public final class Investigation {
                 DataInvestigationAuditEvents.CAPA_DECISION.toString(), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(),
                 investId, investId.toString(),  
                 LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null);
-        if (closeInvestigation) closeInvestigation(investId);
+        if (Boolean.TRUE.equals(closeInvestigation)) closeInvestigation(investId);
         return diagnostic;               
     }
     
