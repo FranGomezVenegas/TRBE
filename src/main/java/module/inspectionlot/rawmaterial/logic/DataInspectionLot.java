@@ -96,7 +96,7 @@ public class DataInspectionLot {
             preReqs.add(0, new String[]{"data","sampleStatusesByBusinessRules"});
             String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
             String sampleStatusFirst = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataInspectionLotBusinessRules.SUFFIX_STATUS_FIRST.getAreaName(), DataInspectionLotBusinessRules.SUFFIX_STATUS_FIRST.getTagName(), preReqs, true);     
-            if (sampleStatusFirst==null || sampleStatusFirst.length()==0 || (isTagValueOneOfDisableOnes(sampleStatusFirst)) ) 
+            if (sampleStatusFirst==null || sampleStatusFirst.length()==0 || (Boolean.TRUE.equals(isTagValueOneOfDisableOnes(sampleStatusFirst))) ) 
                 return DataInspLotCertificateStatuses.NEW.toString();
             return sampleStatusFirst;        
         }

@@ -53,7 +53,7 @@ public class DataProgramCorrectiveAction {
             preReqs.add(0, new String[]{"data","sampleAnalysisResultStatusesByBusinessRules"});
             String procInstanceName=ProcedureRequestSession.getInstanceForQueries(null, null, null).getProcedureInstance();
             String sampleStatusFirst = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleStructureEnums.DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getAreaName(), "sampleAnalysisResult"+DataSampleStructureEnums.DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getTagName(), preReqs, true );     
-            if (sampleStatusFirst==null || sampleStatusFirst.length()==0 || (isTagValueOneOfDisableOnes(sampleStatusFirst)) ) 
+            if (sampleStatusFirst==null || sampleStatusFirst.length()==0 || (Boolean.TRUE.equals(isTagValueOneOfDisableOnes(sampleStatusFirst))) ) 
                 return "CREATED";
             return sampleStatusFirst;        
         }
@@ -62,7 +62,7 @@ public class DataProgramCorrectiveAction {
             preReqs.add(0, new String[]{"data","sampleAnalysisResultStatusesByBusinessRules"});
             String procInstanceName=ProcedureRequestSession.getInstanceForQueries(null, null, null).getProcedureInstance();
             String statusPropertyValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, this.busRulName.getAreaName(), this.busRulName.getTagName(), preReqs, true);     
-            if (statusPropertyValue==null || statusPropertyValue.length()==0 || (isTagValueOneOfDisableOnes(statusPropertyValue)) ) return this.toString();
+            if (statusPropertyValue==null || statusPropertyValue.length()==0 || (Boolean.TRUE.equals(isTagValueOneOfDisableOnes(statusPropertyValue))) ) return this.toString();
             return statusPropertyValue;
         }
         private final DataProgramCorrectiveActionBusinessRules busRulName;

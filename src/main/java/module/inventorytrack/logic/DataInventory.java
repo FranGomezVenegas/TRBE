@@ -382,7 +382,7 @@ public class DataInventory {
     }
 
     public InternalMessage turnAvailable(String[] fldNames, Object[] fldValues) {
-        if (Boolean.TRUE.equals(this.getRequiresQualification()) && !this.getIsQualified()) {
+        if (Boolean.TRUE.equals(this.getRequiresQualification()) && Boolean.FALSE.equals(this.getIsQualified())){
             return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.LOT_NOTQUALIFIED_YET, new Object[]{this.getLotName()}, null);
         }
         return updateLotTransaction(InvLotStatuses.AVAILABLE_FOR_USE.toString(), InvTrackingEnums.InventoryTrackAPIactionsEndpoints.TURN_LOT_AVAILABLE,

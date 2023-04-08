@@ -143,7 +143,7 @@ public class ConfigSamplingPlanForSpec {
     }  
     if (Boolean.FALSE.equals(devMode)){
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInspLotRMData.TablesInspLotRMData.LOT, fieldsName, fieldsValue);    
-        if (!insertRecordInTable.getRunSuccess()){return insertRecordInTable.getApiMessage();}
+        if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess())){return insertRecordInTable.getApiMessage();}
     }    
     if (Boolean.TRUE.equals(devMode)){
         StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();

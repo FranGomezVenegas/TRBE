@@ -600,8 +600,6 @@ public class ConfigSpecRule {
                     TblsCnfg.SpecLimits.PARAMETER.getName()}, new Object[]{sampleSpecCode, sampleSpecCodeVersion, sampleSpecVariationName, 
                       analysis, methodName, methodVersion, paramName}, 
                 fieldsToRetrieve);
-//                new String[]{TblsCnfg.SpecLimits.LIMIT_ID.getName(), TblsCnfg.SpecLimits.RULE_TYPE.getName(), TblsCnfg.SpecLimits.RULE_VARIABLES.getName(), TblsCnfg.SpecLimits.LIMIT_ID.getName(), 
-//                    TblsCnfg.SpecLimits.UOM.getName(), TblsCnfg.SpecLimits.UOM_CONVERSION_MODE.getName()});         
     }
   /**
    * @return the qualitativeRule

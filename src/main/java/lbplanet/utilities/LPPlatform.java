@@ -813,7 +813,7 @@ public class LPPlatform {
                             addIt = true;
                         }
                     }
-                    if (addIt) {
+                    if (Boolean.TRUE.equals(addIt)) {
                         switch (defValueType.toUpperCase()) {
                             case "INTEGER":
                                 defValueFormat = Integer.parseInt(defValue);
@@ -824,7 +824,7 @@ public class LPPlatform {
                             default:
                                 break;
                         }
-                        if (!contains) {
+                        if (Boolean.FALSE.equals(contains)) {
                             fieldNames = LPArray.addValueToArray1D(fieldNames, currField);
                             fieldValues = LPArray.addValueToArray1D(fieldValues, defValueFormat);
                         } else {
@@ -1117,11 +1117,10 @@ public class LPPlatform {
      * @param isOptional
      */
     public static void saveParameterPropertyInDbErrorLog(String schemaName, String fileName, Object[] callerInfo, String paramName, Boolean isOptional) {
-        if (isOptional) {
+        if (Boolean.TRUE.equals(isOptional)) {
             return;
         }
-        if (!Rdbms.getRdbms().getIsStarted()) {
-            //Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, paramName);
+        if (Boolean.FALSE.equals(Rdbms.getRdbms().getIsStarted())){
             return;
         }
         String procInstanceName = LPNulls.replaceNull(schemaName);
