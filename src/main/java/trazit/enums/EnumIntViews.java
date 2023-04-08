@@ -31,7 +31,7 @@ public interface EnumIntViews {
         String[] tblAliases=new String[]{};
         for (EnumIntTablesJoin curTblJoin: vwDef.getTablesRequiredInView()){
             String mainTableSchemaName="";
-            if (!curTblJoin.getMainTable().getIsProcedureInstance())
+            if (Boolean.FALSE.equals(curTblJoin.getMainTable().getIsProcedureInstance()))
                 mainTableSchemaName=curTblJoin.getMainTable().getRepositoryName();
             else
                 mainTableSchemaName=LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), curTblJoin.getMainTable().getRepositoryName(), isForTesting, curTblJoin.getMainTable().getTableName());       
@@ -44,7 +44,7 @@ public interface EnumIntViews {
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbMainTableExists[0].toString())&&curTblJoin.childMandatoy)
                 return "View "+mainTableSchemaName+"."+curTblJoin.mainTbl.getTableName()+" was not found but declared as mandatory for this view, cannot continue";
             String childTableSchemaName="";
-            if (!curTblJoin.getChildTable().getIsProcedureInstance())
+            if (Boolean.FALSE.equals(curTblJoin.getChildTable().getIsProcedureInstance()))
                 childTableSchemaName=curTblJoin.getChildTable().getRepositoryName();
             else
                 childTableSchemaName=LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), curTblJoin.getChildTable().getRepositoryName(), isForTesting, curTblJoin.getChildTable().getTableName());

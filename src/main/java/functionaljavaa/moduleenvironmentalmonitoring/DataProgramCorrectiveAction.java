@@ -147,7 +147,7 @@ public class DataProgramCorrectiveAction {
         String[] myFldName=new String[]{TblsProcedure.ProgramCorrectiveAction.PROGRAM_NAME.getName()};    
         Object[] myFldValue=new Object[]{""};        
         for (TblsProcedure.ProgramCorrectiveAction obj: TblsProcedure.ProgramCorrectiveAction.values()){
-            if (!"TBL".equalsIgnoreCase(obj.name())){
+            if (Boolean.FALSE.equals("TBL".equalsIgnoreCase(obj.name()))){
               Integer posicInArray=LPArray.valuePosicInArray(sarFieldNames, obj.getName());
               if (posicInArray==-1){
                 posicInArray=LPArray.valuePosicInArray(sampleFieldNames, obj.getName());

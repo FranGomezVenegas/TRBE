@@ -1709,7 +1709,7 @@ public class Rdbms {
                             break;
                     }
                 }
-                if (!clase.equals("class json.Na")) {
+                if (Boolean.FALSE.equals(clase.equals("class json.Na"))) {
                     indexval++;
                 }
             }
@@ -2266,7 +2266,7 @@ public class Rdbms {
             return schemaName;
         }
         if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE_AUDIT.getName())) {
-            if (!LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureAuditSchema_TablesWithNoTestingClone, tableName)) {
+            if (Boolean.FALSE.equals(LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureAuditSchema_TablesWithNoTestingClone, tableName))) {
                 if (schemaName.endsWith("\"")) {
                     schemaName = schemaName.substring(0, schemaName.length() - 1) + "_testing\"";
                 } else {
@@ -2276,7 +2276,7 @@ public class Rdbms {
             }
         }
         if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE.getName())) {
-            if (!LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone, tableName)) {
+            if (Boolean.FALSE.equals(LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone, tableName))) {
                 if (schemaName.endsWith("\"")) {
                     schemaName = schemaName.substring(0, schemaName.length() - 1) + "_testing\"";
                 } else {

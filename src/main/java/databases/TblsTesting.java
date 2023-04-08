@@ -279,7 +279,7 @@ public class TblsTesting {
         String[] tableFldsInfoColumns = LPArray.convertObjectArrayToStringArray(LPArray.getColumnFromArray2D(tableFldsInfo, LPArray.valuePosicInArray(fldDefinitionColName, "column_name")));
         String[] newTableFlds=new String[]{};
         for (String curFld: tableFldsInfoColumns){
-            if (!LPArray.valueInArray(fieldsToNotGet, curFld))
+            if (Boolean.FALSE.equals(LPArray.valueInArray(fieldsToNotGet, curFld)))
                 newTableFlds=LPArray.addValueToArray1D(newTableFlds, curFld);
         }
         return newTableFlds;

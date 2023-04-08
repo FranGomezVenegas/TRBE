@@ -103,7 +103,7 @@ public final class AuditEventsToRequirements {
                             }
                         }
                     }
-                    if (!enumsIncomplete.isEmpty()){
+                    if (Boolean.FALSE.equals(enumsIncomplete.isEmpty())){
                         LPFrontEnd.servletReturnSuccess(request, response, enumsIncomplete);
                         return;
                     }else{
@@ -157,19 +157,19 @@ private static void declareInDatabase(String objectName, String eventName){
             new Object[]{objectName, eventName}, 
             new String[]{AuditEventsDeclaration.ID.getName(), AuditEventsDeclaration.EVENT_PRETTY_EN.getName(), AuditEventsDeclaration.EVENT_PRETTY_ES.getName()});
     Object[] docInfoForEndPoint = getDocInfoForAuditEvent(objectName, eventName);
-    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(reqEvAuditInfo[0][0].toString())){
+    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(reqEvAuditInfo[0][0].toString()))){
         String[] updFldName=new String[]{};
         Object[] updFldValue=new Object[]{};
         String propValueEn = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
             objectName, null, eventName, "en", false, null);
         
-        if (!propValueEn.equalsIgnoreCase(reqEvAuditInfo[0][1].toString())){
+        if (Boolean.FALSE.equals(propValueEn.equalsIgnoreCase(reqEvAuditInfo[0][1].toString()))){
             updFldName=LPArray.addValueToArray1D(updFldName, AuditEventsDeclaration.EVENT_PRETTY_EN.getName());
             updFldValue=LPArray.addValueToArray1D(updFldValue, propValueEn);
         }
         String propValueEs = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
             objectName, null, eventName, "es", false, null);        
-        if (!propValueEn.equalsIgnoreCase(reqEvAuditInfo[0][2].toString())){
+        if (Boolean.FALSE.equals(propValueEn.equalsIgnoreCase(reqEvAuditInfo[0][2].toString()))){
             updFldName=LPArray.addValueToArray1D(updFldName, AuditEventsDeclaration.EVENT_PRETTY_ES.getName());
             updFldValue=LPArray.addValueToArray1D(updFldValue, propValueEn);
         }

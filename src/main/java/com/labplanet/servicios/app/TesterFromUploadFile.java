@@ -85,7 +85,7 @@ public class TesterFromUploadFile extends HttpServlet {
                 }
                 Token token=new Token(tokenStr);
                 String validateToken = token.validateToken(tokenStr);
-                if (!"TRUE".equalsIgnoreCase(validateToken)){
+                if (Boolean.FALSE.equals("TRUE".equalsIgnoreCase(validateToken))){
                     PrintWriter out = response.getWriter();
                     out.println("Token provided is invalid"); 
                     return;

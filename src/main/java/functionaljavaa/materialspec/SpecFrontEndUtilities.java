@@ -79,7 +79,7 @@ public class SpecFrontEndUtilities {
         if (fieldsName==null || fieldsName.length==0){
           for (TblsCnfg.SpecLimits obj: TblsCnfg.SpecLimits.values()){
               String objName = obj.name();
-              if (!"TBL".equalsIgnoreCase(objName))
+              if (Boolean.FALSE.equals("TBL".equalsIgnoreCase(objName)))
                 fieldsName=LPArray.addValueToArray1D(fieldsName, obj.getName());
           }      
         }

@@ -102,7 +102,7 @@ public class LPTestingOutFormat {
         if (testingSource!=null && testingSource=="DB"){
             csvPathName ="";
             csvFileName ="";
-            if (!LPFrontEnd.servletStablishDBConection(request, null)){return;}
+            if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, null))){return;}
             scriptId = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_ID).toString()));
             procInstanceName=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
             String repositoryName=LPPlatform.buildSchemaName(GlobalVariables.Schemas.APP_TESTING.getName(), "");
@@ -252,7 +252,7 @@ public class LPTestingOutFormat {
                 
                 
                 
-                if (!LPFrontEnd.servletStablishDBConection(request, null)){return fileContentBuilder;}
+                if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, null))){return fileContentBuilder;}
                 String procInstanceName=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
                 String repositoryName=LPPlatform.buildSchemaName(GlobalVariables.Schemas.APP_TESTING.getName(), "");
                 if (procInstanceName!=null && procInstanceName.length()>0)
@@ -542,12 +542,10 @@ public class LPTestingOutFormat {
         File file = new File(csvPathName);
             try (FileWriter fileWriter = new FileWriter(file)) {
                 if (file.exists()) {
-                  if (!file.delete()){return;}
-//                  file.delete();
+                  if (Boolean.FALSE.equals(file.delete())){return;}
                 }
-                if (!file.createNewFile()){return;}
-//                file.createNewFile();
-                if (!file.exists()){
+                if (Boolean.FALSE.equals(file.createNewFile())){return;}
+                if (Boolean.FALSE.equals(file.exists())){
                     return;
                 }
                 fileWriter.write(fileContent);
@@ -651,7 +649,7 @@ public class LPTestingOutFormat {
             if (iLineParsed>=maxHeaderLines){continueParsing=false;}
             iLineParsed++;
         }
-        if (!fieldsRequired.isEmpty()){
+        if (Boolean.FALSE.equals(fieldsRequired.isEmpty())){
             hm.clear();
             hm.put(LPPlatform.LAB_FALSE, LPHashMap.hashMapToStringKeys(fieldsRequired, ", "));
         }
@@ -903,7 +901,7 @@ public class LPTestingOutFormat {
 
     public static String getAttributeValue(Object value, Object[][] scriptSteps){
         try{
-            if (!value.toString().contains("step")) return LPAPIArguments.specialTagFilter(LPNulls.replaceNull(value.toString()));
+            if (Boolean.FALSE.equals(value.toString().contains("step"))) return LPAPIArguments.specialTagFilter(LPNulls.replaceNull(value.toString()));
 
             Object[] objToJsonObj = LPJson.convertToJsonObjectStringedObject(value.toString());            
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString()))
@@ -1200,7 +1198,7 @@ Integer dbErrorCurrentIncrement=getScriptDbErrorIncrementsInt(procInstanceName, 
         Object[][] recordFieldsByFilter = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT.getTableName(), 
             new String[]{TblsTesting.Script.SCRIPT_ID.getName()}, new Object[]{scriptId}, 
             new String[]{fieldName});
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsByFilter[0][0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsByFilter[0][0].toString()))){
             return Integer.valueOf(recordFieldsByFilter[0][0].toString());
         }
         return -1;
@@ -1210,7 +1208,7 @@ Integer dbErrorCurrentIncrement=getScriptDbErrorIncrementsInt(procInstanceName, 
         Object[][] recordFieldsByFilter = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT.getTableName(), 
             new String[]{TblsTesting.Script.SCRIPT_ID.getName()}, new Object[]{scriptId}, 
             new String[]{fieldName});
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsByFilter[0][0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsByFilter[0][0].toString()))){
             return recordFieldsByFilter[0][0].toString();
         }
         return fldInfo;

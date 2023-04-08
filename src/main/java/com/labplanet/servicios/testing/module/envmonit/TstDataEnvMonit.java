@@ -109,7 +109,7 @@ public class TstDataEnvMonit extends HttpServlet {
         boolean isConnected = false;
         
         isConnected = Rdbms.getRdbms().startRdbms();
-        if (!isConnected){
+        if (Boolean.FALSE.equals(isConnected)){
             errObject = LPArray.addValueToArray1D(errObject, TAG_NAME_ERROR_STATUS_CODE+": "+HttpServletResponse.SC_BAD_REQUEST);
 
             errObject = LPArray.addValueToArray1D(errObject, "API Error Message: db User Name and Password not correct, connection to the database is not possible");                    
@@ -122,7 +122,7 @@ public class TstDataEnvMonit extends HttpServlet {
              (!LPFrontEnd.servletUserToVerify(request, token.getUserName(), token.getUsrPw())) ){return;}
 
         if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresEsignConfirmation[0].toString())) &&    
-             (!LPFrontEnd.servletEsignToVerify(request, token.geteSign())) ){return;}
+             (Boolean.FALSE.equals(LPFrontEnd.servletEsignToVerify(request, token.geteSign()))) ){return;}
         if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return;}     
             
             DataProgramSampleAnalysis dsProgramAna = new DataProgramSampleAnalysis();

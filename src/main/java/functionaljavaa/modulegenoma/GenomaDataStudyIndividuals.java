@@ -105,7 +105,7 @@ public class GenomaDataStudyIndividuals {
             for (Integer inumLines=0;inumLines<mandatoryFields.length;inumLines++){
                 String currField = mandatoryFields[inumLines];
                 boolean contains = Arrays.asList(fieldsName).contains(currField.toLowerCase());
-                if (!contains){
+                if (Boolean.FALSE.equals(contains)){
                     if (mandatoryFieldsMissingBuilder.length()>0){mandatoryFieldsMissingBuilder.append(",");}
 
                     mandatoryFieldsMissingBuilder.append(currField);

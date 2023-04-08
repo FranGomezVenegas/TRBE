@@ -22,7 +22,7 @@ public final class QueryUtilities {
     
     public static String[] getFieldsListToRetrieve(String fldToRetrieve, String[] tableAllFields){
         String[] fieldsToRetrieve=tableAllFields;
-        if (!(fldToRetrieve==null || fldToRetrieve.length()==0 || "ALL".equalsIgnoreCase(fldToRetrieve)))
+        if (Boolean.FALSE.equals(fldToRetrieve==null || fldToRetrieve.length()==0 || "ALL".equalsIgnoreCase(fldToRetrieve)))
             fieldsToRetrieve=fldToRetrieve.split("\\|");
         return fieldsToRetrieve;
     }

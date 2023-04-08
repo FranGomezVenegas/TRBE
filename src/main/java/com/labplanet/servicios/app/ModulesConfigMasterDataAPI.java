@@ -306,31 +306,31 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     if (specFieldValue != null && specFieldValue.length() > 0) {
                         specFieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|"));
                     }
-                    if (!LPArray.valueInArray(specFieldNameArr, REQUEST_PARAM_ANALYSIS)) {
+                    if (Boolean.FALSE.equals(LPArray.valueInArray(specFieldNameArr, REQUEST_PARAM_ANALYSIS))) {
                         specFieldNameArr = LPArray.addValueToArray1D(specFieldNameArr, REQUEST_PARAM_ANALYSIS);
                         specFieldValueArr = LPArray.addValueToArray1D(specFieldValueArr, analysis);
                     }
-                    if (!LPArray.valueInArray(specFieldNameArr, "method_name")) {
+                    if (Boolean.FALSE.equals(LPArray.valueInArray(specFieldNameArr, "method_name"))) {
                         specFieldNameArr = LPArray.addValueToArray1D(specFieldNameArr, "method_name");
                         specFieldValueArr = LPArray.addValueToArray1D(specFieldValueArr, methodName);
                     }
-                    if (!LPArray.valueInArray(specFieldNameArr, "method_version")) {
+                    if (Boolean.FALSE.equals(LPArray.valueInArray(specFieldNameArr, "method_version"))) {
                         specFieldNameArr = LPArray.addValueToArray1D(specFieldNameArr, "method_version");
                         specFieldValueArr = LPArray.addValueToArray1D(specFieldValueArr, methodVersion);
                     }
-                    if (!LPArray.valueInArray(specFieldNameArr, "variation_name")) {
+                    if (Boolean.FALSE.equals(LPArray.valueInArray(specFieldNameArr, "variation_name"))){
                         specFieldNameArr = LPArray.addValueToArray1D(specFieldNameArr, "variation_name");
                         specFieldValueArr = LPArray.addValueToArray1D(specFieldValueArr, variationName);
                     }
-                    if (!LPArray.valueInArray(specFieldNameArr, REQUEST_PARAM_PARAMETER)) {
+                    if (Boolean.FALSE.equals(LPArray.valueInArray(specFieldNameArr, REQUEST_PARAM_PARAMETER))) {
                         specFieldNameArr = LPArray.addValueToArray1D(specFieldNameArr, REQUEST_PARAM_PARAMETER);
                         specFieldValueArr = LPArray.addValueToArray1D(specFieldValueArr, parameter);
                     }
-                    if (!LPArray.valueInArray(specFieldNameArr, "rule_type")) {
+                    if (Boolean.FALSE.equals(LPArray.valueInArray(specFieldNameArr, "rule_type"))) {
                         specFieldNameArr = LPArray.addValueToArray1D(specFieldNameArr, "rule_type");
                         specFieldValueArr = LPArray.addValueToArray1D(specFieldValueArr, ruleType);
                     }
-                    if (!LPArray.valueInArray(specFieldNameArr, "rule_variables")) {
+                    if (Boolean.FALSE.equals(LPArray.valueInArray(specFieldNameArr, "rule_variables"))) {
                         specFieldNameArr = LPArray.addValueToArray1D(specFieldNameArr, "rule_variables");
                         specFieldValueArr = LPArray.addValueToArray1D(specFieldValueArr, ruleVariables);
                     }

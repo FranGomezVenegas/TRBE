@@ -36,7 +36,7 @@ public interface Indexed<E extends Enum> {
      * @return
      */
     public default  E getByIndexFran(int index) {
-        if (!this.getClass().isEnum()) {
+        if (Boolean.FALSE.equals(this.getClass().isEnum())) {
             //not implemented on enum, you can do as you like here
         }
         Enum<?>[] vals = (Enum<?>[]) this.getClass().getEnumConstants();

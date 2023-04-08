@@ -85,17 +85,16 @@ public class ProcedureSampleStage {
             return "SECONDINCUB_MANDATORY"+"@"+sampleId; //" Pendiente 2a Incubacion para la muestra "+sampleId;}        
         boolean incubationStartIsNull = sampleStructure.get("incubation_start").isJsonNull();
         boolean incubation2StartIsNull = sampleStructure.get("incubation2_start").isJsonNull();
-        String incubationStartStr=sampleStructure.get("incubation_start").getAsString();
         String incubationPassedStr=sampleStructure.get("incubation_passed").getAsString();
         Boolean incubationPassed=Boolean.valueOf(incubationPassedStr);
         String incubation2PassedStr=sampleStructure.get("incubation2_passed").getAsString();
         Boolean incubation2Passed=Boolean.valueOf(incubation2PassedStr);
-        if ((!incubationStartIsNull) && (!incubationPassed))
+        if ((Boolean.FALSE.equals(incubationStartIsNull)) && (Boolean.FALSE.equals(incubationPassed)))
             return "INCUB_INPROGRESS"+"@"+sampleId;
-        if ((!incubation2StartIsNull) && (!incubation2Passed))
+        if ((Boolean.FALSE.equals(incubation2StartIsNull)) && (Boolean.FALSE.equals(incubation2Passed)))
             return "INCUB_INPROGRESS"+"@"+sampleId;
         if (Boolean.FALSE.equals(incubationPassed)){
-            return "FIRSTINCUB_MANDATORY"+"@"+sampleId;} //" Pendiente 1a Incubacion para la muestra "+sampleId;}
+            return "FIRSTINCUB_MANDATORY"+"@"+sampleId;} 
         if (Boolean.FALSE.equals(incubation2Passed)){
             return "SECONDINCUB_MANDATORY"+"@"+sampleId;} //" Pendiente 2a Incubacion para la muestra "+sampleId;}
         return LPPlatform.LAB_TRUE;

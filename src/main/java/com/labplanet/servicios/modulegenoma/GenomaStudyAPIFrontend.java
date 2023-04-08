@@ -226,7 +226,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                                 new String[]{TblsGenomaData.Study.PROJECT.getName()}, new Object[]{curProjectName},
                                 EnumIntTableFields.getAllFieldNames(TblsGenomaData.TablesGenomaData.STUDY.getTableFields()), new String[]{TblsGenomaData.Study.NAME.getName()});
                         JSONArray projStudiesJsonArr = new JSONArray();
-                        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyInfo[0][0].toString())) {
+                        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyInfo[0][0].toString()))) {
                             for (Object[] curProjStudy : projStudyInfo) {
                                 JSONObject curProjStudyJson = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(TblsGenomaData.TablesGenomaData.STUDY.getTableFields()), curProjStudy);
 
@@ -286,7 +286,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                                     new String[]{TblsGenomaConfig.Variables.NAME.getName()}, new Object[]{curVariableFromList},
                                     EnumIntTableFields.getAllFieldNames(TblsGenomaConfig.Variables.values()), new String[]{TblsGenomaConfig.Variables.NAME.getName()});
 
-                            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(variableInfo[0][0].toString())) {
+                            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(variableInfo[0][0].toString()))) {
                                 for (Object[] curVariable : variableInfo) {
                                     JSONObject curVariableObj = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(TblsGenomaConfig.Variables.values()), curVariable);
                                     variablesSetVarListArr.add(curVariableObj);
@@ -366,7 +366,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                             break;
                     }
                     JSONArray jArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(objectsDeactivactedLastDays[0][0].toString())) {
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(objectsDeactivactedLastDays[0][0].toString()))) {
                         for (Object[] currIncident : objectsDeactivactedLastDays) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
                             jArr.add(jObj);
@@ -402,7 +402,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                 new String[]{TblsGenomaData.StudyObjectsFiles.STUDY.getName()}, new Object[]{curStudyName},
                 EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyObjectsFiles.values()), new String[]{TblsGenomaData.StudyObjectsFiles.FILE_ID.getName()});
         JSONArray studyFamiliesJsonArr = new JSONArray();
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(studyFamilyInfo[0][0].toString())) {
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(studyFamilyInfo[0][0].toString()))) {
             for (Object[] curstudyObjectsFiles : studyFamilyInfo) {
                 JSONObject curstudyObjectsFilesJson = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyObjectsFiles.values()), curstudyObjectsFiles);
                 studyFamiliesJsonArr.add(curstudyObjectsFilesJson);
@@ -425,7 +425,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                 whereFldNames, whereFldValues,
                 EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyFamily.values()), new String[]{TblsGenomaData.StudyFamily.NAME.getName()});
         JSONArray studyFamiliesJsonArr = new JSONArray();
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(studyFamilyInfo[0][0].toString())) {
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(studyFamilyInfo[0][0].toString()))) {
             for (Object[] curStudyFamily : studyFamilyInfo) {
                 JSONObject curStudyFamilyJson = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyFamily.values()), curStudyFamily);
                 String curFamilyName = curStudyFamily[LPArray.valuePosicInArray(EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyFamily.values()), TblsGenomaData.StudyFamily.NAME.getName())].toString();
@@ -453,7 +453,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                 whereFldNames, whereFldValues,
                 EnumIntTableFields.getAllFieldNames(TblsGenomaData.ProjectUsers.values()));
         JSONArray projectUsersJsonArr = new JSONArray();
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(projectUsersInfo[0][0].toString())) {
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(projectUsersInfo[0][0].toString()))) {
             for (Object[] curProjectUser : projectUsersInfo) {
                 JSONObject curProjectUserJson = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(TblsGenomaData.ProjectUsers.values()), curProjectUser);
                 projectUsersJsonArr.add(curProjectUserJson);
@@ -477,7 +477,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                 whereFldNames, whereFldValues,
                 EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyUsers.values()));
         JSONArray studyUsersJsonArr = new JSONArray();
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(studyUsersInfo[0][0].toString())) {
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(studyUsersInfo[0][0].toString()))) {
             for (Object[] curStudyUser : studyUsersInfo) {
                 JSONObject curStudyUserJson = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyUsers.values()), curStudyUser);
                 studyUsersJsonArr.add(curStudyUserJson);
@@ -519,7 +519,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                 whereFldNames, whereFldValues,
                 EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyIndividual.values()), new String[]{TblsGenomaData.StudyIndividual.INDIVIDUAL_ID.getName()});
         JSONArray studyIndividualJsonArr = new JSONArray();
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(studyIndividualInfo[0][0].toString())) {
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(studyIndividualInfo[0][0].toString()))) {
             for (Object[] curStudyIndividual : studyIndividualInfo) {
                 JSONObject curStudyIndividualJson = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyIndividual.values()), curStudyIndividual);
 
@@ -545,7 +545,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                 whereFldNames, whereFldValues,
                 EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyFamilyIndividual.values()), new String[]{TblsGenomaData.StudyFamilyIndividual.FAMILY_NAME.getName()});
         JSONArray studyFamiliesJsonArr = new JSONArray();
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(studyFamilyInfo[0][0].toString())) {
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(studyFamilyInfo[0][0].toString()))) {
             for (Object[] curStudyFamily : studyFamilyInfo) {
                 JSONObject curStudyFamilyJson = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyFamilyIndividual.values()), curStudyFamily);
                 studyFamiliesJsonArr.add(curStudyFamilyJson);
@@ -580,7 +580,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
 //    }
 
         JSONArray studyIndividualSampleJsonArr = new JSONArray();
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(studyIndividualSampleInfo[0][0].toString())) {
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(studyIndividualSampleInfo[0][0].toString()))) {
             for (Object[] curStudyIndividualSample : studyIndividualSampleInfo) {
                 JSONObject curStudyIndividualSampleJson = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyIndividualSample.values()), curStudyIndividualSample);
                 Integer curSampleId = Integer.valueOf(curStudyIndividualSample[LPArray.valuePosicInArray(EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyIndividualSample.values()), TblsGenomaData.StudyIndividualSample.SAMPLE_ID.getName())].toString());
@@ -608,7 +608,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
             Object[][] studyFamilyInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(),
                     new String[]{TblsGenomaData.StudySamplesSet.STUDY.getName(), TblsGenomaData.StudySamplesSet.UNSTRUCT_CONTENT.getName() + " LIKE "}, new Object[]{curStudyName, currSamplePosic},
                     EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudySamplesSet.values()), new String[]{TblsGenomaData.StudySamplesSet.NAME.getName()});
-            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(studyFamilyInfo[0][0].toString())) {
+            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(studyFamilyInfo[0][0].toString()))) {
                 for (Object[] curStudyFamily : studyFamilyInfo) {
                     JSONObject curStudyFamilyJson = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudySamplesSet.values()), curStudyFamily);
                     studyFamiliesJsonArr.add(curStudyFamilyJson);
@@ -641,7 +641,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                 whereFldNames, whereFldValues,
                 EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyVariableValues.values()), new String[]{TblsGenomaData.StudyVariableValues.INDIVIDUAL.getName()});
         JSONArray studyIndividualSampleJsonArr = new JSONArray();
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(studyVariableValueInfo[0][0].toString())) {
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(studyVariableValueInfo[0][0].toString()))) {
             for (Object[] curStudyVariableValues : studyVariableValueInfo) {
                 JSONObject curStudyVariableValuesJson = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyVariableValues.values()), curStudyVariableValues);
                 studyIndividualSampleJsonArr.add(curStudyVariableValuesJson);
@@ -664,7 +664,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                 whereFldNames, whereFldValues,
                 EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudySamplesSet.values()), new String[]{TblsGenomaData.StudySamplesSet.NAME.getName()});
         JSONArray studySamplesSetJsonArr = new JSONArray();
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(studySamplesSetInfo[0][0].toString())) {
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(studySamplesSetInfo[0][0].toString()))) {
             for (Object[] curStudySamplesSet : studySamplesSetInfo) {
                 JSONObject curStudySamplesSetJson = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudySamplesSet.values()), curStudySamplesSet);
                 //studySamplesSetJsonArr.add(curStudySamplesSetJson);
@@ -708,7 +708,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                 new String[]{TblsProcedure.ViewProcUserAndRoles.ACTIVE.getName()},
                 new Object[]{true}, fldsArr);
         JSONArray jBlockArr = new JSONArray();
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procUsers[0][0].toString())) {
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procUsers[0][0].toString()))) {
             for (Object[] curRow : procUsers) {
                 jBlockArr.add(LPJson.convertArrayRowToJSONObject(fldsArr, curRow));
             }
@@ -725,7 +725,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                 new String[]{TblsProcedure.ViewProcUserAndRoles.ACTIVE.getName()},
                 new Object[]{true}, fldsArr);
         JSONArray jBlockArr = new JSONArray();
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(variableSetListInfo[0][0].toString())) {
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(variableSetListInfo[0][0].toString()))) {
             for (Object[] curRow : variableSetListInfo) {
                 jBlockArr.add(LPJson.convertArrayRowToJSONObject(fldsArr, curRow));
             }
@@ -741,7 +741,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                 new String[]{TblsProcedure.ViewProcUserAndRoles.ACTIVE.getName()},
                 new Object[]{true}, fldsArr);
         JSONArray jBlockArr = new JSONArray();
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(variablesListInfo[0][0].toString())) {
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(variablesListInfo[0][0].toString()))) {
             for (Object[] curRow : variablesListInfo) {
                 jBlockArr.add(LPJson.convertArrayRowToJSONObject(fldsArr, curRow));
             }

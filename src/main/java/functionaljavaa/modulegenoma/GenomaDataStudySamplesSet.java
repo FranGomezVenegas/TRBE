@@ -49,7 +49,7 @@ public InternalMessage createStudySamplesSet(GenomaStudyAPI.GenomaStudyAPIaction
         
     if (Boolean.FALSE.equals(devMode)){
         InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldsName, fieldsValue);
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))
+        if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic())))
             return fieldNameValueArrayChecker;
     }    
     if (Boolean.FALSE.equals(devMode)){
@@ -57,7 +57,7 @@ public InternalMessage createStudySamplesSet(GenomaStudyAPI.GenomaStudyAPIaction
         for (Integer inumLines=0;inumLines<mandatoryFields.length;inumLines++){
             String currField = mandatoryFields[inumLines];
             boolean contains = Arrays.asList(fieldsName).contains(currField.toLowerCase());
-            if (!contains){
+            if (Boolean.FALSE.equals(contains)){
                 if (mandatoryFieldsMissingBuilder.length()>0){mandatoryFieldsMissingBuilder.append(",");}
                 
                 mandatoryFieldsMissingBuilder.append(currField);
@@ -221,7 +221,7 @@ public Object[] studySamplesSetAddSample(GenomaStudyAPI.GenomaStudyAPIactionsEnd
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSamplesSetSamples[0].toString())) {
         return updateSamplesSetSamples;
     }
-    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSamplesSetSamples[0].toString())) {
+    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSamplesSetSamples[0].toString()))) {
         GenomaDataAudit.studyAuditAdd(endpoint, TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), sampleSetName, 
             studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(new String[]{TblsGenomaData.StudySamplesSet.UNSTRUCT_CONTENT.getName()}, new Object[]{updateSamplesSetSamples[updateSamplesSetSamples.length-1]}, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
     }
@@ -239,7 +239,7 @@ public Object[] studySamplesSetRemoveSample(GenomaStudyAPI.GenomaStudyAPIactions
         return updateSamplesSetSamples;
     }
     
-    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSamplesSetSamples[0].toString())) {
+    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSamplesSetSamples[0].toString()))) {
         GenomaDataAudit.studyAuditAdd(endpoint, TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), sampleSetName, 
             studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(new String[]{TblsGenomaData.StudySamplesSet.UNSTRUCT_CONTENT.getName()}, new Object[]{updateSamplesSetSamples[updateSamplesSetSamples.length-1]}, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
     }

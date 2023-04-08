@@ -162,7 +162,7 @@ public class UnitsOfMeasurement {
                         new Object[]{familyFieldNameDataBase, Arrays.toString(fieldsToGet), procInstanceName,  MESSAGE_LABELS_VALUE_CONVERTED+this.getOrigQuantity()+", "+MESSAGE_LABELS_CURRENT_UNIT+LPNulls.replaceNull(currentUnit)+", "+MESSAGE_LABELS_NEW_UNIT+LPNulls.replaceNull(newUnit)});
             return conversion;
         }
-        if (!currentUnitInfo[0][currentUnitFamilyFieldPosic].toString().equalsIgnoreCase(newUnitInfo[0][currentUnitFamilyFieldPosic].toString())){
+        if (Boolean.FALSE.equals(currentUnitInfo[0][currentUnitFamilyFieldPosic].toString().equalsIgnoreCase(newUnitInfo[0][currentUnitFamilyFieldPosic].toString()))){
             conversion = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.FAMILY_FIELD_NOT_IN_QUERY,
                         new Object[]{currentUnit , currentUnitInfo[0][currentUnitFamilyFieldPosic].toString(),
                             newUnit, newUnitInfo[0][currentUnitFamilyFieldPosic].toString(),
@@ -234,7 +234,7 @@ public class UnitsOfMeasurement {
             this.conversionErrorDetail=conversion;
             return;
         }
-        if (!currentUnitInfo[0][currentUnitFamilyFieldPosic].toString().equalsIgnoreCase(newUnitInfo[0][currentUnitFamilyFieldPosic].toString())){
+        if (Boolean.FALSE.equals(currentUnitInfo[0][currentUnitFamilyFieldPosic].toString().equalsIgnoreCase(newUnitInfo[0][currentUnitFamilyFieldPosic].toString()))){
             conversion = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UomErrorTrapping.FAMILY_FIELD_NOT_IN_QUERY,
                         new Object[]{this.getOrigQuantityUom(), currentUnitInfo[0][currentUnitFamilyFieldPosic].toString(),
                             newUnit, newUnitInfo[0][currentUnitFamilyFieldPosic].toString(),

@@ -54,7 +54,7 @@ public class SaveQueries {
         }
         
         RdbmsObject insertDiagn = Rdbms.insertRecordInTable(TblsData.TablesData.SAVED_QUERIES, updFieldName, updFieldValue);
-        if (!insertDiagn.getRunSuccess()) return insertDiagn.getApiMessage();
+        if (Boolean.FALSE.equals(insertDiagn.getRunSuccess())) return insertDiagn.getApiMessage();
         
         return LPArray.addValueToArray1D(insertDiagn.getApiMessage(),insertDiagn.getNewRowId());
     }

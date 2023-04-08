@@ -498,7 +498,7 @@ public class ClassEnvMonSampleFrontend {
                                     new String[]{TblsEnvMonitData.SampleMicroorganism.MICROORG_NAME.getName()},
                                     new String[]{TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID.getName()},
                                     new Object[]{curSmpId}, new String[]{TblsEnvMonitData.SampleMicroorganism.MICROORG_NAME.getName()});
-                            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(grouper[0][0].toString())) {
+                            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(grouper[0][0].toString()))) {
                                 for (Object[] curMic : grouper) {
                                     JSONObject jmicObj = new JSONObject();
                                     jmicObj.put("name", curMic[0]);
@@ -636,7 +636,7 @@ public class ClassEnvMonSampleFrontend {
                     Object[][] testingGroupInfo = QueryUtilitiesEnums.getTableData(TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP,
                             EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP, testingGroupFldsArr),
                             new String[]{TblsData.SampleRevisionTestingGroup.SAMPLE_ID.getName()}, new Object[]{sampleId}, null);
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(testingGroupInfo[0][0].toString())) {
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(testingGroupInfo[0][0].toString()))) {
                         JSONArray tstGrpJsArr = new JSONArray();
                         for (Object[] curTstGrp : testingGroupInfo) {
                             JSONObject curTstGrpJObj = LPJson.convertArrayRowToJSONObject(testingGroupFldsArr, curTstGrp);
@@ -646,7 +646,7 @@ public class ClassEnvMonSampleFrontend {
                                     EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS, testFldsArr),
                                     new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName(), TblsData.SampleAnalysis.TESTING_GROUP.getName()}, new Object[]{sampleId, curTstGrpName},
                                     null);
-                            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(testInfo[0][0].toString())) {
+                            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(testInfo[0][0].toString()))) {
                                 JSONArray testJsArr = new JSONArray();
                                 for (Object[] curTest : testInfo) {
                                     JSONObject curTestJsObj = LPJson.convertArrayRowToJSONObject(testFldsArr, curTest);
@@ -656,7 +656,7 @@ public class ClassEnvMonSampleFrontend {
                                             EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, resultFldsArr),
                                             new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName(), TblsData.SampleAnalysisResult.TEST_ID.getName()}, new Object[]{sampleId, curTestId},
                                             null);
-                                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(resultInfo[0][0].toString())) {
+                                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(resultInfo[0][0].toString()))) {
                                         JSONArray resultJsArr = new JSONArray();
                                         for (Object[] curResult : resultInfo) {
                                             JSONObject curResultJsObj = LPJson.convertArrayRowToJSONObject(resultFldsArr, curResult);
@@ -674,7 +674,7 @@ public class ClassEnvMonSampleFrontend {
                                     new SqlWhere(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_ID.getName(),
                                 TblsData.ViewSampleAnalysisResultWithSpecLimits.TESTING_GROUP.getName()}, new Object[]{sampleId, curTstGrpName}),
                                     null);
-                            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(testWithSpecsInfo[0][0].toString())) {
+                            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(testWithSpecsInfo[0][0].toString()))) {
                                 JSONArray testJsArr = new JSONArray();
                                 for (Object[] curTestWSpec : testWithSpecsInfo) {
                                     JSONObject curTestJsObj = LPJson.convertArrayRowToJSONObject(testFldsArr, curTestWSpec);
@@ -871,7 +871,7 @@ public class ClassEnvMonSampleFrontend {
                     if (sampleWhereFieldsValue != null && sampleWhereFieldsValue.length() > 0) {
                         sampleWhereFieldsValueArr = LPArray.convertStringWithDataTypeToObjectArray(sampleWhereFieldsValue.split("\\|"));
                     }
-                    if (!LPArray.valueInArray(sampleWhereFieldsNameArr, TblsEnvMonitData.Sample.PRODUCTION_LOT.getName())) {
+                    if (Boolean.FALSE.equals(LPArray.valueInArray(sampleWhereFieldsNameArr, TblsEnvMonitData.Sample.PRODUCTION_LOT.getName()))) {
                         sampleWhereFieldsNameArr = LPArray.addValueToArray1D(sampleWhereFieldsNameArr, TblsEnvMonitData.Sample.PRODUCTION_LOT.getName());
                         sampleWhereFieldsValueArr = LPArray.addValueToArray1D(sampleWhereFieldsValueArr, lotName);
                     }
@@ -1142,7 +1142,7 @@ public class ClassEnvMonSampleFrontend {
                                     new SqlWhere(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, whereFieldNames, whereFieldValues),
                                     new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.ENTERED_ON.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                             JSONArray jArrSampleResults = new JSONArray();
-                            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(programLastResults[0][0].toString())) {
+                            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(programLastResults[0][0].toString()))) {
                                 if (numTotalRecords > programLastResults.length) {
                                     numTotalRecords = programLastResults.length;
                                 }
@@ -1203,7 +1203,7 @@ public class ClassEnvMonSampleFrontend {
                             whereFieldsValueArr[iFields] = tokenFieldValue[1];
                         }
                     }
-                    if (!LPArray.valueInArray(whereFieldsNameArr, TblsEnvMonitData.IncubBatch.ACTIVE.getName())) {
+                    if (Boolean.FALSE.equals(LPArray.valueInArray(whereFieldsNameArr, TblsEnvMonitData.IncubBatch.ACTIVE.getName()))) {
                         whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsEnvMonitData.IncubBatch.ACTIVE.getName());
                         whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, true);
                     }
@@ -1217,7 +1217,7 @@ public class ClassEnvMonSampleFrontend {
                     } else {
                         sampleFieldToRetrieveArr = sampleFieldToRetrieve.split("\\|");
                     }
-                    if (!LPArray.valueInArray(sampleFieldToRetrieveArr, TblsData.Sample.SAMPLE_ID.getName())) {
+                    if (Boolean.FALSE.equals(LPArray.valueInArray(sampleFieldToRetrieveArr, TblsData.Sample.SAMPLE_ID.getName()))) {
                         sampleFieldToRetrieveArr = LPArray.addValueToArray1D(sampleFieldToRetrieveArr, TblsData.Sample.SAMPLE_ID.getName());
                     }
                     jArr = new JSONArray();
@@ -1225,7 +1225,7 @@ public class ClassEnvMonSampleFrontend {
                             EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, sampleFieldToRetrieveArr),
                             new String[]{TblsData.Sample.CURRENT_STAGE.getName(), TblsData.Sample.INCUBATION_PASSED.getName(), TblsData.Sample.INCUBATION2_PASSED.getName()},
                             new Object[]{"Incubation", true, true}, null);
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(smpArr[0][0].toString())) {
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(smpArr[0][0].toString()))) {
                         for (Object[] curSmp : smpArr) {
                             JSONObject curRecordJObj = LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curSmp);
                             jArr.add(curRecordJObj);
@@ -1599,7 +1599,7 @@ public class ClassEnvMonSampleFrontend {
         if (sampleStageFldValue == null) {
             return null;
         }
-        if (!LPArray.valueInArray(sampleStageFldName, TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT.getName())) {
+        if (Boolean.FALSE.equals(LPArray.valueInArray(sampleStageFldName, TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT.getName()))) {
             return null;
         }
         String currentStage = sampleStageFldValue[LPArray.valuePosicInArray(sampleStageFldName, TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT.getName())].toString();
@@ -1702,7 +1702,7 @@ public class ClassEnvMonSampleFrontend {
                     EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION, SAMPLEANALYSISRESULTLOCKDATA_RETRIEVEDATA_PROGRAMCORRECTIVEACTION),
                     new String[]{TblsProcedure.ProgramCorrectiveAction.RESULT_ID.getName(), TblsProcedure.ProgramCorrectiveAction.STATUS.getName() + "<>"},
                     new Object[]{resultId, DataProgramCorrectiveAction.ProgramCorrectiveStatus.CLOSED.toString()}, null);
-            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(notClosedProgramCorrreciveAction[0][0].toString())) {
+            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(notClosedProgramCorrreciveAction[0][0].toString()))) {
                 String notifMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.STILLOPEN_NOTIFMODE.getAreaName(), DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.STILLOPEN_NOTIFMODE.getTagName());
                 switch (notifMode.toLowerCase()) {
                     case "silent":
@@ -1801,11 +1801,11 @@ public class ClassEnvMonSampleFrontend {
         Object[] objIds = new Object[]{};
         for (Object[] curRow : analysisResultList) {
             String curTest = TblsData.SampleAnalysisResult.TEST_ID.getName() + separator + curRow[LPArray.valuePosicInArray(headerFlds, TblsData.SampleAnalysisResult.TEST_ID.getName())].toString();
-            if (!LPArray.valueInArray(objIds, curTest)) {
+            if (Boolean.FALSE.equals(LPArray.valueInArray(objIds, curTest))) {
                 objIds = LPArray.addValueToArray1D(objIds, curTest);
             }
             String curResult = TblsData.SampleAnalysisResult.RESULT_ID.getName() + separator + curRow[LPArray.valuePosicInArray(headerFlds, TblsData.SampleAnalysisResult.RESULT_ID.getName())].toString();
-            if (!LPArray.valueInArray(objIds, curResult)) {
+            if (Boolean.FALSE.equals(LPArray.valueInArray(objIds, curResult))) {
                 objIds = LPArray.addValueToArray1D(objIds, curResult);
             }
         }

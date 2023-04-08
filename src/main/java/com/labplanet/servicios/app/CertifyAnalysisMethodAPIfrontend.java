@@ -323,7 +323,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
             JSONArray myAnaMethCertif = new JSONArray(); 
             JSONObject myAnaMethCertifList = new JSONObject();
             if ( (procAnaMethCertif.length>0) &&
-                 (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procAnaMethCertif[0][0].toString())) ){
+                 (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procAnaMethCertif[0][0].toString())))){
                     for (Object[] curAnaMeth : procAnaMethCertif) {                                                
                         JSONObject anaMethodJObj = new JSONObject();
                         anaMethodJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curAnaMeth);

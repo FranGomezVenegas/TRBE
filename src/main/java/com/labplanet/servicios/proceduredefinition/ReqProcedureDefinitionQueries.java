@@ -176,7 +176,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                         }
                         jMainObj.put("scripts_list", scriptsList);
                     }
-                    if (!jObj.isEmpty()) {
+                    if (Boolean.FALSE.equals(jObj.isEmpty())) {
                         jMainObj.put("proc_testing_script_summary", jObj);
                     }
                     LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
@@ -419,7 +419,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                     new Object[]{Integer.valueOf(curTest[scriptIdPosic].toString())},
                     fieldsToRetrieveScriptSteps,
                     new String[]{TblsTesting.ScriptSteps.STEP_ID.getName()});
-            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptStepsTblInfo[0][0].toString())) {
+            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptStepsTblInfo[0][0].toString()))) {
                 JSONArray scriptStepsList = new JSONArray();
                 for (Object[] curStep : scriptStepsTblInfo) {
                     JSONObject curStepObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieveScriptSteps, curStep);

@@ -54,8 +54,8 @@ public class ClassEnvMonIncubator {
                     String fieldValue=argValues[5].toString();
                     String[] fieldNames=new String[0];
                     Object[] fieldValues=new Object[0];
-                    if (fieldName!=null && fieldName.length()>0 && !"undefined".equalsIgnoreCase(fieldName)) fieldNames = fieldName.split("\\|");                                            
-                    if (fieldValue!=null && fieldValue.length()>0 && !"undefined".equalsIgnoreCase(fieldValue)) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                                                
+                    if (fieldName!=null && fieldName.length()>0 && Boolean.FALSE.equals("undefined".equalsIgnoreCase(fieldName))) fieldNames = fieldName.split("\\|");                                            
+                    if (fieldValue!=null && fieldValue.length()>0 && Boolean.FALSE.equals("undefined".equalsIgnoreCase(fieldValue))) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                                                
                     if (fieldValues!=null && fieldValues.length>0 && fieldValues[0].toString().length()>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
                         actionDiagnoses=fieldValues;
                         break;

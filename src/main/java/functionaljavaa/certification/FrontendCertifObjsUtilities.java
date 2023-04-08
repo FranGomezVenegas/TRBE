@@ -69,7 +69,7 @@ public class FrontendCertifObjsUtilities {
         }
         mainObj.put("user_name", objFldValues[LPArray.valuePosicInArray(objFldNames, TblsData.ViewUserAndAnalysisMethodCertificationView.USER_NAME.getName())]);
         valuePosicInArray = LPArray.valuePosicInArray(objFldNames, TblsData.ViewUserAndMetaDataSopView.PENDING_REVIEW.getName());
-        if (valuePosicInArray==-1||!Boolean.TRUE.toString().equalsIgnoreCase(LPNulls.replaceNull(objFldValues[valuePosicInArray]).toString())){
+        if (valuePosicInArray==-1||Boolean.FALSE.equals(Boolean.TRUE.toString().equalsIgnoreCase(LPNulls.replaceNull(objFldValues[valuePosicInArray]).toString()))){
             mainObj.put("action_visible", true);
             mainObj.put("action_enabled", false);    
             

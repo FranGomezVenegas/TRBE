@@ -47,7 +47,7 @@ public class LPParadigm {
         Object[] errorDetailVariables= new Object[0];
 
         diagnoses = LPArray.checkTwoArraysSameLength(fName, fValue);
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString()))){
            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(fName));
            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(fValue));
            return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.ARRAYS_DIFFERENT_SIZE, errorDetailVariables);

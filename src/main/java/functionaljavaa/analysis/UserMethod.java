@@ -128,7 +128,7 @@ public class UserMethod {
         userMethodInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, UserMethod.TABLENAME_DATA_USER_METHOD, whereFields, whereFieldsValue, 
                 new String[]{FLDNDATA_USR_METHD_USER_METHOD_ID, UserMethod.FLDNDATA_USR_METHD_USER_ID, FLDNDATA_USR_METHD_ANALYSIS, 
                     FLDNDATA_USR_METHD_METHOD_NAME, FLDNDATA_USR_METHD_METHOD_VERSION});
-        if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(userMethodInfo[0][0].toString()))) {
+        if (Boolean.FALSE.equals((LPPlatform.LAB_FALSE.equalsIgnoreCase(userMethodInfo[0][0].toString())))) {
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                 updFields = LPArray.addValueToArray1D(updFields, whereFields);
                 updFieldsValue = LPArray.addValueToArray1D(updFieldsValue, whereFieldsValue);
@@ -179,12 +179,12 @@ public class UserMethod {
                 else{query.append(" from \"").append(currProcInstanceName).append("-data\".").append(viewName).append(" where 1=1");}
                 for(String fFN: filterFieldName){
                     query.append(" and ").append(fFN); 
-                    if (!fFN.contains("null")){query.append("= ?");}
+                    if (Boolean.FALSE.equals(fFN.contains("null"))){query.append("= ?");}
                 }
                 query.append(") union ");
             }else{
                 Object[] tableUserMethodExistInSchema= Rdbms.dbTableExists(currProcInstanceName, GlobalVariables.Schemas.CONFIG.getName(), TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName());
-                if (!"APP".equalsIgnoreCase(currProcInstanceName) && LPPlatform.LAB_TRUE.equalsIgnoreCase(tableUserMethodExistInSchema[0].toString()))
+                if (Boolean.FALSE.equals("APP".equalsIgnoreCase(currProcInstanceName)) && LPPlatform.LAB_TRUE.equalsIgnoreCase(tableUserMethodExistInSchema[0].toString()))
                     LPPlatform.saveMessageInDbErrorLog("", new Object[]{currProcInstanceName, GlobalVariables.Schemas.DATA.getName(), viewName}, 
                             new Object[]{viewName, viewName, "getUserAnalysisMethodCerttifByProcess", 290}, "view not exist in this given schema", new Object[0], currProcInstanceName);            
             }
@@ -247,7 +247,7 @@ public class UserMethod {
         filterFieldValue[1]=userSopStatuses.NOTPASS.getLightCode();
         if (fieldsToRetrieve!=null){            
             for (String fv: fieldsToRetrieve){
-                if (!LPArray.valueInArray(fieldsToReturn, fv)){
+                if (Boolean.FALSE.equals(LPArray.valueInArray(fieldsToReturn, fv))){
                     fieldsToReturn = LPArray.addValueToArray1D(fieldsToReturn, fv);
                 }
             }

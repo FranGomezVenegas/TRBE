@@ -237,7 +237,7 @@ public class SampleAudit {
         Object[] fieldValues=gAuditFlds.getFieldValues();
 
         Object[][] procedureInfo = Requirement.getProcedureByProcInstanceName(procInstanceName);
-        if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString()))){
+        if (Boolean.FALSE.equals((LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString())))){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.PROCEDURE.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][0]);
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.PROCEDURE_VERSION.getName());
@@ -348,7 +348,7 @@ public class SampleAudit {
                 whereFieldName, whereFieldValue, 
                 new String[]{TblsDataAudit.Sample.AUDIT_ID.getName(), TblsDataAudit.Sample.REVIEWED.getName()});
         for (Object[] curSampleInfo: sampleInfo){
-          if (!"true".equalsIgnoreCase(curSampleInfo[1].toString())) {
+          if (Boolean.FALSE.equals("true".equalsIgnoreCase(curSampleInfo[1].toString()))) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUDIT_RECORDS_PENDING_REVISION, 
             new Object[]{sampleId, procInstanceName});
           }
@@ -411,7 +411,7 @@ public class SampleAudit {
                 whereFieldName, whereFieldValue, 
                 new String[]{TblsDataAudit.Sample.AUDIT_ID.getName(), TblsDataAudit.Sample.REVIEWED.getName()});
         for (Object[] curSampleInfo: sampleAuditInfo){
-          if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(curSampleInfo[0].toString())) {
+          if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(curSampleInfo[0].toString()))) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUDIT_RECORDS_PENDING_REVISION, 
             new Object[]{sampleId, procInstanceName});
           }

@@ -187,7 +187,7 @@ public class TblsGenomaConfig {
             for (xVariables obj: xVariables.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
+                if ( (Boolean.FALSE.equals("TBL".equalsIgnoreCase(objName))) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
                         if (fieldsScript.length()>0)fieldsScript.append(", ");
                         StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
                         currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()));
@@ -203,7 +203,7 @@ public class TblsGenomaConfig {
             String[] tableFields=new String[0];
             for (Variables obj: Variables.values()){
                 String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
+                if (Boolean.FALSE.equals("TBL".equalsIgnoreCase(objName))){
                     tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
                 }
             }           
@@ -263,7 +263,7 @@ public class TblsGenomaConfig {
             for (xVariablesSet obj: xVariablesSet.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
-                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
+                if ( (Boolean.FALSE.equals("TBL".equalsIgnoreCase(objName))) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
                         if (fieldsScript.length()>0)fieldsScript.append(", ");
                         StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
                         currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()));
@@ -279,7 +279,7 @@ public class TblsGenomaConfig {
             String[] tableFields=new String[0];
             for (VariablesSet obj: VariablesSet.values()){
                 String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
+                if (Boolean.FALSE.equals("TBL".equalsIgnoreCase(objName))){
                     tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
                 }
             }           

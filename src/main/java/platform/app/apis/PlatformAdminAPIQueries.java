@@ -122,7 +122,7 @@ public class PlatformAdminAPIQueries extends HttpServlet {
                             EnumIntTableFields.getTableFieldsFromString(curTbl, "ALL"),
                             w, new String[]{curTbl.getPrimaryKey()[0]+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()}, alternativeProcedureInstanceName);
                     JSONArray jArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(ipBlackLists[0][0].toString())){
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(ipBlackLists[0][0].toString()))){
                         for (Object[] currInstr: ipBlackLists){
                             JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
                             jArr.add(jObj);

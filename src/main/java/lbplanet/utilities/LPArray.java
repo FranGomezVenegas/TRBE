@@ -440,7 +440,7 @@ public class  LPArray {
         String evaluation="";
         Object[] valuesNotIncluded = new Object[0];
         for (Object currField: valuesToCheck){
-            if (!valueInArray(theArray, currField)){valuesNotIncluded=addValueToArray1D(valuesNotIncluded, currField);}
+            if (Boolean.FALSE.equals(valueInArray(theArray, currField))){valuesNotIncluded=addValueToArray1D(valuesNotIncluded, currField);}
         }    
         if (valuesNotIncluded.length==0){evaluation=LPPlatform.LAB_TRUE;}else{evaluation=LPPlatform.LAB_FALSE;}
         hm.put(evaluation, valuesNotIncluded);
@@ -785,7 +785,7 @@ public class  LPArray {
                 if (curObjIndex++<matrix.length)
                     nameBuilder.append(fieldsSeparator);
                 else
-                    if (removeLastSeparator==null || !removeLastSeparator)
+                    if (removeLastSeparator==null || Boolean.FALSE.equals(removeLastSeparator))
                         nameBuilder.append(fieldsSeparator);
             }
             return nameBuilder.toString();

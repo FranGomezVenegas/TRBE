@@ -259,7 +259,7 @@ public final class Token {
         if (fieldName == null) {
             return new String[]{LPPlatform.LAB_FALSE, ""};
         }
-        if (!fieldName.toUpperCase().contains(TOKEN_PARAM_PREFIX)) {
+        if (Boolean.FALSE.equals(fieldName.toUpperCase().contains(TOKEN_PARAM_PREFIX))) {
             return new String[]{LPPlatform.LAB_FALSE, ""};
         }
         Token tokenObj = new Token(token);

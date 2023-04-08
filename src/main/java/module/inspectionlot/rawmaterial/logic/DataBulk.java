@@ -55,7 +55,7 @@ public class DataBulk {
         fieldValue=LPArray.addValueToArray1D(fieldValue, lotName+"-"+numBulkStr);
         
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInspLotRMData.TablesInspLotRMData.LOT_BULK, fieldName, fieldValue);  
-        if (!insertRecordInTable.getRunSuccess())
+        if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess()))
             return new InternalMessage(LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), null);
         LotAudit lotAudit = new LotAudit();  
         EnumIntAuditEvents audEvObj=null;
@@ -81,7 +81,7 @@ public class DataBulk {
             new String[]{TblsInspLotRMConfig.Material.ADD_ADHOC_BULK_ADDITION.getName(), TblsInspLotRMConfig.Material.SPEC_CODE.getName(), TblsInspLotRMConfig.Material.SPEC_CODE_VERSION.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(materialInfo[0][0].toString())) return 
             new InternalMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{lotName, TblsInspLotRMConfig.TablesInspLotRMConfig.MATERIAL.getTableName(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())}, lotName);
-        if (!Boolean.valueOf(LPNulls.replaceNull(materialInfo[0][0]).toString()))
+        if (Boolean.FALSE.equals(Boolean.valueOf(LPNulls.replaceNull(materialInfo[0][0]).toString())))
             new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.ADD_ADHOC_BULKS_NOT_ALLOWED, new Object[]{lotName, materialName}, null);
         Object[][] specInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsInspLotRMConfig.TablesInspLotRMConfig.SPEC.getTableName(), 
              new String[]{TblsCnfg.Spec.CODE.getName(), TblsCnfg.Spec.CONFIG_VERSION.getName()}, new Object[]{materialInfo[0][1], materialInfo[0][2]},
@@ -119,7 +119,7 @@ public class DataBulk {
         Object[] updFieldValue=new Object[]{quantity};
         RdbmsObject diagnoses = Rdbms.updateTableRecordFieldsByFilter(TblsInspLotRMData.TablesInspLotRMData.LOT_BULK,
             EnumIntTableFields.getTableFieldsFromString(TblsInspLotRMData.TablesInspLotRMData.LOT_BULK, TblsInspLotRMData.LotBulk.QUANTITY.getName()), updFieldValue, sqlWhere, null);
-        if (!diagnoses.getRunSuccess())
+        if (Boolean.FALSE.equals(diagnoses.getRunSuccess()))
             return new InternalMessage(LPPlatform.LAB_FALSE, diagnoses.getErrorMessageCode(), diagnoses.getErrorMessageVariables());
         LotAudit lotAudit = new LotAudit();            
         lotAudit.lotAuditAdd(InspectionLotRMAuditEvents.LOT_BULK_QUANTITY_ADJUSTED, 
@@ -142,7 +142,7 @@ public class DataBulk {
         Object[] updFieldValue=new Object[]{smpQuantity};
         RdbmsObject diagnoses = Rdbms.updateTableRecordFieldsByFilter(TblsInspLotRMData.TablesInspLotRMData.LOT_BULK,
             EnumIntTableFields.getTableFieldsFromString(TblsInspLotRMData.TablesInspLotRMData.LOT_BULK, TblsInspLotRMData.LotBulk.SAMPLE_QUANTITY.getName()), updFieldValue, sqlWhere, null);
-        if (!diagnoses.getRunSuccess())
+        if (Boolean.FALSE.equals(diagnoses.getRunSuccess()))
             return new InternalMessage(LPPlatform.LAB_FALSE, diagnoses.getErrorMessageCode(), diagnoses.getErrorMessageVariables());
         LotAudit lotAudit = new LotAudit();            
         lotAudit.lotAuditAdd(InspectionLotRMAuditEvents.LOT_BULK_SAMPLE_QUANTITY_ADJUSTED, 
@@ -193,7 +193,7 @@ public class DataBulk {
             lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, lotName);                         
             RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInspLotRMData.TablesInspLotRMData.LOT_BULK, lotFieldName, lotFieldValue);
 
-            if (!insertRecordInTable.getRunSuccess()){
+            if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess())){
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, insertRecordInTable.getNewRowId());
                 return new InternalMessage(LPPlatform.LAB_FALSE, diagnoses.getErrorMessageCode(), diagnoses.getErrorMessageVariables());
             }                                

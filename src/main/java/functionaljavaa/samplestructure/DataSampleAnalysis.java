@@ -70,7 +70,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         String currStatus = (String) objectInfo[0][0];
         if (sampleId==null)
             sampleId = Integer.valueOf(LPNulls.replaceNull(objectInfo[0][3].toString()));
-        if ((!(sampleAnalysisStatusCanceled.equalsIgnoreCase(currStatus))) && (!(sampleAnalysisStatusReviewed.equalsIgnoreCase(currStatus))) && (testId != null)) {
+        if ((Boolean.FALSE.equals((sampleAnalysisStatusCanceled.equalsIgnoreCase(currStatus)))) && (Boolean.FALSE.equals((sampleAnalysisStatusReviewed.equalsIgnoreCase(currStatus)))) && (testId != null)) {
             String[] updateFldNames=new String[]{TblsData.SampleAnalysis.STATUS.getName(), TblsData.SampleAnalysis.STATUS_PREVIOUS.getName()};
             Object[] updateFldValues=new Object[]{sampleAnalysisStatusReviewed, currStatus};
             SqlWhere sqlWhere = new SqlWhere();
@@ -306,7 +306,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         if (testAssignmentMode == null) {
             testAssignmentMode = "null";
         }
-        if (!assignmentModes.contains(testAssignmentMode)) {
+        if (Boolean.FALSE.equals(assignmentModes.contains(testAssignmentMode))) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLEANALYSISASSIGNED_MODENOTRECOGNIZED, 
                     new Object[]{TblsCnfg.SampleRules.ANALYST_ASSIGNMENT_MODE.getName(), sampleConfigCode, sampleConfigCodeVersion, testAssignmentMode, assignmentModes, procInstanceName,
                     testId, newAnalyst});
@@ -407,14 +407,14 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         String sampleLevel = TblsData.TablesData.SAMPLE.getTableName();
         mandatoryFields = labIntChecker.getTableMandatoryFields(sampleLevel + tableName, actionName);
         InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldName, fieldValue);
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))
+        if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic())))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
         mandatoryFieldsValue = new Object[mandatoryFields.length];
         StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
         for (Integer inumLines = 0; inumLines < mandatoryFields.length; inumLines++) {
             String currField = mandatoryFields[inumLines];
             boolean contains = Arrays.asList(fieldName).contains(currField.toLowerCase());
-            if (!contains) {                
+            if (Boolean.FALSE.equals(contains)) {
                 if (mandatoryFieldsMissingBuilder.length()>0){mandatoryFieldsMissingBuilder.append(",");}
                 
                 mandatoryFieldsMissingBuilder.append(currField);
@@ -598,7 +598,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         for (Integer inumLines = 0; inumLines < resultMandatoryFieldsValue.length; inumLines++) {
             String currField = resultMandatoryFields[inumLines];
             boolean contains = Arrays.asList(getResultFieldsBeforeEach).contains(currField.toLowerCase());
-            if (!contains) {
+            if (Boolean.FALSE.equals(contains)) {
                 Integer valuePosic = Arrays.asList(resultDefaulFields).indexOf(currField.toLowerCase());
                 if (valuePosic == -1) {
                     if (resultMandatoryFieldsMissingBuilder.length()>0){resultMandatoryFieldsMissingBuilder.append(",");}
@@ -618,7 +618,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         fieldValue = LPArray.addValueToArray1D(fieldValue, new Object[]{sampleId, Rdbms.getCurrentDate(), token.getUserName()});
         Object[] isReviewByTestingGroupEnable=LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName(), DataSampleRevisionTestingGroup.DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP.getTagName());
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isReviewByTestingGroupEnable[0].toString()) &&                
-                !LPArray.valueInArray(fieldName, TblsData.SampleAnalysis.TESTING_GROUP.getName())){
+                Boolean.FALSE.equals(LPArray.valueInArray(fieldName, TblsData.SampleAnalysis.TESTING_GROUP.getName())) ){
             fieldName = LPArray.addValueToArray1D(fieldName, TblsData.SampleAnalysis.TESTING_GROUP.getName());
             fieldValue = LPArray.addValueToArray1D(fieldValue, specAnalysisTestingGroup);
         }
@@ -679,7 +679,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
                     fieldVal[Arrays.asList(getResultFields).indexOf(TblsData.SampleAnalysisResult.PARAM_NAME.getName())].toString(), 
                     new String[]{TblsCnfg.SpecLimits.LIMIT_ID.getName(), TblsCnfg.SpecLimits.MAX_DP.getName(), TblsCnfg.SpecLimits.LIST_ENTRY.getName()});
                 Integer fldPosic=-1;
-                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(specLimits[0][0].toString())){
+                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(specLimits[0][0].toString()))){
                     fldPosic=LPArray.valuePosicInArray(getResultFields, TblsData.SampleAnalysisResult.LIMIT_ID.getName());
                     if (fldPosic==-1){
 //                        getResultFieldsWithLimits = LPArray.addValueToArray1D(getResultFieldsWithLimits, TblsData.SampleAnalysisResult.LIMIT_ID.getName());
@@ -725,11 +725,10 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
                     getResultFields = LPArray.addValueToArray1D(getResultFields, TblsData.SampleAnalysisResult.STATUS.getName());
                     fieldVal = LPArray.addValueToArray1D(fieldVal, firstStatusSampleAnalysisResult);
                 }else
-//                    fieldValWithLimits[statusFieldPosic]=firstStatusSampleAnalysisResult;                
                     fieldVal[statusFieldPosic]=firstStatusSampleAnalysisResult;   
                 RdbmsObject newResultRdbmsDiagnObj = Rdbms.insertRecordInTable(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, 
                         getResultFields, fieldVal);
-                if (!newResultRdbmsDiagnObj.getRunSuccess())
+                if (Boolean.FALSE.equals(newResultRdbmsDiagnObj.getRunSuccess()))
                     return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, newResultRdbmsDiagnObj.getErrorMessageCode(), newResultRdbmsDiagnObj.getErrorMessageVariables());
                 Integer resultId = Integer.parseInt(newResultRdbmsDiagnObj.getNewRowId().toString());
                 smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ADDED, sampleLevel + TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 
@@ -763,7 +762,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         Object[][] grouper = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
                 new String[]{TblsData.SampleAnalysis.STATUS.getName()}, whereFieldName, whereFieldValue, null);
         if (grouper.length!=1) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.PENDING_REVISION, null);
-        if (!grouper[0][0].toString().equalsIgnoreCase(sampleAnalysisStatusReviewed))
+        if (Boolean.FALSE.equals(grouper[0][0].toString().equalsIgnoreCase(sampleAnalysisStatusReviewed)))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.PENDING_REVISION, null);
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "", null);
     }

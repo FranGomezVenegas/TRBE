@@ -69,7 +69,7 @@ public class DbObjects {
             
             JSONObject scriptLog=new JSONObject();
             scriptLog.put("script", tblCreateScript);
-            if (!tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE) && !tblCreateScript.toLowerCase().contains("already"))            
+            if (Boolean.FALSE.equals(tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE)) && Boolean.FALSE.equals(tblCreateScript.toLowerCase().contains("already")))
                 scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
             if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains("error"))
                 errorsOnlyObj.put("app."+curTbl.getTableName(), scriptLog);
@@ -84,7 +84,7 @@ public class DbObjects {
             Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
             JSONObject scriptLog=new JSONObject();
             scriptLog.put("script", tblCreateScript);
-            if (!tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE) && !tblCreateScript.toLowerCase().contains("already"))            
+            if (Boolean.FALSE.equals(tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE)) && Boolean.FALSE.equals(tblCreateScript.toLowerCase().contains("already")) )
                 scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
             if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains("error"))
                 errorsOnlyObj.put("app_audit."+curTbl.getTableName(), scriptLog);
@@ -99,7 +99,7 @@ public class DbObjects {
             Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
             JSONObject scriptLog=new JSONObject();
             scriptLog.put("script", tblCreateScript);
-            if (!tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE) && !tblCreateScript.toLowerCase().contains("already"))        
+            if (Boolean.FALSE.equals(tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE)) && Boolean.FALSE.equals(tblCreateScript.toLowerCase().contains("already")) )        
                 scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
             if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains("error"))
                 errorsOnlyObj.put("config."+curTbl.getTableName(), scriptLog);
@@ -113,7 +113,7 @@ public class DbObjects {
 
         JSONObject scriptLog=new JSONObject();
         scriptLog.put("script", tblCreateScript);
-        if (!tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE) && !tblCreateScript.toLowerCase().contains("already"))            
+        if (Boolean.FALSE.equals(tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE)) && Boolean.FALSE.equals(tblCreateScript.toLowerCase().contains("already")) )            
             scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
         if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains("error"))
             errorsOnlyObj.put("app."+TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), scriptLog);
@@ -144,7 +144,7 @@ public class DbObjects {
             prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
             scriptLog=new JSONObject();
             scriptLog.put("script", tblCreateScript);
-            if (!tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE) && !tblCreateScript.toLowerCase().contains("already"))        
+            if (Boolean.FALSE.equals(tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE)) && Boolean.FALSE.equals(tblCreateScript.toLowerCase().contains("already")) )
                 scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
             if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains("error"))
                 errorsOnlyObj.put("requirements."+curTbl.getTableName(), scriptLog);
@@ -180,14 +180,14 @@ public class DbObjects {
             tblCreateScript = createTableScript(curTbl, LPPlatform.buildSchemaName(procInstanceName, curTbl.getRepositoryName()), false, true);
             Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
             String schemaForTesting = Rdbms.suffixForTesting(LPPlatform.buildSchemaName(procInstanceName, curTbl.getRepositoryName()), curTbl.getTableName());
-            if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curTbl.getRepositoryName()))){
+            if (Boolean.FALSE.equals(schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curTbl.getRepositoryName())))){
                 String tblCreateScriptTesting = createTableScript(curTbl, schemaForTesting, false, true);
                 prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScriptTesting, new Object[]{});
             }
             //Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
             JSONObject scriptLog=new JSONObject();
             scriptLog.put("script", tblCreateScript);
-            if (!tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE) && !tblCreateScript.toLowerCase().contains("already"))            
+            if (Boolean.FALSE.equals(tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE)) && Boolean.FALSE.equals(tblCreateScript.toLowerCase().contains("already")) )            
                 scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
             if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains("error"))
                 errorsOnlyObj.put(curTbl.getRepositoryName()+"."+curTbl.getTableName(), scriptLog);
@@ -211,7 +211,7 @@ public class DbObjects {
         JSONArray mainLogArr = new JSONArray();
         for (String configSchemaName:schemasNames){
             JSONObject jsonObj = new JSONObject();
-            if (configSchemaName.contains("-") && (!configSchemaName.startsWith("\""))){            
+            if (configSchemaName.contains("-") && (Boolean.FALSE.equals(configSchemaName.startsWith("\"")))){            
                 configSchemaName = "\""+configSchemaName+"\"";}
             Object[] dbSchemaExists = Rdbms.dbSchemaExists(configSchemaName);
             SchemaActions SchemaAction = SchemaActions.valueOf(actionToPerform);
@@ -274,7 +274,7 @@ public class DbObjects {
                 new Object[]{},
                 procEventFldNamesToGet);
         JSONArray multiRolejArr=new JSONArray();
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procEventRows[0][0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procEventRows[0][0].toString()))){
             Object[][] procRoles = new Object[][]{{}};
                 Object[][] procRolesAllRoles = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_ROLES.getTableName(), 
                     new String[]{TblsReqs.ProcedureRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureRoles.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureRoles.PROC_INSTANCE_NAME.getName()},
@@ -301,7 +301,7 @@ public class DbObjects {
                         sqlWhere.addConstraint(TblsProcedure.ProcedureEvents.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.NAME.getName())]}, "");
                         Object[] diagnoses=Rdbms.updateRecordFieldsByFilter(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS,
                             EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS, new String[]{TblsProcedure.ProcedureEvents.ROLE_NAME.getName()}), new Object[]{procRoles[0][0].toString()}, sqlWhere, procInstanceName);
-                        multiRolCurEvent.put("updated?", !LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString()));
+                        multiRolCurEvent.put("updated?", Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString())));
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString()))
                             multiRolCurEvent.put("update error log", Arrays.toString(diagnoses));
                     }else{
@@ -318,7 +318,7 @@ public class DbObjects {
                     multiRolejArr.add(multiRolCurEvent);
             }
         }
-        if (!multiRolejArr.isEmpty())
+        if (Boolean.FALSE.equals(multiRolejArr.isEmpty()))
             jsonObj.put("multiroles_addition_log", multiRolejArr);
         return jsonObj;
     }

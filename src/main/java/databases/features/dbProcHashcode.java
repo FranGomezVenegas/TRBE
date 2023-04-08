@@ -26,7 +26,7 @@ import trazit.session.ProcedureRequestSession;
 public class dbProcHashcode {
     public static void procHashCodeHandler(String schemaName, String tableName){
         if (tableName.toUpperCase().contains("ZZZ")) return;
-        if (!(schemaName.toUpperCase().contains(GlobalVariables.Schemas.CONFIG.getName().toUpperCase())) || (schemaName.toUpperCase().contains(GlobalVariables.Schemas.PROCEDURE.getName().toUpperCase()))) return;
+        if (Boolean.FALSE.equals((schemaName.toUpperCase().contains(GlobalVariables.Schemas.CONFIG.getName().toUpperCase()))) || (schemaName.toUpperCase().contains(GlobalVariables.Schemas.PROCEDURE.getName().toUpperCase()))) return;
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);       
         if (instanceForActions.getIsPlatform()==null) return;
         if (instanceForActions.getIsForDocumentation()==null) return;

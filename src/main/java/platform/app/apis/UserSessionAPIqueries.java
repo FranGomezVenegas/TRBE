@@ -218,7 +218,7 @@ public class UserSessionAPIqueries extends HttpServlet {
                             EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.APP_SESSION, "ALL"),
                             sW, new String[]{TblsApp.AppSession.SESSION_ID.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                     JSONArray userSessionArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(userSessionInfo[0][0].toString())) {
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(userSessionInfo[0][0].toString()))) {
                         for (Object[] currUsrSession : userSessionInfo) {
                             JSONObject userSessionObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currUsrSession);
                             userSessionArr.add(userSessionObj);
@@ -234,7 +234,7 @@ public class UserSessionAPIqueries extends HttpServlet {
                             new String[]{TblsApp.AppSession.SESSION_ID.getName()}, new Object[]{argValues[0]},
                             new String[]{TblsApp.AppSession.SESSION_ID.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                     userSessionArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(userSessionInfo[0][0].toString())) {
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(userSessionInfo[0][0].toString()))) {
                         JSONArray procAuditArr = new JSONArray();
                         for (Object[] currUsrSession : userSessionInfo) {
                             Integer sessionId = -1;
@@ -246,7 +246,7 @@ public class UserSessionAPIqueries extends HttpServlet {
                             for (String curProc : userSessionProceduresList) {
                                 JSONObject procAuditJson = new JSONObject();
                                 procAuditJson.put("procedure", curProc);
-                                if (!userSessionExistAtProcLevel(curProc, sessionId)) {
+                                if (Boolean.FALSE.equals(userSessionExistAtProcLevel(curProc, sessionId))) {
                                     procAuditJson.put("proc_audit_records", "No actions performed during this session on this procedure");
                                 } else {
                                     try {
@@ -256,7 +256,7 @@ public class UserSessionAPIqueries extends HttpServlet {
                                                     EnumIntTableFields.getTableFieldsFromString(curTable, "ALL"),
                                                     new String[]{TblsDataAudit.Sample.APP_SESSION_ID.getName()}, new Object[]{sessionId},
                                                     new String[]{TblsDataAudit.Sample.AUDIT_ID.getName()}, curProc);
-                                            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(dataAuditCurTableInfo[0][0].toString())) {
+                                            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(dataAuditCurTableInfo[0][0].toString()))) {
                                                 JSONArray procAuditCurTableArr = new JSONArray();
                                                 JSONArray auditCurTableArr = new JSONArray();
                                                 JSONObject procAuditCurTableJson = new JSONObject();
@@ -285,7 +285,7 @@ public class UserSessionAPIqueries extends HttpServlet {
                 /*            case USER_SESSION_AUDIT_HISTORY:
                 String statusClosed=Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getAreaName(), DataProgramCorrectiveActionBusinessRules.STATUS_CLOSED.getTagName());
                 JSONArray jArray = new JSONArray(); 
-                if (!isProgramCorrectiveActionEnable(procInstanceName)){
+                if (Boolean.FALSE.equals(isProgramCorrectiveActionEnable(procInstanceName))){
                   JSONObject jObj=new JSONObject();
                   jArray.add(jObj.put(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(), "program corrective action not active!"));
                 }

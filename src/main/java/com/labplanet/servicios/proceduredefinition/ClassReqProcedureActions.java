@@ -134,7 +134,7 @@ public class ClassReqProcedureActions {
                         break;
                     }
                     Object[] procedureRolesList = procedureRolesList(procedureName, procedureVersion);    
-                    if (!LPArray.valueInArray(procedureRolesList, roleName)){
+                    if (Boolean.FALSE.equals(LPArray.valueInArray(procedureRolesList, roleName))){
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "The role <*1*> does not exist in procedure <*2*> and version <*3*>", new Object[]{roleName, procedureName, procedureVersion});
                         break;
                     }

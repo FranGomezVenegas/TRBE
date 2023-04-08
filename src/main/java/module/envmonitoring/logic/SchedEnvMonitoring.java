@@ -19,7 +19,7 @@ import trazit.queries.QueryUtilitiesEnums;
 public class SchedEnvMonitoring {
     public static void EnvMonitSchedProcesses(Token token, String procInstanceName){
         String moduleNameFromProcInstance = token.getModuleNameFromProcInstance(procInstanceName);
-        if (!GlobalVariables.TrazitModules.ENVIRONMENTAL_MONITORING.name().equalsIgnoreCase(moduleNameFromProcInstance)) return;
+        if (Boolean.FALSE.equals(GlobalVariables.TrazitModules.ENVIRONMENTAL_MONITORING.name().equalsIgnoreCase(moduleNameFromProcInstance))) return;
         logNextEventWhenExpiredOrClose(token, procInstanceName);
     }
     public static void logNextEventWhenExpiredOrClose(Token token, String procInstanceName){  

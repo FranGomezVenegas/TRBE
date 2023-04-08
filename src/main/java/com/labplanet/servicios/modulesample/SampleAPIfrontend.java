@@ -237,7 +237,7 @@ public class SampleAPIfrontend extends HttpServlet {
                 
                 sortFieldsNameArr = null;
                 sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME); 
-                if (! ((sortFieldsName==null) || (sortFieldsName.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED))) ) {
+                if (Boolean.FALSE.equals( ((sortFieldsName==null) || (sortFieldsName.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED)))) ) {
                     sortFieldsNameArr = sortFieldsName.split("\\|");                                    
                 }else{   sortFieldsNameArr=null;}  
                 for (int iFldV=0;iFldV<whereFieldsValueArr.length; iFldV++){                  
@@ -380,7 +380,7 @@ public class SampleAPIfrontend extends HttpServlet {
                     }                
                     sortFieldsNameArr = null;
                     sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME); 
-                    if (! ((sortFieldsName==null) || (sortFieldsName.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED))) ) {
+                    if (Boolean.FALSE.equals( ((sortFieldsName==null) || (sortFieldsName.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED)))) ) {
                         sortFieldsNameArr = sortFieldsName.split("\\|");                                    
                     }else{   sortFieldsNameArr=null;}  
 
@@ -406,14 +406,14 @@ public class SampleAPIfrontend extends HttpServlet {
                     
                     sampleAnalysisFieldToRetrieveArr = new String[0];
                     sampleAnalysisFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE);  
-                    if (! ((sampleAnalysisFieldToRetrieve==null) || (sampleAnalysisFieldToRetrieve.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED))) ) {
+                    if (Boolean.FALSE.equals( ((sampleAnalysisFieldToRetrieve==null) || (sampleAnalysisFieldToRetrieve.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED)))) ) {
                          sampleAnalysisFieldToRetrieveArr=  sampleAnalysisFieldToRetrieve.split("\\|");                             
                     }    
                     sampleAnalysisFieldToRetrieveArr = LPArray.addValueToArray1D(sampleAnalysisFieldToRetrieveArr, sampleAnalysisFixFieldToRetrieveArr);
                     
                     sortFieldsNameArr = null;
                     sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME); 
-                    if (! ((sortFieldsName==null) || (sortFieldsName.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED))) ) {
+                    if (Boolean.FALSE.equals( ((sortFieldsName==null) || (sortFieldsName.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED)))) ) {
                         sortFieldsNameArr =  sortFieldsName.split("\\|");                                    
                     }else{   
                         sortFieldsNameArr = LPArray.getUniquesArray(SampleAPIParams.MANDATORY_FIELDS_FRONTEND_WHEN_SORT_NULL_GET_SAMPLE_ANALYSIS_LIST.split("\\|"));                     
@@ -459,7 +459,7 @@ public class SampleAPIfrontend extends HttpServlet {
                   
                     sortFieldsNameArr = null;
                     sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME); 
-                    if (! ((sortFieldsName==null) || (sortFieldsName.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED))) ) {
+                    if (Boolean.FALSE.equals( ((sortFieldsName==null) || (sortFieldsName.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED)))) ) {
                         sortFieldsNameArr = sortFieldsName.split("\\|");                                    
                     }else{   
                         sortFieldsNameArr = LPArray.getUniquesArray(SampleAPIParams.MANDATORY_FIELDS_FRONTEND_WHEN_SORT_NULL_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|"));     
@@ -548,14 +548,14 @@ public class SampleAPIfrontend extends HttpServlet {
                     sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME);
                     
                     fieldToRetrieveArr = new String[0];
-                    if (!( (fieldToRetrieve==null) || (fieldToRetrieve.length()==0) )){                      
+                    if (Boolean.FALSE.equals(( (fieldToRetrieve==null) || (fieldToRetrieve.length()==0) ))){
                         fieldToRetrieveArr=LPArray.addValueToArray1D(fieldToRetrieveArr, fieldToRetrieve.split("\\|"));
                     }  
                     fieldToRetrieveArr = LPArray.getUniquesArray(LPArray.addValueToArray1D(fieldToRetrieveArr, SampleAPIParams.MANDATORY_FIELDS_FRONTEND_TO_RETRIEVE_CHANGEOFCUSTODY_SAMPLE_HISTORY.split("\\|")));
                     
                     sortFieldsNameArr = null;
                     sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME); 
-                    if (! ((sortFieldsName==null) || (sortFieldsName.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED))) ) {
+                    if (Boolean.FALSE.equals( ((sortFieldsName==null) || (sortFieldsName.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED))) )) {
                         sortFieldsNameArr = sortFieldsName.split("\\|");                                    
                     }else{   
                         sortFieldsNameArr = LPArray.getUniquesArray(SampleAPIParams.MANDATORY_FIELDS_FRONTEND_WHEN_SORT_NULL_CHANGEOFCUSTODY_SAMPLE_HISTORY.split("\\|"));
@@ -575,13 +575,13 @@ public class SampleAPIfrontend extends HttpServlet {
                     sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME);
                     
                     fieldToRetrieveArr = new String[0];
-                    if (!( (fieldToRetrieve==null) || (fieldToRetrieve.length()==0) )){
+                    if (Boolean.FALSE.equals(( (fieldToRetrieve==null) || (fieldToRetrieve.length()==0) ))){
                         fieldToRetrieveArr=LPArray.addValueToArray1D(fieldToRetrieveArr, fieldToRetrieve.split("\\|"));                
                     }   
                     fieldToRetrieveArr=LPArray.getUniquesArray(LPArray.addValueToArray1D(fieldToRetrieveArr, SampleAPIParams.MANDATORY_FIELDS_FRONTEND_TO_RETRIEVE_CHANGEOFCUSTODY_USERS_LIST.split("\\|")));
                     sortFieldsNameArr = null;
                     sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME); 
-                    if (! ((sortFieldsName==null) || (sortFieldsName.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED))) ) {
+                    if (Boolean.FALSE.equals( ((sortFieldsName==null) || (sortFieldsName.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED))) )) {
                         sortFieldsNameArr = sortFieldsName.split("\\|");                                    
                     }else{   
                         sortFieldsNameArr=LPArray.getUniquesArray(SampleAPIParams.MANDATORY_FIELDS_FRONTEND_WHEN_SORT_NULL_CHANGEOFCUSTODY_USERS_LIST.split("\\|")); 
@@ -678,7 +678,7 @@ public class SampleAPIfrontend extends HttpServlet {
                     jArr = new JSONArray();
                     String[] fldNames=(String[])analysisMethodCertifiedUsersList[0];
                     Object[][] dataValues=(Object[][])analysisMethodCertifiedUsersList[1];
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(dataValues[0][0].toString())){
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(dataValues[0][0].toString()))){
                         for (Object[] curRow: dataValues){      
                             JSONObject jObj=LPJson.convertArrayRowToJSONObject(fldNames, curRow);
                             jArr.add(jObj);
@@ -745,7 +745,7 @@ public class SampleAPIfrontend extends HttpServlet {
         }                                    
     }            
     String[]     sortFieldsNameArr = null;
-    if (! ((sortFieldsName==null || sortFieldsName.length()==0) || (sortFieldsName.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED))) ) 
+    if (Boolean.FALSE.equals( ((sortFieldsName==null || sortFieldsName.length()==0) || (sortFieldsName.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED)))) ) 
         sortFieldsNameArr = sortFieldsName.split("\\|");                                    
     else   
         sortFieldsNameArr=null;    
@@ -888,7 +888,7 @@ public class SampleAPIfrontend extends HttpServlet {
             }                                    
         }            
         String[]     sortFieldsNameArr = null;
-        if (! ((sortFieldsName==null || sortFieldsName.length()==0) || (sortFieldsName.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED))) ) 
+        if (Boolean.FALSE.equals( ((sortFieldsName==null || sortFieldsName.length()==0) || (sortFieldsName.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED)))) ) 
             sortFieldsNameArr = sortFieldsName.split("\\|");                                    
         else   
             sortFieldsNameArr=null;    
@@ -969,7 +969,7 @@ public class SampleAPIfrontend extends HttpServlet {
             }                                    
         }            
         String[]     sortFieldsNameArr = null;
-        if (! ((sortFieldsName==null || sortFieldsName.length()==0) || (sortFieldsName.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED))) ) 
+        if (Boolean.FALSE.equals( ((sortFieldsName==null || sortFieldsName.length()==0) || (sortFieldsName.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED)))) ) 
             sortFieldsNameArr = sortFieldsName.split("\\|");                                    
         else   
             sortFieldsNameArr=null;    

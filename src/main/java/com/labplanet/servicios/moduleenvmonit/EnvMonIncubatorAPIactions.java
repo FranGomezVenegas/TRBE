@@ -187,10 +187,6 @@ public class EnvMonIncubatorAPIactions extends HttpServlet {
             ClassEnvMonIncubator clss = new ClassEnvMonIncubator(request, endPoint);
             Object[] diagnostic = clss.getDiagnostic();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
-                /*                Rdbms.rollbackWithSavePoint();
-                if (!con.getAutoCommit()){
-                    con.rollback();
-                    con.setAutoCommit(true);}                */
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);
             } else {
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());
@@ -204,7 +200,6 @@ public class EnvMonIncubatorAPIactions extends HttpServlet {
         } finally {
             // release database resources
             try {
-                //con.close();
                 procReqInstance.killIt();
             } catch (Exception ex) {
                 Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);

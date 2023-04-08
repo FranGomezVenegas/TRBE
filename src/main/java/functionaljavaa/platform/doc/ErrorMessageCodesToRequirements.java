@@ -103,7 +103,7 @@ public class ErrorMessageCodesToRequirements {
                                 }
                             }
                         }
-                        if (!enumsIncomplete.isEmpty()){
+                        if (Boolean.FALSE.equals(enumsIncomplete.isEmpty())){
                             LPFrontEnd.servletReturnSuccess(request, response, enumsIncomplete);
                             return;
                         }else{
@@ -237,9 +237,9 @@ public class ErrorMessageCodesToRequirements {
             Object[] data=new Object[2];
             String[] fldsToRetrieve=new String[]{};
             String[] fldsValuesToRetrieve=new String[]{};
-            if (!errorTrapFileEn.containsKey(entryName)) 
+            if (Boolean.FALSE.equals(errorTrapFileEn.containsKey(entryName))) 
                 parm.addTagInPropertiesFile(propFileName, errorTrapFilePathEn, entryName, LPNulls.replaceNull("X"));
-            if (!errorTrapFileEs.containsKey(entryName)) 
+            if (Boolean.FALSE.equals(errorTrapFileEs.containsKey(entryName))) 
                 parm.addTagInPropertiesFile(propFileName, errorTrapFilePathEs, entryName, LPNulls.replaceNull("X"));
         }catch(Exception e){
             String s=e.getMessage();

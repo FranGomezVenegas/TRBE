@@ -127,13 +127,13 @@ if (1==1) return DIAGNOSES_SUCCESS;
 if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
         
         Object[] variationNameDiagnosticArray = specVariationGetNamesList(procInstanceName, specCode);
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(variationNameDiagnosticArray[0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(variationNameDiagnosticArray[0].toString()))){
             return DIAGNOSES_SUCCESS;
         }
         else{
             String[] currVariationNameArray = variationNameDiagnosticArray[4].toString().split("\\|", -1);
             for (String currVariation: currVariationNameArray){   
-                if (!variationNames.contains(currVariation)){
+                if (Boolean.FALSE.equals(variationNames.contains(currVariation))){
                     if (variationNameExistBuilder.length()>0){variationNameExistBuilder.append(",");}
                 
                     variationNameExistBuilder.append(currVariation);                    
@@ -166,13 +166,13 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
         StringBuilder variationNameExistBuilder = new StringBuilder(0);
         
         Object[] variationNameDiagnosticArray = specVariationGetNamesList(procInstanceName, specCode);
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(variationNameDiagnosticArray[0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(variationNameDiagnosticArray[0].toString()))){
             return DIAGNOSES_SUCCESS;
         }
         else{
             String[] currVariationNameArray = variationNameDiagnosticArray[4].toString().split("\\|", -1);
             for (String currVariation: currVariationNameArray){   
-                if (!variationNames.contains(currVariation)){
+                if (Boolean.FALSE.equals(variationNames.contains(currVariation))){
                     if (variationNameExistBuilder.length()>0){variationNameExistBuilder.append(" , ");}
                 
                     variationNameExistBuilder.append(currVariation);     
@@ -452,7 +452,7 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
         for (Integer inumLines=0;inumLines<mandatoryFields.length;inumLines++){
             String currField = mandatoryFields[inumLines];
             boolean contains = Arrays.asList(specFieldName).contains(currField.toLowerCase());
-            if (!contains){
+            if (Boolean.FALSE.equals(contains)){
                 if (mandatoryFieldsMissingBuilder.length()>0){mandatoryFieldsMissingBuilder.append(",");}
                 
                 mandatoryFieldsMissingBuilder.append(currField);                
@@ -545,11 +545,11 @@ specialFunctionReturn=DIAGNOSES_SUCCESS;
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, quantitativeRulesErrors.SPEC_RECORD_ALREADY_EXISTS, errorDetailVariables);           
         }
         try{
-            if (!LPArray.valueInArray(specFieldName, TblsCnfg.SpecLimits.CODE.getName())){
+            if (Boolean.FALSE.equals(LPArray.valueInArray(specFieldName, TblsCnfg.SpecLimits.CODE.getName()))){
                 specFieldName = LPArray.addValueToArray1D(specFieldName, TblsCnfg.SpecLimits.CODE.getName());
                 specFieldValue = LPArray.addValueToArray1D(specFieldValue, specCode);
             }
-            if (!LPArray.valueInArray(specFieldName, TblsCnfg.SpecLimits.CONFIG_VERSION.getName())){
+            if (Boolean.FALSE.equals(LPArray.valueInArray(specFieldName, TblsCnfg.SpecLimits.CONFIG_VERSION.getName()))){
                 specFieldName = LPArray.addValueToArray1D(specFieldName, TblsCnfg.SpecLimits.CONFIG_VERSION.getName());
                 specFieldValue = LPArray.addValueToArray1D(specFieldValue, specCodeVersion);                        
             }
@@ -703,7 +703,7 @@ specialFunctionReturn=DIAGNOSES_SUCCESS;
         for (Integer inumLines=0;inumLines<mandatoryFields.length;inumLines++){
             String currField = mandatoryFields[inumLines];
             boolean contains = Arrays.asList(specFieldName).contains(currField.toLowerCase());
-            if (!contains){
+            if (Boolean.FALSE.equals(contains)){
                 if (mandatoryFieldsMissingBuilder.length()>0){mandatoryFieldsMissingBuilder.append(",");}
                 
                 mandatoryFieldsMissingBuilder.append(currField);                
@@ -767,7 +767,7 @@ specialFunctionReturn=DIAGNOSES_SUCCESS;
         String[] whereFields = new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName(), TblsCnfg.AnalysisMethod.METHOD_NAME.getName(), TblsCnfg.AnalysisMethod.METHOD_VERSION.getName()};
         Object[] whereFieldsValue = new Object[] {analysis, methodName, methodVersion};
         diagnoses = Rdbms.existsRecord(schemaName, TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName(), whereFields, whereFieldsValue);                
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString()))){
             Object[] whereFieldsAndValues = LPArray.joinTwo1DArraysInOneOf1DString(diagnoses, whereFieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName());
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(whereFieldsAndValues));                                   
@@ -779,7 +779,7 @@ specialFunctionReturn=DIAGNOSES_SUCCESS;
             whereFields = new String[]{TblsCnfg.SpecLimits.ANALYSIS.getName(), TblsCnfg.SpecLimits.METHOD_NAME.getName(), TblsCnfg.SpecLimits.METHOD_VERSION.getName(), "param_name"};
             whereFieldsValue = new Object[] {analysis, methodName, methodVersion, parameter};            
             diagnoses = Rdbms.existsRecord(schemaName, TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(), whereFields, whereFieldsValue);      
-            if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
+            if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString()))){
                 Object[] whereFieldsAndValues = LPArray.joinTwo1DArraysInOneOf1DString(diagnoses, whereFieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName());
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(whereFieldsAndValues));                                   

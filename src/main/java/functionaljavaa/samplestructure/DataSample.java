@@ -136,7 +136,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         sampleFieldName = LPArray.addValueToArray1D(sampleFieldName, TblsData.Sample.STATUS.getName());
         sampleFieldValue = LPArray.addValueToArray1D(sampleFieldValue, sampleStatusFirst);
         InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(sampleFieldName, sampleFieldValue);
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))
+        if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic())))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
         // spec is not mandatory but when any of the fields involved is added to the parameters 
         //  then it turns mandatory all the fields required for linking this entity.
@@ -160,7 +160,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         for (Integer inumLines=0;inumLines<mandatoryFields.length;inumLines++){
             String currField = mandatoryFields[inumLines];
             boolean contains = Arrays.asList(sampleFieldName).contains(currField.toLowerCase());
-            if (!contains){
+            if (Boolean.FALSE.equals(contains)){
                 if (mandatoryFieldsMissingBuilder.length()>0){mandatoryFieldsMissingBuilder.append(",");}
                 
                 mandatoryFieldsMissingBuilder.append(currField);
@@ -393,7 +393,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(),  
                 new String[] {TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId}, sampleFieldName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString()))return LPArray.array2dTo1d(sampleInfo);
-        if (!Boolean.valueOf(LPNulls.replaceNull(sampleInfo[0][2]).toString()))
+        if (Boolean.FALSE.equals(Boolean.valueOf(LPNulls.replaceNull(sampleInfo[0][2]).toString())))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLINGDATEEND_NOTREQUIRED_ASTOPERFORMTHEACTION, new Object[]{sampleId, sampleInfo[0][0]});                             
         if (LPNulls.replaceNull(sampleInfo[0][0]).toString().length()==0)
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLINGDATE_REQUIRED_FOR_SAMPLINGDATEEND, new Object[]{sampleId, sampleInfo[0][0]});                             
@@ -569,12 +569,10 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()); 
 
         String sampleStatusFirst = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.SAMPLE_STATUS_FIRST.getAreaName(), DataSampleBusinessRules.SAMPLE_STATUS_FIRST.getTagName());
-        String sampleStatusInReceived = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.SAMPLE_STATUS_RECEIVED.getAreaName(), DataSampleBusinessRules.SAMPLE_STATUS_RECEIVED.getTagName());
 
         Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(), new String[]{TblsData.Sample.SAMPLE_ID.getName()},
                 new Object[]{sampleId}, new String[]{TblsData.Sample.STATUS.getName()});
-        if ( !(sampleStatusFirst.equalsIgnoreCase(sampleInfo[0][0].toString())) ){ // || (sampleStatusInReceived.equalsIgnoreCase(sampleInfo[0][0].toString()))){
-            String[] fieldsForAudit = new String[0];
+        if ( Boolean.FALSE.equals((sampleStatusFirst.equalsIgnoreCase(sampleInfo[0][0].toString()))) ){ 
             SampleAudit smpAudit = new SampleAudit();        
             smpAudit.sampleAuditAdd(auditActionName, TblsData.TablesData.SAMPLE.getTableName(), sampleId, sampleId, null, null, new String[]{TblsData.Sample.STATUS.getName()}, new Object[]{" keep status "+sampleInfo[0][0].toString()});              
             return new Object[]{LPPlatform.LAB_TRUE};
@@ -655,7 +653,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                                         new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId},
                                         new String[]{TblsData.Sample.STATUS.getName(), TblsData.Sample.STATUS_PREVIOUS.getName(), TblsData.Sample.SAMPLE_ID.getName(), TblsData.Sample.SAMPLE_ID.getName()});
         String currStatus = (String) objectInfo[0][0];               
-        if ( (!(sampleStatusCanceled.equalsIgnoreCase(currStatus))) && (!(sampleStatusReviewed.equalsIgnoreCase(currStatus))) && (sampleId!=null) ){
+        if ( (Boolean.FALSE.equals((sampleStatusCanceled.equalsIgnoreCase(currStatus)))) && (Boolean.FALSE.equals((sampleStatusReviewed.equalsIgnoreCase(currStatus)))) && (sampleId!=null) ){
             String[] updFldName=new String[]{TblsData.Sample.STATUS.getName(), TblsData.Sample.STATUS_PREVIOUS.getName(), TblsData.Sample.REVIEWED.getName(), TblsData.Sample.REVIEWED_BY.getName(), TblsData.Sample.REVIEWED_ON.getName()};
             Object[] updFldValue=new Object[]{sampleStatusReviewed, currStatus, true, token.getPersonName(), LPDate.getCurrentTimeStamp()};
             SqlWhere sqlWhere = new SqlWhere();
@@ -694,7 +692,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         if (status.length()==0){myDiagnoses = "ERROR: The parameter status cannot be null"; return myDiagnoses;}
         
         Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, TblsCnfg.TablesConfig.SAMPLE_RULES.getTableName(), new String[] {TblsCnfg.SampleRules.CODE.getName(), TblsCnfg.SampleRules.CODE_VERSION.getName()}, new Object[] {template, templateVersion});
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString()))){
             myDiagnoses = "ERROR: The sample_rule record for "+template+" does not exist in schema"+schemaConfigName+". ERROR: "+diagnosis[5];}
         else{    
             String[] fieldNames = new String[]{TblsCnfg.SampleRules.CODE.getName()};
@@ -777,7 +775,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
         InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(smpAliqFieldName, smpAliqFieldValue);
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))
+        if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic())))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
 
         BigDecimal aliqVolume = BigDecimal.ZERO;
@@ -826,7 +824,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             token.getPersonName(), LPDate.getCurrentTimeStamp()});
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsData.TablesData.SAMPLE_ALIQ, smpAliqFieldName, smpAliqFieldValue);
         Object[] diagnoses = insertRecordInTable.getApiMessage();
-        if (!insertRecordInTable.getRunSuccess()){            
+        if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess())){
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.ERROR_INSERTING_SAMPLE_RECORD, new Object[]{diagnoses[diagnoses.length-2]});
         }
         if (Rdbms.TBL_NO_KEY.equalsIgnoreCase(diagnoses[diagnoses.length-1].toString())){            
@@ -900,7 +898,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                     sampleId, null, null,
                     LPArray.joinTwo1DArraysInOneOf1DString(smpVolFldName, smpVolFldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR));        
         }
-        if (!actionEnabledSampleSubAliquotVolumeRequired.toUpperCase().contains(LPPlatform.BUSINESS_RULES_VALUE_ENABLED)){
+        if (Boolean.FALSE.equals(actionEnabledSampleSubAliquotVolumeRequired.toUpperCase().contains(LPPlatform.BUSINESS_RULES_VALUE_ENABLED))){
             Object[][] aliquotInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ALIQ.getTableName(), new String[] {TblsData.SampleAliq.ALIQUOT_ID.getName()}, new Object[]{aliquotId}, mandatoryAliquotFields);
             sampleId = (Integer) aliquotInfo[0][0];
         }
@@ -911,7 +909,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             token.getPersonName(), LPDate.getCurrentTimeStamp()});
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsData.TablesData.SAMPLE_ALIQ_SUB, smpSubAliqFieldName, smpSubAliqFieldValue);
         Object[] diagnoses = insertRecordInTable.getApiMessage();
-        if (!insertRecordInTable.getRunSuccess()){            
+        if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess())){
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.ERROR_INSERTING_SAMPLE_RECORD, new Object[]{diagnoses[diagnoses.length-2]});
         }
         Integer subaliquotId = Integer.parseInt(diagnoses[diagnoses.length-1].toString());
@@ -962,7 +960,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                 sampleAnalysisFieldToRetrieve="*";
 /*                {                
                 for (TblsData.SampleAnalysis obj: TblsData.SampleAnalysis.values()){
-                    if (!"TBL".equalsIgnoreCase(obj.name()))
+                    if (Boolean.FALSE.equals("TBL".equalsIgnoreCase(obj.name())))
                     sampleAnalysisFieldToRetrieveArr=LPArray.addValueToArray1D(sampleAnalysisFieldToRetrieveArr, obj.getName());
                 }               } */
             else{
@@ -977,7 +975,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                 sarFieldToRetrieve="*";
             /*{                
                 for (TblsData.SampleAnalysisResult obj: TblsData.SampleAnalysisResult.values()){
-                    if (!"TBL".equalsIgnoreCase(obj.name()))
+                    if (Boolean.FALSE.equals("TBL".equalsIgnoreCase(obj.name())))
                     sarFieldToRetrieveArr=LPArray.addValueToArray1D(sarFieldToRetrieveArr, obj.getName());
                 }                
             }*/
@@ -993,7 +991,7 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
                 sampleAuditFieldToRetrieve="*";
             /*{                
                 for (TblsDataAudit.Sample obj: TblsDataAudit.Sample.values()){
-                    if (!"TBL".equalsIgnoreCase(obj.name()))
+                    if (Boolean.FALSE.equals("TBL".equalsIgnoreCase(obj.name())))
                     sampleAuditFieldToRetrieveArr=LPArray.addValueToArray1D(sampleAuditFieldToRetrieveArr, obj.getName());
                 }                
             }*/

@@ -54,7 +54,7 @@ public InternalMessage createStudy(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints
     mandatoryFieldsProj = labIntChecker.getTableMandatoryFields(TblsGenomaData.TablesGenomaData.STUDY.getTableName(), actionName);
     if (Boolean.FALSE.equals(devMode)){
             InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldsName, fieldsValue);
-            if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))
+            if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic())))
                 return fieldNameValueArrayChecker;
     }    
     if (Boolean.FALSE.equals(devMode)){        
@@ -62,7 +62,7 @@ public InternalMessage createStudy(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints
         for (Integer inumLines=0;inumLines<mandatoryFieldsProj.length;inumLines++){
             String currField = mandatoryFieldsProj[inumLines];
             boolean contains = Arrays.asList(fieldsName).contains(currField.toLowerCase());
-            if (!contains){
+            if (Boolean.FALSE.equals(contains)){
                 if (mandatoryFieldsMissingBuilder.length()>0){mandatoryFieldsMissingBuilder.append(",");}
                 
                 mandatoryFieldsMissingBuilder.append(currField);

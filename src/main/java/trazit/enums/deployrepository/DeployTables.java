@@ -56,7 +56,7 @@ public static String createTableScript(EnumIntTables tableObj, String procInstan
                 String[] tbldFldsArr = LPArray.convertObjectArrayToStringArray(tbldFldsArrObj);    
                 Boolean fieldToAdd=false;
                 for (EnumIntTableFields curFld: tableObj.getTableFields()){
-                    if (!LPArray.valueInArray(tbldFldsArrObj, curFld.getName())){
+                    if (Boolean.FALSE.equals(LPArray.valueInArray(tbldFldsArrObj, curFld.getName()))){
                         if (seqScript.length()>0)seqScript=seqScript.append(", ");
                         StringBuilder currFieldDefBuilder = new StringBuilder(curFld.getFieldType());
                         seqScript=seqScript.append(" add column "+curFld.getName()+" "+currFieldDefBuilder);
@@ -192,7 +192,7 @@ private static String fieldCommentScript(EnumIntTables tableObj, String procInst
 private static String createTableBeginScript(EnumIntTables tableObj, String procInstanceName){
     BusinessRules bi=null;
     Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()) , TblsCnfg.TablesConfig.ZZZ_DB_ERROR.getTableName());
-    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))
+    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())))
         bi=new BusinessRules(procInstanceName, null);
     String script="";    
     script=LPDatabase.createTable() + " (";    

@@ -443,7 +443,7 @@ public class EnvMonAPIStats extends HttpServlet {
                 String samplingDayStart = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLING_DAY_START);
                 String samplingDayEnd = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLING_DAY_END);
                 Object[] buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLING_DATE.getName(), samplingDayStart, samplingDayEnd);
-                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString())) {
+                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))) {
                     if (buildDateRangeFromStrings.length == 4) {
                         wObj.addConstraint(TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLING_DATE, SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{buildDateRangeFromStrings[2], buildDateRangeFromStrings[3]}, null);
                     } else {
@@ -453,7 +453,7 @@ public class EnvMonAPIStats extends HttpServlet {
                 String loginDayStart = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_START);
                 String loginDayEnd = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_END);
                 buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsData.ViewSampleAnalysisResultWithSpecLimits.LOGGED_ON.getName(), loginDayStart, loginDayEnd);
-                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString())) {
+                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))) {
                     if (buildDateRangeFromStrings.length == 4) {
                         wObj.addConstraint(TblsData.ViewSampleAnalysisResultWithSpecLimits.LOGGED_ON, SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{buildDateRangeFromStrings[2], buildDateRangeFromStrings[3]}, null);
                     } else {
@@ -496,7 +496,7 @@ public class EnvMonAPIStats extends HttpServlet {
                 }
                 String includeSamplerSamples = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_SAMPLER_SAMPLES);
                 if (includeSamplerSamples != null && includeSamplerSamples.length() > 0 && Boolean.TRUE.equals(Boolean.valueOf(includeSamplerSamples))) {
-                    if (!(includeSamples != null && includeSamples.length() > 0 && Boolean.valueOf(includeSamples))) {
+                    if (Boolean.FALSE.equals((includeSamples != null && includeSamples.length() > 0 && Boolean.valueOf(includeSamples))) ) {
                         wObj.addConstraint(TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_CONFIG_CODE, SqlStatement.WHERECLAUSE_TYPES.NOT_IN, new Object[]{Integer.valueOf(samplerSmpTemplate)}, null);
                     }
                 }
@@ -504,13 +504,13 @@ public class EnvMonAPIStats extends HttpServlet {
                 String microOrganismsToFind = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND);
                 if (microOrganismsToFind != null && microOrganismsToFind.length() > 0) {
                     includeMicroOrganisms = Boolean.TRUE.toString();
-                    if (!(includeSamples != null && includeSamples.length() > 0 && Boolean.valueOf(includeSamples))) {
+                    if (Boolean.FALSE.equals((includeSamples != null && includeSamples.length() > 0 && Boolean.valueOf(includeSamples))) ) {
                         wObj.addConstraint(TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_CONFIG_CODE, SqlStatement.WHERECLAUSE_TYPES.NOT_IN, new Object[]{Integer.valueOf(samplerSmpTemplate)}, null);
                     }
                 }
                 jObj = new JSONObject();
                 JSONArray sampleJsonArr = new JSONArray();
-                if (!wObj.getAllWhereEntries().isEmpty()) {
+                if (Boolean.FALSE.equals(wObj.getAllWhereEntries().isEmpty())) {
                     EnumIntViewFields[] fieldsToGet = EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, "ALL");
                     sampleInfo = QueryUtilitiesEnums.getViewData(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW,
                             fieldsToGet,
@@ -577,14 +577,14 @@ public class EnvMonAPIStats extends HttpServlet {
                 String creationDayEnd = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_CREATION_DAY_END);
                 Object[] buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsProcedure.Investigation.CREATED_ON.getName(), creationDayStart, creationDayEnd);
 
-                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString())) {
+                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))) {
                     if (buildDateRangeFromStrings.length == 4) {
                         wObj.addConstraint(TblsProcedure.Investigation.CREATED_ON, SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{buildDateRangeFromStrings[2], buildDateRangeFromStrings[3]}, null);
                     } else {
                         wObj.addConstraint(TblsProcedure.Investigation.CREATED_ON, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{buildDateRangeFromStrings[2]}, null);
                     }
                 }
-                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString())) {
+                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))) {
                     if (buildDateRangeFromStrings.length == 4) {
                         wObj.addConstraint(TblsProcedure.Investigation.CLOSED_ON, SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{buildDateRangeFromStrings[2], buildDateRangeFromStrings[3]}, null);
                     } else {

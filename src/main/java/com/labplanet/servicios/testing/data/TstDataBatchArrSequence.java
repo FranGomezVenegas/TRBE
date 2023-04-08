@@ -116,7 +116,7 @@ public class TstDataBatchArrSequence extends HttpServlet {
                 mb.batchCommentAdd("hello", mb.getBatchOperator());
                 mb.batchAssignOperator("newOper");
                 String comment = mb.batchCommentOpen("OperA", "");
-                if (!comment.isEmpty())
+                if (Boolean.FALSE.equals(comment.isEmpty()))
                     comment = comment + " (Comment created by:" + mb.getBatchCommentAuthor() + ") <br>";
                 
                 out.println("Batch Position length is: " + mb.getNumTotalObjects() + " in a " + mb.getNumRows() + " x " + mb.getNumCols() + " array.<br>");

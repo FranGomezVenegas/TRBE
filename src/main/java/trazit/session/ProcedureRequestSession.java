@@ -115,7 +115,7 @@ public class ProcedureRequestSession {
             }
             tokn = new Token(finalToken);
             if (Boolean.FALSE.equals(isForDocumentation)) {
-                if ((!LPNulls.replaceNull(dbNameProp).equalsIgnoreCase(LPNulls.replaceNull(tokn.getDbName())))) {
+                if ((Boolean.FALSE.equals(LPNulls.replaceNull(dbNameProp).equalsIgnoreCase(LPNulls.replaceNull(tokn.getDbName()))))) {
                     this.hasErrors = true;
                     this.errorMessage = "This dbName does not match the one in the token.";
                     return;

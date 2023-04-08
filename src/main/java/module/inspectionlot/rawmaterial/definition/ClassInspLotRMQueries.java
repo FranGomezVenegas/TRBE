@@ -182,7 +182,7 @@ public class ClassInspLotRMQueries  implements EnumIntQueriesObj{
                     Object specCode = jLotInfoObj.get(TblsInspLotRMData.Lot.SPEC_CODE.getName());
                     Object specConfigVersion = jLotInfoObj.get(TblsEnvMonitConfig.Program.SPEC_CONFIG_VERSION.getName());                    
                     JSONObject specDefinition = new JSONObject();
-                    if (!(specCode==null || specCode=="" || specConfigVersion==null || "".equals(specConfigVersion.toString()))){
+                    if (Boolean.FALSE.equals(specCode==null || specCode=="" || specConfigVersion==null || "".equals(specConfigVersion.toString()))){
                         JSONObject specInfo=SpecFrontEndUtilities.configSpecInfo(procReqInstance, (String) specCode, (Integer) specConfigVersion, 
                             null, null);
                         specDefinition.put(TblsCnfg.TablesConfig.SPEC.getTableName(), specInfo);

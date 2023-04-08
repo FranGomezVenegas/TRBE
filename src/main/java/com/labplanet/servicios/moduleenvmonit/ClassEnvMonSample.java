@@ -196,7 +196,7 @@ public class ClassEnvMonSample {
                         actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{resultId, rawValueResult, procInstanceName});
                         resultInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
                                 new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}, new Object[]{resultId}, new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName()});
-                        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(resultInfo[0][0].toString())) {
+                        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(resultInfo[0][0].toString()))) {
                             sampleId = Integer.valueOf(resultInfo[0][0].toString());
                         }
                         dynamicDataObjects = new Object[]{resultInfo[0][0].toString()};
@@ -254,7 +254,7 @@ public class ClassEnvMonSample {
                         actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{resultId, rawValueResult, procInstanceName});
                         resultInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT_SECONDENTRY.getTableName(),
                                 new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}, new Object[]{resultId}, new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName()});
-                        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(resultInfo[0][0].toString())) {
+                        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(resultInfo[0][0].toString()))) {
                             sampleId = Integer.valueOf(resultInfo[0][0].toString());
                         }
                         dynamicDataObjects = new Object[]{resultInfo[0][0].toString()};

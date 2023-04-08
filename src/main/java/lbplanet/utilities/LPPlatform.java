@@ -302,7 +302,7 @@ public class LPPlatform {
         String userProceduresList = token.getUserProcedures();
         userProceduresList = userProceduresList.replace("[", "");
         userProceduresList = userProceduresList.replace("]", "");
-        if (!LPArray.valueInArray(userProceduresList.split(", "), procInstanceName)) {
+        if (Boolean.FALSE.equals(LPArray.valueInArray(userProceduresList.split(", "), procInstanceName))) {
             return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USER_NOTASSIGNED_TOPROCEDURE, new String[]{token.getUserName(), procInstanceName, userProceduresList});
         }
 
@@ -320,7 +320,7 @@ public class LPPlatform {
         }
         if ((procedureActions.length == 1 && "".equals(procedureActions[0]))) {
             return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_DENIED_RULESNOTFOUND, new String[]{procInstanceName, Arrays.toString(procedureActions)});
-        } else if (!LPArray.valueInArray(procedureActions, actionName)) {
+        } else if (Boolean.FALSE.equals(LPArray.valueInArray(procedureActions, actionName))) {
             return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_DENIED, new String[]{actionName, procInstanceName, Arrays.toString(procedureActions)});
         } else {
             return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformSuccess.USRROLACTIONENABLED_ENABLED, new String[]{procInstanceName, actionName});
@@ -350,7 +350,7 @@ public class LPPlatform {
         }
         if ((procedureActionsUserRoles.length == 1 && "".equals(procedureActionsUserRoles[0]))) {
             return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_MISSEDPARAMETER, new Object[]{actionName, procInstanceName});
-        } else if (!LPArray.valueInArray(procedureActionsUserRoles, userRole)) {
+        } else if (Boolean.FALSE.equals(LPArray.valueInArray(procedureActionsUserRoles, userRole))) {
             return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ROLENOTINCLUDED, new Object[]{procInstanceName, actionName, userRole, Arrays.toString(procedureActionsUserRoles)});
         } else {
             return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformSuccess.USRROLACTIONENABLED_ENABLED, new Object[]{procInstanceName, actionName});
@@ -380,7 +380,7 @@ public class LPPlatform {
         }
         if ((actionRequiresUserConfirmationRuleValue.length == 1 && "".equals(actionRequiresUserConfirmationRuleValue[0]))) {
             return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_DENIED_RULENOTFOUND, new Object[]{procInstanceName, Arrays.toString(actionRequiresUserConfirmationRuleValue)});
-        } else if (!LPArray.valueInArray(actionRequiresUserConfirmationRuleValue, actionName)) {
+        } else if (Boolean.FALSE.equals(LPArray.valueInArray(actionRequiresUserConfirmationRuleValue, actionName))) {
             return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_DENIED, new Object[]{actionName, procInstanceName, Arrays.toString(actionRequiresUserConfirmationRuleValue)});
         } else {
             String diagnStr = LAB_TRUE;
@@ -414,7 +414,7 @@ public class LPPlatform {
         }
         if ((procedureActions.length == 1 && "".equals(procedureActions[0]))) {
             return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.ESIGNREQUIRED_DENIED_RULENOTFOUND, new Object[]{procInstanceName, Arrays.toString(procedureActions)});
-        } else if (!LPArray.valueInArray(procedureActions, actionName)) {
+        } else if (Boolean.FALSE.equals(LPArray.valueInArray(procedureActions, actionName))) {
             return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.ESIGNREQUIRED_DENIED, new Object[]{actionName, procInstanceName, Arrays.toString(procedureActions)});
         } else {
             return ApiMessageReturn.trapMessage(LAB_TRUE + auditReasonType(procInstanceName, actionName, procBusinessRules), LpPlatformSuccess.ESIGNREQUIRED_ENABLED, new Object[]{procInstanceName, actionName});
@@ -437,7 +437,7 @@ public class LPPlatform {
         }
         if ((procedureActions.length == 1 && "".equals(procedureActions[0]))) {
             return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_DENIED_RULENOTFOUND, new Object[]{procInstanceName, Arrays.toString(procedureActions)});
-        } else if (!LPArray.valueInArray(procedureActions, actionName)) {
+        } else if (Boolean.FALSE.equals(LPArray.valueInArray(procedureActions, actionName))) {
             return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_DENIED, new Object[]{actionName, procInstanceName, Arrays.toString(procedureActions)});
         } else {
             return ApiMessageReturn.trapMessage(LAB_TRUE + auditReasonType(procInstanceName, actionName, procBusinessRules), LpPlatformSuccess.JUSTIFPHRASEREQUIRED_ENABLED, new Object[]{procInstanceName, actionName});
@@ -525,7 +525,7 @@ public class LPPlatform {
     private static HashMap<String, String> encryptEncryptableFields(Boolean override, String fieldName, String fieldValue) {
         HashMap<String, String> hm = new HashMap<>();
         StringBuilder newFieldValueBuilder = new StringBuilder(0);
-        if (!fieldName.toUpperCase().contains("IN")) {
+        if (Boolean.FALSE.equals(fieldName.toUpperCase().contains("IN"))) {
             Object[] encStr = encryptString(fieldValue);
             if (Boolean.TRUE.equals(override)) {
                 newFieldValueBuilder.append(encStr[1].toString());
@@ -797,7 +797,7 @@ public class LPPlatform {
             boolean contains = Arrays.asList(fieldNames).contains(currField.toLowerCase());
             String defValueType = "";
             Object defValueFormat = null;
-            if ((!contains) || (fieldValues[inumLines] == null)) {
+            if ((Boolean.FALSE.equals(contains)) || (fieldValues[inumLines] == null)) {
                 Boolean addIt = false;
                 if (mandatoryFieldsToCheckDefault.contains(currField)) {
                     Integer endPosic = mandatoryFieldsToCheckDefault.indexOf(currField);
@@ -967,7 +967,7 @@ public class LPPlatform {
 
         }
         Object[] diagnosis = Rdbms.existsRecord(procInstanceName, configTableName, configTableKeyFieldName, configTableKeyFielValue);
-        if (!LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString())) {
+        if (Boolean.FALSE.equals(LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString()))) {
             String[] configTableFilter = LPArray.joinTwo1DArraysInOneOf1DString(configTableKeyFieldName, configTableKeyFielValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
             return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.MISSINGTABLECONFIGCODE, new Object[]{tableName, Arrays.toString(configTableFilter), procInstanceName, diagnosis[5]});
         }
@@ -1084,7 +1084,7 @@ public class LPPlatform {
         if (procInstanceName == null) {
             return;
         }
-        if (!Rdbms.getRdbms().getIsStarted()) {
+        if (Boolean.FALSE.equals(Rdbms.getRdbms().getIsStarted())) {
 //            Logger.log(LogTag.JFR, LogLevel.TRACE, msgCode);
             return;
         }

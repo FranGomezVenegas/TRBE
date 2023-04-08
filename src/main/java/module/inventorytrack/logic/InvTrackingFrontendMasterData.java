@@ -28,7 +28,7 @@ public class InvTrackingFrontendMasterData implements FrontendMasterData{
         JSONObject jSummaryObj=new JSONObject();
         
         String[] fieldsToRetrieve = getAllFieldNames(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_CATEGORY, alternativeProcInstanceName);
-        if (!LPArray.valueInArray(fieldsToRetrieve, TblsInvTrackingConfig.Category.NAME.getName()))
+        if (Boolean.FALSE.equals(LPArray.valueInArray(fieldsToRetrieve, TblsInvTrackingConfig.Category.NAME.getName())))
             fieldsToRetrieve=LPArray.addValueToArray1D(fieldsToRetrieve, TblsInvTrackingConfig.Category.NAME.getName());
         Object[][] categoryInfo = QueryUtilitiesEnums.getTableData(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_CATEGORY,
                 EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_CATEGORY, alternativeProcInstanceName),
@@ -36,7 +36,7 @@ public class InvTrackingFrontendMasterData implements FrontendMasterData{
                 new Object[]{},
                 new String[]{TblsInvTrackingConfig.Category.NAME.getName()}, alternativeProcInstanceName);
         JSONArray jSummaryArr = new JSONArray();
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(categoryInfo[0][0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(categoryInfo[0][0].toString()))){
             for (Object[] currCategory: categoryInfo){
                 JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currCategory);
                 

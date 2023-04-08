@@ -71,7 +71,7 @@ public class DataInventoryQualif {
         fldValues = LPArray.addValueToArray1D(fldValues, new Object[]{lotName, LPDate.getCurrentTimeStamp(), token.getPersonName()});
 
         RdbmsObject invLotQualifCreationDiagn = Rdbms.insertRecordInTable(TablesInvTrackingData.LOT_CERTIFICATION, fldNames, fldValues);
-        if (!invLotQualifCreationDiagn.getRunSuccess()) {
+        if (Boolean.FALSE.equals(invLotQualifCreationDiagn.getRunSuccess())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, invLotQualifCreationDiagn.getErrorMessageCode(), new Object[]{lotName}, null);
         }
         InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.CREATED_QUALIFICATION, lotName, reference, category, TablesInvTrackingData.LOT.getTableName(), lotName,
@@ -325,7 +325,7 @@ public class DataInventoryQualif {
         String fieldType = objectVariablePropInfo[0][2].toString();
         if (DataStudyObjectsVariableValues.VariableTypes.LIST.toString().equalsIgnoreCase(fieldType)) {
             String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
-            if (!LPArray.valueInArray(allowedValuesArr, newValue)) {
+            if (Boolean.FALSE.equals(LPArray.valueInArray(allowedValuesArr, newValue))) {
                 return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.VARIABLE_VALUE_NOTONEOFTHEEXPECTED,
                         new Object[]{newValue, Arrays.toString(allowedValuesArr), variableName, appProcInstance});
             }
@@ -349,7 +349,7 @@ public class DataInventoryQualif {
         sqlWhere.addConstraint(TblsInvTrackingData.LotCertificationVariableValues.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{Integer.valueOf(objectVariablePropInfo[0][0].toString())}, "");
         Object[] diagnostic = Rdbms.updateRecordFieldsByFilter(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES,
                 EnumIntTableFields.getTableFieldsFromString(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES, updFieldsName), updFieldsValue, sqlWhere, null);
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString()))) {
             InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.VALUE_ENTERED, lotName, null, null, TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION.getTableName(), lotCertifId.toString(),
                     updFieldsName, updFieldsValue);
         }
@@ -398,7 +398,7 @@ public class DataInventoryQualif {
         String fieldType = objectVariablePropInfo[0][2].toString();
         if (DataStudyObjectsVariableValues.VariableTypes.LIST.toString().equalsIgnoreCase(fieldType)) {
             String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
-            if (!LPArray.valueInArray(allowedValuesArr, newValue)) {
+            if (Boolean.FALSE.equals(LPArray.valueInArray(allowedValuesArr, newValue))) {
                 return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.MORE_THAN_ONE_VARIABLE,
                         new Object[]{newValue, Arrays.toString(allowedValuesArr), variableName, appProcInstance});
             }
@@ -422,7 +422,7 @@ public class DataInventoryQualif {
         sqlWhere.addConstraint(TblsInvTrackingData.LotCertificationVariableValues.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{Integer.valueOf(objectVariablePropInfo[0][0].toString())}, "");
         Object[] diagnostic = Rdbms.updateRecordFieldsByFilter(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES,
                 EnumIntTableFields.getTableFieldsFromString(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES, updFieldsName), updFieldsValue, sqlWhere, null);
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString()))) {
             InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.VALUE_REENTERED, lotName, null, null, TblsInvTrackingData.TablesInvTrackingData.LOT.getTableName(), lotCertifId.toString(),
                     updFieldsName, updFieldsValue);
         }
@@ -456,7 +456,7 @@ public class DataInventoryQualif {
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();
         String appProcInstance = GlobalVariables.Schemas.APP_PROC_DATA_AUDIT.getName();
         String auditReviewMode = Parameter.getBusinessRuleProcedureFile(appProcInstance, InstrumentsEnums.InstrumentsBusinessRules.REVISION_MODE.getAreaName(), InstrumentsEnums.InstrumentsBusinessRules.REVISION_MODE.getTagName());
-        if (!isTagValueOneOfEnableOnes(auditReviewMode)) {
+        if (Boolean.FALSE.equals(isTagValueOneOfEnableOnes(auditReviewMode))) {
             messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.DISABLED, new Object[]{});
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.DISABLED, new Object[]{});
         }
@@ -465,7 +465,7 @@ public class DataInventoryQualif {
                 EnumIntTableFields.getTableFieldsFromString(TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT, new String[]{TblsInvTrackingDataAudit.Lot.PERSON.getName(), TblsInvTrackingDataAudit.Lot.REVIEWED.getName()}),
                 new String[]{TblsInvTrackingDataAudit.Lot.AUDIT_ID.getName()}, new Object[]{auditId},
                 new String[]{TblsInvTrackingDataAudit.Lot.AUDIT_ID.getName()});
-        if (!isTagValueOneOfEnableOnes(auditAuthorCanBeReviewerMode)) {
+        if (Boolean.FALSE.equals(isTagValueOneOfEnableOnes(auditAuthorCanBeReviewerMode))) {
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(auditInfo[0][0].toString())) {
                 messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.DISABLED, new Object[]{});
                 return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.DISABLED, new Object[]{});

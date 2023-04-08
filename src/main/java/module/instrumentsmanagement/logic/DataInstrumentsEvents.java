@@ -152,7 +152,7 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
         String fieldType = objectVariablePropInfo[0][2].toString();        
         if (DataStudyObjectsVariableValues.VariableTypes.LIST.toString().equalsIgnoreCase(fieldType)){
             String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
-            if (!LPArray.valueInArray(allowedValuesArr, newValue)) 
+            if (Boolean.FALSE.equals(LPArray.valueInArray(allowedValuesArr, newValue)))
                 return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.MORE_THAN_ONE_VARIABLE, 
                     new Object[]{newValue, Arrays.toString(allowedValuesArr), variableName, appProcInstance});
         }else if (DataStudyObjectsVariableValues.VariableTypes.REAL.toString().equalsIgnoreCase(fieldType)){
@@ -172,7 +172,7 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
 	sqlWhere.addConstraint(TblsInstrumentsData.InstrEventVariableValues.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{Integer.valueOf(objectVariablePropInfo[0][0].toString())}, "");
 	Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES,
 		EnumIntTableFields.getTableFieldsFromString(TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES, updFieldsName), updFieldsValue, sqlWhere, null);
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) 
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())))
             instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.VALUE_ENTERED, instrName, TablesInstrumentsData.INSTRUMENTS.getTableName(), instrEventId.toString(),
                 updFieldsName, updFieldsValue);
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.ENTER_EVENT_RESULT, new Object[]{instrName, instrEventId, variableName, newValue}, null);        
@@ -218,7 +218,7 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
         String fieldType = objectVariablePropInfo[0][2].toString();        
         if (DataStudyObjectsVariableValues.VariableTypes.LIST.toString().equalsIgnoreCase(fieldType)){
             String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
-            if (!LPArray.valueInArray(allowedValuesArr, newValue)) 
+            if (Boolean.FALSE.equals(LPArray.valueInArray(allowedValuesArr, newValue)))
                 return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.MORE_THAN_ONE_VARIABLE, 
                     new Object[]{newValue, Arrays.toString(allowedValuesArr), variableName, appProcInstance});
         }else if (DataStudyObjectsVariableValues.VariableTypes.REAL.toString().equalsIgnoreCase(fieldType)){
@@ -238,7 +238,7 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
 	sqlWhere.addConstraint(TblsInstrumentsData.InstrEventVariableValues.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{Integer.valueOf(objectVariablePropInfo[0][0].toString())}, "");
 	Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES,
 		EnumIntTableFields.getTableFieldsFromString(TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES, updFieldsName), updFieldsValue, sqlWhere, null);
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) 
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())))
             instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.VALUE_REENTERED, instrName, TablesInstrumentsData.INSTRUMENTS.getTableName(), instrEventId.toString(),
                 updFieldsName, updFieldsValue);
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.ENTER_EVENT_RESULT, new Object[]{instrName, instrEventId, variableName, newValue}, null);        
@@ -269,7 +269,7 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();
         String appProcInstance=GlobalVariables.Schemas.APP_PROC_DATA_AUDIT.getName();
         String auditReviewMode = Parameter.getBusinessRuleProcedureFile(appProcInstance, InstrumentsBusinessRules.REVISION_MODE.getAreaName(), InstrumentsBusinessRules.REVISION_MODE.getTagName());  
-        if (!isTagValueOneOfEnableOnes(auditReviewMode)){
+        if (Boolean.FALSE.equals(isTagValueOneOfEnableOnes(auditReviewMode))){
                 messages.addMainForError(InstrumentsErrorTrapping.DISABLED, new Object[]{});
                 return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.DISABLED, new Object[]{});                        
         }
@@ -278,7 +278,7 @@ public static Object[] isEventOpenToChanges(Integer insEventId){
             EnumIntTableFields.getTableFieldsFromString(TblsInstrumentsDataAudit.TablesInstrumentsDataAudit.INSTRUMENTS, new String[]{TblsInstrumentsDataAudit.Instruments.PERSON.getName(), TblsInstrumentsDataAudit.Instruments.REVIEWED.getName()}),
             new String[]{TblsInstrumentsDataAudit.Instruments.AUDIT_ID.getName()}, new Object[]{auditId}, 
             new String[]{TblsInstrumentsDataAudit.Instruments.AUDIT_ID.getName()});
-        if (!isTagValueOneOfEnableOnes(auditAuthorCanBeReviewerMode)){//(!"TRUE".equalsIgnoreCase(auditAuthorCanBeReviewerMode)){            
+        if (Boolean.FALSE.equals(isTagValueOneOfEnableOnes(auditAuthorCanBeReviewerMode))){
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(auditInfo[0][0].toString())){ 
                 messages.addMainForError(InstrumentsErrorTrapping.DISABLED, new Object[]{});
                 return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.DISABLED, new Object[]{});            

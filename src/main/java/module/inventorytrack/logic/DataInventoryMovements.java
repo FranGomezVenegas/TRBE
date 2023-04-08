@@ -37,7 +37,7 @@ public class DataInventoryMovements {
             return checkVolumeCoherency;
         if (checkVolumeCoherencyDiagn.length>1){
             myUom=(UnitsOfMeasurement)checkVolumeCoherencyDiagn[1];
-            if (!myUom.getConvertedFine())
+            if (Boolean.FALSE.equals(myUom.getConvertedFine()))
                 return new InternalMessage(LPPlatform.LAB_FALSE, myUom.getConversionErrorDetail()[0].toString(), new Object[]{invLot.getLotName()}, null);
         }          
 	SqlWhere sqlWhere = new SqlWhere();
@@ -54,14 +54,14 @@ public class DataInventoryMovements {
         fldValues=LPArray.addValueToArray1D(fldValues, 
                 new Object[]{LPNulls.replaceNull(invLot.getLotFieldValues()[LPArray.valuePosicInArray(invLot.getLotFieldNames(), TblsInvTrackingData.Lot.VOLUME.getName())]).toString(),
                     LPNulls.replaceNull(invLot.getLotFieldValues()[LPArray.valuePosicInArray(invLot.getLotFieldNames(), TblsInvTrackingData.Lot.VOLUME_UOM.getName())]).toString()});
-        if (!invLotTurnAvailableDiagn.getRunSuccess())
+        if (Boolean.FALSE.equals(invLotTurnAvailableDiagn.getRunSuccess()))
             return new InternalMessage(LPPlatform.LAB_FALSE, invLotTurnAvailableDiagn.getErrorMessageCode(), new Object[]{invLot.getLotName()}, null);
         InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.LOT_VOLUME_ADJUSTED, invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(), invLot.getLotName(),
             fldNames, fldValues); 
         
         if (checkVolumeCoherencyDiagn.length>1){
             myUom=(UnitsOfMeasurement)checkVolumeCoherencyDiagn[1];
-            if (!myUom.getConvertedFine())
+            if (Boolean.FALSE.equals(myUom.getConvertedFine()))
                 return new InternalMessage(LPPlatform.LAB_FALSE, myUom.getConversionErrorDetail()[0].toString(), new Object[]{invLot.getLotName()}, null);
         }        
         if (myUom!=null&&myUom.getConvertedFine()&&!myUom.getOrigQuantity().equals(myUom.getConvertedQuantity())){            
@@ -104,7 +104,7 @@ public class DataInventoryMovements {
                 return checkVolumeCoherency;
             if (checkVolumeCoherencyDiagn.length>1){
                 myUom=(UnitsOfMeasurement)checkVolumeCoherencyDiagn[1];
-                if (!myUom.getConvertedFine())
+                if (Boolean.FALSE.equals(myUom.getConvertedFine()))
                     return new InternalMessage(LPPlatform.LAB_FALSE, myUom.getConversionErrorDetail()[0].toString(), new Object[]{invLot.getLotName()}, null);
             }          
             reducedVolume=invLot.getCurrentVolume().subtract(myUom.getConvertedQuantity());
@@ -139,7 +139,7 @@ public class DataInventoryMovements {
             fldNames=LPArray.addValueToArray1D(fldNames, "conversion_es");
             fldValues=LPArray.addValueToArray1D(fldValues, "The valor entrado por el usuario fue "+newVolume+" "+newVolumeUom+" y este lot está expresado en "+invLot.getCurrentVolumeUom()+" por lo tanto se convirtió a "+myUom.getConvertedQuantity()+" "+myUom.getConvertedQuantityUom());
         }
-        if (!invLotTurnAvailableDiagn.getRunSuccess())
+        if (Boolean.FALSE.equals(invLotTurnAvailableDiagn.getRunSuccess()))
             return new InternalMessage(LPPlatform.LAB_FALSE, invLotTurnAvailableDiagn.getErrorMessageCode(), new Object[]{invLot.getLotName()}, null);
         InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.LOT_VOLUME_CONSUMED, invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(), invLot.getLotName(),
             fldNames, fldValues, externalProcInstanceName); 
@@ -170,7 +170,7 @@ public class DataInventoryMovements {
                 return checkVolumeCoherency;
             if (checkVolumeCoherencyDiagn.length>1){
                 myUom=(UnitsOfMeasurement)checkVolumeCoherencyDiagn[1];
-                if (!myUom.getConvertedFine())
+                if (Boolean.FALSE.equals(myUom.getConvertedFine()))
                     return new InternalMessage(LPPlatform.LAB_FALSE, myUom.getConversionErrorDetail()[0].toString(), new Object[]{invLot.getLotName()}, null);
             }          
             increasedVolume=invLot.getCurrentVolume().add(myUom.getConvertedQuantity());
@@ -202,7 +202,7 @@ public class DataInventoryMovements {
             fldNames=LPArray.addValueToArray1D(fldNames, "conversion_es");
             fldValues=LPArray.addValueToArray1D(fldValues, "The valor entrado por el usuario fue "+newVolume+" "+newVolumeUom+" y este lot está expresado en "+invLot.getCurrentVolumeUom()+" por lo tanto se convirtió a "+myUom.getConvertedQuantity()+" "+myUom.getConvertedQuantityUom());
         }
-        if (!invLotTurnAvailableDiagn.getRunSuccess())
+        if (Boolean.FALSE.equals(invLotTurnAvailableDiagn.getRunSuccess()))
             return new InternalMessage(LPPlatform.LAB_FALSE, invLotTurnAvailableDiagn.getErrorMessageCode(), new Object[]{invLot.getLotName()}, null);
         InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.LOT_VOLUME_ADDITION, invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(), invLot.getLotName(),
             fldNames, fldValues); 
@@ -214,12 +214,10 @@ public class DataInventoryMovements {
     private static InternalMessage isAvailableForMovements(DataInventory invLot, BigDecimal newVolume, String newVolumeUom){
 
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
-        if (!invLot.getAvailableForUse()){
+        if (Boolean.FALSE.equals(invLot.getAvailableForUse())){
             messages.addMainForError(InventoryTrackingErrorTrapping.NOT_AVAILABLE, new Object[]{invLot.getLotName()});
             return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.NOT_AVAILABLE, new Object[]{invLot.getLotName()}, null);
         }
-        Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
-        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
         if (invLot.getCurrentVolume()==null){
             messages.addMainForError(InventoryTrackingErrorTrapping.INV_LOT_HAS_NO_VOLUME_SET, new Object[]{invLot.getLotName()});
             return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.INV_LOT_HAS_NO_VOLUME_SET, new Object[]{invLot.getLotName()}, null);

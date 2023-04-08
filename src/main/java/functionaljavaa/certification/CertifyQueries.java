@@ -100,7 +100,7 @@ public class CertifyQueries {
                     Object[][] certifRowExpDateInfo=QueryUtilitiesEnums.getTableData(curCertifObj.getTable(),
                         EnumIntTableFields.getTableFieldsFromString(curCertifObj.getTable(), fieldsToGet),
                         fldsName, fldsValue, new String[]{TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName()});
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(certifRowExpDateInfo[0][0].toString())){
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(certifRowExpDateInfo[0][0].toString()))){
                         JSONArray jCertifObjArr=new JSONArray();
                         for (Object[] curRow: certifRowExpDateInfo){
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(curCertifObj.getFieldsToGet(), curRow);
@@ -110,7 +110,7 @@ public class CertifyQueries {
                                     new String[]{TblsDataAudit.CertifUserAnalysisMethod.CERTIF_ID.getName()},
                                     new Object[]{curRow[LPArray.valuePosicInArray(fieldsToGet, TblsData.CertifUserAnalysisMethod.ID.getName())]},
                                     new String[]{TblsDataAudit.CertifUserAnalysisMethod.AUDIT_ID.getName()});
-                                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(certifRowAuditInfo[0][0].toString())){
+                                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(certifRowAuditInfo[0][0].toString()))){
                                     JSONArray jCertifAuditObjArr=new JSONArray();
                                     for (Object[] curAuditRow: certifRowAuditInfo)
                                         jCertifAuditObjArr.add(LPJson.convertArrayRowToJSONObject(curCertifObj.getAuditFieldsToGet(), curAuditRow));

@@ -54,7 +54,7 @@ public class DataInspectionLotDecision {
                 dataLotBulkFlds);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(lotBulksInfo[0][0].toString())) 
             new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.LOT_WITH_NO_BULKS, new Object[]{lotName, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())}, lotName);
-        if (!decision.toUpperCase().contains("REJECT")){       
+        if (Boolean.FALSE.equals(decision.toUpperCase().contains("REJECT"))){
             Integer bulksNoDecision=0;
             for (Object[] curBulk: lotBulksInfo){
                 if (LPNulls.replaceNull(curBulk[1]).toString().length()==0)bulksNoDecision++;
@@ -148,11 +148,11 @@ public class DataInspectionLotDecision {
 
         String testRevisionRequired=configLotDecInfo[LPArray.valuePosicInArray(configLotDecFlds, TblsInspLotRMConfig.LotDecisionRules.SAMPLE_ANALYSIS_REVISION_REQUIRED.getName())].toString();
         String sampleRevisionRequired=configLotDecInfo[LPArray.valuePosicInArray(configLotDecFlds, TblsInspLotRMConfig.LotDecisionRules.SAMPLE_REVISION_REQUIRED.getName())].toString();
-        if ((testRevisionRequired==null || !Boolean.valueOf(testRevisionRequired)) && (sampleRevisionRequired==null || !Boolean.valueOf(sampleRevisionRequired)) ) 
+        if ((testRevisionRequired==null || Boolean.FALSE.equals(Boolean.valueOf(testRevisionRequired))) && (sampleRevisionRequired==null || Boolean.FALSE.equals(Boolean.valueOf(sampleRevisionRequired))) ) 
             return new InternalMessage(LPPlatform.LAB_TRUE, InspLotRMEnums.DataInspLotErrorTrapping.NO_DECISION_LIST_DEFINED, null);
         else{
             String[] sampleAndSampleAnalysisFlds=new String[]{TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_ID.getName(), TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_STATUS.getName(), TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.TEST_ID.getName(), TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.TEST_STATUS.getName()};
-            String sampleStatusReviewed = sampleStatusReviewed=DataSampleStructureStatuses.SampleStatuses.REVIEWED.getStatusCode(""); //Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.SAMPLE_STATUS_REVIEWED.getAreaName(), DataSampleBusinessRules.SAMPLE_STATUS_REVIEWED.getTagName());
+            String sampleStatusReviewed = sampleStatusReviewed=DataSampleStructureStatuses.SampleStatuses.REVIEWED.getStatusCode("");
             
             Object[][] sampleAndSampleAnalysisInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.ViewsInspLotRMData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName(), 
                     new String[]{TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.LOT_NAME.getName()}, new Object[]{lotName}, 
@@ -163,14 +163,14 @@ public class DataInspectionLotDecision {
                 Object[] sampleAnalysisStatuses = LPArray.getColumnFromArray2D(sampleAndSampleAnalysisInfo, LPArray.valuePosicInArray(sampleAndSampleAnalysisFlds, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.TEST_STATUS.getName()));
                 for (Object curSmpAnaStatus: sampleAnalysisStatuses){
                     if (curSmpAnaStatus==null || curSmpAnaStatus.toString().length()==0) return new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.LOT_HAS_ONE_SAMPLE_ANALYSIS_WITH_NO_STATUS, null);
-                    if (!sampleStatusReviewed.equalsIgnoreCase(curSmpAnaStatus.toString())) return new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.LOT_HAS_NOTREVIEWED_SAMPLEANALYSIS, new Object[]{lotName, procInstanceName});
+                    if (Boolean.FALSE.equals(sampleStatusReviewed.equalsIgnoreCase(curSmpAnaStatus.toString()))) return new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.LOT_HAS_NOTREVIEWED_SAMPLEANALYSIS, new Object[]{lotName, procInstanceName});
                 }
             }
             if (Boolean.TRUE.equals(Boolean.valueOf(sampleRevisionRequired))){
                 Object[] sampleStatuses = LPArray.getColumnFromArray2D(sampleAndSampleAnalysisInfo, LPArray.valuePosicInArray(sampleAndSampleAnalysisFlds, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_STATUS.getName()));
                 for (Object curSmpStatus: sampleStatuses){
                     if (curSmpStatus==null || curSmpStatus.toString().length()==0) return new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.LOT_HAS_ONE_SAMPLE_ANALYSIS_WITH_NO_STATUS, null);
-                    if (!sampleStatusReviewed.equalsIgnoreCase(curSmpStatus.toString())) return new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.LOT_HAS_NOTREVIEWED_SAMPLE, null);
+                    if (Boolean.FALSE.equals(sampleStatusReviewed.equalsIgnoreCase(curSmpStatus.toString()))) return new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.LOT_HAS_NOTREVIEWED_SAMPLE, null);
                 }
             }
             return new InternalMessage(LPPlatform.LAB_TRUE, Rdbms.RdbmsSuccess.RDBMS_TABLE_FOUND, null);
@@ -216,14 +216,14 @@ public class DataInspectionLotDecision {
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(lotExists[0].toString())){      
             RdbmsObject diagnoses = Rdbms.updateTableRecordFieldsByFilter(tblObj,
                     EnumIntTableFields.getTableFieldsFromString(tblObj, lotFieldName), lotFieldValue, sqlWhere, null);
-            if (!diagnoses.getRunSuccess())
+            if (Boolean.FALSE.equals(diagnoses.getRunSuccess()))
                 return new InternalMessage(LPPlatform.LAB_FALSE, diagnoses.getErrorMessageCode(), diagnoses.getErrorMessageVariables());
             
         }else{
             lotFieldName = LPArray.addValueToArray1D(lotFieldName, TblsInspLotRMData.LotDecision.LOT_NAME.getName());    
             lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, lotName);                         
             RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(tblObj, lotFieldName, lotFieldValue);
-            if (!insertRecordInTable.getRunSuccess()){
+            if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess())){
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, insertRecordInTable.getNewRowId());
                 return new InternalMessage(LPPlatform.LAB_FALSE, DataInspLotErrorTrapping.ERROR_INSERTING_INSPLOT_RECORD, errorDetailVariables);
             }                                

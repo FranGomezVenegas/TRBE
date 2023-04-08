@@ -219,7 +219,7 @@ public class DataSpec {
                     String[] textSpecArray = values.split(separator);
                     if (textSpecArray.length==0) textSpecArray=values.split("\\"+separator);
                     if (textSpecArray.length==0) textSpecArray=LPArray.addValueToArray1D(textSpecArray, values);
-                    if (!LPArray.valueInArray(textSpecArray, result)){
+                    if (Boolean.FALSE.equals(LPArray.valueInArray(textSpecArray, result))){
                         errorVariables = new Object[]{result, String.valueOf((Integer)textSpecArray.length), values};                        
                         Object[] diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleStructureSuccess.QUALITATIVE_IN, errorVariables);
                         diagnoses = LPArray.addValueToArray1D(diagnoses, DataSampleStructureSuccess.EVALUATION_IN);
@@ -349,7 +349,7 @@ public class DataSpec {
         
         Object[] isCorrectMinMaxSpec = this.resultCheck(result,minSpec,maxSpec, minStrict, maxStrict, minValAllowed, maxValAllowed);
         
-        if (!DataSampleStructureSuccess.EVALUATION_IN.toString().equalsIgnoreCase(isCorrectMinMaxSpec[isCorrectMinMaxSpec.length-1].toString())){
+        if (Boolean.FALSE.equals(DataSampleStructureSuccess.EVALUATION_IN.toString().equalsIgnoreCase(isCorrectMinMaxSpec[isCorrectMinMaxSpec.length-1].toString()))){
             return isCorrectMinMaxSpec;
         }
 

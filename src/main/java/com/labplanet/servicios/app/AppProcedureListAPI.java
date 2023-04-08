@@ -139,7 +139,7 @@ public class AppProcedureListAPI extends HttpServlet {
                             new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.AREA.getName()},
                             new Object[]{UserSop.UserSopBusinessRules.USERSOP_MODE.getTagName(), UserSop.UserSopBusinessRules.WINDOWOPENABLE_WHENNOTSOPCERTIFIED.getAreaName()}, 
                             new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});                        
-                        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(rulesInfo[0][0].toString())){
+                        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(rulesInfo[0][0].toString()))){
                             for (Object[] curRule: rulesInfo)                            
                                 procedure.put(curRule[0].toString(), curRule[1].toString());
                         }
@@ -430,7 +430,7 @@ public class AppProcedureListAPI extends HttpServlet {
                 procEventFldNameIconsDownArray, new String[]{TblsProcedure.ProcedureEvents.ORDER_NUMBER.getName()});
         JSONObject procedure=new JSONObject();
         JSONArray procEventsIconsDown = new JSONArray(); 
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procEventIconsDown[0][0].toString())){                                                                        
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procEventIconsDown[0][0].toString()))){                                                                        
             for (Object[] procEvent1 : procEventIconsDown) {
                 JSONObject procEventJson = new JSONObject();
                 procEventJson = LPJson.convertArrayRowToJSONObject(procEventFldNameIconsDownArray, procEvent1);
@@ -458,7 +458,7 @@ public class AppProcedureListAPI extends HttpServlet {
                 procEventFldNameIconsUpArray, new String[]{TblsProcedure.ProcedureEvents.ORDER_NUMBER.getName()});
         JSONObject procedure=new JSONObject();
         JSONArray procEventsIconsUp = new JSONArray(); 
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procEventIconsUp[0][0].toString())){                                                
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procEventIconsUp[0][0].toString()))){
             for (Object[] procEvent1 : procEventIconsUp) {
                 JSONObject procEventJson = new JSONObject();
                 procEventJson = LPJson.convertArrayRowToJSONObject(procEventFldNameIconsUpArray, procEvent1);
@@ -502,14 +502,14 @@ public class AppProcedureListAPI extends HttpServlet {
             procedure.put(LABEL_ARRAY_PROC_EVENTS_ERROR, procEventJson);
             procedure.put(LABEL_ARRAY_PROC_EVENTS, new JSONArray());
         }                    
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procEvent[0][0].toString())){                                                
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procEvent[0][0].toString()))){
             JSONObject procEventJson = new JSONObject();
             JSONArray childs=new JSONArray();
             procEventFldNameArray = PROC_NEW_EVENT_FLD_NAME.replace(TblsProcedure.ProcedureEvents.LP_FRONTEND_PAGE_FILTER.getName(), TblsProcedure.ProcedureEvents.NAME.getName()).split("\\|");
             for (Object[] procEvent1 : procEvent) {
                 String curProcEventType=procEvent1[LPArray.valuePosicInArray(procEventFldNameArray, TblsProcedure.ProcedureEvents.TYPE.getName())].toString();
-                if (!curProcEventType.equalsIgnoreCase(elementType.TWOICONS.toString().toLowerCase())){
-                    if (!childs.isEmpty()){
+                if (Boolean.FALSE.equals(curProcEventType.equalsIgnoreCase(elementType.TWOICONS.toString().toLowerCase()))){
+                    if (Boolean.FALSE.equals(childs.isEmpty())){
                         procEventJson.put(LABEL_ICONS, childs);
                         procEvents.add(procEventJson);
                         procEventJson = new JSONObject();                        
@@ -524,7 +524,7 @@ public class AppProcedureListAPI extends HttpServlet {
                 if (curProcEventType.equalsIgnoreCase(elementType.TWOICONS.toString().toLowerCase())){
                     String curProcEventPosition=procEvent1[LPArray.valuePosicInArray(procEventFldNameArray, TblsProcedure.ProcedureEvents.POSITION.getName())].toString();
                     if ("0".equalsIgnoreCase(curProcEventPosition)){
-                        if (!childs.isEmpty()){
+                        if (Boolean.FALSE.equals(childs.isEmpty())){
                             procEventJson.put(LABEL_ICONS, childs);
                             procEvents.add(procEventJson);
                             procEventJson = new JSONObject();                        
@@ -544,7 +544,7 @@ public class AppProcedureListAPI extends HttpServlet {
                     }
                 }
             }
-            if (!childs.isEmpty())
+            if (Boolean.FALSE.equals(childs.isEmpty()))
                 procEventJson.put(LABEL_ICONS, childs);
             if (Boolean.FALSE.equals(procEventJson.isEmpty()))
                 procEvents.add(procEventJson);

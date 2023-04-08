@@ -28,7 +28,7 @@ public class LPJson {
      * @return
      */
     static String setAlias(String value) {
-        if (!value.toUpperCase().contains(" AS")) {
+        if (Boolean.FALSE.equals(value.toUpperCase().contains(" AS"))) {
             return value;
         }
         return value.substring(value.toUpperCase().indexOf(" AS") + 4);

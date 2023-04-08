@@ -39,7 +39,7 @@ public class TestingBusinessRulesVisited {
         jObj.put("className", className);
         jObj.put("ruleName", ruleName);
         jObj.put("ruleValue", ruleValue);
-        if (!this.jsonContent.contains(jObj))
+        if (Boolean.FALSE.equals(this.jsonContent.contains(jObj)))
             this.jsonContent.add(jObj);
     }
     

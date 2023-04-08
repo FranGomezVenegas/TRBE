@@ -273,7 +273,7 @@ public class UserSop {
         filterFieldValue[1]=userSopStatuses.NOTPASS.getLightCode();
         if (fieldsToRetrieve!=null){            
             for (String fv: fieldsToRetrieve){
-                if (!LPArray.valueInArray(fieldsToReturn, fv)){
+                if (Boolean.FALSE.equals(LPArray.valueInArray(fieldsToReturn, fv))){
                     fieldsToReturn = LPArray.addValueToArray1D(fieldsToReturn, fv);
                 }
             }
@@ -345,11 +345,11 @@ public class UserSop {
                 }
                 for(String fFN: filterFieldName){
                     query.append(" and ").append(fFN); 
-                    if (!fFN.contains("null")){query.append("= ?");}
+                    if (Boolean.FALSE.equals(fFN.contains("null"))){query.append("= ?");}
                 }
                 query.append(") union ");
             }else{
-                if (!"APP".equalsIgnoreCase(currProcInstanceName))
+                if (Boolean.FALSE.equals("APP".equalsIgnoreCase(currProcInstanceName)))
                     LPPlatform.saveMessageInDbErrorLog("", new Object[]{currProcInstanceName, GlobalVariables.Schemas.DATA.getName(), viewName}, 
                         new Object[]{"UserSop", "UserSop", "getUserProfileFieldValues", 333}, "view not exist in this given schema", new Object[0], currProcInstanceName);
             }
@@ -460,12 +460,12 @@ public class UserSop {
             sopId=Integer.valueOf(sopIdFieldValue.toString());
             insertFieldValues=LPArray.addValueToArray1D(insertFieldValues, Sop.dbGetSopNameById(procInstanceName, sopIdFieldValue));
         }     
-        if (!LPArray.valueInArray(insertFieldNames, TblsData.UserSop.USER_NAME.getName())){
+        if (Boolean.FALSE.equals(LPArray.valueInArray(insertFieldNames, TblsData.UserSop.USER_NAME.getName()))){
             insertFieldNames=LPArray.addValueToArray1D(insertFieldNames, TblsData.UserSop.USER_NAME.getName()); 
             insertFieldValues=LPArray.addValueToArray1D(insertFieldValues, UserAndRolesViews.getUserByPerson(personName));}
         
         RdbmsObject insertDiagn = Rdbms.insertRecordInTable(TblsData.TablesData.USER_SOP, insertFieldNames, insertFieldValues);
-        if (!insertDiagn.getRunSuccess()) return insertDiagn.getApiMessage();
+        if (Boolean.FALSE.equals(insertDiagn.getRunSuccess())) return insertDiagn.getApiMessage();
         
         UserCertificationTracking.userCertificationTrackingAuditAdd(UserCertifTrackAuditEvents.ASSIGNED_BY_USERROLE_ASSIGNMENT,"SOP", UserAndRolesViews.getUserByPerson(personName), 
                 sopName, sopId, insertFieldNames, insertFieldValues);

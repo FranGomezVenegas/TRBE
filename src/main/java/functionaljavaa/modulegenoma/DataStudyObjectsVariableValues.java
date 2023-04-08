@@ -140,7 +140,7 @@ public class DataStudyObjectsVariableValues {
         String fieldType = objectVariablePropInfo[0][2].toString();
         if (VariableTypes.LIST.toString().equalsIgnoreCase(fieldType)){
             String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
-            if (!LPArray.valueInArray(allowedValuesArr, newValue)) 
+            if (Boolean.FALSE.equals(LPArray.valueInArray(allowedValuesArr, newValue)))
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "The value <*1*> is not one of the accepted values <*2*> for variable <*3*> in procedure <*4*>", 
                     new Object[]{newValue, Arrays.toString(allowedValuesArr), variableName, procInstanceName});
         }else if (VariableTypes.INTEGER.toString().equalsIgnoreCase(fieldType)){
@@ -160,7 +160,7 @@ public class DataStudyObjectsVariableValues {
         sqlWhere.addConstraint(TblsGenomaData.StudyVariableValues.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{Integer.valueOf(objectVariablePropInfo[0][0].toString())}, "");
         diagn=Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES,
             EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES, updFieldsName), updFieldsValue, sqlWhere, null);
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) 
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString()))) 
             GenomaDataAudit.studyAuditAdd(endpoint, TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES.getTableName(), newValue, 
                 studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(updFieldsName, updFieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);                
         

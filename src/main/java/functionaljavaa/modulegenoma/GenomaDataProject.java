@@ -92,17 +92,16 @@ public class GenomaDataProject {
 
         if (Boolean.FALSE.equals(devMode)) {
             InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldsName, fieldsValue);
-            if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic())) {
+            if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))) {
                 return fieldNameValueArrayChecker;
             }
         }
-        Object[] diagnosesProj = new Object[0];
         if (Boolean.FALSE.equals(devMode)) {
             StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
             for (Integer inumLines = 0; inumLines < mandatoryFieldsProj.length; inumLines++) {
                 String currField = mandatoryFieldsProj[inumLines];
                 boolean contains = Arrays.asList(fieldsName).contains(currField.toLowerCase());
-                if (!contains) {
+                if (Boolean.FALSE.equals(contains)) {
                     if (mandatoryFieldsMissingBuilder.length() > 0) {
                         mandatoryFieldsMissingBuilder.append(",");
                     }
@@ -205,7 +204,7 @@ public class GenomaDataProject {
 
     public Object[] projectActivate(GenomaProjectAPI.GenomaProjectAPIactionsEndPoints endpoint, String projectName) {
         Object[] projOpenToChanges = isProjectOpenToChanges(projectName);
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges[0].toString())) {
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges[0].toString()))) {
             return projOpenToChanges;
         }
 
@@ -295,7 +294,7 @@ public class GenomaDataProject {
                 RdbmsObject removeRecordInTable = Rdbms.removeRecordInTable(TblsGenomaData.TablesGenomaData.PROJECT_USERS,
                         sqlWhere, null);
                 diagnosesProj = removeRecordInTable.getApiMessage();
-                if (!removeRecordInTable.getRunSuccess()) {
+                if (Boolean.FALSE.equals(removeRecordInTable.getRunSuccess())){
                     return removeRecordInTable.getApiMessage();
                 }
                 GenomaDataAudit.projectAuditAdd(endpoint, TblsGenomaData.TablesGenomaData.PROJECT.getTableName(), projectName,

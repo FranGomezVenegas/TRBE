@@ -59,7 +59,7 @@ public class ConfigSpecRule {
             String[] tableFields=new String[0];
             for (qualitativeRules obj: qualitativeRules.values()){
                 String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
+                if (Boolean.FALSE.equals("TBL".equalsIgnoreCase(objName))){
                     tableFields=LPArray.addValueToArray1D(tableFields, obj.getRuleName());
                 }
             }           
@@ -119,7 +119,7 @@ public class ConfigSpecRule {
             String[] tableFields=new String[0];
             for (qualitativeRules obj: qualitativeRules.values()){
                 String objName = obj.name();
-                if (!"TBL".equalsIgnoreCase(objName)){
+                if (Boolean.FALSE.equals("TBL".equalsIgnoreCase(objName))){
                     tableFields=LPArray.addValueToArray1D(tableFields, obj.toString());
                 }
             }           

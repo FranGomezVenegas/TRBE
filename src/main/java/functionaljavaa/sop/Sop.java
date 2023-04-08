@@ -156,7 +156,7 @@ public class Sop {
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsCnfg.TablesConfig.SOP_META_DATA, 
                 new String[]{TblsCnfg.SopMetaData.SOP_NAME.getName(), TblsCnfg.SopMetaData.SOP_VERSION.getName(), TblsCnfg.SopMetaData.SOP_REVISION.getName()},
                 new Object[]{sopName, 1, 1});
-        if (!insertRecordInTable.getRunSuccess()){
+        if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess())){
             errorCode = "Sop_SopMetaData_recordNotCreated";
             String[] fieldForInserting = LPArray.joinTwo1DArraysInOneOf1DString(new String[]{TblsCnfg.SopMetaData.SOP_NAME.getName(), TblsCnfg.SopMetaData.SOP_VERSION.getName(), TblsCnfg.SopMetaData.SOP_REVISION.getName()}, 
                     new Object[]{sopName, 1, 1}, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);

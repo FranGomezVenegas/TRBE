@@ -85,7 +85,7 @@ public class HolidayCalendarAPIqueries extends HttpServlet {
                             new Object[]{true}, 
                             new String[]{TblsApp.HolidaysCalendar.CODE.getName()});
                     JSONArray jCalendarsArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(calendarInfo[0][0].toString())){
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(calendarInfo[0][0].toString()))){
                         for (Object[] currCalendar: calendarInfo){
                             Object curCalendarCode=currCalendar[LPArray.valuePosicInArray(fieldsToRetrieveCalendar, TblsApp.HolidaysCalendar.CODE.getName())];
                             JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieveCalendar, currCalendar);
@@ -95,7 +95,7 @@ public class HolidayCalendarAPIqueries extends HttpServlet {
                                     new Object[]{curCalendarCode}, 
                                     new String[]{TblsApp.HolidaysCalendarDate.CALENDAR_CODE.getName(), TblsApp.HolidaysCalendarDate.ID.getName()});
                             JSONArray jDatesArr = new JSONArray();
-                            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(calendarDateInfo[0][0].toString())){
+                            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(calendarDateInfo[0][0].toString()))){
                                 for (Object[] currCalendarDate: calendarDateInfo){
                                     JSONObject jCalDateObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieveCalendarDate, currCalendarDate);
                                     Object currCalendarDateDateObj=currCalendarDate[LPArray.valuePosicInArray(fieldsToRetrieveCalendarDate, TblsApp.HolidaysCalendarDate.DATE.getName())];                                    

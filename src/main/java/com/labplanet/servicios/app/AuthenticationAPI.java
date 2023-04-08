@@ -128,7 +128,7 @@ public class AuthenticationAPI extends HttpServlet {
                     String userMail="";
                     Object[][] userInfoArr = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(), 
                      new String[]{TblsApp.Users.USER_NAME.getName()}, new String[]{dbUserName}, new String[]{TblsApp.Users.EMAIL.getName()});             
-                    if (!LPPlatform.LAB_FALSE.equals(userInfoArr[0][0].toString())){                                                                                                                                                   
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equals(userInfoArr[0][0].toString()))){
                         userMail=userInfoArr[0][0].toString();
                     }
 

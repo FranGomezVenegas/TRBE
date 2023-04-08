@@ -64,7 +64,7 @@ public InternalMessage createStudyFamily(GenomaStudyAPI.GenomaStudyAPIactionsEnd
     }    
     if (Boolean.FALSE.equals(devMode)){
         InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldsName, fieldsValue);
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))
+        if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic())))
             return fieldNameValueArrayChecker;
     }    
     if (Boolean.FALSE.equals(devMode)){        

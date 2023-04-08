@@ -146,13 +146,13 @@ public class UserAndRolesViews {
         String pasEncrypted = encryptValue[encryptValue.length-1].toString();
         
         Object[] personByUserObj = getPersonByUser(uName);        
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUserObj[0].toString())) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "UserAlreadyExists", new Object[]{uName});        
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUserObj[0].toString()))) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "UserAlreadyExists", new Object[]{uName});        
         Object[] personIdDiagn = getNextAppPersonId();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personIdDiagn[0].toString())) return personIdDiagn;
         String personId=personIdDiagn[1].toString();        
         RdbmsObject personCreatedDiagn = Rdbms.insertRecordInTable(TblsAppConfig.TablesAppConfig.PERSON, 
                 new String[]{TblsAppConfig.Person.PERSON_ID.getName(), TblsAppConfig.Person.FIRST_NAME.getName()}, new Object[]{personId, uName});
-        if (!personCreatedDiagn.getRunSuccess()) return personCreatedDiagn.getApiMessage();
+        if (Boolean.FALSE.equals(personCreatedDiagn.getRunSuccess())) return personCreatedDiagn.getApiMessage();
         RdbmsObject userCreatedDiagn = Rdbms.insertRecordInTable(TblsApp.TablesApp.USERS, 
                 new String[]{Users.USER_NAME.getName(), Users.PASSWORD.getName(), Users.PERSON_NAME.getName()}, new Object[]{uName, pasEncrypted, personId});        
         return userCreatedDiagn.getApiMessage();

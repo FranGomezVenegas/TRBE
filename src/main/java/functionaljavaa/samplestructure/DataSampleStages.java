@@ -156,7 +156,7 @@ static final String LBL_PREFIX_SAMPLE_STAGE="sampleStage";
         Object[] javaScriptDiagnostic = moveStageChecker(sampleId, currStage, "Next");
                 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(javaScriptDiagnostic[0].toString()))return javaScriptDiagnostic; 
-        if (!javaScriptDiagnostic[0].toString().contains(LPPlatform.LAB_TRUE)) return javaScriptDiagnostic;
+        if (Boolean.FALSE.equals(javaScriptDiagnostic[0].toString().contains(LPPlatform.LAB_TRUE))) return javaScriptDiagnostic;
         
         String[] javaScriptDiagnosticArr=javaScriptDiagnostic[0].toString().split("\\|");
         if (javaScriptDiagnosticArr.length>1){
@@ -332,7 +332,7 @@ static final String LBL_PREFIX_SAMPLE_STAGE="sampleStage";
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         if (Boolean.FALSE.equals(this.isSampleStagesTimingCaptureEnable))
            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "The business rule <*1*> is not enable therefore stage change timing capture is not enabled for procedure <*2*>", new Object[]{SampleStageBusinessRules.SAMPLE_STAGE_TIMING_CAPTURE_MODE.getTagName(), procInstanceName});
-        if ( (!("ALL".equalsIgnoreCase(this.isSampleStagesTimingCaptureStages))) && (LPArray.valuePosicInArray(this.isSampleStagesTimingCaptureStages.split("\\|"), currStage)==-1) )
+        if ( (Boolean.FALSE.equals(("ALL".equalsIgnoreCase(this.isSampleStagesTimingCaptureStages)))) && (LPArray.valuePosicInArray(this.isSampleStagesTimingCaptureStages.split("\\|"), currStage)==-1) )
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "The stage <*1*> is not declared for timing capture for procedure <*2*>", new Object[]{currStage, procInstanceName});
         if (SampleStageTimingCapturePhases.START.toString().equalsIgnoreCase(phase)){
             RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE, 

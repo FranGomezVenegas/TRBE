@@ -43,7 +43,7 @@ public class DataInspectionLotCertificate {
             lotFieldName = LPArray.addValueToArray1D(lotFieldName, new String[]{TblsInspLotRMData.LotCertificate.LOT_NAME.getName(), TblsInspLotRMData.LotCertificate.STATUS.getName()});    
             lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, new Object[]{lotName, firstStatus});                         
             RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInspLotRMData.TablesInspLotRMData.LOT, lotFieldName, lotFieldValue);
-            if (!insertRecordInTable.getRunSuccess()){
+            if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess())){
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, diagnoses[diagnoses.length-2]);
                 return new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.ERROR_INSERTING_INSPLOT_RECORD,  errorDetailVariables); 
             }                                           
@@ -55,14 +55,14 @@ public class DataInspectionLotCertificate {
                 sqlWhere.addConstraint(TblsInspLotRMData.LotCertificate.LOT_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{lotName}, "");
                 RdbmsObject updateRecordFieldsByFilter = Rdbms.updateTableRecordFieldsByFilter(TblsInspLotRMData.TablesInspLotRMData.LOT,
                         EnumIntTableFields.getTableFieldsFromString(TblsInspLotRMData.TablesInspLotRMData.LOT, lotFieldName), lotFieldValue, sqlWhere, null);
-                if (!updateRecordFieldsByFilter.getRunSuccess())
+                if (Boolean.FALSE.equals(updateRecordFieldsByFilter.getRunSuccess()))
                     return new InternalMessage(LPPlatform.LAB_FALSE, updateRecordFieldsByFilter.getErrorMessageCode(),  updateRecordFieldsByFilter.getErrorMessageVariables()); 
                 auditEvObj=InspectionLotRMAuditEvents.LOT_CERTIFICATE_UPDATED;
             }else{
                 lotFieldName = LPArray.addValueToArray1D(lotFieldName, new String[]{TblsInspLotRMData.LotCertificate.LOT_NAME.getName(), TblsInspLotRMData.LotCertificate.STATUS.getName()});    
                 lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, new Object[]{lotName, DataInspLotCertificateStatuses.NEW.toString()});                         
                 RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInspLotRMData.TablesInspLotRMData.LOT, lotFieldName, lotFieldValue);
-                if (!insertRecordInTable.getRunSuccess()){
+                if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess())){
                     errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, diagnoses[diagnoses.length-2]);
                     return new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.ERROR_INSERTING_INSPLOT_RECORD, errorDetailVariables);
                 }  
@@ -91,7 +91,7 @@ public class DataInspectionLotCertificate {
         try{
             DataInspLotCertificateTrackActions action = DataInspLotCertificateTrackActions.valueOf(eventName);
             RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInspLotRMData.TablesInspLotRMData.LOT_CERTIFICATE_TRACK, lotFieldName, lotFieldValue);
-            if (!insertRecordInTable.getRunSuccess()){
+            if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess())){
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, insertRecordInTable.getApiMessage());
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.ERROR_INSERTING_INSPLOT_RECORD, errorDetailVariables);
             }                                        

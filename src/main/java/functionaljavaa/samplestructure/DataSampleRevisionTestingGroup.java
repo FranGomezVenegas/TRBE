@@ -154,7 +154,7 @@ public class DataSampleRevisionTestingGroup{
         Object[][] grouper = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP.getTableName(), 
             new String[]{TblsData.SampleRevisionTestingGroup.REVIEWED.getName()}, whereFieldName, whereFieldValue, null);
         if (grouper.length!=1) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureEnums.DataSampleAnalysisErrorTrapping.PENDING_REVISION, null);
-        if (!grouper[0][0].toString().equalsIgnoreCase("TRUE"))
+        if (Boolean.FALSE.equals(grouper[0][0].toString().equalsIgnoreCase("TRUE")))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureEnums.DataSampleAnalysisErrorTrapping.PENDING_REVISION, null);
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "", null);        
     }

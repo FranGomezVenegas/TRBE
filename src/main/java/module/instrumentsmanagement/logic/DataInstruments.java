@@ -68,7 +68,7 @@ public class DataInstruments {
         }
     }
     private Boolean decisionAndFamilyRuleToTurnOn(String decision, String fieldName){
-        if (!decision.toUpperCase().contains("ACCEPT")) return false;
+        if (Boolean.FALSE.equals(decision.toUpperCase().contains("ACCEPT"))) return false;
         Integer fldPosic=LPArray.valuePosicInArray(this.familyFieldNames, fieldName);
         if (fldPosic==-1) return false;
         return Boolean.valueOf(LPNulls.replaceNull(this.familyFieldValues[fldPosic]).toString());
@@ -105,7 +105,7 @@ public class DataInstruments {
             this.isDecommissioned= Boolean.valueOf(LPNulls.replaceNull(instrInfo[0][LPArray.valuePosicInArray(fieldNames, TblsInstrumentsData.Instruments.DECOMMISSIONED.getName())]).toString());
             if (this.isDecommissioned==null) this.isDecommissioned=false;
             this.lockedReason=LPNulls.replaceNull(instrInfo[0][LPArray.valuePosicInArray(fieldNames, TblsInstrumentsData.Instruments.LOCKED_REASON.getName())]).toString();
-            if (!this.isLocked)
+            if (Boolean.FALSE.equals(this.isLocked))
                 responsibleLocking();
             this.family=LPNulls.replaceNull(instrInfo[0][LPArray.valuePosicInArray(fieldNames, TblsInstrumentsData.Instruments.FAMILY.getName())]).toString();
             if (this.family!=null && this.family.length()>0){
@@ -122,7 +122,6 @@ public class DataInstruments {
         }
     }    
     private void responsibleLocking(){
-        
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);    
         Token token = procReqSession.getToken();
         Integer respFldPosic=LPArray.valuePosicInArray(this.fieldNames, TblsInstrumentsData.Instruments.RESPONSIBLE.getName());
@@ -201,7 +200,7 @@ public class DataInstruments {
     }
     
     public InternalMessage updateInstrument(String[] fldNames, Object[] fldValues, String actionName, AppInstrumentsAuditEvents eventObj){
-        if (this.isDecommissioned)
+        if (Boolean.TRUE.equals(this.isDecommissioned))
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);
         String[] reservedFldsNotUpdatable=new String[]{TblsInstrumentsData.Instruments.NAME.getName(), TblsInstrumentsData.Instruments.ON_LINE.getName()};
         String[] reservedFldsNotUpdatableFromActions=new String[]{TblsInstrumentsData.Instruments.NAME.getName(), TblsInstrumentsData.Instruments.ON_LINE.getName()};
@@ -231,7 +230,7 @@ public class DataInstruments {
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.UPDATE_INSTRUMENT, new Object[]{name}, name);
     }
     public InternalMessage decommissionInstrument(String[] fldNames, Object[] fldValues){
-        if (this.isDecommissioned)
+        if (Boolean.TRUE.equals(this.isDecommissioned))
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getToken();
         String[] reservedFldsNotUpdatable=new String[]{TblsInstrumentsData.Instruments.NAME.getName(), TblsInstrumentsData.Instruments.IS_LOCKED.getName(),
@@ -263,7 +262,7 @@ public class DataInstruments {
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.DECOMMISSION_INSTRUMENT, new Object[]{name}, name);
     }
     public InternalMessage unDecommissionInstrument(String[] fldNames, Object[] fldValues){
-        if (!this.isDecommissioned)
+        if (Boolean.FALSE.equals(this.isDecommissioned))
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.NOT_DECOMMISSIONED, new Object[]{this.name}, null);
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getToken();
         String[] reservedFldsNotUpdatable=new String[]{TblsInstrumentsData.Instruments.NAME.getName(), TblsInstrumentsData.Instruments.IS_LOCKED.getName(),
@@ -302,7 +301,7 @@ public class DataInstruments {
         return turnOnLine(fldNames, fldValues, null);
     }
     public InternalMessage turnOnLine(String[] fldNames, Object[] fldValues, String actionName){
-        if (this.isDecommissioned)
+        if (Boolean.TRUE.equals(this.isDecommissioned))
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         if (fldNames==null || fldNames[0].length()==0){
@@ -311,7 +310,7 @@ public class DataInstruments {
         }        
         fldNames=LPArray.addValueToArray1D(fldNames, new String[]{TblsInstrumentsData.Instruments.ON_LINE.getName()});
         fldValues=LPArray.addValueToArray1D(fldValues, new Object[]{true});
-        if (this.onLine){
+        if (Boolean.TRUE.equals(this.onLine)){
             messages.addMainForError(InstrumentsErrorTrapping.ALREADY_ONLINE, new Object[]{name});
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_ONLINE, new Object[]{name}, null);
         }
@@ -331,14 +330,14 @@ public class DataInstruments {
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.TURN_ON_LINE, new Object[]{name}, name);
     }
     public InternalMessage turnOffLine(String[] fldNames, Object[] fldValues){
-        if (this.isDecommissioned)
+        if (Boolean.TRUE.equals(this.isDecommissioned))
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         if (fldNames==null || fldNames[0].length()==0){
             fldNames=new String[]{};
             fldValues=new Object[]{};
         }        
-        if (!this.onLine){
+        if (Boolean.FALSE.equals(this.onLine)){
             messages.addMainForError(InstrumentsErrorTrapping.NOT_ONLINE, new Object[]{name});
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.NOT_ONLINE, new Object[]{name}, null);
         }
@@ -358,7 +357,7 @@ public class DataInstruments {
 
     public InternalMessage startCalibration(Boolean isScheduled){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
-        if (this.isDecommissioned)
+        if (Boolean.TRUE.equals(this.isDecommissioned))
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);        
         Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
@@ -368,15 +367,15 @@ public class DataInstruments {
                     TblsInstrumentsData.InstrumentEvent.COMPLETED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, 
                 new Object[]{this.name, AppInstrumentsAuditEvents.CALIBRATION.toString(), ""}, new String[]{TblsInstrumentsData.InstrumentEvent.ID.getName()});
         
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString()))){
             messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_HAS_PENDING_CALIBRATION, new Object[]{name});
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_HAS_PENDING_CALIBRATION, new Object[]{name}, name);
         }        
         String[] fldNames=new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName(), TblsInstrumentsData.InstrumentEvent.EVENT_TYPE.getName(),
             TblsInstrumentsData.InstrumentEvent.CREATED_ON.getName(), TblsInstrumentsData.InstrumentEvent.CREATED_BY.getName()};
-        Object[] fldValues=new Object[]{this.name, AppInstrumentsAuditEvents.CALIBRATION.toString(), LPDate.getCurrentTimeStamp(), (isScheduled) ? GlobalVariables.TRAZIT_SCHEDULER : token.getPersonName()};
+        Object[] fldValues=new Object[]{this.name, AppInstrumentsAuditEvents.CALIBRATION.toString(), LPDate.getCurrentTimeStamp(), (Boolean.TRUE.equals(isScheduled)) ? GlobalVariables.TRAZIT_SCHEDULER : token.getPersonName()};
         RdbmsObject instCreationDiagn = Rdbms.insertRecordInTable(TablesInstrumentsData.INSTRUMENT_EVENT, fldNames, fldValues);
-        if (!instCreationDiagn.getRunSuccess())
+        if (Boolean.FALSE.equals(instCreationDiagn.getRunSuccess()))
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn.getErrorMessageCode(), new Object[]{name}, null);
         String insEventIdCreated=instCreationDiagn.getNewRowId().toString();
         instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.START_CALIBRATION, name, TablesInstrumentsData.INSTRUMENTS.getTableName(), name,
@@ -391,7 +390,7 @@ public class DataInstruments {
             Integer instrEventId=Integer.valueOf(instCreationDiagn.getNewRowId().toString());
             addVariableSetToObject(name, instrEventId, variableSetName, ownerId);
         }
-        if (this.onLine){
+        if (Boolean.TRUE.equals(this.onLine)){
             fldNames=new String[]{TblsInstrumentsData.Instruments.IS_LOCKED.getName(), TblsInstrumentsData.Instruments.LOCKED_REASON.getName()};
             fldValues=new Object[]{true, InstrLockingReasons.UNDER_CALIBRATION_EVENT.getPropertyName()};
             turnOffLine(fldNames, fldValues);
@@ -404,7 +403,7 @@ public class DataInstruments {
         InternalMessage decisionValueIsCorrect = decisionValueIsCorrect(decision);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(decisionValueIsCorrect.getDiagnostic())) return decisionValueIsCorrect;
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
-        if (this.isDecommissioned!=null && this.isDecommissioned){
+        if (this.isDecommissioned!=null && Boolean.TRUE.equals(this.isDecommissioned)){
             messages.addMainForError(InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name});
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);
         }
@@ -449,7 +448,7 @@ public class DataInstruments {
             fldNames=LPArray.addValueToArray1D(fldNames, TblsInstrumentsData.Instruments.NEXT_CALIBRATION.getName());
             fldValues=LPArray.addValueToArray1D(fldValues, nextEventDate);
         }
-        if (!this.onLine && decisionAndFamilyRuleToTurnOn(decision, TblsInstrumentsConfig.InstrumentsFamily.CALIB_TURN_ON_WHEN_COMPLETED.getName())){
+        if (Boolean.FALSE.equals(this.onLine) && decisionAndFamilyRuleToTurnOn(decision, TblsInstrumentsConfig.InstrumentsFamily.CALIB_TURN_ON_WHEN_COMPLETED.getName())){
             turnOnLine(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_CALIBRATION.toString());
         }else{
             updateInstrument(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_CALIBRATION.toString(), AppInstrumentsAuditEvents.COMPLETE_CALIBRATION);            
@@ -460,7 +459,7 @@ public class DataInstruments {
 
     public InternalMessage startPrevMaint(Boolean isScheduled){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
-        if (this.isDecommissioned)
+        if (Boolean.TRUE.equals(this.isDecommissioned))
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);        
         Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
@@ -470,16 +469,16 @@ public class DataInstruments {
                     TblsInstrumentsData.InstrumentEvent.COMPLETED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, 
                 new Object[]{this.name, AppInstrumentsAuditEvents.PREVENTIVE_MAINTENANCE.toString(), ""}, new String[]{TblsInstrumentsData.InstrumentEvent.ID.getName()});
         
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString()))){
             messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_HAS_PENDING_PREV_MAINT, new Object[]{name});
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_HAS_PENDING_PREV_MAINT, new Object[]{name}, name);
         }        
         String[] fldNames=new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName(), TblsInstrumentsData.InstrumentEvent.EVENT_TYPE.getName(),
             TblsInstrumentsData.InstrumentEvent.CREATED_ON.getName(), TblsInstrumentsData.InstrumentEvent.CREATED_BY.getName()};
-        Object[] fldValues=new Object[]{this.name, AppInstrumentsAuditEvents.PREVENTIVE_MAINTENANCE.toString(), LPDate.getCurrentTimeStamp(), (isScheduled) ? GlobalVariables.TRAZIT_SCHEDULER : token.getPersonName()};
+        Object[] fldValues=new Object[]{this.name, AppInstrumentsAuditEvents.PREVENTIVE_MAINTENANCE.toString(), LPDate.getCurrentTimeStamp(), (Boolean.TRUE.equals(isScheduled)) ? GlobalVariables.TRAZIT_SCHEDULER : token.getPersonName()};
         RdbmsObject instCreationDiagn = Rdbms.insertRecordInTable(TablesInstrumentsData.INSTRUMENT_EVENT, fldNames, fldValues);
         String insEventIdCreated=instCreationDiagn.getNewRowId().toString();
-        if (!instCreationDiagn.getRunSuccess())
+        if (Boolean.FALSE.equals(instCreationDiagn.getRunSuccess()))
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn.getErrorMessageCode(), new Object[]{name}, null);
         instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.START_PREVENTIVE_MAINTENANCE, name, TablesInstrumentsData.INSTRUMENTS.getTableName(), name,
                         fldNames, fldValues);
@@ -494,7 +493,7 @@ public class DataInstruments {
             addVariableSetToObject(name, instrEventId, variableSetName, ownerId);
         }
         
-        if (this.onLine){
+        if (Boolean.TRUE.equals(this.onLine)){
             fldNames=new String[]{TblsInstrumentsData.Instruments.IS_LOCKED.getName(), TblsInstrumentsData.Instruments.LOCKED_REASON.getName()};
             fldValues=new Object[]{true, InstrLockingReasons.UNDER_MAINTENANCE_EVENT.getPropertyName()};
             turnOffLine(fldNames, fldValues);
@@ -507,7 +506,7 @@ public class DataInstruments {
         InternalMessage decisionValueIsCorrect = decisionValueIsCorrect(decision);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(decisionValueIsCorrect.getDiagnostic())) return decisionValueIsCorrect;
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
-        if (this.isDecommissioned!=null && this.isDecommissioned){
+        if (this.isDecommissioned!=null && Boolean.TRUE.equals(this.isDecommissioned)){
             messages.addMainForError(InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name});
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);
         }
@@ -560,7 +559,7 @@ public class DataInstruments {
     
     public InternalMessage startVerification(){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
-        if (this.isDecommissioned)
+        if (Boolean.TRUE.equals(this.isDecommissioned))
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);        
         Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
@@ -570,7 +569,7 @@ public class DataInstruments {
                     TblsInstrumentsData.InstrumentEvent.COMPLETED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, 
                 new Object[]{this.name, AppInstrumentsAuditEvents.VERIFICATION.toString(), ""}, new String[]{TblsInstrumentsData.InstrumentEvent.ID.getName()});
         
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString()))){
             messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_HAS_PENDING_VERIFICATION, new Object[]{name});
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_HAS_PENDING_VERIFICATION, new Object[]{name}, name);
         }        
@@ -579,7 +578,7 @@ public class DataInstruments {
         Object[] fldValues=new Object[]{this.name, AppInstrumentsAuditEvents.VERIFICATION.toString(), LPDate.getCurrentTimeStamp(), token.getPersonName()};
         RdbmsObject instCreationDiagn = Rdbms.insertRecordInTable(TablesInstrumentsData.INSTRUMENT_EVENT, 
                 fldNames, fldValues);
-        if (!instCreationDiagn.getRunSuccess())
+        if (Boolean.FALSE.equals(instCreationDiagn.getRunSuccess()))
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn.getErrorMessageCode(), new Object[]{name}, null);
         String insEventIdCreated=instCreationDiagn.getNewRowId().toString();
         instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.START_VERIFICATION, name, TablesInstrumentsData.INSTRUMENTS.getTableName(), name,
@@ -594,7 +593,7 @@ public class DataInstruments {
             addVariableSetToObject(name, instrEventId, variableSetName, ownerId);
         }
         
-        if (this.onLine){
+        if (Boolean.TRUE.equals(this.onLine)){
             fldNames=new String[]{TblsInstrumentsData.Instruments.IS_LOCKED.getName(), TblsInstrumentsData.Instruments.LOCKED_REASON.getName()};
             fldValues=new Object[]{true, InstrLockingReasons.UNDER_DAILY_VERIF_EVENT.getPropertyName()};
             turnOffLine(fldNames, fldValues);
@@ -608,7 +607,7 @@ public class DataInstruments {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(decisionValueIsCorrect.getDiagnostic())) return decisionValueIsCorrect;
         
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
-        if (this.isDecommissioned!=null && this.isDecommissioned){
+        if (this.isDecommissioned!=null && Boolean.TRUE.equals(this.isDecommissioned)){
             messages.addMainForError(InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name});
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);
         }
@@ -644,7 +643,7 @@ public class DataInstruments {
                         fldNames, fldValues);        
         fldNames=new String[]{TblsInstrumentsData.Instruments.LAST_VERIF.getName(), TblsInstrumentsData.Instruments.IS_LOCKED.getName(), TblsInstrumentsData.Instruments.LOCKED_REASON.getName()};
         fldValues=new Object[]{LPDate.getCurrentTimeStamp(),false, ""};
-        if (!this.onLine){
+        if (Boolean.FALSE.equals(this.onLine)){
             turnOnLine(fldNames, fldValues);
         }else{
             updateInstrument(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_VERIFICATION.toString(), InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_VERIFICATION);            
@@ -655,7 +654,7 @@ public class DataInstruments {
 
     public InternalMessage startSevice(){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
-        if (this.isDecommissioned)
+        if (Boolean.TRUE.equals(this.isDecommissioned))
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);        
         Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
@@ -665,7 +664,7 @@ public class DataInstruments {
                     TblsInstrumentsData.InstrumentEvent.COMPLETED_ON.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, 
                 new Object[]{this.name, AppInstrumentsAuditEvents.SERVICE.toString(), ""}, new String[]{TblsInstrumentsData.InstrumentEvent.ID.getName()});
         
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString()))){
             messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_HAS_PENDING_SERVICE, new Object[]{name});
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_HAS_PENDING_SERVICE, new Object[]{name}, name);
         }        
@@ -673,7 +672,7 @@ public class DataInstruments {
             TblsInstrumentsData.InstrumentEvent.CREATED_ON.getName(), TblsInstrumentsData.InstrumentEvent.CREATED_BY.getName()};
         Object[] fldValues=new Object[]{this.name, AppInstrumentsAuditEvents.SERVICE.toString(), LPDate.getCurrentTimeStamp(), token.getPersonName()};
         RdbmsObject instCreationDiagn = Rdbms.insertRecordInTable(TablesInstrumentsData.INSTRUMENT_EVENT, fldNames, fldValues);
-        if (!instCreationDiagn.getRunSuccess())
+        if (Boolean.FALSE.equals(instCreationDiagn.getRunSuccess()))
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn.getErrorMessageCode(), new Object[]{name}, null);
         String insEventIdCreated=instCreationDiagn.getNewRowId().toString();
         instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.START_SERVICE, name, TablesInstrumentsData.INSTRUMENTS.getTableName(), name,
@@ -688,7 +687,7 @@ public class DataInstruments {
             addVariableSetToObject(name, instrEventId, variableSetName, ownerId);
         }
         
-        if (this.onLine){
+        if (Boolean.TRUE.equals(this.onLine)){
             fldNames=new String[]{TblsInstrumentsData.Instruments.IS_LOCKED.getName(), TblsInstrumentsData.Instruments.LOCKED_REASON.getName()};
             fldValues=new Object[]{true, InstrLockingReasons.UNDER_SERVICE_EVENT.getPropertyName()};
             turnOffLine(fldNames, fldValues);
@@ -702,7 +701,7 @@ public class DataInstruments {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(decisionValueIsCorrect.getDiagnostic())) return decisionValueIsCorrect;
         
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
-        if (this.isDecommissioned!=null && this.isDecommissioned){
+        if (this.isDecommissioned!=null && Boolean.TRUE.equals(this.isDecommissioned)){
             messages.addMainForError(InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name});
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);
         }
@@ -738,7 +737,7 @@ public class DataInstruments {
                         fldNames, fldValues);        
         fldNames=new String[]{TblsInstrumentsData.Instruments.LAST_VERIF.getName(), TblsInstrumentsData.Instruments.IS_LOCKED.getName(), TblsInstrumentsData.Instruments.LOCKED_REASON.getName()};
         fldValues=new Object[]{LPDate.getCurrentTimeStamp(),false, ""};
-        if (!this.onLine){
+        if (Boolean.FALSE.equals(this.onLine)){
             turnOnLine(fldNames, fldValues);
         }else{
             updateInstrument(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_SERVICE.toString(), InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_SERVICE);            
@@ -749,11 +748,10 @@ public class DataInstruments {
     
     public InternalMessage reopenEvent(Integer instrEventId){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
-        if (this.isDecommissioned)
+        if (Boolean.TRUE.equals(this.isDecommissioned))
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.name}, null);
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
-        Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
-        
+       
         Object[][] instrEventInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(), 
                 new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName(), TblsInstrumentsData.InstrumentEvent.ID.getName()}, 
                 new Object[]{this.name, instrEventId}, 
@@ -784,7 +782,7 @@ public class DataInstruments {
                         fldNames, fldValues);        
         fldNames=new String[]{TblsInstrumentsData.Instruments.LAST_VERIF.getName(), TblsInstrumentsData.Instruments.IS_LOCKED.getName(), TblsInstrumentsData.Instruments.LOCKED_REASON.getName()};
         fldValues=new Object[]{LPDate.getCurrentTimeStamp(),false, ""};
-        if (this.onLine){
+        if (Boolean.TRUE.equals(this.onLine)){
             turnOffLine(fldNames, fldValues);
         }else{
             updateInstrument(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.REOPEN_EVENT.toString(), InstrumentsEnums.AppInstrumentsAuditEvents.REOPEN_EVENT);            

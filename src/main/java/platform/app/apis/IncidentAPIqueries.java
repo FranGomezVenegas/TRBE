@@ -102,7 +102,7 @@ public class IncidentAPIqueries extends HttpServlet {
                         new Object[]{AppIncident.IncidentStatuses.CLOSED.toString(), token.getPersonName()}, 
                         new String[]{TblsApp.Incident.ID.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                 JSONArray jArr = new JSONArray();
-                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsClosedLastDays[0][0].toString())){
+                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsClosedLastDays[0][0].toString()))){
                     for (Object[] currIncident: incidentsClosedLastDays){
                         JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
                         jArr.add(jObj);
@@ -123,7 +123,7 @@ public class IncidentAPIqueries extends HttpServlet {
                     new String[]{TblsAppAudit.Incident.DATE.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                 jArr = new JSONArray();
                 Integer actionPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsAppAudit.Incident.ACTION_NAME.getName());
-                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsClosedLastDays[0][0].toString())){
+                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsClosedLastDays[0][0].toString()))){
                     for (Object[] currIncident: incidentsClosedLastDays){
                         JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
                         if (actionPosic>-1){
@@ -164,7 +164,7 @@ public class IncidentAPIqueries extends HttpServlet {
                     new Object[]{AppIncident.IncidentStatuses.CLOSED.toString(), LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
                     new String[]{TblsApp.Incident.DATE_RESOLUTION.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                 jArr = new JSONArray();
-                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsClosedLastDays[0][0].toString())){
+                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsClosedLastDays[0][0].toString()))){
                     for (Object[] currIncident: incidentsClosedLastDays){
                         JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
                         jArr.add(jObj);

@@ -94,7 +94,7 @@ public class InvestigationAPIfrontend extends HttpServlet {
                         new Object[]{true}, 
                         new String[]{TblsProcedure.Investigation.ID.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                     JSONArray investigationJArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString())){
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString()))){
                         for (Object[] currInvestigation: incidentsNotClosed){
                             JSONObject investigationJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInvestigation);
                             Integer investFldPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsProcedure.Investigation.ID.getName());
@@ -107,7 +107,7 @@ public class InvestigationAPIfrontend extends HttpServlet {
                                     new Object[]{investigationId}, 
                                     new String[]{TblsProcedure.InvestObjects.ID.getName()});
                                 JSONArray investObjectsJArr = new JSONArray();
-                                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString())){
+                                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString()))){
                                     for (Object[] currInvestObject: incidentsNotClosed){
                                         JSONObject investObjectsJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieveInvestObj, currInvestObject);
                                         investObjectsJArr.add(investObjectsJObj);
@@ -166,7 +166,7 @@ public class InvestigationAPIfrontend extends HttpServlet {
                         new Object[]{investigationId}, 
                         new String[]{TblsProcedure.Investigation.ID.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                     investigationJArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString())){
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString()))){
                         for (Object[] currInvestigation: incidentsNotClosed){
                             JSONObject investigationJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInvestigation);
                             fieldsToRetrieve=getAllFieldNames(TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableFields());
@@ -176,7 +176,7 @@ public class InvestigationAPIfrontend extends HttpServlet {
                                 new Object[]{investigationId}, 
                                 new String[]{TblsProcedure.InvestObjects.ID.getName()});
                             JSONArray investObjectsJArr = new JSONArray();
-                            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString())){
+                            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString()))){
                                 for (Object[] currInvestObject: incidentsNotClosed){
                                     JSONObject investObjectsJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInvestObject);
                                     investObjectsJArr.add(investObjectsJObj);

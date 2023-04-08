@@ -141,9 +141,9 @@ public class EndpointsDocAPIqueries extends HttpServlet {
             if (Boolean.TRUE.equals(groupedByAPI)) {
                 String curApiName = "";
                 for (Object[] currEndpoint : reqEndpointInfo) {
-                    if (!curApiName.equalsIgnoreCase(LPNulls.replaceNull(currEndpoint[LPArray.valuePosicInArray(endpointDeclarationAllFieldNames, TblsTrazitDocTrazit.EndpointsDeclaration.API_NAME.getName())]).toString())) {
+                    if (Boolean.FALSE.equals(curApiName.equalsIgnoreCase(LPNulls.replaceNull(currEndpoint[LPArray.valuePosicInArray(endpointDeclarationAllFieldNames, TblsTrazitDocTrazit.EndpointsDeclaration.API_NAME.getName())]).toString()))) {
                         curApiName = LPNulls.replaceNull(currEndpoint[LPArray.valuePosicInArray(endpointDeclarationAllFieldNames, TblsTrazitDocTrazit.EndpointsDeclaration.API_NAME.getName())]).toString();
-                        if (!jApiArr.isEmpty()) {
+                        if (Boolean.FALSE.equals(jApiArr.isEmpty())) {
                             jApiObj.put("endpoints", jApiArr);
                             jMainArr.add(jApiObj);
                         }
@@ -162,7 +162,7 @@ public class EndpointsDocAPIqueries extends HttpServlet {
                     jObj.put(TblsTrazitDocTrazit.EndpointsDeclaration.OUTPUT_OBJECT_TYPES.getName(), argOutputToJson);
                     jApiArr.add(jObj);
                 }
-                if (!jApiArr.isEmpty()) {
+                if (Boolean.FALSE.equals(jApiArr.isEmpty())) {
                     jApiObj.put("endpoints", jApiArr);
                     jMainArr.add(jApiObj);
                 }

@@ -33,7 +33,7 @@ class EnvMonFrontEndUtilities {
     if (fieldsName==null || fieldsName.length==0){
       for (TblsEnvMonitConfig.Program obj: TblsEnvMonitConfig.Program.values()){
           String objName = obj.name();
-          if (!"TBL".equalsIgnoreCase(objName))
+          if (Boolean.FALSE.equals("TBL".equalsIgnoreCase(objName)))
             fieldsName=LPArray.addValueToArray1D(fieldsName, obj.getName());
       }      
     }
@@ -55,7 +55,7 @@ class EnvMonFrontEndUtilities {
     if (fieldsName==null || fieldsName.length==0){
       for (TblsEnvMonitConfig.ProgramCalendarDate obj: TblsEnvMonitConfig.ProgramCalendarDate.values()){
           String objName = obj.name();
-          if (!"TBL".equalsIgnoreCase(objName))
+          if (Boolean.FALSE.equals("TBL".equalsIgnoreCase(objName)))
             fieldsName=LPArray.addValueToArray1D(fieldsName, obj.getName());
       }      
     }
@@ -77,7 +77,7 @@ class EnvMonFrontEndUtilities {
     if (fieldsName==null || fieldsName.length==0){
       for (TblsEnvMonitConfig.Program obj: TblsEnvMonitConfig.Program.values()){
           String objName = obj.name();
-          if (!"TBL".equalsIgnoreCase(objName))
+          if (Boolean.FALSE.equals("TBL".equalsIgnoreCase(objName)))
             fieldsName=LPArray.addValueToArray1D(fieldsName, obj.getName());
       }      
     }
@@ -105,7 +105,7 @@ class EnvMonFrontEndUtilities {
         new Object[]{programName,}, 
         sortFields);
     JSONArray jArr = new JSONArray();
-    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(records[0][0].toString())){
+    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(records[0][0].toString()))){
         for (Object[] curRec: records)
             jArr.add(LPJson.convertArrayRowToJSONObject(fieldsName, curRec));    
     }

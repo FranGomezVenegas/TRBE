@@ -99,7 +99,7 @@ public class LPFrontEnd {
             if (userToVerify==null) userToVerify=LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK)).toString();
         String passwordToVerify = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK);    
             if (passwordToVerify==null) passwordToVerify=LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK)).toString();
-        return !((!userToVerify.equalsIgnoreCase(dbUserName)) || (!passwordToVerify.equalsIgnoreCase(dbUserPassword)));
+        return Boolean.FALSE.equals((Boolean.FALSE.equals(userToVerify.equalsIgnoreCase(dbUserName))) || (Boolean.FALSE.equals(passwordToVerify.equalsIgnoreCase(dbUserPassword))) );
     }
 
     /**

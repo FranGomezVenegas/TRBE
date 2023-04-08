@@ -293,8 +293,7 @@ public final class Investigation {
     private static Object[] isCapaField(String[] fields){
         String[] allFieldNames = getAllFieldNames(TblsProcedure.TablesProcedure.INVESTIGATION.getTableFields());
         for (String curFld: fields){
-            if (!LPArray.valueInArray(allFieldNames, curFld)) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.NOT_CAPA_FIELD, new Object[]{curFld});
-            //if (!curFld.toUpperCase().contains("CAPA")) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "<*1*> notCapaField", new Object[]{curFld});
+            if (Boolean.FALSE.equals(LPArray.valueInArray(allFieldNames, curFld))) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.NOT_CAPA_FIELD, new Object[]{curFld});
         }
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "AllCapaFields:  <*1*>", new Object[]{Arrays.toString(fields)});
     }

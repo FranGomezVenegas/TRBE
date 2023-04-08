@@ -212,7 +212,7 @@ public final class TestingCoverage {
         for (int i=0;i<this.scriptsBusRules.getProcedureBusinessRules().size();i++){
             String curScriptProcedureRule=this.scriptsBusRules.getProcedureBusinessRules().get(i).getRuleName();
             if (calcProcedure==null || calcProcedure.isEmpty() || !calcProcedure.contains(curScriptProcedureRule)){
-                if (!curScriptProcedureRule.contains("AuditReasonPhrase")){
+                if (Boolean.FALSE.equals(curScriptProcedureRule.contains("AuditReasonPhrase"))){
                     if(curScriptProcedureRule!=null)
                         calcProcedure.add(curScriptProcedureRule);
                     JSONObject jObj=new JSONObject();
@@ -251,7 +251,7 @@ public final class TestingCoverage {
                 String curMsgCode=currScriptMessages.get(i).getAsJsonObject().get("messageCode").getAsString();
                 if (this.msgCodeVisitedObj==null || !this.msgCodeVisitedObj.contains(msgCodeObj))
                     this.msgCodeVisitedObj.add(msgCodeObj);
-                if (!this.msgCodeVisited.contains(curMsgCode))
+                if (Boolean.FALSE.equals(this.msgCodeVisited.contains(curMsgCode)))
                     this.msgCodeVisited.add(curMsgCode);
             }
         }catch(Exception e){           
@@ -322,7 +322,7 @@ public final class TestingCoverage {
             String curRuleStr="config_"+curRule.getRuleName();//+"="+curRule.getRuleValue();
             boolean inExclList = LPArray.valueInArray(this.coverageBusRulesExcludeList, curRuleStr);
             boolean valueInArray = LPArray.valueInArray(accVisitedArr, curRuleStr);
-            if (!valueInArray && !inExclList && !notCoveredBusRules.contains(curRuleStr))
+            if (Boolean.FALSE.equals(valueInArray) && Boolean.FALSE.equals(inExclList) && Boolean.FALSE.equals(notCoveredBusRules.contains(curRuleStr)))
                 notCoveredBusRules.add(curRuleStr);
         }
         procBusRulesJObj.put("config", procBusRulesAreaJArr);
@@ -336,7 +336,7 @@ public final class TestingCoverage {
             String curRuleStr="data_"+curRule.getRuleName();//+"="+curRule.getRuleValue();
             boolean inExclList = LPArray.valueInArray(this.coverageBusRulesExcludeList, curRuleStr);
             boolean valueInArray = LPArray.valueInArray(accVisitedArr, curRuleStr);
-            if (!valueInArray && !inExclList && !notCoveredBusRules.contains(curRuleStr))
+            if (Boolean.FALSE.equals(valueInArray) && Boolean.FALSE.equals(inExclList) && Boolean.FALSE.equals(notCoveredBusRules.contains(curRuleStr)))
                 notCoveredBusRules.add(curRuleStr);
         }
         procBusRulesJObj.put("data", procBusRulesAreaJArr); 
@@ -353,8 +353,8 @@ public final class TestingCoverage {
             String curRuleStr="procedure_"+curRule.getRuleName();//+"="+curRule.getRuleValue();
             boolean inExclList = LPArray.valueInArray(this.coverageBusRulesExcludeList, curRuleStr);
             boolean valueInArray = LPArray.valueInArray(accVisitedArr, curRuleStr);
-            if (!valueInArray && !notCoveredBusRules.contains(curRuleStr) && !procedureRulesNotToPutInPlace(curRuleStr) ){
-                if (!inExclList && !LPArray.valueInArray(this.busRuleExcludedByExcludeEndpoint, curRuleStr))
+            if (Boolean.FALSE.equals(valueInArray) && Boolean.FALSE.equals(notCoveredBusRules.contains(curRuleStr)) && Boolean.FALSE.equals(procedureRulesNotToPutInPlace(curRuleStr)) ){
+                if (Boolean.FALSE.equals(inExclList) && Boolean.FALSE.equals(LPArray.valueInArray(this.busRuleExcludedByExcludeEndpoint, curRuleStr)))
                     notCoveredBusRules.add(curRuleStr);
             }
         }
@@ -407,7 +407,7 @@ public final class TestingCoverage {
             boolean inExclList = LPArray.valueInArray(this.coverageEndpointsExcludeList, curEnd);
             JSONArray accVisited = (JSONArray) this.endpointsCoverageDetail.get("visited");            
             boolean inVisitedList = accVisited.contains(curEnd);
-            if (!inExclList && !inVisitedList && curEnd.length()>0 && !LPArray.valueInArray(this.busRuleExcludedByExcludeEndpoint, curEnd))
+            if (Boolean.FALSE.equals(inExclList) && Boolean.FALSE.equals(inVisitedList) && curEnd.length()>0 && Boolean.FALSE.equals(LPArray.valueInArray(this.busRuleExcludedByExcludeEndpoint, curEnd)) )
                 notCoveredEndPoints.add(curEnd);
         }
         unCoveredEndPoints.put("uncoverage_list", notCoveredEndPoints);
@@ -423,7 +423,7 @@ public final class TestingCoverage {
         try{
             for (int iMsgs=0; iMsgs<this.msgCodeVisitedObj.size();iMsgs++){
                 JsonObject curVisited = (JsonObject) this.msgCodeVisitedObj.get(iMsgs);
-                if (!LPArray.valueInArray(msgClasses, curVisited.get("className")))
+                if (Boolean.FALSE.equals(LPArray.valueInArray(msgClasses, curVisited.get("className"))))
                     msgClasses=LPArray.addValueToArray1D(msgClasses, curVisited.get("className").toString());
             }
             msgClasses=LPArray.getUniquesArray(msgClasses);

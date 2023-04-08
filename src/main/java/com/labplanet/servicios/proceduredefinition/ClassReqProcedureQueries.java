@@ -29,7 +29,7 @@ public class ClassReqProcedureQueries {
             new Object[]{procInstanceName}, fldsArr);
         JSONObject jBlockObj = new JSONObject();
         JSONArray jBlockArr = new JSONArray(); 
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procUsers[0][0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procUsers[0][0].toString()))){
             for (Object[] curRow: procUsers){
                 jBlockArr.add(LPJson.convertArrayRowToJSONObject(fldsArr, curRow));
             }
@@ -40,7 +40,7 @@ public class ClassReqProcedureQueries {
             new String[]{TblsReqs.ProcedureUserRoles.PROC_INSTANCE_NAME.getName()}, 
             new Object[]{procInstanceName}, fldsArr);
         jBlockArr = new JSONArray(); 
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserRoles[0][0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserRoles[0][0].toString()))){
             for (Object[] curRow: procUserRoles){
                 jBlockArr.add(LPJson.convertArrayRowToJSONObject(fldsArr, curRow));
             }
@@ -54,14 +54,14 @@ public class ClassReqProcedureQueries {
             new Object[]{procInstanceName}, fldsArr);
         jBlockArr = new JSONArray(); 
         JSONObject jRolesActions=new JSONObject();
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procRoles[0][0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procRoles[0][0].toString()))){
             for (Object[] curRow: procRoles){
                 jBlockArr.add(LPJson.convertArrayRowToJSONObject(fldsArr, curRow));
                 JSONArray jRoleActionsjArr = new JSONArray(); 
                 Object[][] roleActions = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS.getTableName(), 
                     new String[]{TblsReqs.ProcedureUserRequirements.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRequirements.ROLES.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.LIKE.getSqlClause()}, 
                     new Object[]{procInstanceName, "%"+curRow[0]+"%"}, roleActionsFldsArr);
-                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(roleActions[0][0].toString())){
+                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(roleActions[0][0].toString()))){
                     for (Object[] curRolAction: roleActions){
                         jRoleActionsjArr.add(curRolAction[0]);
                     }
@@ -167,8 +167,8 @@ public class ClassReqProcedureQueries {
             String curSchema="";
             JSONArray jSchemaArr=new JSONArray();
             for (Object[] curRow: procTblRows){
-                if (!curSchema.equalsIgnoreCase(LPNulls.replaceNull(curRow[0]).toString())){
-                    if (!jSchemaArr.isEmpty()){
+                if (Boolean.FALSE.equals(curSchema.equalsIgnoreCase(LPNulls.replaceNull(curRow[0]).toString()))){
+                    if (Boolean.FALSE.equals(jSchemaArr.isEmpty())){
                         if (curSchema.length()==0) curSchema="-";
                         jBlockObj.put(curSchema, jSchemaArr);
                     }
@@ -195,7 +195,7 @@ public class ClassReqProcedureQueries {
                     }
                 }
             }
-            if (!jSchemaArr.isEmpty()){            
+            if (Boolean.FALSE.equals(jSchemaArr.isEmpty())){
                 if (curSchema.length()==0) curSchema="-";                
                 jBlockObj.put(curSchema, jSchemaArr);
             }

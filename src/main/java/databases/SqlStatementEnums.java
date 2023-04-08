@@ -165,7 +165,7 @@ public class SqlStatementEnums {
         String tableName = tblObj.getTableName();
 
         Object[] whereFieldValuesNew = new Object[0];
-        if (!whereObj.getAllWhereEntries().isEmpty()) {
+        if (Boolean.FALSE.equals(whereObj.getAllWhereEntries().isEmpty())) {
             Object[] whereClauseContent = buildWhereClause(whereObj, false);
             queryWhere = (String) whereClauseContent[0];
             whereFieldValuesNew = (Object[]) whereClauseContent[1];
@@ -332,7 +332,7 @@ public class SqlStatementEnums {
         tableName = setSchemaName(tableName);
 
         Object[] whereFieldValuesNew = new Object[0];
-        if (!sWhere.getAllWhereEntries().isEmpty()) {
+        if (Boolean.FALSE.equals(sWhere.getAllWhereEntries().isEmpty())) {
             Object[] whereClauseContent = buildWhereClause(sWhere, caseSensitive);
             queryWhere = (String) whereClauseContent[0];
             whereFieldValuesNew = (Object[]) whereClauseContent[1];
@@ -355,7 +355,7 @@ public class SqlStatementEnums {
                 break;
             }
             if (iwhereFieldNames > 0) {
-                if (!fn.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase())) //                    queryWhere.append(" or ");
+                if (Boolean.FALSE.equals(fn.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase()))) //                    queryWhere.append(" or ");
                 //                else
                 {
                     queryWhere.append(" and ");
@@ -695,7 +695,7 @@ public class SqlStatementEnums {
             return null;
         }
         Object[] whereFieldValuesNew = new Object[0];
-        if (!whereObj.getAllWhereEntries().isEmpty()) {
+        if (Boolean.FALSE.equals(whereObj.getAllWhereEntries().isEmpty())) {
             Object[] whereClauseContent = buildWhereClause(whereObj, caseSenstive);
             queryWhere = (String) whereClauseContent[0];
             whereFieldValuesNew = (Object[]) whereClauseContent[1];
@@ -727,7 +727,7 @@ public class SqlStatementEnums {
                 break;
             }
             if (iwhereFieldNames > 0) {
-                if (!fn.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase())) {
+                if (Boolean.FALSE.equals(fn.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase()))) {
                     queryWhere.append(" and ");
                 }
             }
@@ -883,7 +883,7 @@ public class SqlStatementEnums {
             return new Object[]{};
         }
         if (queryWhere.length() > 0) {
-            if (!symbol.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase())) //                    queryWhere.append(" or ");
+            if (Boolean.FALSE.equals(symbol.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase())))
             //                else
             {
                 queryWhere.append(" ").append(constraintType).append(" ");

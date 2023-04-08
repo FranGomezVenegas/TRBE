@@ -155,7 +155,7 @@ public class LPDate {
     }
     
     public static Date stringFormatToDate(String dateStr){ 
-        if (!dateStr.toUpperCase().contains("T")) dateStr=dateStr+"T00:00:00";
+        if (Boolean.FALSE.equals(dateStr.toUpperCase().contains("T"))) dateStr=dateStr+"T00:00:00";
         Calendar cal = Calendar.getInstance();    
         Integer Tposic=dateStr.indexOf(":");
         Tposic=Tposic-3;

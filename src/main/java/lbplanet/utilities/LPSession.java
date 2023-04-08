@@ -51,7 +51,7 @@ public class LPSession {
                     "("+TblsApp.IPWhiteList.IP_VALUE3.getName(), "OR "+TblsApp.IPWhiteList.IP_VALUE3.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()+" )", 
                     "("+TblsApp.IPWhiteList.IP_VALUE4.getName(), "OR "+TblsApp.IPWhiteList.IP_VALUE4.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()+" )"}, 
                 new Object[]{true, remoteAddrParts[0], remoteAddrParts[1], null, remoteAddrParts[2], null, remoteAddrParts[3]});
-            if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(existRecordWhiteList[0].toString())){
+            if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(existRecordWhiteList[0].toString())) ){
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AuthenticationErrorTrapping.IP_NOTIN_WHITE_LIST, new Object[]{remoteAddr});
             }
         }
@@ -115,7 +115,7 @@ public class LPSession {
             Object[] appSession = getAppSession(appSessionId, fieldsNamesToInsert);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(appSession[0].toString())) 
                 return appSession;
-            if (!LPArray.valueInArray(fieldsNamesToInsert, TblsDataAudit.Session.SESSION_ID.getName())){
+            if (Boolean.FALSE.equals(LPArray.valueInArray(fieldsNamesToInsert, TblsDataAudit.Session.SESSION_ID.getName()))){
                 fieldsNamesToInsert = LPArray.addValueToArray1D(fieldsNamesToInsert, TblsDataAudit.Session.SESSION_ID.getName());
                 appSession = LPArray.addValueToArray1D(appSession, appSessionId);
             }
@@ -148,7 +148,7 @@ public class LPSession {
         }else{
             String[] sessionProcsArr=LPNulls.replaceNull(recordFieldsBySessionId[0][0]).toString().split("\\,");
             processName=processName.replace("-"+GlobalVariables.Schemas.DATA_AUDIT.getName(), "").replace("\"", "");
-            if (!LPArray.valueInArray(sessionProcsArr, processName)){
+            if (Boolean.FALSE.equals(LPArray.valueInArray(sessionProcsArr, processName))){
                 if (procListValue.length()>0)
                     procListValue=procListValue+","+processName;
                 addProcess=true;
@@ -170,7 +170,7 @@ public class LPSession {
                 new String[]{TblsAppAudit.Session.SESSION_ID.getName()}, new Object[]{appSessionId}, fieldsNamesToInsert);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsBySessionId[0][0].toString())){
             Object[] appSession = getAppSession(appSessionId, fieldsNamesToInsert);
-            if (!LPArray.valueInArray(fieldsNamesToInsert, TblsAppAudit.Session.SESSION_ID.getName())){
+            if (Boolean.FALSE.equals(LPArray.valueInArray(fieldsNamesToInsert, TblsAppAudit.Session.SESSION_ID.getName()))){
                 fieldsNamesToInsert = LPArray.addValueToArray1D(fieldsNamesToInsert, TblsAppAudit.Session.SESSION_ID.getName());
                 appSession = LPArray.addValueToArray1D(appSession, appSessionId);
             }

@@ -387,11 +387,11 @@ public enum IncubatorBatchSuccess implements EnumIntMessages{
         String batchIncubName=batchInfo[0][1].toString();
         if ( (batchInfo[0][0]!=null) && (batchInfo[0][0].toString().trim().length()>0) ) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.INCUBATORBATCH_ALREADY_STARTED, new Object[]{bName, procInstanceName});        
         String allowMultipleStartBatch=Parameter.getBusinessRuleProcedureFile(procInstanceName, BatchBusinessRules.START_MULTIPLE_BATCH_IN_PARALLEL.getAreaName(), BatchBusinessRules.START_MULTIPLE_BATCH_IN_PARALLEL.getTagName());
-        if (!"YES".equalsIgnoreCase(allowMultipleStartBatch)){
+        if (Boolean.FALSE.equals("YES".equalsIgnoreCase(allowMultipleStartBatch))){
             Object[][] batchInProcess = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), 
                     new String[]{TblsEnvMonitData.IncubBatch.INCUBATION_INCUBATOR.getName(), TblsEnvMonitData.IncubBatch.INCUBATION_START.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause(), TblsEnvMonitData.IncubBatch.INCUBATION_END.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, new Object[]{batchIncubName, "", ""},
                     new String[]{TblsEnvMonitData.IncubBatch.NAME.getName()});            
-            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(batchInProcess[0][0].toString())) {
+            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(batchInProcess[0][0].toString()))) {
                 Object[] diagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.INCUBATORBATCH_ALREADY_IN_PROCESS, new Object[]{batchInProcess[0][0], batchIncubName, procInstanceName});
                 diagn=LPArray.addValueToArray1D(diagn, batchInProcess[0][0].toString());
                 return LPArray.addValueToArray1D(diagn, batchIncubName);
@@ -472,7 +472,7 @@ public enum IncubatorBatchSuccess implements EnumIntMessages{
 	sqlWhere.addConstraint(TblsEnvMonitData.IncubBatch.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{bName}, "");
 	Object[] updateDiagnostic=Rdbms.updateRecordFieldsByFilter(TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH,
             EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH, requiredFields), requiredFieldsValue, sqlWhere, null);
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateDiagnostic[0].toString()))
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(updateDiagnostic[0].toString())))
             IncubBatchAudit.incubBatchAuditAdd(batchAuditEvent, TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), bName,
                 LPArray.joinTwo1DArraysInOneOf1DString(requiredFields, requiredFieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
         return updateDiagnostic;
@@ -495,11 +495,11 @@ public enum IncubatorBatchSuccess implements EnumIntMessages{
     private static Integer samplePendingBatchStage(String[] fieldsName, Object[] fieldsValue){
         Integer posic = LPArray.valuePosicInArray(fieldsName, TblsEnvMonitData.Sample.INCUBATION_PASSED.getName());
         if (posic==-1) return posic;
-        if ((fieldsValue[posic]==null) || (!Boolean.valueOf(fieldsValue[posic].toString())) ) return 1;
+        if ((fieldsValue[posic]==null) || (Boolean.FALSE.equals(Boolean.valueOf(fieldsValue[posic].toString()))) ) return 1;
 
         posic = LPArray.valuePosicInArray(fieldsName, TblsEnvMonitData.Sample.INCUBATION2_PASSED.getName());
         if (posic==-1) return posic;
-        if ((fieldsValue[posic]==null) || (!Boolean.valueOf(fieldsValue[posic].toString())) ) return 2;
+        if ((fieldsValue[posic]==null) || (Boolean.FALSE.equals(Boolean.valueOf(fieldsValue[posic].toString()))) ) return 2;
         return -1;
     }
     
@@ -563,7 +563,7 @@ public enum IncubatorBatchSuccess implements EnumIntMessages{
 	sqlWhere.addConstraint(TblsEnvMonitData.IncubBatch.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{batchName}, "");
 	Object[] updateDiagnostic=Rdbms.updateRecordFieldsByFilter(TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH,
             EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH, updFieldName), updFieldValue, sqlWhere, null);
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateDiagnostic[0].toString()))
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(updateDiagnostic[0].toString())))
             IncubBatchAudit.incubBatchAuditAdd(DataBatchAuditEvents.BATCH_ASSIGN_INCUBATOR.toString(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), batchName,  
                         LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
         return updateDiagnostic;
@@ -590,7 +590,7 @@ public enum IncubatorBatchSuccess implements EnumIntMessages{
 	sqlWhere.addConstraint(TblsEnvMonitData.IncubBatch.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{batchName}, "");
 	Object[] updateDiagnostic=Rdbms.updateRecordFieldsByFilter(TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH,
             updateFldNames, fieldsValue, sqlWhere, null);
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateDiagnostic[0].toString()))
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(updateDiagnostic[0].toString())))
             IncubBatchAudit.incubBatchAuditAdd(DataBatchAuditEvents.BATCH_UPDATED.toString(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), batchName,
                 LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
         return updateDiagnostic;
@@ -601,7 +601,7 @@ public enum IncubatorBatchSuccess implements EnumIntMessages{
         Object[][] batchInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), 
                 new String[]{TblsEnvMonitData.IncubBatch.NAME.getName()}, new Object[]{batchName}, 
                 new String[]{TblsEnvMonitData.IncubBatch.ACTIVE.getName(), TblsEnvMonitData.IncubBatch.INCUBATION_START.getName()});
-        if (batchInfo[0][0]==null || !Boolean.valueOf(batchInfo[0][0].toString())) 
+        if (batchInfo[0][0]==null || Boolean.FALSE.equals(Boolean.valueOf(batchInfo[0][0].toString()))) 
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.INCUB_BATCH_NOT_ACTIVE_FOR_CHANGES, new Object[]{batchName}); 
         if (batchInfo[0][1]!=null && batchInfo[0][1].toString().length()>0) 
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.INCUB_BATCH_STARTED_CHANGEITSCONTENT, new Object[]{batchName}); 
@@ -614,7 +614,7 @@ public enum IncubatorBatchSuccess implements EnumIntMessages{
         Object[] procedureBusinessRuleEnable = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, ConfigIncubatorBusinessRules.LOCK_WHEN_TEMP_OUT_OF_RANGE.getAreaName(), ConfigIncubatorBusinessRules.LOCK_WHEN_TEMP_OUT_OF_RANGE.getTagName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureBusinessRuleEnable[0].toString()))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "incubationLockingNotEnabled", null);
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), TblsEnvMonitConfig.InstrIncubator.LOCKED.getName())[0].toString())) 
+        if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), TblsEnvMonitConfig.InstrIncubator.LOCKED.getName())[0].toString()))) 
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "lockedFieldNotPresentInIncubatorForProcedure", new Object[]{procInstanceName});
         String[] incubFldNames=new String[]{TblsEnvMonitConfig.InstrIncubator.LOCKED.getName(), TblsEnvMonitConfig.InstrIncubator.LOCKED_REASON.getName()};        
         Object[][] instrInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), 

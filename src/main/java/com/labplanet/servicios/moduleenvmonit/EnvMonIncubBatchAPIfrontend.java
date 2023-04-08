@@ -158,7 +158,7 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(tokenFieldValue[0])) 
                         whereFieldsValueArr[iFields]=tokenFieldValue[1];                                                    
                 } 
-                if (!LPArray.valueInArray(whereFieldsNameArr, TblsEnvMonitData.IncubBatch.ACTIVE.getName())){
+                if (Boolean.FALSE.equals(LPArray.valueInArray(whereFieldsNameArr, TblsEnvMonitData.IncubBatch.ACTIVE.getName()))){
                     whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsEnvMonitData.IncubBatch.ACTIVE.getName());
                     whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, true);
                 }
@@ -214,7 +214,7 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                     ProcedureRequestSession.getInstanceForQueries(null, null, false);
                     instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(currBatch[incubPosic].toString(), 10, tempReadingFldsToRetrieve);
                 }
-                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrIncubatorInfo[0][0].toString())){
+                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrIncubatorInfo[0][0].toString()))){
                     for (int i=0;i<incubatorFldsToRetrieve.length;i++){
                         jObj.put("incubator_info_"+incubatorFldsToRetrieve[i], instrIncubatorInfo[0][i]);                            
                     }
@@ -228,7 +228,7 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                 }                            
                 instrLast10ReadingsjArr = new JSONArray();
                 for (Object[] curLastReading: instrReadings){
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrReadings[0][0].toString())){
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrReadings[0][0].toString()))){
                         JSONObject curLastReadingjObj=LPJson.convertArrayRowToJSONObject(tempReadingFldsToRetrieve, curLastReading);
                         instrLast10ReadingsjArr.add(curLastReadingjObj);
                     }

@@ -246,12 +246,12 @@ public class SavedQueriesAPI extends HttpServlet {
             }
         }
         if ((LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresUserConfirmation[0].toString()))
-                && (!LPFrontEnd.servletUserToVerify(request, token.getUserName(), token.getUsrPw()))) {
+                && (Boolean.FALSE.equals(LPFrontEnd.servletUserToVerify(request, token.getUserName(), token.getUsrPw())))) {
             return;
         }
 
         if ((LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresEsignConfirmation[0].toString()))
-                && (!LPFrontEnd.servletEsignToVerify(request, token.geteSign()))) {
+                && (Boolean.FALSE.equals(LPFrontEnd.servletEsignToVerify(request, token.geteSign())))) {
             return;
         }
 

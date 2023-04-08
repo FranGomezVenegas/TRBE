@@ -143,7 +143,7 @@ public final class DataInventoryRetain {
         UnitsOfMeasurement uom = new UnitsOfMeasurement(new BigDecimal(q.toString()), qUom);
         BigDecimal resultConverted = q;
         if ((newAmountUom.length()>0) && (!newAmountUom.equalsIgnoreCase(qUom)) ) {
-            if ((!qUom.equalsIgnoreCase(newAmountUom)) && (conversionMode == null || conversionMode.equalsIgnoreCase("DISABLED") || ((!conversionMode.contains(qUom)) && !conversionMode.equalsIgnoreCase("ALL")))) 
+            if ((Boolean.FALSE.equals(qUom.equalsIgnoreCase(newAmountUom))) && (conversionMode == null || conversionMode.equalsIgnoreCase("DISABLED") || ((Boolean.FALSE.equals(conversionMode.contains(qUom))) && Boolean.FALSE.equals(conversionMode.equalsIgnoreCase("ALL"))))) 
                 return new InternalMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.CONVERSION_NOT_ALLOWED, new Object[]{conversionMode, newAmountUom, qUom,  id.toString(), procReqSession.getProcedureInstance()});            
             uom.convertValue(newAmountUom);
             if (Boolean.FALSE.equals(uom.getConvertedFine()))

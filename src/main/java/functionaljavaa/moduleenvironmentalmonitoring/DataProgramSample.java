@@ -125,7 +125,7 @@ public class DataProgramSample{
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(DataProgram.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(newProjSample[0].toString()))
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(newProjSample[0].toString())))
             logProgramSamplerSample(samplerTemplateCode, samplerTemplateCodeVersion, fieldName, fieldValue, programName, programLocation, Integer.valueOf(newProjSample[newProjSample.length-1].toString()));
         return newProjSample;
     }

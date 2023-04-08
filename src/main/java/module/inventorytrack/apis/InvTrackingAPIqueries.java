@@ -116,11 +116,11 @@ public class InvTrackingAPIqueries extends HttpServlet {
                             EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInvTrackingData.TablesInvTrackingData.LOT),
                             sW, new String[]{TblsInvTrackingData.Lot.LOT_NAME.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                     JSONArray jArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentsInfo[0][0].toString())) {
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentsInfo[0][0].toString()))) {
                         for (Object[] currInstr : instrumentsInfo) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
                             JSONObject instLockingDetail = instrumentLockingInfo(fieldsToRetrieve, currInstr);
-                            if (!instLockingDetail.isEmpty()) {
+                            if (Boolean.FALSE.equals(instLockingDetail.isEmpty())) {
                                 jObj.put("locking_reason", instLockingDetail);
                             }
                             jArr.add(jObj);
@@ -132,7 +132,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                 case AUDIT_FOR_GIVEN_INVENTORY_LOT:
                     String lotName = LPNulls.replaceNull(argValues[0]).toString();
                     fieldsToRetrieve = getAllFieldNames(TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT);
-                    if (!LPArray.valueInArray(fieldsToRetrieve, TblsInvTrackingDataAudit.Lot.AUDIT_ID.getName())) {
+                    if (Boolean.FALSE.equals(LPArray.valueInArray(fieldsToRetrieve, TblsInvTrackingDataAudit.Lot.AUDIT_ID.getName()))) {
                         fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, TblsInvTrackingDataAudit.Lot.AUDIT_ID.getName());
                     }
                     instrumentsInfo = QueryUtilitiesEnums.getTableData(TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT,
@@ -141,7 +141,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                             new Object[]{lotName, ""},
                             new String[]{TblsInvTrackingDataAudit.Lot.LOT_NAME.getName(), TblsInvTrackingDataAudit.Lot.DATE.getName() + " asc"}, null, false);
                     jArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentsInfo[0][0].toString())) {
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentsInfo[0][0].toString()))) {
                         for (Object[] currInstrAudit : instrumentsInfo) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrAudit);
 
@@ -193,7 +193,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     Object[][] qualifsInProgress = QueryUtilitiesEnums.getTableData(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION,
                             fieldsToRetrieveObj, sW, new String[]{TblsInvTrackingData.LotCertification.CATEGORY.getName(), TblsInvTrackingData.LotCertification.CREATED_ON.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                     jArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(qualifsInProgress[0][0].toString())) {
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(qualifsInProgress[0][0].toString()))) {
                         for (Object[] currInstrEv : qualifsInProgress) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrEv);
                             jArr.add(jObj);
@@ -229,7 +229,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                             tblFieldsToRetrieveObj,
                             wFldNames, wFldValues,
                             new String[]{TblsInvTrackingData.LotCertificationVariableValues.ID.getName(), TblsInvTrackingData.LotCertificationVariableValues.CREATED_ON.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(qualifsInProgress[0][0].toString())) {
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(qualifsInProgress[0][0].toString()))) {
                         for (Object[] currInstrEv : qualifsInProgress) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(tblFieldsToRetrieve, currInstrEv);
                             jArr.add(jObj);
@@ -262,7 +262,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                             EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInvTrackingData.TablesInvTrackingData.LOT),
                             sW, new String[]{TblsInvTrackingData.Lot.RETIRED_ON.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                     jArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(instrDecommissionedClosedLastDays[0][0].toString())) {
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrDecommissionedClosedLastDays[0][0].toString()))) {
                         for (Object[] currIncident : instrDecommissionedClosedLastDays) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
                             jArr.add(jObj);
@@ -297,7 +297,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                             TblsInvTrackingData.ViewsInvTrackingData.LOTS_EXPIRED.getViewFields(),
                             sWhere, new String[]{TblsInvTrackingData.ViewExpiredLots.EXPIRY_REASON.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                     jArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithControlIssues[0][0].toString())) {
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithControlIssues[0][0].toString()))) {
                         for (Object[] currIncident : referenceWithControlIssues) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
                             jArr.add(jObj);
@@ -332,7 +332,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                             TblsInvTrackingData.ViewsInvTrackingData.REFERENCES_STOCK_UNDER_MIN.getViewFields(),
                             sWhere, new String[]{TblsInvTrackingData.ViewReferencesStockUnderMin.CURRENT_STOCK.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                     jArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithStockAvailableForUseUponMin[0][0].toString())) {
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithStockAvailableForUseUponMin[0][0].toString()))) {
                         for (Object[] currIncident : referenceWithStockAvailableForUseUponMin) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
                             jArr.add(jObj);
@@ -362,7 +362,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                             TblsInvTrackingData.ViewsInvTrackingData.REFERENCES_AVAILABLE_FOR_USE_UNDER_MIN.getViewFields(),
                             sWhere, new String[]{TblsInvTrackingData.ViewReferencesAvailableForUseUnderMin.CURRENT_STOCK_AVAILABLE_FOR_USE.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                     jArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithStockAvailableForUseUponMin[0][0].toString())) {
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithStockAvailableForUseUponMin[0][0].toString()))) {
                         for (Object[] currIncident : referenceWithStockAvailableForUseUponMin) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
                             jArr.add(jObj);
@@ -392,7 +392,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                             TblsInvTrackingData.ViewsInvTrackingData.LOTS_EXPIRED.getViewFields(),
                             sWhere, new String[]{TblsInvTrackingData.ViewExpiredLots.EXPIRY_REASON.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                     jArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithControlIssues[0][0].toString())) {
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithControlIssues[0][0].toString()))) {
                         for (Object[] currIncident : referenceWithControlIssues) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
                             jArr.add(jObj);
@@ -410,7 +410,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                             TblsInvTrackingData.ViewsInvTrackingData.REFERENCES_STOCK_UNDER_MIN.getViewFields(),
                             sWhere, new String[]{TblsInvTrackingData.ViewReferencesStockUnderMin.CURRENT_STOCK.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                     jArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithStockAvailableForUseUponMin[0][0].toString())) {
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithStockAvailableForUseUponMin[0][0].toString()))) {
                         for (Object[] currIncident : referenceWithStockAvailableForUseUponMin) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
                             jArr.add(jObj);
@@ -428,7 +428,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                             TblsInvTrackingData.ViewsInvTrackingData.REFERENCES_AVAILABLE_FOR_USE_UNDER_MIN.getViewFields(),
                             sWhere, new String[]{TblsInvTrackingData.ViewReferencesAvailableForUseUnderMin.CURRENT_STOCK_AVAILABLE_FOR_USE.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                     jArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithStockAvailableForUseUponMin[0][0].toString())) {
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithStockAvailableForUseUponMin[0][0].toString()))) {
                         for (Object[] curRow : referenceWithStockAvailableForUseUponMin) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curRow);
                             jArr.add(jObj);
@@ -513,7 +513,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
         if (fldPosic == -1) {
             return jObj;
         }
-        if (!Boolean.TRUE.equals(Boolean.valueOf(LPNulls.replaceNull(currInstr[fldPosic]).toString()))) {
+        if (Boolean.FALSE.equals(Boolean.TRUE.equals(Boolean.valueOf(LPNulls.replaceNull(currInstr[fldPosic]).toString())))) {
             return jObj;
         }
         fldPosic = LPArray.valuePosicInArray(fieldsToRetrieve, TblsInvTrackingData.Lot.LOCKED_REASON.getName());

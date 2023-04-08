@@ -228,7 +228,7 @@ public class TestingAPIActions extends HttpServlet {
                 new Object[]{scriptId},
                 getAllFieldNames(TblsTesting.TablesTesting.SCRIPT_STEPS.getTableFields()));
         JSONArray scriptStepsJArr = new JSONArray();
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptStepsInfo[0][0].toString())) {
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptStepsInfo[0][0].toString()))) {
             for (Object[] curStep : scriptStepsInfo) {
                 scriptStepsJArr.add(LPJson.convertArrayRowToJSONObject(scriptFldToRetrieve, curStep));
             }
@@ -239,7 +239,7 @@ public class TestingAPIActions extends HttpServlet {
                 new Object[]{scriptId},
                 getAllFieldNames(TblsTesting.TablesTesting.SCRIPT_BUS_RULES.getTableFields()));
         JSONArray scriptBusRulesJArr = new JSONArray();
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptBusRulesInfo[0][0].toString())) {
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptBusRulesInfo[0][0].toString()))) {
             for (Object[] curBusRules : scriptBusRulesInfo) {
                 scriptBusRulesJArr.add(LPJson.convertArrayRowToJSONObject(scriptFldToRetrieve, curBusRules));
             }

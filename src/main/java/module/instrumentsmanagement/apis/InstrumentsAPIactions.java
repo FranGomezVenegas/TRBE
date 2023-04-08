@@ -142,7 +142,7 @@ public class InstrumentsAPIactions extends HttpServlet {
         }
         JsonObject jsonObject=(JsonObject) objToJsonObj[1];
         String jsonObjType = jsonObject.get("object_type").getAsString();
-        if (!objectType.toUpperCase().contains(jsonObjType.toUpperCase())){
+        if (Boolean.FALSE.equals(objectType.toUpperCase().contains(jsonObjType.toUpperCase()))){
             this.diagnostic=new Object[]{LPPlatform.LAB_FALSE, "objectType in record and objectType in the JsonObject mismatch"};
             return;
         }

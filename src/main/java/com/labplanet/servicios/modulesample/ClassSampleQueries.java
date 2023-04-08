@@ -658,8 +658,8 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
         if (sampleStageFldValue == null) {
             return null;
         }
-        if (!LPArray.valueInArray(sampleStageFldName, TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT.getName())) {
-            return null; //new Object[][]{{}};
+        if (Boolean.FALSE.equals(LPArray.valueInArray(sampleStageFldName, TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT.getName()))) {
+            return null; 
         }
         String currentStage = sampleStageFldValue[LPArray.valuePosicInArray(sampleStageFldName, TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT.getName())].toString();
         JSONObject jObj = new JSONObject();
@@ -744,7 +744,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                 new String[]{TblsProcedure.ProgramCorrectiveAction.RESULT_ID.getName(), TblsProcedure.ProgramCorrectiveAction.STATUS.getName() + "<>"},
                 new Object[]{resultId, DataProgramCorrectiveAction.ProgramCorrectiveStatus.CLOSED.toString()},
                 SAMPLEANALYSISRESULTLOCKDATA_RETRIEVEDATA_PROGRAMCORRECTIVEACTION);
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(notClosedProgramCorrreciveAction[0][0].toString())) {
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(notClosedProgramCorrreciveAction[0][0].toString()))) {
             String notifMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.STILLOPEN_NOTIFMODE.getAreaName(), DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.STILLOPEN_NOTIFMODE.getTagName());
             switch (notifMode.toLowerCase()) {
                 case "silent":
@@ -807,11 +807,11 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
         Object[] objIds = new Object[]{};
         for (Object[] curRow : analysisResultList) {
             String curTest = TblsData.SampleAnalysisResult.TEST_ID.getName() + separator + curRow[LPArray.valuePosicInArray(headerFlds, TblsData.SampleAnalysisResult.TEST_ID.getName())].toString();
-            if (!LPArray.valueInArray(objIds, curTest)) {
+            if (Boolean.FALSE.equals(LPArray.valueInArray(objIds, curTest))) {
                 objIds = LPArray.addValueToArray1D(objIds, curTest);
             }
             String curResult = TblsData.SampleAnalysisResult.RESULT_ID.getName() + separator + curRow[LPArray.valuePosicInArray(headerFlds, TblsData.SampleAnalysisResult.RESULT_ID.getName())].toString();
-            if (!LPArray.valueInArray(objIds, curResult)) {
+            if (Boolean.FALSE.equals(LPArray.valueInArray(objIds, curResult))) {
                 objIds = LPArray.addValueToArray1D(objIds, curResult);
             }
         }

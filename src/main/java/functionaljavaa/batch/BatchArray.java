@@ -261,7 +261,7 @@ public final class BatchArray extends Batch{
                     "array_num_cols", "array_total_positions", "array_total_objects",
                     "array_lines_name", "array_columns_name"}
         );
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsByFilter[0][0].toString())){                    
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsByFilter[0][0].toString()))){
             try {
                 SerialArray rowNames = (SerialArray) recordFieldsByFilter[0][8];
                 Object[] rowNamesArr = (Object[]) rowNames.getArray();

@@ -85,7 +85,7 @@ public class SavedQueriesAPIfrontend extends HttpServlet {
                     new Object[]{0}, 
                     new String[]{TblsData.SavedQueries.ID.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                 JSONArray savedQryJArr = new JSONArray();
-                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(savedQueriesInfo[0][0].toString())){
+                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(savedQueriesInfo[0][0].toString()))){
                     for (Object[] currSavedQry: savedQueriesInfo){
                         
                         JSONObject savedQryObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currSavedQry);

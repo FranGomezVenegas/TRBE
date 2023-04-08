@@ -231,7 +231,7 @@ public class ConfigProgramCalendar {
                   new String[]{TblsEnvMonitConfig.ProgramCalendarDate.PROGRAM_CONFIG_ID.getName(), TblsEnvMonitConfig.ProgramCalendarDate.CALENDAR_ID.getName(), TblsEnvMonitConfig.ProgramCalendarDate.DATE.getName(), TblsEnvMonitConfig.ProgramCalendarDate.IS_HOLIDAYS.getName()},
                   new Object[]{pName, programCalendarId, calDate, false}, 
                   new String[]{TblsEnvMonitConfig.ProgramCalendarDate.CALENDAR_ID.getName(), TblsEnvMonitConfig.ProgramCalendarDate.PROGRAM_CONFIG_ID.getName(), TblsEnvMonitConfig.ProgramCalendarDate.CALENDAR_ID.getName(), TblsEnvMonitConfig.ProgramCalendarDate.RECURSIVE_ID.getName(), TblsEnvMonitConfig.ProgramCalendarDate.DATE.getName(), TblsEnvMonitConfig.ProgramCalendarDate.IS_HOLIDAYS.getName()});
-          if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(itemsSameDay[0][0].toString())){
+          if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(itemsSameDay[0][0].toString()))){
               for (Object[] itemsSameDay1 : itemsSameDay) {
                   Long itemId = (Long) itemsSameDay1[0];
                     SqlWhere sqlWhere = new SqlWhere();

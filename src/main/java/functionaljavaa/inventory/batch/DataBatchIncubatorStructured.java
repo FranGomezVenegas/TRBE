@@ -148,7 +148,7 @@ public final class DataBatchIncubatorStructured {
 	sqlWhere.addConstraint(TblsEnvMonitData.IncubBatch.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{batchName}, "");
 	Object[] updateBatchContentDiagn=Rdbms.updateRecordFieldsByFilter(TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH,
 		EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH, updFieldName), updFieldValue, sqlWhere, null);        
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateBatchContentDiagn[0].toString())) {
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(updateBatchContentDiagn[0].toString()))) {
             if (byMovement!=null && !byMovement) 
                 IncubBatchAudit.incubBatchAuditAdd(DataBatchIncubator.DataBatchAuditEvents.BATCH_SAMPLE_ADDED.toString(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), batchName, LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
             else
@@ -171,7 +171,7 @@ public final class DataBatchIncubatorStructured {
 	sqlWhere.addConstraint(TblsEnvMonitData.Sample.SAMPLE_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sampleId}, "");
 	Object[] updateSampleInfo=Rdbms.updateRecordFieldsByFilter(TblsEnvMonitData.TablesEnvMonitData.SAMPLE,
 		EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.SAMPLE, new String[]{batchFldName}), new Object[]{batchName}, sqlWhere, null);        
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSampleInfo[0].toString())) {
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSampleInfo[0].toString()))) {
             SampleAudit smpAudit = new SampleAudit();       
             if (byMovement!=null && !byMovement) 
                 smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.BATCH_SAMPLE_ADDED, TblsData.TablesData.SAMPLE.getTableName(), sampleId, sampleId, null, null, updFieldName, updFieldValue);
@@ -279,7 +279,7 @@ public final class DataBatchIncubatorStructured {
 	Object[] updateSampleInfo=Rdbms.updateRecordFieldsByFilter(TblsEnvMonitData.TablesEnvMonitData.SAMPLE,
 		EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.SAMPLE, new String[]{batchFldName}), new Object[]{null}, sqlWhere, null);
 
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSampleInfo[0].toString())) {
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSampleInfo[0].toString()))) {
             SampleAudit smpAudit = new SampleAudit();       
             if (byMovement!=null && !byMovement) 
                 smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.BATCH_SAMPLE_REMOVED, TblsData.TablesData.SAMPLE.getTableName(), 

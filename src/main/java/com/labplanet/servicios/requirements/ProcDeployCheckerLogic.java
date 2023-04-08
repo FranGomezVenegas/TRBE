@@ -34,16 +34,16 @@ public class ProcDeployCheckerLogic {
         if (anyMismatch==null)
             mainObj.put("status", "under development");
         else{
-            if (!anyMismatch){
+            if (Boolean.FALSE.equals(anyMismatch)){
                 mainObj.put("pass", "yes");
                 mainObj.put("pass_icon", "/images/Pass.jpg");
             }else{
                 mainObj.put("pass", "no");
                 mainObj.put("pass_icon", "/images/NotPass.png");
             }
-            if (!detailsObj.isEmpty())
+            if (Boolean.FALSE.equals(detailsObj.isEmpty()))
                 mainObj.put("detail", detailsObj);
-            if (!mismatchesObj.isEmpty())
+            if (Boolean.FALSE.equals(mismatchesObj.isEmpty()))
                 mainObj.put("mismatches_detail", mismatchesObj);
         }
         return mainObj;        
@@ -62,7 +62,7 @@ public class ProcDeployCheckerLogic {
         dbSchemasList=LPArray.getUniquesArray(dbSchemasList);
         HashMap<String, Object[]> evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(dbSchemasList, schemaNames);
         String evaluation= evaluateValuesAreInArray.keySet().iterator().next();        
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation)){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation))){
             anyMismatch=true;
             Object[] missingObjects = evaluateValuesAreInArray.get(evaluation);
             mismatchesObj.put("missing_schemas", LPJson.convertToJSONArray(missingObjects));
@@ -77,7 +77,7 @@ public class ProcDeployCheckerLogic {
         dbSchemasTablesList=LPArray.getUniquesArray(dbSchemasTablesList);
         evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(dbSchemasTablesList, moduleBaseTablesArr);
         evaluation= evaluateValuesAreInArray.keySet().iterator().next();        
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation)){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation))){
             anyMismatch=true;
             Object[] missingObjects = evaluateValuesAreInArray.get(evaluation);
             mismatchesObj.put("missing_tables", LPJson.convertToJSONArray(missingObjects));
@@ -162,7 +162,7 @@ public class ProcDeployCheckerLogic {
             }
             HashMap<String, Object[]> evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(sourceInfo, destInfo);
             String evaluation= evaluateValuesAreInArray.keySet().iterator().next();        
-            if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation)){
+            if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation))){
                 anyMismatch=true;
                 Object[] missingObjects = evaluateValuesAreInArray.get(evaluation);
                 mismatchesObj.put("missing_user-role pairs", LPJson.convertToJSONArray(missingObjects));
@@ -221,7 +221,7 @@ public class ProcDeployCheckerLogic {
             }
             HashMap<String, Object[]> evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(sourceInfo, destInfo);
             String evaluation= evaluateValuesAreInArray.keySet().iterator().next();        
-            if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation)){
+            if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation))){
                 anyMismatch=true;
                 Object[] missingObjects = evaluateValuesAreInArray.get(evaluation);
                 mismatchesObj.put("missing_user-role pairs", LPJson.convertToJSONArray(missingObjects));
@@ -280,7 +280,7 @@ public class ProcDeployCheckerLogic {
             }
             HashMap<String, Object[]> evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(destInfo, sourceInfo);
             String evaluation= evaluateValuesAreInArray.keySet().iterator().next();        
-            if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation)){
+            if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation))){
                 anyMismatch=true;
                 Object[] missingObjects = evaluateValuesAreInArray.get(evaluation);
                 mismatchesObj.put("missing_pairs", LPJson.convertToJSONArray(missingObjects));
@@ -301,7 +301,7 @@ public class ProcDeployCheckerLogic {
         Object[][] procUserAndRolesRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableName(), 
                 new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(),TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procedure, procVersion, procInstanceName}, 
                 procUserRolesSourceFlds);
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserAndRolesRecordsSource[0][0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserAndRolesRecordsSource[0][0].toString()))){
             for (Object[] curRow: procUserAndRolesRecordsSource)
                 procUserRolesSource.add(LPJson.convertArrayRowToJSONObject(procUserRolesSourceFlds, curRow));
             detailsObj.put(GlobalAPIsParams.LBL_DATA_IN_DEFINITION_TABLE+TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableName(), procUserRolesSource);
@@ -310,7 +310,7 @@ public class ProcDeployCheckerLogic {
         Object[][] personProfileRecordsDestination = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, TblsCnfg.TablesConfig.SOP_META_DATA.getRepositoryName()), TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
                new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}, 
                personProfilesDestFlds);
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(personProfileRecordsDestination[0][0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(personProfileRecordsDestination[0][0].toString()))){
             for (Object[] curRow: personProfileRecordsDestination)
                 personProfilesDest.add(LPJson.convertArrayRowToJSONObject(personProfilesDestFlds, curRow));
             detailsObj.put(GlobalAPIsParams.LBL_DATA_DEPLOYED_TABLE+TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), personProfilesDest);
@@ -336,7 +336,7 @@ public class ProcDeployCheckerLogic {
             }
             HashMap<String, Object[]> evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(destInfo, sourceInfo);
             String evaluation= evaluateValuesAreInArray.keySet().iterator().next();        
-            if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation)){
+            if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation))){
                 anyMismatch=true;
                 Object[] missingObjects = evaluateValuesAreInArray.get(evaluation);
                 mismatchesObj.put("missing_pairs", LPJson.convertToJSONArray(missingObjects));
@@ -359,7 +359,7 @@ public class ProcDeployCheckerLogic {
         Object[][] procUserAndRolesRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableName(), 
                 new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(),TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procedure, procVersion, procInstanceName}, 
                 procUserRolesSourceFlds);
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserAndRolesRecordsSource[0][0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserAndRolesRecordsSource[0][0].toString()))){
             for (Object[] curRow: procUserAndRolesRecordsSource)
                 procUserRolesSource.add(LPJson.convertArrayRowToJSONObject(procUserRolesSourceFlds, curRow));
             detailsObj.put(GlobalAPIsParams.LBL_DATA_IN_DEFINITION_TABLE+TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableName(), procUserRolesSource);
@@ -368,7 +368,7 @@ public class ProcDeployCheckerLogic {
         Object[][] personProfileRecordsDestination = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, TblsCnfg.TablesConfig.SOP_META_DATA.getRepositoryName()), TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
                new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}, 
                personProfilesDestFlds);
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(personProfileRecordsDestination[0][0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(personProfileRecordsDestination[0][0].toString()))){
             for (Object[] curRow: personProfileRecordsDestination)
                 personProfilesDest.add(LPJson.convertArrayRowToJSONObject(personProfilesDestFlds, curRow));
             detailsObj.put(GlobalAPIsParams.LBL_DATA_DEPLOYED_TABLE+TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), personProfilesDest);
@@ -394,7 +394,7 @@ public class ProcDeployCheckerLogic {
             }
             HashMap<String, Object[]> evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(destInfo, sourceInfo);
             String evaluation= evaluateValuesAreInArray.keySet().iterator().next();        
-            if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation)){
+            if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation))){
                 anyMismatch=true;
                 Object[] missingObjects = evaluateValuesAreInArray.get(evaluation);
                 mismatchesObj.put("missing_pairs", LPJson.convertToJSONArray(missingObjects));
@@ -414,7 +414,7 @@ public class ProcDeployCheckerLogic {
         Object[][] procUserAndRolesRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableName(), 
                 new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(),TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procedure, procVersion, procInstanceName}, 
                 procUserRolesSourceFlds);
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserAndRolesRecordsSource[0][0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserAndRolesRecordsSource[0][0].toString()))){
             for (Object[] curRow: procUserAndRolesRecordsSource)
                 procUserRolesSource.add(LPJson.convertArrayRowToJSONObject(procUserRolesSourceFlds, curRow));
             detailsObj.put(GlobalAPIsParams.LBL_DATA_IN_DEFINITION_TABLE+TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableName(), procUserRolesSource);
@@ -431,7 +431,7 @@ public class ProcDeployCheckerLogic {
         dbSchemasTablesList=LPArray.getUniquesArray(dbSchemasTablesList);
         HashMap<String, Object[]> evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(dbSchemasTablesList, moduleBaseTablesArr);
         String evaluation = evaluateValuesAreInArray.keySet().iterator().next();        
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation)){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation))){
             anyMismatch=true;
             Object[] missingObjects = evaluateValuesAreInArray.get(evaluation);
             mismatchesObj.put("missing_tables", LPJson.convertToJSONArray(missingObjects));

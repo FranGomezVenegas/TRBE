@@ -193,7 +193,7 @@ public class SqlStatement {
             String fn = whereFieldNames[iwhereFieldNames];
             if (fn==null || fn.length()==0) break;
             if (iwhereFieldNames > 0) {
-                if (!fn.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase()))
+                if (Boolean.FALSE.equals(fn.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase())))
 //                    queryWhere.append(" or ");
 //                else
                     queryWhere.append(" and ");

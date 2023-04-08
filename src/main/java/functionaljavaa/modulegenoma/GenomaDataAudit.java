@@ -71,7 +71,7 @@ public class GenomaDataAudit {
         Object[] fieldValues = new Object[]{LPDate.getCurrentTimeStamp()};
         
         Object[][] procedureInfo = Requirement.getProcedureByProcInstanceName(procInstanceName);
-        if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString()))){
+        if (Boolean.FALSE.equals((LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString())))){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.PROCEDURE.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][0]);
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Project.PROCEDURE_VERSION.getName());
@@ -151,7 +151,7 @@ public class GenomaDataAudit {
         Object[] fieldValues = new Object[]{LPDate.getCurrentTimeStamp()};
         
         Object[][] procedureInfo = Requirement.getProcedureByProcInstanceName(procInstanceName);
-        if (!(LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString()))){
+        if (Boolean.FALSE.equals((LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureInfo[0][0].toString())))){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.PROCEDURE.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][0]);
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsGenomaDataAudit.Study.PROCEDURE_VERSION.getName());

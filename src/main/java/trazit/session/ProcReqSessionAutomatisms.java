@@ -34,9 +34,7 @@ public class ProcReqSessionAutomatisms {
             Object[][] expiredRecordsArr = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, curEntityInfo[0]), curEntityInfo[1], 
                     new String[]{TblsData.CertifUserAnalysisMethod.LIGHT.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName()+WHERECLAUSE_TYPES.LESS_THAN.getSqlClause()}, 
                     new Object[]{CertifGlobalVariables.CertifLight.GREEN.toString(), LPDate.getCurrentTimeStamp()}, new String[]{curEntityInfo[2]}); 
-//            if (curEntityInfo[1].toString().equalsIgnoreCase(TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName())) 
-//                return expiredRecordsArr.length;
-            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(expiredRecordsArr[0][0].toString())){
+            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(expiredRecordsArr[0][0].toString()))){
                 String whereFldValue="";
                 for (Object[] curObj: expiredRecordsArr){
                     if (whereFldValue.length()>0)whereFldValue=whereFldValue+"|";

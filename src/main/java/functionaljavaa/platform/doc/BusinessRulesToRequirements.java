@@ -107,7 +107,7 @@ public class BusinessRulesToRequirements {
                             }
                         }
                     }
-                    if (!enumsIncomplete.isEmpty()){
+                    if (Boolean.FALSE.equals(enumsIncomplete.isEmpty())){
                         LPFrontEnd.servletReturnSuccess(request, response, enumsIncomplete);
                         return;
                     }else{
@@ -152,7 +152,7 @@ private static void declareBusinessRuleInDatabaseOld(String apiName, String area
             new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.BusinessRulesDeclaration.FILE_AREA.getName(),  TblsTrazitDocTrazit.BusinessRulesDeclaration.PROPERTY_NAME.getName()},
             new Object[]{apiName, areaName, tagName}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.ID.getName()});
     Object[] docInfoForBusinessRule = getDocInfoForBusinessRules(apiName, tagName);
-    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(reqEndpointInfo[0][0].toString())){
+    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(reqEndpointInfo[0][0].toString()))){
 /*        String newArgumentsArray=fieldValues[LPArray.valuePosicInArray(fieldNames, TblsTrazitDocTrazit.BusinessRulesDeclaration.ARGUMENTS_ARRAY.getName())].toString();
         if (!newArgumentsArray.equalsIgnoreCase(reqEndpointInfo[0][1].toString())){
             Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.BusinessRulesDeclaration.TBL.getName(),
@@ -212,7 +212,7 @@ private static void declareBusinessRuleInDatabaseWithValuesList(String apiName, 
             updFldValue=LPArray.addValueToArray1D(updFldValue, new Object[]{String.valueOf(separatr)});        
         }
 
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(reqEndpointInfo[0][0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(reqEndpointInfo[0][0].toString()))){
     /*        String newArgumentsArray=fieldValues[LPArray.valuePosicInArray(fieldNames, TblsTrazitDocTrazit.BusinessRulesDeclaration.ARGUMENTS_ARRAY.getName())].toString();
             if (!newArgumentsArray.equalsIgnoreCase(reqEndpointInfo[0][1].toString())){
                 Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.BusinessRulesDeclaration.TBL.getName(),

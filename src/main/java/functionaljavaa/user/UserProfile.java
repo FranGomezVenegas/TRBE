@@ -101,7 +101,7 @@ public class UserProfile {
                 String currProcPrefix = procInstanceName1.toString();
                 Object[] currProcUserProfiles =  getProcedureUserProfileFieldValues(currProcPrefix, personName);
                 for (Object fn: currProcUserProfiles ){
-                    if (!LPArray.valueInArray(totalProcUserProfiles, fn))
+                    if (Boolean.FALSE.equals(LPArray.valueInArray(totalProcUserProfiles, fn)))
                         totalProcUserProfiles = LPArray.addValueToArray1D(totalProcUserProfiles, fn);
                 }
             }

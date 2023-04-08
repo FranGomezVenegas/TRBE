@@ -322,7 +322,7 @@ public class SopUserAPIqueries extends HttpServlet {
             String[] fieldsToRetrieve = new String[]{FIELDNAME_SOP_ID, FIELDNAME_SOP_NAME};
 
             String sopFieldsToRetrieve = null;
-            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
+            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString()))) {
                 sopFieldsToRetrieve = argValues[0].toString();
             }
 
@@ -404,7 +404,7 @@ public class SopUserAPIqueries extends HttpServlet {
             String[] fieldsToRetrieve = new String[]{FIELDNAME_SOP_ID, FIELDNAME_SOP_NAME};
 
             String sopFieldsToRetrieve = null;
-            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
+            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString()))) {
                 sopFieldsToRetrieve = argValues[0].toString();
             }
 
@@ -557,7 +557,7 @@ public class SopUserAPIqueries extends HttpServlet {
             }
             String[] fieldsToRetrieve = new String[]{FIELDNAME_SOP_ID, FIELDNAME_SOP_NAME};
             String sopFieldsToRetrieve = argValues[0].toString();
-            if (sopFieldsToRetrieve != null && sopFieldsToRetrieve.length() > 0 && !sopFieldsToRetrieve.toUpperCase().contains("LABPLANET_FALSE")) {
+            if (sopFieldsToRetrieve != null && sopFieldsToRetrieve.length() > 0 && Boolean.FALSE.equals(sopFieldsToRetrieve.toUpperCase().contains("LABPLANET_FALSE"))) {
                 for (String fv : EnumIntViewFields.getAllFieldNames(TblsData.ViewUserAndMetaDataSopView.values())) {
                     fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, fv);
                 }
@@ -574,7 +574,7 @@ public class SopUserAPIqueries extends HttpServlet {
                 JSONArray mySops = new JSONArray();
                 JSONObject mySopsList = new JSONObject();
                 if ((procSops.length > 0)
-                        && (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procSops[0][0].toString()))) {
+                        && (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procSops[0][0].toString())))) {
                     for (Object[] procSop : procSops) {
                         JSONObject sop = new JSONObject();
                         sop = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, procSop);
@@ -629,7 +629,7 @@ public class SopUserAPIqueries extends HttpServlet {
                     return new JSONArray();
                 }
                 if ((userProcSops.length > 0)
-                        && (!LPPlatform.LAB_FALSE.equalsIgnoreCase(userProcSops[0][0].toString()))) {
+                        && (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(userProcSops[0][0].toString())))) {
                     numPendingSOPs = numPendingSOPs + userProcSops.length;
                 }
             }

@@ -129,7 +129,7 @@ public class DataInspectionLot {
         lotFieldName = LPArray.addValueToArray1D(lotFieldName, TblsInspLotRMData.Lot.ANALYSIS_STATUS.getName());
         lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, lotStatusFirst);
         InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(lotFieldName, lotFieldValue);
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))
+        if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic())))
             return new InternalMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
         // spec is not mandatory but when any of the fields involved is added to the parameters 
         //  then it turns mandatory all the fields required for linking this entity.
@@ -166,7 +166,7 @@ public class DataInspectionLot {
         for (Integer inumLines=0;inumLines<mandatoryFields.length;inumLines++){
             String currField = mandatoryFields[inumLines];
             boolean contains = Arrays.asList(lotFieldName).contains(currField.toLowerCase());
-            if (!contains){
+            if (Boolean.FALSE.equals(contains)){
                 if (mandatoryFieldsMissingBuilder.length()>0){mandatoryFieldsMissingBuilder.append(",");}
                 
                 mandatoryFieldsMissingBuilder.append(currField);
@@ -271,7 +271,7 @@ public class DataInspectionLot {
             lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, lotName);                         
             
             RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInspLotRMData.TablesInspLotRMData.LOT, lotFieldName, lotFieldValue);
-            if (!insertRecordInTable.getRunSuccess()){
+            if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess())){
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, diagnoses[diagnoses.length-2]);
                 return new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.ERROR_INSERTING_INSPLOT_RECORD, errorDetailVariables);
             }                                
@@ -439,7 +439,7 @@ public class DataInspectionLot {
             String lotBulkQuantityUOM = lotBulkInfo[0][1].toString();
             UnitsOfMeasurement uom=new UnitsOfMeasurement(BigDecimal.valueOf(lotBulkQuantity), lotBulkQuantityUOM);
             uom.convertValue(lotQuantityUOM);
-            if (!uom.getConvertedFine()) 
+            if (Boolean.FALSE.equals(uom.getConvertedFine()))
                 return new InternalMessage(LPPlatform.LAB_FALSE, 
                     InventoryGlobalVariables.DataInvRetErrorTrapping.CONVERTER_FALSE, new Object[]{bulkId.toString(), uom.getConversionErrorDetail()[3].toString(), GlobalVariables.Schemas.DATA.getName()});
             BigDecimal resultConverted = uom.getConvertedQuantity();
@@ -450,7 +450,7 @@ public class DataInspectionLot {
             Object[] updFieldValue=new Object[]{newLotQuantity};
             RdbmsObject updateRecordFieldsByFilter = Rdbms.updateTableRecordFieldsByFilter(TblsInspLotRMData.TablesInspLotRMData.LOT, 
                     updFieldNameObj, updFieldValue, sW, null);
-            if (!updateRecordFieldsByFilter.getRunSuccess())
+            if (Boolean.FALSE.equals(updateRecordFieldsByFilter.getRunSuccess()))
                 return new InternalMessage(LPPlatform.LAB_FALSE, updateRecordFieldsByFilter.getErrorMessageCode(), updateRecordFieldsByFilter.getErrorMessageVariables()); 
             LotAudit lotAudit = new LotAudit();            
             lotAudit.lotAuditAdd(InspectionLotRMAuditEvents.LOT_QUANTITY_REDUCED_BY_BULK_REJECTION, 
@@ -471,7 +471,7 @@ public class DataInspectionLot {
         Object[] updFieldValue=new Object[]{true, instanceForActions.getToken().getPersonName(), LPDate.getCurrentTimeStamp(), clType.toString()};
         RdbmsObject updateRecordFieldsByFilter = Rdbms.updateTableRecordFieldsByFilter(TblsInspLotRMData.TablesInspLotRMData.LOT, 
                 updFieldNameObj, updFieldValue, sW, null);
-        if (!updateRecordFieldsByFilter.getRunSuccess())
+        if (Boolean.FALSE.equals(updateRecordFieldsByFilter.getRunSuccess()))
             return new InternalMessage(LPPlatform.LAB_FALSE, updateRecordFieldsByFilter.getErrorMessageCode(), updateRecordFieldsByFilter.getErrorMessageVariables()); 
         LotAudit lotAudit = new LotAudit();            
         lotAudit.lotAuditAdd(InspectionLotRMAuditEvents.LOT_QUANTITY_REDUCED_BY_BULK_REJECTION, 

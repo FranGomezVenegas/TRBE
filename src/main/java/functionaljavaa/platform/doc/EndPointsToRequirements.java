@@ -127,7 +127,7 @@ public final class EndPointsToRequirements {
                     }
                     totalEndpointsVisitedInjection++;
                 }
-                if (!enumsIncomplete.isEmpty()) {
+                if (Boolean.FALSE.equals(enumsIncomplete.isEmpty())) {
                     LPFrontEnd.servletReturnSuccess(request, response, enumsIncomplete);
                     return;
                 } else {
@@ -154,7 +154,7 @@ public final class EndPointsToRequirements {
             summaryDiagnoses = "WITH ERRORS";
         }
         JSONArray endpointsInDatabaseNoLongerInUse = endpointsInDatabaseNoLongerInUse(endpointsFound);
-        if (!endpointsInDatabaseNoLongerInUse.isEmpty()) {
+        if (Boolean.FALSE.equals(endpointsInDatabaseNoLongerInUse.isEmpty())) {
             summaryDiagnoses = summaryDiagnoses + " There are endpoints in db no longer in use";
         }
 
@@ -169,7 +169,7 @@ public final class EndPointsToRequirements {
         jMainObj.put("06_found_total", endpointsFound.size());
         jMainObj.put("07_not_found", endpointsNotFound);
         jMainObj.put("07_not_found_total", endpointsNotFound.size());
-        if (!endpointsInDatabaseNoLongerInUse.isEmpty()) {
+        if (Boolean.FALSE.equals(endpointsInDatabaseNoLongerInUse.isEmpty())) {
             jMainObj.put("08_Endpoints_in_db_no_longer_in_use", endpointsInDatabaseNoLongerInUse);
         }
 
@@ -229,10 +229,10 @@ public final class EndPointsToRequirements {
     public void declareInDatabase(String apiName, String endpointName, String[] fieldNames, Object[] fieldValues, JsonArray outputObjectTypes, Integer numEndpointsInApi, Integer numEndpointArguments, String apiUrl) {
         try {
             Object[] reqEndpointInfo = existsEndPointInDatabase(apiName, endpointName);
-            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(reqEndpointInfo[0].toString())) {
+            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(reqEndpointInfo[0].toString()))) {
                 String newArgumentsArray = fieldValues[LPArray.valuePosicInArray(fieldNames, EndpointsDeclaration.ARGUMENTS_ARRAY.getName())].toString();
 
-                if (!newArgumentsArray.equalsIgnoreCase(reqEndpointInfo[1].toString())) {
+                if (Boolean.FALSE.equals(newArgumentsArray.equalsIgnoreCase(reqEndpointInfo[1].toString()))) {
                     SqlWhere sqlWhere = new SqlWhere();
                     sqlWhere.addConstraint(TblsTrazitDocTrazit.EndpointsDeclaration.ID,
                             SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{reqEndpointInfo[0]}, "");
@@ -241,7 +241,7 @@ public final class EndPointsToRequirements {
                     fldNames = LPArray.addValueToArray1D(fldNames, EndpointsDeclaration.OUTPUT_OBJECT_TYPES.getName());
                     if (outputObjectTypes == null && "ACTION".equalsIgnoreCase(apiName)) {
                         fldValues = LPArray.addValueToArray1D(fldValues, "TBD-To be defined");
-                    } else if (outputObjectTypes == null && !"ACTION".equalsIgnoreCase(apiName)) {
+                    } else if (outputObjectTypes == null && Boolean.FALSE.equals("ACTION".equalsIgnoreCase(apiName)) ) {
                         fldValues = LPArray.addValueToArray1D(fldValues, "Not Applies for queries");
                     } else {
                         fldValues = LPArray.addValueToArray1D(fldValues, outputObjectTypes.toString());
@@ -257,7 +257,7 @@ public final class EndPointsToRequirements {
                     fldNames = LPArray.addValueToArray1D(fldNames, EndpointsDeclaration.OUTPUT_OBJECT_TYPES.getName());
                     if (outputObjectTypes == null && "ACTION".equalsIgnoreCase(apiName)) {
                         fldValues = LPArray.addValueToArray1D(fldValues, "TBD-To be defined");
-                    } else if (outputObjectTypes == null && !"ACTION".equalsIgnoreCase(apiName)) {
+                    } else if (outputObjectTypes == null && Boolean.FALSE.equals("ACTION".equalsIgnoreCase(apiName)) ){
                         fldValues = LPArray.addValueToArray1D(fldValues, "Not Applies for queries");
                     } else {
                         fldValues = LPArray.addValueToArray1D(fldValues, outputObjectTypes.toString());
@@ -360,13 +360,10 @@ public final class EndPointsToRequirements {
                 parm.createPropertiesFile(propFileName, filePrefix + "_en");
                 errorTrapFileEn = ResourceBundle.getBundle("parameter.LabPLANET." + filePrefixEn);
             }
-            Object[] data = new Object[2];
-            String[] fldsToRetrieve = new String[]{};
-            String[] fldsValuesToRetrieve = new String[]{};
-            if (!errorTrapFileEn.containsKey(entryName)) {
+            if (Boolean.FALSE.equals(errorTrapFileEn.containsKey(entryName))) {
                 parm.addTagInPropertiesFile(propFileName, filePrefixEn, entryName, LPNulls.replaceNull("X"));
             }
-            if (!errorTrapFileEs.containsKey(entryName)) {
+            if (Boolean.FALSE.equals(errorTrapFileEs.containsKey(entryName))) {
                 parm.addTagInPropertiesFile(propFileName, filePrefixEs, entryName, LPNulls.replaceNull("X"));
             }
         } catch (Exception e) {

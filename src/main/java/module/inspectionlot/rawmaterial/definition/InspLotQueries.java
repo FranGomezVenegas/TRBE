@@ -103,7 +103,7 @@ public final class InspLotQueries {
         try{
             String[] whereFldName=new String[]{TblsInspLotRMData.Sample.LOT_NAME.getName()};
             Object[] whereFldValue=new Object[]{lotName};
-            if ((includeAnalysis==null || includeAnalysis || includeAnalysisResults==null || includeAnalysisResults) && filterFieldsToRetrieve.length()>0 && !filterFieldsToRetrieve.contains(TblsInspLotRMData.Lot.MATERIAL_NAME.getName()))
+            if ((includeAnalysis==null || includeAnalysis || includeAnalysisResults==null || includeAnalysisResults) && filterFieldsToRetrieve.length()>0 && Boolean.FALSE.equals(filterFieldsToRetrieve.contains(TblsInspLotRMData.Lot.MATERIAL_NAME.getName())))
                 filterFieldsToRetrieve=filterFieldsToRetrieve + "|"+TblsInspLotRMData.Sample.SAMPLE_ID.getName();
 
             Object[][] materialInfo=getTableData(GlobalVariables.Schemas.DATA.getName(), TblsInspLotRMData.TablesInspLotRMData.SAMPLE.getTableName(), 

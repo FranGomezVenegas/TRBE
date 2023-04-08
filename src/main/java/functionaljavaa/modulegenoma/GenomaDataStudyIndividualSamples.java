@@ -54,7 +54,7 @@ public InternalMessage createStudyIndividualSample(GenomaStudyAPI.GenomaStudyAPI
         mandatoryFields = labIntChecker.getTableMandatoryFields(TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName(), actionName);
         if (Boolean.FALSE.equals(devMode)){
             InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldsName, fieldsValue);
-            if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))
+            if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic())))
                 return fieldNameValueArrayChecker;
         }    
         if (Boolean.FALSE.equals(devMode)){        
@@ -62,7 +62,7 @@ public InternalMessage createStudyIndividualSample(GenomaStudyAPI.GenomaStudyAPI
             for (Integer inumLines=0;inumLines<mandatoryFields.length;inumLines++){
                 String currField = mandatoryFields[inumLines];
                 boolean contains = Arrays.asList(fieldsName).contains(currField.toLowerCase());
-                if (!contains){
+                if (Boolean.FALSE.equals(contains)){
                     if (mandatoryFieldsMissingBuilder.length()>0){mandatoryFieldsMissingBuilder.append(",");}
 
                     mandatoryFieldsMissingBuilder.append(currField);

@@ -212,7 +212,7 @@ public class DataSampleIncubation {
         Object[] incubTempReadingRequiredArr = LPPlatform.isProcedureBusinessRuleDisable(procInstanceName, DataSampleIncubationBusinessRules.SAMPLE_INCUB_TEMP_READING_BUSRULE.getAreaName(), DataSampleIncubationBusinessRules.SAMPLE_INCUB_TEMP_READING_BUSRULE.getTagName());
         String sampleIncubationMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleIncubationBusinessRules.SAMPLE_INCUBATION_MODE.getAreaName(), DataSampleIncubationBusinessRules.SAMPLE_INCUBATION_MODE.getTagName());
         if (sampleIncubationMode.length()==0) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "SampleIncubatorModeBusinessRuleNotDefined", new Object[]{procInstanceName});
-        if (!SampleIncubationModes.contains(sampleIncubationMode)) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "SampleIncubatorModeValueNotRrecognized", new Object[]{sampleIncubationMode});        
+        if (Boolean.FALSE.equals(SampleIncubationModes.contains(sampleIncubationMode))) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "SampleIncubatorModeValueNotRrecognized", new Object[]{sampleIncubationMode});        
         
         String[] requiredFields=new String[0];
         Object[] requiredFieldsValue=new Object[0];
@@ -223,7 +223,7 @@ public class DataSampleIncubation {
         else
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATION_OBJECT_NOTRECOGNIZED, new Object[]{sampleIncubationMode});
         
-        if (!SampleIncubationMoment.contains(moment))
+        if (Boolean.FALSE.equals(SampleIncubationMoment.contains(moment)))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATION_STAGE_NOTRECOGNIZED, new Object[]{moment});        
         if (sampleIncubationMode.contains(SampleIncubationLevel.DATE.toString())){
             if (incubationStage == 2) {
@@ -259,7 +259,7 @@ public class DataSampleIncubation {
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleIncubationErrorTrapping.INCUBATOR_NOT_ASSIGNED, new Object[]{incubName, procInstanceName});
             Integer tempReadingEvId=null;
             
-            if (tempReading==null && !LPPlatform.LAB_TRUE.equalsIgnoreCase(incubTempReadingRequiredArr[0].toString())){
+            if (tempReading==null && Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(incubTempReadingRequiredArr[0].toString())) ){
                 Object[][] incubLastTempReading=DataIncubatorNoteBook.getLastTemperatureReadingNoMask(incubName, 1);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubLastTempReading[0][0].toString())) return LPArray.array2dTo1d(incubLastTempReading);
                 tempReadingEvId= Integer.valueOf(incubLastTempReading[0][0].toString());

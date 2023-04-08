@@ -500,7 +500,7 @@ out.println(Rdbms.dbViewExists("em-demo-a", "data", "pr_scheduled_locations")[0]
 String procInstanceName="em-demo-a";
     Object[] dbSchemaAndTestingSchemaTablesAndFieldsIsMirror = Rdbms.dbSchemaAndTestingSchemaTablesAndFieldsIsMirror(procInstanceName, GlobalVariables.Schemas.DATA.getName(), GlobalVariables.Schemas.DATA_TESTING.getName());
     Object[][] mismatches= (Object[][]) dbSchemaAndTestingSchemaTablesAndFieldsIsMirror[0];
-    if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(mismatches[0][0].toString())){
+    if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(mismatches[0][0].toString()))){
         out.println("the schemas "+procInstanceName+"-"+GlobalVariables.Schemas.DATA.getName()
             +" and "+procInstanceName+"-"+GlobalVariables.Schemas.DATA_TESTING.getName()+" are not mirror, see below the mismatches ("+dbSchemaAndTestingSchemaTablesAndFieldsIsMirror.length+"):");    
         out.print("<table><tr><th>Table</th><th>Field</th></tr></table>");

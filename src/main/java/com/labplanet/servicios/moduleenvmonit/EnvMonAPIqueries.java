@@ -337,7 +337,7 @@ GlobalAPIsParams.
                             }
                         }
                         programJsonObj.put(JSON_TAG_GROUP_NAME_CONFIG_CALENDAR, programConfigScheduledPointsJsonArray);
-                        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(programLocations[0][0].toString())) {
+                        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(programLocations[0][0].toString()))) {
                             JSONArray programLocationsJsonArray = new JSONArray();
                             for (Object[] programLocations1 : programLocations) {
                                 String locationName = programLocations1[LPArray.valuePosicInArray(programLocationFldNameArray, TblsEnvMonitConfig.ProgramLocation.LOCATION_NAME.getName())].toString();
@@ -420,7 +420,7 @@ GlobalAPIsParams.
                             }
                             programJsonObj.put(JSON_TAG_GROUP_NAME_SAMPLE_POINTS, programLocationsJsonArray);
                         }
-                        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(programLocations[0][0].toString())) {
+                        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(programLocations[0][0].toString()))) {
                             JSONArray programSampleSummaryJsonArray = new JSONArray();
                             Object[] samplesStatusCounter = new Object[0];
                             for (Object statusList1 : statusList) {
@@ -455,7 +455,7 @@ GlobalAPIsParams.
                         Object specCode = templateProgramInfo.get(TblsEnvMonitConfig.Program.SPEC_CODE.getName());
                         Object specConfigVersion = templateProgramInfo.get(TblsEnvMonitConfig.Program.SPEC_CONFIG_VERSION.getName());
                         JSONObject specDefinition = new JSONObject();
-                        if (!(specCode == null || specCode == "" || specConfigVersion == null || "".equals(specConfigVersion.toString()))) {
+                        if (Boolean.FALSE.equals((specCode == null || specCode == "" || specConfigVersion == null || "".equals(specConfigVersion.toString())))) {
                             JSONObject specInfo = SpecFrontEndUtilities.configSpecInfo(procReqInstance, (String) specCode, (Integer) specConfigVersion,
                                     null, null);
                             specDefinition.put(TblsCnfg.TablesConfig.SPEC.getTableName(), specInfo);
@@ -531,7 +531,7 @@ GlobalAPIsParams.
                             new Object[]{false, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)},
                             new String[]{TblsEnvMonitData.ProductionLot.CLOSED_ON.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                     jArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(prodLotsDeactivatedLastDays[0][0].toString())) {
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(prodLotsDeactivatedLastDays[0][0].toString()))) {
                         for (Object[] currIncident : prodLotsDeactivatedLastDays) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
                             jArr.add(jObj);

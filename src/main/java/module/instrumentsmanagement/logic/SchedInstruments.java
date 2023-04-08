@@ -28,7 +28,7 @@ public class SchedInstruments {
     
     public static void InstrumentsSchedProcesses(Token token, String procInstanceName){
         String moduleNameFromProcInstance = token.getModuleNameFromProcInstance(procInstanceName);
-        if (!GlobalVariables.TrazitModules.INSTRUMENTS.name().equalsIgnoreCase(moduleNameFromProcInstance)) return;
+        if (Boolean.FALSE.equals(GlobalVariables.TrazitModules.INSTRUMENTS.name().equalsIgnoreCase(moduleNameFromProcInstance))) return;
         logNextEventWhenExpiredOrClose(token, procInstanceName);
     }
     public static void logNextEventWhenExpiredOrClose(Token token, String procInstanceName){       
@@ -44,7 +44,7 @@ public class SchedInstruments {
             fieldsToRetrieveObj, sW, new String[]{TblsInstrumentsData.CalibPmExpiredOrExpiring.NAME.getName()}, 
             procInstanceName);
         JSONArray jArr = new JSONArray();        
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(eventsInfo[0][0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(eventsInfo[0][0].toString()))){
             Integer fldEventTypePosic = EnumIntViewFields.getFldPosicInArray(fieldsToRetrieveObj, TblsInstrumentsData.CalibPmExpiredOrExpiring.TYPE.getName());
             Integer fldInstrNamePosic = EnumIntViewFields.getFldPosicInArray(fieldsToRetrieveObj, TblsInstrumentsData.CalibPmExpiredOrExpiring.NAME.getName());
             if (fldEventTypePosic==-1||fldInstrNamePosic==-1)return;

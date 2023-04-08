@@ -107,13 +107,13 @@ public class ProcedureDefinitionToInstance {
                 Object[][] procInfoRecordsDestination = Rdbms.getRecordFieldsByFilter(schemaNameDestinationProc, TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(),
                         new String[]{TblsProcedure.ProcedureInfo.NAME.getName(), TblsProcedure.ProcedureInfo.VERSION.getName()}, new Object[]{procedure, procVersion},
                         FLDSTORETR_PROCEDURE_INFO_SOURCE.split("\\|"));
-                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfoRecordsDestination[0][0].toString())) {
+                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfoRecordsDestination[0][0].toString()))) {
                     jsonErrorObj.put("Record in the new instance", "Already exists");
                 } else {
                     jsonErrorObj.put("Record in new instance", "Not exists");
                     String[] fldName = FLDSTORETR_PROCEDURE_INFO_SOURCE.split("\\|");
                     Object[] fldValue = curRow;
-                    if (!LPArray.valueInArray(fldName, TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName())) {
+                    if (Boolean.FALSE.equals(LPArray.valueInArray(fldName, TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName()))) {
                         fldName = LPArray.addValueToArray1D(fldName, TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName());
                         fldValue = LPArray.addValueToArray1D(fldValue, procInstanceName);
                     }
@@ -139,7 +139,7 @@ public class ProcedureDefinitionToInstance {
         JSONObject jsonObj = new JSONObject();
         String type = values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.TYPE.getName())].toString();
         String position = values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.POSITION.getName())].toString();
-        if (!elementType.TWOICONS.toString().equalsIgnoreCase(type) || !"1".equalsIgnoreCase(position)) {
+        if (Boolean.FALSE.equals(elementType.TWOICONS.toString().equalsIgnoreCase(type)) || Boolean.FALSE.equals("1".equalsIgnoreCase(position))) {
             return jsonObj;
         }
         values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.POSITION.getName())] = "0";
@@ -147,7 +147,7 @@ public class ProcedureDefinitionToInstance {
         values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.ESIGN_REQUIRED.getName())] = Boolean.valueOf(values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.ESIGN_REQUIRED.getName())].toString());
         values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.USERCONFIRM_REQUIRED.getName())] = Boolean.valueOf(values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.USERCONFIRM_REQUIRED.getName())].toString());
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS, procEventFldNamesToGet, values);
-        if (!insertRecordInTable.getRunSuccess()) {
+        if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess())) {
             jsonObj.put("insert error log",
                     insertRecordInTable.getErrorMessageCode() + " " + Arrays.toString(insertRecordInTable.getErrorMessageVariables()));
         } else {
@@ -182,7 +182,7 @@ public class ProcedureDefinitionToInstance {
                 new Object[]{},
                 procEventFldNamesToGet);
         JSONArray multiRolejArr = new JSONArray();
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procEventRows[0][0].toString())) {
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procEventRows[0][0].toString()))) {
             Object[][] procRoles = new Object[][]{{}};
             Object[][] procRolesAllRoles = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_ROLES.getTableName(),
                     new String[]{TblsReqs.ProcedureRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureRoles.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureRoles.PROC_INSTANCE_NAME.getName()},
@@ -221,7 +221,7 @@ public class ProcedureDefinitionToInstance {
                         curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.ROLE_NAME.getName())] = procRoles[i][0].toString();
                         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS, procEventFldNamesToGet, curProcEvent);
                         multiRolCurEvent.put("inserted?", insertRecordInTable.getRunSuccess());
-                        if (!insertRecordInTable.getRunSuccess()) {
+                        if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess())) {
                             multiRolCurEvent.put("insert error log",
                                     insertRecordInTable.getErrorMessageCode() + " " + Arrays.toString(insertRecordInTable.getErrorMessageVariables()));
                         } else {
@@ -235,7 +235,7 @@ public class ProcedureDefinitionToInstance {
                 }
             }
         }
-        if (!multiRolejArr.isEmpty()) {
+        if (Boolean.FALSE.equals(multiRolejArr.isEmpty())) {
             jsonObj.put("multiroles_addition_log", multiRolejArr);
         }
         return jsonObj;
@@ -469,7 +469,7 @@ public class ProcedureDefinitionToInstance {
                 // Place to create the user
             }
             jsUserRoleObj.put("User exists in the app after running this logic?", LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesForLog));
-            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(existsAppUser[0]))) {
+            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(existsAppUser[0])))) {
                 Object[] existsAppUserProcess = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USER_PROCESS.getTableName(),
                         new String[]{TblsApp.UserProcess.USER_NAME.getName(), TblsApp.UserProcess.PROC_NAME.getName()}, new Object[]{curUserName.toString(), procInstanceName});
                 jsonObj.put("User was added to the Process at the App level?", LPPlatform.LAB_TRUE.equalsIgnoreCase(existsAppUserProcess[0].toString()));
@@ -480,7 +480,7 @@ public class ProcedureDefinitionToInstance {
                 }
             }
             Object curPersonName = existsAppUser[0][0];
-            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(existsAppUser[0][0].toString())) {
+            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(existsAppUser[0][0].toString()))) {
                 RdbmsObject insertRecord = Rdbms.insertRecord(TblsProcedure.TablesProcedure.PERSON_PROFILE,
                         FLDSTO_INSERT_PROC_USR_ROLE_DEST.split("\\|"), new Object[]{curPersonName.toString(), curRoleName.toString(), true}, schemaNameDestinationProcedure);
                 jsonObj.put("User Role inserted in the instance?", insertRecord.getApiMessage()[0].toString());
@@ -527,7 +527,7 @@ public class ProcedureDefinitionToInstance {
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsAppUser[0][0].toString())) {
                 RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsCnfg.TablesConfig.SOP_META_DATA,
                         FLDSTO_RETRIEVE_PROC_SOPMTDATA_SRC.split("\\|"), curSopMetaData);
-                diagnosesForLog = (!insertRecordInTable.getRunSuccess()) ? JsonTags.NO.getTagValue() : JsonTags.YES.getTagValue();
+                diagnosesForLog = (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess())) ? JsonTags.NO.getTagValue() : JsonTags.YES.getTagValue();
                 jsonObj.put("SOP inserted in the instance?", diagnosesForLog);
                 //if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(insertRecordInTable[0].toString())){}
             }
@@ -576,7 +576,7 @@ public class ProcedureDefinitionToInstance {
                 Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, curSchemaName), curTableName);
                 Object[] dbTableTestingExists = dbTableExists;
                 String schemaForTesting = Rdbms.suffixForTesting(LPPlatform.buildSchemaName(procInstanceName, curSchemaName), curTableName);
-                if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName))) {
+                if (Boolean.FALSE.equals(schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName))) ) {
                     dbTableTestingExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, schemaForTesting), curTableName);
                 }
                 String diagn = "";
@@ -606,7 +606,7 @@ public class ProcedureDefinitionToInstance {
                                     }
                                     break;
                                     case "data":
-                                        if (curIsView == null || !Boolean.valueOf(curIsView)) {
+                                        if (curIsView == null || Boolean.FALSE.equals(Boolean.valueOf(curIsView))) {
                                             try {
                                                 tblCreateScript = createTableScript(TablesEnvMonitData.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
                                                 tblCreateScriptTesting = createTableScript(TablesEnvMonitData.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
@@ -645,15 +645,15 @@ public class ProcedureDefinitionToInstance {
                                     }
                                     break;
                                     case "procedure":
-                                        if (curIsView == null || !Boolean.valueOf(curIsView)) {
+                                        if (curIsView == null || Boolean.FALSE.equals(Boolean.valueOf(curIsView)) ){
                                             try {
                                                 tblCreateScript = createTableScript(TablesEnvMonitProcedure.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
-                                                if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName))) {
+                                                if (Boolean.FALSE.equals(schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName)))) {
                                                     tblCreateScriptTesting = createTableScript(TablesEnvMonitProcedure.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
                                                 }
                                             } catch (Exception e) {
                                                 tblCreateScript = createTableScript(TablesProcedure.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
-                                                if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName))) {
+                                                if (Boolean.FALSE.equals(schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName)))) {
                                                     tblCreateScriptTesting = createTableScript(TablesProcedure.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
                                                 }
                                             }
@@ -671,9 +671,9 @@ public class ProcedureDefinitionToInstance {
                                         }
                                         break;
                                     case "procedure-config":
-                                        if (curIsView == null || !Boolean.valueOf(curIsView)) {
+                                        if (curIsView == null || Boolean.FALSE.equals(Boolean.valueOf(curIsView))) {
                                             tblCreateScript = createTableScript(TablesProcedureConfig.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
-                                            if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName))) {
+                                            if (Boolean.FALSE.equals(schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName))) ) {
                                                 tblCreateScriptTesting = createTableScript(TablesProcedureConfig.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
                                             }
                                         } else {
@@ -693,7 +693,7 @@ public class ProcedureDefinitionToInstance {
                                     case "procedure-audit":
                                     try {
                                         tblCreateScript = createTableScript(TablesProcedureAudit.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
-                                        if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName))) {
+                                        if (Boolean.FALSE.equals(schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName))) ){
                                             tblCreateScriptTesting = createTableScript(TablesProcedureAudit.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
                                         }
                                     } catch (Exception e) {

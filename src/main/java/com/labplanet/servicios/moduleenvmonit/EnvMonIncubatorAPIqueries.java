@@ -222,7 +222,7 @@ public class EnvMonIncubatorAPIqueries extends HttpServlet {
                             new Object[]{false, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)},
                             new String[]{TblsEnvMonitConfig.InstrIncubator.LAST_DEACTIVATION_ON.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                     jArr = new JSONArray();
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(prodLotsDeactivatedLastDays[0][0].toString())) {
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(prodLotsDeactivatedLastDays[0][0].toString()))) {
                         for (Object[] currIncident : prodLotsDeactivatedLastDays) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
                             jArr.add(jObj);

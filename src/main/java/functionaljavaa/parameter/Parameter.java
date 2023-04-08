@@ -84,7 +84,7 @@ public class Parameter {
         }
         try {
             prop = ResourceBundle.getBundle(filePath);
-            if ((!prop.containsKey(parameterName)) && reportMissingProp!=null && reportMissingProp) {  
+            if ((Boolean.FALSE.equals(prop.containsKey(parameterName))) && reportMissingProp!=null && reportMissingProp) {  
                 if (parameterName.toLowerCase().contains("encrypted_")) return ""; 
                 LPPlatform.saveParameterPropertyInDbErrorLog(propFilePrefix, parameterFolder, 
                         //new Object[]{className, classFullName, methodName, lineNumber}, 
@@ -159,7 +159,7 @@ public class Parameter {
         if ((valueToReturn==null || valueToReturn.length()==0) && (!isOptional))
             LPPlatform.saveParameterPropertyInDbErrorLog("", procInstanceName+"-"+area, 
                 callerInfo, parameterName, isOptional);
-        if (Boolean.TRUE.equals(ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting()) && (!disabledByPreReq) ){
+        if (Boolean.TRUE.equals(ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting()) && (Boolean.FALSE.equals(disabledByPreReq)) ){
             TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
             if (testingBusinessRulesVisitedObj!=null)
                 testingBusinessRulesVisitedObj.addObject(procInstanceName, area, callerInfo[0].toString(), parameterName, valueToReturn);        
@@ -271,7 +271,7 @@ public class Parameter {
         */
         try {            
             ResourceBundle prop = ResourceBundle.getBundle("parameter.config." + configFile.replace("\"", ""));
-            if (!prop.containsKey(parameterName)) {
+            if (Boolean.FALSE.equals(prop.containsKey(parameterName))) {
                 if (parameterName.toLowerCase().contains("encrypted_")) return ""; 
                 LPPlatform.saveParameterPropertyInDbErrorLog("", configFile, 
                         //new Object[]{className, classFullName, methodName, lineNumber}, 

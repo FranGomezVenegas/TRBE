@@ -98,7 +98,7 @@ public class LPMath {
         try  {            
             for (int i=0;i<strNum.length();i++){
                 curDigit=strNum.substring(i, i+1);
-                if (!"-".equalsIgnoreCase(curDigit) && !".".equalsIgnoreCase(curDigit)){
+                if (Boolean.FALSE.equals("-".equalsIgnoreCase(curDigit)) && Boolean.FALSE.equals(".".equalsIgnoreCase(curDigit))){
                     Double valueParsed=Double.parseDouble(strNum.substring(i, i+1));}
             }
             //Float f = Float.valueOf(strNum);
