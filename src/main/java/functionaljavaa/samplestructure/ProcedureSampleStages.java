@@ -79,7 +79,6 @@ public class ProcedureSampleStages {
                insFldValues=LPArray.addValueToArray1D(insFldValues, datesDiffSeconds);
             }
             Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION, insFldNames, insFldValues);            
-            return;            
         }
     }
 }

@@ -474,10 +474,10 @@ public class TstDataSample extends HttpServlet {
                     Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, dataSample);
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate));                    
                 }
-                fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());                    
+                fileContentTable1Builder.append(LPTestingOutFormat.ROW_END);                    
             }                          
             tstAssertSummary.notifyResults();
-            fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
+            fileContentTable1Builder.append(LPTestingOutFormat.TABLE_END);
             
             String summaryPhrase ="";
             String scriptIdStr=request.getParameter("scriptId");                       

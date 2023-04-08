@@ -154,16 +154,16 @@ public class TestingConfigSpecQuantitativeRuleFormat extends HttpServlet {
                     Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, resSpecEvaluation);
                     if (minControl==null){
                         fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate));                        
-                        fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());                                                
+                        fileContentTable1Builder.append(LPTestingOutFormat.ROW_END);                                                
                     }else{
                         fileContentTable2Builder.append(LPTestingOutFormat.rowAddFields(evaluate));                        
-                        fileContentTable2Builder.append(LPTestingOutFormat.rowEnd());                                                
+                        fileContentTable2Builder.append(LPTestingOutFormat.ROW_END);                                                
                     }
                 }
             }    
             tstAssertSummary.notifyResults();
-            fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());                                                
-            fileContentTable2Builder.append(LPTestingOutFormat.tableEnd());       
+            fileContentTable1Builder.append(LPTestingOutFormat.TABLE_END);                                                
+            fileContentTable2Builder.append(LPTestingOutFormat.TABLE_END);       
             
             fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary, stopPhrase, timeStarted)).append("<br>")
                 .append(fileContentTable1Builder).append(fileContentTable2Builder);
@@ -192,7 +192,7 @@ public class TestingConfigSpecQuantitativeRuleFormat extends HttpServlet {
                 fileContentBuilder.append(fileContentSummary).append(fileContentTable1Builder).append(fileContentTable2Builder);
             }
 */            
-            fileContentBuilder.append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
+            fileContentBuilder.append(LPTestingOutFormat.BODY_END).append(LPTestingOutFormat.HTML_END);
             out.println(fileContentBuilder.toString());            
             LPTestingOutFormat.createLogFile(tstOut.getFilePathName(), fileContentBuilder.toString());
             tstAssertSummary=null; mSpec=null;

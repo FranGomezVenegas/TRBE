@@ -184,18 +184,18 @@ public class TestingResultCheckSpecQuantitative extends HttpServlet {
                 if (numEvaluationArguments>0){                    
                     Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, resSpecEvaluation);
                     if (minControl==null){
-                        fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate)).append(LPTestingOutFormat.rowEnd());
+                        fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate)).append(LPTestingOutFormat.ROW_END);
                     }else{
-                        fileContentTable2Builder.append(LPTestingOutFormat.rowAddFields(evaluate)).append(LPTestingOutFormat.rowEnd());
+                        fileContentTable2Builder.append(LPTestingOutFormat.rowAddFields(evaluate)).append(LPTestingOutFormat.ROW_END);
                     }
                 }
             }       
             tstAssertSummary.notifyResults();
-            fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
-            fileContentTable2Builder.append(LPTestingOutFormat.tableEnd());
+            fileContentTable1Builder.append(LPTestingOutFormat.TABLE_END);
+            fileContentTable2Builder.append(LPTestingOutFormat.TABLE_END);
             
             fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary, stopPhrase, timeStarted)).append("<br>")
-                .append(fileContentTable1Builder).append(fileContentTable2Builder.toString()).append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
+                .append(fileContentTable1Builder).append(fileContentTable2Builder.toString()).append(LPTestingOutFormat.BODY_END).append(LPTestingOutFormat.HTML_END);
             
 /*            String summaryPhrase ="";
             String scriptIdStr=request.getParameter("scriptId");                       

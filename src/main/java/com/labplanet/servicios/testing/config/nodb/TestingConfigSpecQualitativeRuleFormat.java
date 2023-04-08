@@ -131,17 +131,17 @@ public class TestingConfigSpecQualitativeRuleFormat extends HttpServlet {
 //                                new String[]{TblsTesting.Script.SCRIPT_ID.getName()}, new Object[]{6}); //testingContent[iLines][tstOut.getScriptIdPosic()]});
                     break;
                 }                
-                fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());                                                
+                fileContentTable1Builder.append(LPTestingOutFormat.ROW_END);                                                
                 
             }    
-            fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
+            fileContentTable1Builder.append(LPTestingOutFormat.TABLE_END);
             //fileContentTable1Builder.append();
             //fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary));
 
             fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary, stopPhrase, timeStarted)).append("<br>")
                 .append(fileContentTable1Builder);
             
-            fileContentBuilder.append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
+            fileContentBuilder.append(LPTestingOutFormat.BODY_END).append(LPTestingOutFormat.HTML_END);
             out.println(fileContentBuilder.toString());            
             LPTestingOutFormat.createLogFile(tstOut.getFilePathName(), fileContentBuilder.toString());
             tstAssertSummary=null; mSpec=null;

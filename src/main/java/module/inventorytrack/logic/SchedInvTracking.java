@@ -6,7 +6,6 @@
 package module.inventorytrack.logic;
 
 import databases.features.Token;
-import trazit.globalvariables.GlobalVariables;
 
 /**
  *
@@ -14,8 +13,8 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class SchedInvTracking {
     public static void InvTrackingSchedProcesses(Token token, String procInstanceName){
-        String moduleNameFromProcInstance = token.getModuleNameFromProcInstance(procInstanceName);
-        if (!GlobalVariables.TrazitModules.INVENTORY_TRACKING.name().equalsIgnoreCase(moduleNameFromProcInstance)) return;
-        return;
+        //String moduleNameFromProcInstance = token.getModuleNameFromProcInstance(procInstanceName);
+        //if (!GlobalVariables.TrazitModules.INVENTORY_TRACKING.name().equalsIgnoreCase(moduleNameFromProcInstance)) return;
+        
     }    
 }

@@ -308,12 +308,12 @@ public class TestingRegressionUAT extends HttpServlet {
 
                 StringBuilder fileContentTable1Builder = new StringBuilder(0);
                 for (Object[] curRow : allMismatches) {
-                    fileContentTable1Builder.append(LPTestingOutFormat.rowStart()).append(rowAddFields(curRow));
-                    fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());
+                    fileContentTable1Builder.append(LPTestingOutFormat.ROW_START).append(rowAddFields(curRow));
+                    fileContentTable1Builder.append(LPTestingOutFormat.ROW_END);
                 }
 
-                fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
-                fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
+                fileContentTable1Builder.append(LPTestingOutFormat.TABLE_END);
+                fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.BODY_END).append(LPTestingOutFormat.HTML_END);
                 return fileContentBuilder;
             }
             return fileContentBuilder;

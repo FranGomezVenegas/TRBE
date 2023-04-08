@@ -31,7 +31,7 @@ public final class ClassPath {
             myClass = myClass.getParentFile();
         }
  
-        this.webInfPath = myClass.getAbsolutePath().replaceAll("%20", " ") + File.separator;
+        this.webInfPath = myClass.getAbsolutePath().replace("%20", " ") + File.separator;
         this.webXmlPath = this.getWebInfPath() + "web.xml";
         this.configXmlPath = this.getWebInfPath() + "config.xml";
     }

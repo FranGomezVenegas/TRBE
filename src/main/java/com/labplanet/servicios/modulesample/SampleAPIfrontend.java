@@ -505,7 +505,6 @@ public class SampleAPIfrontend extends HttpServlet {
                     Rdbms.closeRdbms();
                     if (myData==null||myData.contains(LPPlatform.LAB_FALSE)){  
                         LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
-                        return;
                     }else{
                         LPFrontEnd.servletReturnSuccess(request, response, myData);
                     }                             
@@ -531,7 +530,6 @@ public class SampleAPIfrontend extends HttpServlet {
                      
                     if (myData==null || myData.contains(LPPlatform.LAB_FALSE)){  
                         LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
-                        return;
                     }else{
                         LPFrontEnd.servletReturnSuccess(request, response, myData);
                     }                             
@@ -567,7 +565,6 @@ public class SampleAPIfrontend extends HttpServlet {
                     Rdbms.closeRdbms();
                     if (myData.contains(LPPlatform.LAB_FALSE)){  
                         LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
-                        return;
                     }else{
                         LPFrontEnd.servletReturnSuccess(request, response, myData);
                     }                             
@@ -595,17 +592,14 @@ public class SampleAPIfrontend extends HttpServlet {
                     Rdbms.closeRdbms();
                     if (myData.contains(LPPlatform.LAB_FALSE)){  
                         LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
-                        return;
                     }else{
                         LPFrontEnd.servletReturnSuccess(request, response, myData);
                     }                             
-
                     return;                      
                 case GET_SAMPLE_ANALYSIS_RESULT_SPEC:
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, SampleAPIParams.MANDATORY_PARAMS_FRONTEND_GET_SAMPLE_ANALYSIS_RESULT_SPEC.split("\\|"));
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                         LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
-                        return;
                     }                      
                     return;  
                 case SAMPLE_ENTIRE_STRUCTURE:

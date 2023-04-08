@@ -110,7 +110,7 @@ out.println(Arrays.toString(configSamplingPlanTestingArray));
                 if (configSamplingPlanTestingArray[i][0]!=null){procInstanceName = (String) configSamplingPlanTestingArray[i][0];}
                 if (configSamplingPlanTestingArray[i][5]!=null){actionName = (String) configSamplingPlanTestingArray[i][5];}
                     
-                out.println(LPTestingOutFormat.fieldStart()+i+LPTestingOutFormat.fieldStart()+LPTestingOutFormat.fieldEnd()+procInstanceName+LPTestingOutFormat.fieldStart()+LPTestingOutFormat.fieldEnd()+actionName+LPTestingOutFormat.fieldStart()+LPTestingOutFormat.fieldEnd()+Arrays.toString(fieldName)+LPTestingOutFormat.fieldStart()+LPTestingOutFormat.fieldEnd()+"<b>"+Arrays.toString(fieldValue)+"</b>"+LPTestingOutFormat.fieldEnd());
+                out.println(LPTestingOutFormat.FIELD_START+i+LPTestingOutFormat.FIELD_START+LPTestingOutFormat.FIELD_END+procInstanceName+LPTestingOutFormat.FIELD_START+LPTestingOutFormat.FIELD_END+actionName+LPTestingOutFormat.FIELD_START+LPTestingOutFormat.FIELD_END+Arrays.toString(fieldName)+LPTestingOutFormat.FIELD_START+LPTestingOutFormat.FIELD_END+"<b>"+Arrays.toString(fieldValue)+"</b>"+LPTestingOutFormat.FIELD_END);
 
                 switch (LPNulls.replaceNull((String) actionName).toUpperCase()){
                     case "NEWSAMPLINGDETAIL":

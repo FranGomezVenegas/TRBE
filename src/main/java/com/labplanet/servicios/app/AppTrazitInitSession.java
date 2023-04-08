@@ -5,7 +5,7 @@
  */
 package com.labplanet.servicios.app;
 
-import static com.labplanet.servicios.app.AppHeaderAPI.AppHeaderAPI;
+import static com.labplanet.servicios.app.AppHeaderAPI.AppHeaderApi;
 import static com.labplanet.servicios.app.AppProcedureListAPI.procedureListInfo;
 import java.io.IOException;
 import javax.servlet.ServletException;
@@ -38,7 +38,7 @@ public class AppTrazitInitSession extends HttpServlet {
 
         JSONObject trazitInitSession=new JSONObject();
         trazitInitSession.put("procedures_list", procedureListInfo(request, response));
-        trazitInitSession.put("header_info", AppHeaderAPI(request, response));
+        trazitInitSession.put("header_info", AppHeaderApi(request, response));
         trazitInitSession.put("all_my_sops", SopUserAPIqueries.AllMySops(request, response));
         trazitInitSession.put("my_pending_sops", SopUserAPIqueries.MyPendingSops(request, response));
         trazitInitSession.put("procedures_sops", SopUserAPIqueries.ProceduresSops(request, response));

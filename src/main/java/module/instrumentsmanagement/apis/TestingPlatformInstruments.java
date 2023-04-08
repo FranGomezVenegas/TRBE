@@ -191,13 +191,13 @@ public class TestingPlatformInstruments extends HttpServlet {
 //                                new String[]{TblsTesting.Script.SCRIPT_ID.getName()}, new Object[]{6}); //testingContent[iLines][tstOut.getScriptIdPosic()]});
                     break;
                 }
-                fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());   
+                fileContentTable1Builder.append(LPTestingOutFormat.ROW_END);   
                 instanceForActions.auditActionsKill();
             }    
-            fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
+            fileContentTable1Builder.append(LPTestingOutFormat.TABLE_END);
             fileContentTable1Builder.append(LPTestingOutFormat.businessRulesTable());
             fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary, stopPhrase, timeStarted)).append("<br>");
-            fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
+            fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.BODY_END).append(LPTestingOutFormat.HTML_END);
 
             out.println(fileContentBuilder.toString());            
             //LPTestingOutFormat.createLogFile(tstOut.getFilePathName(), fileContentBuilder.toString());

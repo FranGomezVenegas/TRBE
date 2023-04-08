@@ -320,13 +320,13 @@ public class DbTestingLimitAndResult extends HttpServlet {
                     Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, resSpecEvaluation);
                     Integer stepId = Integer.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStepIdPosic()]).toString());
                     fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, resSpecEvaluation, new JSONArray(), tstAssert, timeStartedStep));
-                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate)).append(LPTestingOutFormat.rowEnd());
+                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate)).append(LPTestingOutFormat.ROW_END);
                 }
             }
-            fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
+            fileContentTable1Builder.append(LPTestingOutFormat.TABLE_END);
             fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary));
 
-            fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
+            fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.BODY_END).append(LPTestingOutFormat.HTML_END);
             out.println(fileContentBuilder.toString());
             LPTestingOutFormat.createLogFile(tstOut.getFilePathName(), fileContentBuilder.toString());
             tstAssertSummary = null;

@@ -68,7 +68,6 @@ public class ModuleTableOrViewGet {
                     try{
                         this.tableObj=TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.valueOf(tblName.toUpperCase());                        
                         this.found=true;
-                        return;
                     }catch(Exception e1){
                         try{
                             this.tableObj=TblsDataAudit.TablesDataAudit.valueOf(tblName.toUpperCase());                        

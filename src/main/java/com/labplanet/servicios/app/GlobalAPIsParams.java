@@ -425,6 +425,8 @@ public class GlobalAPIsParams extends HttpServlet {
     public static final String LBL_PREFIX_INCUB2 = "incub2_";
     public static final String LBL_PREFIX_ALLPENDINGANYINCUB = "allpendinganyincub_";
 
+    public static final String LBL_DATA_DEPLOYED_TABLE="data_deployed_table_";
+    public static final String LBL_DATA_IN_DEFINITION_TABLE="data_in_definition_table_";
     public static final String REQUEST_PARAM_VALUE_UNDEFINED = "undefined";
 
     /**

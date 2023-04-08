@@ -359,6 +359,6 @@ public String sampleStageSamplingNextChecker(String sch, Integer sampleId) {
     //var samplingDate = sampleStructure.sampling_date;
     //if (samplingDate==null){
       //  return testId+" Fecha de muestreo es obligatoria para la muestra "+sampleId;}
-    return "LABPLANET_TRUE";
+    return LPPlatform.LAB_TRUE;
 }    
 }

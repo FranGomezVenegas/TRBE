@@ -6,7 +6,7 @@
 package com.labplanet.servicios.app;
 
 import static functionaljavaa.platformadmin.AppBusinessRules.AllAppBusinessRules;
-import static com.labplanet.servicios.app.AppHeaderAPI.AppHeaderAPI;
+import static com.labplanet.servicios.app.AppHeaderAPI.AppHeaderApi;
 import static com.labplanet.servicios.app.AppProcedureListAPI.SIZE_WHEN_CONSIDERED_MOBILE;
 import static com.labplanet.servicios.app.AppProcedureListAPI.procedureListInfo;
 import com.labplanet.servicios.app.AuthenticationAPIParams.AuthenticationAPIactionsEndpoints;
@@ -215,7 +215,7 @@ public class AuthenticationAPI extends HttpServlet {
                     }         
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_APP_USER_TABS_ON_LOGIN, jArr);
                     request.setAttribute(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myFinalToken);
-                    jsonObj.put("header_info", AppHeaderAPI(request, response));
+                    jsonObj.put("header_info", AppHeaderApi(request, response));
                     jsonObj.put("procedures_list", procedureListInfo(request, response));
                     jsonObj.put("all_my_sops", SopUserAPIqueries.AllMySops(request, response));
                     jsonObj.put("all_my_pending_certif_approvals", SopUserAPIqueries.AllMyPendingSignSops(request, response));

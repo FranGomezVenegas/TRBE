@@ -161,8 +161,8 @@ public class TestingConfigSop extends HttpServlet {
                     "[sop_id, sop_name]", Arrays.toString(recordCreated)}));
             }
             dbGetSopIdByName = s.dbGetSopObjByName(schemaConfigName, sopName,new String[]{FIELDNAME_SOP_ID, FIELDNAME_SOP_NAME});
-            fileContentBuilder.append(LPTestingOutFormat.rowStart()).append(LPTestingOutFormat.rowAddFields(new String[]{"", LBL_MSG_SCHEMACONFIGNAME+": "+schemaConfigName,
-                FIELDNAME_SOP_NAME+":"+sopName, "["+FIELDNAME_SOP_ID+", "+FIELDNAME_SOP_NAME+"]"})).append(LPTestingOutFormat.rowEnd());        
+            fileContentBuilder.append(LPTestingOutFormat.ROW_START).append(LPTestingOutFormat.rowAddFields(new String[]{"", LBL_MSG_SCHEMACONFIGNAME+": "+schemaConfigName,
+                FIELDNAME_SOP_NAME+":"+sopName, "["+FIELDNAME_SOP_ID+", "+FIELDNAME_SOP_NAME+"]"})).append(LPTestingOutFormat.ROW_END);        
             Object[] dbGetSopIdByName1D = LPArray.array2dTo1d(dbGetSopIdByName);
             fileContentBuilder.append(LPTestingOutFormat.rowAddFields(new Object[]{"dbGetSopObjByName", LBL_MSG_SCHEMACONFIGNAME+": "+schemaConfigName, FIELDNAME_SOP_NAME+":"+sopName, 
                 "[sop_id, sop_name]", Arrays.toString(dbGetSopIdByName1D)}));

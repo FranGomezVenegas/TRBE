@@ -5,6 +5,8 @@
  */
 package functionaljavaa.samplestructure;
 
+import lbplanet.utilities.LPPlatform;
+
 /**
  *
  * @author User
@@ -16,28 +18,28 @@ public String sampleStageSamplingNextChecker(String sch, Integer sampleId) {
     //var samplingDate = sampleStructure.sampling_date;
     //if (samplingDate==null){
       //  return testId+" Fecha de muestreo es obligatoria para la muestra "+sampleId;}
-    return "LABPLANET_TRUE";
+    return LPPlatform.LAB_TRUE;
 }
 public String sampleStagePlateReadingNextChecker(String sch, Integer sampleId) {
     //var sampleStructure=JSON.parse(sampleData);
     //var samplingDate = sampleStructure.sampling_date;
     //if (samplingDate==null){
       //  return testId+" Fecha de muestreo es obligatoria para la muestra "+sampleId;}
-    return "LABPLANET_TRUE";
+    return LPPlatform.LAB_TRUE;
 }
 public String sampleStageIncubationPreviousChecker(String procName, String sch, Integer sampleId) {
     //var sampleStructure=JSON.parse(sampleData);
     //var samplingDate = sampleStructure.sampling_date;
     //if (samplingDate==null){
       //  return testId+" Fecha de muestreo es obligatoria para la muestra "+sampleId;}
-    return "LABPLANET_TRUE";
+    return LPPlatform.LAB_TRUE;
 }
 public String sampleStagePlateReadingNextChecker(String procName, String sch, Integer sampleId) {
     //var sampleStructure=JSON.parse(sampleData);
     //var samplingDate = sampleStructure.sampling_date;
     //if (samplingDate==null){
       //  return testId+" Fecha de muestreo es obligatoria para la muestra "+sampleId;}
-    return "LABPLANET_TRUE";
+    return LPPlatform.LAB_TRUE;
 }
 /*
 var sampleStageIncubationPreviousChecker = function(sampleId, sampleData) {

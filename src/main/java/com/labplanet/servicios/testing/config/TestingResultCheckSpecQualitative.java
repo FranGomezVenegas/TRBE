@@ -147,14 +147,14 @@ public class TestingResultCheckSpecQualitative extends HttpServlet {
                     Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, resSpecEvaluation);
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate));
                 }                
-                fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());
+                fileContentTable1Builder.append(LPTestingOutFormat.ROW_END);
             }                          
             tstAssertSummary.notifyResults();
-            fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
+            fileContentTable1Builder.append(LPTestingOutFormat.TABLE_END);
             fileContentTable1Builder.append(tstOut.getFilePathName());
             
             fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary, stopPhrase, timeStarted)).append("<br>")
-                .append(fileContentTable1Builder).append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
+                .append(fileContentTable1Builder).append(LPTestingOutFormat.BODY_END).append(LPTestingOutFormat.HTML_END);
             
             out.println(fileContentBuilder.toString());            
             LPTestingOutFormat.createLogFile(tstOut.getFilePathName(), fileContentBuilder.toString());

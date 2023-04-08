@@ -119,7 +119,7 @@ public class DataProgramSample{
                 numSamplesToLog=1;
             newProjSample = ds.logSample(sampleTemplateCode, sampleTemplateCodeVersion, fieldName, fieldValue, numSamplesToLog, TblsEnvMonitData.TablesEnvMonitData.SAMPLE); 
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newProjSample[0].toString()))
-                return newProjSample; //newProjSample=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "arguments received", LPArray.joinTwo1DArraysInOneOf1DString(fieldName, fieldValue, ":"));
+                return newProjSample; 
             messages.addMainForSuccess(EnvMonSampleAPIactionsEndpoints.LOGSAMPLE, 
                 new Object[]{newProjSample[newProjSample.length-1], programName, programLocation});            
         } catch (IllegalArgumentException ex) {
@@ -132,9 +132,6 @@ public class DataProgramSample{
 
     public static Object[] logProgramSamplerSample(String samplerSmpTemplate, Integer samplerSmpTemplateVersion, String[] fieldName, Object[] fieldValue, String programName, String programLocation, Integer programSampleId){        
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        
-        //String samplerSmpTemplate=Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramSampleBusinessRules.SAMPLER_SAMPLE_TEMPLATE.getAreaName(), DataProgramSampleBusinessRules.SAMPLER_SAMPLE_TEMPLATE.getTagName());  
-        
         Object[][] programLocationPersonalInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_LOCATION.getTableName(), 
                 new String[]{TblsEnvMonitConfig.ProgramLocation.PROGRAM_NAME.getName(), TblsEnvMonitConfig.ProgramLocation.LOCATION_NAME.getName()}, 
                 new Object[]{programName, programLocation}, 

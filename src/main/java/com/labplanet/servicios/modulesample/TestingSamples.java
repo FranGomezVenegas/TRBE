@@ -191,13 +191,13 @@ public class TestingSamples extends HttpServlet {
                         stopPhrase="Interrupted by evaluation returning false in step "+(iLines+1)+" of "+testingContent.length;
                     break;
                 }
-                fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());   
+                fileContentTable1Builder.append(LPTestingOutFormat.ROW_END);   
                 instanceForActions.auditActionsKill();
             }    
-            fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
+            fileContentTable1Builder.append(LPTestingOutFormat.TABLE_END);
             fileContentTable1Builder.append(LPTestingOutFormat.businessRulesTable());
             fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary, stopPhrase, timeStarted)).append("<br>");
-            fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
+            fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.BODY_END).append(LPTestingOutFormat.HTML_END);
 
             out.println(fileContentBuilder.toString());            
             tstAssertSummary=null; 

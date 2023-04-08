@@ -439,7 +439,6 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                         new String[]{TblsData.ViewSampleTestingGroup.SAMPLE_ID.getName(), TblsData.ViewSampleTestingGroup.TESTING_GROUP.getName()});
                 if (myData == null || myData.contains(LPPlatform.LAB_FALSE)) {
                     this.isSuccess = false;
-                    return;
                 } else {
                     this.isSuccess = true;
                     this.responseSuccessJArr = LPJson.convertArrayJsonToJSON(LPJson.convertToJsonArrayStringedObject(myData));
@@ -466,7 +465,6 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                         new String[]{TblsData.Sample.SAMPLE_ID.getName()});
                 if (myData == null || myData.contains(LPPlatform.LAB_FALSE)) {
                     this.isSuccess = false;
-                    return;
                 } else {
                     this.isSuccess = true;
                     this.responseSuccessJArr = LPJson.convertArrayJsonToJSON(LPJson.convertToJsonArrayStringedObject(myData));

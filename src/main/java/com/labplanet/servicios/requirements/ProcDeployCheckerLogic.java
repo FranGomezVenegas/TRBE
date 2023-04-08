@@ -5,6 +5,7 @@
  */
 package com.labplanet.servicios.requirements;
 
+import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.app.TestingRegressionUAT;
 import databases.Rdbms;
 import databases.SqlStatement;
@@ -55,7 +56,7 @@ public class ProcDeployCheckerLogic {
         String[] schemaNames=ProcDeployEnums.moduleBaseSchemas(procInstanceName);
         schemaNames=LPArray.getUniquesArray(schemaNames);
         for (int i=0;i<schemaNames.length;i++)
-            schemaNames[i]=schemaNames[i].replaceAll("\"", "");
+            schemaNames[i]=schemaNames[i].replace("\"", "");
         detailsObj.put("expected_and_checked_repositories", LPJson.convertToJSON(schemaNames));
         Object[] dbSchemasList = Rdbms.dbSchemasList(procInstanceName);
         dbSchemasList=LPArray.getUniquesArray(dbSchemasList);
@@ -124,11 +125,12 @@ public class ProcDeployCheckerLogic {
                personProfilesDestFlds);
         Integer personNameFldPosic=LPArray.valuePosicInArray(personProfilesDestFlds, TblsProcedure.PersonProfile.PERSON_NAME.getName());
         Integer roleNameFldPosic=LPArray.valuePosicInArray(personProfilesDestFlds, TblsProcedure.PersonProfile.ROLE_NAME.getName());
-        for (int i=0;i<personProfileRecordsDestination.length;i++)
-            personProfileRecordsDestination[i][personNameFldPosic]=UserAndRolesViews.getUserByPerson(personProfileRecordsDestination[i][personNameFldPosic].toString());
+        for (Object[] personProfileRecordsDestination1 : personProfileRecordsDestination) {
+            personProfileRecordsDestination1[personNameFldPosic] = UserAndRolesViews.getUserByPerson(personProfileRecordsDestination1[personNameFldPosic].toString());
+        }
         for (Object[] curRow: personProfileRecordsDestination)
             personProfilesDest.add(LPJson.convertArrayRowToJSONObject(personProfilesDestFlds, curRow));
-        detailsObj.put("data_deployed_table_"+TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), personProfilesDest);
+        detailsObj.put(GlobalAPIsParams.LBL_DATA_DEPLOYED_TABLE+TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), personProfilesDest);
 
         String[] procUserRolesSourceFlds = new String[]{TblsReqs.ProcedureUserRoles.USER_NAME.getName() , TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()};
         Object[][] procUserAndRolesRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USER_ROLES.getTableName(), 
@@ -136,7 +138,7 @@ public class ProcDeployCheckerLogic {
            procUserRolesSourceFlds);
         for (Object[] curRow: procUserAndRolesRecordsSource)
             procUserRolesSource.add(LPJson.convertArrayRowToJSONObject(procUserRolesSourceFlds, curRow));
-        detailsObj.put("data_in_definition_table_"+TblsReqs.TablesReqs.PROC_USER_ROLES.getTableName(), procUserRolesSource);
+        detailsObj.put(GlobalAPIsParams.LBL_DATA_IN_DEFINITION_TABLE+TblsReqs.TablesReqs.PROC_USER_ROLES.getTableName(), procUserRolesSource);
 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personProfileRecordsDestination[0][0].toString())){
             anyMismatch=true;
@@ -171,8 +173,6 @@ public class ProcDeployCheckerLogic {
     }
     
     public static final  JSONObject createDBProcedureEvents(String procedure,  Integer procVersion, String procInstanceName){        
-        //if (1==1)
-//            publishJson(null, null, null);
         Boolean anyMismatch=false;
         JSONObject detailsObj=new JSONObject();
         JSONObject mismatchesObj=new JSONObject();   
@@ -184,7 +184,7 @@ public class ProcDeployCheckerLogic {
             new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(),TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procedure, procVersion, procInstanceName},                 procUserRolesSourceFlds);
         for (Object[] curRow: procUserAndRolesRecordsSource)
             procUserRolesSource.add(LPJson.convertArrayRowToJSONObject(procUserRolesSourceFlds, curRow));
-        detailsObj.put("data_in_definition_table_"+TblsReqs.TablesReqs.PROCEDURE_USER_REQS_EVENTS.getTableName(), procUserRolesSource);
+        detailsObj.put(GlobalAPIsParams.LBL_DATA_IN_DEFINITION_TABLE+TblsReqs.TablesReqs.PROCEDURE_USER_REQS_EVENTS.getTableName(), procUserRolesSource);
         
         String[] personProfilesDestFlds = EnumIntTableFields.getAllFieldNames(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS);
         Object[][] personProfileRecordsDestination = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getRepositoryName()), TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(), 
@@ -192,7 +192,7 @@ public class ProcDeployCheckerLogic {
                personProfilesDestFlds);
         for (Object[] curRow: personProfileRecordsDestination)
             personProfilesDest.add(LPJson.convertArrayRowToJSONObject(personProfilesDestFlds, curRow));
-        detailsObj.put("data_deployed_table_"+TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), personProfilesDest);
+        detailsObj.put(GlobalAPIsParams.LBL_DATA_DEPLOYED_TABLE+TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), personProfilesDest);
 
 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personProfileRecordsDestination[0][0].toString())){
@@ -232,8 +232,6 @@ public class ProcDeployCheckerLogic {
     }        
 
     public static final  JSONObject createBusinessRules(String procedure,  Integer procVersion, String procInstanceName){        
-        //if (1==1)
-//            publishJson(null, null, null);
         Boolean anyMismatch=false;
         JSONObject detailsObj=new JSONObject();
         JSONObject mismatchesObj=new JSONObject();   
@@ -246,7 +244,7 @@ public class ProcDeployCheckerLogic {
                 procUserRolesSourceFlds);
         for (Object[] curRow: procUserAndRolesRecordsSource)
             procUserRolesSource.add(LPJson.convertArrayRowToJSONObject(procUserRolesSourceFlds, curRow));
-        detailsObj.put("data_in_definition_table_"+TblsReqs.TablesReqs.PROC_BUS_RULES.getTableName(), procUserRolesSource);
+        detailsObj.put(GlobalAPIsParams.LBL_DATA_IN_DEFINITION_TABLE+TblsReqs.TablesReqs.PROC_BUS_RULES.getTableName(), procUserRolesSource);
         
         String[] personProfilesDestFlds = EnumIntTableFields.getAllFieldNames(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE);
         Object[][] personProfileRecordsDestination = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getRepositoryName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), 
@@ -254,7 +252,7 @@ public class ProcDeployCheckerLogic {
                personProfilesDestFlds);
         for (Object[] curRow: personProfileRecordsDestination)
             personProfilesDest.add(LPJson.convertArrayRowToJSONObject(personProfilesDestFlds, curRow));
-        detailsObj.put("data_deployed_table_"+TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), personProfilesDest);
+        detailsObj.put(GlobalAPIsParams.LBL_DATA_DEPLOYED_TABLE+TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), personProfilesDest);
 
 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personProfileRecordsDestination[0][0].toString())){
@@ -293,8 +291,6 @@ public class ProcDeployCheckerLogic {
     }        
 
     public static final  JSONObject createDBSopMetaDataAndUserSop(String procedure,  Integer procVersion, String procInstanceName){        
-        //if (1==1)
-//            publishJson(null, null, null);
         Boolean anyMismatch=false;
         JSONObject detailsObj=new JSONObject();
         JSONObject mismatchesObj=new JSONObject();   
@@ -308,7 +304,7 @@ public class ProcDeployCheckerLogic {
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserAndRolesRecordsSource[0][0].toString())){
             for (Object[] curRow: procUserAndRolesRecordsSource)
                 procUserRolesSource.add(LPJson.convertArrayRowToJSONObject(procUserRolesSourceFlds, curRow));
-            detailsObj.put("data_in_definition_table_"+TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableName(), procUserRolesSource);
+            detailsObj.put(GlobalAPIsParams.LBL_DATA_IN_DEFINITION_TABLE+TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableName(), procUserRolesSource);
         }
         String[] personProfilesDestFlds = EnumIntTableFields.getAllFieldNames(TblsCnfg.TablesConfig.SOP_META_DATA.getTableFields());
         Object[][] personProfileRecordsDestination = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, TblsCnfg.TablesConfig.SOP_META_DATA.getRepositoryName()), TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
@@ -317,7 +313,7 @@ public class ProcDeployCheckerLogic {
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(personProfileRecordsDestination[0][0].toString())){
             for (Object[] curRow: personProfileRecordsDestination)
                 personProfilesDest.add(LPJson.convertArrayRowToJSONObject(personProfilesDestFlds, curRow));
-            detailsObj.put("data_deployed_table_"+TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), personProfilesDest);
+            detailsObj.put(GlobalAPIsParams.LBL_DATA_DEPLOYED_TABLE+TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), personProfilesDest);
         }
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personProfileRecordsDestination[0][0].toString())){
             anyMismatch=true;
@@ -366,7 +362,7 @@ public class ProcDeployCheckerLogic {
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserAndRolesRecordsSource[0][0].toString())){
             for (Object[] curRow: procUserAndRolesRecordsSource)
                 procUserRolesSource.add(LPJson.convertArrayRowToJSONObject(procUserRolesSourceFlds, curRow));
-            detailsObj.put("data_in_definition_table_"+TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableName(), procUserRolesSource);
+            detailsObj.put(GlobalAPIsParams.LBL_DATA_IN_DEFINITION_TABLE+TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableName(), procUserRolesSource);
         }
         String[] personProfilesDestFlds = EnumIntTableFields.getAllFieldNames(TblsCnfg.TablesConfig.SOP_META_DATA.getTableFields());
         Object[][] personProfileRecordsDestination = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, TblsCnfg.TablesConfig.SOP_META_DATA.getRepositoryName()), TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
@@ -375,7 +371,7 @@ public class ProcDeployCheckerLogic {
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(personProfileRecordsDestination[0][0].toString())){
             for (Object[] curRow: personProfileRecordsDestination)
                 personProfilesDest.add(LPJson.convertArrayRowToJSONObject(personProfilesDestFlds, curRow));
-            detailsObj.put("data_deployed_table_"+TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), personProfilesDest);
+            detailsObj.put(GlobalAPIsParams.LBL_DATA_DEPLOYED_TABLE+TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), personProfilesDest);
         }
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personProfileRecordsDestination[0][0].toString())){
             anyMismatch=true;
@@ -421,7 +417,7 @@ public class ProcDeployCheckerLogic {
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserAndRolesRecordsSource[0][0].toString())){
             for (Object[] curRow: procUserAndRolesRecordsSource)
                 procUserRolesSource.add(LPJson.convertArrayRowToJSONObject(procUserRolesSourceFlds, curRow));
-            detailsObj.put("data_in_definition_table_"+TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableName(), procUserRolesSource);
+            detailsObj.put(GlobalAPIsParams.LBL_DATA_IN_DEFINITION_TABLE+TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableName(), procUserRolesSource);
         }        
         
         Integer srcRepositoryNameFldPosic=LPArray.valuePosicInArray(procUserRolesSourceFlds, TblsReqs.ProcedureModuleTables.SCHEMA_NAME.getName());

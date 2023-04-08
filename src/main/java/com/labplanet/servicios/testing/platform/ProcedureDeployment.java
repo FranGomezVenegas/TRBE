@@ -170,7 +170,7 @@ public class ProcedureDeployment extends HttpServlet {
             if (Boolean.TRUE.equals(PROCDEPLOYT_DB_CREATE_SCHEMA_TABLES)) createDBProcessTables(procInstanceName, "", new String[]{});
             //if (PROC_DEPLOYMENT_ENTIRE_PROCEDURE){reqDep.procedureDeployment(procName, procVersion);}
             //if (PROC_DEPLOYMENT_ASSIGN_USER_SOPS){reqDep.procedureDeployment(procName, procVersion);}
-            fileContent=fileContent+LPTestingOutFormat.bodyEnd()+LPTestingOutFormat.htmlEnd();
+            fileContent=fileContent+LPTestingOutFormat.BODY_END+LPTestingOutFormat.HTML_END;
             out.println(fileContent);
             //LPTestingOutFormat.createLogFile(csvPathName, fileContent);
         }

@@ -435,74 +435,18 @@ public class LPTestingOutFormat {
      *
      * @return
      */
-    public static String htmlStart(){        return "<html>";    }
-
-    /**
-     *
-     * @return
-     */
-    public static String htmlEnd(){        return "</html>";    }
-
-    /**
-     *
-     * @return
-     */
-    public static String bodyStart(){        return "<body>";    }
-
-    /**
-     *
-     * @return
-     */
-    public static String bodyEnd(){        return "</body>";    }
-
-    /**
-     *
-     * @param cssClassName
-     * @return
-     */
+    public static String HTML_START="<html>";
+    public static String HTML_END= "</html>";
+    public static String BODY_START="<body>";
+    public static String BODY_END="</body>";
     public static String tableStart(String cssClassName){        return "<table class=\""+ cssClassName+"\">";    }
-
-    /**
-     *
-     * @return
-     */
-    public static String tableEnd(){        return "</table>";    }
-
-    /**
-     *
-     * @return
-     */
-    public static String headerStart(){        return "<th>";    }
-
-    /**
-     *
-     * @return
-     */
-    public static String headerEnd(){        return "</th>";    }
-
-    /**
-     *
-     * @return
-     */
-    public static String rowStart(){        return "<tr>";    }
-
-    /**
-     *
-     * @return
-     */
-    public static String rowEnd(){        return "</tr>";    }
-
-    /**
-     *
-     * @return
-     */
-    public static String fieldStart(){        return "<td>";    }
-
-    /**
-     *
-     * @return
-     */
-    public static String fieldEnd(){        return "</td>";    }
+    public static String TABLE_END="</table>";    
+    public static String HEADER_START="<th>";
+    public static String HEADER_END="</th>";
+    public static String ROW_START="<tr>";
+    public static String ROW_END="</tr>";
+    public static String FIELD_START="<td>";
+    public static String FIELD_END="</td>";
 
     /**
      *
@@ -511,7 +455,7 @@ public class LPTestingOutFormat {
      */
     public static String headerAddField(String field){
         String content="";
-        content = content+headerStart()+LPNulls.replaceNull((String) field)+headerEnd();
+        content = content+HEADER_START+LPNulls.replaceNull((String) field)+HEADER_END;
         return content;
     }
 
@@ -523,7 +467,7 @@ public class LPTestingOutFormat {
     public static String headerAddFields(Object[] fields){
         StringBuilder content=new StringBuilder(0);
         for (Object fld: fields){
-            content.append(headerStart()).append(LPNulls.replaceNull(fld).toString()).append(headerEnd());
+            content.append(HEADER_START).append(LPNulls.replaceNull(fld).toString()).append(HEADER_END);
         }
         return content.toString();
     }
@@ -536,7 +480,7 @@ public class LPTestingOutFormat {
     public static String headerAddFields(String[] fields){
         StringBuilder content=new StringBuilder(0);
         for (Object fld: fields){
-            content.append(headerStart()).append(LPNulls.replaceNull(fld).toString()).append(headerEnd());
+            content.append(HEADER_START).append(LPNulls.replaceNull(fld).toString()).append(HEADER_END);
         }
         return content.toString();
     }
@@ -567,7 +511,7 @@ public class LPTestingOutFormat {
      */
     public static String rowAddField(String field){
         StringBuilder content=new StringBuilder(0);
-        content.append(headerStart()).append(LPNulls.replaceNull(field)).append(headerEnd());
+        content.append(HEADER_START).append(LPNulls.replaceNull(field)).append(HEADER_END);
         return content.toString();
     }
 
@@ -580,9 +524,9 @@ public class LPTestingOutFormat {
         StringBuilder content=new StringBuilder(0);
         for (Object field: fields){
             if (field==null){
-                content.append(fieldStart()).append("").append(fieldEnd());
+                content.append(FIELD_START).append("").append(FIELD_END);
             }else{
-                content.append(fieldStart()).append(LPNulls.replaceNull(field).toString()).append(fieldEnd());
+                content.append(FIELD_START).append(LPNulls.replaceNull(field).toString()).append(FIELD_END);
             }
         }
         return content.toString();
@@ -718,17 +662,17 @@ public class LPTestingOutFormat {
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, null);
         LPTestingOutFormat.getIdsComplete(procReqInstance.getProcedureInstance(), scriptId);
 
-        String fileContentHeaderSummary = LPTestingOutFormat.tableStart("Logs info")+rowStart();
-        String fileContentSummary =rowStart();
+        String fileContentHeaderSummary = LPTestingOutFormat.tableStart("Logs info")+ROW_START;
+        String fileContentSummary =ROW_START;
         
-        fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Logs detail created by running this script")+headerEnd();
+        fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Logs detail created by running this script")+HEADER_END;
         String msgStr="Audit Ids";
         if (procReqInstance!=null&&procReqInstance.getTestingAuditObj().getMinAudit()!=null)
             msgStr=msgStr+" (First: "+LPNulls.replaceNull(procReqInstance.getTestingAuditObj().getMinAudit()).toString()
                 +", Last: "+LPNulls.replaceNull(procReqInstance.getTestingAuditObj().getMaxAudit()).toString()+")";
         else            
             msgStr=msgStr+" "+LPTestingOutFormat.TST_ICON_UNDEFINED+" No Audit records created by this script";
-        fileContentSummary=fileContentSummary+rowStart()+rowAddField(msgStr);
+        fileContentSummary=fileContentSummary+ROW_START+rowAddField(msgStr);
         
         msgStr="DB Errors Ids";
         if (procReqInstance!=null&&procReqInstance.getTestingMainInfo()!=null){
@@ -745,7 +689,7 @@ public class LPTestingOutFormat {
             }
         }else            
             msgStr=msgStr+" "+LPTestingOutFormat.TST_ICON_UNDEFINED+" No DB Errors found";
-        fileContentSummary=fileContentSummary+rowStart()+rowAddField(msgStr);
+        fileContentSummary=fileContentSummary+ROW_START+rowAddField(msgStr);
 
         msgStr="Properties Errors Ids";
         if (procReqInstance!=null&&procReqInstance.getTestingMainInfo()!=null){
@@ -762,19 +706,19 @@ public class LPTestingOutFormat {
             }
         }else            
             msgStr=msgStr+" "+LPTestingOutFormat.TST_ICON_UNDEFINED+" No Properties Errors found";
-        fileContentSummary=fileContentSummary+rowStart()+rowAddField(msgStr);
+        fileContentSummary=fileContentSummary+ROW_START+rowAddField(msgStr);
         
-/*        fileContentSummary=fileContentSummary+rowStart()+rowAddField("Properties Ids");
+/*        fileContentSummary=fileContentSummary+ROW_START+rowAddField("Properties Ids");
         if (procReqInstance!=null&&procReqInstance.getTestingMainInfo()!=null)
             fileContentSummary = fileContentSummary
                 +rowAddField(LPNulls.replaceNull(procReqInstance.getTestingMainInfo().getPropertiesErrorStart()).toString())
                 +" - "+rowAddField(LPNulls.replaceNull(procReqInstance.getTestingMainInfo().getPropertiesErrorEnd()).toString())
-                +rowEnd();
+                +ROW_END;
         else            
-            fileContentSummary = fileContentSummary +rowAddField(LPNulls.replaceNull("No Properties Errors found"))+rowEnd();
+            fileContentSummary = fileContentSummary +rowAddField(LPNulls.replaceNull("No Properties Errors found"))+ROW_END;
 */        
-        fileContentSummary = fileContentHeaderSummary+fileContentSummary +rowEnd();
-        fileContentSummary = fileContentSummary +tableEnd();
+        fileContentSummary = fileContentHeaderSummary+fileContentSummary +ROW_END;
+        fileContentSummary = fileContentSummary +TABLE_END;
         return fileContentSummary;        
     }
     /**
@@ -784,8 +728,8 @@ public class LPTestingOutFormat {
      * @return
      */
     public static String createSummaryTable(TestingAssertSummary tstAssert, Integer numArguments, String scriptSummaryPhrase, BigDecimal timeConsume){
-        String fileContentHeaderSummary = LPTestingOutFormat.tableStart("summary")+rowStart();
-        String fileContentSummary =rowStart();
+        String fileContentHeaderSummary = LPTestingOutFormat.tableStart("summary")+ROW_START;
+        String fileContentSummary =ROW_START;
             fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Execution Summary");
             fileContentSummary = fileContentSummary +rowAddField(LPNulls.replaceNull(scriptSummaryPhrase));
         if (numArguments>0){
@@ -808,8 +752,8 @@ public class LPTestingOutFormat {
             fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Total ErrorCode Unmatch "+LPTestingOutFormat.TST_ICON_UNMATCH);
             fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.getTotalCodeUnMatch().toString());
         }
-        fileContentSummary = fileContentHeaderSummary+fileContentSummary +rowEnd();
-        fileContentSummary = fileContentSummary +tableEnd();
+        fileContentSummary = fileContentHeaderSummary+fileContentSummary +ROW_END;
+        fileContentSummary = fileContentSummary +TABLE_END;
         return fileContentSummary;
     }
 
@@ -821,11 +765,11 @@ public class LPTestingOutFormat {
     public static String convertArrayInHtmlTable(Object[][] content){
         StringBuilder fileContentTable = new StringBuilder(0);
         fileContentTable.append(LPTestingOutFormat.tableStart(""));
-        fileContentTable.append(headerAddFields(content[0])).append(headerEnd());
+        fileContentTable.append(headerAddFields(content[0])).append(HEADER_END);
         for (int iRows=1; iRows< content.length; iRows++){
-            fileContentTable.append(rowStart()).append(rowAddFields(content[iRows])).append(rowEnd());
+            fileContentTable.append(ROW_START).append(rowAddFields(content[iRows])).append(ROW_END);
         }
-        fileContentTable.append(LPTestingOutFormat.tableEnd());
+        fileContentTable.append(LPTestingOutFormat.TABLE_END);
         return fileContentTable.toString();
     }
 
@@ -838,10 +782,10 @@ public class LPTestingOutFormat {
     public static String createTableWithHeader(String table1Header, Integer numEvaluationArguments){
         String fileContentTable = LPTestingOutFormat.tableStart("");
         if (numEvaluationArguments==0)
-            fileContentTable=fileContentTable+rowStart()+headerAddFields(table1Header.split(TESTING_FILES_FIELD_SEPARATOR))+rowEnd();
+            fileContentTable=fileContentTable+ROW_START+headerAddFields(table1Header.split(TESTING_FILES_FIELD_SEPARATOR))+ROW_END;
         else
             fileContentTable=fileContentTable+headerAddFields(addUATColumns(table1Header.split(TESTING_FILES_FIELD_SEPARATOR), numEvaluationArguments));
-        fileContentTable=fileContentTable+rowStart();
+        fileContentTable=fileContentTable+ROW_START;
         return fileContentTable;
     }
 
@@ -1274,16 +1218,16 @@ Integer dbErrorCurrentIncrement=getScriptDbErrorIncrementsInt(procInstanceName, 
     public static StringBuilder businessRulesTable(){
         StringBuilder fileContentTable1Builder=new StringBuilder(0);
         fileContentTable1Builder.append(LPTestingOutFormat.tableStart(""));            
-        fileContentTable1Builder.append(LPTestingOutFormat.headerStart()).append("Rule Name").append(LPTestingOutFormat.headerEnd());
-        fileContentTable1Builder.append(LPTestingOutFormat.headerStart()).append("Rule Value").append(LPTestingOutFormat.headerEnd());
+        fileContentTable1Builder.append(LPTestingOutFormat.HEADER_START).append("Rule Name").append(LPTestingOutFormat.HEADER_END);
+        fileContentTable1Builder.append(LPTestingOutFormat.HEADER_START).append("Rule Value").append(LPTestingOutFormat.HEADER_END);
         Object[][] SessionBusinessRulesList = BusinessRules.SessionBusinessRulesList(); 
         for (Object[] curRl: SessionBusinessRulesList){
-            fileContentTable1Builder.append(LPTestingOutFormat.rowStart()).append(LPTestingOutFormat.fieldStart())
-                .append(curRl[0]).append(LPTestingOutFormat.fieldEnd());
-            fileContentTable1Builder.append(LPTestingOutFormat.fieldStart()).append(curRl[1]).append(LPTestingOutFormat.fieldEnd())
-                .append(LPTestingOutFormat.rowEnd());
+            fileContentTable1Builder.append(LPTestingOutFormat.ROW_START).append(LPTestingOutFormat.FIELD_START)
+                .append(curRl[0]).append(LPTestingOutFormat.FIELD_END);
+            fileContentTable1Builder.append(LPTestingOutFormat.FIELD_START).append(curRl[1]).append(LPTestingOutFormat.FIELD_END)
+                .append(LPTestingOutFormat.ROW_END);
         }
-        fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
+        fileContentTable1Builder.append(LPTestingOutFormat.TABLE_END);
         return fileContentTable1Builder;
     }
 }

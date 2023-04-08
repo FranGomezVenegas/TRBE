@@ -99,7 +99,7 @@ public class TestingUOMConversionTable extends HttpServlet {
                 }else{
                     StringBuilder tableConversionsBuilder = new StringBuilder(0);
                     for (Object[] tableGet1 : tableGet) {
-                        tableConversionsBuilder.append(LPTestingOutFormat.rowStart());
+                        tableConversionsBuilder.append(LPTestingOutFormat.ROW_START);
                         uom.convertValue((String) tableGet1[0]);
                         
                         if (Boolean.FALSE.equals(uom.getConvertedFine())){
@@ -107,24 +107,24 @@ public class TestingUOMConversionTable extends HttpServlet {
                         }else{
                             tableConversionsBuilder.append(LPTestingOutFormat.rowAddField("Value "+baseValue+" in "+baseUnitName+" is equal to "+uom.getConvertedQuantity().toString()+" in "+uom.getConvertedQuantityUom()+" once converted."));
                         }
-                        tableConversionsBuilder.append(LPTestingOutFormat.rowEnd());
+                        tableConversionsBuilder.append(LPTestingOutFormat.ROW_END);
                     }                 
-                    tableConversionsBuilder.append(LPTestingOutFormat.tableEnd());
+                    tableConversionsBuilder.append(LPTestingOutFormat.TABLE_END);
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddField("There are "+(tableGet.length)+" units in the family "+familyName+", the conversions are"+tableConversionsBuilder.toString()));
                 }    
-                fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());
+                fileContentTable1Builder.append(LPTestingOutFormat.ROW_END);
             }    
-            fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
+            fileContentTable1Builder.append(LPTestingOutFormat.TABLE_END);
             if (numEvaluationArguments>0){                    
                 Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, new Object[0]);
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate));
             }
-            fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());
+            fileContentTable1Builder.append(LPTestingOutFormat.ROW_END);
             }      
             tstAssertSummary.notifyResults();
             procReqInstance.killIt();
-            fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
-            fileContentBuilder.append(fileContentTable1Builder.toString()).append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());            
+            fileContentTable1Builder.append(LPTestingOutFormat.TABLE_END);
+            fileContentBuilder.append(fileContentTable1Builder.toString()).append(LPTestingOutFormat.BODY_END).append(LPTestingOutFormat.HTML_END);            
             out.println(fileContentBuilder.toString());            
             LPTestingOutFormat.createLogFile(csvPathName, fileContentBuilder.toString());
         }
