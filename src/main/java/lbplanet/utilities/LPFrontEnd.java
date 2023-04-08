@@ -100,7 +100,6 @@ public class LPFrontEnd {
      * En uso, no tocar
      *
      * @param request
-     * @param response
      * @param dbUserName
      * @param dbUserPassword
      * @return
@@ -121,7 +120,6 @@ public class LPFrontEnd {
      * En uso, no tocar
      *
      * @param request
-     * @param response
      * @param eSign
      * @return
      */
@@ -271,13 +269,13 @@ public class LPFrontEnd {
         } else {
             try {
                 if (filePath == null || filePath.length() == 0) {
-                    filePath = "D:\\\\LP\\\\";
+                    filePath = "fake";
                 }
                 if (fileName == null || fileName.length() == 0) {
                     fileName = "mycsv.csv";
                 }
-                String fileWithPath = filePath + fileName; //"D:\\\\LP\\\\mycsv.csv";
-                String str = jsonObj.toJSONString(); //new String(Files.readAllBytes(Paths.get(fileWithPath)));
+                String fileWithPath = filePath + fileName; 
+                String str = jsonObj.toJSONString(); 
 
                 JFlat flatMe = new JFlat(str);
 
@@ -287,7 +285,6 @@ public class LPFrontEnd {
                 //directly write the JSON document to CSV but with delimiter
                 flatMe.json2Sheet().write2csv(fileWithPath, '|');
 
-                //String fileWithPath = "E:/Test/Download/MYPIC.JPG";
                 File downloadFile = new File(fileWithPath);
                 OutputStream outStream;
                 // if you want to use a relative path to context root:
@@ -311,7 +308,6 @@ public class LPFrontEnd {
                     String headerKey = "Content-Disposition";
                     String headerValue = String.format("attachment; filename=\"%s\"", downloadFile.getName());
                     response.setHeader(headerKey, headerValue);
-                    //response.getContext().responseComplete();
                     // obtains response's output stream
                     outStream = response.getOutputStream();
                     byte[] buffer = new byte[4096];

@@ -492,7 +492,7 @@ if (1==1){myDiagnoses="SUCCESS, but not implemented yet"; return myDiagnoses;}
 method = null;
 specialFunctionReturn=DIAGNOSES_SUCCESS;
                     if (method!=null){ try {
-                        specialFunctionReturn = method.invoke(this, (Object[]) parameters);
+                        specialFunctionReturn = method.invoke(this, parameters);
                         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
                             Logger.getLogger(ConfigSpecStructure.class.getName()).log(Level.SEVERE, null, ex);
                             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, currField);

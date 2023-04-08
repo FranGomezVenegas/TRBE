@@ -179,7 +179,7 @@ public final class EndPointsToRequirements {
     public EndPointsToRequirements() {
     }
 
-    public static JsonArray endpointWithNoOutputObjects = Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, "no output for testing")
+    public static final JsonArray endpointWithNoOutputObjects = Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, "no output for testing")
             .add(GlobalAPIsParams.LBL_TABLE, "no output for testing").build()).build();
 
     private static JSONArray getEndPointArguments(LPAPIArguments[] arguments) {

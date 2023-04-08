@@ -51,7 +51,7 @@ public final class AuditEventsToRequirements {
     JSONObject summaryInfo;
     
     public JSONObject getSummaryInfo(){return this.summaryInfo;}
-    public static JsonArray endpointWithNoOutputObjects=Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, "no output for testing")
+    public static final JsonArray endpointWithNoOutputObjects=Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, "no output for testing")
                     .add(GlobalAPIsParams.LBL_TABLE, "no output for testing").build()).build();
 
     public AuditEventsToRequirements(HttpServletRequest request, HttpServletResponse response){

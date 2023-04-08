@@ -751,7 +751,7 @@ out.println("Bye");
             
 
 
-            if (Boolean.TRUE.equals((Boolean) isConnected[0])){out.println("Connected to the db !:)");
+            if (Boolean.TRUE.equals(isConnected[0])){out.println("Connected to the db !:)");
             }else{out.println("NOT Connected to the db :( "+ Arrays.toString(isConnected));}
             token = new Token("eyJ1c2VyREIiOiJtYXJjIiwiZVNpZ24iOiJ2YWxlZSIsInVzZXJEQlBhc3N3b3JkIjoiYXVsaW4iLCJ1c2VyX3Byb2NlZHVyZXMiOiJbZW0tZGVtby1hXSIsInR5cCI6IkpXVCIsImFwcFNlc3Npb25JZCI6IjExNTQxIiwiYXBwU2Vzc2lvblN0YXJ0ZWREYXRlIjoiVHVlIFNlcCAwOCAyMjoyNDoxNyBDRVNUIDIwMjAiLCJ1c2VyUm9sZSI6ImNvb3JkaW5hdG9yIiwiYWxnIjoiSFMyNTYiLCJpbnRlcm5hbFVzZXJJRCI6IjEyIn0.eyJpc3MiOiJMYWJQTEFORVRkZXN0cmFuZ2lzSW5UaGVOaWdodCJ9.IOclIuaUZ-OhyTif3Mmmt4r9m8F9PYC2ECZ4coX3Jno");
             out.println("Today in Date format: "+LPDate.getTimeStampLocalDate().toString());

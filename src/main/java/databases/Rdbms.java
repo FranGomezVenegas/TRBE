@@ -58,7 +58,7 @@ import trazit.session.DbLogSummary;
  */
 public class Rdbms {
 
-    public static Boolean transactionMode = false;
+    public static final Boolean transactionMode = false;
     String errorCode = "";
     private static Connection conn = null;
     private static Boolean isStarted = false;
@@ -1689,7 +1689,7 @@ public class Rdbms {
                             break;
 //                    case "class org.postgresql.util.PGobject":
                         case "class com.google.gson.JsonObject":
-                            prepsta.setString(indexval, (String) obj.toString());
+                            prepsta.setString(indexval, obj.toString());
                             break;
                         case "class org.json.simple.JSONArray":
                             JSONArray jArr = (JSONArray) obj;

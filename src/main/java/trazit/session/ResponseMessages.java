@@ -84,7 +84,7 @@ public class ResponseMessages {
         String procName=procReqSession.getProcedureInstance();
         if (testingMessageCodeVisitedObj!=null)
             testingMessageCodeVisitedObj.addObject(procName, "", endpoint.getSuccessMessageCode(), endpoint.getSuccessMessageCode(), endpoint.getClass().getSimpleName());        
-        this.setIsSuccess((Boolean) true);
+        this.setIsSuccess(true);
         mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{endpoint.getClass().getSimpleName(), endpoint.getSuccessMessageCode(), msgCodeVariables}, 3);
     }    
     public void addMainForError(String messageCode, Object[] msgCodeVariables, String className){
@@ -93,8 +93,8 @@ public class ResponseMessages {
         String procName=procReqSession.getProcedureInstance();
         if (testingMessageCodeVisitedObj!=null)
             testingMessageCodeVisitedObj.addObject(procName, "", messageCode, messageCode, className);        
-        this.setIsSuccess((Boolean) true);
-        this.setIsSuccess((Boolean) false);
+        this.setIsSuccess(true);
+        this.setIsSuccess(false);
         mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{messageCode, msgCodeVariables, new Object[]{}}, 3);
         mainStructureObject.mainMessageCode=null;
         mainStructureObject.mainMessageVariables=msgCodeVariables;
@@ -105,8 +105,8 @@ public class ResponseMessages {
         String procName=procReqSession.getProcedureInstance();
         if (testingMessageCodeVisitedObj!=null)
             testingMessageCodeVisitedObj.addObject(procName, "", messageCode.getErrorCode(), messageCode.getErrorCode(), messageCode.getClass().getSimpleName());        
-        this.setIsSuccess((Boolean) true);
-        this.setIsSuccess((Boolean) false);
+        this.setIsSuccess(true);
+        this.setIsSuccess(false);
         mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{messageCode.getErrorCode(), msgCodeVariables, new Object[]{}}, 3);
         mainStructureObject.mainMessageCode=messageCode;
         mainStructureObject.mainMessageVariables=msgCodeVariables;

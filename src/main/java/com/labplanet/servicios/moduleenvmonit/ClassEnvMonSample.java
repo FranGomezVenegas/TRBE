@@ -272,12 +272,12 @@ public class ClassEnvMonSample {
                             numItems = Integer.valueOf(numItemsStr);
                         }
                     }
-                    for (String orgName : (String[]) argValues[1].toString().split("\\|")) {
+                    for (String orgName : argValues[1].toString().split("\\|")) {
                         actionDiagnoses = DataProgramSample.addSampleMicroorganism((Integer) argValues[0], orgName, numItems);
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM.getTableName(), actionDiagnoses[actionDiagnoses.length - 1]);
                     }
                     if (EnvMonSampleAPI.EnvMonSampleAPIactionsEndpoints.ADD_ADHOC_SAMPLE_MICROORGANISM.getName().equalsIgnoreCase(endPoint.getName()) && actionDiagnoses != null && LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())) {
-                        for (String orgName : (String[]) argValues[1].toString().split("\\|")) {
+                        for (String orgName : argValues[1].toString().split("\\|")) {
                             adhocMicroorganismAdd(orgName);
                         }
                     }
@@ -296,7 +296,7 @@ public class ClassEnvMonSample {
                             numItems = Integer.valueOf(numItemsStr);
                         }
                     }
-                    for (String orgName : (String[]) argValues[1].toString().split("\\|")) {
+                    for (String orgName : argValues[1].toString().split("\\|")) {
                         actionDiagnoses = DataProgramSample.removeSampleMicroorganism((Integer) argValues[0], orgName, numItems);
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM.getTableName(), actionDiagnoses[actionDiagnoses.length - 1]);
                     }

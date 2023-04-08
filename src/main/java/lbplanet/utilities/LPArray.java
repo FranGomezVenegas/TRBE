@@ -114,13 +114,13 @@ public class LPArray {
                         myObjectsArray[i] = rowParse[0];
                         break;
                     case "INTEGER":
-                        myObjectsArray[i] = Integer.parseInt((String) rowParse[0]);
+                        myObjectsArray[i] = Integer.parseInt(rowParse[0]);
                         break;
                     case "FLOAT":
-                        myObjectsArray[i] = Float.parseFloat((String) rowParse[0]);
+                        myObjectsArray[i] = Float.parseFloat(rowParse[0]);
                         break;
                     case "BOOLEAN":
-                        myObjectsArray[i] = Boolean.valueOf((String) rowParse[0]);
+                        myObjectsArray[i] = Boolean.valueOf(rowParse[0]);
                         break;
                     case "DATETIME":
                         myObjectsArray[i] = stringFormatToLocalDateTime((String) rowParse[0]);
@@ -134,7 +134,7 @@ public class LPArray {
                     case "DATE":
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                         try {
-                            myObjectsArray[i] = format.parse((String) rowParse[0]);
+                            myObjectsArray[i] = format.parse(rowParse[0]);
                         } catch (ParseException ex) {
                             Logger.getLogger(LPArray.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -168,13 +168,13 @@ public class LPArray {
                         myObjectsArray[i] = rowParse[0];
                         break;
                     case "INTEGER":
-                        myObjectsArray[i] = Integer.parseInt((String) rowParse[0]);
+                        myObjectsArray[i] = Integer.parseInt(rowParse[0]);
                         break;
                     case "FLOAT":
-                        myObjectsArray[i] = Float.parseFloat((String) rowParse[0]);
+                        myObjectsArray[i] = Float.parseFloat(rowParse[0]);
                         break;
                     case "BOOLEAN":
-                        myObjectsArray[i] = Boolean.valueOf((String) rowParse[0]);
+                        myObjectsArray[i] = Boolean.valueOf(rowParse[0]);
                         break;
                     case "DATETIME":
                         myObjectsArray[i] = stringFormatToLocalDateTime((String) rowParse[0]);
@@ -188,7 +188,7 @@ public class LPArray {
                     case "DATE":
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                         try {
-                            myObjectsArray[i] = format.parse((String) rowParse[0]);
+                            myObjectsArray[i] = format.parse(rowParse[0]);
                         } catch (ParseException ex) {
                             Logger.getLogger(LPArray.class.getName()).log(Level.SEVERE, null, ex);
                         }

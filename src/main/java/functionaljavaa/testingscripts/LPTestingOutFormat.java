@@ -350,11 +350,6 @@ public class LPTestingOutFormat {
     /**
      *
      */
-    public static final String TESTING_FILES_PATH_CHEMOS = "C:\\Chemos\\";
-
-    /**
-     *
-     */
     public static final String TESTING_FILES_FIELD_SEPARATOR = ";";
 
     /**

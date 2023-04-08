@@ -23,7 +23,7 @@ import trazit.session.ProcedureRequestSession;
  */
 public class IntervalsUtilities {
     
-    public static String dbFieldNameExpiryIntervalInfo="expiry_interval_info";            
+    public static final String dbFieldNameExpiryIntervalInfo="expiry_interval_info";            
     
     public static Object[] applyExpiryInterval(String objectWithIntervalTableName, String[] whereFieldNames, Object[] whereFieldValues){        
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
