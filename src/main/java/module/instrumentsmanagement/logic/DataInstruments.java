@@ -176,7 +176,7 @@ public class DataInstruments {
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_EXISTS, new Object[]{name}, null);
         
         RdbmsObject instCreationDiagn = Rdbms.insertRecordInTable(TablesInstrumentsData.INSTRUMENTS, fldNames, fldValues);
-        if (!instCreationDiagn.getRunSuccess())
+        if (Boolean.FALSE.equals(instCreationDiagn.getRunSuccess()))
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn.getErrorMessageCode(), new Object[]{name}, null);
         instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.CREATION, name, TablesInstrumentsData.INSTRUMENTS.getTableName(), name,
                         fldNames, fldValues);
@@ -448,7 +448,7 @@ public class DataInstruments {
             fldNames=LPArray.addValueToArray1D(fldNames, TblsInstrumentsData.Instruments.NEXT_CALIBRATION.getName());
             fldValues=LPArray.addValueToArray1D(fldValues, nextEventDate);
         }
-        if (Boolean.FALSE.equals(this.onLine) && decisionAndFamilyRuleToTurnOn(decision, TblsInstrumentsConfig.InstrumentsFamily.CALIB_TURN_ON_WHEN_COMPLETED.getName())){
+        if (Boolean.FALSE.equals(this.onLine) && Boolean.TRUE.equals(decisionAndFamilyRuleToTurnOn(decision, TblsInstrumentsConfig.InstrumentsFamily.CALIB_TURN_ON_WHEN_COMPLETED.getName())) ){
             turnOnLine(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_CALIBRATION.toString());
         }else{
             updateInstrument(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_CALIBRATION.toString(), AppInstrumentsAuditEvents.COMPLETE_CALIBRATION);            
@@ -548,7 +548,7 @@ public class DataInstruments {
             fldNames=LPArray.addValueToArray1D(fldNames, TblsInstrumentsData.Instruments.NEXT_PM.getName());
             fldValues=LPArray.addValueToArray1D(fldValues, nextEventDate);
         }
-        if (!this.onLine  && decisionAndFamilyRuleToTurnOn(decision, TblsInstrumentsConfig.InstrumentsFamily.PM_TURN_ON_WHEN_COMPLETED.getName())){
+        if (!this.onLine  && Boolean.TRUE.equals(decisionAndFamilyRuleToTurnOn(decision, TblsInstrumentsConfig.InstrumentsFamily.PM_TURN_ON_WHEN_COMPLETED.getName())) ){
             turnOnLine(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_PREVENTIVE_MAINTENANCE.toString());
         }else{
             updateInstrument(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_PREVENTIVE_MAINTENANCE.toString(), InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_PREVENTIVE_MAINTENANCE);            

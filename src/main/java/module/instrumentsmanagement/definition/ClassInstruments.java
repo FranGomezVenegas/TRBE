@@ -71,7 +71,7 @@ public class ClassInstruments {
         String instrName=argValues[0].toString();
         if (Boolean.FALSE.equals("NEW_INSTRUMENT".equalsIgnoreCase(endPoint.getName()))){
             instr=new DataInstruments(instrName);
-            if (instr.getHasError()){
+            if (Boolean.TRUE.equals(instr.getHasError())){
                 this.actionDiagnosesObj=instr.getErrorDetail();
                 this.diagnostic=ApiMessageReturn.trapMessage(instr.getErrorDetail().getDiagnostic(),instr.getErrorDetail().getMessageCodeObj(), instr.getErrorDetail().getMessageCodeVariables());
                 this.relatedObj=rObj;

@@ -54,7 +54,7 @@ public class ClassInvTracking {
         String reference = argValues[2].toString();
         if (Boolean.FALSE.equals("NEW_INVENTORY_LOT".equalsIgnoreCase(endPoint.getName()))){
             invLot = new DataInventory(lotName, reference, category, null);
-            if (invLot.getHasError()) {
+            if (Boolean.TRUE.equals(invLot.getHasError())) {
                 this.actionDiagnosesObj = invLot.getErrorDetail();
                 this.diagnostic = ApiMessageReturn.trapMessage(invLot.getErrorDetail().getDiagnostic(), invLot.getErrorDetail().getMessageCodeObj(), invLot.getErrorDetail().getMessageCodeVariables());
                 this.relatedObj = rObj;

@@ -251,14 +251,14 @@ public class DataInspectionLot {
             numCont=Integer.valueOf(fieldValue[LPArray.valuePosicInArray(fieldName, TblsInspLotRMData.Lot.NUM_CONTAINERS.getName())].toString());
         
         SamplingPlanEntry spEntry=new SamplingPlanEntry(materialName, specCode, specCodeVersion, quant, numCont);
-        if (spEntry.getHasErrors())
+        if (Boolean.TRUE.equals(spEntry.getHasErrors()))
             return new InternalMessage(LPPlatform.LAB_FALSE, DataInspLotErrorTrapping.SAMPLEPLAN_CHECKER_ERROR, new Object[]{Arrays.toString(spEntry.getErrorsArr())});
 
         Boolean inventoryManagement=Boolean.valueOf(LPNulls.replaceNull(materialInfo[0][2]).toString());
         InventoryPlanEntry invPlanEntry=null;
         if (Boolean.TRUE.equals(inventoryManagement)){
             invPlanEntry=new InventoryPlanEntry(materialName, specCode, specCodeVersion, quant, numCont);
-            if (invPlanEntry.getHasErrors())
+            if (Boolean.TRUE.equals(invPlanEntry.getHasErrors()))
                 return new InternalMessage(LPPlatform.LAB_FALSE, DataInspLotErrorTrapping.INVENTORYPLAN_CHECKER_ERROR, 
                     new Object[]{Arrays.toString(invPlanEntry.getErrorsArr())});
         }

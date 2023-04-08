@@ -74,7 +74,7 @@ public class ClassInspLotRMQueries  implements EnumIntQueriesObj{
                 String fieldsToRetrieveStr=LPNulls.replaceNull(argValues[1].toString());
                 Boolean includesSamplesInfo=Boolean.valueOf(LPNulls.replaceNull(argValues[2]).toString());
                 Boolean includesMaterialInfo=Boolean.valueOf(LPNulls.replaceNull(argValues[3]).toString());
-                if (includesMaterialInfo && fieldsToRetrieveStr.length()>0 && !fieldsToRetrieveStr.contains(TblsInspLotRMData.Lot.MATERIAL_NAME.getName()))
+                if (Boolean.TRUE.equals(includesMaterialInfo) && fieldsToRetrieveStr.length()>0 && Boolean.FALSE.equals(fieldsToRetrieveStr.contains(TblsInspLotRMData.Lot.MATERIAL_NAME.getName())) ) 
                     fieldsToRetrieveStr=fieldsToRetrieveStr + "|"+TblsInspLotRMData.Lot.MATERIAL_NAME.getName();
 
                 JSONObject lotJsonObj = new JSONObject();

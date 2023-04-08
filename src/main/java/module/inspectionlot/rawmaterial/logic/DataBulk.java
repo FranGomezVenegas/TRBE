@@ -227,7 +227,7 @@ public class DataBulk {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(lotBulksInfo[0][0].toString())) 
             new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.LOT_WITH_NO_BULKS, new Object[]{lotName, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())}, lotName);
         SamplingPlanEntry spEntry=new SamplingPlanEntry(materialName, materialInfo[0][1].toString(), Integer.valueOf(materialInfo[0][2].toString()), null, null);
-        if (spEntry.getHasErrors())
+        if (Boolean.TRUE.equals(spEntry.getHasErrors()))
             return new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.SAMPLEPLAN_CHECKER_ERROR, new Object[]{Arrays.toString(spEntry.getErrorsArr())});
 
         for (Object[] curBulk: lotBulksInfo){

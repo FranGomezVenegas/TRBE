@@ -41,7 +41,7 @@ public interface EnumIntViews {
                 tblAliases=LPArray.addValueToArray1D(tblAliases, curTblJoin.getMainTableAlias());
             }
             Object[] dbMainTableExists = Rdbms.dbTableExists(mainTableSchemaName.replace("\"", ""), curTblJoin.getMainTable().getTableName());
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbMainTableExists[0].toString())&&curTblJoin.childMandatoy)
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbMainTableExists[0].toString())&&Boolean.TRUE.equals(curTblJoin.childMandatoy))
                 return "View "+mainTableSchemaName+"."+curTblJoin.mainTbl.getTableName()+" was not found but declared as mandatory for this view, cannot continue";
             String childTableSchemaName="";
             if (Boolean.FALSE.equals(curTblJoin.getChildTable().getIsProcedureInstance()))
@@ -49,7 +49,7 @@ public interface EnumIntViews {
             else
                 childTableSchemaName=LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), curTblJoin.getChildTable().getRepositoryName(), isForTesting, curTblJoin.getChildTable().getTableName());
             Object[] dbChildTableExists = Rdbms.dbTableExists(childTableSchemaName.replace("\"", ""), curTblJoin.getChildTable().getTableName());
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbChildTableExists[0].toString())&&curTblJoin.childMandatoy)
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbChildTableExists[0].toString())&&Boolean.TRUE.equals(curTblJoin.childMandatoy) )
                 return "View "+childTableSchemaName+"."+curTblJoin.childTbl.getTableName()+" was not found but declared as mandatory for this view, cannot continue";
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbMainTableExists[0].toString()) &&
                 LPPlatform.LAB_TRUE.equalsIgnoreCase(dbChildTableExists[0].toString())){

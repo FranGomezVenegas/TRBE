@@ -179,6 +179,7 @@ public class UserSop {
      * @param procInstanceName
      * @param userName
      * @param sopName
+     * @param isForTesting
      * @return
      */
     public static final Object[][] getUserSop(String procInstanceName, String userName, String sopName, Boolean isForTesting) {
@@ -209,6 +210,7 @@ public class UserSop {
      * @param procInstanceNameName
      * @param userInfoId
      * @param sopName
+     * @param isForTesting
      * @return
      */
     public Object[] userSopCertifiedBySopName(String procInstanceNameName, String userInfoId, String sopName, Boolean isForTesting) {
@@ -220,6 +222,7 @@ public class UserSop {
      * @param procInstanceNameName
      * @param userInfoId
      * @param sopId
+     * @param isForTesting
      * @return
      */
     public Object[] userSopCertifiedBySopId(String procInstanceNameName, String userInfoId, String sopId, Boolean isForTesting) {
@@ -296,6 +299,7 @@ public class UserSop {
      * @param userInfoId
      * @param procInstanceName
      * @param fieldsToRetrieve
+     * @param isForTesting
      * @return
      */
     public Object[][] getNotCompletedUserSOP(String userInfoId, String procInstanceName, String[] fieldsToRetrieve, Boolean isForTesting) {
@@ -344,11 +348,11 @@ public class UserSop {
      * @param filterFieldValue
      * @param fieldsToReturn
      * @param procInstanceName
+     * @param isForTesting
      * @return
      */
     public static final Object[][] getUserProfileFieldValues(String[] filterFieldName, Object[] filterFieldValue, String[] fieldsToReturn, String[] procInstanceName, Boolean isForTesting) {
-        //String sopView = TblsData.ViewsData.USER_AND_META_DATA_SOP_VIEW.getViewName();
-        String viewName = TblsData.ViewsData.USER_AND_META_DATA_SOP_VIEW.getViewName(); //"user_and_meta_data_sop_vw"; //sopView.getViewName();
+        String viewName = TblsData.ViewsData.USER_AND_META_DATA_SOP_VIEW.getViewName(); 
         if (fieldsToReturn.length <= 0) {
             String[][] getUserProfileNEW = new String[1][2];
             getUserProfileNEW[0][0] = DIAGNOSES_ERROR_CODE;
@@ -422,13 +426,9 @@ public class UserSop {
             query.deleteCharAt(query.length() - 1);
         }
 
-        //Object[] filterFieldValueAllSchemas = new Object[filterFieldValue.length*correctProcess];
         Object[] filterFieldValueAllSchemas = new Object[]{};
-        //Integer iFldValue=0;
-        //for(String sPref: procInstanceName){
         for (int iFldValue = 0; iFldValue < correctProcess; iFldValue++) {
             for (Object fVal : filterFieldValue) {
-                //filterFieldValueAllSchemas[iFldValue]=fVal;    
                 filterFieldValueAllSchemas = LPArray.addValueToArray1D(filterFieldValueAllSchemas, fVal);
             }
         }
@@ -544,7 +544,6 @@ public class UserSop {
         UserCertificationTracking.userCertificationTrackingAuditAdd(UserCertifTrackAuditEvents.ASSIGNED_BY_USERROLE_ASSIGNMENT, "SOP", UserAndRolesViews.getUserByPerson(personName),
                 sopName, sopId, insertFieldNames, insertFieldValues);
         SessionAuditActions auditActions = ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditActions();
-        ProcedureRequestSession.getInstanceForActions(null, null, null).auditActionsKill();
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SopUserAPIactionsEndpoints.ADD_SOP_TO_USER.getSuccessMessageCode(), new Object[]{sopIdFieldValue, personName, schemaName});
     }
 
@@ -556,7 +555,7 @@ public class UserSop {
     public static Object[] isProcedureSopEnable(String procedureName) {
         BusinessRules bi = new BusinessRules(procedureName, null);
         String sopCertificationLevel = Parameter.getBusinessRuleProcedureFile(procedureName, UserSopBusinessRules.USERSOP_MODE.getAreaName(), UserSopBusinessRules.USERSOP_MODE.getTagName(), null, null, bi);
-        if (isTagValueOneOfDisableOnes(sopCertificationLevel)) {
+        if (Boolean.TRUE.equals(isTagValueOneOfDisableOnes(sopCertificationLevel))) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "disabled", null);
         }
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "disabled", null);
@@ -567,6 +566,7 @@ public class UserSop {
      * @param procInstanceName
      * @param userName
      * @param sopName
+     * @param isForTesting
      * @return
      */
     public static final Object[] userSopMarkedAsCompletedByUser(String procInstanceName, String userName, String sopName, Boolean isForTesting) {
@@ -574,8 +574,6 @@ public class UserSop {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureSopEnable[0].toString())) {
             return procedureSopEnable;
         }
-
-        String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
         Object[][] sopInfo = getUserSop(procInstanceName, userName, sopName, isForTesting);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sopInfo[0][0].toString())) {
             return LPArray.array2dTo1d(sopInfo);
@@ -611,7 +609,6 @@ public class UserSop {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureSopEnable[0].toString())) {
             return procedureSopEnable;
         }
-
         Object[][] sopInfo = getUserSop(procInstanceName, userName, sopName, isForTesting);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sopInfo[0][0].toString())) {
             return LPArray.array2dTo1d(sopInfo);
@@ -647,9 +644,7 @@ public class UserSop {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureSopEnable[0].toString())) {
             return procedureSopEnable;
         }
-
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, null);
-
         Object[][] sopInfo = getUserSop(procInstanceName, userName, sopName, isForTesting);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sopInfo[0][0].toString())) {
             return LPArray.array2dTo1d(sopInfo);

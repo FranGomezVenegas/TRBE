@@ -507,7 +507,7 @@ public class DataInventory {
             return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.REFERENCE_LOT_OR_USE_OPEN_REFERENCE_LOT_SHOULDBESPECIFIED, new Object[]{null}, null);
         }
         DataInventory invLot = null;
-        if (LPNulls.replaceNull(lotName).length() == 0 && (useOpenReferenceLot)) {
+        if (LPNulls.replaceNull(lotName).length() == 0 && Boolean.TRUE.equals(useOpenReferenceLot)) {
             invLot = new DataInventory(null, reference, category, externalProcInstanceName, useOpenReferenceLot);
         } else {
             invLot = new DataInventory(lotName, reference, category, externalProcInstanceName);

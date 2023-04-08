@@ -53,7 +53,7 @@ public class SchedInstruments {
                 String curInstName = currInstrEv[fldInstrNamePosic].toString();
                 DataInstruments instr=new DataInstruments(curInstName);
                 InternalMessage newEventLog=null;
-                if (instr.getHasError())
+                if (Boolean.TRUE.equals(instr.getHasError()))
                     newEventLog=null;
                 else{
                     switch (currInstrEv[fldEventTypePosic].toString().toUpperCase()){

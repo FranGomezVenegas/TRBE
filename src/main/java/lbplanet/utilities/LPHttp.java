@@ -114,7 +114,7 @@ public class LPHttp {
         StringBuilder paramsNotPresent = new StringBuilder(0); 
         if ( (paramNames!=null) && (paramNames.length>1 || (paramNames.length==1 && (!"".equals(paramNames[0].toString())))) ){
             for (LPAPIArguments curParam: paramNames){
-                if (curParam.getMandatory()){
+                if (Boolean.TRUE.equals(curParam.getMandatory())){
                     Boolean notPresent = false;
                     String curParamValue = request.getParameter(curParam.getName());
                     if (curParamValue==null){notPresent=true;}

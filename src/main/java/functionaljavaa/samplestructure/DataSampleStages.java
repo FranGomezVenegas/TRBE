@@ -14,7 +14,6 @@ import databases.SqlStatement;
 import databases.SqlWhere;
 import databases.TblsData;
 import databases.TblsProcedure;
-import databases.features.Token;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.modulesample.DataModuleSampleAnalysis;
 import functionaljavaa.parameter.Parameter;
@@ -153,7 +152,7 @@ public class DataSampleStages {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String sampleStagesMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.SAMPLE_STAGE_MODE.getAreaName(), SampleStageBusinessRules.SAMPLE_STAGE_MODE.getTagName(), SampleStageBusinessRules.SAMPLE_STAGE_TIMING_CAPTURE_MODE.getPreReqs(), true);
-        if (Parameter.isTagValueOneOfDisableOnes(sampleStagesMode)) {
+        if (Boolean.TRUE.equals(Parameter.isTagValueOneOfDisableOnes(sampleStagesMode))) {
             this.isSampleStagesEnable = false;
             return;
         }
@@ -250,7 +249,6 @@ public class DataSampleStages {
     }
 
     public Object[] dataSampleActionAutoMoveToNext(String actionName, Integer sampleId) {
-        Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(),

@@ -308,7 +308,7 @@ public class LPPlatform {
 
         actionName = actionName.toUpperCase();
         String[] procedureActions = procBusinessRules.getProcedureBusinessRule(LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName()).split("\\|");
-        if (ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting()) {
+        if (Boolean.TRUE.equals(ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting())) {
             TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
             if (testingBusinessRulesVisitedObj != null) {
                 testingBusinessRulesVisitedObj.addObject(procInstanceName, "procedure", "TestingRegresssionUAT", LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName(), Arrays.toString(procedureActions));
@@ -336,15 +336,13 @@ public class LPPlatform {
      * @return
      */
     public static Object[] procUserRoleActionEnabled(String procInstanceName, String userRole, String actionName, BusinessRules procBusinessRules) {
-        String[] procedureActionsUserRoles = procBusinessRules.getProcedureBusinessRule(LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName() + actionName).split("\\|"); //Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getAreaName(), LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName()+actionName).toString().split("\\|");
-        if (ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting()) {
+        String[] procedureActionsUserRoles = procBusinessRules.getProcedureBusinessRule(LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName() + actionName).split("\\|");
+        if (Boolean.TRUE.equals(ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting())) {
             TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
             if (testingBusinessRulesVisitedObj != null) {
                 testingBusinessRulesVisitedObj.addObject(procInstanceName, "procedure", "TestingRegresssionUAT", LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName() + actionName, Arrays.toString(procedureActionsUserRoles));
             }
         }
-
-        //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "actionEnabled"+actionName).split("\\|");
         if (LPArray.valueInArray(procedureActionsUserRoles, "ALL")) {
             return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformSuccess.USRROLACTIONENABLED_ENABLED_BYALL, new Object[]{procInstanceName});
         }
@@ -366,15 +364,14 @@ public class LPPlatform {
      */
     public static Object[] procActionRequiresUserConfirmation(String procInstanceName, String actionName, BusinessRules procBusinessRules) {
         actionName = actionName.toUpperCase();
-        String[] actionRequiresUserConfirmationRuleValue = procBusinessRules.getProcedureBusinessRule(LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName()).split("\\|"); // Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getAreaName(), LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName()).toString().split("\\|");
-        if (ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting()) {
+        String[] actionRequiresUserConfirmationRuleValue = procBusinessRules.getProcedureBusinessRule(LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName()).split("\\|");
+        if (Boolean.TRUE.equals(ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting())) {
             TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
             if (testingBusinessRulesVisitedObj != null) {
                 testingBusinessRulesVisitedObj.addObject(procInstanceName, "procedure", "TestingRegresssionUAT", LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName() + actionName, Arrays.toString(actionRequiresUserConfirmationRuleValue));
             }
         }
 
-        //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "verifyUserRequired").split("\\|");        
         if (LPArray.valueInArray(actionRequiresUserConfirmationRuleValue, "ALL")) {
             return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_ENABLED_BY_ALL, new Object[]{procInstanceName, actionName});
         }
@@ -400,15 +397,13 @@ public class LPPlatform {
      */
     public static Object[] procActionRequiresEsignConfirmation(String procInstanceName, String actionName, BusinessRules procBusinessRules) {
         actionName = actionName.toUpperCase();
-        String[] procedureActions = procBusinessRules.getProcedureBusinessRule(LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()).split("\\|"); // Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.ESIGN_REQUIRED.getAreaName(), LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()).toString().split("\\|");
-        if (ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting()) {
+        String[] procedureActions = procBusinessRules.getProcedureBusinessRule(LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()).split("\\|"); 
+        if (Boolean.TRUE.equals(ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting())) {
             TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
             if (testingBusinessRulesVisitedObj != null) {
                 testingBusinessRulesVisitedObj.addObject(procInstanceName, "procedure", "TestingRegresssionUAT", LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName() + actionName, Arrays.toString(procedureActions));
             }
         }
-        //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "eSignRequired").split("\\|");
-
         if (LPArray.valueInArray(procedureActions, "ALL")) {
             return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformSuccess.ESIGNREQUIRED_ENABLED_BY_ALL, new Object[]{procInstanceName, actionName});
         }
@@ -424,14 +419,12 @@ public class LPPlatform {
     public static Object[] procActionRequiresJustificationPhrase(String procInstanceName, String actionName, BusinessRules procBusinessRules) {
         actionName = actionName.toUpperCase();
         String[] procedureActions = procBusinessRules.getProcedureBusinessRule(LpPlatformBusinessRules.AUDIT_JUSTIF_REASON_REQUIRED.getTagName()).split("\\|"); // Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.ESIGN_REQUIRED.getAreaName(), LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()).toString().split("\\|");
-        if (ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting()) {
+        if (Boolean.TRUE.equals(ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting())) {
             TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
             if (testingBusinessRulesVisitedObj != null) {
                 testingBusinessRulesVisitedObj.addObject(procInstanceName, "procedure", "TestingRegresssionUAT", LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName() + actionName, Arrays.toString(procedureActions));
             }
         }
-        //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, "eSignRequired").split("\\|");
-
         if (LPArray.valueInArray(procedureActions, "ALL")) {
             return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformSuccess.JUSTIFPHRASEREQUIRED_ENABLED_BY_ALL, new Object[]{procInstanceName, actionName});
         }
@@ -458,10 +451,6 @@ public class LPPlatform {
             auditReasonType = procBusinessRules.getProcedureBusinessRule(actionName + LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName());
         }
 
-        /*        String auditReasonType = LPNulls.replaceNull(Parameter.getBusinessRuleProcedureFile(procInstanceName, 
-            LpPlatformBusinessRules.AUDITREASON_PHRASE.getAreaName(), 
-            actionName+LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName())).toString();*/
-        //Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+CONFIG_PROC_FILE_NAME, actionName+"AuditReasonPhrase");        
         if (auditReasonType.length() == 0) {
             return "TEXT";
         }
@@ -701,12 +690,6 @@ public class LPPlatform {
                 fieldsUpdate = LPArray.addValueToArray1D(fieldsUpdate, currField);
                 fieldsUpdateValue = LPArray.addValueToArray1D(fieldsUpdateValue, elementsDev[1].getLineNumber());
             }
-            /*            if (fieldsUpdate.length>0){
-                SqlWhere sqlWhere = new SqlWhere(tableName, getFilterFldName, getFilterFldValue);
-                sqlWhere.addConstraint(TblsEnvMonitConfig.InstrIncubator.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{instName}, "");
-                updateRecordFieldsByFilter=Rdbms.updateRecordFieldsByFilter(tableName,
-                    EnumIntTableFields.getTableFieldsFromString(tableName, fieldsUpdate), fieldsUpdateValue, sqlWhere, null);
-            } */
         }
     }
 
@@ -847,7 +830,7 @@ public class LPPlatform {
             diagnoses[0][2] = "Code Line " + elements[1].getLineNumber();
             diagnoses[0][3] = "FALSE";
             diagnoses[0][4] = "ERROR:Missing Mandatory Fields";
-            diagnoses[0][5] = "MissingMandatoryFields"; //"Mandatory fields not found: "+mandatoryFieldsMissing;
+            diagnoses[0][5] = "MissingMandatoryFields";
             return diagnoses;
         }
         for (Integer i = 0; i < fieldNames.length; i++) {
@@ -1076,7 +1059,6 @@ public class LPPlatform {
     }
 
     public static void saveMessageInDbErrorLog(String query, Object[] queryParams, Object[] callerInfo, String msgCode, Object[] msgVariables, String procName) {
-        //    if (1==1) return;
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         if (procInstanceName == null) {
             procInstanceName = procName;
@@ -1085,7 +1067,6 @@ public class LPPlatform {
             return;
         }
         if (Boolean.FALSE.equals(Rdbms.getRdbms().getIsStarted())) {
-//            Logger.log(LogTag.JFR, LogLevel.TRACE, msgCode);
             return;
         }
         Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ZZZ_DB_ERROR.getTableName());

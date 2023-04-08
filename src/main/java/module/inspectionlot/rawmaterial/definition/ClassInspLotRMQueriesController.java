@@ -47,7 +47,7 @@ public class ClassInspLotRMQueriesController implements EnumIntQueriesEndpoints{
             }
             ClassInspLotRMQueries clss=new ClassInspLotRMQueries(request, response, endPoint);
             this.functionDiagn=clss.getDiagnostic();
-            if (clss.getIsSuccess())
+            if (Boolean.TRUE.equals(clss.getIsSuccess()))
                 this.functionDiagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "queriesHaveNoMsgCode", null);
             else
                 this.functionDiagn=clss.getDiagnostic(); 

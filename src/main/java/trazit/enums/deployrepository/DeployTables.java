@@ -205,7 +205,6 @@ private static String createTableBeginScript(EnumIntTables tableObj, String proc
         if (addFldToScript.equalsIgnoreCase(CreateFldTypes.ADD.name())){
             if (fieldsScript.length()>0)fieldsScript.append(", ");            
             if (tableObj.getSeqName()!=null && tableObj.getSeqName().equalsIgnoreCase(curFld.getName())){
-                //fieldsScript.append(curFld.getName()).append(" ").append(currFieldDefBuilder);
                 String fldSeq="";
                 fldSeq=curFld.getName()+" bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_#FLD_seq'::regclass)";
                 fldSeq=fldSeq.replace("#SCHEMA", schemaName).replace("#TBL", tableObj.getTableName()).replace("#FLD", curFld.getName());
@@ -246,9 +245,9 @@ private static String addFldToScript(EnumIntTableFields curFld, BusinessRules bi
             default:
                 return CreateFldTypes.STOP.name();
         } 
-        if (busRuleProcValue.length()==0 && curBusRule.getStopTableCreationIfBusinessRuleAbsent())
+        if (busRuleProcValue.length()==0 && Boolean.TRUE.equals(curBusRule.getStopTableCreationIfBusinessRuleAbsent()))
             return CreateFldTypes.STOP.name();
-        if (busRuleProcValue.length()==0 && curBusRule.getAddIfBusinessRuleAbsent())
+        if (busRuleProcValue.length()==0 && Boolean.TRUE.equals(curBusRule.getAddIfBusinessRuleAbsent()))
             return CreateFldTypes.DISCARD.name();
         if (busRuleProcValue.length()>=0){
             if (curBusRule.getExpectedValues()!=null && !LPArray.valueInArray(curBusRule.getExpectedValues(), busRuleProcValue))
