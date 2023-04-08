@@ -141,6 +141,7 @@ public class TblsReqs {
         PROCEDURE_HASH_CODE("procedure_hash_code", LPDatabase.stringNotNull(), null, null, null, null),
         DESCRIPTION(FIELDS_NAMES_DESCRIPTION, LPDatabase.stringNotNull(), null, null, null, null),
         PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
+        MODULE_NAME("module_name", LPDatabase.stringNotNull(), null, null, null, null),
         LABEL_EN("label_en", LPDatabase.stringNotNull(), null, null, null, null),
         LABEL_ES("label_es", LPDatabase.stringNotNull(), null, null, null, null),
         LOCKED_FOR_ACTIONS("locked_for_actions", LPDatabase.booleanFld(false), null, null, null, null),
