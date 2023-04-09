@@ -17,6 +17,7 @@ import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -50,9 +51,7 @@ public class BusinessRulesToRequirements {
         String rulesNames="businessRulesEnableValues|businessRulesDisableValues";
         for (String curRule:rulesNames.split("\\|")){
             String enableValuesStr=getBusinessRuleAppFile(curRule, true); 
-            for (String curVal: enableValuesStr.split("\\|")){
-                vList.add(curVal);
-            }
+            vList.addAll(Arrays.asList(enableValuesStr.split("\\|")));
         }
         return vList;
     }
@@ -141,7 +140,6 @@ public class BusinessRulesToRequirements {
         jMainObj.put("05_found_total", eventsFound.size());
         jMainObj.put("06_not_found_total", eventsNotFound.size());
         this.summaryInfo=jMainObj;
-        //LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
     }
 private static void declareBusinessRuleInDatabaseOld(String apiName, String areaName, String tagName, String[] fieldNames, Object[] fieldValues){
 //    Rdbms.getRecordFieldsByFilter(apiName, apiName, fieldNames, fieldValues, fieldNames)

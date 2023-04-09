@@ -319,16 +319,12 @@ public class AppProcedureListAPI extends HttpServlet {
                 new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()},
                 new Object[]{actionName}, 
                 new String[]{TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});
-//        String[] actionDetail = Parameter.getBusinessRuleProcedureFile(procInstanceName, LPPlatform.LpPlatformBusinessRules.ESIGN_REQUIRED.getAreaName(), actionName+"AuditReasonPhrase").toString().split("\\|");
-        
         String[] actionDetail=LPNulls.replaceNull(ruleValue[0][0]).toString().split("\\|");
         jObj.put("name", actionName);
         jObj.put("type", actionDetail[0]);
         if (actionDetail[0].toUpperCase().contains("LIST")){
             JSONArray jObjListEntries = new JSONArray();
-            for (int i=1;i<actionDetail.length;i++){
-                jObjListEntries.add(actionDetail[i]);
-            }
+            jObjListEntries.addAll(Arrays.asList(actionDetail));
             jObj.put("list_entries", jObjListEntries);
         }
         return jObj;
