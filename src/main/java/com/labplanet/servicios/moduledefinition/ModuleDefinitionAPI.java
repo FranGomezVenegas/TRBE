@@ -37,28 +37,12 @@ import trazit.session.ProcedureRequestSession;
 public class ModuleDefinitionAPI extends HttpServlet {
 
     public enum ModuleDefinitionpParametersEndpoints {
-        /**
-         *
-         */
         PROCEDURE_NAME("procedureName"), PROCEDURE_VERSION("procedureVersion"), SCHEMA_PREFIX("procInstanceName"), MODULE_NAME("moduleName"), USER_NAME("userName"), ROLE_NAME("roleName"),
         UOM_NAME("uomName"), UOM_IMPORT_TYPE("importType");
-
-        private ModuleDefinitionpParametersEndpoints(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return this.name;
-        }
+        private ModuleDefinitionpParametersEndpoints(String name) {this.name = name;}
+        public String getName() {return this.name;}
         private final String name;
-
-        public String getSuccessMessageCode() {
-            return "Not supported yet."; //To change body of generated methods, choose Tools | Templates.
-        }
-
-        public LPAPIArguments[] getArguments() {
-            return new LPAPIArguments[]{}; //To change body of generated methods, choose Tools | Templates.
-        }
+        public LPAPIArguments[] getArguments() {return new LPAPIArguments[]{};}
     }
 
     public enum ModuleDefinitionAPIactionsEndpoints implements EnumIntEndpoints {

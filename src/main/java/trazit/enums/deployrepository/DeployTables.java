@@ -83,7 +83,7 @@ public static String createTableScript(EnumIntTables tableObj, String procInstan
         seqScript=seqScript.append(createTableBeginScript(tableObj, procInstanceName));
         seqScript=seqScript.append(primaryKeyScript(tableObj));
         seqScript=seqScript.append(foreignKeyScript(tableObj, procInstanceName));
-        seqScript=seqScript.append(createTableEndScript());
+        seqScript=seqScript.append(CREATE_TABLE_END_SCRIPT);
 
         seqScript=seqScript.append(alterTableScript(tableObj, procInstanceName, false));
         seqScript=seqScript.append(tableCommentScript(tableObj, procInstanceName));
@@ -217,9 +217,7 @@ private static String createTableBeginScript(EnumIntTables tableObj, String proc
     script=script.replace("#SCHEMA", schemaName).replace("#TBL", tableObj.getTableName());
     return script;
 }
-private static String createTableEndScript(){
-    return ")";
-}
+private static final String CREATE_TABLE_END_SCRIPT = ")";
 
 private static String addFldToScript(EnumIntTableFields curFld, BusinessRules bi){
     String s="";

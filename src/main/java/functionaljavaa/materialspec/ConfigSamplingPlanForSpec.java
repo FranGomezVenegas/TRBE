@@ -8,6 +8,8 @@ package functionaljavaa.materialspec;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMData;
 import databases.Rdbms;
 import databases.RdbmsObject;
+import java.math.BigInteger;
+import static java.math.BigInteger.ZERO;
 import lbplanet.utilities.LPArray;
 import static lbplanet.utilities.LPMath.nthroot;
 import lbplanet.utilities.LPPlatform;
@@ -176,8 +178,8 @@ public class ConfigSamplingPlanForSpec {
         return val;
     }    
     
-    public Integer samplingAlgorithmQuantityDisable(Integer val){
-        return 0;
+    public BigInteger samplingAlgorithmQuantityDisable(Integer val){
+        return ZERO;
     }    
         
 }
