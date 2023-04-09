@@ -11,7 +11,7 @@ import trazit.enums.EnumIntTables;
 public final class CertifTablesAudit {
     private CertifTablesAudit() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
     
-    public static Object[] CertifTablesAudit(EnumIntTables tblObj, Integer certifId, String action, String userId, String userName, String objectFldName, String objectName, String objectVersionFldName, Integer objectVersion, 
+    public static Object[] CertifTablsAudit(EnumIntTables tblObj, Integer certifId, String action, String userId, String userName, String objectFldName, String objectName, String objectVersionFldName, Integer objectVersion, 
                         Object[] auditlog, Integer trainingId, Integer parentAuditId, String note) {
         GenericAuditFields gAuditFlds=new GenericAuditFields(auditlog);
 
