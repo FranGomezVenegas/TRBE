@@ -553,10 +553,9 @@ specialFunctionReturn=DIAGNOSES_SUCCESS;
                 specFieldName = LPArray.addValueToArray1D(specFieldName, TblsCnfg.SpecLimits.CONFIG_VERSION.getName());
                 specFieldValue = LPArray.addValueToArray1D(specFieldValue, specCodeVersion);                        
             }
-            Object[] actionDiagnoses=null;
-            RdbmsObject insertDiagn = Rdbms.insertRecordInTable(TblsCnfg.TablesConfig.SPEC, specFieldName, specFieldValue); // , schemaConfigName);
+            RdbmsObject insertDiagn = Rdbms.insertRecordInTable(TblsCnfg.TablesConfig.SPEC, specFieldName, specFieldValue);
             if (Boolean.FALSE.equals(insertDiagn.getRunSuccess())){
-                return actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
             }else{
                 ConfigTablesAudit.specAuditAdd(ConfigSpecAuditEvents.SPEC_NEW.toString(), TblsCnfg.TablesConfig.SPEC, specCode, 
                         specCode, specCodeVersion, LPArray.joinTwo1DArraysInOneOf1DString(specFieldName, specFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
@@ -576,7 +575,7 @@ specialFunctionReturn=DIAGNOSES_SUCCESS;
                 insertDiagn=Rdbms.insertRecordInTable(TblsCnfg.TablesConfig.SPEC_RULES, 
                         specRulesFldNames,specRulesFldValues); 
                 if (Boolean.FALSE.equals(insertDiagn.getRunSuccess()))
-                    return actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
+                    return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
 
                 ConfigTablesAudit.specAuditAdd(ConfigSpecAuditEvents.SPEC_NEW.toString(), TblsCnfg.TablesConfig.SPEC_RULES, specCode, 
                     specCode, specCodeVersion, LPArray.joinTwo1DArraysInOneOf1DString(specRulesFldNames, specRulesFldValues, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);

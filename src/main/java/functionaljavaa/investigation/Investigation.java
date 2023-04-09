@@ -87,7 +87,6 @@ public final class Investigation {
 
     public static Object[] newInvestigation(String[] fldNames, Object[] fldValues, String objectsToAdd){ 
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        String procInstanceName=instanceForActions.getProcedureInstance();
         Token token=instanceForActions.getToken();
 
         Object[] newInvestigationChecks = newInvestigationChecks(fldNames, fldValues, objectsToAdd);
@@ -109,7 +108,7 @@ public final class Investigation {
             if (objectsToAdd!=null && objectsToAdd.length()>0)
                 addInvestObjects(Integer.valueOf(investIdStr), objectsToAdd, Integer.valueOf(auditObjDiagn.getNewRowId().toString()));
             Object[] trapMessage = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());                    
-            return trapMessage=LPArray.addValueToArray1D(trapMessage, insertDiagn);
+            return LPArray.addValueToArray1D(trapMessage, insertDiagn);
         }else
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());                  
     }
@@ -144,7 +143,6 @@ public final class Investigation {
     }
 
     public static Object[] addInvestObjects(Integer investId, String objectsToAdd, Integer parentAuditId){ 
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         Object[] investigationClosed = isInvestigationClosed(investId); 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationClosed[0].toString())) return investigationClosed;
@@ -272,7 +270,7 @@ public final class Investigation {
 	Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TblsProcedure.TablesProcedure.INVESTIGATION,
 		EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.INVESTIGATION, updFieldName), updFieldValue, sqlWhere, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) return diagnostic; 
-        Object[] investigationAuditAdd = ProcedureInvestigationAudit.investigationAuditAdd(
+        ProcedureInvestigationAudit.investigationAuditAdd(
                 DataInvestigationAuditEvents.CAPA_DECISION.toString(), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(),
                 investId, investId.toString(),  
                 LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null);
@@ -328,7 +326,6 @@ public final class Investigation {
                 sampleId=Integer.valueOf(objInfo[0][0].toString());
                 smpAudit.sampleAuditAdd(auditActionName, TblsData.TablesData.SAMPLE.getTableName(), resultId, 
                     sampleId, null, resultId, new String[]{TblsProcedure.InvestObjects.INVEST_ID.getName()}, new Object[]{investId.toString()});
-                return;
             default:
         }
 
