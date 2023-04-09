@@ -24,7 +24,6 @@ import static trazit.enums.EnumIntTableFields.getFldPosicInArray;
 import trazit.enums.EnumIntTables;
 import trazit.enums.EnumIntViewFields;
 import trazit.enums.EnumIntViews;
-import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.DbLogSummary;
 import trazit.session.ProcedureRequestSession;
@@ -389,9 +388,6 @@ public class SqlStatementEnums {
                 }
                 queryWhere.deleteCharAt(queryWhere.length() - 1);
                 queryWhere.append(")");
-            } else if (Boolean.TRUE.equals(fn.toUpperCase().contains(WHERECLAUSE_TYPES.NOT_EQUAL.getSqlClause()))) {
-                queryWhere.append(Boolean.TRUE.equals(Boolean.TRUE.equals(caseSenstive)) ? fn : "lower(" + fn + ")").append(" ? ");
-                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, Boolean.TRUE.equals(caseSenstive) ? whereFieldValues[iwhereFieldNames] : whereFieldValues[iwhereFieldNames].toString().toLowerCase());
             } else if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.BETWEEN.getSqlClause())) {
                 queryWhere.append(fn.toLowerCase()).append(" ? ").append(" and ").append(" ? ");
                 whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
@@ -399,6 +395,7 @@ public class SqlStatementEnums {
             } else if ((fn.toUpperCase().contains(WHERECLAUSE_TYPES.LESS_THAN.getSqlClause()))
                     || (fn.toUpperCase().contains(WHERECLAUSE_TYPES.LESS_THAN_STRICT.getSqlClause()))
                     || (fn.toUpperCase().contains(WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()))
+                    || (fn.toUpperCase().contains(WHERECLAUSE_TYPES.NOT_EQUAL.getSqlClause()))
                     || (fn.toUpperCase().contains(WHERECLAUSE_TYPES.GREATER_THAN_STRICT.getSqlClause()))) {
                 queryWhere.append(fn).append(" ? ");
                 whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
@@ -757,69 +754,16 @@ public class SqlStatementEnums {
                 }
                 queryWhere.deleteCharAt(queryWhere.length() - 1);
                 queryWhere.append(")");
-            } else if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.NOT_EQUAL.getSqlClause())) {
-                queryWhere.append(fn).append(" ? ");
-                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
             } else if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.BETWEEN.getSqlClause())) {
                 queryWhere.append(fn.toLowerCase()).append(" ? ").append(" and ").append(" ? ");
                 whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
                 whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames + 1]);
-            } else if ((fn.toUpperCase().contains(WHERECLAUSE_TYPES.LESS_THAN.getSqlClause()))
-                    || (fn.toUpperCase().contains(WHERECLAUSE_TYPES.LESS_THAN_STRICT.getSqlClause()))
-                    || (fn.toUpperCase().contains(WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()))
-                    || (fn.toUpperCase().contains(WHERECLAUSE_TYPES.GREATER_THAN_STRICT.getSqlClause()))) {
-                queryWhere.append(fn).append(" ? ");
-
-                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
             } else {
-                queryWhere.append(fn).append("=? ");
+                queryWhere.append(fn).append(" ? ");
                 whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
             }
         }
         return new Object[]{queryWhere.toString(), whereFieldValuesNew};
-    }
-
-    private String xbuildTableFieldsToRetrieve(EnumIntTableFields[] fieldsToRetrieve) {
-        StringBuilder fieldsToRetrieveStr = new StringBuilder(0);
-        try {
-            if (fieldsToRetrieve != null) {
-                String fn = "";
-                for (EnumIntTableFields curFld : fieldsToRetrieve) {
-                    if (curFld != null) {
-                        fn = curFld.getName();
-                        if ( (curFld.getReferenceTable() != null) &&
-                            (GlobalVariables.Schemas.CONFIG.toString().equalsIgnoreCase(curFld.getReferenceTable().getRepository())
-                                    && "person".equalsIgnoreCase(curFld.getReferenceTable().getTableName())
-                                    && "person_id".equalsIgnoreCase(curFld.getReferenceTable().getFieldName())) ) {
-                                fn = "(select alias from config.person where person_id=" + curFld.getName() + ")";                            
-                        }
-                        if (curFld.getFieldMask() != null) {
-                            fn = curFld.getFieldMask();
-                        } else {
-                            if (curFld.getFieldType() != null) {
-                                if ("DATE".equalsIgnoreCase(curFld.getFieldType())) {
-                                    fn = "to_char(" + curFld.getName() + ",'YYYY-MM-DD')" + ", ";
-                                } else if ("DATETIME".equalsIgnoreCase(curFld.getFieldType())) {
-                                    fn = "to_char(" + curFld.getName() + ",'" + DbFieldValueMask.datetimeFormat(curFld) + "')" + ", ";
-                                } else if (curFld.getFieldType().toLowerCase().contains("timestamp")) {
-                                    fn = "to_char(" + curFld.getName() + ",'" + DbFieldValueMask.datetimeFormat(curFld) + "')" + ", ";
-                                } else if (fn.toUpperCase().contains(" IN")) {
-                                    Integer posicINClause = fn.toUpperCase().indexOf("IN");
-                                    fn = fn.substring(0, posicINClause - 1);
-                                    fieldsToRetrieveStr.append(fn.toLowerCase()).append(", ");
-                                }
-                            }
-                        }
-                        fieldsToRetrieveStr.append(fn.toLowerCase()).append(", ");
-                    }
-                }
-                fieldsToRetrieveStr.deleteCharAt(fieldsToRetrieveStr.length() - 1);
-                fieldsToRetrieveStr.deleteCharAt(fieldsToRetrieveStr.length() - 1);
-            }
-            return fieldsToRetrieveStr.toString();
-        } catch (Exception e) {
-            return "*";
-        }
     }
 
     private Object[] getTableSchema(EnumIntTables tblObj, String alternativeProcInstanceName) {

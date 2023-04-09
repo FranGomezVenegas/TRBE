@@ -52,14 +52,14 @@ public class DataInventoryQualif {
         Object[][] referenceInfo = null;
         String[] allFieldNames = getAllFieldNames(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableFields());
         if (Boolean.TRUE.equals(requiresConfigChecks)
-            && (reference != null && reference.length() > 0)) {
-                referenceInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName(),
-                        new String[]{TblsInvTrackingConfig.Reference.NAME.getName(), TblsInvTrackingConfig.Reference.CATEGORY.getName()}, new Object[]{reference, category},
-                        allFieldNames);
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceInfo[0][0].toString())) {
-                    messages.addMainForError(InvTrackingEnums.InventoryTrackingErrorTrapping.REFERENCE_NOT_FOUND, new Object[]{reference});
-                    return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.REFERENCE_NOT_FOUND, new Object[]{reference}, null);
-                }            
+                && (reference != null && reference.length() > 0)) {
+            referenceInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName(),
+                    new String[]{TblsInvTrackingConfig.Reference.NAME.getName(), TblsInvTrackingConfig.Reference.CATEGORY.getName()}, new Object[]{reference, category},
+                    allFieldNames);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceInfo[0][0].toString())) {
+                messages.addMainForError(InvTrackingEnums.InventoryTrackingErrorTrapping.REFERENCE_NOT_FOUND, new Object[]{reference});
+                return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.REFERENCE_NOT_FOUND, new Object[]{reference}, null);
+            }
         }
         fldNames = LPArray.addValueToArray1D(fldNames, TblsInvTrackingData.LotCertification.REFERENCE.getName());
         fldValues = LPArray.addValueToArray1D(fldValues, reference);
@@ -322,25 +322,25 @@ public class DataInventoryQualif {
                     new Object[]{});
         }
         String fieldType = objectVariablePropInfo[0][2].toString();
-        if (DataStudyObjectsVariableValues.VariableTypes.LIST.toString().equalsIgnoreCase(fieldType)) {
-            String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
-            if (Boolean.FALSE.equals(LPArray.valueInArray(allowedValuesArr, newValue))) {
-                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.VARIABLE_VALUE_NOTONEOFTHEEXPECTED,
-                        new Object[]{newValue, Arrays.toString(allowedValuesArr), variableName, appProcInstance});
-            }
-        } else if (DataStudyObjectsVariableValues.VariableTypes.REAL.toString().equalsIgnoreCase(fieldType)) {
-            Object[] isNumeric = isNumeric(newValue);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isNumeric[0].toString())) {
-                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.NOT_NUMERIC_VALUE, null, null);
-            }
-        } else if (DataStudyObjectsVariableValues.VariableTypes.INTEGER.toString().equalsIgnoreCase(fieldType)) {
-            Object[] isNumeric = isNumeric(newValue);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isNumeric[0].toString())) {
-                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.NOT_NUMERIC_VALUE, null, null);
-            }
-        } else if (DataStudyObjectsVariableValues.VariableTypes.TEXT.toString().equalsIgnoreCase(fieldType)) {
-        } else {
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.VARIABLE_TYPE_NOT_RECOGNIZED, new Object[]{fieldType}, null);
+        switch (DataStudyObjectsVariableValues.VariableTypes.valueOf(fieldType)) {
+            case LIST:
+                String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
+                if (Boolean.FALSE.equals(LPArray.valueInArray(allowedValuesArr, newValue))) {
+                    return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.VARIABLE_VALUE_NOTONEOFTHEEXPECTED,
+                            new Object[]{newValue, Arrays.toString(allowedValuesArr), variableName, appProcInstance});
+                }
+                break;
+            case REAL:
+            case INTEGER:
+                Object[] isNumeric = isNumeric(newValue);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isNumeric[0].toString())) {
+                    return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.NOT_NUMERIC_VALUE, null, null);
+                }
+                break;
+            case TEXT:
+                break;
+            default:
+                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.VARIABLE_TYPE_NOT_RECOGNIZED, new Object[]{fieldType}, null);
         }
         String[] updFieldsName = new String[]{TblsInvTrackingData.LotCertificationVariableValues.VALUE.getName()};
         Object[] updFieldsValue = new Object[]{newValue};
@@ -395,25 +395,25 @@ public class DataInventoryQualif {
                     new Object[]{variableName, appProcInstance, newValue});
         }
         String fieldType = objectVariablePropInfo[0][2].toString();
-        if (DataStudyObjectsVariableValues.VariableTypes.LIST.toString().equalsIgnoreCase(fieldType)) {
-            String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
-            if (Boolean.FALSE.equals(LPArray.valueInArray(allowedValuesArr, newValue))) {
-                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.MORE_THAN_ONE_VARIABLE,
-                        new Object[]{newValue, Arrays.toString(allowedValuesArr), variableName, appProcInstance});
-            }
-        } else if (DataStudyObjectsVariableValues.VariableTypes.REAL.toString().equalsIgnoreCase(fieldType)) {
-            Object[] isNumeric = isNumeric(newValue);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isNumeric[0].toString())) {
-                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.NOT_NUMERIC_VALUE, null, null);
-            }
-        } else if (DataStudyObjectsVariableValues.VariableTypes.INTEGER.toString().equalsIgnoreCase(fieldType)) {
-            Object[] isNumeric = isNumeric(newValue);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isNumeric[0].toString())) {
-                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.NOT_NUMERIC_VALUE, null, null);
-            }
-        } else if (DataStudyObjectsVariableValues.VariableTypes.TEXT.toString().equalsIgnoreCase(fieldType)) {
-        } else {
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.VARIABLE_TYPE_NOT_RECOGNIZED, new Object[]{fieldType}, null);
+        switch (DataStudyObjectsVariableValues.VariableTypes.valueOf(fieldType)) {
+            case LIST:
+                String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
+                if (Boolean.FALSE.equals(LPArray.valueInArray(allowedValuesArr, newValue))) {
+                    return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.MORE_THAN_ONE_VARIABLE,
+                            new Object[]{newValue, Arrays.toString(allowedValuesArr), variableName, appProcInstance});
+                }
+                break;
+            case REAL:
+            case INTEGER:
+                Object[] isNumeric = isNumeric(newValue);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isNumeric[0].toString())) {
+                    return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.NOT_NUMERIC_VALUE, null, null);
+                }
+                break;
+            case TEXT:
+                break;
+            default:
+                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.VARIABLE_TYPE_NOT_RECOGNIZED, new Object[]{fieldType}, null);
         }
         String[] updFieldsName = new String[]{TblsInvTrackingData.LotCertificationVariableValues.VALUE.getName()};
         Object[] updFieldsValue = new Object[]{newValue};
@@ -474,7 +474,7 @@ public class DataInventoryQualif {
                 return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.AUTHOR_CANNOT_BE_REVIEWER, new Object[]{});
             }
         }
-        if (Boolean.TRUE.equals(Boolean.valueOf(auditInfo[0][1].toString()))){
+        if (Boolean.TRUE.equals(Boolean.valueOf(auditInfo[0][1].toString()))) {
             messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.AUDIT_RECORD_ALREADY_REVIEWED, new Object[]{auditId});
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.AUDIT_RECORD_ALREADY_REVIEWED, new Object[]{auditId});
         }

@@ -868,9 +868,7 @@ public class LPArray {
             StringBuilder nameBuilder = new StringBuilder(0);
             for (Object n : matrix) {
                 nameBuilder.append(fieldAdorn).append(LPNulls.replaceNull(n).toString().replace("'", "\\'")).append(fieldAdorn);
-                if (curObjIndex++ < matrix.length) {
-                    nameBuilder.append(fieldsSeparator);
-                } else if (removeLastSeparator == null || Boolean.FALSE.equals(removeLastSeparator)) {
+                if ( (curObjIndex++ < matrix.length) || (removeLastSeparator == null || Boolean.FALSE.equals(removeLastSeparator)) ){
                     nameBuilder.append(fieldsSeparator);
                 }
             }

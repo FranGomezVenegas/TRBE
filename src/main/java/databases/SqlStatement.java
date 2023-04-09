@@ -249,9 +249,6 @@ public class SqlStatement {
                 }
                 queryWhere.deleteCharAt(queryWhere.length() - 1);
                 queryWhere.append(")");
-            } else if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.NOT_EQUAL.getSqlClause())) {
-                queryWhere.append(fn).append(" ? ");
-                whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
             } else if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.BETWEEN.getSqlClause())) {
                 queryWhere.append(fn.toLowerCase()).append(" ? ").append(" and ").append(" ? ");
                 whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
@@ -259,6 +256,7 @@ public class SqlStatement {
             } else if ((fn.toUpperCase().contains(WHERECLAUSE_TYPES.LESS_THAN.getSqlClause()))
                     || (fn.toUpperCase().contains(WHERECLAUSE_TYPES.LESS_THAN_STRICT.getSqlClause()))
                     || (fn.toUpperCase().contains(WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()))
+                    || (fn.toUpperCase().contains(WHERECLAUSE_TYPES.NOT_EQUAL.getSqlClause()))
                     || (fn.toUpperCase().contains(WHERECLAUSE_TYPES.GREATER_THAN_STRICT.getSqlClause()))) {
                 queryWhere.append(fn).append(" ? ");
                 whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
