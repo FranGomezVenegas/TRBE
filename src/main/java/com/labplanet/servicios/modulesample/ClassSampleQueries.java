@@ -760,8 +760,8 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                     String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_WARNING_REASONS, null, msgCode, "en", null, true, null);
                     String errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_WARNING_REASONS, null, msgCode, "es", null, false, null);
                     JSONObject reasonInfo = new JSONObject();
-                    reasonInfo.put("message_en", errorTextEn);
-                    reasonInfo.put("message_es", errorTextEs);
+                    reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_EN, errorTextEn);
+                    reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_ES, errorTextEs);
                     return new Object[]{fldNameArr, fldValueArr, "warning_reason", reasonInfo};
                 case "locking":
                 default:
@@ -774,8 +774,8 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                     errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_LOCKING_REASONS, null, msgCode, "en", null, true, null);
                     errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_LOCKING_REASONS, null, msgCode, "es", null, false, null);
                     reasonInfo = new JSONObject();
-                    reasonInfo.put("message_en", errorTextEn);
-                    reasonInfo.put("message_es", errorTextEs);
+                    reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_EN, errorTextEn);
+                    reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_ES, errorTextEs);
                     return new Object[]{fldNameArr, fldValueArr, "locking_reason", reasonInfo};
             }
         }

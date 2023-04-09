@@ -49,7 +49,6 @@ public class ClassMasterData {
     private Boolean objectTypeExists=true;
     private Object[] diagnostic=new Object[0];
     private String globalDiagn=LPPlatform.LAB_TRUE;
-    private Boolean singleRowDiagn=true; 
     
     public enum MasterDataObjectTypes{
         MD_METHODS(new EnumIntTables[]{TblsCnfg.TablesConfig.METHODS}),
@@ -91,7 +90,6 @@ public class ClassMasterData {
         JsonObject jsonObject=(JsonObject) objToJsonObj[1];
         
         Object[] actionDiagnoses = null;
-        String globalDiagn=LPPlatform.LAB_TRUE;
         JSONArray jLogArr=new JSONArray();
         if (jsonObject.has("parsing_type")&&"SIMPLE_TABLE".equalsIgnoreCase(jsonObject.get("parsing_type").getAsString())){
             JsonArray asJsonArray = jsonObject.get(GlobalAPIsParams.LBL_VALUES).getAsJsonArray();
@@ -120,7 +118,7 @@ public class ClassMasterData {
                         this.diagnostic=insertRecord.getApiMessage();
                     }
                 }
-                jLog.put("diagnostic", Arrays.toString(this.diagnostic));
+                jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, Arrays.toString(this.diagnostic));
                 jLogArr.add(jLog);
             }
             calculateDiagnostic(jLogArr);
@@ -186,13 +184,13 @@ public class ClassMasterData {
                                     Object[] newRecord = AnalysisMethodCertif.newRecord(methodName, methodVersion, curUser);
                                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newRecord[0].toString()))
                                         globalDiagn=newRecord[0].toString();
-                                    jUserAssignLog.put("diagnostic", newRecord[newRecord.length-1].toString());
+                                    jUserAssignLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, newRecord[newRecord.length-1].toString());
                                     jUserAssignLogArr.add(jUserAssignLog);
                                 }
                                 jLog.put("users_assignment_detail", jUserAssignLogArr);
                             }
                         }
-                        jLog.put("diagnostic", diagn);
+                        jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, diagn);
                         jLogArr.add(jLog);
                     }
                     calculateDiagnostic(jLogArr);
@@ -350,7 +348,7 @@ public class ClassMasterData {
                             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString()))
                                 globalDiagn=this.diagnostic[0].toString();
                         }
-                        jLog.put("diagnostic", Arrays.toString(this.diagnostic));
+                        jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, Arrays.toString(this.diagnostic));
                         jLogArr.add(jLog);                        
                     } 
                     calculateDiagnostic(jLogArr);
@@ -372,7 +370,7 @@ public class ClassMasterData {
                                 fldsName, fldsValue, instanceName);
                             this.diagnostic=insertRecord.getApiMessage();
                         }
-                        jLog.put("diagnostic", Arrays.toString(this.diagnostic));
+                        jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, Arrays.toString(this.diagnostic));
                         jLogArr.add(jLog);
                     }
                     calculateDiagnostic(jLogArr);
@@ -407,7 +405,7 @@ public class ClassMasterData {
                                 fldsName, fldsValue, instanceName);
                             this.diagnostic=insertRecord.getApiMessage();
                         }
-                        jLog.put("diagnostic", Arrays.toString(this.diagnostic));
+                        jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, Arrays.toString(this.diagnostic));
                         jLogArr.add(jLog);
                     }
                     calculateDiagnostic(jLogArr);
@@ -603,7 +601,7 @@ public class ClassMasterData {
                                 fldsName, fldsValue, instanceName);
                             this.diagnostic=insertRecord.getApiMessage();
                         }
-                        jLog.put("diagnostic", Arrays.toString(this.diagnostic));
+                        jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, Arrays.toString(this.diagnostic));
                         jLogArr.add(jLog);
                     }
                     calculateDiagnostic(jLogArr);

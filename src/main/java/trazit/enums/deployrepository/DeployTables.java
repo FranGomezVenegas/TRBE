@@ -62,11 +62,13 @@ public static String createTableScript(EnumIntTables tableObj, String procInstan
                         fieldToAdd=true;
                     }
                 }
-                if (Boolean.FALSE.equals(fieldToAdd))
-                    if (Boolean.TRUE.equals(isView))
+                if (Boolean.FALSE.equals(fieldToAdd)){
+                    if (Boolean.TRUE.equals(isView)){
                         return "view "+tableObj.getTableName()+" already exists and up to date";
-                    else
+                    }else{
                         return "table "+tableObj.getTableName()+" already exists and up to date";
+                    }
+                }
                 seqScript=new StringBuilder(0).append(alterTableScript(tableObj, procInstanceName, true)).append(seqScript);
             }
         }        

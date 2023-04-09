@@ -1717,8 +1717,8 @@ public class ClassEnvMonSampleFrontend {
                         String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_WARNING_REASONS, null, msgCode, "en", null, true, null);
                         String errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_WARNING_REASONS, null, msgCode, "es", null, false, null);
                         JSONObject reasonInfo = new JSONObject();
-                        reasonInfo.put("message_en", errorTextEn);
-                        reasonInfo.put("message_es", errorTextEs);
+                        reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_EN, errorTextEn);
+                        reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_ES, errorTextEs);
                         return new Object[]{fldNameArr, fldValueArr, "warning_reason", reasonInfo};
                     case "locking":
                     default:
@@ -1731,8 +1731,8 @@ public class ClassEnvMonSampleFrontend {
                         errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_LOCKING_REASONS, null, msgCode, "en", null, true, null);
                         errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_LOCKING_REASONS, null, msgCode, "es", null, false, null);
                         reasonInfo = new JSONObject();
-                        reasonInfo.put("message_en", errorTextEn);
-                        reasonInfo.put("message_es", errorTextEs);
+                        reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_EN, errorTextEn);
+                        reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_ES, errorTextEs);
                         return new Object[]{fldNameArr, fldValueArr, "locking_reason", reasonInfo};
                 }
             }
@@ -1757,8 +1757,8 @@ public class ClassEnvMonSampleFrontend {
             String msgCode = "resultLockedByStatus";
             fldValueArr = LPArray.addValueToArray1D(fldValueArr, msgCode);
             JSONObject reasonInfo = new JSONObject();
-            reasonInfo.put("message_en", resultStatus);
-            reasonInfo.put("message_es", resultStatus);
+            reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_EN, resultStatus);
+            reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_ES, resultStatus);
             return new Object[]{fldNameArr, fldValueArr, "locking_reason", reasonInfo};
         }
         return new Object[]{null, null};
@@ -1789,8 +1789,8 @@ public class ClassEnvMonSampleFrontend {
         Object[] errorMsgEn = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AnalysisMethodCertif.CertificationAnalysisMethodErrorTrapping.USER_NOT_CERTIFIED, new Object[]{methodName}, "en");
         Object[] errorMsgEs = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AnalysisMethodCertif.CertificationAnalysisMethodErrorTrapping.USER_NOT_CERTIFIED, new Object[]{methodName}, "es");
         JSONObject reasonInfo = new JSONObject();
-        reasonInfo.put("message_en", errorMsgEn[errorMsgEs.length - 1]);
-        reasonInfo.put("message_es", errorMsgEs[errorMsgEs.length - 1]);
+        reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_EN, errorMsgEn[errorMsgEs.length - 1]);
+        reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_ES, errorMsgEs[errorMsgEs.length - 1]);
         return new Object[]{fldNameArr, fldValueArr, "locking_reason", reasonInfo};
     }
 

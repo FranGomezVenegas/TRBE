@@ -5,6 +5,7 @@
  */
 package module.inventorytrack.apis;
 
+import com.labplanet.servicios.app.GlobalAPIsParams;
 import static platform.app.apis.IncidentAPIactions.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import databases.SqlStatement;
@@ -518,8 +519,8 @@ public class InvTrackingAPIqueries extends HttpServlet {
         }
         fldPosic = LPArray.valuePosicInArray(fieldsToRetrieve, TblsInvTrackingData.Lot.LOCKED_REASON.getName());
         if (fldPosic == -1) {
-            jObj.put("message_en", "Locked");
-            jObj.put("message_es", "Bloqueado");
+            jObj.put(GlobalAPIsParams.LBL_MESSAGE_EN, "Locked");
+            jObj.put(GlobalAPIsParams.LBL_MESSAGE_ES, "Bloqueado");
             return jObj;
         }
         String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE + "InstrumentsAPIactionsEndpoints", null, LPNulls.replaceNull(currInstr[fldPosic]).toString(), "en", null, true, "InstrumentsAPIactionsEndpoints");
@@ -530,8 +531,8 @@ public class InvTrackingAPIqueries extends HttpServlet {
         if (errorTextEs.length() == 0) {
             errorTextEs = LPNulls.replaceNull(currInstr[fldPosic]).toString();
         }
-        jObj.put("message_en", errorTextEn);
-        jObj.put("message_es", errorTextEs);
+        jObj.put(GlobalAPIsParams.LBL_MESSAGE_EN, errorTextEn);
+        jObj.put(GlobalAPIsParams.LBL_MESSAGE_ES, errorTextEs);
         return jObj;
     }
 

@@ -581,7 +581,7 @@ public class ProcedureDefinitionToInstance {
                 }
                 String diagn = "";
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString()) && LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableTestingExists[0].toString())) {
-                    curTblJsonObj.put("diagnostic", "table already exists in this repository");
+                    curTblJsonObj.put(GlobalAPIsParams.LBL_DIAGNOSTIC, "table already exists in this repository");
                 } else {
                     diagn = "table NOT exists in this repository";
                     String tblCreateScript = null;
@@ -714,7 +714,7 @@ public class ProcedureDefinitionToInstance {
                                 } else {
                                     diagn = diagn + " and created";
                                 }
-                                curTblJsonObj.put("diagnostic", diagn);
+                                curTblJsonObj.put(GlobalAPIsParams.LBL_DIAGNOSTIC, diagn);
 
                                 JSONObject scriptLog = new JSONObject();
                                 if (!(tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE) || tblCreateScript.toLowerCase().startsWith("view")) && !tblCreateScript.toLowerCase().contains("already")) {
@@ -854,7 +854,7 @@ public class ProcedureDefinitionToInstance {
                                 } else {
                                     diagn = diagn + " and created";
                                 }
-                                curTblJsonObj.put("diagnostic", diagn);
+                                curTblJsonObj.put(GlobalAPIsParams.LBL_DIAGNOSTIC, diagn);
 
                                 JSONObject scriptLog = new JSONObject();
                                 if (!(tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE) || tblCreateScript.toLowerCase().startsWith("view")) && !tblCreateScript.toLowerCase().contains("already")) {
@@ -966,7 +966,7 @@ public class ProcedureDefinitionToInstance {
                                 } else {
                                     diagn = diagn + " and created";
                                 }
-                                curTblJsonObj.put("diagnostic", diagn);
+                                curTblJsonObj.put(GlobalAPIsParams.LBL_DIAGNOSTIC, diagn);
 
                                 JSONObject scriptLog = new JSONObject();
                                 if (!(tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE) || tblCreateScript.toLowerCase().startsWith("view")) && !tblCreateScript.toLowerCase().contains("already")) {
@@ -1047,7 +1047,7 @@ public class ProcedureDefinitionToInstance {
                                 } else {
                                     diagn = diagn + " and created";
                                 }
-                                curTblJsonObj.put("diagnostic", diagn);
+                                curTblJsonObj.put(GlobalAPIsParams.LBL_DIAGNOSTIC, diagn);
 
                                 JSONObject scriptLog = new JSONObject();
                                 if (!(tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE) || tblCreateScript.toLowerCase().startsWith("view")) && !tblCreateScript.toLowerCase().contains("already")) {
@@ -1131,7 +1131,7 @@ public class ProcedureDefinitionToInstance {
                 dbTableTestingExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, schemaForTesting), curTableName);
             String diagn="";
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString()) && LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableTestingExists[0].toString()))
-                curTblJsonObj.put("diagnostic", "table already exists in this repository");
+                curTblJsonObj.put(GlobalAPIsParams.LBL_DIAGNOSTIC, "table already exists in this repository");
             else{
                 diagn ="table NOT exists in this repository";
                 String tblCreateScript =null;
@@ -1244,7 +1244,7 @@ public class ProcedureDefinitionToInstance {
                             diagn=diagn+" and not created, "+prepUpQuery[prepUpQuery.length-1];                                
                         else
                             diagn=diagn+" and created";
-                        curTblJsonObj.put("diagnostic", diagn);
+                        curTblJsonObj.put(GlobalAPIsParams.LBL_DIAGNOSTIC, diagn);
 
                         JSONObject scriptLog=new JSONObject();
                         if (!(tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE)||tblCreateScript.toLowerCase().startsWith("view")) && !tblCreateScript.toLowerCase().contains("already"))
@@ -1355,7 +1355,7 @@ public class ProcedureDefinitionToInstance {
                                 diagn=diagn+" and not created, "+prepUpQuery[prepUpQuery.length-1];                                
                             else
                                 diagn=diagn+" and created";
-                            curTblJsonObj.put("diagnostic", diagn);
+                            curTblJsonObj.put(GlobalAPIsParams.LBL_DIAGNOSTIC, diagn);
                             
                             JSONObject scriptLog=new JSONObject();
                             if (!(tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE)||tblCreateScript.toLowerCase().startsWith("view")) && !tblCreateScript.toLowerCase().contains("already"))
@@ -1524,7 +1524,7 @@ public class ProcedureDefinitionToInstance {
         try {
 
             String[] fieldsRequired = new String[]{TblsReqs.ProcedureBusinessRules.FILE_SUFFIX.getName(), TblsReqs.ProcedureBusinessRules.RULE_NAME.getName(), TblsReqs.ProcedureBusinessRules.RULE_VALUE.getName()};
-            String diagnObjName = "diagnostic";
+            String diagnObjName = GlobalAPIsParams.LBL_DIAGNOSTIC;
             String[] fildsToGet = new String[]{TblsReqs.ProcedureBusinessRules.FILE_SUFFIX.getName(), TblsReqs.ProcedureBusinessRules.RULE_NAME.getName(),
                 TblsReqs.ProcedureBusinessRules.RULE_VALUE.getName()};
             for (String curFldReq : fieldsRequired) {

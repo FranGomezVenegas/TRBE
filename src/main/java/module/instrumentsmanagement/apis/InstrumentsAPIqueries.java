@@ -5,6 +5,7 @@
  */
 package module.instrumentsmanagement.apis;
 
+import com.labplanet.servicios.app.GlobalAPIsParams;
 import static platform.app.apis.IncidentAPIactions.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import databases.SqlStatement;
@@ -332,16 +333,16 @@ public class InstrumentsAPIqueries extends HttpServlet {
             return jObj;
         fldPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsInstrumentsData.Instruments.LOCKED_REASON.getName());
         if (fldPosic==-1){
-            jObj.put("message_en", "Locked");
-            jObj.put("message_es", "Bloqueado");            
+            jObj.put(GlobalAPIsParams.LBL_MESSAGE_EN, "Locked");
+            jObj.put(GlobalAPIsParams.LBL_MESSAGE_ES, "Bloqueado");            
             return jObj;
         }
         String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+"InstrumentsAPIactionsEndpoints", null, LPNulls.replaceNull(currInstr[fldPosic]).toString(), "en", null, true, "InstrumentsAPIactionsEndpoints");
         if (errorTextEn.length()==0) errorTextEn=LPNulls.replaceNull(currInstr[fldPosic]).toString();
         String errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+"InstrumentsAPIactionsEndpoints", null, LPNulls.replaceNull(currInstr[fldPosic]).toString(), "es", null, false, "InstrumentsAPIactionsEndpoints");
         if (errorTextEs.length()==0) errorTextEs=LPNulls.replaceNull(currInstr[fldPosic]).toString();
-        jObj.put("message_en", errorTextEn);
-        jObj.put("message_es", errorTextEs);            
+        jObj.put(GlobalAPIsParams.LBL_MESSAGE_EN, errorTextEn);
+        jObj.put(GlobalAPIsParams.LBL_MESSAGE_ES, errorTextEs);            
         return jObj;
     }
     public static JSONArray instrumentFamiliesList(String alternativeProcInstanceName){

@@ -35,7 +35,7 @@ import trazit.session.ProcedureRequestSession;
 public class LPFrontEnd {
 
     public enum ResponseTags {
-        DIAGNOSTIC("diagnostic"), CATEGORY("category"), MESSAGE_CODE("messageCode"), MESSAGE("message"), RELATED_OBJECTS("related_objects"), IS_ERROR("is_error");
+        DIAGNOSTIC(GlobalAPIsParams.LBL_DIAGNOSTIC), CATEGORY("category"), MESSAGE_CODE("messageCode"), MESSAGE("message"), RELATED_OBJECTS("related_objects"), IS_ERROR("is_error");
 
         private ResponseTags(String labelName) {
             this.labelName = labelName;

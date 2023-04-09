@@ -203,8 +203,7 @@ public final class EndPointsToRequirements {
         Integer apiNamePosic = LPArray.valuePosicInArray(this.fldNames, EndpointsDeclaration.API_NAME.getName());
         Integer endpointNamePosic = LPArray.valuePosicInArray(this.fldNames, EndpointsDeclaration.ENDPOINT_NAME.getName());
         this.apiName1d = LPArray.array2dTo1d(this.endpointsFromDatabase, apiNamePosic);
-        Object[] endpointName1d = LPArray.array2dTo1d(this.endpointsFromDatabase, endpointNamePosic);
-        this.endpointsApiAndEndpointNamesKey = LPArray.joinTwo1DArraysInOneOf1DString(apiName1d, endpointName1d, "-");
+        this.endpointsApiAndEndpointNamesKey = LPArray.joinTwo1DArraysInOneOf1DString(apiName1d, LPArray.array2dTo1d(this.endpointsFromDatabase, endpointNamePosic), "-");
         this.apiName1d = LPArray.getUniquesArray(apiName1d);
     }
 

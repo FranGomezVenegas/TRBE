@@ -414,6 +414,10 @@ public class GlobalAPIsParams extends HttpServlet {
     public static final String REQUEST_PARAM_GROUPED = "dataGrouped";
     public static final String REQUEST_PARAM_FIELDS_TO_RETRIEVE_OR_GROUPING = "fieldsToRetrieveOrGrouping";
 
+    
+    public static final String LBL_MESSAGE_EN = "message_en";
+    public static final String LBL_MESSAGE_ES = "message_es";
+    public static final String LBL_DIAGNOSTIC = "diagnostic";
     public static final String LBL_TABLE = "table";
     public static final String LBL_FIELD_NAME = "field_name";
     public static final String LBL_FIELD_VALUE = "field_value";
