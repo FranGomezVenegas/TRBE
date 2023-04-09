@@ -6,6 +6,7 @@
 package com.labplanet.servicios.moduleenvmonit;
 
 import com.labplanet.servicios.moduleenvmonit.EnvMonAPI.EnvMonAPIactionsEndpoints;
+import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
 import databases.TblsProcedure;
 import functionaljavaa.inventory.batch.DataBatchIncubator;
@@ -14,6 +15,7 @@ import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSample;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
@@ -156,6 +158,9 @@ public class ClassEnvMon {
                         actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{dateStart, dateEnd, programName, procInstanceName});                                        
                     this.messageDynamicData=new Object[]{};
                     break;
+                default:      
+                    Rdbms.closeRdbms(); 
+                    RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);                    
             }    
         this.diagnostic=actionDiagnoses;
         this.relatedObj=rObj;

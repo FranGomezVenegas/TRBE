@@ -8,6 +8,7 @@ package com.labplanet.servicios.modulegenoma;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NUM_DAYS;
 import com.labplanet.servicios.modulegenoma.TblsGenomaData.TablesGenomaData;
+import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.SqlStatementEnums;
@@ -20,6 +21,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.JsonArray;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -60,40 +62,40 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 10),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 11), //new LPAPIArguments(EnvMonitAPIParams., LPAPIArguments.ArgumentType.STRING.toString(), false, 7)
         }, EndPointsToRequirements.endpointWithNoOutputObjects,
-                 null, null),
+                null, null),
         DEACTIVATED_PROJECT_USERS_LAST_N_DAYS("DEACTIVATED_PROJECT_USERS_LAST_N_DAYS", "",
                 new LPAPIArguments[]{new LPAPIArguments("projectName", LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
                     new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7)},
                 EndPointsToRequirements.endpointWithNoOutputObjects,
-                 null, null),
+                null, null),
         DEACTIVATED_STUDY_USERS_LAST_N_DAYS("DEACTIVATED_STUDY_USERS_LAST_N_DAYS", "",
                 new LPAPIArguments[]{new LPAPIArguments("studyName", LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
                     new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7)},
                 EndPointsToRequirements.endpointWithNoOutputObjects,
-                 null, null),
+                null, null),
         DEACTIVATED_STUDY_INDIVIDUALS_LAST_N_DAYS("DEACTIVATED_STUDY_INDIVIDUALS_LAST_N_DAYS", "",
                 new LPAPIArguments[]{new LPAPIArguments("studyName", LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
                     new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7)},
                 EndPointsToRequirements.endpointWithNoOutputObjects,
-                 null, null),
+                null, null),
         DEACTIVATED_STUDY_INDIVIDUAL_SAMPLES_LAST_N_DAYS("DEACTIVATED_STUDY_INDIVIDUAL_SAMPLES_LAST_N_DAYS", "",
                 new LPAPIArguments[]{new LPAPIArguments("studyName", LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
                     new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7)},
                 EndPointsToRequirements.endpointWithNoOutputObjects,
-                 null, null),
+                null, null),
         DEACTIVATED_STUDY_SAMPLES_SET_LAST_N_DAYS("DEACTIVATED_STUDY_SAMPLES_SET_LAST_N_DAYS", "",
                 new LPAPIArguments[]{new LPAPIArguments("studyName", LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
                     new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7)},
                 EndPointsToRequirements.endpointWithNoOutputObjects,
-                 null, null),
+                null, null),
         DEACTIVATED_STUDY_FAMILIES_LAST_N_DAYS("DEACTIVATED_STUDY_FAMILIES_LAST_N_DAYS", "",
                 new LPAPIArguments[]{new LPAPIArguments("studyName", LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
                     new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7)},
                 EndPointsToRequirements.endpointWithNoOutputObjects,
-                 null, null),
+                null, null),
         ALL_ACTIVE_VARIABLES_AND_VARIABLES_SET("ALL_ACTIVE_VARIABLES_AND_VARIABLES_SET", "", new LPAPIArguments[]{
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects,
-                 null, null);
+                null, null);
 
         private GenomaStudyAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
             this.name = name;
@@ -364,6 +366,9 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                                     new Object[]{studyName, false, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)},
                                     new String[]{TblsGenomaData.StudyFamily.DEACTIVATED_ON.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                             break;
+                        default:
+                            Rdbms.closeRdbms();
+                            RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
                     }
                     JSONArray jArr = new JSONArray();
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(objectsDeactivactedLastDays[0][0].toString()))) {

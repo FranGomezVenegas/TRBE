@@ -28,7 +28,6 @@ public final class UserCertificationTracking {
         fieldValues = LPArray.addValueToArray1D(fieldValues, objectName);
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.UserCertifTrack.OBJECT_ID.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, objectId);
-        Object[] insertRecordInfo=AuditUtilities.applyTheInsert(gAuditFlds, TblsDataAudit.TablesDataAudit.USER_CERTIF_TRACK, fieldNames, fieldValues);
-        return insertRecordInfo;
+        return AuditUtilities.applyTheInsert(gAuditFlds, TblsDataAudit.TablesDataAudit.USER_CERTIF_TRACK, fieldNames, fieldValues);
     }       
 }
