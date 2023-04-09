@@ -31,7 +31,6 @@ import trazit.globalvariables.GlobalVariables;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 import static module.inventorytrack.logic.AppInventoryLotAudit.inventoryLotAuditAdd;
-import static module.inventorytrack.logic.AppInventoryLotAudit.inventoryLotAuditAdd;
 
 /**
  *
