@@ -20,7 +20,7 @@ import trazit.session.ApiMessageReturn;
  * @author Administrator
  */
 public class LPDate {
-    public enum IntervalTypes{DAYS, MONTHS, YEARS};
+    public enum IntervalTypes{DAYS, MONTHS, YEARS}
 
     private LPDate(){    throw new IllegalStateException("Utility class");}    
 /**

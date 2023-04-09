@@ -87,14 +87,11 @@ public class ClassEnvMonProdLot {
                 default:      
                     Rdbms.closeRdbms(); 
                     RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
-            {
                 try {
                     rd.forward(request,null);
                 } catch (ServletException | IOException ex) {
                     Logger.getLogger(ClassEnvMonProdLot.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }
-  
             }
         this.diagnostic=actionDiagnoses;
         this.relatedObj=rObj;

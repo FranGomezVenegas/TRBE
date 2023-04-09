@@ -110,8 +110,7 @@ public class FrontendCertifObjsUtilities {
                 mainObj.put("label_es", CertifModes.CERTIFUSER_REVIEWER_SIGN.getLabelEs());
             } else {
                 cMode = CertifModes.valueOf(certifMode.toUpperCase());
-                if ((CertifModes.CERTIFUSER_READ_AND_UNDERSTOOD.toString().equalsIgnoreCase(certifMode))
-                        || (CertifModes.CERTIFUSER_UNDERSTOOD_AND_SENDTOREVIEWER.toString().equalsIgnoreCase(certifMode))
+                if ((CertifModes.CERTIFUSER_READ_AND_UNDERSTOOD.toString().equalsIgnoreCase(certifMode))                        
                         || (CertifModes.CERTIFUSER_UNDERSTOOD_AND_SENDTOREVIEWER.toString().equalsIgnoreCase(certifMode))) {
                     mainObj.put("action_visible", true);
                     mainObj.put("action_enabled", true);
@@ -121,8 +120,12 @@ public class FrontendCertifObjsUtilities {
                 }
             }
             mainObj.put("endpoint_name", certifMode);
-            mainObj.put("label_en", cMode.getLabelEn());
-            mainObj.put("label_es", cMode.getLabelEs());
+            if (cMode != null) {
+                mainObj.put("label_en", cMode.getLabelEn());
+            }
+            if (cMode != null) {
+                mainObj.put("label_es", cMode.getLabelEs());
+            }
 
         } catch (Exception e) {
             mainObj.put("action_visible", false);

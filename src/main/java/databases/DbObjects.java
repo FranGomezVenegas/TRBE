@@ -40,7 +40,7 @@ public class DbObjects {
      *
      */
     public static final String POSTGRES_DB_OWNER="labplanet";
-    enum SchemaActions{CREATE, DELETE};
+    enum SchemaActions{CREATE, DELETE}
     /**
      *
      */

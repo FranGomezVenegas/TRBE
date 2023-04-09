@@ -15,8 +15,8 @@ import trazit.enums.EnumIntTableFields;
  * @author User
  */
 public class CertifGlobalVariables {
-    public enum CertifLight{GREEN, RED};
-    public enum CertifStatuses{UNCERTIFIED, CERTIFIED, NOT_CERTIFIED, EXPIRED, REVOKED};
+    public enum CertifLight{GREEN, RED}
+    public enum CertifStatuses{UNCERTIFIED, CERTIFIED, NOT_CERTIFIED, EXPIRED, REVOKED}
     
     public enum CertifEventUpdateFieldsAndValues{
         NEW_RECORD(new String[]{TblsData.CertifUserAnalysisMethod.LIGHT.getName(), TblsData.CertifUserAnalysisMethod.STATUS.getName(), 
@@ -59,9 +59,7 @@ public class CertifGlobalVariables {
         return getScriptToAddCertifToAnyObjectPostgres(procInstanceName, schemaGroupName, tableName);
     }
     private static String getScriptToAddCertifToAnyObjectPostgres(String procInstanceName, String schemaGroupName, String tableName){            
-        String[] fields=new String[]{//TblsData.CertifUserAnalysisMethod.USER_ID.getName(),
-        //TblsData.CertifUserAnalysisMethod.ASSIGNED_ON.getName(), TblsData.CertifUserAnalysisMethod.ASSIGNED_BY.getName(),
-        //TblsData.CertifUserAnalysisMethod.STATUS.getName(), 
+        String[] fields=new String[]{
         TblsData.CertifUserAnalysisMethod.CERTIFICATION_DATE.getName(),
         TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_STARTED.getName(),
         TblsData.CertifUserAnalysisMethod.CERTIF_COMPLETED.getName(),// TblsData.CertifUserAnalysisMethod.SOP_NAME.getName(),
@@ -72,7 +70,6 @@ public class CertifGlobalVariables {
 
         String[] fldDefinitionColName= dbTableGetFieldDefinition.keySet().iterator().next();    
         Object[][] tableFldsInfo = dbTableGetFieldDefinition.get(fldDefinitionColName);
-        //if (LPPlatform.LAB_FALSE.equalsIgnoreCase(tableFldsInfo[0][0].toString())) return "";
         Object[] tableFldsInfoColumns = LPArray.getColumnFromArray2D(tableFldsInfo, LPArray.valuePosicInArray(fldDefinitionColName, "column_name"));
         StringBuilder tblAlterScript=new StringBuilder();
         

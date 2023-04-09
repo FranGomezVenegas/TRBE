@@ -57,7 +57,7 @@ public class CertifyQueries {
         public EnumIntTables getTable(){return this.table;}
         public String[] getFieldsToGet(){return this.fieldsToGet;}
         public String[] getAuditFieldsToGet(){return this.auditFieldsToGet;}
-    };
+    }
     
     public static JSONArray objectsUponCertificationProcedure(Boolean includeOnlyEnabled){
         JSONArray jGlobalArr=new JSONArray();

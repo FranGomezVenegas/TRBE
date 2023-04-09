@@ -215,12 +215,10 @@ public class ClassInspLotRMQueries  implements EnumIntQueriesObj{
                 String[] fieldsToRetrieve;
                 lotName=LPNulls.replaceNull(argValues[0]).toString();
                 fieldsToRetrieveStr=LPNulls.replaceNull(argValues[1]).toString();
-                {
                     if (LPNulls.replaceNull(fieldsToRetrieveStr).length()==0)
                         fieldsToRetrieve=EnumIntTableFields.getAllFieldNames(TblsInspLotRMDataAudit.TablesInspLotRMDataAudit.LOT.getTableFields());
                     else
                         fieldsToRetrieve=fieldsToRetrieveStr.split("\\|");
-                }
                 fieldsToRetrieve = new String[]{TblsInspLotRMDataAudit.Lot.LOT_NAME.getName(), TblsInspLotRMDataAudit.Lot.AUDIT_ID.getName(), TblsInspLotRMDataAudit.Lot.ACTION_NAME.getName(), TblsInspLotRMDataAudit.Lot.FIELDS_UPDATED.getName()
                         , TblsInspLotRMDataAudit.Lot.REVIEWED.getName(), TblsInspLotRMDataAudit.Lot.REVIEWED_ON.getName(), TblsInspLotRMDataAudit.Lot.DATE.getName(), TblsInspLotRMDataAudit.Lot.PERSON.getName(), TblsInspLotRMDataAudit.Lot.REASON.getName(), TblsInspLotRMDataAudit.Lot.ACTION_PRETTY_EN.getName(), TblsInspLotRMDataAudit.Lot.ACTION_PRETTY_ES.getName()};            
                 Object[][] sampleAuditInfo=QueryUtilitiesEnums.getTableData(TblsInspLotRMDataAudit.TablesInspLotRMDataAudit.LOT,
