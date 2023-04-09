@@ -172,8 +172,8 @@ public class TestingResultCheckSpecQuantitative extends HttpServlet {
                     resSpecEvaluation = resChkSpec.resultCheck(
                             result, minSpec, maxSpec, minStrict, maxStrict, minControl, maxControl, minControlStrict, maxControlStrict, null, null);
                 }         
-                BigDecimal SecondsInDateRange = LPDate.SecondsInDateRange(timeStartedStep, LPDate.getCurrentTimeStamp(), true);
-                fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(String.valueOf(SecondsInDateRange)));
+                BigDecimal secondsInDateRange = LPDate.SecondsInDateRange(timeStartedStep, LPDate.getCurrentTimeStamp(), true);
+                fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(String.valueOf(secondsInDateRange)));
 
                 if (numEvaluationArguments==0){                    
                     if (minControl==null){
