@@ -112,7 +112,7 @@ out.println(Arrays.toString(configSamplingPlanTestingArray));
                     
                 out.println(LPTestingOutFormat.FIELD_START+i+LPTestingOutFormat.FIELD_START+LPTestingOutFormat.FIELD_END+procInstanceName+LPTestingOutFormat.FIELD_START+LPTestingOutFormat.FIELD_END+actionName+LPTestingOutFormat.FIELD_START+LPTestingOutFormat.FIELD_END+Arrays.toString(fieldName)+LPTestingOutFormat.FIELD_START+LPTestingOutFormat.FIELD_END+"<b>"+Arrays.toString(fieldValue)+"</b>"+LPTestingOutFormat.FIELD_END);
 
-                switch (LPNulls.replaceNull((String) actionName).toUpperCase()){
+                switch (LPNulls.replaceNull(actionName).toUpperCase()){
                     case "NEWSAMPLINGDETAIL":
                         if (configSamplingPlanTestingArray[i][1]!=null){procInstanceName = configSamplingPlanTestingArray[i][0].toString();}
                         if (configSamplingPlanTestingArray[i][1]!=null){userName = configSamplingPlanTestingArray[i][2].toString();}

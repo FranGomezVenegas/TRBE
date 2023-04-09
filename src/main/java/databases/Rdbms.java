@@ -1587,8 +1587,6 @@ public class Rdbms {
                     clase = obj.getClass().toString();
                 }
                 obj = LPNulls.replaceNull(obj);
-                //String[] split = obj.toString().split("\\|");
-                //if (split.length==1) 
                 String[] split = obj.toString().split(">>>");
                 if ((obj.toString().toLowerCase().contains("null")) && (split.length > 1)) {
                     clase = split[1];
@@ -1651,7 +1649,6 @@ public class Rdbms {
                             break;
                         case "class java.time.LocalDate":
                             prepsta.setDate(indexval, (java.sql.Date) obj);
-                            //prepsta.setTimestamp(indexval,Timestamp.valueOf((LocalDate)obj));
                             break;
                         case "class java.time.LocalDateTime":
                             prepsta.setTimestamp(indexval, Timestamp.valueOf((LocalDateTime) obj));
@@ -1668,8 +1665,6 @@ public class Rdbms {
                             if (obj != null) {
                                 sqlDate = new java.sql.Date(dt.getTime());
                                 prepsta.setDate(indexval, (java.sql.Date) sqlDate);
-                                //prepsta.setDate(indexval,new java.sql.Date(new java.util.Date().getTime()));
-                                //prepsta.setObject(indexval, (java.util.Date) obj); 
                             } else {
                                 prepsta.setNull(indexval, Types.DATE);
                             }
@@ -1686,7 +1681,6 @@ public class Rdbms {
                             Array array = conn.createArrayOf("VARCHAR", (Object[]) obj);
                             prepsta.setArray(indexval, array);
                             break;
-//                    case "class org.postgresql.util.PGobject":
                         case "class com.google.gson.JsonObject":
                             prepsta.setString(indexval, obj.toString());
                             break;
@@ -1697,10 +1691,6 @@ public class Rdbms {
                         case "class org.json.simple.JSONObject":
                             JSONObject jObj = (JSONObject) obj;
                             prepsta.setString(indexval, jObj.toString());
-                            /*                        PGobject jsonObject = new PGobject();
-                        jsonObject.setType("json");
-                        jsonObject.setValue((JSONObject)obj);
-                        prepsta.setObject(indexval, jsonObject);*/
                             break;
 
                         default:
