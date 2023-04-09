@@ -143,13 +143,13 @@ public class ClassInspLotRMQueries  implements EnumIntQueriesObj{
                                 new SqlWhere(TblsData.TablesData.SAMPLE_ANALYSIS, new String[]{TblsInspLotRMData.Sample.SAMPLE_ID.getName()}, new Object[]{Integer.valueOf(sampleId.toString())}), 
                                 new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName()}, null);        
                             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAnaInfo[0][0].toString())){
-                                JSONObject SampleAnaSectionInfoObj = new JSONObject();
-                                jLotSampleSectionInfoObj.put(TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), SampleAnaSectionInfoObj);
+                                JSONObject sampleAnaSectionInfoObj = new JSONObject();
+                                jLotSampleSectionInfoObj.put(TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), sampleAnaSectionInfoObj);
                             }else{
                                 JSONArray sampleAnaJsonArr = new JSONArray();
                                 for (Object[] curRow2:sampleAnaInfo){
-                                    JSONObject SampleAnaSectionInfoObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieveSmpAna, curRow2);                               
-                                    Object testId=SampleAnaSectionInfoObj.get(TblsData.SampleAnalysis.TEST_ID.getName());              
+                                    JSONObject sampleAnaSectionInfoObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieveSmpAna, curRow2);                               
+                                    Object testId=sampleAnaSectionInfoObj.get(TblsData.SampleAnalysis.TEST_ID.getName());              
                                     EnumIntTableFields[] tableFieldsSmpAnaRes = TblsInspLotRMData.TablesInspLotRMData.SAMPLE_ANALYSIS_RESULT.getTableFields();
                                     String[] fieldsToRetrieveSmpAnaRes = EnumIntTableFields.getAllFieldNames(tableFieldsSmpAnaRes);                                                
                                     Object[][] sampleAnaResInfo=QueryUtilitiesEnums.getTableData(TblsInspLotRMData.TablesInspLotRMData.SAMPLE_ANALYSIS_RESULT, 
@@ -158,17 +158,17 @@ public class ClassInspLotRMQueries  implements EnumIntQueriesObj{
                                             new String[]{TblsInspLotRMData.SampleAnalysisResult.TEST_ID.getName()}, new Object[]{Integer.valueOf(testId.toString())}), 
                                         new String[]{TblsInspLotRMData.SampleAnalysisResult.RESULT_ID.getName()}, null);        
                                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAnaResInfo[0][0].toString())){
-                                        JSONObject SampleAnaResSectionInfoObj = new JSONObject();
-                                        jLotSampleSectionInfoObj.put(TblsInspLotRMData.TablesInspLotRMData.SAMPLE_ANALYSIS_RESULT.getTableName(), SampleAnaResSectionInfoObj);
+                                        JSONObject sampleAnaResSectionInfoObj = new JSONObject();
+                                        jLotSampleSectionInfoObj.put(TblsInspLotRMData.TablesInspLotRMData.SAMPLE_ANALYSIS_RESULT.getTableName(), sampleAnaResSectionInfoObj);
                                     }else{
                                         JSONArray sampleAnaResJsonArr = new JSONArray();
                                         for (Object[] curRow3:sampleAnaResInfo){
-                                            JSONObject SampleAnaResSectionInfoObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieveSmpAnaRes, curRow3);
-                                            sampleAnaResJsonArr.add(SampleAnaResSectionInfoObj);
+                                            JSONObject sampleAnaResSectionInfoObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieveSmpAnaRes, curRow3);
+                                            sampleAnaResJsonArr.add(sampleAnaResSectionInfoObj);
                                         }
-                                        SampleAnaSectionInfoObj.put(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), sampleAnaResJsonArr);
+                                        sampleAnaSectionInfoObj.put(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), sampleAnaResJsonArr);
 
-                                    sampleAnaJsonArr.add(SampleAnaSectionInfoObj);
+                                    sampleAnaJsonArr.add(sampleAnaSectionInfoObj);
                                 }
                                 jLotSampleSectionInfoObj.put(TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), sampleAnaJsonArr);
                                 }

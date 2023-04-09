@@ -113,9 +113,6 @@ public class SqlWhere {
     }
     public void addOrClauseConstraint(SqlWhereEntry[] orClauses){
          this.getAllWhereEntries().add(new SqlWhereEntry(orClauses));
-/*        for (SqlWhereEntry currClause: orClauses){
-            this.getAllWhereEntries().add(new SqlWhereEntry(currClause.getTblFldName(), currClause.getSymbol(), currClause.getFldValue(), currClause.getSeparator()));
-        }*/
     }
     public ArrayList<SqlWhereEntry> getAllWhereEntries() {
         return allWhereEntries;
@@ -146,8 +143,7 @@ public class SqlWhere {
         return fldValues;
     }
 
-    public void addConstraint(TblsTrazitDocTrazit.BusinessRulesDeclaration businessRulesDeclaration, SqlStatement.WHERECLAUSE_TYPES whereclause_types, Object[] object, String string) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
+    public void addConstraint(TblsTrazitDocTrazit.BusinessRulesDeclaration businessRulesDeclaration, SqlStatement.WHERECLAUSE_TYPES whereClauseTypes, Object[] object, String string) {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }    
 }

@@ -99,7 +99,7 @@ public class TblsEnvMonitData {
         }, "where sar.param_name='Recuento' group by s.sample_id, s.status, s.sampling_date, s.current_stage, s.sample_config_code, s.program_name, s.location_name, s.incubation_start, s.incubation_end, s.incubation2_start, s.incubation2_end, sar.raw_value, sar.result_id, sar.test_id"),
         ;
         private ViewsEnvMonData(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds, 
-                String comment, EnumIntTablesJoin[] TablesInView, String extraFilters){
+                String comment, EnumIntTablesJoin[] tablesInView, String extraFilters){
             this.getTblBusinessRules=fldBusRules;
             this.viewName=dbVwName;
             this.viewFields=vwFlds;
@@ -107,7 +107,7 @@ public class TblsEnvMonitData {
             this.isProcedure=isProcedure;
             this.viewComment=comment;
             this.viewScript=viewScript;
-            this.tablesInTheView=TablesInView;
+            this.tablesInTheView=tablesInView;
             this.extraFilters=extraFilters;
         }
         @Override        public String getRepositoryName() {return this.repositoryName;}
@@ -117,7 +117,7 @@ public class TblsEnvMonitData {
         @Override        public EnumIntViewFields[] getViewFields() {return this.viewFields;}
         @Override        public String getViewComment() {return this.viewComment;}
         @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
-        public String getExtraFilters() {return this.extraFilters;}
+        @Override        public String getExtraFilters() {return this.extraFilters;}
         
         private final EnumIntTablesJoin[] tablesInTheView;
         @Override  public EnumIntTablesJoin[] getTablesRequiredInView() {return this.tablesInTheView;}

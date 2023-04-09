@@ -90,18 +90,18 @@ public static String createTableScript(EnumIntTables tableObj, String procInstan
         seqScript=seqScript.append(fieldCommentScript(tableObj, procInstanceName));
         Object[] prepUpQuery;
         if (Boolean.TRUE.equals(run))
-            prepUpQuery = Rdbms.prepUpQueryWithDiagn(schemaName, tableObj.getTableName(), seqScript.toString(), new Object[]{});
+            Rdbms.prepUpQueryWithDiagn(schemaName, tableObj.getTableName(), seqScript.toString(), new Object[]{});
     }    
      return seqScript.toString();
 }
 
 private static String sequenceScript(EnumIntTables tableObj, String procInstanceName){
-    String SEQ_SCRIPT_POSTGRESQL="CREATE SEQUENCE #SCHEMA.#TBL_#FLD_seq INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1; ";
-    String SEQ_SET_OWNER_SCRIPT="ALTER SEQUENCE #SCHEMA.#TBL_#FLD_seq OWNER TO #OWNER; ";
+    String seqScriptPostgresql="CREATE SEQUENCE #SCHEMA.#TBL_#FLD_seq INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 9223372036854775807 CACHE 1; ";
+    String seqSetOwnerScript="ALTER SEQUENCE #SCHEMA.#TBL_#FLD_seq OWNER TO #OWNER; ";
     String seqScript="";
     if (tableObj.getSeqName()!=null){
-        seqScript = SEQ_SCRIPT_POSTGRESQL;
-        seqScript=seqScript+SEQ_SET_OWNER_SCRIPT;
+        seqScript = seqScriptPostgresql;
+        seqScript=seqScript+seqSetOwnerScript;
         String schemaName=tableObj.getRepositoryName();
         schemaName=LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), schemaName);    
         

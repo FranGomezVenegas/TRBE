@@ -170,9 +170,9 @@ public class LPTestingOutFormat {
         if (timeStarted != null) {
             updFldNames = LPArray.addValueToArray1D(updFldNames, TblsTesting.ScriptSteps.TIME_STARTED.getName());
             updFldValues = LPArray.addValueToArray1D(updFldValues, timeStarted);
-            BigDecimal SecondsInDateRange = LPDate.SecondsInDateRange(timeStarted, timeCompleted, true);
+            BigDecimal secondsInDateRange = LPDate.SecondsInDateRange(timeStarted, timeCompleted, true);
             updFldNames = LPArray.addValueToArray1D(updFldNames, TblsTesting.ScriptSteps.TIME_CONSUME.getName());
-            updFldValues = LPArray.addValueToArray1D(updFldValues, SecondsInDateRange);
+            updFldValues = LPArray.addValueToArray1D(updFldValues, secondsInDateRange);
         }
         if (numEvaluationArguments > 0 && ("DB".equals(this.inputMode))) {
             Integer scriptId = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_ID).toString()));
@@ -1308,8 +1308,7 @@ public class LPTestingOutFormat {
         fileContentTable1Builder.append(LPTestingOutFormat.tableStart(""));
         fileContentTable1Builder.append(LPTestingOutFormat.HEADER_START).append("Rule Name").append(LPTestingOutFormat.HEADER_END);
         fileContentTable1Builder.append(LPTestingOutFormat.HEADER_START).append("Rule Value").append(LPTestingOutFormat.HEADER_END);
-        Object[][] SessionBusinessRulesList = BusinessRules.SessionBusinessRulesList();
-        for (Object[] curRl : SessionBusinessRulesList) {
+        for (Object[] curRl : BusinessRules.SessionBusinessRulesList()) {
             fileContentTable1Builder.append(LPTestingOutFormat.ROW_START).append(LPTestingOutFormat.FIELD_START)
                     .append(curRl[0]).append(LPTestingOutFormat.FIELD_END);
             fileContentTable1Builder.append(LPTestingOutFormat.FIELD_START).append(curRl[1]).append(LPTestingOutFormat.FIELD_END)

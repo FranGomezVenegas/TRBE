@@ -106,7 +106,7 @@ public class TblsInspLotRMData {
         }, " "),        
         ;
         private ViewsInspLotRMData(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds, 
-                String comment, EnumIntTablesJoin[] TablesInView, String extraFilters){
+                String comment, EnumIntTablesJoin[] tablesInView, String extraFilters){
             this.getTblBusinessRules=fldBusRules;
             this.viewName=dbVwName;
             this.viewFields=vwFlds;
@@ -114,7 +114,7 @@ public class TblsInspLotRMData {
             this.isProcedure=isProcedure;
             this.viewComment=comment;
             this.viewScript=viewScript;
-            this.tablesInTheView=TablesInView;
+            this.tablesInTheView=tablesInView;
             this.extraFilters=extraFilters;
         }
         @Override        public String getRepositoryName() {return this.repositoryName;}

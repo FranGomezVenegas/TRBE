@@ -92,7 +92,7 @@ public class TblsProcedure {
                 , null),        
         ;
         private ViewsProcedure(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds, 
-                String comment, EnumIntTablesJoin[] TablesInView, String extraFilters){
+                String comment, EnumIntTablesJoin[] tablesInView, String extraFilters){
             this.getTblBusinessRules=fldBusRules;
             this.viewName=dbVwName;
             this.viewFields=vwFlds;
@@ -100,7 +100,7 @@ public class TblsProcedure {
             this.isProcedure=isProcedure;
             this.viewComment=comment;
             this.viewScript=viewScript;
-            this.tablesInTheView=TablesInView;
+            this.tablesInTheView=tablesInView;
             this.extraFilters=extraFilters;
         }
         @Override        public String getRepositoryName() {return this.repositoryName;}
@@ -460,8 +460,8 @@ public class TblsProcedure {
             String[] tableFields=new String[0];
             for (ViewProcUserAndRoles obj: ViewProcUserAndRoles.values()){
                 String objName = obj.name();
-                if (Boolean.FALSE.equals("TBL".equalsIgnoreCase(objName))){
-                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                if (Boolean.FALSE.equals("TBL".equalsIgnoreCase(objName)))
+{                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
                 }
             }           
             return tableFields;

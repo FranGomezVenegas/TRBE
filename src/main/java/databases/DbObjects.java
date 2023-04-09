@@ -214,8 +214,8 @@ public class DbObjects {
             if (configSchemaName.contains("-") && (Boolean.FALSE.equals(configSchemaName.startsWith("\"")))){            
                 configSchemaName = "\""+configSchemaName+"\"";}
             Object[] dbSchemaExists = Rdbms.dbSchemaExists(configSchemaName);
-            SchemaActions SchemaAction = SchemaActions.valueOf(actionToPerform);
-            switch (SchemaAction){
+            SchemaActions schemaAction = SchemaActions.valueOf(actionToPerform);
+            switch (schemaAction){
             case CREATE:
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbSchemaExists[0].toString()) && actionToPerform.equalsIgnoreCase(SchemaActions.CREATE.name())){
                     String configSchemaScript = "CREATE SCHEMA "+configSchemaName+"  AUTHORIZATION "+schemaAuthRole+";"+

@@ -190,14 +190,14 @@ public class InstrumentsAPIqueries extends HttpServlet {
             case INSTRUMENT_EVENTS_FOR_GIVEN_INSTRUMENT:
                 instrName=LPNulls.replaceNull(argValues[0]).toString();
                 fieldsToRetrieve=getAllFieldNames(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENT_EVENT);
-                Object[][] AppInstrumentsAuditEvents = QueryUtilitiesEnums.getTableData(TablesInstrumentsData.INSTRUMENT_EVENT, 
+                Object[][] appInstrumentsAuditEvents = QueryUtilitiesEnums.getTableData(TablesInstrumentsData.INSTRUMENT_EVENT, 
                     EnumIntTableFields.getAllFieldNamesFromDatabase(TablesInstrumentsData.INSTRUMENT_EVENT),
                     new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName()},
                     new Object[]{instrName},
                     new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName(), TblsInstrumentsData.InstrumentEvent.CREATED_ON.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                 jArr = new JSONArray();
-                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(AppInstrumentsAuditEvents[0][0].toString()))){
-                    for (Object[] currInstrEv: AppInstrumentsAuditEvents){
+                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(appInstrumentsAuditEvents[0][0].toString()))){
+                    for (Object[] currInstrEv: appInstrumentsAuditEvents){
                         JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrEv);
                         jArr.add(jObj);
                     }
@@ -226,11 +226,11 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 }
                 EnumIntViewFields[] fieldsToRetrieveObj = EnumIntViewFields.getViewFieldsFromString(ViewsInstrumentsData.NOT_DECOM_INSTR_EVENT_DATA_VW, "ALL");
                 fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(fieldsToRetrieveObj);
-                AppInstrumentsAuditEvents = QueryUtilitiesEnums.getViewData(ViewsInstrumentsData.NOT_DECOM_INSTR_EVENT_DATA_VW, 
+                appInstrumentsAuditEvents = QueryUtilitiesEnums.getViewData(ViewsInstrumentsData.NOT_DECOM_INSTR_EVENT_DATA_VW, 
                     fieldsToRetrieveObj, sW, new String[]{TblsInstrumentsData.ViewNotDecommInstrumentAndEventData.INSTRUMENT.getName(), TblsInstrumentsData.ViewNotDecommInstrumentAndEventData.CREATED_ON.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                 jArr = new JSONArray();
-                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(AppInstrumentsAuditEvents[0][0].toString()))){
-                    for (Object[] currInstrEv: AppInstrumentsAuditEvents){
+                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(appInstrumentsAuditEvents[0][0].toString()))){
+                    for (Object[] currInstrEv: appInstrumentsAuditEvents){
                         JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrEv);
                         jArr.add(jObj);
                     }
@@ -243,14 +243,14 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 Integer instrEventId=(Integer)argValues[0];
                 EnumIntTableFields[] tblFieldsToRetrieveObj = EnumIntTableFields.getAllFieldNamesFromDatabase(TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES);
                 String[] tblFieldsToRetrieve = EnumIntTableFields.getAllFieldNames(tblFieldsToRetrieveObj);
-                AppInstrumentsAuditEvents = QueryUtilitiesEnums.getTableData(TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES, 
+                appInstrumentsAuditEvents = QueryUtilitiesEnums.getTableData(TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES, 
                     tblFieldsToRetrieveObj,
                     new String[]{TblsInstrumentsData.InstrEventVariableValues.EVENT_ID.getName()},
                     new Object[]{instrEventId},
                     new String[]{TblsInstrumentsData.InstrEventVariableValues.ID.getName(), TblsInstrumentsData.InstrEventVariableValues.CREATED_ON.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                 jArr = new JSONArray();
-                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(AppInstrumentsAuditEvents[0][0].toString()))){
-                    for (Object[] currInstrEv: AppInstrumentsAuditEvents){
+                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(appInstrumentsAuditEvents[0][0].toString()))){
+                    for (Object[] currInstrEv: appInstrumentsAuditEvents){
                         JSONObject jObj=LPJson.convertArrayRowToJSONObject(tblFieldsToRetrieve, currInstrEv);
                         jArr.add(jObj);
                     }

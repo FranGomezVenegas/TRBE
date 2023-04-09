@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.Period;
 import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 import java.time.format.DateTimeParseException;
 import java.util.Calendar;
@@ -157,13 +156,13 @@ public class LPDate {
     public static Date stringFormatToDate(String dateStr){ 
         if (Boolean.FALSE.equals(dateStr.toUpperCase().contains("T"))) dateStr=dateStr+"T00:00:00";
         Calendar cal = Calendar.getInstance();    
-        Integer Tposic=dateStr.indexOf(":");
-        Tposic=Tposic-3;
-        char TposicValue=dateStr.charAt(Tposic);
+        Integer tposic=dateStr.indexOf(":");
+        tposic=tposic-3;
+        char tposicValue=dateStr.charAt(tposic);
         
-        if (" ".equalsIgnoreCase(String.valueOf(TposicValue))){
-            String dateStr1=dateStr.substring(0, Tposic)+"T";
-            String dateStr2=dateStr.substring(Tposic+1, dateStr.length()-Tposic);        
+        if (" ".equalsIgnoreCase(String.valueOf(tposicValue))){
+            String dateStr1=dateStr.substring(0, tposic)+"T";
+            String dateStr2=dateStr.substring(tposic+1, dateStr.length()-tposic);        
             dateStr=dateStr1+dateStr2;
         }
         int y=LocalDateTime.parse(dateStr).getYear();
@@ -177,17 +176,17 @@ public class LPDate {
     
     public static LocalDateTime stringFormatToLocalDateTime(String dateStr){ 
         try{                            
-        Integer Tposic=dateStr.indexOf(":");
-        if (Tposic==-1){
+        Integer tposic=dateStr.indexOf(":");
+        if (tposic==-1){
             dateStr=dateStr+"T00:00:00";
-            Tposic=dateStr.indexOf(":");
+            tposic=dateStr.indexOf(":");
         }
-        Tposic=Tposic-3;
-        char TposicValue=dateStr.charAt(Tposic);
+        tposic=tposic-3;
+        char tposicaVlue=dateStr.charAt(tposic);
         
-        if (" ".equalsIgnoreCase(String.valueOf(TposicValue))){
-            String dateStr1=dateStr.substring(0, Tposic)+"T";
-            String dateStr2=dateStr.substring(Tposic+1);        
+        if (" ".equalsIgnoreCase(String.valueOf(tposicaVlue))){
+            String dateStr1=dateStr.substring(0, tposic)+"T";
+            String dateStr2=dateStr.substring(tposic+1);        
             dateStr=dateStr1+dateStr2;
         }            
         if (dateStr.length()>0) return LocalDateTime.parse(dateStr, ISO_LOCAL_DATE_TIME);
@@ -219,19 +218,16 @@ public class LPDate {
         }
     }
     public static long SecondsInDateRange(LocalDateTime startDate, LocalDateTime endDate){
-        Period between = Period.between(startDate.toLocalDate(), endDate.toLocalDate());
         Duration duration = Duration.between(startDate, endDate);
         return duration.getSeconds();
     }
     public static BigDecimal SecondsInDateRange(LocalDateTime startDate, LocalDateTime endDate, Boolean includeMilis){
-        //Period between = Period.between(startDate.toLocalDate(), endDate.toLocalDate());
         BigDecimal durSecs = new BigDecimal(Duration.between(startDate, endDate).getSeconds());
         if (Boolean.FALSE.equals(includeMilis)) return durSecs;
         BigDecimal durMillis=new BigDecimal(Duration.between(startDate, endDate).getNano());
         durMillis=durMillis.divide(new BigDecimal(1000000));
         durMillis=durMillis.divide(new BigDecimal(1000));
         durMillis=durMillis.add(durSecs);
-        //long durMillis = Duration.between(startDate, endDate).getNano()/1000000/100;
         return durMillis;
                 
     }

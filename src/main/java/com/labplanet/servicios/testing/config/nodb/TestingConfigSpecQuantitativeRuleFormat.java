@@ -140,8 +140,8 @@ public class TestingConfigSpecQuantitativeRuleFormat extends HttpServlet {
                     fileContentTable2Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, getprettyValue(minSpec, false, "MIN"), getprettyValue(minControl, false, "MIN"), getprettyValue(maxControl, false, "MAX"), getprettyValue(maxSpec, false, "MAX")}));
                     resSpecEvaluation = mSpec.specLimitIsCorrectQuantitative(minSpec,maxSpec, minControl, maxControl);
                 }        
-                BigDecimal SecondsInDateRange = LPDate.SecondsInDateRange(timeStartedStep, LPDate.getCurrentTimeStamp(), true);
-                fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(String.valueOf(SecondsInDateRange)));
+                BigDecimal secondsInDateRange = LPDate.SecondsInDateRange(timeStartedStep, LPDate.getCurrentTimeStamp(), true);
+                fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(String.valueOf(secondsInDateRange)));
                 
                 if (numEvaluationArguments==0){                    
                     if (minControl==null){

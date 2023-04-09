@@ -100,8 +100,8 @@ public class TestingConfigSpecQualitativeRuleFormat extends HttpServlet {
                     
                 Object[] functionEvaluation = mSpec.specLimitIsCorrectQualitative(ruleType, specText, separator);
                     
-                BigDecimal SecondsInDateRange = LPDate.SecondsInDateRange(timeStartedStep, LPDate.getCurrentTimeStamp(), true);
-                fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(String.valueOf(SecondsInDateRange)));
+                BigDecimal secondsInDateRange = LPDate.SecondsInDateRange(timeStartedStep, LPDate.getCurrentTimeStamp(), true);
+                fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(String.valueOf(secondsInDateRange)));
                 
                 if (numEvaluationArguments==0){                    
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(Arrays.toString(functionEvaluation)));                     

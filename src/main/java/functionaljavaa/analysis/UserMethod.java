@@ -128,31 +128,28 @@ public class UserMethod {
         userMethodInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, UserMethod.TABLENAME_DATA_USER_METHOD, whereFields, whereFieldsValue, 
                 new String[]{FLDNDATA_USR_METHD_USER_METHOD_ID, UserMethod.FLDNDATA_USR_METHD_USER_ID, FLDNDATA_USR_METHD_ANALYSIS, 
                     FLDNDATA_USR_METHD_METHOD_NAME, FLDNDATA_USR_METHD_METHOD_VERSION});
-        if (Boolean.FALSE.equals((LPPlatform.LAB_FALSE.equalsIgnoreCase(userMethodInfo[0][0].toString())))) {
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
+        if (Boolean.FALSE.equals((LPPlatform.LAB_FALSE.equalsIgnoreCase(userMethodInfo[0][0].toString()))) &&
+            LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                 updFields = LPArray.addValueToArray1D(updFields, whereFields);
                 updFieldsValue = LPArray.addValueToArray1D(updFieldsValue, whereFieldsValue);
                 SampleAudit smpAudit = new SampleAudit();
                 smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.UPDATE_LAST_ANALYSIS_USER_METHOD, UserMethod.TABLENAME_DATA_USER_METHOD, 
                     testId, sampleId, testId, null, updFields, updFieldsValue);
-            }
         }
         return diagnoses;        
     }
     
     public static final Object[][] getUserAnalysisMethodCerttifByProcess(String[] filterFieldName, Object[] filterFieldValue, String[] fieldsToReturn, String[] procInstanceName){                
         String viewName = TblsData.ViewsData.USER_AND_ANALYSISMETHOD_CERTIF_VIEW.getViewName();
-       String DIAGNOSES_ERROR_CODE = "DIAGNOSES_ERROR_CODE";
-        
         if (fieldsToReturn.length<=0){
             String[][] getUserProfileNEW = new String[1][2];
-            getUserProfileNEW[0][0]=DIAGNOSES_ERROR_CODE;
+            getUserProfileNEW[0][0]="DIAGNOSES_ERROR_CODE";
             getUserProfileNEW[0][1]="No fields specified for fieldsToReturn";
             return getUserProfileNEW;}
                     
         if ((filterFieldName==null) || (filterFieldValue==null) || (procInstanceName==null)){
             String[][] getUserProfileNEW = new String[1][4];
-            getUserProfileNEW[0][0]=DIAGNOSES_ERROR_CODE;
+            getUserProfileNEW[0][0]="DIAGNOSES_ERROR_CODE";
             getUserProfileNEW[0][1]="filterFieldName and/or filterFieldValue and/or procInstanceName are null and this is not expected";
             if (filterFieldName==null){getUserProfileNEW[0][2]="filterFieldName is null";}else{getUserProfileNEW[0][2]="filterFieldName="+Arrays.toString(filterFieldName);}
             if (filterFieldValue==null){getUserProfileNEW[0][3]="filterFieldValue is null";}else{getUserProfileNEW[0][3]="filterFieldValue="+Arrays.toString(filterFieldValue);}

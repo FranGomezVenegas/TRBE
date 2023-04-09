@@ -287,9 +287,9 @@ public class EnvMonAPIStats extends HttpServlet {
             Boolean showPresence = true;
             Boolean showIN = true;
             Boolean showOUT = true;
-            String[] RRobjGroupName = new String[]{};
-            String RRwhereFieldsName = "";
-            String RRwhereFieldsValue = "";
+            String[] rRobjGroupName = new String[]{};
+            String rRwhereFieldsName = "";
+            String rRwhereFieldsValue = "";
             String[] whereFieldsNameArr = new String[]{};
             String[] whereFieldsValueArr = new String[]{};
             Integer percNumDecimals = null;
@@ -375,9 +375,9 @@ public class EnvMonAPIStats extends HttpServlet {
                     String[] fldToRetrieve = argValues[5].toString().split("\\/");
                     String[] dataGrouped = argValues[6].toString().split("\\/");
                     getRecoveryRate = Boolean.valueOf(argValues[7].toString());
-                    RRobjGroupName = LPNulls.replaceNull(argValues[8]).toString().split("\\|");
-                    RRwhereFieldsName = argValues[3].toString();
-                    RRwhereFieldsValue = argValues[4].toString();
+                    rRobjGroupName = LPNulls.replaceNull(argValues[8]).toString().split("\\|");
+                    rRwhereFieldsName = argValues[3].toString();
+                    rRwhereFieldsValue = argValues[4].toString();
                     showAbsence = Boolean.valueOf(LPNulls.replaceNull(argValues[9]).toString());
                     showPresence = Boolean.valueOf(LPNulls.replaceNull(argValues[10]).toString());
                     showIN = Boolean.valueOf(LPNulls.replaceNull(argValues[11]).toString());
@@ -391,9 +391,9 @@ public class EnvMonAPIStats extends HttpServlet {
                     break;
                 //LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
                 case RECOVERY_RATE:
-                    RRobjGroupName = LPNulls.replaceNull(argValues[0]).toString().split("\\|");
-                    RRwhereFieldsName = LPNulls.replaceNull(argValues[1]).toString();
-                    RRwhereFieldsValue = LPNulls.replaceNull(argValues[2]).toString();
+                    rRobjGroupName = LPNulls.replaceNull(argValues[0]).toString().split("\\|");
+                    rRwhereFieldsName = LPNulls.replaceNull(argValues[1]).toString();
+                    rRwhereFieldsValue = LPNulls.replaceNull(argValues[2]).toString();
                     showAbsence = Boolean.valueOf(LPNulls.replaceNull(argValues[3]).toString());
                     showPresence = Boolean.valueOf(LPNulls.replaceNull(argValues[4]).toString());
                     showIN = Boolean.valueOf(LPNulls.replaceNull(argValues[5]).toString());
@@ -406,7 +406,7 @@ public class EnvMonAPIStats extends HttpServlet {
             }
             JSONObject jObj = new JSONObject();
             if (Boolean.TRUE.equals(getRecoveryRate)) {
-                JSONObject jObjRecoveryData = getRecoveryRate(RRobjGroupName, RRwhereFieldsName, RRwhereFieldsValue,
+                JSONObject jObjRecoveryData = getRecoveryRate(rRobjGroupName, rRwhereFieldsName, rRwhereFieldsValue,
                         showAbsence, showPresence, showIN, showOUT, percNumDecimals, false);
                 jObjMainObject.put("recovery_rate", jObjRecoveryData);
             }
@@ -559,12 +559,11 @@ public class EnvMonAPIStats extends HttpServlet {
                 jObjMainObject.put("datatable", sampleJsonArr);
                 JSONArray filterJArr = new JSONArray();
                 for (SqlWhereEntry curFilterFld : wObj.getAllWhereEntries()) {
-                    JSONObject fltJObj = new JSONObject(); // +" "+LPNulls.replaceNull(curFilterFld.getSeparator())
+                    JSONObject fltJObj = new JSONObject(); 
                     fltJObj.put(curFilterFld.getVwFldName().getName() + " " + curFilterFld.getSymbol().getSqlClause(),
                             LPArray.convertArrayToString(curFilterFld.getFldValue(), ", ", "", true));
                     fltJObj.put("filter_name", curFilterFld.getVwFldName().getName() + " " + curFilterFld.getSymbol().getSqlClause());
                     fltJObj.put("value", LPArray.convertArrayToString(curFilterFld.getFldValue(), ", ", "", true));
-                    //LPNulls.replaceNull(Arrays.toString(curFilterFld.getFldValue())));
                     filterJArr.add(fltJObj);
                 }
                 jObjMainObject.put("filter_detail", filterJArr);
@@ -616,12 +615,11 @@ public class EnvMonAPIStats extends HttpServlet {
                 jObjMainObject.put("datatable", investigationJsonArr);
                 JSONArray filterJArr = new JSONArray();
                 for (SqlWhereEntry curFilterFld : wObj.getAllWhereEntries()) {
-                    JSONObject fltJObj = new JSONObject(); // +" "+LPNulls.replaceNull(curFilterFld.getSeparator())
+                    JSONObject fltJObj = new JSONObject(); 
                     fltJObj.put(curFilterFld.getVwFldName().getName() + " " + curFilterFld.getSymbol().getSqlClause(),
                             LPArray.convertArrayToString(curFilterFld.getFldValue(), ", ", "", true));
                     fltJObj.put("filter_name", curFilterFld.getVwFldName().getName() + " " + curFilterFld.getSymbol().getSqlClause());
                     fltJObj.put("value", LPArray.convertArrayToString(curFilterFld.getFldValue(), ", ", "", true));
-                    //LPNulls.replaceNull(Arrays.toString(curFilterFld.getFldValue())));
                     filterJArr.add(fltJObj);
                 }
                 jObjMainObject.put("filter_detail", filterJArr);

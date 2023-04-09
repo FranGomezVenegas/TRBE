@@ -4,7 +4,6 @@ import databases.TblsDataAudit;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import trazit.enums.EnumIntTables;
-import trazit.session.ProcedureRequestSession;
 /** 
  *
  * @author User
@@ -12,9 +11,8 @@ import trazit.session.ProcedureRequestSession;
 public final class CertifTablesAudit {
     private CertifTablesAudit() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
     
-    public static Object[] CertifTablesAudit(EnumIntTables tblObj, Integer certifId, String action, String userId, String userName, String objectFldName, String objectName, String objectVersionFldName, Integer ObjectVersion, 
+    public static Object[] CertifTablesAudit(EnumIntTables tblObj, Integer certifId, String action, String userId, String userName, String objectFldName, String objectName, String objectVersionFldName, Integer objectVersion, 
                         Object[] auditlog, Integer trainingId, Integer parentAuditId, String note) {
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         GenericAuditFields gAuditFlds=new GenericAuditFields(auditlog);
 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();
@@ -36,9 +34,9 @@ public final class CertifTablesAudit {
         fieldValues = LPArray.addValueToArray1D(fieldValues, action);
         fieldNames = LPArray.addValueToArray1D(fieldNames, objectFldName);
         fieldValues = LPArray.addValueToArray1D(fieldValues, objectName);
-        if (ObjectVersion!=null){
+        if (objectVersion!=null){
             fieldNames = LPArray.addValueToArray1D(fieldNames, objectVersionFldName);
-            fieldValues = LPArray.addValueToArray1D(fieldValues, ObjectVersion);            
+            fieldValues = LPArray.addValueToArray1D(fieldValues, objectVersion);            
         }
         if (parentAuditId!=null){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.CertifUserAnalysisMethod.PARENT_AUDIT_ID.getName());
