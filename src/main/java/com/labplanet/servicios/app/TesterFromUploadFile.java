@@ -58,7 +58,7 @@ public class TesterFromUploadFile extends HttpServlet {
             PrintWriter outZpl = response.getWriter();
             outZpl.println(zplDemoLabel);
             if (1==1) return;
-            String saveDirectory="D:\\LP\\"; //TESTING_FILES_PATH;
+            String saveDirectory="fake"; 
             MultipartRequest mReq = new MultipartRequest(request, saveDirectory);
             Enumeration files = mReq.getFileNames();
             while (files.hasMoreElements()) {

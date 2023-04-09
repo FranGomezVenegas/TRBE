@@ -151,7 +151,7 @@ public class SqlStatementEnums {
      */
     public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIntTables tblObj, SqlWhere whereObj,
             EnumIntTableFields[] fieldsToRetrieve, EnumIntTableFields[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct, String alternativeProcInstanceName) {
-        HashMap<String, Object[]> hm = new HashMap();
+        HashMap<String, Object[]> hm = new HashMap<>();
 
         DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
 
@@ -219,7 +219,7 @@ public class SqlStatementEnums {
     }
 
     public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIntTables tblObj, String[] whereFieldNames, Object[] whereFieldValues, EnumIntTableFields[] fieldsToRetrieve, EnumIntTableFields[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct, String alternativeProcInstanceName, Boolean avoidMask) {
-        HashMap<String, Object[]> hm = new HashMap();
+        HashMap<String, Object[]> hm = new HashMap<>();
 
         String queryWhere = "";
         Object[] schemaDiag = getTableSchema(tblObj, alternativeProcInstanceName);
@@ -272,7 +272,7 @@ public class SqlStatementEnums {
     }
 
     public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIntTables tblObj, String[] whereFieldNames, Object[] whereFieldValues, EnumIntViewFields[] fieldsToRetrieve, EnumIntTableFields[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct) {
-        HashMap<String, Object[]> hm = new HashMap();
+        HashMap<String, Object[]> hm = new HashMap<>();
 
         String queryWhere = "";
         Object[] schemaDiag = getTableSchema(tblObj, null);
@@ -325,7 +325,7 @@ public class SqlStatementEnums {
     }
 
     public HashMap<String, Object[]> buildSqlStatementCounter(String schemaName, String tableName, SqlWhere sWhere, String[] fieldsToGroup, String[] fieldsToOrder, Boolean caseSensitive) {
-        HashMap<String, Object[]> hm = new HashMap();
+        HashMap<String, Object[]> hm = new HashMap<>();
 
         String queryWhere = "";
         schemaName = setSchemaName(schemaName);
@@ -679,7 +679,7 @@ public class SqlStatementEnums {
 
         //private HashMap<String, Object[]> buildSqlStatementViewOld(EnumIntViews viewObj, String[] whereFields, Object[] whereFieldValues, 
         //        EnumIntViewFields[] fieldsToRetrieve, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct, String alternativeProcInstanceName) {        
-        HashMap<String, Object[]> hm = new HashMap();
+        HashMap<String, Object[]> hm = new HashMap<>();
 
         String queryWhere = "";
         Object[] schemaDiag = getViewSchema(viewObj, alternativeProcInstanceName);

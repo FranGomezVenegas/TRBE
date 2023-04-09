@@ -212,7 +212,7 @@ public final class BatchArray extends Batch{
      * @return ArrayList
      */
     public ArrayList searchStringContent(String searchPattern) {  
-        ArrayList foundPosic = new ArrayList();            
+        ArrayList<String> foundPosic = new ArrayList<>();
         for(int i = 0; i < this.getNumRows(); i++){
           for(int j = 0; j < this.getNumCols(); j++){              
             if ((batchPosic[i][j] != null) && (batchPosic[i][j] == null ? searchPattern == null : batchPosic[i][j].equals(searchPattern)) ){
@@ -235,7 +235,6 @@ public final class BatchArray extends Batch{
         for (String[] array :this.batchPosic) {         
               singleDArray.addAll(Arrays.asList(array));
         }       
-        schemaName = LPPlatform.buildSchemaName(schemaName, GlobalVariables.Schemas.DATA.getName());
         return new Object[0];
 // 2022-01-05 Comentado porque esta clase no se usa a día de hoy.
         /*        return Rdbms.insertRecordInTable(schemaName, tableName, 
