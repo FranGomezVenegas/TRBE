@@ -29,10 +29,8 @@ import functionaljavaa.intervals.IntervalsUtilities;
 import functionaljavaa.inventory.batch.DataBatchIncubator;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.parameter.Parameter;
-//import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.platform.doc.EndPointsToRequirements.getDocInfoForEndPoint;
 import functionaljavaa.samplestructure.DataSampleRevisionTestingGroup;
-//import functionaljavaa.samplestructure.DataSampleAnalysis;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.csvExtractFieldValueBigDecimal;
 import functionaljavaa.testingscripts.TestingCoverage;
@@ -59,8 +57,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import static lbplanet.utilities.LPDatabase.FIELDS_NAMES_PROCEDURE_NAME;
 import lbplanet.utilities.LPDate;
-import static lbplanet.utilities.LPDate.secondsInDateRange;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.session.ProcReqSessionAutomatisms.markAsExpiredTheExpiredObjects;
@@ -76,7 +74,7 @@ import trazit.enums.EnumIntTables;
 import trazit.enums.EnumIntViews;
 import trazit.enums.deployrepository.DeployTables;
 import static trazit.enums.deployrepository.DeployTables.createTableScript;
-
+import static lbplanet.utilities.LPDate.secondsInDateRange;
 
 
 /**
@@ -163,15 +161,11 @@ out.println("TLS Mail sent");
 
             JSONObject jObj=new JSONObject();
             jObj.put("hola", "adios");
-            String[] fieldNames=new String[]{"procedure_name", "procedure_version", "proc_instance_name", "model_json"};
+            String[] fieldNames=new String[]{FIELDS_NAMES_PROCEDURE_NAME, "procedure_version", "proc_instance_name", "model_json"};
             Object[] fieldValues=new Object[]{"demo", 1, "demo", jObj};
             RdbmsObject insertRecord = Rdbms.insertRecord(TblsReqs.TablesReqs.PROC_FE_MODEL, fieldNames, fieldValues, PROC_NEW_EVENT_FLD_NAME);
             out.println(Arrays.toString(insertRecord.getApiMessage()));
             Token token=null;
-            //String myToken = "";
-            //token = new Token(myToken);
-            //JSONArray newProcedureDefinition = AppProcedureListAPI.newProcedureDefinition(token, "proc-deploy");
-            //String[] scriptPublicFieldNames = TblsTesting.getScriptPublicFieldNames("em-demo-a");
 
             if (1==1)return;           
         JSONObject procedure=new JSONObject();
@@ -457,7 +451,7 @@ out.println(Arrays.toString(isSampleTestingGroupGenericAutoApproveEnabled));
 
 LocalDateTime startDate=LocalDateTime.now();       
 LocalDateTime endDate=LocalDateTime.now().plusSeconds(2).plusNanos(514);
-out.println("Seconds difference="+" "+SecondsInDateRange(startDate, endDate, true));
+out.println("Seconds difference="+" "+secondsInDateRange(startDate, endDate, true));
 if (1==1) return;
 /*String procName="proc-deploy";
 BusinessRules br=new BusinessRules(procName, 999);
@@ -475,7 +469,7 @@ startDate=LocalDateTime.now();
 int[] plusDays=new int[]{0, 1, 2, 200, 400};
 for (int curPlusDays: plusDays){
     endDate=LocalDateTime.now().plusDays(curPlusDays);
-    out.println("Days difference="+curPlusDays+" "+SecondsInDateRange(startDate, endDate, false));
+    out.println("Days difference="+curPlusDays+" "+secondsInDateRange(startDate, endDate, false));
     long[] intervals=new long[]{-1, 0, 172000, 173000, 15280008, 18280008, 24560009, 34560009, 94560009};
     for (long interval:intervals){
         out.println("interval:"+interval+" "+Arrays.toString(IntervalsUtilities.isTheIntervalIntoTheDatesRange(interval, startDate, endDate)));

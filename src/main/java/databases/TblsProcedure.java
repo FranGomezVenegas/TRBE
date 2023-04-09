@@ -271,7 +271,7 @@ public class TblsProcedure {
         TBL("procedure_business_rules",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey PRIMARY KEY (#PROCEDURE_NAME) )" +
                 LPDatabase.POSTGRESQL_OIDS+"  TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
-        PROCEDURE_NAME("procedure_name", LPDatabase.stringNotNull()),
+        PROCEDURE_NAME(FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull()),
         PROCEDURE_VERSION("procedure_version", LPDatabase.integerNotNull()),
         INSTANCE_NAME("instance_name", LPDatabase.stringNotNull()),
         MODULE_NAME("module_name", LPDatabase.stringNotNull()),

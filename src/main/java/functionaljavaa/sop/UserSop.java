@@ -26,6 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import static lbplanet.utilities.LPDatabase.FIELDS_NAMES_PROCEDURE_NAME;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform.LpPlatformErrorTrapping;
@@ -387,7 +388,7 @@ public class UserSop {
                 query.append("(select ");
                 for (String fRet : fieldsToReturn) {
                     if (fRet != null && fRet.length() > 0) {
-                        if ("procedure_name".equalsIgnoreCase(fRet)) {
+                        if (FIELDS_NAMES_PROCEDURE_NAME.equalsIgnoreCase(fRet)) {
                             query.append("'" + currProcInstanceName + "'").append(",");
                         } else {
                             query.append(fRet).append(",");

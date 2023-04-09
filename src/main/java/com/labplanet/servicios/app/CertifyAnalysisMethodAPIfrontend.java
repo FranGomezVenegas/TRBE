@@ -33,6 +33,7 @@ import java.util.HashMap;
 import java.util.logging.Logger;
 import javax.json.JsonArray;
 import lbplanet.utilities.LPAPIArguments;
+import static lbplanet.utilities.LPDatabase.FIELDS_NAMES_PROCEDURE_NAME;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import trazit.enums.EnumIntViewFields;
@@ -186,7 +187,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
             }
         }else 
             fieldsToRetrieve=EnumIntViewFields.getAllFieldNames(TblsData.ViewUserAndAnalysisMethodCertificationView.values());
-        fieldsToRetrieve=LPArray.addValueToArray1D(fieldsToRetrieve, "procedure_name");
+        fieldsToRetrieve=LPArray.addValueToArray1D(fieldsToRetrieve, FIELDS_NAMES_PROCEDURE_NAME);
         Object[][] userAnaMethCertifByProcess = UserMethod.getUserAnalysisMethodCerttifByProcess( 
                 new String[]{TblsData.ViewUserAndAnalysisMethodCertificationView.USER_NAME.getName()}, new Object[]{token.getUserName()}, fieldsToRetrieve, allUserProcedurePrefix);
         if (userAnaMethCertifByProcess==null)return new JSONArray();
@@ -267,7 +268,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
                     JSONObject anaMethCertifJObj = new JSONObject();
                     anaMethCertifJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curAnaMethCertif);
                     myAnaMethCertifList.put("pending_analysis_method_certification", myAnaMethCertif);
-                    myAnaMethCertifList.put("procedure_name", currProc);
+                    myAnaMethCertifList.put(FIELDS_NAMES_PROCEDURE_NAME, currProc);
                     anaMethCertifJObj.put(GlobalAPIsParams.REQUEST_PARAM_CERTIF_OBJECTS_LEVEL, certifObjCertifModeOwnUserAction(fieldsToRetrieve, curAnaMethCertif));
                     myAnaMethCertif.add(anaMethCertifJObj);
                 }    
@@ -331,7 +332,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
                     }    
             }
             myAnaMethCertifList.put("procedure_analysis_methods", myAnaMethCertif);
-            myAnaMethCertifList.put("procedure_name", currProc);
+            myAnaMethCertifList.put(FIELDS_NAMES_PROCEDURE_NAME, currProc);
             myPendingAnaMethCertifByProc.add(myAnaMethCertifList);
         }                
         return myPendingAnaMethCertifByProc;                   

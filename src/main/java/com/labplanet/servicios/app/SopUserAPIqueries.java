@@ -35,6 +35,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.JsonArray;
 import lbplanet.utilities.LPAPIArguments;
+import static lbplanet.utilities.LPDatabase.FIELDS_NAMES_PROCEDURE_NAME;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import trazit.enums.EnumIntEndpoints;
@@ -516,7 +517,7 @@ public class SopUserAPIqueries extends HttpServlet {
                         sop = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, userProcSop);
                         sop.put(GlobalAPIsParams.REQUEST_PARAM_CERTIF_OBJECTS_LEVEL, certifObjCertifModeOwnUserAction(fieldsToRetrieve, userProcSop));
                         mySopsList.put("pending_sops", mySops);
-                        mySopsList.put("procedure_name", currProc);
+                        mySopsList.put(FIELDS_NAMES_PROCEDURE_NAME, currProc);
                         mySops.add(sop);
                     }
                     myPendingSopsByProc.add(mySopsList);
@@ -581,7 +582,7 @@ public class SopUserAPIqueries extends HttpServlet {
                     }
                 }
                 mySopsList.put("procedure_sops", mySops);
-                mySopsList.put("procedure_name", currProc);
+                mySopsList.put(FIELDS_NAMES_PROCEDURE_NAME, currProc);
                 myPendingSopsByProc.add(mySopsList);
             }
             return myPendingSopsByProc;

@@ -18,6 +18,7 @@ import functionaljavaa.user.UserProfile;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
+import static lbplanet.utilities.LPDatabase.FIELDS_NAMES_PROCEDURE_NAME;
 import lbplanet.utilities.LPPlatform.LpPlatformErrorTrapping;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -163,7 +164,7 @@ public class UserMethod {
                 query.append("(select ");
                 for(String fRet: fieldsToReturn){
                     if (fRet!=null && fRet.length()>0){
-                        if ("procedure_name".equalsIgnoreCase(fRet))
+                        if (FIELDS_NAMES_PROCEDURE_NAME.equalsIgnoreCase(fRet))
                             query.append("'").append(currProcInstanceName).append("'").append(",");
                         else
                             query.append(fRet).append(",");

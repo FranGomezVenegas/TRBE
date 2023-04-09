@@ -7,6 +7,7 @@ package databases;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import lbplanet.utilities.LPDatabase;
+import static lbplanet.utilities.LPDatabase.FIELDS_NAMES_PROCEDURE_NAME;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.enums.FldBusinessRules;
@@ -136,7 +137,7 @@ public class TblsReqs {
     }
 
     public enum ProcedureInfo implements EnumIntTableFields{
-        PROCEDURE_NAME("procedure_name", LPDatabase.stringNotNull(), null, null, null, null),
+        PROCEDURE_NAME(FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         PROCEDURE_VERSION("procedure_version", LPDatabase.integerNotNull(), null, null, null, null),
         PROCEDURE_HASH_CODE("procedure_hash_code", LPDatabase.stringNotNull(), null, null, null, null),
         DESCRIPTION(FIELDS_NAMES_DESCRIPTION, LPDatabase.stringNotNull(), null, null, null, null),

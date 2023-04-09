@@ -56,7 +56,7 @@ public class IntervalsUtilities {
     }
     public static Object[] isTheIntervalIntoTheDatesRange(long interval, LocalDateTime startDate, LocalDateTime endDate){
         if (interval<=0) return LPArray.addValueToArray1D(ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "intervalValueIsNegativeOrZero", null), -1);
-        long seconds = SecondsInDateRange(startDate, endDate);            
+        long seconds = secondsInDateRange(startDate, endDate);            
         int compareTo = Integer.valueOf((int) seconds).compareTo((int) interval);
         if (compareTo>0)
             return LPArray.addValueToArray1D(ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "not", null), seconds);
