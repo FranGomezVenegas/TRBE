@@ -472,7 +472,7 @@ public class LPTestingOutFormat {
      */
     public static String headerAddField(String field) {
         String content = "";
-        content = content + HEADER_START + LPNulls.replaceNull(field.toString()) + HEADER_END;
+        content = content + HEADER_START + LPNulls.replaceNull(field) + HEADER_END;
         return content;
     }
 

@@ -268,7 +268,7 @@ public class DbTestingLimitAndResult extends HttpServlet {
                                 resSpecEvaluation = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, qualitativeRulesErrors.QUALITATIVE_RULE_NOT_RECOGNIZED, null);
                             }
                             if (Boolean.TRUE.equals(specRule.getRuleIsQualitative())) {
-                                resSpecEvaluation = resChkSpec.resultCheck(resultValue.toString(), specRule.getQualitativeRule(),
+                                resSpecEvaluation = resChkSpec.resultCheck(resultValue, specRule.getQualitativeRule(),
                                         specRule.getQualitativeRuleValues(), specRule.getQualitativeRuleSeparator(), specRule.getQualitativeRuleListName());
                             }
                             if (Boolean.TRUE.equals(specRule.getRuleIsQuantitative())) {
