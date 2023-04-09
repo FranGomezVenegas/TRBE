@@ -88,7 +88,6 @@ public static String createTableScript(EnumIntTables tableObj, String procInstan
         seqScript=seqScript.append(alterTableScript(tableObj, procInstanceName, false));
         seqScript=seqScript.append(tableCommentScript(tableObj, procInstanceName));
         seqScript=seqScript.append(fieldCommentScript(tableObj, procInstanceName));
-        Object[] prepUpQuery;
         if (Boolean.TRUE.equals(run))
             Rdbms.prepUpQueryWithDiagn(schemaName, tableObj.getTableName(), seqScript.toString(), new Object[]{});
     }    
