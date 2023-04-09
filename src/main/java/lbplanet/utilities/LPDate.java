@@ -196,12 +196,9 @@ public class LPDate {
             return null;
         }
     }
-//    public static LocalDateTime convertSqlDateTimeToLocalDateTime(java.sql.Date dateSql){
-//    }
     
     public static Boolean isDateBiggerThanTimeStamp(Calendar dateToCompare){
-        if (Calendar.getInstance().before(dateToCompare)) return true;
-        return false;
+        return (Calendar.getInstance().before(dateToCompare));        
     }
     public static Date addIntervalToGivenDate(Date startDay, String itemsMeasurement, int scheduleSize){    
         IntervalTypes iTypes=null;

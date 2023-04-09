@@ -73,8 +73,7 @@ public final class AuditUtilities {
         
         Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), TblsDataAudit.TablesDataAudit.SESSION.getTableName(),
                 new String[]{TblsDataAudit.Session.SESSION_ID.getName()}, new Object[]{sessionId});
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())) return true;
-        return false;
+        return (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString()));        
     }
     
 }

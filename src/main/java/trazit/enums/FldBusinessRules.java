@@ -13,7 +13,7 @@ public class FldBusinessRules {
     private final String busRuleRepository;
     private final String businessRule;
     private final Boolean addIfBusinessRuleAbsent;
-    private final Boolean StopTableCreationIfBusinessRuleAbsent;
+    private final Boolean stopTableCreationIfBusinessRuleAbsent;
     private final String[] expectedValues;
     private final String[] notExpectedValues;
     
@@ -21,7 +21,7 @@ public class FldBusinessRules {
         this.busRuleRepository=brRepository;
         this.businessRule=businessRule;
         this.addIfBusinessRuleAbsent=createIfAbsent;
-        this.StopTableCreationIfBusinessRuleAbsent=stopTableCreationIfBusinessRuleAbsent;
+        this.stopTableCreationIfBusinessRuleAbsent=stopTableCreationIfBusinessRuleAbsent;
         this.expectedValues=expectedValues;
         this.notExpectedValues=notExpectedValues;
     }
@@ -30,6 +30,6 @@ public class FldBusinessRules {
     public String[] getExpectedValues(){return expectedValues;}
     public String[] getNotExpectedValues(){return notExpectedValues;}
     public Boolean getAddIfBusinessRuleAbsent(){return addIfBusinessRuleAbsent;}
-    public Boolean getStopTableCreationIfBusinessRuleAbsent(){return StopTableCreationIfBusinessRuleAbsent;}
+    public Boolean getStopTableCreationIfBusinessRuleAbsent(){return stopTableCreationIfBusinessRuleAbsent;}
     
 }

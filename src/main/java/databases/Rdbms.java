@@ -402,7 +402,7 @@ public class Rdbms {
 
         Integer conTimeOut = 30000;
         Integer initialConnections = 3;
-        Integer maxConnections = 50; 
+        Integer maxConnections = 50;
         try {
             Properties dbProps = new Properties();
             dbProps.setProperty("user", user);
@@ -683,7 +683,7 @@ public class Rdbms {
         SqlWhere sqlWhere = new SqlWhere(tblObj, keyFieldNames, keyFieldValues);
         SqlStatementEnums sql = new SqlStatementEnums();
         HashMap<String, Object[]> hmQuery = sql.buildSqlStatementTable(SQLSELECT, tblObj, sqlWhere,
-                 keyFieldNamesObj, null, null, null, null, false, alternativeProcInstanceName);
+                keyFieldNamesObj, null, null, null, null, false, alternativeProcInstanceName);
         String query = hmQuery.keySet().iterator().next();
         Object[] keyFieldValueNew = hmQuery.get(query);
         try {
@@ -1232,7 +1232,7 @@ public class Rdbms {
      * @return
      */
     public static Object[] insertRecordInTableFromTable(Boolean includeFldsSameName, String[] fieldNamesFrom, String schemaNameFrom, String tableNameFrom, String[] whereFieldNamesFrom, Object[] whereFieldValuesFrom,
-             String schemaNameTo, String tableNameTo, String[] fieldNamesTo) {
+            String schemaNameTo, String tableNameTo, String[] fieldNamesTo) {
 
         DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
         dbLogSummary.addInsert();
@@ -1741,11 +1741,7 @@ public class Rdbms {
      */
     public Connection createTransactionNoTransaction() {
         try {
-            if (Boolean.TRUE.equals(Rdbms.transactionMode)){
-                conn.setAutoCommit(false);
-            } else {
-                conn.setAutoCommit(true);
-            }
+            conn.setAutoCommit(!Rdbms.transactionMode);
         } catch (SQLException ex) {
             Logger.getLogger(Rdbms.class.getName()).log(Level.SEVERE, null, ex);
             return null;
@@ -2248,7 +2244,7 @@ public class Rdbms {
     }
 
     public static String addSuffixIfItIsForTesting(String schemaName, String tableName) {
-        if (Boolean.TRUE.equals(ProcedureRequestSession.getInstanceForActions(null, null, null).getIsForTesting())){
+        if (Boolean.TRUE.equals(ProcedureRequestSession.getInstanceForActions(null, null, null).getIsForTesting())) {
             return suffixForTesting(schemaName, tableName);
         }
         return schemaName;
@@ -2394,7 +2390,6 @@ private static final int CLIENT_CODE_STACK_INDEX;
         CLIENT_CODE_STACK_INDEX = i;
     }
      */
-
     public static RdbmsObject insertRecordInTable(EnumIntTables tblObj, String[] fieldNames, Object[] fieldValues) {
         return insertRecord(tblObj, fieldNames, fieldValues, null, false);
     }
@@ -2433,7 +2428,7 @@ private static final int CLIENT_CODE_STACK_INDEX;
             fieldValues = DbEncryptionObject.encryptTableFieldArray(tblObj, fldNamesObj, fieldValues, encryptAllFlds);
             RdbmsObject insertRecordDiagnosis = Rdbms.prepUpQueryWithKey(schemaName, tblObj.getTableName(), query, fieldValues, 1);
             fieldValues = DbEncryptionObject.decryptTableFieldArray(tblObj, fldNamesObj, fieldValues, encryptAllFlds);
-            if (Boolean.TRUE.equals(insertRecordDiagnosis.getRunSuccess())){
+            if (Boolean.TRUE.equals(insertRecordDiagnosis.getRunSuccess())) {
                 if (schemaName.toUpperCase().contains("AUDIT")) {
                     TestingAuditIds tstAuditId = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingAuditObj();
                     if (tstAuditId != null) {

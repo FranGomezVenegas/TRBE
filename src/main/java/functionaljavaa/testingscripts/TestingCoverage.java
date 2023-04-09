@@ -570,9 +570,6 @@ public final class TestingCoverage {
         if (curRuleStr.equalsIgnoreCase("procedure_verifyUserRequired")) 
             return true;
         if (curRuleStr.equalsIgnoreCase("procedure_auditJustifReasonRequired")) return true;
-        if (curRuleStr.equalsIgnoreCase("procedure_eSignRequired")) 
-            return true;
-        
-        return false;
+        return (curRuleStr.equalsIgnoreCase("procedure_eSignRequired"));
     }
 }
