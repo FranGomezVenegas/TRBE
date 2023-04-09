@@ -217,11 +217,11 @@ public class LPDate {
                 return null;
         }
     }
-    public static long SecondsInDateRange(LocalDateTime startDate, LocalDateTime endDate){
+    public static long secondsInDateRange(LocalDateTime startDate, LocalDateTime endDate){
         Duration duration = Duration.between(startDate, endDate);
         return duration.getSeconds();
     }
-    public static BigDecimal SecondsInDateRange(LocalDateTime startDate, LocalDateTime endDate, Boolean includeMilis){
+    public static BigDecimal secondsInDateRange(LocalDateTime startDate, LocalDateTime endDate, Boolean includeMilis){
         BigDecimal durSecs = new BigDecimal(Duration.between(startDate, endDate).getSeconds());
         if (Boolean.FALSE.equals(includeMilis)) return durSecs;
         BigDecimal durMillis=new BigDecimal(Duration.between(startDate, endDate).getNano());

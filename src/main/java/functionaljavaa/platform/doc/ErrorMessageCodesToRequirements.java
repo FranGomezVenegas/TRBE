@@ -91,7 +91,7 @@ public class ErrorMessageCodesToRequirements {
                             else
                                 msgCodesNotFound.add(curBusRul.getClass().getSimpleName()+"-"+curBusRul.getErrorCode());
                             if (Boolean.FALSE.equals(summaryOnlyMode)){
-                                AddCodeInErrorTrapping(curBusRul.getErrorCode(), "");
+                                addCodeInErrorTrapping(curBusRul.getErrorCode(), "");
                                 try{                                    
                                     declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul.getErrorCode(), fieldNames, fieldValues);
                                 }catch(Exception e){
@@ -229,7 +229,7 @@ public class ErrorMessageCodesToRequirements {
         errorTrapFileEs = ResourceBundle.getBundle("parameter.LabPLANET."+errorTrapFilePathEs);
         errorTrapFileEn = ResourceBundle.getBundle("parameter.LabPLANET."+errorTrapFilePathEn);
     }
-    public void AddCodeInErrorTrapping(String entryName, String entryValue){
+    public void addCodeInErrorTrapping(String entryName, String entryValue){
         Parameter parm=new Parameter();
         String propFileName=PropertyFilesType.ERROR_TRAPING.toString();
         String propValue = "";    

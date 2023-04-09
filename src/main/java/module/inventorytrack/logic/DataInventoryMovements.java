@@ -5,7 +5,6 @@ import databases.Rdbms;
 import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.SqlWhere;
-import static module.inventorytrack.logic.AppInventoryLotAudit.InventoryLotAuditAdd;
 import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement;
 import java.math.BigDecimal;
 import lbplanet.utilities.LPArray;
@@ -19,6 +18,8 @@ import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.session.InternalMessage;
 import trazit.session.ResponseMessages;
+import static module.inventorytrack.logic.AppInventoryLotAudit.inventoryLotAuditAdd;
+import static module.inventorytrack.logic.AppInventoryLotAudit.inventoryLotAuditAdd;
 
 public class DataInventoryMovements {
 
@@ -65,7 +66,7 @@ public class DataInventoryMovements {
         if (Boolean.FALSE.equals(invLotTurnAvailableDiagn.getRunSuccess())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, invLotTurnAvailableDiagn.getErrorMessageCode(), new Object[]{invLot.getLotName()}, null);
         }
-        InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.LOT_VOLUME_ADJUSTED, invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(), invLot.getLotName(),
+        inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.LOT_VOLUME_ADJUSTED, invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(), invLot.getLotName(),
                 fldNames, fldValues);
 
         if (checkVolumeCoherencyDiagn.length > 1) {
@@ -84,7 +85,7 @@ public class DataInventoryMovements {
                     EnumIntTableFields.getTableFieldsFromString(TablesInvTrackingData.LOT, updateFieldNames), updateFieldValues, whereObj, null);
             updateFieldNames = new String[]{"converted_volume", "converted_volume_uom", "creation_volume", "creation_volume_uom"};
             updateFieldValues = LPArray.addValueToArray1D(updateFieldValues, new Object[]{myUom.getOrigQuantity(), myUom.getOrigQuantityUom()});
-            InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.LOT_VOLUME_ADJUSTED, invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(), invLot.getLotName(),
+            inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.LOT_VOLUME_ADJUSTED, invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(), invLot.getLotName(),
                     updateFieldNames, updateFieldValues);
         }
         if (myUom != null) {
@@ -165,7 +166,7 @@ public class DataInventoryMovements {
         if (Boolean.FALSE.equals(invLotTurnAvailableDiagn.getRunSuccess())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, invLotTurnAvailableDiagn.getErrorMessageCode(), new Object[]{invLot.getLotName()}, null);
         }
-        InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.LOT_VOLUME_CONSUMED, invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(), invLot.getLotName(),
+        inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.LOT_VOLUME_CONSUMED, invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(), invLot.getLotName(),
                 fldNames, fldValues, externalProcInstanceName);
         messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.CONSUME_INV_LOT_VOLUME, new Object[]{newVolume, newVolumeUom, invLot.getLotName()});
         return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.CONSUME_INV_LOT_VOLUME, new Object[]{newVolume, newVolumeUom}, invLot.getLotName());
@@ -237,7 +238,7 @@ public class DataInventoryMovements {
         if (Boolean.FALSE.equals(invLotTurnAvailableDiagn.getRunSuccess())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, invLotTurnAvailableDiagn.getErrorMessageCode(), new Object[]{invLot.getLotName()}, null);
         }
-        InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.LOT_VOLUME_ADDITION, invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(), invLot.getLotName(),
+        inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.LOT_VOLUME_ADDITION, invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(), invLot.getLotName(),
                 fldNames, fldValues);
         messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ADD_INV_LOT_VOLUME, new Object[]{newVolume, newVolumeUom, invLot.getLotName()});
         return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ADD_INV_LOT_VOLUME, new Object[]{newVolume, newVolumeUom, invLot.getLotName()}, invLot.getLotName());

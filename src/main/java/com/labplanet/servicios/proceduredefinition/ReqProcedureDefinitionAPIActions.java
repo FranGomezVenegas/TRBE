@@ -18,7 +18,7 @@ import org.json.simple.JSONObject;
 import trazit.session.ProcedureRequestSession;
 
 public class ReqProcedureDefinitionAPIActions extends HttpServlet {
-    public int ProcedureHashCode(String procName, Integer procVersion, String procInstanceName) {
+    public int procedureHashCode(String procName, Integer procVersion, String procInstanceName) {
         String valueStr = LPDate.getCurrentTimeStamp().toString()+procName+procVersion.toString()+procInstanceName;
         return valueStr.hashCode();
     }

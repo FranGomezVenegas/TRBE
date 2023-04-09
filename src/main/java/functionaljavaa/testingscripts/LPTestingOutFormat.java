@@ -170,7 +170,7 @@ public class LPTestingOutFormat {
         if (timeStarted != null) {
             updFldNames = LPArray.addValueToArray1D(updFldNames, TblsTesting.ScriptSteps.TIME_STARTED.getName());
             updFldValues = LPArray.addValueToArray1D(updFldValues, timeStarted);
-            BigDecimal secondsInDateRange = LPDate.SecondsInDateRange(timeStarted, timeCompleted, true);
+            BigDecimal secondsInDateRange = LPDate.secondsInDateRange(timeStarted, timeCompleted, true);
             updFldNames = LPArray.addValueToArray1D(updFldNames, TblsTesting.ScriptSteps.TIME_CONSUME.getName());
             updFldValues = LPArray.addValueToArray1D(updFldValues, secondsInDateRange);
         }
@@ -222,7 +222,7 @@ public class LPTestingOutFormat {
         if (timeStarted != null) {
             updFldNames = LPArray.addValueToArray1D(updFldNames, TblsTesting.Script.TIME_STARTED.getName());
             updFldValues = LPArray.addValueToArray1D(updFldValues, timeStarted);
-            secondsInDateRange = LPDate.SecondsInDateRange(timeStarted, timeCompleted, true);
+            secondsInDateRange = LPDate.secondsInDateRange(timeStarted, timeCompleted, true);
             updFldNames = LPArray.addValueToArray1D(updFldNames, TblsTesting.Script.TIME_CONSUME.getName());
             updFldValues = LPArray.addValueToArray1D(updFldValues, secondsInDateRange);
         }
@@ -1308,7 +1308,7 @@ public class LPTestingOutFormat {
         fileContentTable1Builder.append(LPTestingOutFormat.tableStart(""));
         fileContentTable1Builder.append(LPTestingOutFormat.HEADER_START).append("Rule Name").append(LPTestingOutFormat.HEADER_END);
         fileContentTable1Builder.append(LPTestingOutFormat.HEADER_START).append("Rule Value").append(LPTestingOutFormat.HEADER_END);
-        for (Object[] curRl : BusinessRules.SessionBusinessRulesList()) {
+        for (Object[] curRl : BusinessRules.sessionBusinessRulesList()) {
             fileContentTable1Builder.append(LPTestingOutFormat.ROW_START).append(LPTestingOutFormat.FIELD_START)
                     .append(curRl[0]).append(LPTestingOutFormat.FIELD_END);
             fileContentTable1Builder.append(LPTestingOutFormat.FIELD_START).append(curRl[1]).append(LPTestingOutFormat.FIELD_END)

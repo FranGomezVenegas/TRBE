@@ -6,7 +6,6 @@ import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.SqlWhere;
 import databases.features.Token;
-import static module.inventorytrack.logic.AppInventoryLotAudit.InventoryLotAuditAdd;
 import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement;
 import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement.UomErrorTrapping;
 import java.math.BigDecimal;
@@ -31,6 +30,8 @@ import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
+import static module.inventorytrack.logic.AppInventoryLotAudit.inventoryLotAuditAdd;
+import static module.inventorytrack.logic.AppInventoryLotAudit.inventoryLotAuditAdd;
 
 /**
  *
@@ -329,7 +330,7 @@ public class DataInventory {
             if (Boolean.FALSE.equals(invLotCreationDiagn.getRunSuccess())) {
                 return new InternalMessage(LPPlatform.LAB_FALSE, invLotCreationDiagn.getErrorMessageCode(), new Object[]{newName}, null);
             }
-            InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.CREATION, newName, reference, category, TablesInvTrackingData.LOT.getTableName(), newName,
+            inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.CREATION, newName, reference, category, TablesInvTrackingData.LOT.getTableName(), newName,
                     fldNames, fldValues);
             if (myUom != null && myUom.getConvertedFine() && !myUom.getOrigQuantity().equals(myUom.getConvertedQuantity())) {
                 SqlWhere whereObj = new SqlWhere(TablesInvTrackingData.LOT,
@@ -341,7 +342,7 @@ public class DataInventory {
                         EnumIntTableFields.getTableFieldsFromString(TablesInvTrackingData.LOT, updateFieldNames), updateFieldValues, whereObj, null);
                 updateFieldNames = new String[]{"converted_volume", "converted_volume_uom", "creation_volume", "creation_volume_uom"};
                 updateFieldValues = LPArray.addValueToArray1D(updateFieldValues, new Object[]{myUom.getOrigQuantity(), myUom.getOrigQuantityUom()});
-                InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.UOM_CONVERSION_ON_CREATION, newName, reference, category, TablesInvTrackingData.LOT.getTableName(), newName,
+                inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.UOM_CONVERSION_ON_CREATION, newName, reference, category, TablesInvTrackingData.LOT.getTableName(), newName,
                         updateFieldNames, updateFieldValues);
             }
             myUom = null;
@@ -375,7 +376,7 @@ public class DataInventory {
         if (Boolean.FALSE.equals(invLotTurnAvailableDiagn.getRunSuccess())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, invLotTurnAvailableDiagn.getErrorMessageCode(), new Object[]{this.getLotName()}, null);
         }
-        InventoryLotAuditAdd(auditEventObj, this.getLotName(), getReference(), getCategory(), TablesInvTrackingData.LOT.getTableName(), this.getLotName(),
+        inventoryLotAuditAdd(auditEventObj, this.getLotName(), getReference(), getCategory(), TablesInvTrackingData.LOT.getTableName(), this.getLotName(),
                 fldNames, fldValues);
         messages.addMainForSuccess(actionObj, new Object[]{this.getLotName(), getCategory(), getReference()});
         return new InternalMessage(LPPlatform.LAB_TRUE, actionObj, new Object[]{this.getLotName()}, this.getLotName());
@@ -424,7 +425,7 @@ public class DataInventory {
         if (Boolean.FALSE.equals(instUpdateDiagn.getRunSuccess())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, instUpdateDiagn.getErrorMessageCode(), instUpdateDiagn.getErrorMessageVariables());
         }
-        InventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.UPDATE_INVENTORY_LOT, this.getLotName(), getReference(), getCategory(), TablesInvTrackingData.LOT.getTableName(), this.getLotName(),
+        inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.UPDATE_INVENTORY_LOT, this.getLotName(), getReference(), getCategory(), TablesInvTrackingData.LOT.getTableName(), this.getLotName(),
                 fldNames, fldValues);
         messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.UPDATE_LOT, new Object[]{getLotName()});
         return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.UPDATE_LOT, new Object[]{getLotName()}, getLotName());

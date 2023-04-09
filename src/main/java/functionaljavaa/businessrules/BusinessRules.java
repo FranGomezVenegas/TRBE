@@ -111,12 +111,7 @@ public class BusinessRules {
         }
         return "";
     }
-/*        List<RuleInfo> result = ArrayList.stream()
-     .filter(item -> item.value3.equals(ruleName))
-     .collect(Collectors.toList());
-        return result.get(0).getRuleValue();
-    }*/
-    public static Object[][] SessionBusinessRulesList(){
+    public static Object[][] sessionBusinessRulesList(){
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, false);
         BusinessRules bRProcInstance = procReqInstance.getBusinessRulesProcInstance();
         BusinessRules bRTesting = procReqInstance.getBusinessRulesTesting();

@@ -136,7 +136,7 @@ public class TestingResultCheckSpecQualitative extends HttpServlet {
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, result, ruleType, values, separator, listName}));                    
                 Object[] resSpecEvaluation = resChkSpec.resultCheck(result, ruleType, values, separator, listName);
 
-                BigDecimal secondsInDateRange = LPDate.SecondsInDateRange(timeStartedStep, LPDate.getCurrentTimeStamp(), true);
+                BigDecimal secondsInDateRange = LPDate.secondsInDateRange(timeStartedStep, LPDate.getCurrentTimeStamp(), true);
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(String.valueOf(secondsInDateRange)));
                 
                 if (numEvaluationArguments<=0){                    

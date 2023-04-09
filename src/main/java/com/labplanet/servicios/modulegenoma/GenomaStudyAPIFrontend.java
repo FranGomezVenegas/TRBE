@@ -579,11 +579,6 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
         studyIndividualSampleInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName(),
                 whereFldNames, whereFldValues,
                 EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyIndividualSample.values()), new String[]{TblsGenomaData.StudyIndividualSample.INDIVIDUAL_ID.getName()});
-//    }else{        
-//       // whereFldNames=LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyIndividualSample..getName());
-//       // whereFldValues=LPArray.addValueToArray1D(whereFldValues, familyName);
-//    }
-
         JSONArray studyIndividualSampleJsonArr = new JSONArray();
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(studyIndividualSampleInfo[0][0].toString()))) {
             for (Object[] curStudyIndividualSample : studyIndividualSampleInfo) {
@@ -699,8 +694,8 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
     JSONObject genomaMasterData() {
         JSONObject masterDataJson = new JSONObject();
         masterDataJson.put("users", studyUsersJson());
-        masterDataJson.put(TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableName(), VariablesList());
-        masterDataJson.put(TblsGenomaConfig.TablesGenomaConfig.VARIABLES_SET.getTableName(), VariableSetList());
+        masterDataJson.put(TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableName(), variablesList());
+        masterDataJson.put(TblsGenomaConfig.TablesGenomaConfig.VARIABLES_SET.getTableName(), variableSetList());
 
         return masterDataJson;
     }
@@ -722,7 +717,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
         return jBlockArr;
     }
 
-    JSONArray VariableSetList() {
+    JSONArray variableSetList() {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
         String[] fldsArr = EnumIntTableFields.getAllFieldNames(TblsGenomaConfig.TablesGenomaConfig.VARIABLES_SET.getTableFields());
@@ -738,7 +733,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
         return jBlockArr;
     }
 
-    JSONArray VariablesList() {
+    JSONArray variablesList() {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
         String[] fldsArr = EnumIntTableFields.getAllFieldNames(TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableFields());

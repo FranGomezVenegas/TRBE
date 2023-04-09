@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.Date;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
-import static lbplanet.utilities.LPDate.SecondsInDateRange;
+import static lbplanet.utilities.LPDate.secondsInDateRange;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;

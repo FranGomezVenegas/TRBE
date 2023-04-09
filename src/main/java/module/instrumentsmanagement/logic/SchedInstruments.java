@@ -26,7 +26,7 @@ import trazit.session.InternalMessage;
  */
 public class SchedInstruments {
     
-    public static void InstrumentsSchedProcesses(Token token, String procInstanceName){
+    public static void instrumentsSchedProcesses(Token token, String procInstanceName){
         String moduleNameFromProcInstance = token.getModuleNameFromProcInstance(procInstanceName);
         if (Boolean.FALSE.equals(GlobalVariables.TrazitModules.INSTRUMENTS.name().equalsIgnoreCase(moduleNameFromProcInstance))) return;
         logNextEventWhenExpiredOrClose(token, procInstanceName);

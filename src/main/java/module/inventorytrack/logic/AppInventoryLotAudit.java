@@ -20,13 +20,13 @@ import trazit.session.ProcedureRequestSession;
 public final class AppInventoryLotAudit {
     private AppInventoryLotAudit() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
     
-    public static Object[] InventoryLotAuditAdd(EnumIntAuditEvents action, String lotId, String reference, String category, String tableName, String tableId,
+    public static Object[] inventoryLotAuditAdd(EnumIntAuditEvents action, String lotId, String reference, String category, String tableName, String tableId,
                         String[] fldNames, Object[] fldValues) {
-        return InventoryLotAuditAdd(action, lotId, reference, category, tableName, tableId,
+        return inventoryLotAuditAdd(action, lotId, reference, category, tableName, tableId,
             fldNames, fldValues, null);
     }
         
-    public static Object[] InventoryLotAuditAdd(EnumIntAuditEvents action, String lotId, String reference, String category, String tableName, String tableId,
+    public static Object[] inventoryLotAuditAdd(EnumIntAuditEvents action, String lotId, String reference, String category, String tableName, String tableId,
                         String[] fldNames, Object[] fldValues, String externalProcInstanceName) {
         GenericAuditFields gAuditFlds=new GenericAuditFields(action, TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT, fldNames, fldValues);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();

@@ -130,20 +130,20 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
              
             switch (endPoint){
             case ALL_MY_ANA_METHOD_CERTIF:    
-                LPFrontEnd.servletReturnSuccess(request, response, AllMyAnalysisMethodCertif(request, response));
+                LPFrontEnd.servletReturnSuccess(request, response, allMyAnalysisMethodCertif(request, response));
                 return;
             case MY_PENDING_ANA_METHOD_CERTIF:    
-                LPFrontEnd.servletReturnSuccess(request, response, MyPendingAnalysisMethodCertif(request, response));
+                LPFrontEnd.servletReturnSuccess(request, response, myPendingAnalysisMethodCertif(request, response));
                 return;
             case PROCEDURE_ANA_METHOD_CERTIF:    
-                LPFrontEnd.servletReturnSuccess(request, response, ProceduresAnalysisMethodCertif(request, response));
+                LPFrontEnd.servletReturnSuccess(request, response, proceduresAnalysisMethodCertif(request, response));
                 return;
             case ALL_IN_ONE:
                 JSONObject jsonObj = new JSONObject();
                 jsonObj.put("procedures_list", procedureListInfo(request, response));
-                jsonObj.put("all_my_analysis_method_certifications", CertifyAnalysisMethodAPIfrontend.AllMyAnalysisMethodCertif(request, response));
-                jsonObj.put("my_pending_analysis_method_certifications", CertifyAnalysisMethodAPIfrontend.MyPendingAnalysisMethodCertif(request, response));
-                jsonObj.put("procedures_analysis_method_certifications", CertifyAnalysisMethodAPIfrontend.ProceduresAnalysisMethodCertif(request, response));
+                jsonObj.put("all_my_analysis_method_certifications", CertifyAnalysisMethodAPIfrontend.allMyAnalysisMethodCertif(request, response));
+                jsonObj.put("my_pending_analysis_method_certifications", CertifyAnalysisMethodAPIfrontend.myPendingAnalysisMethodCertif(request, response));
+                jsonObj.put("procedures_analysis_method_certifications", CertifyAnalysisMethodAPIfrontend.proceduresAnalysisMethodCertif(request, response));
                 LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
                 return;                                                   
             default:                
@@ -158,7 +158,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
         }                                      
     }
 
-    public static JSONArray AllMyAnalysisMethodCertif(HttpServletRequest request, HttpServletResponse response){
+    public static JSONArray allMyAnalysisMethodCertif(HttpServletRequest request, HttpServletResponse response){
     try{
         String language = LPFrontEnd.setLanguage(request); 
         String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);        
@@ -216,7 +216,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
         return new JSONArray();
     }
     }
-    public static JSONArray MyPendingAnalysisMethodCertif(HttpServletRequest request, HttpServletResponse response){
+    public static JSONArray myPendingAnalysisMethodCertif(HttpServletRequest request, HttpServletResponse response){
     try{
         String language = LPFrontEnd.setLanguage(request); 
         String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);        
@@ -281,7 +281,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
         return proceduresList;            
     }
     }
-    public static JSONArray ProceduresAnalysisMethodCertif(HttpServletRequest request, HttpServletResponse response){
+    public static JSONArray proceduresAnalysisMethodCertif(HttpServletRequest request, HttpServletResponse response){
     try{
         String language = LPFrontEnd.setLanguage(request); 
         String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);        

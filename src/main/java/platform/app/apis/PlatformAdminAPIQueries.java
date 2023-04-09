@@ -14,7 +14,6 @@ import databases.SqlWhere;
 import databases.TblsApp;
 import databases.TblsProcedure;
 import databases.features.Token;
-import static functionaljavaa.platformadmin.AppBusinessRules.AllAppBusinessRules;
 import functionaljavaa.platformadmin.PlatformAdminEnums.PlatformAdminAPIqueriesEndpoints;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -34,6 +33,7 @@ import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntTables;
 import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ProcedureRequestSession;
+import static functionaljavaa.platformadmin.AppBusinessRules.allAppBusinessRules;
 
 /**
  *
@@ -103,7 +103,7 @@ public class PlatformAdminAPIQueries extends HttpServlet {
                     break;
                 case GET_PLATFORM_ADMIN_ALL_INFO:
                     tblsIP=new EnumIntTables[]{TblsApp.TablesApp.IP_BLACK_LIST, TblsApp.TablesApp.IP_WHITE_LIST};
-                    jMainObj.put("business_rules", AllAppBusinessRules(request, response));
+                    jMainObj.put("business_rules", allAppBusinessRules(request, response));
                     break;
                 case GET_API_LISTS:
                     tblsIP=new EnumIntTables[]{TblsApp.TablesApp.IP_BLACK_LIST, TblsApp.TablesApp.IP_WHITE_LIST};

@@ -94,7 +94,7 @@ public class AppHeaderAPI extends HttpServlet {
         response = LPHttp.responsePreparation(response);
 
         try (PrintWriter out = response.getWriter()) {
-            LPFrontEnd.servletReturnSuccess(request, response, AppHeaderApi(request, response));
+            LPFrontEnd.servletReturnSuccess(request, response, appHeaderApi(request, response));
         } catch (Exception e) {
             String exceptionMessage = e.getMessage();
             LPFrontEnd.responseError(new String[]{exceptionMessage});
@@ -104,7 +104,7 @@ public class AppHeaderAPI extends HttpServlet {
         }
     }
 
-    public static JSONObject AppHeaderApi(HttpServletRequest request, HttpServletResponse response) {
+    public static JSONObject appHeaderApi(HttpServletRequest request, HttpServletResponse response) {
         String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
         if (finalToken == null || finalToken.length() == 0) {
             finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();

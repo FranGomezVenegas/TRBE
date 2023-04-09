@@ -20,9 +20,9 @@ public class SchedProcedures {
     public static void schedProcesses(Token token, String procedureInstance){
         markAsExpiredTheExpiredObjects(procedureInstance);
         if (token!=null&&procedureInstance!=null){
-            SchedInstruments.InstrumentsSchedProcesses(token, procedureInstance);
-            SchedEnvMonitoring.EnvMonitSchedProcesses(token, procedureInstance);   
-            SchedInvTracking.InvTrackingSchedProcesses(token, procedureInstance);   
+            SchedInstruments.instrumentsSchedProcesses(token, procedureInstance);
+            SchedEnvMonitoring.envMonitSchedProcesses(token, procedureInstance);   
+            SchedInvTracking.invTrackingSchedProcesses(token, procedureInstance);   
         }
     }
     

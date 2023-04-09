@@ -12,7 +12,7 @@ import databases.features.Token;
  * @author User
  */
 public class SchedInvTracking {
-    public static void InvTrackingSchedProcesses(Token token, String procInstanceName){
+    public static void invTrackingSchedProcesses(Token token, String procInstanceName){
         //String moduleNameFromProcInstance = token.getModuleNameFromProcInstance(procInstanceName);
         //if (Boolean.FALSE.equals(GlobalVariables.TrazitModules.INVENTORY_TRACKING.name().equalsIgnoreCase(moduleNameFromProcInstance))) return;
         

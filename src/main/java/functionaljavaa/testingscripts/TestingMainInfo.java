@@ -11,7 +11,7 @@ public class TestingMainInfo {
     private Integer propertiesErrorIdStart;
     private Integer propertiesErrorIdEnd;
     
-    public void TestngMainInfo(){      
+    public void testngMainInfo(){      
         this.dbLogErrorIdStart=-999;
         this.dbLogErrorIdEnd=-999;
         this.propertiesErrorIdStart=-999;
