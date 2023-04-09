@@ -5,6 +5,7 @@
  */
 package functionaljavaa.platform.doc;
 
+import com.labplanet.servicios.ResponseError;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import databases.SqlStatement;
@@ -20,6 +21,8 @@ import io.github.classgraph.ScanResult;
 import lbplanet.utilities.LPFrontEnd;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.servlet.http.HttpServletRequest;
@@ -294,14 +297,14 @@ public final class EndPointsToRequirements {
                 this.endpointsFromDatabase = LPArray.joinTwo2DArrays(endpointsFromDatabase, LPArray.array1dTo2d(fieldValues, 1));
             }
         } catch (Exception e) {
-            return;
+            Logger.getLogger(ResponseError.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
     public static Object[] getDocInfoForEndPoint(String apiName, String endpointName) {
         Parameter parm = new Parameter();
         if ("RESULT_CHANGE_UOM".equalsIgnoreCase(endpointName)) {
-            System.out.print(endpointName);
+//            System.out.print(endpointName);
         }
         try {
             String[] fldNames = new String[]{EndpointsDeclaration.BRIEF_SUMMARY_EN.getName(), EndpointsDeclaration.DOCUMENT_NAME_EN.getName(),
