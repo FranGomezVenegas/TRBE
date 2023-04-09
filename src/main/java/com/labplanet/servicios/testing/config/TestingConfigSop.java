@@ -221,13 +221,7 @@ public class TestingConfigSop extends HttpServlet {
             Logger.getLogger(TestingConfigSop.class.getName()).log(Level.SEVERE, null, ex);
             String exceptionMessage = ex.getMessage();     
             LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null, null);                    
-        } finally {
-            // release database resources
-            try {
-                   
-            } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-            }
-        }           
+        }          
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

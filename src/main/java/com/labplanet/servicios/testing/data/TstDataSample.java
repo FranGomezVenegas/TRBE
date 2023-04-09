@@ -32,8 +32,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -154,11 +152,8 @@ public class TstDataSample extends HttpServlet {
                 try{
                     endPoint = SampleAPIactionsEndpoints.valueOf(actionName.toUpperCase());
                 }catch(Exception e){
-//                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
-                    //return;                   
                             dataSample[0] = "LABPLANET_FALSE";
                             dataSample[1] = "function "+actionName+" not recognized"; dataSample[2] = ""; dataSample[3] = ""; dataSample[4] = ""; dataSample[5] = "function "+actionName+" not recognized"; 
-                            //break;
                 }
                 if (endPoint!=null){                
                     Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
@@ -507,12 +502,6 @@ public class TstDataSample extends HttpServlet {
             tstAssertSummary=null; 
             String exceptionMessage = ex.getMessage();     
             LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null, null);                    
-        } finally {
-            // release database resources
-            try {
-                   
-            } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-            }
         }       
     }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

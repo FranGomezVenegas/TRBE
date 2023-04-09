@@ -254,7 +254,8 @@ public final class TestingCoverage {
                 if (Boolean.FALSE.equals(this.msgCodeVisited.contains(curMsgCode)))
                     this.msgCodeVisited.add(curMsgCode);
             }
-        }catch(Exception e){           
+        }catch(Exception e){ 
+            return;
         }
     }            
     public void saveCoverage(){    
@@ -282,7 +283,7 @@ public final class TestingCoverage {
             if (curRule.getRuleName().contains("AuditReasonPhrase"))
                 procBusRulesTotal=procBusRulesTotal-1;
         }
-        double divisor = procBusRulesTotal-this.coverageBusRulesExcludeList.length;//-this.busRuleExcludedByExcludeEndpoint.length;
+        double divisor = procBusRulesTotal-this.coverageBusRulesExcludeList.length;
         double divident = (double)this.busRuleVisitedTotal+(double) this.busRuleVisitedMissingInProcTotal;
         double operatedVal = (divident/divisor)*100;
         this.busRuleCovPerc = new BigDecimal(String.valueOf(operatedVal));
@@ -293,7 +294,7 @@ public final class TestingCoverage {
             busRulesPercExplStr=busRulesPercExplStr+" have on mind that the exclusions are "+this.coverageBusRulesExcludeList.length+
                 " what means that the divider is the total ("+procBusRulesTotal+") minus the excluded ("+this.coverageBusRulesExcludeList.length+")";
         JSONObject busRulesSummaryJObj=new JSONObject();
-        busRulesSummaryJObj.put("percentage_explanation", busRulesPercExplStr);        
+        busRulesSummaryJObj.put("percentage_explanation", busRulesPercExplStr);
         busRulesSummaryJObj.put("procedure_total", procBusRulesTotal);
         busRulesSummaryJObj.put("visited_total", this.busRuleVisitedTotal);
         
@@ -350,7 +351,7 @@ public final class TestingCoverage {
             JSONObject ruleJObj=new JSONObject();
             ruleJObj.put(curRule.getRuleName(), curRule.getRuleValue());
             procBusRulesAreaJArr.add(ruleJObj);
-            String curRuleStr="procedure_"+curRule.getRuleName();//+"="+curRule.getRuleValue();
+            String curRuleStr="procedure_"+curRule.getRuleName();
             boolean inExclList = LPArray.valueInArray(this.coverageBusRulesExcludeList, curRuleStr);
             boolean valueInArray = LPArray.valueInArray(accVisitedArr, curRuleStr);
             if (Boolean.FALSE.equals(valueInArray) && Boolean.FALSE.equals(notCoveredBusRules.contains(curRuleStr)) && Boolean.FALSE.equals(procedureRulesNotToPutInPlace(curRuleStr)) ){
@@ -459,15 +460,8 @@ public final class TestingCoverage {
             return;
         }
         
-/*        JSONArray procActionsJArr = new JSONArray();
-        for (String curV: this.procActionsArr){
-            procActionsJArr.add(curV);
-        }*/
         JSONObject msgCodesSummaryJObj=new JSONObject();
-        //double divisor = (double)this.procActionsArr.length;
-        //divisor=divisor-this.coverageMsgCodeExcludeList.length;
-        this.msgCodeCovPerc = new BigDecimal(this.msgCodeVisited.size());///
-                //divisor)*100);
+        this.msgCodeCovPerc = new BigDecimal(this.msgCodeVisited.size());
         String msgCodesPercExplStr=percExplPatternStr.replace("<*1*>", this.msgCodeCovPerc.setScale(DECIMAL_PLACES, RoundingMode.UP).toString())
             .replace("<*2*>", String.valueOf(this.msgCodeVisited.size()))
             .replace("<*3*>", String.valueOf("divisor (replace string by variable when so)"));

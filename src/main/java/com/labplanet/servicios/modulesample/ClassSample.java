@@ -543,7 +543,7 @@ public class ClassSample {
                         diagn=smpStage.moveToPreviousStage(sampleId, sampleStage, sampleStageNext);
                     String[] sampleFieldName=new String[]{TblsData.Sample.CURRENT_STAGE.getName(), TblsData.Sample.PREVIOUS_STAGE.getName()};
                     Object[] sampleFieldValue=new Object[0];
-                    String newSampleStage=diagn[diagn.length-1].toString();
+                    String newSampleStage=diagn==null?"":diagn[diagn.length-1].toString();
                     if (diagn==null)
                         sampleFieldValue=new Object[]{"", sampleStage};                    
                     else                    
@@ -563,7 +563,7 @@ public class ClassSample {
                             smp.sampleReview(sampleId);                                        
                         this.messageDynamicData=new Object[]{sampleId};                    
                     }else
-                        this.messageDynamicData=new Object[]{diagn[diagn.length-1].toString()};
+                        this.messageDynamicData=diagn==null?new Object[]{}:new Object[]{diagn[diagn.length-1].toString()};
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
                     break;
                 case SAMPLEAUDIT_SET_AUDIT_ID_REVIEWED:
@@ -597,7 +597,7 @@ public class ClassSample {
             this.relatedObj=rObj;
             rObj.killInstance();
         }
-        finally{
+ finally {            
         }
         }
 }

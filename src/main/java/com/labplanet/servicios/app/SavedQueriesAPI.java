@@ -46,11 +46,11 @@ public class SavedQueriesAPI extends HttpServlet {
                     new LPAPIArguments("definition", LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
                     new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
                     new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 9)},
-                 null, null),
+                null, null),
         UPDATE_SAVED_QUERY("UPDATE_SAVED_QUERY", "savedQueriesUpdated_success",
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DB_USERNAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DB_PSSWD, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)},
-                 null, null);
+                null, null);
 
         private SavedQueriesAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, String devComment, String devCommentTag) {
             this.name = name;
@@ -330,10 +330,9 @@ public class SavedQueriesAPI extends HttpServlet {
             errObject = new String[]{e.getMessage()};
             LPFrontEnd.responseError(errObject);
         } finally {
-            RelatedObjects rObj = RelatedObjects.getInstanceForActions();
-            rObj.killInstance();
             try {
-
+                RelatedObjects rObj = RelatedObjects.getInstanceForActions();
+                rObj.killInstance();
             } catch (Exception ex) {
                 Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }

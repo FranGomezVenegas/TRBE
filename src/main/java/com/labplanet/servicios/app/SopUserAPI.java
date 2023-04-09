@@ -215,10 +215,9 @@ public class SopUserAPI extends HttpServlet {
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.EXCEPTION_RAISED.getErrorCode(), new Object[]{e.getMessage(), this.getServletName()}, language, LPPlatform.ApiErrorTraping.class
                     .getSimpleName());
         } finally {
-            procReqInstance.killIt();
             // release database resources
             try {
-
+                procReqInstance.killIt();
             } catch (Exception ex) {
                 Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }

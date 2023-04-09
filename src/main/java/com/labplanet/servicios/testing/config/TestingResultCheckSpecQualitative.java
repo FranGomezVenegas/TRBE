@@ -23,8 +23,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPDate;
 import trazit.session.ProcedureRequestSession;
@@ -164,13 +162,8 @@ public class TestingResultCheckSpecQualitative extends HttpServlet {
             out.println(error.getMessage());
             String exceptionMessage = error.getMessage();     
             LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null, null);                    
-        } finally {
-            // release database resources
-            try {
-                   
-            } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-            }
-        }       }
+        } 
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

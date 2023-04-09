@@ -336,14 +336,7 @@ public class DbTestingLimitAndResult extends HttpServlet {
             out.println(Arrays.toString(testingContent[currentLine]) + error.getMessage() + currentLine.toString());
             tstAssertSummary = null;
             resChkSpec = null;
-        } finally {
-            // release database resources
-            try {
-
-            } catch (Exception ex) {
-                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+        } 
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -271,8 +271,8 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
             errObject = LPArray.addValueToArray1D(errObject, "This call raised one unhandled exception. Error:" + errMessage);
             LPFrontEnd.responseError(errObject);
         } finally {
-            procReqSession.killIt();
             try {
+                procReqSession.killIt();
             } catch (Exception ex) {
                 Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }

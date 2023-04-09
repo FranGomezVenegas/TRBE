@@ -18,8 +18,6 @@ import functionaljavaa.samplestructure.DataSample;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -180,14 +178,7 @@ public class TstDataEnvMonit extends HttpServlet {
             LPFrontEnd.responseError(errObject);
             String exceptionMessage = e.getMessage();     
             LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null, null);                    
-        } finally {
-            // release database resources
-            try {
-            } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-            }
         }       
-         
-
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -243,7 +243,7 @@ public final class EndPointsToRequirements {
                     } else if (outputObjectTypes == null && Boolean.FALSE.equals("ACTION".equalsIgnoreCase(apiName)) ) {
                         fldValues = LPArray.addValueToArray1D(fldValues, "Not Applies for queries");
                     } else {
-                        fldValues = LPArray.addValueToArray1D(fldValues, outputObjectTypes.toString());
+                        fldValues = outputObjectTypes==null?LPArray.addValueToArray1D(fldValues,""):LPArray.addValueToArray1D(fldValues, outputObjectTypes.toString());
                     }
                     fldNames = LPArray.addValueToArray1D(fldNames, EndpointsDeclaration.API_URL.getName());
                     fldValues = LPArray.addValueToArray1D(fldValues, apiUrl);
@@ -259,7 +259,7 @@ public final class EndPointsToRequirements {
                     } else if (outputObjectTypes == null && Boolean.FALSE.equals("ACTION".equalsIgnoreCase(apiName)) ){
                         fldValues = LPArray.addValueToArray1D(fldValues, "Not Applies for queries");
                     } else {
-                        fldValues = LPArray.addValueToArray1D(fldValues, outputObjectTypes.toString());
+                        fldValues = outputObjectTypes==null?LPArray.addValueToArray1D(fldValues,""):LPArray.addValueToArray1D(fldValues, outputObjectTypes.toString());
                     }
                     fldNames = LPArray.addValueToArray1D(fldNames, EndpointsDeclaration.NUM_ENDPOINTS_IN_API.getName());
                     fldValues = LPArray.addValueToArray1D(fldValues, numEndpointsInApi);
@@ -294,6 +294,7 @@ public final class EndPointsToRequirements {
                 this.endpointsFromDatabase = LPArray.joinTwo2DArrays(endpointsFromDatabase, LPArray.array1dTo2d(fieldValues, 1));
             }
         } catch (Exception e) {
+            return;
         }
     }
 
@@ -340,7 +341,6 @@ public final class EndPointsToRequirements {
         }
         Parameter parm = new Parameter();
         String propFileName = Parameter.PropertyFilesType.ERROR_TRAPING.toString();
-        String propValue = "";
         filePrefix = "apiSuccessMsg_" + filePrefix;
         try {
             ResourceBundle errorTrapFileEn = null;

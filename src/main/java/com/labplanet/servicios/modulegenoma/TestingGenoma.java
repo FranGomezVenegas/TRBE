@@ -200,9 +200,6 @@ public class TestingGenoma extends HttpServlet {
             LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null, null);                    
         } finally {
             // release database resources
-            try {
-            } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-            }
         }               
     }
 

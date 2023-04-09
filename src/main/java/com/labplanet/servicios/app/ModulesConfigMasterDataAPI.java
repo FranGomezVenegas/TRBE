@@ -52,7 +52,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 9)},
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.CONFIG.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TblsCnfg.TablesConfig.ANALYSIS.getTableName()).build()).build(),
-                 null, null),
+                null, null),
         ANALYSIS_UPDATE("ANALYSIS_UPDATE", "analysisNew_success",
                 new LPAPIArguments[]{new LPAPIArguments("code", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(REQUEST_PARAM_CONFIG_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
@@ -60,7 +60,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 9)},
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.CONFIG.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TblsCnfg.TablesConfig.ANALYSIS.getTableName()).build()).build(),
-                 null, null),
+                null, null),
         SPEC_NEW("SPEC_NEW", "specNew_success",
                 new LPAPIArguments[]{new LPAPIArguments("code", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(REQUEST_PARAM_CONFIG_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
@@ -68,7 +68,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 9)},
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.CONFIG.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TblsCnfg.TablesConfig.SPEC.getTableName()).build()).build(),
-                 null, null),
+                null, null),
         SPEC_UPDATE("SPEC_UPDATE", "specUpdate_success",
                 new LPAPIArguments[]{new LPAPIArguments("code", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(REQUEST_PARAM_CONFIG_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
@@ -76,7 +76,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 9)},
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.CONFIG.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TblsCnfg.TablesConfig.SPEC.getTableName()).build()).build(),
-                 null, null),
+                null, null),
         SPEC_LIMIT_NEW("SPEC_LIMIT_NEW", "specLimitNew_success",
                 new LPAPIArguments[]{new LPAPIArguments("code", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(REQUEST_PARAM_CONFIG_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
@@ -91,7 +91,8 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 15)},
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.CONFIG.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TblsCnfg.TablesConfig.SPEC.getTableName()).build()).build(),
-                 null, null);
+                null, null);
+
         private ConfigMasterDataAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
             this.name = name;
             this.successMessageCode = successMessageCode;
@@ -318,7 +319,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                         specFieldNameArr = LPArray.addValueToArray1D(specFieldNameArr, "method_version");
                         specFieldValueArr = LPArray.addValueToArray1D(specFieldValueArr, methodVersion);
                     }
-                    if (Boolean.FALSE.equals(LPArray.valueInArray(specFieldNameArr, "variation_name"))){
+                    if (Boolean.FALSE.equals(LPArray.valueInArray(specFieldNameArr, "variation_name"))) {
                         specFieldNameArr = LPArray.addValueToArray1D(specFieldNameArr, "variation_name");
                         specFieldValueArr = LPArray.addValueToArray1D(specFieldValueArr, variationName);
                     }
@@ -361,10 +362,9 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
         } catch (Exception e) {
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.EXCEPTION_RAISED.getErrorCode(), new Object[]{e.getMessage(), this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
         } finally {
-            procReqInstance.killIt();
             // release database resources
             try {
-
+                procReqInstance.killIt();
             } catch (Exception ex) {
                 Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }

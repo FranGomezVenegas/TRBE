@@ -1427,6 +1427,7 @@ public class ClassEnvMonSampleFrontend {
             this.relatedObj = rObj;
             rObj.killInstance();
         } catch (NumberFormatException e) {
+            this.diagnostic = new Object[]{e.getMessage()};
         }
     }
 
