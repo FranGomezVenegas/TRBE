@@ -331,9 +331,6 @@ public class SampleAudit {
             if (LPArray.valuePosicInArray(auditRevisionModeArr, sampleInfo[0][0].toString())==-1) return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SampleAuditErrorTrapping.CURRENTSAMPLESTAGE_NOTREQUIRES_SAMPLEAUDITREVISION, 
                 new Object[]{sampleCurrentStage, sampleId, SampleAuditBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName(), procInstanceName});
         }
-        if (LPArray.valuePosicInArray(auditRevisionModeArr, "ACTIONS")>-1){
-
-        }
         String[] whereFieldName=new String[]{TblsDataAudit.Sample.SAMPLE_ID.getName()};
         Object[] whereFieldValue=new Object[]{sampleId, false};
 

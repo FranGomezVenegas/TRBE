@@ -77,7 +77,6 @@ public class ClassSample {
         DataModuleSampleAnalysisResult moduleSmpAnaRes = new DataModuleSampleAnalysisResult();
         DataSample smp = new DataSample(smpAna);
         DataSampleAnalysisResult smpAnaRes = new DataSampleAnalysisResult(moduleSmpAnaRes);
-        try{
             Integer incubationStage=null;
             Integer sampleId = null;
             Object[] diagn = null;
@@ -106,7 +105,6 @@ public class ClassSample {
                 if ( (sampleStatus[0][0].toString().equalsIgnoreCase(DataSampleStructureStatuses.SampleStatuses.CANCELED.getStatusCode(""))) ||
                      (sampleStatus[0][0].toString().equalsIgnoreCase(DataSampleStructureStatuses.SampleStatuses.REVIEWED.getStatusCode(""))) ){               
                     this.diagnostic=diagn;
-    //                Object[] dynamicDataObjects = new Object[]{sampleId};
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), diagn[diagn.length-1]);
                     this.messageDynamicData=new Object[]{sampleId};
                     this.relatedObj=rObj;
@@ -596,9 +594,6 @@ public class ClassSample {
             this.diagnostic=diagn;
             this.relatedObj=rObj;
             rObj.killInstance();
-        }
- finally {            
-        }
         }
 }
     
