@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -64,7 +63,7 @@ public class TestingGenoma extends HttpServlet {
             }            
     }
     
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
         String table1Header = TestingServletsConfig.DB_SCHEMADATA_GENOMA.getTablesHeaders();
         Integer table1NumArgs=13;
@@ -214,7 +213,7 @@ public class TestingGenoma extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response){
         try {
             processRequest(request, response);
-        } catch (ServletException | IOException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(TestingRegressionUAT.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -230,7 +229,7 @@ public class TestingGenoma extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response){
         try {
             processRequest(request, response);
-        } catch (ServletException | IOException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(TestingRegressionUAT.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

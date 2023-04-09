@@ -133,7 +133,6 @@ public class EnvMonProdLotAPI extends HttpServlet {
 
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false);
         if (Boolean.TRUE.equals(procReqInstance.getHasErrors())) {
-//            procReqInstance.killIt();
             procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);
             return;
@@ -204,7 +203,7 @@ public class EnvMonProdLotAPI extends HttpServlet {
 
     }
 
-    protected void pzzzzrocessRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void pzzzzrocessRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         Object[] diagnostic = new Object[0];
         request = LPHttp.requestPreparation(request);
         response = LPHttp.responsePreparation(response);

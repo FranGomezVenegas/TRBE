@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.JsonArray;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -100,7 +99,7 @@ public class CertifyAPIfrontend extends HttpServlet {
         private final LPAPIEndPointdocumentation endPointDocumentation;
     }
     
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws IOException {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
 
@@ -201,7 +200,7 @@ public class CertifyAPIfrontend extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
         try {
             processRequest(request, response);
-        } catch (IOException | ServletException ex) {
+        } catch (IOException  ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -216,7 +215,7 @@ public class CertifyAPIfrontend extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         try {
             processRequest(request, response);
-        } catch (IOException | ServletException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
         }
     }

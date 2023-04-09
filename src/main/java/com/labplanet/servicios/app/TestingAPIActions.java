@@ -13,7 +13,6 @@ import functionaljavaa.responserelatedobjects.RelatedObjects;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -146,7 +145,7 @@ public class TestingAPIActions extends HttpServlet {
         private final String defaultTextWhenNotInPropertiesFileEs;
     }
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request = LPHttp.requestPreparation(request);
         response = LPHttp.responsePreparation(response);
 
@@ -280,7 +279,7 @@ public class TestingAPIActions extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
         try {
             processRequest(request, response);
-        } catch (ServletException | IOException e) {
+        } catch (IOException e) {
             LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null, null);
         }
     }
@@ -295,7 +294,7 @@ public class TestingAPIActions extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
         try {
             processRequest(request, response);
-        } catch (ServletException | IOException e) {
+        } catch (IOException e) {
             LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null, null);
         }
     }
