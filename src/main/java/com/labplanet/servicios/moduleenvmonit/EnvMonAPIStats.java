@@ -495,10 +495,9 @@ public class EnvMonAPIStats extends HttpServlet {
                     wObj.addConstraint(TblsData.ViewSampleAnalysisResultWithSpecLimits.RAW_VALUE, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{""}, null);
                 }
                 String includeSamplerSamples = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_SAMPLER_SAMPLES);
-                if (includeSamplerSamples != null && includeSamplerSamples.length() > 0 && Boolean.TRUE.equals(Boolean.valueOf(includeSamplerSamples))) {
-                    if (Boolean.FALSE.equals((includeSamples != null && includeSamples.length() > 0 && Boolean.valueOf(includeSamples))) ) {
+                if (includeSamplerSamples != null && includeSamplerSamples.length() > 0 && Boolean.TRUE.equals(Boolean.valueOf(includeSamplerSamples)) && 
+                    (Boolean.FALSE.equals((includeSamples != null && includeSamples.length() > 0 && Boolean.valueOf(includeSamples)))) ) {
                         wObj.addConstraint(TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_CONFIG_CODE, SqlStatement.WHERECLAUSE_TYPES.NOT_IN, new Object[]{Integer.valueOf(samplerSmpTemplate)}, null);
-                    }
                 }
                 String includeMicroOrganisms = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_MICROORGANISMS);
                 String microOrganismsToFind = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND);

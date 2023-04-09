@@ -110,12 +110,12 @@ public class DataSampleStructureRevisionRules {
             TblsData.ViewSampleAnalysisResultWithSpecLimits.TEST_REVIEWER.getName()};
             Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName(),
                 new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_ID.getName()}, new Object[]{sampleId}, fieldsToRetrieve);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(canBeAnyAuthorIsEnable[0].toString())){
-                if (LPArray.valueInArray(LPArray.getColumnFromArray2D(sampleInfo, 0), token.getPersonName()))
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(canBeAnyAuthorIsEnable[0].toString()) &&
+                (LPArray.valueInArray(LPArray.getColumnFromArray2D(sampleInfo, 0), token.getPersonName()))){
                     return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureRevisionErrorTrapping.SAMPLEANALYSIS_AUTHOR_CANNOTBE_SAMPLEREVIEWER, null);    
             }
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(canBeAnyTestReviewerIsEnable[0].toString())){
-                if (LPArray.valueInArray(LPArray.getColumnFromArray2D(sampleInfo, 1), token.getPersonName()))
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(canBeAnyTestReviewerIsEnable[0].toString()) &&
+                (LPArray.valueInArray(LPArray.getColumnFromArray2D(sampleInfo, 1), token.getPersonName()))){
                     return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureRevisionErrorTrapping.SAMPLEANALYSIS_REVIEWER_CANNOTBE_SAMPLEREVIEWER, null);    
             }            
         }
@@ -136,8 +136,8 @@ public class DataSampleStructureRevisionRules {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         Object[] isSampleAnalysisAuthorCanBeReviewerTooEnable = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, DataSampleStructureRevisionRls.SAMPLEANALYSIS_AUTHORCANBEREVIEWERTOO.getAreaName(), DataSampleStructureRevisionRls.SAMPLEANALYSIS_AUTHORCANBEREVIEWERTOO.getTagName());
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isSampleAnalysisAuthorCanBeReviewerTooEnable[0].toString())){
-            if (LPArray.valueInArray(LPArray.getColumnFromArray2D(tstFldValues, LPArray.valuePosicInArray(tstFldName, TblsData.SampleAnalysis.ANALYST.getName())), token.getPersonName()))
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isSampleAnalysisAuthorCanBeReviewerTooEnable[0].toString()) &&
+            (LPArray.valueInArray(LPArray.getColumnFromArray2D(tstFldValues, LPArray.valuePosicInArray(tstFldName, TblsData.SampleAnalysis.ANALYST.getName())), token.getPersonName()))){
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureRevisionErrorTrapping.SAMPLEANALYSIS_AUTHOR_CANNOTBE_ITSREVIEWER, null);
         }       
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "OK", null);        

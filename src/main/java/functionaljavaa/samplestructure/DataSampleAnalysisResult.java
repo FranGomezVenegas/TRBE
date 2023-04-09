@@ -1202,8 +1202,8 @@ public class DataSampleAnalysisResult {
                 new String[]{reviewScope}, new Object[]{reviewScopeId}, fieldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objectInfoForRevisionCheck[0][0].toString()) || objectInfoForRevisionCheck.length == 0)             
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.NOT_FOUND, new Object[]{LPNulls.replaceNull(resultId).toString(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
-        if (reviewScope.equalsIgnoreCase(TblsData.SampleAnalysisResult.RESULT_ID.getName())){
-            if (sampleAnalysisResultStatusReviewed.equalsIgnoreCase(objectInfoForRevisionCheck[0][0].toString()))
+        if (reviewScope.equalsIgnoreCase(TblsData.SampleAnalysisResult.RESULT_ID.getName())
+            && (sampleAnalysisResultStatusReviewed.equalsIgnoreCase(objectInfoForRevisionCheck[0][0].toString())) ){
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_ALREADY_REVIEWED, new Object[]{reviewScope, reviewScopeId, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())});
         }
         Object[][] objectInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), 

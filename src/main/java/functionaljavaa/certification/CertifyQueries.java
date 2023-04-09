@@ -88,10 +88,9 @@ public class CertifyQueries {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();  
         for (CertifObjects curCertifObj: CertifObjects.values()){
             String[] fieldsToGet=curCertifObj.getFieldsToGet();
-            if (includeAuditHistory!=null && includeAuditHistory){
-                if (Boolean.FALSE.equals(LPArray.valueInArray(fieldsToGet, TblsData.CertifUserAnalysisMethod.ID.getName()))){
+            if (includeAuditHistory!=null && Boolean.TRUE.equals(includeAuditHistory) 
+                && (Boolean.FALSE.equals(LPArray.valueInArray(fieldsToGet, TblsData.CertifUserAnalysisMethod.ID.getName()))) ){
                     fieldsToGet=LPArray.addValueToArray1D(fieldsToGet, TblsData.CertifUserAnalysisMethod.ID.getName());
-                }    
             }
             if ("ALL".equalsIgnoreCase(areasToInclude) || LPArray.valueInArray(areasToIncludeArr, curCertifObj.toString())){
                 String tagValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, 

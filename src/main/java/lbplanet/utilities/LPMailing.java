@@ -141,7 +141,7 @@ public class LPMailing {
 
             Multipart multipart = new MimeMultipart();
             multipart.addBodyPart(cuerpoCorreo);
-            if (toList != null && toList.length > 0 && attachmentUrl != null) {
+            if (attachmentUrl != null && toList != null && toList.length > 0) {
                 for (String curAttach : attachmentUrl) {
                     MimeBodyPart adjunto = new MimeBodyPart();
                     adjunto.attachFile(curAttach);

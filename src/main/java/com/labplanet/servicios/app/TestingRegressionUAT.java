@@ -336,11 +336,10 @@ public class TestingRegressionUAT extends HttpServlet {
             Object[] tablesToCheck = Rdbms.dbSchemaAndTestingSchemaTablesAndFieldsIsMirror(procInstanceName, curSchToCheck[0]);
             mirrorCheckDiagn = Rdbms.dbSchemaAndTestingSchemaTablesAndFieldsIsMirror(procInstanceName, curSchToCheck[0], curSchToCheck[1], tablesToCheck);
             Object[][] mismatchesArr = (Object[][]) mirrorCheckDiagn[0];
-            if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(mismatchesArr[0][0].toString()))) {
-                if (allMismatches == null || (allMismatches[0].length == mismatchesArr[0].length)) {
-                    allMismatches = LPArray.joinTwo2DArrays(allMismatches, new String[][]{{"table_name", GlobalAPIsParams.LBL_FIELD_NAME, "counter", "schema"}});
-                    allMismatches = LPArray.joinTwo2DArrays(allMismatches, LPArray.addColumnToArray2D(mismatchesArr, curSchToCheck[0]));
-                }
+            if ((Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(mismatchesArr[0][0].toString())))
+                    && (allMismatches == null || (allMismatches[0].length == mismatchesArr[0].length))) {
+                allMismatches = LPArray.joinTwo2DArrays(allMismatches, new String[][]{{"table_name", GlobalAPIsParams.LBL_FIELD_NAME, "counter", "schema"}});
+                allMismatches = LPArray.joinTwo2DArrays(allMismatches, LPArray.addColumnToArray2D(mismatchesArr, curSchToCheck[0]));
             }
         }
         if (allMismatches != null && allMismatches.length > 0) {

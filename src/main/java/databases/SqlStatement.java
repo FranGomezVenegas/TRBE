@@ -193,7 +193,6 @@ public class SqlStatement {
         String queryWhere = "";
         schemaName = setSchemaName(schemaName);
         tableName = setSchemaName(tableName);
-
         Object[] whereFieldValuesNew = new Object[0];
         if (whereFields != null) {
             Object[] whereClauseContent = buildWhereClause(whereFields, whereFieldValues, true);

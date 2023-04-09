@@ -330,13 +330,12 @@ public class ClassMasterData {
                                     new Object[]{jO.getAsJsonObject().get(TblsCnfg.SpecLimits.ANALYSIS.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.SpecLimits.METHOD_NAME.getName()).getAsString(),
                                         jO.getAsJsonObject().get(TblsCnfg.SpecLimits.PARAMETER.getName()).getAsString()},
                                     new String[]{TblsCnfg.AnalysisMethodParams.UOM.getName(), TblsCnfg.AnalysisMethodParams.UOM_CONVERSION_MODE.getName()});
-                            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(paramUOM[0][0].toString())))){
-                                if (paramUOM[0][0]!=null){
+                            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(paramUOM[0][0].toString())))
+                                && (paramUOM[0][0]!=null)){
                                     fieldName=LPArray.addValueToArray1D(fieldName, TblsCnfg.SpecLimits.UOM.getName());
                                     fieldValue=LPArray.addValueToArray1D(fieldValue, LPNulls.replaceNull(paramUOM[0][0].toString()));
                                     fieldName=LPArray.addValueToArray1D(fieldName, TblsCnfg.SpecLimits.UOM_CONVERSION_MODE.getName());
-                                    fieldValue=LPArray.addValueToArray1D(fieldValue, LPNulls.replaceNull(paramUOM[0][1].toString()));
-                                }
+                                    fieldValue=LPArray.addValueToArray1D(fieldValue, LPNulls.replaceNull(paramUOM[0][1].toString()));                                
                             }                            
                         }
                         this.diagnostic=resSpecEvaluation;

@@ -51,16 +51,15 @@ public class DataInventoryQualif {
         Object[] fldValues = new Object[]{};
         Object[][] referenceInfo = null;
         String[] allFieldNames = getAllFieldNames(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableFields());
-        if (Boolean.TRUE.equals(requiresConfigChecks)){
-            if (reference != null && reference.length() > 0) {
+        if (Boolean.TRUE.equals(requiresConfigChecks)
+            && (reference != null && reference.length() > 0)) {
                 referenceInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName(),
                         new String[]{TblsInvTrackingConfig.Reference.NAME.getName(), TblsInvTrackingConfig.Reference.CATEGORY.getName()}, new Object[]{reference, category},
                         allFieldNames);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceInfo[0][0].toString())) {
                     messages.addMainForError(InvTrackingEnums.InventoryTrackingErrorTrapping.REFERENCE_NOT_FOUND, new Object[]{reference});
                     return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.REFERENCE_NOT_FOUND, new Object[]{reference}, null);
-                }
-            }
+                }            
         }
         fldNames = LPArray.addValueToArray1D(fldNames, TblsInvTrackingData.LotCertification.REFERENCE.getName());
         fldValues = LPArray.addValueToArray1D(fldValues, reference);

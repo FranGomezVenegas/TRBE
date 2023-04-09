@@ -437,8 +437,8 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         String currentDateStr=LPNulls.replaceNull(sampleCurrentInfo[0][0]).toString();
         if (currentDateStr==null || currentDateStr.length()==0)
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.CHANGESAMPLINGDATE_NOT_ALLOW_WHEN_NOT_PREVIOUSDATE, new Object[]{sampleId, newDate});
-        if (currentDateStr!=null && currentDateStr.length()>0){
-            if (newDate.isEqual(LocalDateTime.parse(LPNulls.replaceNull(sampleCurrentInfo[0][0]).toString().replace(" ", "T"))))
+        if (currentDateStr!=null && currentDateStr.length()>0
+            && (newDate.isEqual(LocalDateTime.parse(LPNulls.replaceNull(sampleCurrentInfo[0][0]).toString().replace(" ", "T")))) ){
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.CHANGESAMPLINGDATE_NOT_ALLOW_WHEN_SAME_PREVIOUSDATE, new Object[]{sampleId, newDate});
         }
 	SqlWhere sqlWhere = new SqlWhere();
@@ -470,8 +470,8 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
         String currentDateStr=LPNulls.replaceNull(sampleCurrentInfo[0][0]).toString();
         if (currentDateStr==null || currentDateStr.length()==0)
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.CHANGESAMPLINGDATEEND_NOT_ALLOW_WHEN_NOT_PREVIOUSDATE, new Object[]{sampleId, newDate});
-        if (currentDateStr!=null && currentDateStr.length()>0){
-            if (newDate.isEqual(LocalDateTime.parse(LPNulls.replaceNull(sampleCurrentInfo[0][0]).toString().replace(" ", "T"))))
+        if (currentDateStr!=null && currentDateStr.length()>0 &&
+            newDate.isEqual(LocalDateTime.parse(LPNulls.replaceNull(sampleCurrentInfo[0][0]).toString().replace(" ", "T"))) ){
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.CHANGESAMPLINGDATEEND_NOT_ALLOW_WHEN_SAME_PREVIOUSDATE, new Object[]{sampleId, newDate});
         }
 	SqlWhere sqlWhere = new SqlWhere();

@@ -371,10 +371,9 @@ public class GenomaDataProject {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.PROJECT.getTableName(),
                 new String[]{TblsGenomaData.Project.NAME.getName()}, new Object[]{projectName}, new String[]{TblsGenomaData.Project.ACTIVE.getName()});
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) {
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) {
-                return new InternalMessage(LPPlatform.LAB_FALSE, GenomaErrorTrapping.PROJECT_NOT_FOUND, new Object[]{projectName, procInstanceName});
-            }
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString()) &&
+            (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) ){
+                return new InternalMessage(LPPlatform.LAB_FALSE, GenomaErrorTrapping.PROJECT_NOT_FOUND, new Object[]{projectName, procInstanceName});            
         }
         if (Boolean.FALSE.equals(Boolean.valueOf(LPNulls.replaceNull(sampleInfo[0][0]).toString()))) {
             return new InternalMessage(LPPlatform.LAB_FALSE, GenomaErrorTrapping.PROJECT_ALREADY_INACTIVE, new Object[]{projectName, procInstanceName});

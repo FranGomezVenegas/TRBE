@@ -38,6 +38,7 @@ public class SqlStatementEnums {
     public enum WHERE_FLDVALUES_ARRAY_TYPES {
         NUMBER, INTEGER, BOOLEAN, STRING
     }
+
     public enum SORT_DIRECTION {
         ASC(" asc"), DESC(" desc");
         private final String clause;
@@ -50,6 +51,7 @@ public class SqlStatementEnums {
             return clause;
         }
     }
+
     public enum WHERECLAUSE_TYPES {
         IS_NULL(" is null"), IS_NOT_NULL(" is not null"), NULL("NULL"), IN("IN"), NOT_IN("NOT IN"), EQUAL("="), NOT_EQUAL("<>"), LIKE("LIKE"), BETWEEN("BETWEEN"),
         LESS_THAN_STRICT("<"), LESS_THAN("<="), GREATER_THAN_STRICT(">"), GREATER_THAN(">="),
@@ -354,12 +356,9 @@ public class SqlStatementEnums {
             if (fn == null || fn.length() == 0) {
                 break;
             }
-            if (iwhereFieldNames > 0) {
-                if (Boolean.FALSE.equals(fn.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase()))) //                    queryWhere.append(" or ");
-                //                else
-                {
-                    queryWhere.append(" and ");
-                }
+            if ((iwhereFieldNames > 0)
+                    && Boolean.FALSE.equals(fn.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase()))) {
+                queryWhere.append(" and ");
             }
             if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.NULL.getSqlClause())) {
                 queryWhere.append(fn);
@@ -726,11 +725,9 @@ public class SqlStatementEnums {
             if (fn == null || fn.length() == 0) {
                 break;
             }
-            if (iwhereFieldNames > 0) {
-                if (Boolean.FALSE.equals(fn.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase()))) {
+            if ( (iwhereFieldNames > 0) && Boolean.FALSE.equals(fn.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase()))) {
                     queryWhere.append(" and ");
-                }
-            }
+                }            
             if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.NULL.getSqlClause())) {
                 queryWhere.append(fn);
             } else if (fn.toUpperCase().contains(" " + WHERECLAUSE_TYPES.LIKE.getSqlClause())) {
@@ -790,23 +787,22 @@ public class SqlStatementEnums {
                 for (EnumIntTableFields curFld : fieldsToRetrieve) {
                     if (curFld != null) {
                         fn = curFld.getName();
-                        if (curFld.getReferenceTable() != null) {
-                            if (GlobalVariables.Schemas.CONFIG.toString().equalsIgnoreCase(curFld.getReferenceTable().getRepository())
+                        if ( (curFld.getReferenceTable() != null) &&
+                            (GlobalVariables.Schemas.CONFIG.toString().equalsIgnoreCase(curFld.getReferenceTable().getRepository())
                                     && "person".equalsIgnoreCase(curFld.getReferenceTable().getTableName())
-                                    && "person_id".equalsIgnoreCase(curFld.getReferenceTable().getFieldName())) {
-                                fn = "(select alias from config.person where person_id=" + curFld.getName() + ")";
-                            }
+                                    && "person_id".equalsIgnoreCase(curFld.getReferenceTable().getFieldName())) ) {
+                                fn = "(select alias from config.person where person_id=" + curFld.getName() + ")";                            
                         }
                         if (curFld.getFieldMask() != null) {
                             fn = curFld.getFieldMask();
                         } else {
                             if (curFld.getFieldType() != null) {
                                 if ("DATE".equalsIgnoreCase(curFld.getFieldType())) {
-                                    fn = "to_char(" + curFld.getName() + ",'YYYY-MM-DD')"+", ";
+                                    fn = "to_char(" + curFld.getName() + ",'YYYY-MM-DD')" + ", ";
                                 } else if ("DATETIME".equalsIgnoreCase(curFld.getFieldType())) {
-                                    fn = "to_char(" + curFld.getName() + ",'" + DbFieldValueMask.datetimeFormat(curFld) + "')"+", ";
+                                    fn = "to_char(" + curFld.getName() + ",'" + DbFieldValueMask.datetimeFormat(curFld) + "')" + ", ";
                                 } else if (curFld.getFieldType().toLowerCase().contains("timestamp")) {
-                                    fn = "to_char(" + curFld.getName() + ",'" + DbFieldValueMask.datetimeFormat(curFld) + "')"+", ";
+                                    fn = "to_char(" + curFld.getName() + ",'" + DbFieldValueMask.datetimeFormat(curFld) + "')" + ", ";
                                 } else if (fn.toUpperCase().contains(" IN")) {
                                     Integer posicINClause = fn.toUpperCase().indexOf("IN");
                                     fn = fn.substring(0, posicINClause - 1);
@@ -882,12 +878,9 @@ public class SqlStatementEnums {
         if (fn == null || fn.length() == 0) {
             return new Object[]{};
         }
-        if (queryWhere.length() > 0) {
-            if (Boolean.FALSE.equals(symbol.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase())))
-            //                else
-            {
-                queryWhere.append(" ").append(constraintType).append(" ");
-            }
+        if ( (queryWhere.length() > 0) &&
+            Boolean.FALSE.equals(symbol.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase()))) {            
+                queryWhere.append(" ").append(constraintType).append(" ");            
         }
         switch (curEntry.getSymbol()) {
             case IS_NOT_NULL:
@@ -916,7 +909,7 @@ public class SqlStatementEnums {
                 }
                 Object[] textSpecArray = textSpecs.split("\\" + separator);
                 queryWhere.append(fn).append(" ").append(symbol.toLowerCase()).append("(");
-                if (Boolean.FALSE.equals(valuesAreNumbers)){
+                if (Boolean.FALSE.equals(valuesAreNumbers)) {
                     if (curEntry.getFldValue()[0] instanceof Object[]) {
                         textSpecArray = (Object[]) curEntry.getFldValue()[0];
                     } else if (curEntry.getFldValue()[0] instanceof String[]) {

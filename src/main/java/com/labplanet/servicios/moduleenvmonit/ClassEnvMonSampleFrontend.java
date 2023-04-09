@@ -567,7 +567,7 @@ public class ClassEnvMonSampleFrontend {
                     jObjMainObject.put(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE, jObjSampleInfo);
                     jObjMainObject.put(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_DISPLAY, jArrPieceOfInfo);
                     jObjMainObject.put(reportInfoTagNAme, endPoint.getReportInfo());
-                    jObjMainObject.put("buttonActionInfo", buttonActionInfo(sampleId, sampleTblAllFields, sampleInfo[0]));
+                    jObjMainObject.put("buttonActionInfo", buttonActionInfo(sampleId, sampleTblAllFields));
 
                     JSONArray jArrMainObj = new JSONArray();
                     jObjPieceOfInfo = new JSONObject();
@@ -1670,7 +1670,7 @@ public class ClassEnvMonSampleFrontend {
             String[] fldNameArr = null;
             Object[] fldValueArr = null;
 
-            Object[] lockedByStatus = isLockedByStatus(procInstanceName, resultFieldToRetrieveArr, curRow);
+            Object[] lockedByStatus = isLockedByStatus(resultFieldToRetrieveArr, curRow);
             if (lockedByStatus[0] != null) {
                 return lockedByStatus;
             }
@@ -1744,7 +1744,7 @@ public class ClassEnvMonSampleFrontend {
         }
     }
 
-    static Object[] isLockedByStatus(String procInstanceName, String[] resultFieldToRetrieveArr, Object[] curRow) {
+    static Object[] isLockedByStatus(String[] resultFieldToRetrieveArr, Object[] curRow) {
         String[] fldNameArr = null;
         Object[] fldValueArr = null;
         Integer resultFldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.STATUS.getName());
@@ -1814,7 +1814,7 @@ public class ClassEnvMonSampleFrontend {
         return objIds;
     }
 
-    static JSONObject buttonActionInfo(Integer sampleId, String[] fields, Object[] sampleInfo) {
+    static JSONObject buttonActionInfo(Integer sampleId, String[] fields) {
         JSONObject jObj = new JSONObject();
         String curStage = LPNulls.replaceNull(LPArray.valuePosicInArray(fields, TblsEnvMonitData.Sample.CURRENT_STAGE.getName())).toString();
         String configCode = LPNulls.replaceNull(LPArray.valuePosicInArray(fields, TblsEnvMonitData.Sample.CONFIG_CODE.getName())).toString();

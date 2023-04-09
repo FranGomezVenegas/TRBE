@@ -2261,12 +2261,11 @@ public class Rdbms {
             }
         }
         if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE.getName())) {
-            if (Boolean.FALSE.equals(LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone, tableName))) {
-                if (schemaName.endsWith("\"")) {
-                    schemaName = schemaName.substring(0, schemaName.length() - 1) + "_testing\"";
-                } else {
-                    schemaName = schemaName + "_testing";
-                }
+            if (Boolean.FALSE.equals(LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone, tableName))
+                    && (schemaName.endsWith("\""))) {
+                schemaName = schemaName.substring(0, schemaName.length() - 1) + "_testing\"";
+            } else {
+                schemaName = schemaName + "_testing";
             }
             return schemaName;
         }

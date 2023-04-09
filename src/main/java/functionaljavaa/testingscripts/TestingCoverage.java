@@ -144,23 +144,21 @@ public final class TestingCoverage {
         Object[][] scriptsEndpoints = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(),
                 new String[]{TblsTesting.ScriptSteps.SCRIPT_ID.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause() + "|", TblsTesting.ScriptSteps.ACTIVE.getName()}, whereFldValue,
                 new String[]{TblsTesting.ScriptSteps.SCRIPT_ID.getName(), TblsTesting.ScriptSteps.ACTION_NAME.getName()});
-        //this.endpointsCoverageDetail=new JsonArray();
         JSONArray visitedjObj = new JSONArray();
         JSONArray missingjObj = new JSONArray();
         for (Object[] curStep : scriptsEndpoints) {
             String curScriptEndpoint = curStep[1].toString();
-            if (curScriptEndpoint != null && curScriptEndpoint.length() > 0) {
-                if (calcProcedureActions == null || calcProcedureActions.isEmpty() || !calcProcedureActions.contains(curScriptEndpoint)) {
-                    if (curScriptEndpoint != null) {
-                        calcProcedureActions.add(curScriptEndpoint);
-                    }
-                    if (LPArray.valueInArray(this.procActionsArr, curScriptEndpoint)) {
-                        this.endpointsVisitedTotal++;
-                        visitedjObj.add(curScriptEndpoint);
-                    } else {
-                        this.endpointsMissingTotal++;
-                        missingjObj.add(curScriptEndpoint);
-                    }
+            if ((curScriptEndpoint != null && curScriptEndpoint.length() > 0)
+                    && (calcProcedureActions == null || calcProcedureActions.isEmpty() || !calcProcedureActions.contains(curScriptEndpoint))) {
+                if (curScriptEndpoint != null) {
+                    calcProcedureActions.add(curScriptEndpoint);
+                }
+                if (LPArray.valueInArray(this.procActionsArr, curScriptEndpoint)) {
+                    this.endpointsVisitedTotal++;
+                    visitedjObj.add(curScriptEndpoint);
+                } else {
+                    this.endpointsMissingTotal++;
+                    missingjObj.add(curScriptEndpoint);
                 }
             }
         }
@@ -204,22 +202,21 @@ public final class TestingCoverage {
         }
         for (int i = 0; i < this.scriptsBusRules.getDataBusinessRules().size(); i++) {
             String curScriptDataRule = this.scriptsBusRules.getDataBusinessRules().get(i).getRuleName();
-            if (calcData == null || calcData.isEmpty() || !calcData.contains(curScriptDataRule)) {
-                if (curScriptDataRule != null) {
-                    calcData.add(curScriptDataRule);
-                }
-                JSONObject jObj = new JSONObject();
-                jObj.put("area", "data");
-                jObj.put("rule_name", curScriptDataRule);
-                if (this.procBusRules.getDataBusinessRule(curScriptDataRule).length() == 0) {
-                    this.busRuleVisitedMissingInProcData++;
-                    this.busRuleVisitedMissingInProcTotal++;
-                    missingRulesJArr.add(jObj);
-                } else {
-                    this.busRuleVisitedTotal++;
-                    this.busRuleVisitedDataRules++;
-                    visitedRulesJArr.add(jObj);
-                }
+            if ((calcData == null || calcData.isEmpty() || !calcData.contains(curScriptDataRule))
+                    && (curScriptDataRule != null)) {
+                calcData.add(curScriptDataRule);
+            }
+            JSONObject jObj = new JSONObject();
+            jObj.put("area", "data");
+            jObj.put("rule_name", curScriptDataRule);
+            if (this.procBusRules.getDataBusinessRule(curScriptDataRule).length() == 0) {
+                this.busRuleVisitedMissingInProcData++;
+                this.busRuleVisitedMissingInProcTotal++;
+                missingRulesJArr.add(jObj);
+            } else {
+                this.busRuleVisitedTotal++;
+                this.busRuleVisitedDataRules++;
+                visitedRulesJArr.add(jObj);
             }
         }
         for (int i = 0; i < this.scriptsBusRules.getProcedureBusinessRules().size(); i++) {
@@ -375,10 +372,9 @@ public final class TestingCoverage {
             String curRuleStr = "procedure_" + curRule.getRuleName();
             boolean inExclList = LPArray.valueInArray(this.coverageBusRulesExcludeList, curRuleStr);
             boolean valueInArray = LPArray.valueInArray(accVisitedArr, curRuleStr);
-            if (Boolean.FALSE.equals(valueInArray) && Boolean.FALSE.equals(notCoveredBusRules.contains(curRuleStr)) && Boolean.FALSE.equals(procedureRulesNotToPutInPlace(curRuleStr))) {
-                if (Boolean.FALSE.equals(inExclList) && Boolean.FALSE.equals(LPArray.valueInArray(this.busRuleExcludedByExcludeEndpoint, curRuleStr))) {
-                    notCoveredBusRules.add(curRuleStr);
-                }
+            if ((Boolean.FALSE.equals(valueInArray) && Boolean.FALSE.equals(notCoveredBusRules.contains(curRuleStr)) && Boolean.FALSE.equals(procedureRulesNotToPutInPlace(curRuleStr)))
+                    && (Boolean.FALSE.equals(inExclList) && Boolean.FALSE.equals(LPArray.valueInArray(this.busRuleExcludedByExcludeEndpoint, curRuleStr)))) {
+                notCoveredBusRules.add(curRuleStr);
             }
         }
         if (this.busRuleExcludedByExcludeEndpoint.length > 0) {

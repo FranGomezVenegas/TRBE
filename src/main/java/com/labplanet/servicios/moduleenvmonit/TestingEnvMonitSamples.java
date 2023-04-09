@@ -123,8 +123,6 @@ if (iLines==25){
                     String propValue=LPNulls.replaceNull(testingContent[iLines][9]).toString();
                     fileContentTable1Builder.append(propValue);                    
                     Parameter parm=new Parameter();
-//                    parm.createPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
-//                    procInstanceName+"-"+suffixName);  
                     String diagn=parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
                         procInstanceName+"-"+suffixName, propName, propValue);
                     functionRelatedObjects=new JSONArray();                      
@@ -142,7 +140,7 @@ if (iLines==25){
                     testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                     fileContentTable1Builder.append(clssEnvMonSampleController.getRowArgsRows());
                 }else{
-                    ClassEnvMonSampleFrontendController clssEnvMonSampleFrontendController=new ClassEnvMonSampleFrontendController(request, response, actionName.toString(), testingContent, iLines, table1NumArgs);
+                    ClassEnvMonSampleFrontendController clssEnvMonSampleFrontendController=new ClassEnvMonSampleFrontendController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
                     if (Boolean.TRUE.equals(clssEnvMonSampleFrontendController.getFunctionFound())){
                         functionRelatedObjects=clssEnvMonSampleFrontendController.getFunctionRelatedObjects();
                         functionEvaluation=(Object[]) clssEnvMonSampleFrontendController.getFunctionDiagn();

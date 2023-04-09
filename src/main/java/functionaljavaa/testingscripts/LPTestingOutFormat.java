@@ -559,10 +559,8 @@ public class LPTestingOutFormat {
         csvPathName = csvPathName.replace(".txt", ".html");
         File file = new File(csvPathName);
         try (FileWriter fileWriter = new FileWriter(file)) {
-            if (file.exists()) {
-                if (Boolean.FALSE.equals(file.delete())) {
-                    return;
-                }
+            if (file.exists() && Boolean.FALSE.equals(file.delete())) {
+                return;
             }
             if (Boolean.FALSE.equals(file.createNewFile())) {
                 return;
