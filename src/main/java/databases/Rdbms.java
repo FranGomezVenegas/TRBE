@@ -2250,15 +2250,14 @@ public class Rdbms {
         if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE_CONFIG.getName())) {
             return schemaName;
         }
-        if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE_AUDIT.getName())) {
-            if (Boolean.FALSE.equals(LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureAuditSchema_TablesWithNoTestingClone, tableName))) {
+        if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE_AUDIT.getName()) &&
+            Boolean.FALSE.equals(LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureAuditSchema_TablesWithNoTestingClone, tableName))) {
                 if (schemaName.endsWith("\"")) {
                     schemaName = schemaName.substring(0, schemaName.length() - 1) + "_testing\"";
                 } else {
                     schemaName = schemaName + "_testing";
                 }
                 return schemaName;
-            }
         }
         if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE.getName())) {
             if (Boolean.FALSE.equals(LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone, tableName))

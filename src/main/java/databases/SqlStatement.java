@@ -216,12 +216,9 @@ public class SqlStatement {
             if (fn == null || fn.length() == 0) {
                 break;
             }
-            if (iwhereFieldNames > 0) {
-                if (Boolean.FALSE.equals(fn.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase()))) //                    queryWhere.append(" or ");
-                //                else
-                {
+            if (iwhereFieldNames > 0 &&
+                Boolean.FALSE.equals(fn.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase())) ){
                     queryWhere.append(" and ");
-                }
             }
             if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.NULL.getSqlClause())) {
                 queryWhere.append(fn);

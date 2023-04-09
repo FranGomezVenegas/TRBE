@@ -221,23 +221,22 @@ public final class TestingCoverage {
         }
         for (int i = 0; i < this.scriptsBusRules.getProcedureBusinessRules().size(); i++) {
             String curScriptProcedureRule = this.scriptsBusRules.getProcedureBusinessRules().get(i).getRuleName();
-            if (calcProcedure == null || calcProcedure.isEmpty() || !calcProcedure.contains(curScriptProcedureRule)) {
-                if (Boolean.FALSE.equals(curScriptProcedureRule.contains("AuditReasonPhrase"))) {
-                    if (curScriptProcedureRule != null) {
-                        calcProcedure.add(curScriptProcedureRule);
-                    }
-                    JSONObject jObj = new JSONObject();
-                    jObj.put("area", "procedure");
-                    jObj.put("rule_name", curScriptProcedureRule);
-                    if (this.procBusRules.getProcedureBusinessRule(curScriptProcedureRule).length() == 0) {
-                        this.busRuleVisitedMissingInProcProcedure++;
-                        this.busRuleVisitedMissingInProcTotal++;
-                        missingRulesJArr.add(jObj);
-                    } else {
-                        this.busRuleVisitedTotal++;
-                        this.busRuleVisitedProcedureRules++;
-                        visitedRulesJArr.add(jObj);
-                    }
+            if ((calcProcedure == null || calcProcedure.isEmpty() || !calcProcedure.contains(curScriptProcedureRule))
+                    && Boolean.FALSE.equals(curScriptProcedureRule.contains("AuditReasonPhrase"))) {
+                if (curScriptProcedureRule != null) {
+                    calcProcedure.add(curScriptProcedureRule);
+                }
+                JSONObject jObj = new JSONObject();
+                jObj.put("area", "procedure");
+                jObj.put("rule_name", curScriptProcedureRule);
+                if (this.procBusRules.getProcedureBusinessRule(curScriptProcedureRule).length() == 0) {
+                    this.busRuleVisitedMissingInProcProcedure++;
+                    this.busRuleVisitedMissingInProcTotal++;
+                    missingRulesJArr.add(jObj);
+                } else {
+                    this.busRuleVisitedTotal++;
+                    this.busRuleVisitedProcedureRules++;
+                    visitedRulesJArr.add(jObj);
                 }
             }
         }
