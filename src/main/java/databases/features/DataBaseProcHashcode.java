@@ -23,7 +23,7 @@ import trazit.session.ProcedureRequestSession;
  *
  * @author User
  */
-public class DbProcHashcode {
+public class DataBaseProcHashcode {
     public static void procHashCodeHandler(String schemaName, String tableName){
         if (tableName.toUpperCase().contains("ZZZ")) return;
         if (Boolean.FALSE.equals((schemaName.toUpperCase().contains(GlobalVariables.Schemas.CONFIG.getName().toUpperCase()))) || (schemaName.toUpperCase().contains(GlobalVariables.Schemas.PROCEDURE.getName().toUpperCase()))) return;

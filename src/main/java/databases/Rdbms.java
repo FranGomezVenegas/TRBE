@@ -5,7 +5,7 @@
  */
 package databases;
 
-import databases.features.DbProcHashcode;
+import databases.features.DataBaseProcHashcode;
 import databases.features.DbEncryptionObject;
 import databases.features.DbEncryption;
 import functionaljavaa.testingscripts.TestingAuditIds;
@@ -1177,7 +1177,7 @@ public class Rdbms {
             }
             Object[] diagnosis = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.RDBMS_RECORD_CREATED, new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(fieldValues), schemaName});
             diagnosis = LPArray.addValueToArray1D(diagnosis, insertRecordDiagnosis[1]);
-            DbProcHashcode.procHashCodeHandler(schemaName, tableName);
+            DataBaseProcHashcode.procHashCodeHandler(schemaName, tableName);
             return diagnosis;
         } else {
             Object[] diagnosis = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_CREATED, new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(fieldValues), schemaName});
@@ -1209,7 +1209,7 @@ public class Rdbms {
                     tstAuditId.addObject(schemaName, tableName, Integer.valueOf(insertRecordDiagnosis.getNewRowId().toString()), fieldNames, fieldValues);
                 }
             }
-            DbProcHashcode.procHashCodeHandler(schemaName, tableName);
+            DataBaseProcHashcode.procHashCodeHandler(schemaName, tableName);
             return insertRecordDiagnosis;
         } else {
             return insertRecordDiagnosis;
@@ -1257,7 +1257,7 @@ public class Rdbms {
         Object[] diagnosis = new Object[0];
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(insertRecordDiagnosis[0])) {
             diagnosis = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.RDBMS_RECORDS_CREATED, new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(whereFieldValuesFrom), schemaNameFrom, insertRecordDiagnosis[insertRecordDiagnosis.length - 1]});
-            DbProcHashcode.procHashCodeHandler(schemaNameFrom, tableNameTo);
+            DataBaseProcHashcode.procHashCodeHandler(schemaNameFrom, tableNameTo);
         } else {
             diagnosis = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_CREATED, new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(whereFieldValuesFrom), schemaNameFrom});
             dbLogSummary.setFailure(query, whereFieldValuesFrom);
@@ -1361,7 +1361,7 @@ public class Rdbms {
             if (valoresinterrogaciones != null) {
                 buildPreparedStatement(valoresinterrogaciones, prep);
             }
-            DbProcHashcode.procHashCodeHandler(schemaName, tableName);
+            DataBaseProcHashcode.procHashCodeHandler(schemaName, tableName);
             return new Object[]{prep.executeUpdate(), "Success"};
         } catch (SQLException ex) {
             dbLogSummary.setFailure(script, valoresinterrogaciones);
@@ -1487,7 +1487,7 @@ public class Rdbms {
             if (rs.next()) {
                 newId = rs.getString(indexposition);
                 //Integer newIdInt = Integer.parseInt(newId);
-                DbProcHashcode.procHashCodeHandler(schemaName, tableName);
+                DataBaseProcHashcode.procHashCodeHandler(schemaName, tableName);
                 if ("0".equalsIgnoreCase(newId)) {
                     return new RdbmsObject(true, consultaconinterrogaciones + " " + Arrays.toString(valoresinterrogaciones), RdbmsSuccess.RDBMS_RECORD_CREATED, null, -999);
                 } else {
@@ -2435,7 +2435,7 @@ private static final int CLIENT_CODE_STACK_INDEX;
                         tstAuditId.addObject(schemaName, tblObj.getTableName(), Integer.valueOf(insertRecordDiagnosis.getNewRowId().toString()), getAllFieldNames(fldNamesObj), fieldValues);
                     }
                 }
-                DbProcHashcode.procHashCodeHandler(schemaName, tblObj.getTableName());
+                DataBaseProcHashcode.procHashCodeHandler(schemaName, tblObj.getTableName());
                 return insertRecordDiagnosis;
             } else {
                 return insertRecordDiagnosis;
@@ -2484,7 +2484,7 @@ private static final int CLIENT_CODE_STACK_INDEX;
                 whereObj.getAllWhereEntriesFldNames(), whereFieldValues, false);
         Integer deleteRecordDiagnosis = Rdbms.prepUpQuery(query, whereFieldValues);
         if (deleteRecordDiagnosis > 0) {
-            DbProcHashcode.procHashCodeHandler(schemaName, tblObj.getTableName());
+            DataBaseProcHashcode.procHashCodeHandler(schemaName, tblObj.getTableName());
             return new RdbmsObject(true, query + " " + Arrays.toString(whereFieldValues), RdbmsSuccess.RDBMS_RECORD_REMOVED, null, -999);
         } else if (deleteRecordDiagnosis == -999) {
             dbLogSummary.setFailure(query, whereFieldValues);
