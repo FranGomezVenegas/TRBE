@@ -81,7 +81,7 @@ public class ProcedureRequestSession {
             if (request == null) {
                 return;
             }
-            this.isTransactional = Rdbms.transactionMode;
+            this.isTransactional = Rdbms.TRANSACTION_MODE;
             this.dbLogSummary = new DbLogSummary();
             this.newProcedureHashCodeGenerated = false;
             this.isQuery = isQuery;

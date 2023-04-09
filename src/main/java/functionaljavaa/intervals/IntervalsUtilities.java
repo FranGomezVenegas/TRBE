@@ -23,11 +23,11 @@ import trazit.session.ProcedureRequestSession;
  */
 public class IntervalsUtilities {
     
-    public static final String dbFieldNameExpiryIntervalInfo="expiry_interval_info";            
+    public static final String DB_FLDNAME_EXPIRY_INTRVL_INFO="expiry_interval_info";            
     
     public static Object[] applyExpiryInterval(String objectWithIntervalTableName, String[] whereFieldNames, Object[] whereFieldValues){        
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        String[] fieldsToRetrieve=new String[]{dbFieldNameExpiryIntervalInfo};
+        String[] fieldsToRetrieve=new String[]{DB_FLDNAME_EXPIRY_INTRVL_INFO};
         Object[][] intervalInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), objectWithIntervalTableName, 
                 whereFieldNames, whereFieldValues,
                 fieldsToRetrieve);

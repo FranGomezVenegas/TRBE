@@ -58,7 +58,7 @@ import trazit.session.DbLogSummary;
  */
 public class Rdbms {
 
-    public static final Boolean transactionMode = false;
+    public static final Boolean TRANSACTION_MODE = false;
     String errorCode = "";
     private static Connection conn = null;
     private static Boolean isStarted = false;
@@ -1741,7 +1741,7 @@ public class Rdbms {
      */
     public Connection createTransactionNoTransaction() {
         try {
-            conn.setAutoCommit(!Rdbms.transactionMode);
+            conn.setAutoCommit(!Rdbms.TRANSACTION_MODE);
         } catch (SQLException ex) {
             Logger.getLogger(Rdbms.class.getName()).log(Level.SEVERE, null, ex);
             return null;

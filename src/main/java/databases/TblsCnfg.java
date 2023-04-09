@@ -7,7 +7,7 @@ import trazit.enums.FldBusinessRules;
 import trazit.enums.ForeignkeyFld;
 import trazit.enums.ReferenceFld;
 import trazit.globalvariables.GlobalVariables;
-import static functionaljavaa.intervals.IntervalsUtilities.dbFieldNameExpiryIntervalInfo;
+import static functionaljavaa.intervals.IntervalsUtilities.DB_FLDNAME_EXPIRY_INTRVL_INFO;
 /**
  *
  * @author Administrator
@@ -151,7 +151,7 @@ public class TblsCnfg {
         CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date(), null, null, null, null),
         ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(), null, null, null, null),
         EXPIRES("expires", LPDatabase.booleanFld(), null, null, null, null),
-        EXPIRY_INTERVAL_INFO(dbFieldNameExpiryIntervalInfo, LPDatabase.string(), null, null, null, null),
+        EXPIRY_INTERVAL_INFO(DB_FLDNAME_EXPIRY_INTRVL_INFO, LPDatabase.string(), null, null, null, null),
         CERTIFICATION_MODE("certification_mode", LPDatabase.string(), null, null, null, null)
         ;
         private Methods(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
@@ -204,7 +204,7 @@ public class TblsCnfg {
         METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, LPDatabase.integer(), null, null, null, null),
         CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
         CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date(), null, null, null, null),
-        EXPIRY_INTERVAL_INFO(dbFieldNameExpiryIntervalInfo, LPDatabase.string(), null, null, null, null),
+        EXPIRY_INTERVAL_INFO(DB_FLDNAME_EXPIRY_INTRVL_INFO, LPDatabase.string(), null, null, null, null),
         ;
         private AnalysisMethod(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
@@ -347,7 +347,7 @@ public class TblsCnfg {
         EXPIRES("expires", LPDatabase.booleanFld(), null, null, null, null),
         HAS_CHILD("has_child", LPDatabase.booleanFld(), null, null, null, null),
         AUTHOR("author", LPDatabase.string(), null, null, null, null),
-        EXPIRY_INTERVAL_INFO(dbFieldNameExpiryIntervalInfo, LPDatabase.string(), null, null, null, null),
+        EXPIRY_INTERVAL_INFO(DB_FLDNAME_EXPIRY_INTRVL_INFO, LPDatabase.string(), null, null, null, null),
         CERTIFICATION_MODE("certification_mode", LPDatabase.string(), null, null, null, null),
 /*        , ACTIVE_DATE("active_date", "Date")
         , CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.String())
