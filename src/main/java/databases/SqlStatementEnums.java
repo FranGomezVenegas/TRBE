@@ -277,7 +277,7 @@ public class SqlStatementEnums {
         String queryWhere = "";
         Object[] schemaDiag = getTableSchema(tblObj, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(schemaDiag[0].toString())) {
-            return null;
+            return hm;
         }
         String schemaName = schemaDiag[0].toString();
         schemaName = LPPlatform.buildSchemaName(schemaName, "");
@@ -684,7 +684,7 @@ public class SqlStatementEnums {
         String queryWhere = "";
         Object[] schemaDiag = getViewSchema(viewObj, alternativeProcInstanceName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(schemaDiag[0].toString())) {
-            return null;
+            return hm;
         }
         String schemaName = schemaDiag[0].toString();
         schemaName = LPPlatform.buildSchemaName(schemaName, "");
@@ -692,7 +692,7 @@ public class SqlStatementEnums {
 
         if (whereObj.getAllWhereEntries().isEmpty()) {
             ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{viewName, schemaName});
-            return null;
+            return hm;
         }
         Object[] whereFieldValuesNew = new Object[0];
         if (Boolean.FALSE.equals(whereObj.getAllWhereEntries().isEmpty())) {

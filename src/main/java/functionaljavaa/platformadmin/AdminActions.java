@@ -211,7 +211,10 @@ public class AdminActions {
             messages.addMainForError(RdbmsErrorTrapping.DB_ERROR, null);
             return new InternalMessage(LPPlatform.LAB_FALSE, dbActionDiagn[dbActionDiagn.length - 1].toString(), fldValues, null);
         }
-        return new InternalMessage(LPNulls.replaceNull(dbActionDiagn[0]).toString(), "", new Object[]{}, ipId);
+        if (dbActionDiagn != null) {
+            return new InternalMessage(LPNulls.replaceNull(dbActionDiagn[0]).toString(), "", new Object[]{}, ipId);
+        }
+        return new InternalMessage("No Diagnostic", "", new Object[]{}, ipId);
     }
 
 }

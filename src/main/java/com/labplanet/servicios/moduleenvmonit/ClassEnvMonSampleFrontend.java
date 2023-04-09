@@ -1597,10 +1597,10 @@ public class ClassEnvMonSampleFrontend {
 
     private JSONArray sampleStageDataJsonArr(Integer sampleId, String[] sampleFldName, Object[] sampleFldValue, String[] sampleStageFldName, Object[] sampleStageFldValue) {
         if (sampleStageFldValue == null) {
-            return null;
+            return new JSONArray();
         }
         if (Boolean.FALSE.equals(LPArray.valueInArray(sampleStageFldName, TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT.getName()))) {
-            return null;
+            return new JSONArray();
         }
         String currentStage = sampleStageFldValue[LPArray.valuePosicInArray(sampleStageFldName, TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT.getName())].toString();
         JSONObject jObj = new JSONObject();
