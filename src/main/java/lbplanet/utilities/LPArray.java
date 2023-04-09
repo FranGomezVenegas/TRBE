@@ -535,9 +535,7 @@ public class LPArray {
         }
         Object[] newArray = new Object[arrayLen + 1];
         if (array != null) {
-            for (Integer i = 0; i < array.length; i++) {
-                newArray[i] = array[i];
-            }
+            newArray = Arrays.copyOf(array, array.length);
         }
         newArray[newArray.length - 1] = newValue;
         return newArray;
@@ -553,10 +551,7 @@ public class LPArray {
      */
     public static Calendar[] addCalendarValueToCalendarArray1D(Calendar[] array, Calendar newValue) {
         Calendar[] newArray = new Calendar[array.length + 1];
-
-        for (Integer i = 0; i < array.length; i++) {
-            newArray[i] = array[i];
-        }
+        newArray = Arrays.copyOf(array, array.length);
         newArray[newArray.length - 1] = newValue;
         return newArray;
     }
@@ -583,11 +578,7 @@ public class LPArray {
                 newArray[i] = array[i];
             }
         }
-
-        for (Integer i = 0; i < newValues.length; i++) {
-            newArray = addValueToArray1D(newArray, newValues[i]);
-        }
-
+        newArray = Arrays.copyOf(newValues, newValues.length);
         return newArray;
     }
 
@@ -613,11 +604,7 @@ public class LPArray {
                 newArray[i] = array[i];
             }
         }
-
-        for (Integer i = 0; i < newValues.length; i++) {
-            newArray = addValueToArray1D(newArray, newValues[i]);
-        }
-
+        newArray = Arrays.copyOf(newValues, newValues.length);
         return newArray;
     }
 
@@ -639,9 +626,7 @@ public class LPArray {
         String[] newArray = new String[arrayLen + 1];
 
         if (array != null) {
-            for (Integer i = 0; i < array.length; i++) {
-                newArray[i] = array[i];
-            }
+            newArray = Arrays.copyOf(array, array.length);
         }
         newArray[newArray.length - 1] = newValue;
         return newArray;
