@@ -462,13 +462,11 @@ public class ProcedureRequestSession {
     }
 
     public static ProcedureRequestSession getInstanceForActions(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting) {
-        ProcedureRequestSession instanceForActions = getInstanceForActions(req, resp, null, isTesting, false);
-        return instanceForActions;
+        return getInstanceForActions(req, resp, null, isTesting, false);
     }
 
     public static ProcedureRequestSession getInstanceForActionsWithEndpoint(HttpServletRequest req, HttpServletResponse resp, EnumIntEndpoints endPoint, Boolean isTesting) {
-        ProcedureRequestSession instanceForActions = getInstanceForActions(req, resp, endPoint, isTesting, false);
-        return instanceForActions;
+        return getInstanceForActions(req, resp, endPoint, isTesting, false);
     }
 
     public static ProcedureRequestSession getInstanceForActions(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting, Boolean isPlatform) {

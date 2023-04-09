@@ -290,10 +290,9 @@ public class Parameter {
         }
     }
     public RdbmsObject addProcBusinessRule(String area, String ruleName, String ruleValue){
-        RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, 
+        return Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, 
                 new String[]{TblsProcedure.ProcedureBusinessRules.AREA.getName(), TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()},
                 new Object[]{area, ruleName, ruleValue});
-        return insertRecordInTable;
     }
     public String addTagInPropertiesFile(String type, String fileName, String entryName, String entryValue){
         StringBuilder newEntryBuilder = new StringBuilder(0);

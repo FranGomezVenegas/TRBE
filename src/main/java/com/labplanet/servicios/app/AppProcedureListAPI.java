@@ -187,8 +187,7 @@ public class AppProcedureListAPI extends HttpServlet {
                 return JsonParser.parseString(ruleValue[0][1].toString()).getAsJsonObject();
             return JsonParser.parseString(ruleValue[0][0].toString()).getAsJsonObject();
         }catch(JsonSyntaxException e){
-            JsonObject jArr = new JsonObject();   
-            return jArr;            
+            return new JsonObject();   
         }
     }
     public static com.google.gson.JsonArray procModelArray(String procInstanceName, Integer sizeValue){

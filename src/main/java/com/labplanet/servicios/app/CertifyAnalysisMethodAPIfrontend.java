@@ -213,8 +213,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
         myAnaMethCertifListArr.add(myAnaMethCertifList);        
         return myAnaMethCertifListArr;
     }catch(Exception e){
-        JSONArray proceduresList = new JSONArray();
-        return proceduresList;            
+        return new JSONArray();
     }
     }
     public static JSONArray MyPendingAnalysisMethodCertif(HttpServletRequest request, HttpServletResponse response){

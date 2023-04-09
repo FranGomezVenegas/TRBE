@@ -155,8 +155,7 @@ public class LPJson {
             JsonObject asJsonObject = new JsonObject();
             if (Boolean.TRUE.equals(skipAsteriskSplit)) {
                 asJsonObject = JsonParser.parseString(value).getAsJsonObject();
-                Object[] infoArr = new Object[]{LPPlatform.LAB_TRUE, asJsonObject};
-                return infoArr;
+                return new Object[]{LPPlatform.LAB_TRUE, asJsonObject};
             }
             String[] valueArr = value.split("\\*");
             if (valueArr.length == 1) {

@@ -31,11 +31,9 @@ public final class QueryUtilities {
         return getTableData(procReqSession, schema, tableName, fldToRetrieve, tableAllFields, whereFldName, whereFldValue, orderBy);
     }
     public static Object[][] getTableData(ProcedureRequestSession procReqSession, String schema, String tableName, String fldToRetrieve, String[] tableAllFields, String[] whereFldName, Object[] whereFldValue, String[] orderBy){        
-//        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
         String[] fieldsToRetrieve=getFieldsListToRetrieve(fldToRetrieve, tableAllFields);
-        Object[][] tblInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), schema), 
+        return Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), schema), 
                 tableName, whereFldName, whereFldValue, fieldsToRetrieve, orderBy);
-        return tblInfo;
     }    
     
     public static JSONObject getKPIInfoFromRequest(HttpServletRequest request, String extraGrouperFieldName, String extraGrouperFieldValues){

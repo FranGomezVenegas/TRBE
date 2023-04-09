@@ -32,8 +32,7 @@ public final class AppInstrumentsAudit {
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableName);
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInstrumentsDataAudit.Instruments.TABLE_ID.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableId);
-        Object[] insertRecordInfo=AuditUtilities.applyTheInsert(gAuditFlds, TblsInstrumentsDataAudit.TablesInstrumentsDataAudit.INSTRUMENTS, fieldNames, fieldValues);
-        return insertRecordInfo;
+        return AuditUtilities.applyTheInsert(gAuditFlds, TblsInstrumentsDataAudit.TablesInstrumentsDataAudit.INSTRUMENTS, fieldNames, fieldValues);
     }    
     
  }

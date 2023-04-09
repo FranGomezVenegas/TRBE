@@ -1516,8 +1516,7 @@ public class ProcedureDefinitionToInstance {
      * @return
      */
     public static final JSONObject createDBProcessTables(String schemaNamePrefix, String tableName, String[] fieldsName) {
-        JSONObject jsonObj = new JSONObject();
-        return jsonObj;
+        return new JSONObject();
     }
 
     public static final JSONArray createBusinessRules(String procedure, Integer procVersion, String instanceName) {

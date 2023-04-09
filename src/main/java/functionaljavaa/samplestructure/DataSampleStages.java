@@ -413,9 +413,8 @@ public class DataSampleStages {
             SqlWhere sqlWhere = new SqlWhere();
             sqlWhere.addConstraint(TblsProcedure.SampleStageTimingCapture.SAMPLE_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sampleId}, "");
             sqlWhere.addConstraint(TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{currStage}, "");
-            Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE,
+            return Rdbms.updateRecordFieldsByFilter(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE,
                     EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE, new String[]{TblsProcedure.SampleStageTimingCapture.ENDED_ON.getName()}), new Object[]{LPDate.getCurrentTimeStamp()}, sqlWhere, null);
-            return updateRecordFieldsByFilter;
         } else {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "The phase <*1*> is not one of the recognized by the system, <*2*>",
                     new Object[]{phase, Arrays.toString(new String[]{SampleStageTimingCapturePhases.START.toString(), SampleStageTimingCapturePhases.END.toString()})});

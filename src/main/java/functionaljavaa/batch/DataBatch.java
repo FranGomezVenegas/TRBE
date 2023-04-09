@@ -75,12 +75,11 @@ public class DataBatch {
      */
     public Integer zdbUpdateBatchArray( String schemaName, String batchName, String fieldName, String fieldValue) {
         
-        Integer pk = -999;
+        return -999;
        
 //        Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(schemaName, tableName, 
 //                new String[]{fieldName}, new Object[]{fieldValue}, 
 //                new String[]{"name"}, new Object[]{batchName});
 //        pk = Integer.parseInt(updateRecordFieldsByFilter[6].toString());
-        return pk; 
     }    
 }

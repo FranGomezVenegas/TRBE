@@ -451,8 +451,7 @@ public class SopUserAPIqueries extends HttpServlet {
             mySopsListArr.add(mySopsList);
             return mySopsListArr;
         } catch (Exception e) {
-            JSONArray proceduresList = new JSONArray();
-            return proceduresList;
+            return new JSONArray();
         }
     }
 
@@ -525,14 +524,13 @@ public class SopUserAPIqueries extends HttpServlet {
             }
             return myPendingSopsByProc;
         } catch (Exception e) {
-            JSONArray proceduresList = new JSONArray();
-            return proceduresList;
+            return new JSONArray();
+            
         }
     }
 
     public static JSONArray ProceduresSops(HttpServletRequest request, HttpServletResponse response) {
         try {
-            String language = LPFrontEnd.setLanguage(request);
             String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
             if (finalToken == null || finalToken.length() == 0) {
                 finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
@@ -588,14 +586,12 @@ public class SopUserAPIqueries extends HttpServlet {
             }
             return myPendingSopsByProc;
         } catch (Exception e) {
-            JSONArray proceduresList = new JSONArray();
-            return proceduresList;
+            return new JSONArray();
         }
     }
 
     public static JSONArray SopTreeListElements(HttpServletRequest request, HttpServletResponse response) {
         try {
-            String language = LPFrontEnd.setLanguage(request);
             String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
             if (finalToken == null || finalToken.length() == 0) {
                 finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
@@ -678,8 +674,7 @@ public class SopUserAPIqueries extends HttpServlet {
             arrFinal.add(sopElement);
             return arrFinal;
         } catch (Exception e) {
-            JSONArray proceduresList = new JSONArray();
-            return proceduresList;
+            return new JSONArray();
         }
     }
 

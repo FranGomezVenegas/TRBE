@@ -202,12 +202,7 @@ public class SampleAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.RESULT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, resultId);
         }    
-/*        if (auditActions!=null && auditActions.getMainParentAuditAction()!=null){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.PARENT_AUDIT_ID.getName());
-            fieldValues = LPArray.addValueToArray1D(fieldValues, auditActions.getMainParentAuditAction().getAuditId());
-        }    */
-        Object[] insertRecordInfo = AuditUtilities.applyTheInsert(gAuditFlds, TblsDataAudit.TablesDataAudit.SAMPLE, fieldNames, fieldValues);
-        return insertRecordInfo;
+        return AuditUtilities.applyTheInsert(gAuditFlds, TblsDataAudit.TablesDataAudit.SAMPLE, fieldNames, fieldValues);
     }
     /**
      *
