@@ -274,8 +274,8 @@ public class LPFrontEnd {
                 if (fileName == null || fileName.length() == 0) {
                     fileName = "mycsv.csv";
                 }
-                String fileWithPath = filePath + fileName; 
-                String str = jsonObj.toJSONString(); 
+                String fileWithPath = filePath + fileName;
+                String str = jsonObj.toJSONString();
 
                 JFlat flatMe = new JFlat(str);
 
@@ -291,8 +291,7 @@ public class LPFrontEnd {
                 try (FileInputStream inStream = new FileInputStream(downloadFile)) {
                     // if you want to use a relative path to context root:
                     String relativePath = srv.getServletContext().getRealPath("");
-                    System.out.println("relativePath = " + relativePath);
-                    // obtains ServletContext
+                    //System.out.println("relativePath = " + relativePath);
                     ServletContext context = srv.getServletContext();
                     // gets MIME type of the file
                     String mimeType = context.getMimeType(fileWithPath);
@@ -300,8 +299,6 @@ public class LPFrontEnd {
                         // set to binary type if MIME mapping not found
                         mimeType = "application/octet-stream";
                     }
-                    System.out.println("MIME type: " + mimeType);
-                    // modifies response
                     response.setContentType(mimeType);
                     response.setContentLength((int) downloadFile.length());
                     // forces download
@@ -450,26 +447,26 @@ public class LPFrontEnd {
             errorCode = endpoint.getSuccessMessageCode();
             errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE + endpoint.getClass().getSimpleName(), null, endpoint.getSuccessMessageCode(), "en", null, true, endpoint.getClass().getSimpleName());
             errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE + endpoint.getClass().getSimpleName(), null, endpoint.getSuccessMessageCode(), "es", null, false, endpoint.getClass().getSimpleName());
-            if (endpoint != null) {
-                if (msgDynamicValues != null) {
-                    for (int iVarValue = 1; iVarValue <= msgDynamicValues.length; iVarValue++) {
-                        errorTextEn = errorTextEn.replace("<*" + iVarValue + "*>", LPNulls.replaceNull(msgDynamicValues[iVarValue - 1]).toString());
-                        errorTextEs = errorTextEs.replace("<*" + iVarValue + "*>", LPNulls.replaceNull(msgDynamicValues[iVarValue - 1]).toString());
-                    }
-                }
-                if (errorTextEn.length() == 0) {
-                    errorTextEn = endpoint + " (*** This MessageCode, " + endpoint + ", has no entry defined in messages property file) ";
-                    if (msgDynamicValues != null) {
-                        errorTextEn = errorTextEn + Arrays.toString(msgDynamicValues);
-                    }
-                }
-                if (errorTextEs.length() == 0) {
-                    errorTextEs = endpoint + " (*** Este CódigoDeMensaje, " + endpoint + ", no está definido en los archivos de mensajes) ";
-                    if (msgDynamicValues != null) {
-                        errorTextEs = errorTextEs + Arrays.toString(msgDynamicValues);
-                    }
+
+            if (msgDynamicValues != null) {
+                for (int iVarValue = 1; iVarValue <= msgDynamicValues.length; iVarValue++) {
+                    errorTextEn = errorTextEn.replace("<*" + iVarValue + "*>", LPNulls.replaceNull(msgDynamicValues[iVarValue - 1]).toString());
+                    errorTextEs = errorTextEs.replace("<*" + iVarValue + "*>", LPNulls.replaceNull(msgDynamicValues[iVarValue - 1]).toString());
                 }
             }
+            if (errorTextEn.length() == 0) {
+                errorTextEn = endpoint + " (*** This MessageCode, " + endpoint + ", has no entry defined in messages property file) ";
+                if (msgDynamicValues != null) {
+                    errorTextEn = errorTextEn + Arrays.toString(msgDynamicValues);
+                }
+            }
+            if (errorTextEs.length() == 0) {
+                errorTextEs = endpoint + " (*** Este CódigoDeMensaje, " + endpoint + ", no está definido en los archivos de mensajes) ";
+                if (msgDynamicValues != null) {
+                    errorTextEs = errorTextEs + Arrays.toString(msgDynamicValues);
+                }
+            }
+
         }
         JSONObject errJsObj = new JSONObject();
         errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), LPPlatform.LAB_TRUE);

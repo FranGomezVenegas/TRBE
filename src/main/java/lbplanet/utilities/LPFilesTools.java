@@ -44,9 +44,6 @@ List<String[]> rows=new ArrayList<>();
             
             rows = reader.readAll();
             rows.stream().map((row) -> {
-                for (String e : row) {
-                    System.out.format("%s ", e);
-                }
                 return row;
             });
             return rows;
