@@ -129,8 +129,8 @@ public class UserMethod {
         userMethodInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, UserMethod.TABLENAME_DATA_USER_METHOD, whereFields, whereFieldsValue, 
                 new String[]{FLDNDATA_USR_METHD_USER_METHOD_ID, UserMethod.FLDNDATA_USR_METHD_USER_ID, FLDNDATA_USR_METHD_ANALYSIS, 
                     FLDNDATA_USR_METHD_METHOD_NAME, FLDNDATA_USR_METHD_METHOD_VERSION});
-        if (Boolean.FALSE.equals((LPPlatform.LAB_FALSE.equalsIgnoreCase(userMethodInfo[0][0].toString()))) &&
-            LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
+        if ( Boolean.FALSE.equals((LPPlatform.LAB_FALSE.equalsIgnoreCase(userMethodInfo[0][0].toString()))) &&
+            LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString()) ) {
                 updFields = LPArray.addValueToArray1D(updFields, whereFields);
                 updFieldsValue = LPArray.addValueToArray1D(updFieldsValue, whereFieldsValue);
                 SampleAudit smpAudit = new SampleAudit();
