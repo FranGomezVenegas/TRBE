@@ -42,7 +42,6 @@ public class ResponseSuccess extends HttpServlet {
             String responseMsg="";
             String toJSONString ="";
             if (actionName!=null && !actionName.toUpperCase().contains("DEPLOY") && dbLogSummary!=null && Boolean.TRUE.equals(dbLogSummary.hadAnyFailure())){
-                //response.getWriter().write("Transaction failed! "+dbLogSummary.getFailureStatement());
                 Object[] addValueToArray1D = LPArray.addValueToArray1D(new Object[]{dbLogSummary.getFailureStatement()}, dbLogSummary.getFailureStatementData());
                 if (Boolean.TRUE.equals(ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsTransactional())){
                     toJSONString = LPFrontEnd.responseJSONDiagnosticLPFalse("fullTransactionNotPossibleByErrors", addValueToArray1D).toJSONString();

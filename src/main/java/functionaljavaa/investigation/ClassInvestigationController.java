@@ -31,7 +31,7 @@ public class ClassInvestigationController {
         InvestigationAPI.InvestigationAPIactionsEndpoints endPoint = null;
         try{
 //            request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, actionName);
-/*                AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstanceForActions(request, null, "en");
+/*                AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstanceForActions(request, null, DEFAULTLANGUAGE);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())){
                     LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, null, auditAndUsrValid.getCheckUserValidationPassesDiag());              
                     auditAndUsrValid.killInstance();

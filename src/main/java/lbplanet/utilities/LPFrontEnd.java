@@ -24,6 +24,7 @@ import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;
+import static trazit.globalvariables.GlobalVariables.DEFAULTLANGUAGE;
 import static trazit.globalvariables.GlobalVariables.LANGUAGE_ALL_LANGUAGES;
 import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
@@ -143,7 +144,7 @@ public class LPFrontEnd {
         errJsObj.put(ResponseTags.MESSAGE.getLabelName(), errorPropertyName);
         String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_ERRORTRAPING, null, errorPropertyName, null, true, className);
         if (errorTextEn == null || errorTextEn.length() == 0) {
-            errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, "api-platform", null, errorPropertyName, "en", true, null);
+            errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, "api-platform", null, errorPropertyName, DEFAULTLANGUAGE, true, null);
         }
         if (errorPropertyValue != null) {
             for (int iVarValue = 1; iVarValue <= errorPropertyValue.length; iVarValue++) {
@@ -379,11 +380,11 @@ public class LPFrontEnd {
         Object[] errorMsgEs = null;
         String errorCodeStr = "";
         if (mainMessage != null && messages.getMainMessageCode() != null && mainMessage.length > 0 && mainMessage[0].length > 1) {
-            errorMsgEn = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, messages.getMainMessageCode(), messages.getMainMessageVariables(), "en");
+            errorMsgEn = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, messages.getMainMessageCode(), messages.getMainMessageVariables(), DEFAULTLANGUAGE);
             errorMsgEs = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, messages.getMainMessageCode(), messages.getMainMessageVariables(), "es");
             errorCodeStr = messages.getMainMessageCode().getErrorCode();
         } else {
-            errorMsgEn = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "en");
+            errorMsgEn = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, DEFAULTLANGUAGE);
             errorMsgEs = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "es");
             errorCodeStr = errorCode;
         }
@@ -404,7 +405,7 @@ public class LPFrontEnd {
         Object[] errorMsgEn = null;
         Object[] errorMsgEs = null;
         if (mainMessage != null && mainMessage.length > 0 && mainMessage[0].length > 1) {
-            errorMsgEn = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, messages.getMainMessageCode(), messages.getMainMessageVariables(), "en");
+            errorMsgEn = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, messages.getMainMessageCode(), messages.getMainMessageVariables(), DEFAULTLANGUAGE);
             errorMsgEs = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, messages.getMainMessageCode(), messages.getMainMessageVariables(), "es");
             String errorTextEn = errorMsgEn[errorMsgEn.length - 1].toString();
             String errorTextEs = errorMsgEs[errorMsgEs.length - 1].toString();
@@ -439,13 +440,13 @@ public class LPFrontEnd {
                 msgArg3 = (Object[]) mainMessage[0][2];
             }
             errorCode = mainMessage[0][1].toString();
-            errorMsgEn = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, mainMessage[0][1].toString(), msgArg3, "en", mainMessage[0], true);
+            errorMsgEn = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, mainMessage[0][1].toString(), msgArg3, DEFAULTLANGUAGE, mainMessage[0], true);
             errorMsgEs = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, mainMessage[0][1].toString(), msgArg3, "es", mainMessage[0], false);
             errorTextEn = errorMsgEn[errorMsgEn.length - 1].toString();
             errorTextEs = errorMsgEs[errorMsgEs.length - 1].toString();
         } else {
             errorCode = endpoint.getSuccessMessageCode();
-            errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE + endpoint.getClass().getSimpleName(), null, endpoint.getSuccessMessageCode(), "en", null, true, endpoint.getClass().getSimpleName());
+            errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE + endpoint.getClass().getSimpleName(), null, endpoint.getSuccessMessageCode(), DEFAULTLANGUAGE, null, true, endpoint.getClass().getSimpleName());
             errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE + endpoint.getClass().getSimpleName(), null, endpoint.getSuccessMessageCode(), "es", null, false, endpoint.getClass().getSimpleName());
 
             if (msgDynamicValues != null) {
@@ -489,11 +490,11 @@ public class LPFrontEnd {
         String errorCodeStr = "";
         if (mainMessage != null && mainMessage.length > 0 && mainMessage[0].length > 1) {
             errorCodeStr = messages.getMainMessageCode().getErrorCode();
-            errorMsgEn = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, messages.getMainMessageCode(), messages.getMainMessageVariables(), "en");
+            errorMsgEn = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, messages.getMainMessageCode(), messages.getMainMessageVariables(), DEFAULTLANGUAGE);
             errorMsgEs = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, messages.getMainMessageCode(), messages.getMainMessageVariables(), "es");
         } else {
             errorCodeStr = errorCode.getErrorCode();
-            errorMsgEn = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "en");
+            errorMsgEn = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, DEFAULTLANGUAGE);
             errorMsgEs = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "es");
         }
         String errorTextEn = errorMsgEn[errorMsgEn.length - 1].toString();

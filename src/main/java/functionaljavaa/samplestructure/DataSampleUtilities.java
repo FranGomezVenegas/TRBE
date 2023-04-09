@@ -11,6 +11,7 @@ import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleBusine
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import static trazit.globalvariables.GlobalVariables.DEFAULTLANGUAGE;
 /**
  *
  * @author Administrator
@@ -23,7 +24,7 @@ public class DataSampleUtilities {
      * @return
      */
     public static Object[] getSchemaSampleStatusList(){      
-        return getSchemaSampleStatusList("en");
+        return getSchemaSampleStatusList(DEFAULTLANGUAGE);
     }
 
     /**
@@ -36,9 +37,9 @@ public class DataSampleUtilities {
         String procInstanceName=procReqInstance.getProcedureInstance();
         String stList = "";
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
-        if (language==null){language="en";}
+        if (language==null){language=DEFAULTLANGUAGE;}
        switch (language){
-           case "en":
+           case DEFAULTLANGUAGE:
                stList = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleBusinessRules.STATUSES_LABEL_EN.getAreaName(), DataSampleBusinessRules.STATUSES_LABEL_EN.getTagName(), true); 
                if (stList.length()==0) stList=DataSample.SAMPLE_STATUSES_LABEL_EN_WHEN_NO_PROPERTY;
                break;

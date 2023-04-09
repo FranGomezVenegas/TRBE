@@ -32,6 +32,7 @@ import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.globalvariables.GlobalVariables;
+import static trazit.globalvariables.GlobalVariables.DEFAULTLANGUAGE;
 import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
 /**
@@ -66,7 +67,7 @@ public class ClassReqProcedureActions {
             Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, mandatArgs);                       
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                 LPFrontEnd.servletReturnResponseError(request, response, 
-                    LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, "en", LPPlatform.ApiErrorTraping.class.getSimpleName());
+                    LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, DEFAULTLANGUAGE, LPPlatform.ApiErrorTraping.class.getSimpleName());
                 return;          
             }             
         }
@@ -83,7 +84,7 @@ public class ClassReqProcedureActions {
         String procInstanceName=argValues[2].toString();
         if (Boolean.TRUE.equals(isProcInstLocked(procedureName, procedureVersion, procInstanceName))){
             LPFrontEnd.servletReturnResponseError(request, response, 
-                ReqProcedureDefinitionErrorTraping.INSTANCE_LOCKED_FOR_ACTIONS.getErrorCode(), new Object[]{procedureName, procedureVersion, procInstanceName}, "en", LPPlatform.ApiErrorTraping.class.getSimpleName());
+                ReqProcedureDefinitionErrorTraping.INSTANCE_LOCKED_FOR_ACTIONS.getErrorCode(), new Object[]{procedureName, procedureVersion, procInstanceName}, DEFAULTLANGUAGE, LPPlatform.ApiErrorTraping.class.getSimpleName());
             return;                      
         }
         

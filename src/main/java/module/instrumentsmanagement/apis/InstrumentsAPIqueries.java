@@ -42,6 +42,7 @@ import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntViewFields;
+import static trazit.globalvariables.GlobalVariables.DEFAULTLANGUAGE;
 import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ProcedureRequestSession;
 
@@ -337,7 +338,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
             jObj.put(GlobalAPIsParams.LBL_MESSAGE_ES, "Bloqueado");            
             return jObj;
         }
-        String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+"InstrumentsAPIactionsEndpoints", null, LPNulls.replaceNull(currInstr[fldPosic]).toString(), "en", null, true, "InstrumentsAPIactionsEndpoints");
+        String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+"InstrumentsAPIactionsEndpoints", null, LPNulls.replaceNull(currInstr[fldPosic]).toString(), DEFAULTLANGUAGE, null, true, "InstrumentsAPIactionsEndpoints");
         if (errorTextEn.length()==0) errorTextEn=LPNulls.replaceNull(currInstr[fldPosic]).toString();
         String errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+"InstrumentsAPIactionsEndpoints", null, LPNulls.replaceNull(currInstr[fldPosic]).toString(), "es", null, false, "InstrumentsAPIactionsEndpoints");
         if (errorTextEs.length()==0) errorTextEs=LPNulls.replaceNull(currInstr[fldPosic]).toString();

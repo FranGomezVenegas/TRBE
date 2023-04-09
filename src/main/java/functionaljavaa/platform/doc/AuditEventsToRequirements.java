@@ -37,6 +37,7 @@ import org.json.simple.JSONObject;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
+import static trazit.globalvariables.GlobalVariables.DEFAULTLANGUAGE;
 import trazit.globalvariables.GlobalVariables.Languages;
 
 /**
@@ -161,7 +162,7 @@ private static void declareInDatabase(String objectName, String eventName){
         String[] updFldName=new String[]{};
         Object[] updFldValue=new Object[]{};
         String propValueEn = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
-            objectName, null, eventName, "en", false, null);
+            objectName, null, eventName, DEFAULTLANGUAGE, false, null);
         
         if (Boolean.FALSE.equals(propValueEn.equalsIgnoreCase(reqEvAuditInfo[0][1].toString()))){
             updFldName=LPArray.addValueToArray1D(updFldName, AuditEventsDeclaration.EVENT_PRETTY_EN.getName());
@@ -188,7 +189,7 @@ private static void declareInDatabase(String objectName, String eventName){
             AuditEventsDeclaration.AUDIT_OBJECT.getName(), AuditEventsDeclaration.EVENT_NAME.getName()});
         fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{LPDate.getCurrentTimeStamp(), objectName, eventName});
         String propValueEn = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
-            objectName, null, eventName, "en", false, null);
+            objectName, null, eventName, DEFAULTLANGUAGE, false, null);
         fieldNames=LPArray.addValueToArray1D(fieldNames, AuditEventsDeclaration.EVENT_PRETTY_EN.getName());
         fieldValues=LPArray.addValueToArray1D(fieldValues, propValueEn);
         String propValueEs = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 

@@ -46,6 +46,7 @@ import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import static trazit.globalvariables.GlobalVariables.DEFAULTLANGUAGE;
 import trazit.session.ApiMessageReturn;
 import static trazit.session.ProcedureRequestSession.isTheProcActionEnabled;
 
@@ -121,7 +122,7 @@ public class TestingRegressionUAT extends HttpServlet {
             procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, true);
             if (procReqInstance == null) {
                 LPFrontEnd.servletReturnResponseError(request, response,
-                        "Error", null, "en", null);
+                        "Error", null, DEFAULTLANGUAGE, null);
                 return;
             }
             String sessionLang = procReqInstance.getLanguage();

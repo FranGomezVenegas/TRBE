@@ -151,13 +151,13 @@ public class SampleAudit {
 
 /*        for (GlobalVariables.Languages curLang: GlobalVariables.Languages.values()){            
             Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), 
-                    TblsDataAudit.TablesDataAudit.SAMPLE.getTableName(), TblsDataAudit.Sample.ACTION_PRETTY_EN.getName().replace("en", curLang.getName()));
+                    TblsDataAudit.TablesDataAudit.SAMPLE.getTableName(), TblsDataAudit.Sample.ACTION_PRETTY_EN.getName().replace(DEFAULTLANGUAGE, curLang.getName()));
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())){
                 String propValue = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
                     fileName, null, action, curLang.getName(), false);
                 if (propValue==null || propValue.length()==0)propValue=action;
                 fieldNames = LPArray.addValueToArray1D(fieldNames, 
-                        TblsDataAudit.Sample.ACTION_PRETTY_EN.getName().replace("en", curLang.getName()));
+                        TblsDataAudit.Sample.ACTION_PRETTY_EN.getName().replace(DEFAULTLANGUAGE, curLang.getName()));
                 fieldValues = LPArray.addValueToArray1D(fieldValues, propValue);
             }
         }

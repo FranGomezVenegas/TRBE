@@ -51,6 +51,7 @@ import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntViewFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import static trazit.globalvariables.GlobalVariables.DEFAULTLANGUAGE;
 import static trazit.queries.QueryUtilities.getTableData;
 import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
@@ -1715,7 +1716,7 @@ public class ClassEnvMonSampleFrontend {
                         fldValueArr = LPArray.addValueToArray1D(fldValueArr, TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName());
                         String msgCode = "resultLockedByProgramCorrectiveActionInProgress";
                         fldValueArr = LPArray.addValueToArray1D(fldValueArr, msgCode);
-                        String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_WARNING_REASONS, null, msgCode, "en", null, true, null);
+                        String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_WARNING_REASONS, null, msgCode, DEFAULTLANGUAGE, null, true, null);
                         String errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_WARNING_REASONS, null, msgCode, "es", null, false, null);
                         JSONObject reasonInfo = new JSONObject();
                         reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_EN, errorTextEn);
@@ -1729,7 +1730,7 @@ public class ClassEnvMonSampleFrontend {
                         fldValueArr = LPArray.addValueToArray1D(fldValueArr, TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName());
                         msgCode = "resultLockedByProgramCorrectiveActionInProgress";
                         fldValueArr = LPArray.addValueToArray1D(fldValueArr, msgCode);
-                        errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_LOCKING_REASONS, null, msgCode, "en", null, true, null);
+                        errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_LOCKING_REASONS, null, msgCode, DEFAULTLANGUAGE, null, true, null);
                         errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_LOCKING_REASONS, null, msgCode, "es", null, false, null);
                         reasonInfo = new JSONObject();
                         reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_EN, errorTextEn);
@@ -1787,7 +1788,7 @@ public class ClassEnvMonSampleFrontend {
         fldValueArr = LPArray.addValueToArray1D(fldValueArr, true);
         fldNameArr = LPArray.addValueToArray1D(fldNameArr, "locking_object");
         fldValueArr = LPArray.addValueToArray1D(fldValueArr, TblsCnfg.TablesConfig.METHODS.getTableName());
-        Object[] errorMsgEn = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AnalysisMethodCertif.CertificationAnalysisMethodErrorTrapping.USER_NOT_CERTIFIED, new Object[]{methodName}, "en");
+        Object[] errorMsgEn = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AnalysisMethodCertif.CertificationAnalysisMethodErrorTrapping.USER_NOT_CERTIFIED, new Object[]{methodName}, DEFAULTLANGUAGE);
         Object[] errorMsgEs = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AnalysisMethodCertif.CertificationAnalysisMethodErrorTrapping.USER_NOT_CERTIFIED, new Object[]{methodName}, "es");
         JSONObject reasonInfo = new JSONObject();
         reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_EN, errorMsgEn[errorMsgEs.length - 1]);

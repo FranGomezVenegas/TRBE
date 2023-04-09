@@ -118,7 +118,6 @@ public class InvestigationAPIfrontend extends HttpServlet {
                             investigationJArr.add(investigationJObj);
                         }
                     }
-                    //Rdbms.closeRdbms();  
                     instanceForQueries.killIt();                
                     LPFrontEnd.servletReturnSuccess(request, response, investigationJArr);
                     return;                  

@@ -37,6 +37,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
+import static trazit.globalvariables.GlobalVariables.DEFAULTLANGUAGE;
 import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ProcedureRequestSession;
 
@@ -129,7 +130,7 @@ public class IncidentAPIqueries extends HttpServlet {
                         if (actionPosic>-1){
                             String action=LPNulls.replaceNull(currIncident[actionPosic]).toString();
                             String propValue = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
-                                DataIncidentAuditEvents.class.getSimpleName(), null, action, "en", false, null);
+                                DataIncidentAuditEvents.class.getSimpleName(), null, action, DEFAULTLANGUAGE, false, null);
                             if (propValue.length()==0) propValue=action;
                             jObj.put(TblsDataAudit.Sample.ACTION_PRETTY_EN.getName(), propValue);
                             propValue = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 

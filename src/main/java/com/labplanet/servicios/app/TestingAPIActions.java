@@ -208,11 +208,9 @@ public class TestingAPIActions extends HttpServlet {
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, false, true);
         if (Boolean.TRUE.equals(procReqInstance.getHasErrors())) {
             procReqInstance.killIt();
-            //LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
             return;
         }
         String[] scriptFldToRetrieve = getAllFieldNames(TblsTesting.TablesTesting.SCRIPT.getTableFields());
-        //String[] scriptFldToRetrieve=new String[]{TblsTesting.Script.SCRIPT_ID.getName(), TblsTesting.Script.DATE_CREATION.getName()};
         Object[][] scriptInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT.getTableName(),
                 new String[]{TblsTesting.Script.SCRIPT_ID.getName()},
                 new Object[]{scriptId},
@@ -265,7 +263,6 @@ public class TestingAPIActions extends HttpServlet {
                 updFldValue = LPArray.addValueToArray1D(updFldValue, scriptInfo[0][fldPosicInArray]);
             }
         }
-        // Rdbms.insertRecord(TblsTesting.TablesTesting.SCRIPT_SAVE_POINT, updFldName, updFldValue, null);
     }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
 

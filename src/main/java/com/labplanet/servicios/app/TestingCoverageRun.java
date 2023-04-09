@@ -16,6 +16,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import functionaljavaa.testingscripts.TestingCoverage;
 import lbplanet.utilities.LPPlatform;
+import static trazit.globalvariables.GlobalVariables.DEFAULTLANGUAGE;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -43,7 +44,7 @@ public class TestingCoverageRun extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {               
             if (procReqInstance==null){
                 LPFrontEnd.servletReturnResponseError(request, response, 
-                    "Error", null, procReqInstance.getLanguage(), null);              
+                    "Error", null, DEFAULTLANGUAGE, null);              
                 return;
             }
             String sessionLang=procReqInstance.getLanguage();

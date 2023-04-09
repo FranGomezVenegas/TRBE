@@ -40,6 +40,7 @@ import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntViewFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import static trazit.globalvariables.GlobalVariables.DEFAULTLANGUAGE;
 import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
 
@@ -757,7 +758,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
 
                     String msgCode = "resultLockedByProgramCorrectiveActionInProgress";
                     fldValueArr = LPArray.addValueToArray1D(fldValueArr, msgCode);
-                    String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_WARNING_REASONS, null, msgCode, "en", null, true, null);
+                    String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_WARNING_REASONS, null, msgCode, DEFAULTLANGUAGE, null, true, null);
                     String errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_WARNING_REASONS, null, msgCode, "es", null, false, null);
                     JSONObject reasonInfo = new JSONObject();
                     reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_EN, errorTextEn);
@@ -771,7 +772,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                     fldValueArr = LPArray.addValueToArray1D(fldValueArr, TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName());
                     msgCode = "resultLockedByProgramCorrectiveActionInProgress";
                     fldValueArr = LPArray.addValueToArray1D(fldValueArr, msgCode);
-                    errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_LOCKING_REASONS, null, msgCode, "en", null, true, null);
+                    errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_LOCKING_REASONS, null, msgCode, DEFAULTLANGUAGE, null, true, null);
                     errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_LOCKING_REASONS, null, msgCode, "es", null, false, null);
                     reasonInfo = new JSONObject();
                     reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_EN, errorTextEn);

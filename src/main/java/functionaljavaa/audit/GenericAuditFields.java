@@ -19,6 +19,7 @@ import lbplanet.utilities.LPPlatform;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntTables;
 import trazit.globalvariables.GlobalVariables;
+import static trazit.globalvariables.GlobalVariables.DEFAULTLANGUAGE;
 import trazit.session.ProcedureRequestSession;
 import trazit.session.SessionAuditActions;
 
@@ -99,7 +100,7 @@ public class GenericAuditFields {
         SessionAuditActions auditActions = ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditActions();
         for (GlobalVariables.Languages curLang: GlobalVariables.Languages.values()){            
             Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), 
-                   tblObj.getTableName(), TblsInstrumentsDataAudit.Instruments.ACTION_PRETTY_EN.getName().replace("en", curLang.getName()));
+                   tblObj.getTableName(), TblsInstrumentsDataAudit.Instruments.ACTION_PRETTY_EN.getName().replace(DEFAULTLANGUAGE, curLang.getName()));
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())){                
                 String propValue = "";
                 if (instanceForActions.getActionEndpoint()!=null)
@@ -110,7 +111,7 @@ public class GenericAuditFields {
                         fileName, null, auditEventObj.toString(), curLang.getName(), false, null);
                 if (propValue==null || propValue.length()==0)propValue=auditEventObj.toString();
                 fieldNames = LPArray.addValueToArray1D(fieldNames, 
-                        TblsInstrumentsDataAudit.Instruments.ACTION_PRETTY_EN.getName().replace("en", curLang.getName()));
+                        TblsInstrumentsDataAudit.Instruments.ACTION_PRETTY_EN.getName().replace(DEFAULTLANGUAGE, curLang.getName()));
                 fieldValues = LPArray.addValueToArray1D(fieldValues, propValue);            
             }
         }
