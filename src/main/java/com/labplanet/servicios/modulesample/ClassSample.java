@@ -94,7 +94,7 @@ public class ClassSample {
                 if (GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID.equalsIgnoreCase(currArg.getName())){
                     String sampleIdStr = (String) request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
                     if (sampleIdStr==null)
-                        sampleIdStr = (String) request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
+                        sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
                     if (sampleIdStr!=null) 
                         sampleId = Integer.valueOf(sampleIdStr);
                 }

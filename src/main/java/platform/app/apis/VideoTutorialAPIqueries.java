@@ -249,7 +249,7 @@ public class VideoTutorialAPIqueries extends HttpServlet {
                     Object curItemId=curItem[LPArray.valuePosicInArray(getAllFieldNames(TblsApp.TablesApp.VIDEO_TUTORIAL.getTableFields()), TblsApp.VideoTutorial.ID.getName())];
                     Object curItemParentId=curItem[LPArray.valuePosicInArray(getAllFieldNames(TblsApp.TablesApp.VIDEO_TUTORIAL.getTableFields()), TblsApp.VideoTutorial.PARENT_ID.getName())];
                     if ("0".equalsIgnoreCase(curItemParentId.toString())){
-                        itemPosic=(String[]) LPArray.addValueToArray1D(itemPosic, curItemId.toString());
+                        itemPosic=LPArray.addValueToArray1D(itemPosic, curItemId.toString());
                         jArr.add(LPJson.convertArrayRowToJSONObject(getAllFieldNames(TblsApp.TablesApp.VIDEO_TUTORIAL.getTableFields()), curItem));
                     }else{
                         Integer parentValuePosicInArray = LPArray.valuePosicInArray(itemPosic, curItemParentId.toString());

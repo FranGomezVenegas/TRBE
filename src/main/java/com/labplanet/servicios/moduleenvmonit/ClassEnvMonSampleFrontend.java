@@ -401,7 +401,7 @@ public class ClassEnvMonSampleFrontend {
                             if (resultLockData != null && resultLockData[0] != null) {
                                 if (resultLockData.length > 2) {
                                     row = LPJson.convertArrayRowToJSONObject(LPArray.addValueToArray1D(LPArray.addValueToArray1D(EnumIntViewFields.getAllFieldNames(fldsToGet), (String) resultLockData[2]), (String[]) resultLockData[0]),
-                                            LPArray.addValueToArray1D(LPArray.addValueToArray1D(curRow, (JSONObject) resultLockData[3]), (Object[]) resultLockData[1]));
+                                            LPArray.addValueToArray1D(LPArray.addValueToArray1D(curRow, resultLockData[3]), (Object[]) resultLockData[1]));
                                 } else {
                                     row = LPJson.convertArrayRowToJSONObject(LPArray.addValueToArray1D(EnumIntViewFields.getAllFieldNames(fldsToGet), (String[]) resultLockData[0]), LPArray.addValueToArray1D(curRow, (Object[]) resultLockData[1]));
                                 }

@@ -352,7 +352,7 @@ public class AppProcedureListAPI extends HttpServlet {
                     
         UserSop userSop = new UserSop();        
 
-        Object[] procedureSopEnable = isProcedureSopEnable((String) curProc);
+        Object[] procedureSopEnable = isProcedureSopEnable(curProc);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureSopEnable[0].toString())) 
             procedure.put(LABEL_SOP_CERTIFICATION, LBL_VAL_SOP_CERTIF_DISABLE);                 
         else{

@@ -95,7 +95,7 @@ public class DataModuleSampleAnalysis implements DataSampleAnalysisStrategy{
             Object[] isReviewByTestingGroupEnable=LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName(), DataSampleRevisionTestingGroup.DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP.getTagName());
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isReviewByTestingGroupEnable[0].toString())){
                 fieldsName = LPArray.addValueToArray1D(fieldsName, TblsData.SampleAnalysis.TESTING_GROUP.getName());
-                fieldsValue= LPArray.addValueToArray1D(fieldsValue, (String) anaName1[3]);
+                fieldsValue= LPArray.addValueToArray1D(fieldsValue, anaName1[3].toString());
             }
             
             DataSampleAnalysis.sampleAnalysisAddtoSample(sampleId, fieldsName, fieldsValue);

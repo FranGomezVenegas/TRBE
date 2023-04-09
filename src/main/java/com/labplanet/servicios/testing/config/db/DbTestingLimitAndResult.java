@@ -268,7 +268,7 @@ public class DbTestingLimitAndResult extends HttpServlet {
                                 resSpecEvaluation = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, qualitativeRulesErrors.QUALITATIVE_RULE_NOT_RECOGNIZED, null);
                             }
                             if (Boolean.TRUE.equals(specRule.getRuleIsQualitative())) {
-                                resSpecEvaluation = resChkSpec.resultCheck((String) resultValue, specRule.getQualitativeRule(),
+                                resSpecEvaluation = resChkSpec.resultCheck(resultValue.toString(), specRule.getQualitativeRule(),
                                         specRule.getQualitativeRuleValues(), specRule.getQualitativeRuleSeparator(), specRule.getQualitativeRuleListName());
                             }
                             if (Boolean.TRUE.equals(specRule.getRuleIsQuantitative())) {
@@ -298,14 +298,14 @@ public class DbTestingLimitAndResult extends HttpServlet {
                                             if (Boolean.TRUE.equals(requiresUnitsConversion)) {
                                                 resSpecEvaluation = resChkSpec.resultCheck(resultConverted, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
                                             } else {
-                                                resSpecEvaluation = resChkSpec.resultCheck((BigDecimal) resultValueBigDecimal, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
+                                                resSpecEvaluation = resChkSpec.resultCheck(resultValueBigDecimal, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
                                             }
                                             resSpecEvaluation = LPArray.addValueToArray1D(resSpecEvaluation, "Regla: " + specRule.getQualitativeRuleRepresentation());
                                         } else {
                                             if (Boolean.TRUE.equals(requiresUnitsConversion)) {
                                                 resSpecEvaluation = resChkSpec.resultCheck(resultConverted, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
                                             } else {
-                                                resSpecEvaluation = resChkSpec.resultCheck((BigDecimal) resultValueBigDecimal, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
+                                                resSpecEvaluation = resChkSpec.resultCheck(resultValueBigDecimal, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
                                             }
                                         }
                                     }

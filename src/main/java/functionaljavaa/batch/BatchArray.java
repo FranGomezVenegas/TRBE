@@ -275,8 +275,8 @@ public final class BatchArray extends Batch{
                         //Integer.valueOf(LPNulls.replaceNull((String)recordFieldsByFilter[0][4])),
                         (Integer) recordFieldsByFilter[0][4],
                         (Integer) recordFieldsByFilter[0][5],
-                        (Object[]) rowNamesArr,
-                        (Object[]) colNamesArr );
+                        rowNamesArr,
+                        colNamesArr );
             } catch (SerialException ex) {
                 Logger.getLogger(BatchArray.class.getName()).log(Level.SEVERE, null, ex);
             }

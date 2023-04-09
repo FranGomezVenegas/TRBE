@@ -107,15 +107,15 @@ out.println(Arrays.toString(configSamplingPlanTestingArray));
                 String actionName=null;
                 Object[] dataSample = null;
 
-                if (configSamplingPlanTestingArray[i][0]!=null){procInstanceName = (String) configSamplingPlanTestingArray[i][0];}
-                if (configSamplingPlanTestingArray[i][5]!=null){actionName = (String) configSamplingPlanTestingArray[i][5];}
+                if (configSamplingPlanTestingArray[i][0]!=null){procInstanceName = configSamplingPlanTestingArray[i][0].toString();}
+                if (configSamplingPlanTestingArray[i][5]!=null){actionName = configSamplingPlanTestingArray[i][5].toString();}
                     
                 out.println(LPTestingOutFormat.FIELD_START+i+LPTestingOutFormat.FIELD_START+LPTestingOutFormat.FIELD_END+procInstanceName+LPTestingOutFormat.FIELD_START+LPTestingOutFormat.FIELD_END+actionName+LPTestingOutFormat.FIELD_START+LPTestingOutFormat.FIELD_END+Arrays.toString(fieldName)+LPTestingOutFormat.FIELD_START+LPTestingOutFormat.FIELD_END+"<b>"+Arrays.toString(fieldValue)+"</b>"+LPTestingOutFormat.FIELD_END);
 
                 switch (LPNulls.replaceNull((String) actionName).toUpperCase()){
                     case "NEWSAMPLINGDETAIL":
-                        if (configSamplingPlanTestingArray[i][1]!=null){procInstanceName = (String) configSamplingPlanTestingArray[i][0];}
-                        if (configSamplingPlanTestingArray[i][1]!=null){userName = (String) configSamplingPlanTestingArray[i][2];}
+                        if (configSamplingPlanTestingArray[i][1]!=null){procInstanceName = configSamplingPlanTestingArray[i][0].toString();}
+                        if (configSamplingPlanTestingArray[i][1]!=null){userName = configSamplingPlanTestingArray[i][2].toString();}
                         if (configSamplingPlanTestingArray[i][3]!=null){fieldName = (String[]) configSamplingPlanTestingArray[i][3];}              
                         if (configSamplingPlanTestingArray[i][4]!=null){fieldValue = (Object[]) configSamplingPlanTestingArray[i][4];}                         
                         dataSample = smpPlan.newSamplingPlanDetailRecord(fieldName, fieldValue);

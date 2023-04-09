@@ -123,7 +123,7 @@ public class LPArray {
                         myObjectsArray[i] = Boolean.valueOf(rowParse[0]);
                         break;
                     case "DATETIME":
-                        myObjectsArray[i] = stringFormatToLocalDateTime((String) rowParse[0]);
+                        myObjectsArray[i] = stringFormatToLocalDateTime(rowParse[0].toString());
                         /*                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-ddT00:00:00");
                             try {
                                 myObjectsArray[i]= format.parse((String) rowParse[0]);
@@ -177,7 +177,7 @@ public class LPArray {
                         myObjectsArray[i] = Boolean.valueOf(rowParse[0]);
                         break;
                     case "DATETIME":
-                        myObjectsArray[i] = stringFormatToLocalDateTime((String) rowParse[0]);
+                        myObjectsArray[i] = stringFormatToLocalDateTime(rowParse[0].toString());
                         /*                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-ddT00:00:00");
                             try {
                                 myObjectsArray[i]= format.parse((String) rowParse[0]);

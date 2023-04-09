@@ -1167,7 +1167,7 @@ public class Rdbms {
         String query = hmQuery.keySet().iterator().next();
         fieldValues = DbEncryption.encryptTableFieldArray(schemaName, tableName, fieldNames, fieldValues);
         String[] insertRecordDiagnosis = Rdbms.prepUpQueryK(query, fieldValues, 1);
-        fieldValues = DbEncryption.decryptTableFieldArray(schemaName, tableName, fieldNames, (Object[]) fieldValues);
+        fieldValues = DbEncryption.decryptTableFieldArray(schemaName, tableName, fieldNames, fieldValues);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(insertRecordDiagnosis[0])) {
             if (schemaName.toUpperCase().contains("AUDIT")) {
                 TestingAuditIds tstAuditId = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingAuditObj();
@@ -1201,7 +1201,7 @@ public class Rdbms {
         String query = hmQuery.keySet().iterator().next();
         fieldValues = DbEncryption.encryptTableFieldArray(schemaName, tableName, fieldNames, fieldValues);
         RdbmsObject insertRecordDiagnosis = Rdbms.prepUpQueryWithKey(schemaName, tableName, query, fieldValues, 1);
-        fieldValues = DbEncryption.decryptTableFieldArray(schemaName, tableName, fieldNames, (Object[]) fieldValues);
+        fieldValues = DbEncryption.decryptTableFieldArray(schemaName, tableName, fieldNames, fieldValues);
         if (Boolean.TRUE.equals(insertRecordDiagnosis.getRunSuccess())) {
             if (schemaName.toUpperCase().contains("AUDIT")) {
                 TestingAuditIds tstAuditId = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingAuditObj();
@@ -1252,7 +1252,7 @@ public class Rdbms {
         String query = hmQuery.keySet().iterator().next();
         query = "insert into " + schemaNameTo + "." + tableNameTo + "(" + Arrays.toString(fldsInBoth).replace("[", "").replace("]", "") + ")" + "( " + query + " ) ";
         //fieldValues = LPArray.encryptTableFieldArray(schemaNameFrom, tableNameFrom, fieldNamesFrom, fieldValues);
-        String[] insertRecordDiagnosis = Rdbms.prepUpQueryCloneRecords(query, whereFieldValuesFrom, 1);
+        String[] insertRecordDiagnosis = Rdbms.prepUpQueryCloneRecords(query, whereFieldValuesFrom);
 //        fieldValues = LPArray.decryptTableFieldArray(schemaNameFrom, tableNameFrom, fieldNames, (Object[]) whereFieldValuesFrom);
         Object[] diagnosis = new Object[0];
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(insertRecordDiagnosis[0])) {
@@ -1278,13 +1278,13 @@ public class Rdbms {
      */
     public static Object[] updateRecordFieldsByFilter(String schemaName, String tableName, String[] updateFieldNames, Object[] updateFieldValues, String[] whereFieldNames, Object[] whereFieldValues) {
         schemaName = addSuffixIfItIsForTesting(schemaName, tableName);
-        updateFieldValues = DbEncryption.decryptTableFieldArray(schemaName, tableName, updateFieldNames, (Object[]) updateFieldValues);
+        updateFieldValues = DbEncryption.decryptTableFieldArray(schemaName, tableName, updateFieldNames, updateFieldValues);
         if (whereFieldNames.length == 0) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});
         }
         SqlStatement sql = new SqlStatement();
 
-        updateFieldValues = DbEncryption.encryptTableFieldArray(schemaName, tableName, updateFieldNames, (Object[]) updateFieldValues);
+        updateFieldValues = DbEncryption.encryptTableFieldArray(schemaName, tableName, updateFieldNames, updateFieldValues);
         HashMap<String, Object[]> hmQuery = sql.buildSqlStatement("UPDATE", schemaName, tableName,
                 whereFieldNames, whereFieldValues, null, updateFieldNames, updateFieldValues,
                 null, null);
@@ -1402,7 +1402,7 @@ public class Rdbms {
         }
     }
 
-    private static String[] prepUpQueryCloneRecords(String consultaconinterrogaciones, Object[] valoresinterrogaciones, Integer indexposition) {
+    private static String[] prepUpQueryCloneRecords(String consultaconinterrogaciones, Object[] valoresinterrogaciones) {
         DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
         int newId = 0;
         try (PreparedStatement prep = getConnection().prepareStatement(consultaconinterrogaciones, Statement.RETURN_GENERATED_KEYS)) {
@@ -1410,7 +1410,6 @@ public class Rdbms {
             buildPreparedStatement(valoresinterrogaciones, prep);
             prep.executeUpdate();
             ResultSet rs = prep.getGeneratedKeys();
-            //rs.first();
             if (rs.next()) { //se valida si hay resultados
                 do {
                     newId++;

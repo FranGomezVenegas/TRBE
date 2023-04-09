@@ -194,7 +194,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                         jArr = new JSONArray();
                         Object[][] mismatchTables = (Object[][]) actionDiagnosesAll[1];
                         for (int i = 1; i < mismatchTables.length; i++) {
-                            jArr.add(LPJson.convertArrayRowToJSONObject(LPArray.convertObjectArrayToStringArray((Object[]) mismatchTables[0]), (Object[]) mismatchTables[i]));
+                            jArr.add(LPJson.convertArrayRowToJSONObject(LPArray.convertObjectArrayToStringArray(mismatchTables[0]), mismatchTables[i]));
                         }
                         JSONArray jTblColsArr = new JSONArray();
                         for (Object curCol : mismatchTables[0]) {

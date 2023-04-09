@@ -442,8 +442,8 @@ public class LPFrontEnd {
                 msgArg3 = (Object[]) mainMessage[0][2];
             }
             errorCode = mainMessage[0][1].toString();
-            errorMsgEn = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, (String) mainMessage[0][1].toString(), msgArg3, "en", mainMessage[0], true);
-            errorMsgEs = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, (String) mainMessage[0][1].toString(), msgArg3, "es", mainMessage[0], false);
+            errorMsgEn = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, mainMessage[0][1].toString(), msgArg3, "en", mainMessage[0], true);
+            errorMsgEs = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, mainMessage[0][1].toString(), msgArg3, "es", mainMessage[0], false);
             errorTextEn = errorMsgEn[errorMsgEn.length - 1].toString();
             errorTextEs = errorMsgEs[errorMsgEs.length - 1].toString();
         } else {
