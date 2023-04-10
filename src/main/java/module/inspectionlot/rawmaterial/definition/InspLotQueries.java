@@ -5,6 +5,7 @@
  */
 package module.inspectionlot.rawmaterial.definition;
 
+import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.TblsData;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
@@ -122,7 +123,7 @@ public final class InspLotQueries {
             return jArr;
         }catch(Exception e){
             JSONObject jObj=new JSONObject();
-            jObj.put("error", e.getMessage());
+            jObj.put(GlobalAPIsParams.LBL_ERROR, e.getMessage());
             jArr.add(jObj);
             return jArr;
         }

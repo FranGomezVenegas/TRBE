@@ -97,7 +97,7 @@ public final class AuditEventsToRequirements {
                                 JSONObject jObj=new JSONObject();
                                 jObj.put("enum",getMine.getSimpleName());
                                 jObj.put("endpoint_code",curAudEv.toString());
-                                jObj.put("error",e.getMessage());
+                                jObj.put(GlobalAPIsParams.LBL_ERROR,e.getMessage());
                                 enumsIncomplete.add(jObj);
                             }
                         }

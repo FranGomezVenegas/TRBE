@@ -5,6 +5,7 @@
  */
 package functionaljavaa.platform.doc;
 
+import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.TblsTrazitDocTrazit;
@@ -97,7 +98,7 @@ public class ErrorMessageCodesToRequirements {
                                     JSONObject jObj=new JSONObject();
                                     jObj.put("enum",getMine.getSimpleName());
                                     jObj.put("message_code",curBusRul.toString());
-                                    jObj.put("error",e.getMessage());
+                                    jObj.put(GlobalAPIsParams.LBL_ERROR,e.getMessage());
                                     enumsIncomplete.add(jObj);
                                 }
                             }

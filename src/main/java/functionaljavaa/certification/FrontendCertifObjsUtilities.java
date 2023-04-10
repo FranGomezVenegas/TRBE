@@ -5,6 +5,7 @@
  */
 package functionaljavaa.certification;
 
+import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.TblsCnfg;
 import databases.TblsData;
 import lbplanet.utilities.LPArray;
@@ -65,7 +66,7 @@ public class FrontendCertifObjsUtilities {
         valuePosicInArray = LPArray.valuePosicInArray(objFldNames, TblsCnfg.SopMetaData.CERTIFICATION_MODE.getName());
         if (valuePosicInArray == -1) {
             mainObj.put("action_visible", false);
-            mainObj.put("error", TblsCnfg.SopMetaData.CERTIFICATION_MODE.getName() + " field not found to determine the mode, please review definition");
+            mainObj.put(GlobalAPIsParams.LBL_ERROR, TblsCnfg.SopMetaData.CERTIFICATION_MODE.getName() + " field not found to determine the mode, please review definition");
             return mainObj;
         }
         mainObj.put("user_name", objFldValues[LPArray.valuePosicInArray(objFldNames, TblsData.ViewUserAndAnalysisMethodCertificationView.USER_NAME.getName())]);
@@ -96,7 +97,7 @@ public class FrontendCertifObjsUtilities {
         valuePosicInArray = LPArray.valuePosicInArray(objFldNames, TblsCnfg.SopMetaData.CERTIFICATION_MODE.getName());
         if (valuePosicInArray == -1) {
             mainObj.put("action_visible", false);
-            mainObj.put("error", TblsCnfg.SopMetaData.CERTIFICATION_MODE.getName() + " field not found to determine the mode, please review definition");
+            mainObj.put(GlobalAPIsParams.LBL_ERROR, TblsCnfg.SopMetaData.CERTIFICATION_MODE.getName() + " field not found to determine the mode, please review definition");
             return mainObj;
         }
         String certifMode = LPNulls.replaceNull(objFldValues[valuePosicInArray]).toString();

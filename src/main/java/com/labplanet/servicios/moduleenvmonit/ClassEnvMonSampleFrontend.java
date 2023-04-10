@@ -75,6 +75,9 @@ public class ClassEnvMonSampleFrontend {
     private static final String[] SAMPLEANALYSISRESULTLOCKDATA_RETRIEVEDATA_PROGRAMCORRECTIVEACTION = new String[]{TblsProcedure.ProgramCorrectiveAction.RESULT_ID.getName(), TblsProcedure.ProgramCorrectiveAction.STATUS.getName()};
     public static final String MANDATORY_PARAMS_MAIN_SERVLET = GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME + "|" + GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN + "|" + GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
 
+    static final String IS_LOCKED="is_locked";
+    static final String LOCKING_OBJECT="locking_object";
+    static final String LOCKING_REASON="locking_reason";
     public enum EnvMonSampleAPIqueriesEndpoints implements EnumIntEndpoints {
         GET_SAMPLE_ANALYSIS_RESULT_LIST("GET_SAMPLE_ANALYSIS_RESULT_LIST", "", new LPAPIArguments[]{
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
@@ -754,7 +757,7 @@ public class ClassEnvMonSampleFrontend {
                     JSONArray jArrLastTempReadings = new JSONArray();
                     if (LPNulls.replaceNull(incubName).length() == 0 || LPNulls.replaceNull(incubStart.toString()).length() == 0 || LPNulls.replaceNull(incubEnd.toString()).length() == 0) {
                         JSONObject jObj = new JSONObject();
-                        jObj.put("error", "This is not a completed batch so temperature readings cannot be"
+                        jObj.put(GlobalAPIsParams.LBL_ERROR, "This is not a completed batch so temperature readings cannot be"
                                 + ". IncubName:" + incubName + ". incubStart:" + incubStart + ". incubEnd:" + incubEnd);
                         jArrLastTempReadings.add(jObj);
                     } else {
@@ -766,9 +769,9 @@ public class ClassEnvMonSampleFrontend {
                                 new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName() + " BETWEEN "},
                                 new Object[]{incubName, incubStart, incubEnd},
                                 new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName()});
-                        if ("LABPLANET_FALSE".equalsIgnoreCase(instrReadings[0][0].toString())) {
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrReadings[0][0].toString())) {
                             JSONObject jObj = new JSONObject();
-                            jObj.put("error", "No temperature readings found");
+                            jObj.put(GlobalAPIsParams.LBL_ERROR, "No temperature readings found");
                             jArrLastTempReadings.add(jObj);
                         } else {
                             for (Object[] currReading : instrReadings) {
@@ -1010,7 +1013,7 @@ public class ClassEnvMonSampleFrontend {
                     for (Object[] currReading : instrReadings) {
                         jObj = new JSONObject();
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(currReading[0].toString())) {
-                            jObj.put("error", "No temperature readings found");
+                            jObj.put(GlobalAPIsParams.LBL_ERROR, "No temperature readings found");
                         } else {
                             jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currReading);
                         }
@@ -1376,7 +1379,7 @@ public class ClassEnvMonSampleFrontend {
 
                     String addSampleAnalysis = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS);
                     if (addSampleAnalysis == null) {
-                        addSampleAnalysis = "false";
+                        addSampleAnalysis = Boolean.FALSE.toString().toLowerCase();
                     }
                     String sampleAnalysisFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE);
                     String[] sampleAnalysisFieldToRetrieveArr = null;
@@ -1394,7 +1397,7 @@ public class ClassEnvMonSampleFrontend {
 
                     String addSampleAnalysisResult = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT);
                     if (addSampleAnalysisResult == null) {
-                        addSampleAnalysisResult = "false";
+                        addSampleAnalysisResult = Boolean.FALSE.toString().toLowerCase();
                     }
                     sampleAnalysisResultFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT_FIELD_TO_RETRIEVE);
                     String[] sampleAnalysisResultFieldToRetrieveArr = null;
@@ -1483,7 +1486,7 @@ public class ClassEnvMonSampleFrontend {
         }
         if (whereFieldsValueArr != null) {
             for (int iFldV = 0; iFldV < whereFieldsValueArr.length; iFldV++) {
-                if (whereFieldsValueArr[iFldV].toString().equalsIgnoreCase("false")) {
+                if (whereFieldsValueArr[iFldV].toString().equalsIgnoreCase(Boolean.FALSE.toString().toLowerCase())) {
                     whereFieldsValueArr[iFldV] = Boolean.valueOf(whereFieldsValueArr[iFldV].toString());
                 }
                 if (whereFieldsValueArr[iFldV].toString().equalsIgnoreCase("true")) {
@@ -1723,10 +1726,10 @@ public class ClassEnvMonSampleFrontend {
                         reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_ES, errorTextEs);
                         return new Object[]{fldNameArr, fldValueArr, "warning_reason", reasonInfo};
                     case "locking":
-                    default:
-                        fldNameArr = LPArray.addValueToArray1D(fldNameArr, "is_locked");
+                    default: 
+                        fldNameArr = LPArray.addValueToArray1D(fldNameArr, IS_LOCKED);
                         fldValueArr = LPArray.addValueToArray1D(fldValueArr, true);
-                        fldNameArr = LPArray.addValueToArray1D(fldNameArr, "locking_object");
+                        fldNameArr = LPArray.addValueToArray1D(fldNameArr, LOCKING_OBJECT);
                         fldValueArr = LPArray.addValueToArray1D(fldValueArr, TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName());
                         msgCode = "resultLockedByProgramCorrectiveActionInProgress";
                         fldValueArr = LPArray.addValueToArray1D(fldValueArr, msgCode);
@@ -1735,7 +1738,7 @@ public class ClassEnvMonSampleFrontend {
                         reasonInfo = new JSONObject();
                         reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_EN, errorTextEn);
                         reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_ES, errorTextEs);
-                        return new Object[]{fldNameArr, fldValueArr, "locking_reason", reasonInfo};
+                        return new Object[]{fldNameArr, fldValueArr, LOCKING_REASON, reasonInfo};
                 }
             }
             return new Object[]{null, null};
@@ -1752,16 +1755,16 @@ public class ClassEnvMonSampleFrontend {
         String sampleAnalysisStatusCanceled = DataSampleStructureStatuses.SampleAnalysisStatuses.CANCELED.getStatusCode("");
         String sampleAnalysisStatusReviewed = DataSampleStructureStatuses.SampleAnalysisStatuses.REVIEWED.getStatusCode("");
         if ((resultStatus.equalsIgnoreCase(sampleAnalysisStatusReviewed)) || (resultStatus.equalsIgnoreCase(sampleAnalysisStatusCanceled))) {
-            fldNameArr = LPArray.addValueToArray1D(fldNameArr, "is_locked");
+            fldNameArr = LPArray.addValueToArray1D(fldNameArr, IS_LOCKED);
             fldValueArr = LPArray.addValueToArray1D(fldValueArr, true);
-            fldNameArr = LPArray.addValueToArray1D(fldNameArr, "locking_object");
+            fldNameArr = LPArray.addValueToArray1D(fldNameArr, LOCKING_OBJECT);
             fldValueArr = LPArray.addValueToArray1D(fldValueArr, TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName());
             String msgCode = "resultLockedByStatus";
             fldValueArr = LPArray.addValueToArray1D(fldValueArr, msgCode);
             JSONObject reasonInfo = new JSONObject();
             reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_EN, resultStatus);
             reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_ES, resultStatus);
-            return new Object[]{fldNameArr, fldValueArr, "locking_reason", reasonInfo};
+            return new Object[]{fldNameArr, fldValueArr, LOCKING_REASON, reasonInfo};
         }
         return new Object[]{null, null};
     }
@@ -1784,16 +1787,16 @@ public class ClassEnvMonSampleFrontend {
             return new Object[]{null, null};
         }
 
-        fldNameArr = LPArray.addValueToArray1D(fldNameArr, "is_locked");
+        fldNameArr = LPArray.addValueToArray1D(fldNameArr, IS_LOCKED);
         fldValueArr = LPArray.addValueToArray1D(fldValueArr, true);
-        fldNameArr = LPArray.addValueToArray1D(fldNameArr, "locking_object");
+        fldNameArr = LPArray.addValueToArray1D(fldNameArr, LOCKING_OBJECT);
         fldValueArr = LPArray.addValueToArray1D(fldValueArr, TblsCnfg.TablesConfig.METHODS.getTableName());
         Object[] errorMsgEn = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AnalysisMethodCertif.CertificationAnalysisMethodErrorTrapping.USER_NOT_CERTIFIED, new Object[]{methodName}, DEFAULTLANGUAGE);
         Object[] errorMsgEs = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AnalysisMethodCertif.CertificationAnalysisMethodErrorTrapping.USER_NOT_CERTIFIED, new Object[]{methodName}, "es");
         JSONObject reasonInfo = new JSONObject();
         reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_EN, errorMsgEn[errorMsgEs.length - 1]);
         reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_ES, errorMsgEs[errorMsgEs.length - 1]);
-        return new Object[]{fldNameArr, fldValueArr, "locking_reason", reasonInfo};
+        return new Object[]{fldNameArr, fldValueArr, LOCKING_REASON, reasonInfo};
     }
 
     static Object[] getObjectsId(String[] headerFlds, Object[][] analysisResultList, String separator) {

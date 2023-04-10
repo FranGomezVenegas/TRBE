@@ -31,7 +31,7 @@ public final class LPKPIs {
         if (objGroupName.length!=fldToRetrieve.length && objGroupName.length!=whereFieldsNameArr.length 
                 && objGroupName.length!=whereFieldsValueArr.length){
             jObjMainObject.put("is_error", true);
-            jObjMainObject.put("error", "KPI Definition is wrong");
+            jObjMainObject.put(GlobalAPIsParams.LBL_ERROR, "KPI Definition is wrong");
         }
         for (int i=0;i<objGroupName.length;i++){
             String curgrouperName=giveMeString(objGroupName[i]); 
@@ -185,7 +185,7 @@ public final class LPKPIs {
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString())){
                     JSONObject jObjMainObject=new JSONObject();
                     jObjMainObject.put("is_error", true);
-                    jObjMainObject.put("error", "KPI Definition is wrong");
+                    jObjMainObject.put(GlobalAPIsParams.LBL_ERROR, "KPI Definition is wrong");
                     return new Object[]{LPPlatform.LAB_FALSE, jObjMainObject};
                 }
                 if (endPosic>-1){                         

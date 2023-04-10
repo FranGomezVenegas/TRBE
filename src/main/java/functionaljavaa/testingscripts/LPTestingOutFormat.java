@@ -95,7 +95,11 @@ public class LPTestingOutFormat {
             TblsTesting.ScriptSteps.ARGUMENT_03.getName(), TblsTesting.ScriptSteps.ARGUMENT_04.getName(),
             TblsTesting.ScriptSteps.ARGUMENT_05.getName(), TblsTesting.ScriptSteps.ARGUMENT_06.getName(),
             TblsTesting.ScriptSteps.ARGUMENT_07.getName(), TblsTesting.ScriptSteps.ARGUMENT_08.getName(),
-            TblsTesting.ScriptSteps.ARGUMENT_09.getName(), TblsTesting.ScriptSteps.ARGUMENT_10.getName(), TblsTesting.ScriptSteps.STEP_ID.getName(),
+            TblsTesting.ScriptSteps.ARGUMENT_09.getName(), TblsTesting.ScriptSteps.ARGUMENT_10.getName(), 
+            TblsTesting.ScriptSteps.ARGUMENT_11.getName(), TblsTesting.ScriptSteps.ARGUMENT_12.getName(),
+            TblsTesting.ScriptSteps.ARGUMENT_13.getName(), TblsTesting.ScriptSteps.ARGUMENT_14.getName(),
+            TblsTesting.ScriptSteps.ARGUMENT_15.getName(),
+            TblsTesting.ScriptSteps.STEP_ID.getName(),
             TblsTesting.ScriptSteps.AUDIT_REASON.getName(),
             TblsTesting.ScriptSteps.STOP_WHEN_SYNTAXIS_UNMATCH.getName(), TblsTesting.ScriptSteps.STOP_WHEN_SYNTAXIS_FALSE.getName(),
             TblsTesting.ScriptSteps.ALTERNATIVE_TOKEN.getName()
@@ -958,7 +962,7 @@ public class LPTestingOutFormat {
             JsonObject jsonObject = (JsonObject) objToJsonObj[1];
 
             int stepNumber = jsonObject.get("step").getAsInt();
-            String stepObjectType = jsonObject.get("object_type").getAsString();
+            String stepObjectType = jsonObject.get(GlobalAPIsParams.LBL_OBJECT_TYPE).getAsString();
             int stepObjectPosic = getStepObjectPosic(jsonObject);
             Integer stepPosic = LPArray.valuePosicInArray(LPArray.getColumnFromArray2D(scriptSteps, scriptSteps[0].length - 6), stepNumber);
             if (stepPosic == -1) {
@@ -969,7 +973,7 @@ public class LPTestingOutFormat {
             Integer numObjectsFound = 0;
             for (int i = 0; i < jsonArr.size(); i++) {
                 JsonObject object = (JsonObject) jsonArr.get(i);
-                String objType = object.get("object_type").getAsString();
+                String objType = object.get(GlobalAPIsParams.LBL_OBJECT_TYPE).getAsString();
                 if (objType.equalsIgnoreCase(stepObjectType)) {
                     numObjectsFound++;
                     if (numObjectsFound.equals(stepObjectPosic)) {

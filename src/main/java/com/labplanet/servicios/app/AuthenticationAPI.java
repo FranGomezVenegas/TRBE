@@ -223,7 +223,7 @@ public class AuthenticationAPI extends HttpServlet {
                         }
                         jArr.add(jObj);
                     }
-                    jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_APP_USER_TABS_ON_LOGIN, jArr);
+                    jsonObj.put(AuthenticationAPIParams.RESPNS_JSON_TAG_APPUSERTBS_ONLOGIN, jArr);
                     request.setAttribute(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myFinalToken);
                     jsonObj.put("header_info", appHeaderApi(request, response));
                     jsonObj.put("procedures_list", procedureListInfo(request, response));

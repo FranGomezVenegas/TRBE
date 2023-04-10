@@ -311,7 +311,7 @@ public class IncidentAPIactions extends HttpServlet {
                 theBody=paramName;
         }
         JsonObject jsonObject=(JsonObject) objToJsonObj[1];
-        String jsonObjType = jsonObject.get("object_type").getAsString();
+        String jsonObjType = jsonObject.get(GlobalAPIsParams.LBL_OBJECT_TYPE).getAsString();
         if (!objectType.toUpperCase().contains(jsonObjType.toUpperCase())){
             this.diagnostic=new Object[]{LPPlatform.LAB_FALSE, "objectType in record and objectType in the JsonObject mismatch"};
             return;

@@ -52,7 +52,7 @@ public class ClassInvTracking {
         String lotName = argValues[0].toString();
         String category = argValues[1].toString();
         String reference = argValues[2].toString();
-        if (Boolean.FALSE.equals("NEW_INVENTORY_LOT".equalsIgnoreCase(endPoint.getName()))){
+        if (Boolean.FALSE.equals("NEW_INVENTORY_LOT".equalsIgnoreCase(endPoint.getName()))) {
             invLot = new DataInventory(lotName, reference, category, null);
             if (Boolean.TRUE.equals(invLot.getHasError())) {
                 this.actionDiagnosesObj = invLot.getErrorDetail();
@@ -62,9 +62,6 @@ public class ClassInvTracking {
                 invLot = null;
                 return;
             }
-        }
-        if (invLot==null){
-            return;
         }
         this.functionFound = true;
         switch (endPoint) {
@@ -98,7 +95,7 @@ public class ClassInvTracking {
                     fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInvTrackingData.Lot.EXPIRY_DATE.getName());
                     fieldValues = LPArray.addValueToArray1D(fieldValues, LPDate.stringFormatToDate(expiryDate));
                 }
-                if (LPNulls.replaceNull(expiryDateInUse).length() > 0){
+                if (LPNulls.replaceNull(expiryDateInUse).length() > 0) {
                     fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInvTrackingData.Lot.EXPIRY_DATE_IN_USE.getName());
                     fieldValues = LPArray.addValueToArray1D(fieldValues, LPDate.stringFormatToDate(expiryDateInUse));
                 }
@@ -144,6 +141,9 @@ public class ClassInvTracking {
                 if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                     actionDiagnoses = (InternalMessage) fieldValues[1];
                 } else {
+                    if (invLot == null) {
+                        return;
+                    }
                     actionDiagnoses = invLot.turnAvailable(fieldNames, fieldValues);
                 }
                 break;
@@ -159,6 +159,9 @@ public class ClassInvTracking {
                 if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                     actionDiagnoses = (InternalMessage) fieldValues[1];
                 } else {
+                    if (invLot == null) {
+                        return;
+                    }
                     actionDiagnoses = invLot.turnUnAvailable(fieldNames, fieldValues);
                 }
                 break;
@@ -195,6 +198,9 @@ public class ClassInvTracking {
                     fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInvTrackingData.Lot.RETEST_DATE.getName());
                     fieldValues = LPArray.addValueToArray1D(fieldValues, retestDate);
                 }
+                if (invLot == null) {
+                    return;
+                }
                 actionDiagnoses = invLot.updateInventoryLot(fieldNames, fieldValues);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), lotName);
@@ -212,6 +218,9 @@ public class ClassInvTracking {
                 if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                     actionDiagnoses = (InternalMessage) fieldValues[1];
                 } else {
+                    if (invLot == null) {
+                        return;
+                    }
                     actionDiagnoses = invLot.retireInventoryLot(fieldNames, fieldValues);
                 }
                 break;
@@ -227,6 +236,9 @@ public class ClassInvTracking {
                 if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                     actionDiagnoses = (InternalMessage) fieldValues[1];
                 } else {
+                    if (invLot == null) {
+                        return;
+                    }
                     actionDiagnoses = invLot.unRetireInventoryLot(fieldNames, fieldValues);
                 }
                 break;
@@ -236,6 +248,9 @@ public class ClassInvTracking {
                     volume = BigDecimal.valueOf(Double.valueOf(argValues[3].toString()));
                 }
                 volumeUom = argValues[4].toString();
+                if (invLot == null) {
+                    return;
+                }
                 actionDiagnoses = invLot.consumeInvLotVolume(volume, volumeUom);
                 break;
             case ADD_INV_LOT_VOLUME:
@@ -244,6 +259,9 @@ public class ClassInvTracking {
                     volume = BigDecimal.valueOf(Double.valueOf(argValues[3].toString()));
                 }
                 volumeUom = argValues[4].toString();
+                if (invLot == null) {
+                    return;
+                }
                 actionDiagnoses = invLot.addInvLotVolume(volume, volumeUom);
                 break;
             case ADJUST_INV_LOT_VOLUME:
@@ -252,6 +270,9 @@ public class ClassInvTracking {
                     volume = BigDecimal.valueOf(Double.valueOf(argValues[3].toString()));
                 }
                 volumeUom = argValues[4].toString();
+                if (invLot == null) {
+                    return;
+                }
                 actionDiagnoses = invLot.adjustInvLotVolume(volume, volumeUom);
                 break;
             case COMPLETE_QUALIFICATION:
@@ -259,12 +280,18 @@ public class ClassInvTracking {
                 reference = argValues[2].toString();
                 String decision = argValues[3].toString();
                 String turnAvailable = argValues[4].toString();
+                if (invLot == null) {
+                    return;
+                }
                 actionDiagnoses = invLot.completeQualification(decision, category, reference, Boolean.valueOf(turnAvailable));
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), lotName);
                 }
                 break;
             case REOPEN_QUALIFICATION:
+                if (invLot == null) {
+                    return;
+                }
                 actionDiagnoses = invLot.reopenQualification();
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), lotName);
@@ -318,12 +345,13 @@ public class ClassInvTracking {
         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), lotName);
         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TablesInvTrackingConfig.INV_REFERENCE.getTableName(), reference);
         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TablesInvTrackingConfig.INV_CATEGORY.getTableName(), category);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
-            this.diagnostic = ApiMessageReturn.trapMessage(actionDiagnoses.getDiagnostic(), actionDiagnoses.getMessageCodeObj(), actionDiagnoses.getMessageCodeVariables());
-        } else {
-            this.diagnostic = ApiMessageReturn.trapMessage(actionDiagnoses.getDiagnostic(), endPoint, actionDiagnoses.getMessageCodeVariables());
+        if (actionDiagnoses != null) {
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
+                this.diagnostic = ApiMessageReturn.trapMessage(actionDiagnoses.getDiagnostic(), actionDiagnoses.getMessageCodeObj(), actionDiagnoses.getMessageCodeVariables());
+            } else {
+                this.diagnostic = ApiMessageReturn.trapMessage(actionDiagnoses.getDiagnostic(), endPoint, actionDiagnoses.getMessageCodeVariables());
+            }
         }
-
         this.relatedObj = rObj;
         invLot = null;
         rObj.killInstance();

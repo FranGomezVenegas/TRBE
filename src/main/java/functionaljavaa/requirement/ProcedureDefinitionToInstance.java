@@ -279,7 +279,7 @@ public class ProcedureDefinitionToInstance {
                     TblsReqs.ProcedureUserRequirements.CONFIRM_DIALOG.getName(), TblsReqs.ProcedureUserRequirements.CONFIRM_DIALOG_DETAIL.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procUsrReqs[0][0].toString())) {
             JSONObject jObj = new JSONObject();
-            jObj.put("error", "no entries in " + TblsReqs.TablesReqs.PROCEDURE_USER_REQS.getTableName() + " table");
+            jObj.put(GlobalAPIsParams.LBL_ERROR, "no entries in " + TblsReqs.TablesReqs.PROCEDURE_USER_REQS.getTableName() + " table");
             jArr.add(jObj);
         } else {
             String allProcActionsInOne = LPArray.convertArrayToString(LPArray.getColumnFromArray2D(procUsrReqs, 0), "|", "", true);
@@ -735,7 +735,7 @@ public class ProcedureDefinitionToInstance {
                                     curTblJsonObj.put("requires_testing_clone", false);
                                 }
 
-                                if (prepUpQuery[prepUpQuery.length - 1].toString().toLowerCase().contains("error")) {
+                                if (prepUpQuery[prepUpQuery.length - 1].toString().toLowerCase().contains(GlobalAPIsParams.LBL_ERROR)) {
                                     errorsOnlyObj.put(curSchemaName + "." + curTableName, scriptLog);
                                 }
                                 curTblJsonObj.put("scripts_detail", scriptLog);
@@ -876,7 +876,7 @@ public class ProcedureDefinitionToInstance {
                                     curTblJsonObj.put("requires_testing_clone", false);
                                 }
 
-                                if (prepUpQuery[prepUpQuery.length - 1].toString().toLowerCase().contains("error")) {
+                                if (prepUpQuery[prepUpQuery.length - 1].toString().toLowerCase().contains(GlobalAPIsParams.LBL_ERROR)) {
                                     errorsOnlyObj.put(curSchemaName + "." + curTableName, scriptLog);
                                 }
                                 curTblJsonObj.put("scripts_detail", scriptLog);
@@ -988,7 +988,7 @@ public class ProcedureDefinitionToInstance {
                                     curTblJsonObj.put("requires_testing_clone", false);
                                 }
 
-                                if (prepUpQuery[prepUpQuery.length - 1].toString().toLowerCase().contains("error")) {
+                                if (prepUpQuery[prepUpQuery.length - 1].toString().toLowerCase().contains(GlobalAPIsParams.LBL_ERROR)) {
                                     errorsOnlyObj.put(curSchemaName + "." + curTableName, scriptLog);
                                 }
                                 curTblJsonObj.put("scripts_detail", scriptLog);
@@ -1030,8 +1030,8 @@ public class ProcedureDefinitionToInstance {
                             if (curIsView == null || !Boolean.valueOf(curIsView)) {
                                 //EnumIntTables moduleTableObj = getModuleTableObj(moduleName, curSchemaName, curTableName.toUpperCase());
                                 if (Boolean.FALSE.equals(tblDiagn.getFound())) {
-                                    curTblJsonObj.put("error", tblDiagn.getErrorMsg());
-                                    //curTblJsonObj.put("error", tableCreationScriptTable);
+                                    curTblJsonObj.put(GlobalAPIsParams.LBL_ERROR, tblDiagn.getErrorMsg());
+                                    //curTblJsonObj.put(GlobalAPIsParams.LBL_ERROR, tableCreationScriptTable);
                                 } else {
                                     tblCreateScript = createTableScript(tblDiagn.getTableObj(), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
                                     if (Boolean.TRUE.equals(tblDiagn.getMirrorForTesting())) {
@@ -1069,7 +1069,7 @@ public class ProcedureDefinitionToInstance {
                                     curTblJsonObj.put("requires_testing_clone", false);
                                 }
 
-                                if (prepUpQuery[prepUpQuery.length - 1].toString().toLowerCase().contains("error")) {
+                                if (prepUpQuery[prepUpQuery.length - 1].toString().toLowerCase().contains(GlobalAPIsParams.LBL_ERROR)) {
                                     errorsOnlyObj.put(curSchemaName + "." + curTableName, scriptLog);
                                 }
                                 curTblJsonObj.put("scripts_detail", scriptLog);
@@ -1083,7 +1083,7 @@ public class ProcedureDefinitionToInstance {
                         break;*/
                         default:
                             tableCreationScriptTable = "The module " + moduleName + " is not recognized";
-                            curTblJsonObj.put("error", tableCreationScriptTable);
+                            curTblJsonObj.put(GlobalAPIsParams.LBL_ERROR, tableCreationScriptTable);
                             break;
                     }
                 }
@@ -1093,7 +1093,7 @@ public class ProcedureDefinitionToInstance {
         } catch (Exception e) {
             JSONObject jErr = new JSONObject();
             jErr.put("log_before_error", jsonObj);
-            jErr.put("error", e.getMessage());
+            jErr.put(GlobalAPIsParams.LBL_ERROR, e.getMessage());
         }
         return jsonObj;
     }
@@ -1328,7 +1328,7 @@ public class ProcedureDefinitionToInstance {
             jsonObjSummary.put("summary", jsonRowArr);
             return jsonObjSummary;
         } catch (Exception e) {
-            jsonObjSummary.put("error", e.getMessage());
+            jsonObjSummary.put(GlobalAPIsParams.LBL_ERROR, e.getMessage());
             return jsonObjSummary;
         }
     }

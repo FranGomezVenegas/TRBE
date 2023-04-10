@@ -71,7 +71,7 @@ public class DbObjects {
             scriptLog.put("script", tblCreateScript);
             if (Boolean.FALSE.equals(tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE)) && Boolean.FALSE.equals(tblCreateScript.toLowerCase().contains("already")))
                 scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
-            if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains("error"))
+            if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains(GlobalAPIsParams.LBL_ERROR))
                 errorsOnlyObj.put("app."+curTbl.getTableName(), scriptLog);
             jsonObj.put(curTbl.getTableName(), scriptLog);
         }
@@ -86,7 +86,7 @@ public class DbObjects {
             scriptLog.put("script", tblCreateScript);
             if (Boolean.FALSE.equals(tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE)) && Boolean.FALSE.equals(tblCreateScript.toLowerCase().contains("already")) )
                 scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
-            if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains("error"))
+            if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains(GlobalAPIsParams.LBL_ERROR))
                 errorsOnlyObj.put("app_audit."+curTbl.getTableName(), scriptLog);
             jsonObj.put(curTbl.getTableName(), scriptLog);
         }
@@ -101,7 +101,7 @@ public class DbObjects {
             scriptLog.put("script", tblCreateScript);
             if (Boolean.FALSE.equals(tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE)) && Boolean.FALSE.equals(tblCreateScript.toLowerCase().contains("already")) )        
                 scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
-            if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains("error"))
+            if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains(GlobalAPIsParams.LBL_ERROR))
                 errorsOnlyObj.put("config."+curTbl.getTableName(), scriptLog);
             jsonObj.put(curTbl.getTableName(), scriptLog);
         }
@@ -115,7 +115,7 @@ public class DbObjects {
         scriptLog.put("script", tblCreateScript);
         if (Boolean.FALSE.equals(tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE)) && Boolean.FALSE.equals(tblCreateScript.toLowerCase().contains("already")) )            
             scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
-        if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains("error"))
+        if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains(GlobalAPIsParams.LBL_ERROR))
             errorsOnlyObj.put("app."+TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), scriptLog);
         jsonObj.put(TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), scriptLog);
         
@@ -146,7 +146,7 @@ public class DbObjects {
             scriptLog.put("script", tblCreateScript);
             if (Boolean.FALSE.equals(tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE)) && Boolean.FALSE.equals(tblCreateScript.toLowerCase().contains("already")) )
                 scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
-            if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains("error"))
+            if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains(GlobalAPIsParams.LBL_ERROR))
                 errorsOnlyObj.put("requirements."+curTbl.getTableName(), scriptLog);
             jsonObj.put(curTbl.getTableName(), scriptLog);
         }
@@ -189,7 +189,7 @@ public class DbObjects {
             scriptLog.put("script", tblCreateScript);
             if (Boolean.FALSE.equals(tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE)) && Boolean.FALSE.equals(tblCreateScript.toLowerCase().contains("already")) )            
                 scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
-            if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains("error"))
+            if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains(GlobalAPIsParams.LBL_ERROR))
                 errorsOnlyObj.put(curTbl.getRepositoryName()+"."+curTbl.getTableName(), scriptLog);
             jsonObj.put(curTbl.getRepositoryName()+"."+curTbl.getTableName(), scriptLog);
         }

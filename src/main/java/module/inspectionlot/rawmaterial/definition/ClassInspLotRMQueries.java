@@ -5,6 +5,7 @@
  */
 package module.inspectionlot.rawmaterial.definition;
 
+import com.labplanet.servicios.app.GlobalAPIsParams;
 import static com.labplanet.servicios.moduleenvmonit.EnvMonAPIqueries.JSON_TAG_SPEC_DEFINITION;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import databases.Rdbms;
@@ -86,7 +87,7 @@ public class ClassInspLotRMQueries  implements EnumIntQueriesObj{
                         tableFieldsLot, new SqlWhere(TblsInspLotRMData.TablesInspLotRMData.LOT, new String[]{TblsInspLotRMData.Lot.NAME.getName()}, new Object[]{lotName}),
                         new String[]{TblsInspLotRMData.Lot.NAME.getName()}, null);        
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(lotInfo[0][0].toString())){
-                    lotJsonObj.put("error", Arrays.toString(lotInfo[0])); 
+                    lotJsonObj.put(GlobalAPIsParams.LBL_ERROR, Arrays.toString(lotInfo[0])); 
                     lotsJsonArr.add(lotJsonObj);
                     Rdbms.closeRdbms();  
                     LPFrontEnd.servletReturnSuccess(request, response, lotsJsonArr);                

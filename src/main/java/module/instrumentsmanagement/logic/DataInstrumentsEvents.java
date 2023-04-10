@@ -157,7 +157,7 @@ public class DataInstrumentsEvents {
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.USE_REENTER_WHEN_PARAM_ALREADY_HAS_VALUE,
                     new Object[]{});
         }
-        String fieldType = objectVariablePropInfo[0][2].toString();
+        String fieldType = objectVariablePropInfo[0][2].toString().toUpperCase();
 
         switch (DataStudyObjectsVariableValues.VariableTypes.valueOf(fieldType)) {
             case LIST:
@@ -179,6 +179,15 @@ public class DataInstrumentsEvents {
             default:
                 return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.VARIABLE_TYPE_NOT_RECOGNIZED, new Object[]{fieldType}, null);
         }
+        String[] updFieldsName=new String[]{TblsInstrumentsData.InstrEventVariableValues.VALUE.getName()};
+        Object[] updFieldsValue=new Object[]{newValue};
+	SqlWhere sqlWhere = new SqlWhere();
+	sqlWhere.addConstraint(TblsInstrumentsData.InstrEventVariableValues.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{Integer.valueOf(objectVariablePropInfo[0][0].toString())}, "");
+	Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES,
+		EnumIntTableFields.getTableFieldsFromString(TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES, updFieldsName), updFieldsValue, sqlWhere, null);
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())))
+            instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.VALUE_ENTERED, instrName, TablesInstrumentsData.INSTRUMENTS.getTableName(), instrEventId.toString(),
+                updFieldsName, updFieldsValue);        
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.ENTER_EVENT_RESULT, new Object[]{instrName, instrEventId, variableName, newValue}, null);
     }
 
@@ -221,8 +230,7 @@ public class DataInstrumentsEvents {
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.SAME_RESULT_VALUE,
                     new Object[]{variableName, appProcInstance, newValue});
         }
-        String fieldType = objectVariablePropInfo[0][2].toString();
-
+        String fieldType = objectVariablePropInfo[0][2].toString().toUpperCase();
         switch (DataStudyObjectsVariableValues.VariableTypes.valueOf(fieldType)) {
             case LIST:
                 String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");

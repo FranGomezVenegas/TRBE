@@ -26,15 +26,15 @@ import trazit.globalvariables.GlobalVariables.ApiUrls;
  * @author Administrator
  */
 public class AuthenticationAPIParams extends HttpServlet {
-
+final static String USER_CHANGE_PSWD_SUCCESS="userChangePswd_success";
     public enum AuthenticationAPIactionsEndpoints implements EnumIntEndpoints{
-        USER_CHANGE_PSWD("USER_CHANGE_PASSWORD", "userChangePswd_success", 
+        USER_CHANGE_PSWD("USER_CHANGE_PASSWORD", USER_CHANGE_PSWD_SUCCESS, 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PSWD_NEW, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), false, 9)}, EndPointsToRequirements.endpointWithNoOutputObjects 
                 , null, null),
-        USER_CHANGE_PSWD_SEND_MAIL("USER_CHANGE_PSWD_SEND_MAIL", "userChangePswd_success", 
+        USER_CHANGE_PSWD_SEND_MAIL("USER_CHANGE_PSWD_SEND_MAIL", USER_CHANGE_PSWD_SUCCESS, 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PSWD_NEW, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),}, EndPointsToRequirements.endpointWithNoOutputObjects 
                 , null, null),
@@ -63,7 +63,7 @@ public class AuthenticationAPIParams extends HttpServlet {
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}, EndPointsToRequirements.endpointWithNoOutputObjects 
                 , null, null),
-        USER_CHANGE_PSWD_BY_MAIL("USER_CHANGE_PSWD_BY_MAIL", "userChangePswd_success", 
+        USER_CHANGE_PSWD_BY_MAIL("USER_CHANGE_PSWD_BY_MAIL", USER_CHANGE_PSWD_SUCCESS, 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PSWD_NEW, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
@@ -134,9 +134,9 @@ public enum AuthenticationErrorTrapping  implements EnumIntMessages{
             this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
         }
-        public String getErrorCode(){return this.errorCode;}
-        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
-        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+        @Override        public String getErrorCode(){return this.errorCode;}
+        @Override        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        @Override        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
         private final String errorCode;
         private final String defaultTextWhenNotInPropertiesFileEn;
@@ -167,7 +167,7 @@ public enum AuthenticationErrorTrapping  implements EnumIntMessages{
      *
      */
     public static final String RESPONSE_JSON_TAG_APP_SESSION_DATE = "appSessionStartDate";
-    public static final String RESPONSE_JSON_TAG_APP_USER_TABS_ON_LOGIN = "userTabsOnLogin";
+    public static final String RESPNS_JSON_TAG_APPUSERTBS_ONLOGIN = "userTabsOnLogin";
 
     
     

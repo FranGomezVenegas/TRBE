@@ -105,7 +105,7 @@ public class ProcDeployCheckerLogic {
                 detailsObj.put("In requirements", 
                     LPJson.convertArrayRowToJSONObject(FLDSTORETR_REQS_PROCINFOSRC.split("\\|"), procInfoRecordsSource[0]));                
             }
-            mismatchesObj.put("error", errMsg);
+            mismatchesObj.put(GlobalAPIsParams.LBL_ERROR, errMsg);
         }else
             detailsObj.put(TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), 
                 LPJson.convertArrayRowToJSONObject(FLDSTORETR_PROCEDURE_INFO_SOURCE.split("\\|"), procInfoRecordsDestination[0]));
@@ -148,11 +148,11 @@ public class ProcDeployCheckerLogic {
             else{
                 errMsg=errMsg+". Found the info in the requirements definition neither";
             }
-            mismatchesObj.put("error", errMsg);
+            mismatchesObj.put(GlobalAPIsParams.LBL_ERROR, errMsg);
         }else{
             if (personProfileRecordsDestination.length!=procUserAndRolesRecordsSource.length){
                 anyMismatch=true;
-                mismatchesObj.put("error", "Not the same record number found in both places");
+                mismatchesObj.put(GlobalAPIsParams.LBL_ERROR, "Not the same record number found in both places");
             }
             String[] sourceInfo=new String[procUserAndRolesRecordsSource.length];
             String[] destInfo=new String[personProfileRecordsDestination.length];
@@ -203,11 +203,11 @@ public class ProcDeployCheckerLogic {
             else{
                 errMsg=errMsg+". Found the info in the requirements definition neither";
             }
-            mismatchesObj.put("error", errMsg);
+            mismatchesObj.put(GlobalAPIsParams.LBL_ERROR, errMsg);
         }else{
             if (personProfileRecordsDestination.length!=procUserAndRolesRecordsSource.length){
                 anyMismatch=true;
-                mismatchesObj.put("error", "Not the same record number found in both places");
+                mismatchesObj.put(GlobalAPIsParams.LBL_ERROR, "Not the same record number found in both places");
             }
 /*            
             Integer personNameFldPosic=LPArray.valuePosicInArray(personProfilesDestFlds, TblsProcedure.PersonProfile.PERSON_NAME.getName());
@@ -263,7 +263,7 @@ public class ProcDeployCheckerLogic {
             else{
                 errMsg=errMsg+". Found the info in the requirements definition neither";
             }
-            mismatchesObj.put("error", errMsg);
+            mismatchesObj.put(GlobalAPIsParams.LBL_ERROR, errMsg);
         }else{
             Integer srcAreaFldPosic=LPArray.valuePosicInArray(procUserRolesSourceFlds, TblsReqs.ProcedureBusinessRules.FILE_SUFFIX.getName());
             Integer srcRuleNameFldPosic=LPArray.valuePosicInArray(procUserRolesSourceFlds, TblsReqs.ProcedureBusinessRules.RULE_NAME.getName());
@@ -323,7 +323,7 @@ public class ProcDeployCheckerLogic {
             else{
                 errMsg=errMsg+". Found the info in the requirements definition neither";
             }
-            mismatchesObj.put("error", errMsg);
+            mismatchesObj.put(GlobalAPIsParams.LBL_ERROR, errMsg);
         }else{
             Integer srcSopNameFldPosic=LPArray.valuePosicInArray(procUserRolesSourceFlds, TblsReqs.ProcedureSopMetaData.SOP_NAME.getName());
             Integer destSopNameFldPosic=LPArray.valuePosicInArray(personProfilesDestFlds, TblsCnfg.SopMetaData.SOP_NAME.getName());
@@ -381,7 +381,7 @@ public class ProcDeployCheckerLogic {
             else{
                 errMsg=errMsg+". Found the info in the requirements definition neither";
             }
-            mismatchesObj.put("error", errMsg);
+            mismatchesObj.put(GlobalAPIsParams.LBL_ERROR, errMsg);
         }else{
             Integer srcSopNameFldPosic=LPArray.valuePosicInArray(procUserRolesSourceFlds, TblsReqs.ProcedureSopMetaData.SOP_NAME.getName());
             Integer destSopNameFldPosic=LPArray.valuePosicInArray(personProfilesDestFlds, TblsCnfg.SopMetaData.SOP_NAME.getName());

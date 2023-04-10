@@ -98,8 +98,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                 case ALL_PROCEDURES_DEFINITION:
                     JSONObject jMainObj = new JSONObject();
                     String mainObjectName = "all_platform_procedures_list";
-                    fieldsToRetrieveScripts = new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName(),
-                        TblsReqs.ProcedureInfo.LOCKED_FOR_ACTIONS.getName(), TblsReqs.ProcedureInfo.NAVIGATION_ICON_NAME.getName()};
+                    fieldsToRetrieveScripts = getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableFields());
                     Object[][] procAndInstanceArr = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName(),
                             new String[]{TblsReqs.ProcedureInfo.ACTIVE.getName()},
                             new Object[]{true},

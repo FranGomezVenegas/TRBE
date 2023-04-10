@@ -22,6 +22,7 @@ import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.materialspec.ConfigSpecStructure;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.requirement.ModuleTableOrViewGet;
+import functionaljavaa.responserelatedobjects.RelatedObjects.RelatedObjectsElementNames;
 import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement;
 import static functionaljavaa.unitsofmeasurement.UnitsOfMeasurement.getUomFromConfig;
 import functionaljavaa.user.UserProfile;
@@ -93,10 +94,10 @@ public class ClassMasterData {
             JsonArray asJsonArray = jsonObject.get(GlobalAPIsParams.LBL_VALUES).getAsJsonArray();
             for (JsonElement jO: asJsonArray){
                 JSONObject jLog=new JSONObject();
-                if (Boolean.FALSE.equals(jsonObject.has("object_type")))
+                if (Boolean.FALSE.equals(jsonObject.has(RelatedObjectsElementNames.OBJECT_TYPE.toString().toLowerCase())))
                     this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, 
                         "object_type property not found in this json model which is required for 'simple_table' parsing_type", null);
-                String tableName=jsonObject.get("object_type").getAsString();
+                String tableName=jsonObject.get(RelatedObjectsElementNames.OBJECT_TYPE.toString().toLowerCase()).getAsString();
                 ModuleTableOrViewGet tblDiagn=new ModuleTableOrViewGet(Boolean.FALSE, moduleName, GlobalVariables.Schemas.CONFIG.getName(), tableName);
                 if (Boolean.FALSE.equals(tblDiagn.getFound())){
                     this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, tblDiagn.getErrorMsg(), null);
@@ -132,7 +133,7 @@ public class ClassMasterData {
                 return;
             }        
 
-            String jsonObjType = jsonObject.get("object_type").getAsString();
+            String jsonObjType = jsonObject.get(RelatedObjectsElementNames.OBJECT_TYPE.toString().toLowerCase()).getAsString();
             if (Boolean.FALSE.equals(objectType.toUpperCase().contains(jsonObjType.toUpperCase()))){
                 this.diagnostic=new Object[]{LPPlatform.LAB_FALSE, "objectType in record and objectType in the JsonObject mismatch"};
                 return;

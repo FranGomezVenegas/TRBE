@@ -5,6 +5,7 @@
  */
 package functionaljavaa.platform.doc;
 
+import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.SqlWhere;
@@ -99,7 +100,7 @@ public class BusinessRulesToRequirements {
                                 JSONObject jObj=new JSONObject();
                                 jObj.put("enum",getMine.getSimpleName());
                                 jObj.put("endpoint",curBusRul.toString());
-                                jObj.put("error",e.getMessage());
+                                jObj.put(GlobalAPIsParams.LBL_ERROR,e.getMessage());
                                 enumsIncomplete.add(jObj);
                             }
                         }

@@ -321,7 +321,7 @@ public class DataInventoryQualif {
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.USE_REENTER_WHEN_PARAM_ALREADY_HAS_VALUE,
                     new Object[]{});
         }
-        String fieldType = objectVariablePropInfo[0][2].toString();
+        String fieldType = objectVariablePropInfo[0][2].toString().toUpperCase();
         switch (DataStudyObjectsVariableValues.VariableTypes.valueOf(fieldType)) {
             case LIST:
                 String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
@@ -394,7 +394,7 @@ public class DataInventoryQualif {
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.SAME_RESULT_VALUE,
                     new Object[]{variableName, appProcInstance, newValue});
         }
-        String fieldType = objectVariablePropInfo[0][2].toString();
+        String fieldType = objectVariablePropInfo[0][2].toString().toUpperCase();
         switch (DataStudyObjectsVariableValues.VariableTypes.valueOf(fieldType)) {
             case LIST:
                 String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");

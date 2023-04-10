@@ -79,9 +79,9 @@ public class ClassInstruments {
                 return;
             }
             String[] responsiblesArr=new String[]{};
-            if (instr.getResponsible()!=null)
+            if (LPNulls.replaceNull(instr.getResponsible()).length()>0)
                 responsiblesArr=LPArray.addValueToArray1D(responsiblesArr, instr.getResponsible());
-            if (instr.getResponsibleBackup()!=null)
+            if (LPNulls.replaceNull(instr.getResponsibleBackup()).length()>0)
                 responsiblesArr=LPArray.addValueToArray1D(responsiblesArr, instr.getResponsibleBackup());                    
             if (responsiblesArr.length>0&&Boolean.FALSE.equals(LPArray.valueInArray(responsiblesArr, procReqSession.getToken().getPersonName()))){
                 this.actionDiagnosesObj=instr.getErrorDetail();

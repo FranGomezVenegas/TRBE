@@ -5,6 +5,7 @@
  */
 package functionaljavaa.platformadmin;
 
+import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.SqlStatement;
 import databases.TblsApp;
 import databases.TblsProcedure;
@@ -38,7 +39,7 @@ public class AppBusinessRules {
         return appBusinessRulesJArr;
     }catch(Exception e){
         JSONObject proceduresList = new JSONObject();
-        proceduresList.put("Error",e.getMessage());
+        proceduresList.put(GlobalAPIsParams.LBL_ERROR,e.getMessage());
         return proceduresList;            
     }
     }

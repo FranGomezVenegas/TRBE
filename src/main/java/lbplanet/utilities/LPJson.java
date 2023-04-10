@@ -9,6 +9,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
+import com.labplanet.servicios.app.GlobalAPIsParams;
 
 import java.util.Arrays;
 import org.json.simple.JSONArray;
@@ -207,7 +208,7 @@ public class LPJson {
             return JsonParser.parseString(value).getAsJsonObject();
         } catch (JsonSyntaxException e) {
             JsonObject jObj = new JsonObject();
-            jObj.addProperty("error", e.getMessage());
+            jObj.addProperty(GlobalAPIsParams.LBL_ERROR, e.getMessage());
             jObj.addProperty("value", value);
             return jObj;
         }

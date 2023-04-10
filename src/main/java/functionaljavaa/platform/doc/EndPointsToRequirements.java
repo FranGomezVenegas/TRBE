@@ -116,7 +116,7 @@ public final class EndPointsToRequirements {
                             JSONObject jObj = new JSONObject();
                             jObj.put("enum", getMine.getSimpleName());
                             jObj.put("endpoint_code", curEndpoint.toString());
-                            jObj.put("error", e.getMessage());
+                            jObj.put(GlobalAPIsParams.LBL_ERROR, e.getMessage());
                             enumsIncomplete.add(jObj);
                         }
                     }

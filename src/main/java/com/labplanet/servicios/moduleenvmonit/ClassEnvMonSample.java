@@ -135,7 +135,6 @@ public class ClassEnvMonSample {
                                     fieldNames, fieldValues, (String) argValues[4], (String) argValues[5], (Integer) argValues[6]);
                         }
                     }
-                    //actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "arguments received", argValues);
                     dynamicDataObjects = new Object[]{actionDiagnoses[actionDiagnoses.length - 1]};
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), actionDiagnoses[actionDiagnoses.length - 1]);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())) {
@@ -150,9 +149,9 @@ public class ClassEnvMonSample {
                 case REENTER_PLATE_READING:
                     String altAuditEntry = null;
                     String altAuditClass = null;
-                    if ("ENTER_PLATE_READING".equalsIgnoreCase(endPoint.getName()) || "REENTER_PLATE_READING".equalsIgnoreCase(endPoint.getName())) {
+                    if (EnvMonSampleAPI.EnvMonSampleAPIactionsEndpoints.ENTER_PLATE_READING.getName().equalsIgnoreCase(endPoint.getName()) || EnvMonSampleAPI.EnvMonSampleAPIactionsEndpoints.REENTER_PLATE_READING.getName().equalsIgnoreCase(endPoint.getName())) {
                         altAuditClass = "DateEnvMonitSampleEvents";
-                        if ("ENTER_PLATE_READING".equalsIgnoreCase(endPoint.getName())) {
+                        if (EnvMonSampleAPI.EnvMonSampleAPIactionsEndpoints.ENTER_PLATE_READING.getName().equalsIgnoreCase(endPoint.getName())) {
                             altAuditEntry = "PLATE_READING_ENTERED";
                         } else {
                             altAuditEntry = "PLATE_READING_REENTERED";

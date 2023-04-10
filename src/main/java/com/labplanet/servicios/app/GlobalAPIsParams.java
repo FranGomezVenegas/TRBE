@@ -419,12 +419,14 @@ public class GlobalAPIsParams extends HttpServlet {
     public static final String LBL_MESSAGE_ES = "message_es";
     public static final String LBL_DIAGNOSTIC = "diagnostic";
     public static final String LBL_TABLE = "table";
+    public static final String LBL_ERROR = "error";
     public static final String LBL_FIELD_NAME = "field_name";
     public static final String LBL_FIELD_VALUE = "field_value";
    
     public static final String LBL_REPOSITORY = "repository";
     public static final String LBL_RPT_INFO = "report_information";
     public static final String LBL_VALUES = "values";
+    public static final String LBL_OBJECT_TYPE = "object_type";
     public static final String LBL_PREFIX_INCUB1 = "incub1_";
     public static final String LBL_PREFIX_INCUB2 = "incub2_";
     public static final String LBL_PREFIX_ALLPENDINGANYINCUB = "allpendinganyincub_";

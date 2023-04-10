@@ -154,7 +154,7 @@ public class DataStudyObjectsVariableValues {
                     new Object[]{objectVariablePropInfo.length, Arrays.toString(fieldsName), procInstanceName});
         }
 
-        String fieldType = objectVariablePropInfo[0][2].toString();
+        String fieldType = objectVariablePropInfo[0][2].toString().toUpperCase();
         switch (DataStudyObjectsVariableValues.VariableTypes.valueOf(fieldType)) {
             case LIST:
                 String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
