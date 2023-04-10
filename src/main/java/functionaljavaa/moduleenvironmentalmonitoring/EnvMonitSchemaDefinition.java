@@ -12,7 +12,6 @@ import static functionaljavaa.requirement.ProcedureDefinitionToInstance.SCHEMA_A
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static trazit.enums.deployrepository.DeployTables.createTableScript;
-import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 
 /**
