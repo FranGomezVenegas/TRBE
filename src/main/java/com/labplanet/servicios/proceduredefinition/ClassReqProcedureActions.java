@@ -10,7 +10,6 @@ import databases.TblsReqs.TablesReqs;
 import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.requirement.ProcedureDefinitionToInstanceUtility.procedureRolesList;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
-import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement.UomImportType;
 import static functionaljavaa.unitsofmeasurement.UnitsOfMeasurement.getUomFromConfig;
 import static functionaljavaa.user.UserAndRolesViews.getPersonByUser;
 import java.io.IOException;
@@ -156,14 +155,6 @@ public class ClassReqProcedureActions {
                     procInstanceName=argValues[2].toString();
                     String uomName=argValues[3].toString();
                     String importType=argValues[4].toString();
-                    UomImportType impTypeEnum=null;
-                    try{
-                        impTypeEnum = UomImportType.valueOf(importType.toUpperCase());
-                    }catch(Exception e){
-                        actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "UOM Import Type "+importType+" not recognized", null);
-                        LPFrontEnd.servletReturnResponseError(request, response, "UOM Import Type "+importType+" not recognized", new Object[]{importType}, "", null);
-                        return;
-                    }   
                     actionDiagnoses=getUomFromConfig(uomName, importType);
                     break;                    
                 case PROC_DEPLOY_CHECKER:

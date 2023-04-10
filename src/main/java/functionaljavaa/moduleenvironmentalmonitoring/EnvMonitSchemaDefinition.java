@@ -56,7 +56,6 @@ public final class EnvMonitSchemaDefinition {
      * @return
      */
     public static final  JSONObject createDBTables(String[] fieldsName){
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         JSONObject jsonObj = new JSONObject();        
         String tblCreateScript="";
         

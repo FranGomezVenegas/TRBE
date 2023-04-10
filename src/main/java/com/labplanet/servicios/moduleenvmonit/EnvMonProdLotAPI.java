@@ -141,21 +141,6 @@ public class EnvMonProdLotAPI extends HttpServlet {
         String language = procReqInstance.getLanguage();
         String[] errObject = new String[]{"Servlet programAPI at " + request.getServletPath()};
 
-        String sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
-        Integer sampleId = 0;
-        if (sampleIdStr != null && sampleIdStr.length() > 0 && !sampleIdStr.equalsIgnoreCase("null")) {
-            sampleId = Integer.valueOf(sampleIdStr);
-        }
-        String testIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_TEST_ID);
-        Integer testId = 0;
-        if (testIdStr != null && testIdStr.length() > 0) {
-            testId = Integer.valueOf(testIdStr);
-        }
-        String resultIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID);
-        Integer resultId = 0;
-        if (resultIdStr != null && resultIdStr.length() > 0) {
-            sampleId = Integer.valueOf(resultIdStr);
-        }
         try (PrintWriter out = response.getWriter()) {
             EnvMonProdLotAPIactionsEndpoints endPoint = null;
             try {

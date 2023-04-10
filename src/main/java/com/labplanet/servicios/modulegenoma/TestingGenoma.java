@@ -14,7 +14,6 @@ import functionaljavaa.testingscripts.TestingAssert;
 import functionaljavaa.testingscripts.TestingAssertSummary;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
-import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -53,8 +52,6 @@ public class TestingGenoma extends HttpServlet {
     private ClassControllerActionsEndpointForTesting getClassControllerObj(String className){
             try (       io.github.classgraph.ScanResult scanResult = new ClassGraph().enableAllInfo()//.acceptPackages("com.xyz")
             .scan()) {    
-                ClassInfoList classesImplementing = scanResult.getClassesImplementing("trazit.enums.ClassControllerActionsEndpointForTesting");
-                ClassInfoList allClasses = scanResult.getAllClasses();
                 ClassInfo classInfo = scanResult.getClassInfo(className);                 
                 return (ClassControllerActionsEndpointForTesting) classInfo;
             }catch(Exception e){

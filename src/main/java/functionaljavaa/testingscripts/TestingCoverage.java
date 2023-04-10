@@ -477,7 +477,6 @@ public final class TestingCoverage {
                 }
             }
         } catch (Exception e) {
-            String errMsg = e.getMessage();
             return;
         }
 

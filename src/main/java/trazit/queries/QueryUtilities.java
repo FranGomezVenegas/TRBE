@@ -49,14 +49,8 @@ public final class QueryUtilities {
         String programKPITableName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_TABLE_NAME);   
         if (programKPITableName!=null) 
             programKPITableNameArr = programKPITableName.split("\\/");
-        String[] programKPIWhereFieldsNameArr = new String[0];
         String programKPIWhereFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME);   
-        if (programKPIWhereFieldsName!=null) 
-            programKPIWhereFieldsNameArr = programKPIWhereFieldsName.split("\\/");
-        String[] programKPIWhereFieldsValueArr = new String[0];
         String programKPIWhereFieldsValue = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE);   
-        if (programKPIWhereFieldsValue!=null) 
-            programKPIWhereFieldsValueArr = programKPIWhereFieldsValue.split("\\/");
         String[] programKPIRetrieveOrGroupingArr = new String[0];
         String programKPIRetrieveOrGrouping = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FIELDS_TO_RETRIEVE_OR_GROUPING);   
         if (programKPIRetrieveOrGrouping!=null) 

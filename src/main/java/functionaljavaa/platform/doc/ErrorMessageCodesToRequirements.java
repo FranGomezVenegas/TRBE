@@ -186,7 +186,6 @@ public class ErrorMessageCodesToRequirements {
                         new Object[]{fldValues[fldIdPosic]});        */
             }
         }catch(Exception e){
-            String errMsg=e.getMessage();
         }
     }
     public static Object[] getDocInfoForMessage(String apiName, String endpointName){
@@ -236,7 +235,6 @@ public class ErrorMessageCodesToRequirements {
             if (Boolean.FALSE.equals(errorTrapFileEs.containsKey(entryName))) 
                 parm.addTagInPropertiesFile(propFileName, errorTrapFilePathEs, entryName, LPNulls.replaceNull("X"));
         }catch(Exception e){
-            String s=e.getMessage();
         }finally{
             parm=null;
         }

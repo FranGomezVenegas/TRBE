@@ -841,18 +841,6 @@ public class ClassEnvMonSampleFrontend {
                     jObjMainObject.put(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_RETRIEVE, jObjProdLotInfo);
                     jObjMainObject.put(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_DISPLAY, jArrPieceOfInfo);
 
-                    String prodLotFieldToRetrieve = request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_PROD_LOT_FIELD_TO_RETRIEVE);
-                    String[] prodLotFieldToRetrieveArr = new String[0];
-                    if ((prodLotFieldToRetrieve != null) && (prodLotFieldToRetrieve.length() > 0)) {
-                        if ("ALL".equalsIgnoreCase(prodLotFieldToRetrieve)) {
-                            prodLotFieldToRetrieveArr = EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableFields());
-                        } else {
-                            prodLotFieldToRetrieveArr = prodLotFieldToRetrieve.split("\\|");
-                        }
-                    }
-                    if (prodLotFieldToRetrieve == null) {
-                        prodLotFieldToRetrieveArr = EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableFields());
-                    }
                     String sampleFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE);
                     String[] sampleFieldToRetrieveArr = new String[0];
                     if ((sampleFieldToRetrieve != null) && (sampleFieldToRetrieve.length() > 0)) {
@@ -1321,14 +1309,6 @@ public class ClassEnvMonSampleFrontend {
                         j++;
                         sampleAnalysisWhereFieldsValue = argValues[j].toString();
                         j++;
-                        String sampleAnalysisResultFieldToRetrieve = argValues[j].toString();
-                        j++;
-                        String[] sampleAnalysisResultFieldToRetrieveArr = null;
-                        if (sampleAnalysisResultFieldToRetrieve.length() == 0 || "ALL".equalsIgnoreCase(sampleAnalysisResultFieldToRetrieve)) {
-                            sampleAnalysisResultFieldToRetrieveArr = EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableFields());
-                        } else {
-                            sampleAnalysisResultFieldToRetrieveArr = sampleAnalysisResultFieldToRetrieve.split("\\|");
-                        }
                         sortFieldsName = argValues[j].toString();
                         j++;
                         jArr = new JSONArray();

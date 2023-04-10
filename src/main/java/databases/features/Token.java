@@ -288,7 +288,6 @@ public final class Token {
         for (String curVal: splitted){
             if (curVal.toUpperCase().contains(procInstanceName.toUpperCase())){
                 String[] splittedEntry = curVal.split("\\*");
-                TblsProcedure.ProcedureInfo endPoint = null;  
                 switch (field){
                     case PROC_INSTANCE_NAME:
                         if (splittedEntry.length>=1)

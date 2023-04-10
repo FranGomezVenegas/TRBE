@@ -219,7 +219,7 @@ public class ProcedureSampleStage {
 
             String rawValue="";
             if (asJsonObject.get("sar2_"+"raw_value").isJsonNull())
-                return LPPlatform.LAB_FALSE+"SAMPLEWITHNORESULT"+"@"+sampleId; //"raw value not entered yet";
+                return LPPlatform.LAB_FALSE+"SAMPLEWITHNORESULT"+"@"+sampleId;
             else
                 rawValue=asJsonObject.get("sar2_"+"raw_value").getAsString();
 

@@ -11,7 +11,6 @@ import databases.Rdbms;
 import databases.SqlWhere;
 import databases.TblsData;
 import databases.TblsDataAudit;
-import databases.features.Token;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.changeofcustody.ChangeOfCustody;
 import functionaljavaa.modulesample.DataModuleSampleAnalysis;
@@ -448,13 +447,9 @@ public class ClassSample {
                     this.messageDynamicData=new Object[]{sampleId};
                     return;
                 case COC_STARTCHANGE:
-                    Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
                     Integer objectId = (Integer) argValues[0];
                     String custodianCandidate = argValues[1].toString();
                     ChangeOfCustody coc = new ChangeOfCustody();
-                    Integer appSessionId=null;
-                    if (token.getAppSessionId()!=null){
-                        appSessionId=Integer.valueOf(token.getAppSessionId());}
                     diagn = coc.cocStartChange(TblsData.TablesData.SAMPLE_COC, TblsData.SampleCoc.SAMPLE_ID, objectId, custodianCandidate);
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
                     this.messageDynamicData=new Object[]{sampleId};

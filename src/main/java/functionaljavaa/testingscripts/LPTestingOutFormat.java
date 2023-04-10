@@ -956,9 +956,6 @@ public class LPTestingOutFormat {
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString())) {
                 return LPPlatform.LAB_FALSE + ": " + objToJsonObj[objToJsonObj.length - 1];
             }
-            if (objToJsonObj.length == 3) {
-                String h = "2";
-            }
             JsonObject jsonObject = (JsonObject) objToJsonObj[1];
 
             int stepNumber = jsonObject.get("step").getAsInt();
@@ -1154,7 +1151,7 @@ public class LPTestingOutFormat {
             Object[] updFldValues = new Object[]{dbErrorCurrentIncrement};
             SqlWhere sqlWhere = new SqlWhere();
             sqlWhere.addConstraint(TblsTesting.Script.SCRIPT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{scriptId}, "");
-            Object[] diagnostic = Rdbms.updateRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPT,
+            Rdbms.updateRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPT,
                     EnumIntTableFields.getTableFieldsFromString(TblsTesting.TablesTesting.SCRIPT, updFldNames), updFldValues, sqlWhere, null);
         }
     }
@@ -1221,10 +1218,8 @@ public class LPTestingOutFormat {
         if (moment == null) {
             return null;
         }
-        JSONArray indxInfo = new JSONArray();
         String indexName = "zzz_db_error_log_id_seq";
         Object[] dbGetIndexLastNumberInUse = dbGetIndexLastNumberInUse(GlobalVariables.Schemas.CONFIG.getName(), procInstanceName, null, indexName);
-        JSONObject currIndxInfo = new JSONObject();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbGetIndexLastNumberInUse[0].toString())) {
             return -1;
         } else {

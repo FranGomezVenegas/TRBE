@@ -245,12 +245,8 @@ public class DeployTables {
     private static final String CREATE_TABLE_END_SCRIPT = ")";
 
     private static String addFldToScript(EnumIntTableFields curFld, BusinessRules bi) {
-        String s = "";
         if (bi == null) {
             return CreateFldTypes.ADD.name();
-        }
-        if ("incubation2_passed".equalsIgnoreCase(curFld.getName())) {
-            s = "breakpoint";
         }
         if (curFld.getFldBusinessRules() == null) {
             return CreateFldTypes.ADD.name();

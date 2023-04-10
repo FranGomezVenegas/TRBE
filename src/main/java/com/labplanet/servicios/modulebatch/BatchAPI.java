@@ -10,7 +10,6 @@ import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPHttp;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.features.Token;
-import functionaljavaa.batch.BatchArray;
 import functionaljavaa.businessrules.BusinessRules;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
@@ -214,21 +213,15 @@ public class BatchAPI extends HttpServlet {
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())) {
                         LPFrontEnd.servletReturnResponseError(request, response,
                                 LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
-                        return;
                     }
-                    String batchName = request.getParameter(PARAMS_BATCH_NAME);
                     break;
                 case LOAD_BATCH_ARRAY:
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_LOADBATCHARRAY.split("\\|"));
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())) {
                         LPFrontEnd.servletReturnResponseError(request, response,
                                 LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
-                        return;
                     }
-                    batchName = request.getParameter(PARAMS_BATCH_NAME);
-                    BatchArray bArray = BatchArray.dbGetBatchArray(procInstanceName, batchName);
                     break;
-
                 default:
                     LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
             }

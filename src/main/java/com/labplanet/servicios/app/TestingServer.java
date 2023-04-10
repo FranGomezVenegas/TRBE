@@ -67,7 +67,6 @@ import lbplanet.utilities.LPNulls;
 import module.instrumentsmanagement.definition.TblsInstrumentsData.ViewsInstrumentsData;
 import module.inventorytrack.definition.TblsInvTrackingData.ViewsInvTrackingData;
 import module.inventorytrack.logic.InvTrackingFrontendMasterData;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntTables;
@@ -174,7 +173,6 @@ public class TestingServer extends HttpServlet {
                 return;
             }
             JSONObject procedure = new JSONObject();
-            JSONArray procEventsIconsDown = new JSONArray();
             JSONObject procEventJson = new JSONObject();
             String[] procEventFldNameArray = PROC_NEW_EVENT_FLD_NAME.split("\\|");
             Rdbms.stablishDBConection("labplanet");

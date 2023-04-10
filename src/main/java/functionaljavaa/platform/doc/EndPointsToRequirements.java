@@ -361,7 +361,6 @@ public final class EndPointsToRequirements {
                 parm.addTagInPropertiesFile(propFileName, filePrefixEs, entryName, LPNulls.replaceNull("X"));
             }
         } catch (Exception e) {
-            String s = e.getMessage();
         } finally {
             parm = null;
         }
