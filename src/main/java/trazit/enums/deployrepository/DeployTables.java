@@ -152,12 +152,12 @@ public class DeployTables {
         if (tableObj.getPrimaryKey() != null) {
             seqScript = ", CONSTRAINT #TBL_pkey PRIMARY KEY ";
             seqScript = seqScript.replace("#TBL", tableObj.getTableName());
-            String fldsInv = "";
+            StringBuilder fldsInv =new StringBuilder(0);
             for (String curFld : tableObj.getPrimaryKey()) {
                 if (fldsInv.length() > 0) {
-                    fldsInv = fldsInv + ", ";
+                    fldsInv.append(", ");
                 }
-                fldsInv = fldsInv + curFld;
+                fldsInv.append(curFld);
             }
             seqScript = seqScript + " (" + fldsInv + ") ";
         }
