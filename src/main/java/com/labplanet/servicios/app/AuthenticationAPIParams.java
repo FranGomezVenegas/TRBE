@@ -26,7 +26,7 @@ import trazit.globalvariables.GlobalVariables.ApiUrls;
  * @author Administrator
  */
 public class AuthenticationAPIParams extends HttpServlet {
-final static String USER_CHANGE_PSWD_SUCCESS="userChangePswd_success";
+static final String USER_CHANGE_PSWD_SUCCESS="userChangePswd_success";
     public enum AuthenticationAPIactionsEndpoints implements EnumIntEndpoints{
         USER_CHANGE_PSWD("USER_CHANGE_PASSWORD", USER_CHANGE_PSWD_SUCCESS, 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
