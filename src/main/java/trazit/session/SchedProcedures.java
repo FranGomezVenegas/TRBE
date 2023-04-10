@@ -16,7 +16,7 @@ import static trazit.session.ProcReqSessionAutomatisms.markAsExpiredTheExpiredOb
  * @author User
  */
 public class SchedProcedures {
-    
+    private SchedProcedures() {throw new IllegalStateException("Utility class");}
     public static void schedProcesses(Token token, String procedureInstance){
         markAsExpiredTheExpiredObjects(procedureInstance);
         if (token!=null&&procedureInstance!=null){

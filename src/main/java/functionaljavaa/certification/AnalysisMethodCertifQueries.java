@@ -11,6 +11,7 @@ import trazit.queries.QueryUtilitiesEnums;
  * @author User
  */
 public class AnalysisMethodCertifQueries {
+    private AnalysisMethodCertifQueries() {throw new IllegalStateException("Utility class");}
     public static Object[] analysisMethodCertifiedUsersList(String methodName, String[] fieldsToRetrieve, String[] fieldsToSort){
         return analysisMethodCertifiedUsersList(methodName, null, fieldsToRetrieve, fieldsToSort);
     }

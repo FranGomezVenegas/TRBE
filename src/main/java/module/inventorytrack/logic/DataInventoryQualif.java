@@ -42,7 +42,7 @@ import static module.inventorytrack.logic.AppInventoryLotAudit.inventoryLotAudit
  * @author Administrator
  */
 public class DataInventoryQualif {
-
+private DataInventoryQualif() {throw new IllegalStateException("Utility class");}
     public static InternalMessage createInventoryLotQualif(String lotName, String category, String reference, Boolean requiresConfigChecks) {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         ResponseMessages messages = procReqSession.getMessages();

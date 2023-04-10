@@ -25,7 +25,7 @@ import trazit.session.InternalMessage;
  * @author User
  */
 public class SchedInstruments {
-    
+    private SchedInstruments() {throw new IllegalStateException("Utility class");}
     public static void instrumentsSchedProcesses(Token token, String procInstanceName){
         String moduleNameFromProcInstance = token.getModuleNameFromProcInstance(procInstanceName);
         if (Boolean.FALSE.equals(GlobalVariables.TrazitModules.INSTRUMENTS.name().equalsIgnoreCase(moduleNameFromProcInstance))) return;

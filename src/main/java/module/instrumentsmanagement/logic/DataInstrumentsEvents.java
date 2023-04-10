@@ -42,7 +42,7 @@ import trazit.session.ResponseMessages;
  * @author User
  */
 public class DataInstrumentsEvents {
-
+private DataInstrumentsEvents() {throw new IllegalStateException("Utility class");}
     public static Object[][] getVariableSetVariablesProperties(String variableSetName) {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         String appProcInstance = LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName());

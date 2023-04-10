@@ -28,7 +28,7 @@ import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntTables;
 
 public class ProcDeployCheckerLogic {
-    
+    private ProcDeployCheckerLogic() {throw new IllegalStateException("Utility class");}
     private static JSONObject publishJson(Boolean anyMismatch, JSONObject mismatchesObj, JSONObject detailsObj){
         JSONObject mainObj=new JSONObject();
         if (anyMismatch==null)

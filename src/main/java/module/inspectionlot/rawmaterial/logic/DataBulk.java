@@ -34,6 +34,7 @@ import trazit.session.ProcedureRequestSession;
  * @author User
  */
 public class DataBulk {
+    private DataBulk() {throw new IllegalStateException("Utility class");}
     public static InternalMessage createBulk(String lotName, String materialName, Double smpQuant, String smpQuantUom, Integer numBulk, Boolean isAdhoc){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         String[] fieldName=new String[]{TblsInspLotRMData.LotBulk.LOT_NAME.getName(), 

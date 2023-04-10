@@ -29,6 +29,7 @@ import trazit.session.ProcedureRequestSession;
  * @author User
  */
 public class DbEncryptionObject {
+    private DbEncryptionObject() {throw new IllegalStateException("Utility class");}
     public static Object[] decryptTableFieldArray(EnumIntTables tblObj, EnumIntTableFields[] fieldsToRetrieve, Object[] fieldValue, Boolean encryptAllFlds){
         Boolean tableHasEncryptedFlds = tableHasEncryptedFlds(tblObj);
         if (Boolean.FALSE.equals(encryptAllFlds)&&Boolean.FALSE.equals(tableHasEncryptedFlds)) return fieldValue;

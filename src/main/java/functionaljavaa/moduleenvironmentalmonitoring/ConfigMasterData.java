@@ -17,7 +17,7 @@ import trazit.session.ProcedureRequestSession;
  * @author User
  */
 public class ConfigMasterData {
-    
+    private ConfigMasterData() {throw new IllegalStateException("Utility class");}
     public static JSONObject getMasterData(String procInstanceName, BusinessRules bi){
         if (procInstanceName==null){
             ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(null, null, false);

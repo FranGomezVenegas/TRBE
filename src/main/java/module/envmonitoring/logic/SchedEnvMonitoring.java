@@ -17,6 +17,7 @@ import trazit.globalvariables.GlobalVariables;
 import trazit.queries.QueryUtilitiesEnums;
 
 public class SchedEnvMonitoring {
+    private SchedEnvMonitoring() {throw new IllegalStateException("Utility class");}
     public static void envMonitSchedProcesses(Token token, String procInstanceName){
         String moduleNameFromProcInstance = token.getModuleNameFromProcInstance(procInstanceName);
         if (Boolean.FALSE.equals(GlobalVariables.TrazitModules.ENVIRONMENTAL_MONITORING.name().equalsIgnoreCase(moduleNameFromProcInstance))) return;

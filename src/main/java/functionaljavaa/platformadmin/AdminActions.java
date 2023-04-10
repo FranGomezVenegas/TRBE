@@ -28,7 +28,7 @@ import trazit.session.ResponseMessages;
  * @author User
  */
 public class AdminActions {
-
+private AdminActions() {throw new IllegalStateException("Utility class");}
     static String insertStatement = "INSERT";
     static String updateStatement = "UPDATE";
     static String deleteteStatement = "DELETE";

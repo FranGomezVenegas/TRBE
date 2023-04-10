@@ -11,6 +11,7 @@ import trazit.enums.EnumIntTables;
 import trazit.globalvariables.GlobalVariables;
 
 public class ProcDeployEnums {
+    private ProcDeployEnums() {throw new IllegalStateException("Utility class");}
     public static String[] moduleBaseSchemas(String procInstanceName){
         return new String[]{
         LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG_AUDIT.getName()), 

@@ -19,6 +19,7 @@ import trazit.globalvariables.GlobalVariables;
  * @author User
  */
 public class ApiMessageReturn {
+    private ApiMessageReturn() {throw new IllegalStateException("Utility class");}
     public static final String JAVADOC_CLASS_FLDNAME = "class";
     public static final String JAVADOC_METHOD_FLDNAME = "method";
     public static final String JAVADOC_LINE_FLDNAME = "line";

@@ -29,7 +29,7 @@ import trazit.session.ApiMessageReturn;
  * @author User
  */
 public class QueryUtilitiesEnums {
-
+private QueryUtilitiesEnums() {throw new IllegalStateException("Utility class");}
     public static Object[][] getTableData(EnumIntTables tblObj, EnumIntTableFields[] fldsToRetrieve, SqlWhere whereObj, String[] orderBy) {
         return getRecordFieldsByFilter(tblObj, fldsToRetrieve, whereObj, orderBy, false, null);
     }

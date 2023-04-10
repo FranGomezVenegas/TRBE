@@ -20,7 +20,9 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author User
  */
-public class ClassReqProcedureQueries {    
+public class ClassReqProcedureQueries {        
+    private ClassReqProcedureQueries() {throw new IllegalStateException("Utility class");}
+    
     static final String NO_DATA="No Data";
     static JSONObject procAccessBlockInRequirements(String procInstanceName){
         String[] fldsArr=new String[]{TblsReqs.ProcedureUsers.USER_NAME.getName()};

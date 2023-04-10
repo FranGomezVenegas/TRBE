@@ -22,6 +22,7 @@ import trazit.queries.QueryUtilitiesEnums;
  * @author User
  */
 public class AppBusinessRules {
+    private AppBusinessRules() {throw new IllegalStateException("Utility class");}
     public static JSONObject allAppBusinessRules(HttpServletRequest request, HttpServletResponse response){
     try{
         Object[][] appBusRulesInfo = QueryUtilitiesEnums.getTableData(TblsApp.TablesApp.APP_BUSINESS_RULES, 

@@ -20,7 +20,7 @@ import trazit.session.ApiMessageReturn;
  * @author User
  */
 public class FromInstanceToInstance {
-    
+    private FromInstanceToInstance() {throw new IllegalStateException("Utility class");}
     public static Object[] tableContent(EnumIntTables tblObj, String sourceDB, String destinationDB){
         Rdbms.closeRdbms();
         Rdbms.stablishDBConection(sourceDB);

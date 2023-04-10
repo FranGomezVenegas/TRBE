@@ -27,7 +27,8 @@ import trazit.session.ProcedureRequestSession;
  *
  * @author User
  */
-public class DbEncryption {
+public class DbEncryption {  
+    private DbEncryption() {throw new IllegalStateException("Utility class");}
     static final String ENCRYPTION_KEY = "Bar12345Bar12345";
     static final String CYPHER_TYPE = "AES/GCM/NoPadding";
     /**

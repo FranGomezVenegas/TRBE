@@ -22,7 +22,7 @@ import trazit.session.ProcedureRequestSession;
  * @author User
  */
 public class IntervalsUtilities {
-    
+    private IntervalsUtilities() {throw new IllegalStateException("Utility class");}
     public static final String DB_FLDNAME_EXPIRY_INTRVL_INFO="expiry_interval_info";            
     
     public static Object[] applyExpiryInterval(String objectWithIntervalTableName, String[] whereFieldNames, Object[] whereFieldValues){        

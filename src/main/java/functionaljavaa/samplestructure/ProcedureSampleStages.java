@@ -27,6 +27,7 @@ import trazit.session.ProcedureRequestSession;
  * @author User
  */
 public class ProcedureSampleStages {
+    private ProcedureSampleStages() {throw new IllegalStateException("Utility class");}
     public static Object[] procedureSampleStagesTimingEvaluateDeviation(Integer sampleId, String stage){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String tagValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, 

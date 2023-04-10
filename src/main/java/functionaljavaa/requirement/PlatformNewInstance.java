@@ -28,6 +28,7 @@ import trazit.session.ApiMessageReturn;
  * @author User
  */
 public class PlatformNewInstance {
+    private PlatformNewInstance() {throw new IllegalStateException("Utility class");}
     public static JSONObject createCheckPlatformProcedure(String platfName){
         String fakeProcName = "check-platform";
         String fakeProcUserName = "demo";

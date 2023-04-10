@@ -22,6 +22,7 @@ import trazit.session.ProcedureRequestSession;
 import trazit.session.ResponseMessages;
 
 public class HolidaysCalendar {
+    private HolidaysCalendar() {throw new IllegalStateException("Utility class");}
 public static InternalMessage createNewCalendar(String name, String[] fldNames, Object[] fldValues){   
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getToken();

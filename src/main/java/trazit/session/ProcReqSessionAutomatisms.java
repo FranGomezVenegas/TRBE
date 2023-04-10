@@ -22,7 +22,7 @@ import lbplanet.utilities.LPPlatform;
  * @author User
  */
 public class ProcReqSessionAutomatisms {
-
+private ProcReqSessionAutomatisms() {throw new IllegalStateException("Utility class");}
     public static void markAsExpiredTheExpiredObjects(String procInstanceName) {
         String procedureActionsUserRoles = Parameter.getBusinessRuleProcedureFile(procInstanceName, LPPlatform.LpPlatformBusinessRules.MARK_EXPIRED_OBJECTS.getAreaName(), LPPlatform.LpPlatformBusinessRules.MARK_EXPIRED_OBJECTS.getTagName(), LPPlatform.LpPlatformBusinessRules.MARK_EXPIRED_OBJECTS.getIsOptional());
         if (procedureActionsUserRoles == null || procedureActionsUserRoles.length() == 0) {

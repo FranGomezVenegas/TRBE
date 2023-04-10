@@ -15,7 +15,7 @@ import trazit.session.ProcedureRequestSession;
 
 // fieldMasked Date-Time only hours and minutes "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')";
 public class DbFieldValueMask {
-
+private DbFieldValueMask() {throw new IllegalStateException("Utility class");}
     public static StringBuilder getFieldMaskedByReferenceTableForTable(EnumIntTableFields curFld) {
         if (GlobalVariables.Schemas.CONFIG.toString().equalsIgnoreCase(curFld.getReferenceTable().getRepository())
                 && "person".equalsIgnoreCase(curFld.getReferenceTable().getTableName())
