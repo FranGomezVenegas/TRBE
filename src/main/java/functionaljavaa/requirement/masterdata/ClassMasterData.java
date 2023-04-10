@@ -81,7 +81,7 @@ public class ClassMasterData {
     
     public ClassMasterData(String instanceName, String objectType, String jsonObj, String moduleName){
         String userCreator="PROCEDURE_DEPLOYMENT";
-
+String START="START";
         Object[] objToJsonObj = convertToJsonObjectStringedObject(jsonObj, true);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString())){
            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, objToJsonObj[1].toString()+".Object: <*1*>", new Object[]{jsonObj});
@@ -155,19 +155,19 @@ public class ClassMasterData {
                         String diagn="";
                         String methodName = jO.getAsJsonObject().get(TblsCnfg.Methods.CODE.getName()).getAsString();
                         Integer methodVersion = -9;
-                        if (jO.getAsJsonObject().has("users_assignment"))
+                        if (jO.getAsJsonObject().has(GlobalAPIsParams.LBL_USERS_ASSIGNMENT))
                             methodVersion=jO.getAsJsonObject().get(TblsCnfg.Methods.CONFIG_VERSION.getName()).getAsInt();
                         else
                             methodVersion=1;
                         JSONObject jLog=new JSONObject();
                         jLog.put(TblsCnfg.Methods.CODE.getName(), methodName);
-                        if (jO.getAsJsonObject().has("users_assignment")){
+                        if (jO.getAsJsonObject().has(GlobalAPIsParams.LBL_USERS_ASSIGNMENT)){
                             Object[] userCertificationEnabled = AnalysisMethodCertif.isUserCertificationEnabled();
                             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userCertificationEnabled[0].toString())){
                                 globalDiagn=userCertificationEnabled[0].toString();
                                 diagn=userCertificationEnabled[userCertificationEnabled.length-1].toString();
                             }else{
-                                String userNameStr=jO.getAsJsonObject().get("users_assignment").getAsString();
+                                String userNameStr=jO.getAsJsonObject().get(GlobalAPIsParams.LBL_USERS_ASSIGNMENT).getAsString();
                                 String[] usersArr=null;
                                 if ("ALL".equalsIgnoreCase(userNameStr)){
                                     Object[] procedureUsers = UserProfile.getProcedureUsers(instanceName, null);
@@ -556,13 +556,13 @@ public class ClassMasterData {
                             if (jO.getAsJsonObject().has(curFldName) && "YES".equalsIgnoreCase(jO.getAsJsonObject().get(curFldName).getAsString()))
                                 stageWithTimingCapture.append("|").append(curStage);
                             curFldName="PREVIOUS STAGES";
-                            if (firstStage.length()==0 && "START".equalsIgnoreCase(jO.getAsJsonObject().get(curFldName).getAsString()))
+                            if (firstStage.length()==0 && START.equalsIgnoreCase(jO.getAsJsonObject().get(curFldName).getAsString()))
                                     firstStage=curStage;
-                            if (jO.getAsJsonObject().has(curFldName) && Boolean.FALSE.equals("START".equalsIgnoreCase(jO.getAsJsonObject().get(curFldName).getAsString())) )
+                            if (jO.getAsJsonObject().has(curFldName) && Boolean.FALSE.equals(START.equalsIgnoreCase(jO.getAsJsonObject().get(curFldName).getAsString())) )
                                 parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(),  
                                     "sampleStage"+curStage+"Previous", jO.getAsJsonObject().get(curFldName).getAsString());
                             curFldName="NEXT STAGES";
-                            if (jO.getAsJsonObject().has(curFldName) && Boolean.FALSE.equals("START".equalsIgnoreCase(jO.getAsJsonObject().get(curFldName).getAsString())) )
+                            if (jO.getAsJsonObject().has(curFldName) && Boolean.FALSE.equals(START.equalsIgnoreCase(jO.getAsJsonObject().get(curFldName).getAsString())) )
                                 parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(),  
                                     "sampleStage"+curStage+"Next", jO.getAsJsonObject().get(curFldName).getAsString());
                         }

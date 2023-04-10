@@ -21,7 +21,7 @@ import trazit.globalvariables.GlobalVariables;
  * @author User
  */
 public class ClassReqProcedureQueries {    
-    
+    static final String NO_DATA="No Data";
     static JSONObject procAccessBlockInRequirements(String procInstanceName){
         String[] fldsArr=new String[]{TblsReqs.ProcedureUsers.USER_NAME.getName()};
         Object[][] procUsers = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USERS.getTableName(), 
@@ -81,7 +81,7 @@ public class ClassReqProcedureQueries {
                 new String[]{TblsReqs.ProcedureFEModel.MODEL_JSON.getName(), TblsReqs.ProcedureFEModel.MODEL_JSON_MOBILE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())){
             JSONObject jObj= new JSONObject();
-            jObj.put("No Data", "No Data");
+            jObj.put(NO_DATA, NO_DATA);
             jArr.add(jObj);
         }else{
             JSONObject jObj= new JSONObject();
@@ -102,7 +102,7 @@ public class ClassReqProcedureQueries {
             whereFldName, whereFldValue, fldsToGet);        
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procTblRows[0][0].toString())){
             JSONObject jObj= new JSONObject();
-            jObj.put("No Data", "No Data");
+            jObj.put(NO_DATA, NO_DATA);
             return jObj;
         }else{       
             JSONObject jObj=new JSONObject();
@@ -115,7 +115,7 @@ public class ClassReqProcedureQueries {
             whereFldName, whereFldValue, fldsToGet);        
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procTblRows[0][0].toString())){
             JSONObject jObj= new JSONObject();
-            jObj.put("No Data", "No Data");
+            jObj.put(NO_DATA, NO_DATA);
             JSONArray jArr= new JSONArray();
             jArr.add(jObj);
             return jArr;
@@ -133,7 +133,7 @@ public class ClassReqProcedureQueries {
         JSONArray jBlockArr = new JSONArray(); 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procTblRows[0][0].toString())){
             JSONObject jObj= new JSONObject();
-            jObj.put("No Data", "No Data");
+            jObj.put(NO_DATA, NO_DATA);
             jBlockArr.add(jObj);
         }else{ 
             try{
@@ -161,7 +161,7 @@ public class ClassReqProcedureQueries {
             whereFldName, whereFldValue, fldsToGet, sortFlds);
         JSONObject jBlockObj = new JSONObject();        
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procTblRows[0][0].toString())){
-            jBlockObj.put("No Data", "No Data");
+            jBlockObj.put(NO_DATA, NO_DATA);
             return jBlockObj;
         }else{
             String curSchema="";

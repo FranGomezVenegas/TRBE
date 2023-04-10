@@ -51,13 +51,12 @@ public class DataInventoryMovements {
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsInvTrackingData.Lot.LOT_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{invLot.getLotName()}, "");
         sqlWhere.addConstraint(TblsInvTrackingData.Lot.REFERENCE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{invLot.getReference()}, "");
-        sqlWhere.addConstraint(TblsInvTrackingData.Lot.CATEGORY, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{invLot.getCategory()}, "");
-        String[] fldNames = new String[]{TblsInvTrackingData.Lot.VOLUME.getName(), TblsInvTrackingData.Lot.VOLUME.getName()};
+        sqlWhere.addConstraint(TblsInvTrackingData.Lot.CATEGORY, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{invLot.getCategory()}, "");        
         Object[] fldValues = new Object[]{newVolume, newVolumeUom};
         RdbmsObject invLotTurnAvailableDiagn = Rdbms.updateTableRecordFieldsByFilter(TablesInvTrackingData.LOT,
                 new EnumIntTableFields[]{TblsInvTrackingData.Lot.VOLUME, TblsInvTrackingData.Lot.VOLUME_UOM},
                 fldValues, sqlWhere, null);
-        fldNames = new String[]{"new_" + TblsInvTrackingData.Lot.VOLUME.getName(), "new_" + TblsInvTrackingData.Lot.VOLUME_UOM.getName(),
+        String[] fldNames = new String[]{"new_" + TblsInvTrackingData.Lot.VOLUME.getName(), "new_" + TblsInvTrackingData.Lot.VOLUME_UOM.getName(),
             "previous_" + TblsInvTrackingData.Lot.VOLUME.getName(), "previous_" + TblsInvTrackingData.Lot.VOLUME_UOM.getName()};
         fldValues = LPArray.addValueToArray1D(fldValues,
                 new Object[]{LPNulls.replaceNull(invLot.getLotFieldValues()[LPArray.valuePosicInArray(invLot.getLotFieldNames(), TblsInvTrackingData.Lot.VOLUME.getName())]).toString(),
