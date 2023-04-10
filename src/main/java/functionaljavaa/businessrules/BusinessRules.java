@@ -23,11 +23,17 @@ import trazit.session.ProcedureRequestSession;
  */
 public class BusinessRules {
     static String startsMark=" *** ";
+    String procedureInstanceName;
+    ArrayList<RuleInfo> procedure;
+    ArrayList<RuleInfo> data;
+    ArrayList<RuleInfo> config;
+    Integer totalBusinessRules;
+
     public BusinessRules(String procedureInstanceName, Integer scriptId, JsonArray busRulesList){
         this.procedureInstanceName=procedureInstanceName;
-        this.procedure=new ArrayList<>();
-        this.data=new ArrayList<>();
-        this.config=new ArrayList<>();
+        this.procedure=new ArrayList();
+        this.data=new ArrayList();
+        this.config=new ArrayList();
         for (int i = 0; i < busRulesList.size(); i++) {
             JsonObject object = (JsonObject) busRulesList.get(i);
             String suffix=object.get("suffix").getAsString();
@@ -44,9 +50,9 @@ public class BusinessRules {
     }
     public BusinessRules(String procedureInstanceName, Integer scriptId){
         this.procedureInstanceName=procedureInstanceName;
-        this.procedure=new ArrayList<>();
-        this.data=new ArrayList<>();
-        this.config=new ArrayList<>();
+        this.procedure=new ArrayList();
+        this.data=new ArrayList();
+        this.config=new ArrayList();
 //        if(1==1) return;
         Object[][] testingBusRulsInfo = null;
         if (scriptId!=null && scriptId>0)
@@ -71,11 +77,6 @@ public class BusinessRules {
         }
         this.totalBusinessRules=this.procedure.size()+this.config.size()+this.data.size();
     }
-    String procedureInstanceName;
-    ArrayList<RuleInfo> procedure;
-    ArrayList<RuleInfo> data;
-    ArrayList<RuleInfo> config;
-    Integer totalBusinessRules;
     public Integer getTotalBusinessRules(){
         return this.totalBusinessRules;}
     public ArrayList<RuleInfo> getProcedureBusinessRules(){return this.procedure;}    

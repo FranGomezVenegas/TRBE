@@ -212,7 +212,7 @@ public final class BatchArray extends Batch{
      * @return ArrayList
      */
     public ArrayList searchStringContent(String searchPattern) {  
-        ArrayList<String> foundPosic = new ArrayList<>();
+        ArrayList<String> foundPosic = new ArrayList();
         for(int i = 0; i < this.getNumRows(); i++){
           for(int j = 0; j < this.getNumCols(); j++){              
             if ((batchPosic[i][j] != null) && (batchPosic[i][j] == null ? searchPattern == null : batchPosic[i][j].equals(searchPattern)) ){
@@ -231,7 +231,7 @@ public final class BatchArray extends Batch{
      */
     public Object[] dbCreateBatchArray(String schemaName)
     {
-        List<String> singleDArray = new ArrayList<>();
+        List<String> singleDArray = new ArrayList();
         for (String[] array :this.batchPosic) {         
               singleDArray.addAll(Arrays.asList(array));
         }       

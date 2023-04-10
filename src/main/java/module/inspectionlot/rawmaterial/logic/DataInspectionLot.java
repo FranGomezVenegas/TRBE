@@ -92,7 +92,7 @@ public class DataInspectionLot {
         private final ArrayList<String[]> preReqs;
     }
         public static String getStatusFirstCode(){
-            ArrayList<String[]> preReqs = new ArrayList<>();
+            ArrayList<String[]> preReqs = new ArrayList();
             preReqs.add(0, new String[]{"data","sampleStatusesByBusinessRules"});
             String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
             String sampleStatusFirst = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataInspectionLotBusinessRules.SUFFIX_STATUS_FIRST.getAreaName(), DataInspectionLotBusinessRules.SUFFIX_STATUS_FIRST.getTagName(), preReqs, true);     

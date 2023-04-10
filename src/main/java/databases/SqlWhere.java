@@ -21,10 +21,10 @@ public class SqlWhere {
     private final ArrayList<SqlWhereEntry> allWhereEntries;
     
     public SqlWhere(){
-        this.allWhereEntries = new ArrayList<>();
+        this.allWhereEntries = new ArrayList();
     }
     public SqlWhere(EnumIntTables tblObj, String[] fldName, Object[] fldValue){
-        ArrayList<SqlWhereEntry> myEntries = new ArrayList<>();
+        ArrayList<SqlWhereEntry> myEntries = new ArrayList();
         for (int iFld=0;iFld<fldName.length;iFld++){
             SqlStatement.WHERECLAUSE_TYPES symb;
             symb = null;
@@ -63,11 +63,11 @@ public class SqlWhere {
     }
 
     public SqlWhere(SqlWhereEntry[] orConstraint){
-        ArrayList<SqlWhereEntry> myEntries = new ArrayList<>();
+        ArrayList<SqlWhereEntry> myEntries = new ArrayList();
         this.allWhereEntries = myEntries;
     }    
     public SqlWhere(EnumIntViews viewObj, String[] fldName, Object[] fldValue){
-        ArrayList<SqlWhereEntry> myEntries = new ArrayList<>();
+        ArrayList<SqlWhereEntry> myEntries = new ArrayList();
         for (int iFld=0;iFld<fldName.length;iFld++){
             SqlStatement.WHERECLAUSE_TYPES symb;
             symb = null;

@@ -67,7 +67,7 @@ public class SamplingPlanEntry {
         this.errorsArr=new String[]{};
         this.errorsjArr=new JSONArray();
         this.hasErrors=false;
-        List<SamplingPlanEntryItem> myList = new ArrayList<>();
+        List<SamplingPlanEntryItem> myList = new ArrayList();
         Object[][] materialSampPlanInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsInspLotRMConfig.TablesInspLotRMConfig.MATERIAL_SAMPLING_PLAN.getTableName(), 
             new String[]{TblsInspLotRMConfig.MaterialSamplingPlan.MATERIAL.getName()}, new Object[]{materialName}, 
             new String[]{TblsInspLotRMConfig.MaterialSamplingPlan.ENTRY_NAME.getName(), TblsInspLotRMConfig.MaterialSamplingPlan.ANALYSIS_VARIATION.getName(), TblsInspLotRMConfig.MaterialSamplingPlan.ALGORITHM.getName(), TblsInspLotRMConfig.MaterialSamplingPlan.FIX_SAMPLES_NUM.getName()});

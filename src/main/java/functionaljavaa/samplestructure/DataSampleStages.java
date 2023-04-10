@@ -116,7 +116,7 @@ public class DataSampleStages {
 
         @Override
         public ArrayList<String[]> getPreReqs() {
-            ArrayList<String[]> d = new ArrayList<>();
+            ArrayList<String[]> d = new ArrayList();
             if (preReqsBusRules != null && preReqsBusRules.length() > 0) {
                 String[] rulesArr = preReqsBusRules.split("\\|");
                 for (String curRule : rulesArr) {

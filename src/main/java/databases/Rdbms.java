@@ -2053,7 +2053,7 @@ public class Rdbms {
     public static HashMap<String[], Object[][]> dbTableGetFieldDefinition(String schemaName, String tableName, String alternativeProcInstanceName) {
         schemaName = addSuffixIfItIsForTesting(schemaName, tableName);
         schemaName = schemaName.replace("\"", "");
-        HashMap<String[], Object[][]> hm = new HashMap<>();
+        HashMap<String[], Object[][]> hm = new HashMap();
         String[] fieldsToRetrieve = new String[]{"table_schema", "table_name", "column_name", "data_type"};
         String[] keyFieldValueNew = new String[]{schemaName, tableName};
 
@@ -2250,21 +2250,24 @@ public class Rdbms {
         if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE_CONFIG.getName())) {
             return schemaName;
         }
-        if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE_AUDIT.getName()) &&
-            Boolean.FALSE.equals(LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureAuditSchema_TablesWithNoTestingClone, tableName))) {
+        if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE_AUDIT.getName())) {
+            if (!LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureAuditSchema_TablesWithNoTestingClone, tableName)) {
                 if (schemaName.endsWith("\"")) {
                     schemaName = schemaName.substring(0, schemaName.length() - 1) + "_testing\"";
                 } else {
                     schemaName = schemaName + "_testing";
                 }
                 return schemaName;
+             
+        }
         }
         if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE.getName())) {
-            if (Boolean.FALSE.equals(LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone, tableName))
-                    && (schemaName.endsWith("\""))) {
+            if (!LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone, tableName)) {
+                if (schemaName.endsWith("\"")) {
                 schemaName = schemaName.substring(0, schemaName.length() - 1) + "_testing\"";
             } else {
                 schemaName = schemaName + "_testing";
+            }
             }
             return schemaName;
         }

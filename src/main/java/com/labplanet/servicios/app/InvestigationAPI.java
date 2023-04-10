@@ -89,7 +89,7 @@ public class InvestigationAPI extends HttpServlet {
         }
 
         public HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex) {
-            HashMap<HttpServletRequest, Object[]> hm = new HashMap<>();
+            HashMap<HttpServletRequest, Object[]> hm = new HashMap();
             Object[] argValues = new Object[0];
             for (LPAPIArguments curArg : this.arguments) {
                 argValues = LPArray.addValueToArray1D(argValues, curArg.getName() + ":" + getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
@@ -162,7 +162,7 @@ public class InvestigationAPI extends HttpServlet {
         }
 
         public HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex) {
-            HashMap<HttpServletRequest, Object[]> hm = new HashMap<>();
+            HashMap<HttpServletRequest, Object[]> hm = new HashMap();
             Object[] argValues = new Object[0];
             for (LPAPIArguments curArg : this.arguments) {
                 argValues = LPArray.addValueToArray1D(argValues, curArg.getName() + ":" + getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));

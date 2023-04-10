@@ -136,7 +136,7 @@ public class SqlStatement {
      * @return
      */
     public HashMap<String, Object[]> buildSqlStatement(String operation, String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, String[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct) {
-        HashMap<String, Object[]> hm = new HashMap<>();
+        HashMap<String, Object[]> hm = new HashMap();
 
         DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
         String queryWhere = "";
@@ -188,7 +188,7 @@ public class SqlStatement {
     }
 
     public HashMap<String, Object[]> buildSqlStatementCounter(String schemaName, String tableName, String[] whereFields, Object[] whereFieldValues, String[] fieldsToGroup, String[] fieldsToOrder) {
-        HashMap<String, Object[]> hm = new HashMap<>();
+        HashMap<String, Object[]> hm = new HashMap();
 
         String queryWhere = "";
         schemaName = setSchemaName(schemaName);
