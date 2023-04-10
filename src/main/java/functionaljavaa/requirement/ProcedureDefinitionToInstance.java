@@ -296,10 +296,10 @@ public class ProcedureDefinitionToInstance {
                 jObj.put(LPPlatform.LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName(), allProcActionsInOne + " " + "error adding" + insertRecordInTable.getErrorMessageCode());
             }
             jArr.add(jObj);
-            String esigns = "";
-            String verifUsers = "";
-            String actionConfirm = "";
-            String justifReason = "";
+            StringBuilder esigns = new StringBuilder(0);
+            StringBuilder verifUsers = new StringBuilder(0);
+            StringBuilder actionConfirm = new StringBuilder(0);
+            StringBuilder justifReason = new StringBuilder(0);
             for (Object[] curAction : procUsrReqs) {
                 String actionName = LPNulls.replaceNull(curAction[0]).toString();
                 String[] allRoles = LPNulls.replaceNull(curAction[1]).toString().split("\\|");
@@ -320,27 +320,27 @@ public class ProcedureDefinitionToInstance {
                     if (confirmDialog.length > 0) {
                         if (Arrays.toString(confirmDialog).toLowerCase().contains("esign")) {
                             if (esigns.length() > 0) {
-                                esigns = esigns + "|";
+                                esigns.append("|");
                             }
-                            esigns = esigns + actionName;
+                            esigns.append(actionName);
                         }
                         if (Arrays.toString(confirmDialog).toLowerCase().contains("user")) {
                             if (verifUsers.length() > 0) {
-                                verifUsers = verifUsers + "|";
+                                verifUsers.append("|");
                             }
-                            verifUsers = verifUsers + actionName;
+                            verifUsers.append(actionName);
                         }
                         if (Arrays.toString(confirmDialog).toLowerCase().contains("confirm")) {
                             if (actionConfirm.length() > 0) {
-                                actionConfirm = actionConfirm + "|";
+                                actionConfirm.append("|");
                             }
-                            actionConfirm = actionConfirm + actionName;
+                            actionConfirm.append(actionName);
                         }
                         if (Arrays.toString(confirmDialog).toLowerCase().contains("justif")) {
                             if (justifReason.length() > 0) {
-                                justifReason = justifReason + "|";
+                                justifReason.append("|");
                             }
-                            justifReason = justifReason + actionName;
+                            justifReason.append(actionName);
                         }
                     }
                     String[] confirmDialogDetail = LPNulls.replaceNull(curAction[3]).toString().split("\\|");
@@ -1245,8 +1245,8 @@ public class ProcedureDefinitionToInstance {
                 jsonArr.add(jsonObj);
                 return jsonArr;
             }
-            String allEnabledActions = "";
-            String allEsigReq = "";
+            StringBuilder allEnabledActions = new StringBuilder(0);
+            StringBuilder allEsigReq = new StringBuilder(0);
             String allUserConfirmReq = "";
             for (Object[] curProcActionEnabled : procActionsEnabledBusRules) {
                 String curAction = LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.WINDOW_ACTION.getName())]).toString();
@@ -1254,7 +1254,7 @@ public class ProcedureDefinitionToInstance {
                     curAction = curAction.trim();
                     String confirmDialog = LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.CONFIRM_DIALOG.getName())]).toString();
                     if ("user_esign".equalsIgnoreCase(confirmDialog)) {
-                        allEsigReq = allEsigReq + "|" + curAction;
+                        allEsigReq.append("|").append(curAction);
                     }
                     RdbmsObject diagn = Rdbms.insertRecord(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE,
                             new String[]{TblsProcedure.ProcedureBusinessRules.AREA.getName(), TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()},
@@ -1263,18 +1263,17 @@ public class ProcedureDefinitionToInstance {
                     JSONObject convertArrayRowToJSONObject = LPJson.convertArrayRowToJSONObject(fildsToGet, curProcActionEnabled);
                     jsonArr.add(convertArrayRowToJSONObject);
                     if (allEnabledActions.length() > 0) {
-                        allEnabledActions = allEnabledActions + "|";
+                        allEnabledActions.append("|");
                     }
-                    allEnabledActions = allEnabledActions+ LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.WINDOW_ACTION.getName())]).toString();
+                    allEnabledActions.append(LPNulls.replaceNull(curProcActionEnabled[LPArray.valuePosicInArray(fildsToGet, TblsReqs.ProcedureUserRequirements.WINDOW_ACTION.getName())]).toString());
                 }
             }
             Parameter parm = new Parameter();
-            RdbmsObject addProcBusinessRule = parm.addProcBusinessRule(LpPlatformBusinessRules.PROCEDURE_ACTIONS.getAreaName(),
-                    LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName(), allEnabledActions);
-
-            addProcBusinessRule = parm.addProcBusinessRule(LpPlatformBusinessRules.ESIGN_REQUIRED.getAreaName(),
-                    LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName(), allEsigReq);
-            addProcBusinessRule = parm.addProcBusinessRule(LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getAreaName(),
+            parm.addProcBusinessRule(LpPlatformBusinessRules.PROCEDURE_ACTIONS.getAreaName(),
+                    LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName(), allEnabledActions.toString());
+            parm.addProcBusinessRule(LpPlatformBusinessRules.ESIGN_REQUIRED.getAreaName(),
+                    LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName(), allEsigReq.toString());
+            parm.addProcBusinessRule(LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getAreaName(),
                     LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName(), allUserConfirmReq);
             return jsonArr;
         } catch (Exception e) {

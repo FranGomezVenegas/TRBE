@@ -990,13 +990,13 @@ public class LPTestingOutFormat {
                     if (numObjectsFound.equals(stepObjectPosic)) {
                         String valueReplaced = object.get("object_name").getAsString();
                         if (objToJsonObj.length == 3) {
-                            String objsToJsonObjToStr = "";
+                            StringBuilder objsToJsonObjToStr = new StringBuilder(0);
                             String[] valueArr = value.toString().split("\\*");
                             for (int iObjs = 0; iObjs < valueArr.length - 1; iObjs++) {
                                 if (objsToJsonObjToStr.length() > 0) {
-                                    objsToJsonObjToStr = objsToJsonObjToStr + "*";
+                                    objsToJsonObjToStr.append("*");
                                 }
-                                objsToJsonObjToStr = objsToJsonObjToStr + valueArr[iObjs];
+                                objsToJsonObjToStr.append(valueArr[iObjs]);
                             }
                             valueReplaced = objsToJsonObjToStr + "*" + valueReplaced;
                         }
@@ -1078,14 +1078,14 @@ public class LPTestingOutFormat {
     }
 
     public Object[] checkMissingMandatoryParamValuesByCall(LPAPIArguments[] args, Object[] testingRowValues) {
-        String missingValues = "";
+        StringBuilder missingValues = new StringBuilder(0);
         for (int i = 0; i < args.length; i++) {
             String curArgValue = LPTestingOutFormat.csvExtractFieldValueString(testingRowValues[getActionNamePosic() + i]);
             if (LPNulls.replaceNull(curArgValue).length() == 0 && Boolean.TRUE.equals(args[i].getMandatory())) {
                 if (missingValues.length() > 0) {
-                    missingValues = missingValues + ", ";
+                    missingValues.append(", ");
                 }
-                missingValues = missingValues + args[i].getName();
+                missingValues.append(args[i].getName());
             }
         }
         if (missingValues.length() == 0) {

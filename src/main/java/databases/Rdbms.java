@@ -1935,31 +1935,32 @@ public class Rdbms {
     public static Object[] dbSchemaAndTestingSchemaTablesAndFieldsIsMirror(String procInstanceName, String schemaName1) {
         String schema = LPPlatform.buildSchemaName(procInstanceName, schemaName1).replace("\"", "");
         String[] filter = new String[]{schema};
-        String query = " SELECT distinct table_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema in (?)";
+        StringBuilder query = new StringBuilder();
+        query.append(" SELECT distinct table_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema in (?)");
         if (GlobalVariables.Schemas.PROCEDURE.getName().equalsIgnoreCase(schemaName1)) {
-            query = query + " and table_name not in(";
+            query.append(" and table_name not in(");
             for (int i = 0; i < ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone.length; i++) {
                 if (i > 0) {
-                    query = query + ",";
+                    query.append(",");
                 }
-                query = query + "?";
+                query.append("?");
             }
-            query = query + ")";
+            query.append(")");
             filter = LPArray.addValueToArray1D(filter, ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone);
         }
         if (GlobalVariables.Schemas.PROCEDURE_AUDIT.getName().equalsIgnoreCase(schemaName1)) {
-            query = query + " and table_name not in(";
+            query.append(" and table_name not in(");
             for (int i = 0; i < ProcedureDefinitionToInstance.ProcedureAuditSchema_TablesWithNoTestingClone.length; i++) {
                 if (i > 0) {
-                    query = query + ",";
+                    query.append(",");
                 }
-                query = query + "?";
+                query.append("?");
             }
-            query = query + ")";
+            query.append(")");
             filter = LPArray.addValueToArray1D(filter, ProcedureDefinitionToInstance.ProcedureAuditSchema_TablesWithNoTestingClone);
         }
         try {
-            ResultSet res = Rdbms.prepRdQuery(query, filter);
+            ResultSet res = Rdbms.prepRdQuery(query.toString(), filter);
             if (res == null) {
                 return new Object[]{LPArray.array1dTo2d(ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_THE_SAME, new Object[]{procInstanceName, schemaName1}), 7), null};
             }
@@ -1981,7 +1982,7 @@ public class Rdbms {
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_THE_SAME, new Object[]{procInstanceName, schemaName1});
             }
         } catch (SQLException er) {
-            Logger.getLogger(query).log(Level.SEVERE, null, er);
+            Logger.getLogger(query.toString()).log(Level.SEVERE, null, er);
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{er.getLocalizedMessage() + er.getCause(), query});
         }
     }
@@ -1995,22 +1996,21 @@ public class Rdbms {
         String schemaTesting = LPPlatform.buildSchemaName(procInstanceName, schemaName2).replace("\"", "");
         String[] fieldsToRetrieve = new String[]{"table_name", "column_name", "counter"};
         String[] filter = new String[]{schema, schemaTesting};
-
-        String query = "select * from ( "
-                + " SELECT  table_name, column_name, count(*) as counter FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema in (?, ?)";
+        StringBuilder query = new StringBuilder(0);
+        query.append("select * from ( "
+                + " SELECT  table_name, column_name, count(*) as counter FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema in (?, ?)");
         if (tablesToCheck != null && tablesToCheck.length > 0) {
-            query = query + " and table_name in (";
+            query.append(" and table_name in (");
             for (Object curTblChck : tablesToCheck) {
-                query = query + "?,";
+                query.append("?,");
                 filter = LPArray.addValueToArray1D(filter, curTblChck.toString());
             }
-            query = query.substring(0, query.length() - 1);
-            query = query + ")";
-            //filter=LPArray.addValueToArray1D(filter, tablesToCheck);
+            query.deleteCharAt(query.length() - 1);
+            query.append(")");
         }
-        query = query + " group by table_name, column_name) as match where counter <>2";
+        query.append(" group by table_name, column_name) as match where counter <>2");
         try {
-            ResultSet res = Rdbms.prepRdQuery(query, filter);
+            ResultSet res = Rdbms.prepRdQuery(query.toString(), filter);
             if (res == null) {
                 return new Object[]{LPArray.array1dTo2d(ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_THE_SAME, new Object[]{procInstanceName, schemaName1}), 7), fieldsToRetrieve};
             }
@@ -2034,7 +2034,7 @@ public class Rdbms {
                 return new Object[]{LPArray.array1dTo2d(ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_THE_SAME, new Object[]{procInstanceName, schemaName1}), 7), fieldsToRetrieve};
             }
         } catch (SQLException er) {
-            Logger.getLogger(query).log(Level.SEVERE, null, er);
+            Logger.getLogger(query.toString()).log(Level.SEVERE, null, er);
             return new Object[]{LPArray.array1dTo2d(ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{er.getLocalizedMessage() + er.getCause(), query}), 7), fieldsToRetrieve};
         }
     }
@@ -2258,16 +2258,16 @@ public class Rdbms {
                     schemaName = schemaName + "_testing";
                 }
                 return schemaName;
-             
-        }
+
+            }
         }
         if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE.getName())) {
             if (!LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone, tableName)) {
                 if (schemaName.endsWith("\"")) {
-                schemaName = schemaName.substring(0, schemaName.length() - 1) + "_testing\"";
-            } else {
-                schemaName = schemaName + "_testing";
-            }
+                    schemaName = schemaName.substring(0, schemaName.length() - 1) + "_testing\"";
+                } else {
+                    schemaName = schemaName + "_testing";
+                }
             }
             return schemaName;
         }

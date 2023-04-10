@@ -542,9 +542,9 @@ public class ClassMasterData {
                     break;
                 case MD_STAGES: 
                     asJsonArray = jsonObject.get(GlobalAPIsParams.LBL_VALUES).getAsJsonArray();
-                    String allStages="";
-                    String stageWithAutoMoveToNext="";
-                    String stageWithTimingCapture="";
+                    StringBuilder allStages=new StringBuilder(0);
+                    StringBuilder stageWithAutoMoveToNext=new StringBuilder(0);
+                    StringBuilder stageWithTimingCapture=new StringBuilder(0);
                     String curFldName="";
                     String firstStage="";
                     Parameter parm=new Parameter();
@@ -552,13 +552,13 @@ public class ClassMasterData {
                         curFldName="NAME";
                         if (jO.getAsJsonObject().has(curFldName)){
                             String curStage=jO.getAsJsonObject().get(curFldName).getAsString();
-                            allStages=allStages+"|"+curStage;
+                            allStages.append("|").append(curStage);
                             curFldName="LET AUTO-NEXT STAGE?";
                             if (jO.getAsJsonObject().has(curFldName) && "YES".equalsIgnoreCase(jO.getAsJsonObject().get(curFldName).getAsString()))
-                                stageWithAutoMoveToNext=stageWithAutoMoveToNext+"|"+curStage;                        
+                                stageWithAutoMoveToNext.append("|").append(curStage);
                             curFldName="TIMING CAPTURE?";
                             if (jO.getAsJsonObject().has(curFldName) && "YES".equalsIgnoreCase(jO.getAsJsonObject().get(curFldName).getAsString()))
-                                stageWithTimingCapture=stageWithTimingCapture+"|"+curStage;
+                                stageWithTimingCapture.append("|").append(curStage);
                             curFldName="PREVIOUS STAGES";
                             if (firstStage.length()==0 && "START".equalsIgnoreCase(jO.getAsJsonObject().get(curFldName).getAsString()))
                                     firstStage=curStage;
@@ -578,15 +578,14 @@ public class ClassMasterData {
                     parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(), "sampleStagesFirst_en", firstStage);
                     parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(), "sampleStagesFirst_es", firstStage);
                     parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(), "sampleStagesFirst_es", firstStage);
-                    parm.addProcBusinessRule(GlobalVariables.Schemas.PROCEDURE.getName(), "sampleStagesTimingCaptureStages", stageWithTimingCapture);
-                    parm.addProcBusinessRule(GlobalVariables.Schemas.PROCEDURE.getName(), "sampleStagesActionAutoMoveToNext", stageWithAutoMoveToNext);
+                    parm.addProcBusinessRule(GlobalVariables.Schemas.PROCEDURE.getName(), "sampleStagesTimingCaptureStages", stageWithTimingCapture.toString());
+                    parm.addProcBusinessRule(GlobalVariables.Schemas.PROCEDURE.getName(), "sampleStagesActionAutoMoveToNext", stageWithAutoMoveToNext.toString());
                     parm.addProcBusinessRule(GlobalVariables.Schemas.PROCEDURE.getName(), "sampleStagesMode", "ENABLED");
                     
                     break;
                 case MD_STAGES_TIMING_INTERVAL:    
                     asJsonArray = jsonObject.get(GlobalAPIsParams.LBL_VALUES).getAsJsonArray();
                     for (JsonElement jO: asJsonArray){
-                        String diagn="";
                         JSONObject jLog=new JSONObject();
                         Object[] fldsInfo=getFldsNamesAndValues(TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL, jO);
                         if (fldsInfo.length==3)

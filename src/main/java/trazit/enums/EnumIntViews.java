@@ -24,9 +24,7 @@ public interface EnumIntViews {
     public static String getViewScriptCreation(EnumIntViews vwDef, String procInstanceName, Boolean run, Boolean refreshTableIfExists, Boolean isForTesting){
         if (vwDef.getTablesRequiredInView()==null)
             return "ERROR: No Views specified to build the view";
-        String vwScript="";
-//        String vwScript=" SELECT "+getViewFldsList(vwDef, procInstanceName).toString()+" from ";
-//        vwScript=vwScript.replace("#SCHEMA_CONFIG", LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), "config", isForTesting, ""));
+        StringBuilder vwScript = new StringBuilder(0);
         Integer iterations=0;
         String[] tblAliases=new String[]{};
         for (EnumIntTablesJoin curTblJoin: vwDef.getTablesRequiredInView()){
@@ -36,8 +34,8 @@ public interface EnumIntViews {
             else
                 mainTableSchemaName=LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), curTblJoin.getMainTable().getRepositoryName(), isForTesting, curTblJoin.getMainTable().getTableName());       
             if (iterations==0){
-                vwScript=vwScript+" "
-                    +mainTableSchemaName+"."+curTblJoin.getMainTable().getTableName()+" "+curTblJoin.getMainTableAlias();
+                vwScript.append(" ").append(mainTableSchemaName).append(".").append(curTblJoin.getMainTable().getTableName())
+                        .append(" ").append(curTblJoin.getMainTableAlias());
                 tblAliases=LPArray.addValueToArray1D(tblAliases, curTblJoin.getMainTableAlias());
             }
             Object[] dbMainTableExists = Rdbms.dbTableExists(mainTableSchemaName.replace("\"", ""), curTblJoin.getMainTable().getTableName());
@@ -53,34 +51,35 @@ public interface EnumIntViews {
                 return "View "+childTableSchemaName+"."+curTblJoin.childTbl.getTableName()+" was not found but declared as mandatory for this view, cannot continue";
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbMainTableExists[0].toString()) &&
                 LPPlatform.LAB_TRUE.equalsIgnoreCase(dbChildTableExists[0].toString())){
-                vwScript=vwScript+curTblJoin.getJoinType().getSqlClause()+" "
-                    +childTableSchemaName+"."+curTblJoin.getChildTable().getTableName()+" "+curTblJoin.getChildTableAlias()+" on ";
+                vwScript.append(curTblJoin.getJoinType().getSqlClause()).append(" ")
+                    .append(childTableSchemaName).append(".").append(curTblJoin.getChildTable().getTableName()+" "+curTblJoin.getChildTableAlias()).append(" on ");
                 tblAliases=LPArray.addValueToArray1D(tblAliases, curTblJoin.getChildTableAlias());
                 Integer numJoins=0;
                 if (curTblJoin.getJoins()!=null){
                     for (EnumIntTableFields[] curJoin: curTblJoin.getJoins()){
                         if (numJoins>0)
-                            vwScript=vwScript+" and ";
+                            vwScript.append(" and ");
                         if (curJoin[0]!=null&&curJoin[1]!=null) 
-                            vwScript=vwScript+" "+curTblJoin.getMainTableAlias()+"."+curJoin[0].getName()+" = "+curTblJoin.getChildTableAlias()+"."+curJoin[1].getName();
+                            vwScript.append(" ").append(curTblJoin.getMainTableAlias()).append(".").append(curJoin[0].getName())
+                                    .append(" = ").append(curTblJoin.getChildTableAlias()).append(".").append(curJoin[1].getName());
                         numJoins++;
                         tblAliases=LPArray.addValueToArray1D(tblAliases, curTblJoin.getChildTableAlias());
                     }
                 }
                 if (curTblJoin.getExtraJoins()!=null)
-                    vwScript=vwScript+" "+curTblJoin.getExtraJoins();
+                    vwScript.append(" ").append(curTblJoin.getExtraJoins());
             }
             iterations++;
         }
         if (vwDef.getExtraFilters()!=null)
-                    vwScript=vwScript+" "+vwDef.getExtraFilters();
+                    vwScript.append(" ").append(vwDef.getExtraFilters());
         
-        vwScript=" SELECT "+getViewFldsList(vwDef, procInstanceName, tblAliases).toString()+" from "+vwScript;
-        vwScript=vwScript.replace("#SCHEMA_CONFIG", LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), "config", isForTesting, ""));
-        vwScript=vwScript.replace("#SCHEMA_DATA", LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), "data", isForTesting, ""));
+        vwScript=new StringBuilder(" SELECT ").append(getViewFldsList(vwDef, procInstanceName, tblAliases).toString()).append(" from ").append(vwScript);
+        vwScript=new StringBuilder(vwScript.toString().replace("#SCHEMA_CONFIG", LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), "config", isForTesting, "")));
+        vwScript=new StringBuilder(vwScript.toString().replace("#SCHEMA_DATA", LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), "data", isForTesting, "")));
         
-        vwScript="create view "+LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), vwDef.getRepositoryName(), isForTesting, vwDef.getViewName())+"."+vwDef.getViewName()+" AS "+vwScript;
-        return vwScript;
+        vwScript=new StringBuilder("create view ").append(LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), vwDef.getRepositoryName(), isForTesting, vwDef.getViewName())).append(".").append(vwDef.getViewName()).append(" AS ").append(vwScript);
+        return vwScript.toString();
     }
     static StringBuilder getViewFldsList(EnumIntViews vwDef, String procInstanceName, String[] tblAliases){
         StringBuilder fldsStr=new StringBuilder(0);

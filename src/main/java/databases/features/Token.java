@@ -188,11 +188,12 @@ public final class Token {
         UserProfile usProf = new UserProfile();
         Object[] allUserProcedurePrefix = usProf.getAllUserProcedurePrefix(userDBId);
         myParams.put(TOKEN_PARAM_USER_PROCEDURES, Arrays.toString(allUserProcedurePrefix));
-        String procHashCodes="";  
-        String procModulesArr="";
+        StringBuilder procHashCodes=new StringBuilder(0);  
+        StringBuilder procModulesArr=new StringBuilder(0);  
         for (Object curProcPrefix: allUserProcedurePrefix){            
             if (Boolean.FALSE.equals(GlobalVariables.PROC_MANAGEMENT_SPECIAL_ROLE.equalsIgnoreCase(curProcPrefix.toString()))){
-                if (procHashCodes.length()>0)procHashCodes=procHashCodes+"|";
+                if (procHashCodes.length()>0)
+                    procHashCodes.append("|");
                 Object[][] procInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(curProcPrefix.toString(), GlobalVariables.Schemas.PROCEDURE.getName()), 
                     TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), 
                     new String[]{TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{curProcPrefix.toString()}, 
@@ -200,10 +201,10 @@ public final class Token {
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfo[0][0].toString()))
                     return "ERROR: procedure_info into node procedure not found for instance "+curProcPrefix.toString();  
                 else{
-                    procHashCodes=procHashCodes+curProcPrefix.toString()+"*"+procInfo[0][0].toString()+"*"+procInfo[0][1].toString();            
+                    procHashCodes.append(curProcPrefix.toString()).append("*").append(procInfo[0][0].toString()).append("*").append(procInfo[0][1].toString());
                     if (procModulesArr.length()>0)
-                        procModulesArr=procModulesArr+"|";
-                    procModulesArr=procModulesArr+curProcPrefix.toString()+"*"+procInfo[0][2].toString();
+                        procModulesArr.append("|");
+                    procModulesArr.append(curProcPrefix.toString()).append("*").append(procInfo[0][2].toString());
                 }
             }
         }   
@@ -222,7 +223,7 @@ public final class Token {
             this.datetimeFormatAtPlatformLvl=appBusRulesInfo[0][0].toString();
         }
         myParams.put(TKNPRM_USR_PROCS_VERSIONS_HASHCODES, procHashCodes);
-        this.procsModuleNames=procModulesArr;
+        this.procsModuleNames=procModulesArr.toString();
         myParams.put(TOKEN_PARAM_PROCS_MODULE_NAME, procModulesArr);
         try{
             return JWT.create()

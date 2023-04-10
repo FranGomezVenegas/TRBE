@@ -288,7 +288,7 @@ public class AnalysisMethodCertif {
             new Object[]{CertifLight.GREEN.toString()},
             fieldsToGet,new String[]{TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(certifRowExpDateInfo[0][0].toString())) return;
-        String fldIdStr="";
+        StringBuilder fldIdStr=new StringBuilder();
         for (Object[] curRow: certifRowExpDateInfo){
             Calendar certifDateCal = Calendar.getInstance();
             String expDateStr=LPNulls.replaceNull(curRow[LPArray.valuePosicInArray(fieldsToGet, TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName())]).toString();
@@ -296,19 +296,20 @@ public class AnalysisMethodCertif {
             certifDateCal.setTime(certifDate);
             if (Boolean.FALSE.equals(LPDate.isDateBiggerThanTimeStamp(certifDateCal))){
                 Integer fldId=Integer.valueOf(curRow[LPArray.valuePosicInArray(fieldsToGet, TblsData.CertifUserAnalysisMethod.ID.getName())].toString());
-                if (fldIdStr.length()>0)fldIdStr=fldIdStr+"|";
-                fldIdStr=fldIdStr+fldId.toString();
+                if (fldIdStr.length()>0)
+                    fldIdStr.append("|");
+                fldIdStr.append(fldId.toString());
             }  
         }
         if (fldIdStr.length()>0){
-            fldIdStr="INTEGER*"+fldIdStr;
+            fldIdStr.append("INTEGER*").append(fldIdStr);
             SqlWhere sqlWhere = new SqlWhere();
             sqlWhere.addConstraint(TblsData.CertifUserAnalysisMethod.ID, SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{fldIdStr}, "");
             Object[] diagn=Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD,
                     EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD, CertifGlobalVariables.CertifEventUpdateFieldsAndValues.EXPIRED.getFieldsName()), CertifGlobalVariables.CertifEventUpdateFieldsAndValues.EXPIRED.getFieldsValue(), sqlWhere, null);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) return;
-            fldIdStr=fldIdStr.replace("INTEGER*", "");
-            String[] fldIdStrArr=fldIdStr.split("\\|");
+            fldIdStr=new StringBuilder(fldIdStr.toString().replace("INTEGER*", ""));
+            String[] fldIdStrArr=fldIdStr.toString().split("\\|");
             for (String curFldId: fldIdStrArr){
                 Object[] diagnAudit=CertifTablesAudit.certifTablsAudit(TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD, Integer.valueOf(curFldId),
                     CertifyAnalysisMethodAPIactionsEndpoints.CERTIFY_REVOKE_USER_METHOD.getAuditEvent(), null, null, 
