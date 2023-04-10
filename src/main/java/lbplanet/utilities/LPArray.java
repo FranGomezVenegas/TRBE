@@ -73,7 +73,7 @@ public class LPArray {
      * @return
      */
     public static boolean duplicates(String[] zipcodelist) {
-        Set<String> lump = new HashSet();
+        Set<String> lump = new HashSet<>();
         for (String i : zipcodelist) {
             if (lump.contains(i)) {
                 return true;
@@ -832,7 +832,7 @@ public class LPArray {
      * @return
      */
     public static String[] getUniquesArray(String[][] matrix) {
-        Map<String, Integer> map = new LinkedHashMap();
+        Map<String, Integer> map = new LinkedHashMap<>();
 
         for (String[] row : matrix) {
             for (String col : row) {
