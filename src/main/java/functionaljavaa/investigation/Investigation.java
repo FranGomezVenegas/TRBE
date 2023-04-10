@@ -103,8 +103,9 @@ public final class Investigation {
             String investIdStr=insertDiagn.getNewRowId().toString();
             Object[] investigationAuditAdd = ProcedureInvestigationAudit.investigationAuditAdd(DataInvestigationAuditEvents.NEW_INVESTIGATION_CREATED.toString(), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(), Integer.valueOf(investIdStr), investIdStr,  
                     LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationAuditAdd[0].toString())) return investigationAuditAdd; 
-                RdbmsObject auditObjDiagn=(RdbmsObject) investigationAuditAdd[investigationAuditAdd.length-1];
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationAuditAdd[0].toString())) 
+                return investigationAuditAdd; 
+            RdbmsObject auditObjDiagn=(RdbmsObject) investigationAuditAdd[investigationAuditAdd.length-1];
             if (objectsToAdd!=null && objectsToAdd.length()>0)
                 addInvestObjects(Integer.valueOf(investIdStr), objectsToAdd, Integer.valueOf(auditObjDiagn.getNewRowId().toString()));
             Object[] trapMessage = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());                    

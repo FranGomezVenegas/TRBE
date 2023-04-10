@@ -544,7 +544,6 @@ public class UserSop {
 
         UserCertificationTracking.userCertificationTrackingAuditAdd(UserCertifTrackAuditEvents.ASSIGNED_BY_USERROLE_ASSIGNMENT, "SOP", UserAndRolesViews.getUserByPerson(personName),
                 sopName, sopId, insertFieldNames, insertFieldValues);
-        SessionAuditActions auditActions = ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditActions();
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SopUserAPIactionsEndpoints.ADD_SOP_TO_USER.getSuccessMessageCode(), new Object[]{sopIdFieldValue, personName, schemaName});
     }
 

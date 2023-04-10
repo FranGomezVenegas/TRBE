@@ -193,7 +193,6 @@ if (1==1) return fieldValue;
      * @return
      */
     public static Object[] decryptTableFieldArray(String schemaName, String tableName, String[] fieldName, Object[] fieldValue){
-//if (1==1) return fieldValue;
         Boolean tableHasEncryptedFlds = tableHasEncryptedFlds(null, schemaName, tableName);
         if (Boolean.FALSE.equals(tableHasEncryptedFlds)) return fieldValue;
 if (1==1) return fieldValue;

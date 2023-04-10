@@ -188,8 +188,9 @@ public class LPDate {
             String dateStr2=dateStr.substring(tposic+1);        
             dateStr=dateStr1+dateStr2;
         }            
-        if (dateStr.length()>0) return LocalDateTime.parse(dateStr, ISO_LOCAL_DATE_TIME);
-            return null;
+        if (dateStr.length()>0) 
+            return LocalDateTime.parse(dateStr, ISO_LOCAL_DATE_TIME);
+        return null;
         }catch(DateTimeParseException e){
             return null;
         }
