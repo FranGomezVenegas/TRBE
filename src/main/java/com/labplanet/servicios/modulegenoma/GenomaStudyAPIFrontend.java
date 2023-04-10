@@ -368,7 +368,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                             break;
                         default:
                             Rdbms.closeRdbms();
-                            RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
+                            request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
                     }
                     JSONArray jArr = new JSONArray();
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(objectsDeactivactedLastDays[0][0].toString()))) {

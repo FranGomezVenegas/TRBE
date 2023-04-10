@@ -8,7 +8,6 @@ package functionaljavaa.audit;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitDataAudit;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
-import trazit.session.ProcedureRequestSession;
 /**
  *
  * @author User
@@ -26,8 +25,6 @@ public final class IncubBatchAudit {
      * @return  
  */    
     public static Object[] incubBatchAuditAdd(String action, String tableName, String batchName, Object[] auditlog, Integer parentAuditId) {
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-
         GenericAuditFields gAuditFlds=new GenericAuditFields(auditlog);
 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();

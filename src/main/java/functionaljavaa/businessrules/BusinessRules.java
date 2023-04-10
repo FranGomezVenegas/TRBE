@@ -116,9 +116,6 @@ public class BusinessRules {
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, false);
         BusinessRules bRProcInstance = procReqInstance.getBusinessRulesProcInstance();
         BusinessRules bRTesting = procReqInstance.getBusinessRulesTesting();
-        if (bRProcInstance!=null){
-            Integer totalRules=bRProcInstance.config.size()+bRProcInstance.data.size()+bRProcInstance.procedure.size();
-        }        
         Object[] ruleNameArr=new Object[]{};
         if (bRTesting!=null){
             for (int i=0;i<bRTesting.config.size();i++){

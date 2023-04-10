@@ -13,7 +13,6 @@ import databases.TblsProcedureAudit;
 import java.time.LocalDateTime;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
-import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
@@ -35,16 +34,11 @@ public class DataBaseProcHashcode {
         if (LPNulls.replaceNull(instanceForActions.getProcedureInstance()).length()==0) return;
         LocalDateTime currentTimeStamp = LPDate.getCurrentTimeStamp();
         int hashCode=currentTimeStamp.hashCode();
-        String previousHashCode=LPNulls.replaceNull(instanceForActions.getProcedureHashCode());
         String[] fieldNames=new String[]{TblsProcedureAudit.procHashCodesHistory.DATE.getName(), TblsProcedureAudit.procHashCodesHistory.PERSON.getName(),
             TblsProcedureAudit.procHashCodesHistory.ACTION_NAME.getName(), TblsProcedureAudit.procHashCodesHistory.NEW_HASHCODE.getName(),
-            }; //TblsProcedureAudit.procHashCodesHistory.PREVIOUS_HASHCODE.getName()};
+            }; 
         Object[] fieldValues=new Object[]{currentTimeStamp, instanceForActions.getToken().getPersonName(), 
-            instanceForActions.getActionName(), String.valueOf(hashCode)}; //, previousHashCode};
-        Object[][] procInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(instanceForActions.getProcedureInstance(), TblsProcedure.TablesProcedure.PROCEDURE_INFO.getRepositoryName()), TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(),
-                new String[]{TblsProcedure.ProcedureInfo.NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}, 
-                new String[]{TblsProcedure.ProcedureInfo.CREATE_PICT_ONGCHNGE.getName()});
-
+            instanceForActions.getActionName(), String.valueOf(hashCode)}; 
 /*  Fails
         if (procInfo[0][0]==null || Boolean.valueOf(procInfo[0][0].toString())){
             fieldNames=LPArray.addValueToArray1D(fieldNames, TblsProcedureAudit.procHashCodesHistory.PICTURE.getName());

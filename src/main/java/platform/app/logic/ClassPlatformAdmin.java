@@ -41,14 +41,12 @@ public class ClassPlatformAdmin {
 
     public ClassPlatformAdmin(HttpServletRequest request, PlatformAdminAPIActionsEndpoints endPoint) {
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        String procInstanceName = instanceForActions.getProcedureInstance();
 
         RelatedObjects rObj = RelatedObjects.getInstanceForActions();
         InternalMessage actionDiagnoses = null;
         this.functionFound = true;
         Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
-            String language = instanceForActions.getLanguage();
             this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE,
                     (EnumIntMessages) argValues[1], new Object[]{argValues[2].toString()});
             this.messageDynamicData = new Object[]{argValues[2].toString()};
@@ -61,8 +59,6 @@ public class ClassPlatformAdmin {
                 String ipVal3 = LPNulls.replaceNull(argValues[2]).toString();
                 String ipVal4 = LPNulls.replaceNull(argValues[3]).toString();
                 String description = LPNulls.replaceNull(argValues[4]).toString();
-                String[] fieldNames = new String[]{TblsApp.IPWhiteList.ACTIVE.getName()};
-                Object[] fieldValues = new Object[]{true};
                 actionDiagnoses = AdminActions.addWhiteIp(ipVal1, ipVal2, ipVal3, ipVal4, description);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsApp.TablesApp.IP_WHITE_LIST.getTableName(), actionDiagnoses.getNewObjectId());
@@ -74,13 +70,13 @@ public class ClassPlatformAdmin {
                 ipVal3 = LPNulls.replaceNull(argValues[2]).toString();
                 ipVal4 = LPNulls.replaceNull(argValues[3]).toString();
                 description = LPNulls.replaceNull(argValues[4]).toString();
-                fieldNames = new String[]{TblsApp.IPWhiteList.ACTIVE.getName()};
-                fieldValues = new Object[]{true};
                 actionDiagnoses = AdminActions.addBlackIp(ipVal1, ipVal2, ipVal3, ipVal4, description);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP_PROC_DATA.getName(), TblsApp.TablesApp.IP_BLACK_LIST.getTableName(), actionDiagnoses.getNewObjectId());
                 }
                 break;
+
+
             case ACTIVATE_WHITE_IP:
                 String id = LPNulls.replaceNull(argValues[0]).toString();
                 actionDiagnoses = AdminActions.activateWhiteIp(Integer.valueOf(id));

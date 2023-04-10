@@ -8,7 +8,6 @@ package functionaljavaa.audit;
 import databases.TblsProcedureAudit;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
-import trazit.session.ProcedureRequestSession;
 /**
  *
  * @author User
@@ -18,8 +17,6 @@ public final class ProcedureInvestigationAudit {
     
     public static Object[] investigationAuditAdd(String action, String tableName, Integer investigationId, String tableId,
                         Object[] auditlog, Integer parentAuditId, String note) {
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-
         GenericAuditFields gAuditFlds=new GenericAuditFields(auditlog);
 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();

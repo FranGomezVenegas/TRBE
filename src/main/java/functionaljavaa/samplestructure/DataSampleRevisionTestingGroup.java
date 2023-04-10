@@ -12,7 +12,6 @@ import databases.SqlWhere;
 import databases.TblsData;
 import databases.features.Token;
 import functionaljavaa.audit.SampleAudit;
-import functionaljavaa.modulesample.DataModuleSampleAnalysis;
 import functionaljavaa.samplestructure.DataSampleStructureRevisionRules.DataSampleStructureRevisionRls;
 import static functionaljavaa.samplestructure.DataSampleStructureRevisionRules.reviewTestingGroupRulesAllowed;
 import java.util.ArrayList;
@@ -201,7 +200,7 @@ public class DataSampleRevisionTestingGroup{
 		EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP, updFldNames), updFldValues, sqlWhere, null);        
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(updateReviewSampleTestingGroup[0].toString())){
             SampleAudit smpAudit = new SampleAudit();
-            Object[] sampleAudit = smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.SAMPLE_TESTINGGROUP_REVIEWED, TblsData.TablesData.SAMPLE.getTableName(), 
+            smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.SAMPLE_TESTINGGROUP_REVIEWED, TblsData.TablesData.SAMPLE.getTableName(), 
                 sampleId, sampleId, null, null, updFldNames, updFldValues);
             markSampleAsReadyForRevision(sampleId);
         }
@@ -216,8 +215,6 @@ public class DataSampleRevisionTestingGroup{
                 new String[]{TblsData.SampleRevisionTestingGroup.SAMPLE_ID.getName()}, 
                 new Object[]{sampleId}, null);
         if (pendingTestingGroupByRevisionValue.length==1 && pendingTestingGroupByRevisionValue[0][0].toString().equalsIgnoreCase("TRUE")){
-            DataModuleSampleAnalysis smpAna = new DataModuleSampleAnalysis();
-            DataSample smp=new DataSample(smpAna);
             DataSample.setReadyForRevision(sampleId);
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "", null);
         }
@@ -231,8 +228,6 @@ public class DataSampleRevisionTestingGroup{
      */
     public static Object[] setReadyForRevision(Integer sampleId, String testingGroup){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
-        
         String[] sampleFieldName=new String[]{TblsData.SampleRevisionTestingGroup.READY_FOR_REVISION.getName()};
         Object[] sampleFieldValue=new Object[]{true};
         Object[][] sampleRevisionTestingGroupInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP.getTableName(),  

@@ -197,8 +197,6 @@ public class AppIncident {
         RdbmsObject diagnostic=Rdbms.updateTableRecordFieldsByFilter(TblsApp.TablesApp.INCIDENT,
             EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.INCIDENT, updFieldName), updFieldValue, sqlWhere, null);
         if (Boolean.TRUE.equals(diagnostic.getRunSuccess())){
-            String auditStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.STATUS.getName())].toString();
-            if (newStatus!=null) auditStatus=newStatus;
             AppIncidentAudit.incidentAuditAdd(DataIncidentAuditEvents.ADD_NOTE_INCIDENT.toString(), TblsAppAudit.TablesAppAudit.INCIDENT.getTableName(), incidentId, 
                         LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, note);
         }

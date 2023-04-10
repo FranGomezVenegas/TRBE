@@ -43,10 +43,10 @@ public class BatchAPI extends HttpServlet {
     public enum BatchAPIactionsEndpoints implements EnumIntEndpoints {
         CREATE_BATCH_ARRAY("CREATE_BATCH_ARRAY", "createBatchArray_success",
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)},
-                 null, null),
+                null, null),
         LOAD_BATCH_ARRAY("LOAD_BATCH_ARRAY", "loadBatchArray_success",
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)},
-                 null, null),;
+                null, null),;
 
         private BatchAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, String devComment, String devCommentTag) {
             this.name = name;
@@ -217,13 +217,6 @@ public class BatchAPI extends HttpServlet {
                         return;
                     }
                     String batchName = request.getParameter(PARAMS_BATCH_NAME);
-                    String batchTemplate = request.getParameter(PARAMS_BATCH_TEMPLATE);
-                    String batchTemplateVersionStr = request.getParameter(PARAMS_BATCH_TEMPLATE_VERSION);
-                    String numRowsStr = request.getParameter(PARAMS_BATCH_NUM_ROWS);
-                    String numColsStr = request.getParameter(PARAMS_BATCH_NUM_COLS);
-
-                    BatchArray bArray = new BatchArray(procInstanceName, batchTemplate, Integer.valueOf(batchTemplateVersionStr), batchName,
-                            token.getPersonName(), Integer.valueOf(numRowsStr), Integer.valueOf(numColsStr));
                     break;
                 case LOAD_BATCH_ARRAY:
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_LOADBATCHARRAY.split("\\|"));
@@ -233,8 +226,9 @@ public class BatchAPI extends HttpServlet {
                         return;
                     }
                     batchName = request.getParameter(PARAMS_BATCH_NAME);
-                    bArray = BatchArray.dbGetBatchArray(procInstanceName, batchName);
+                    BatchArray bArray = BatchArray.dbGetBatchArray(procInstanceName, batchName);
                     break;
+
                 default:
                     LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
             }

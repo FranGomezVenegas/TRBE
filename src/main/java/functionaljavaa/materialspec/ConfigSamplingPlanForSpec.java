@@ -96,7 +96,6 @@ public class ConfigSamplingPlanForSpec {
         LPPlatform.addJavaClassDoc(javaDocFields, javaDocValues, elementsDev);
     }  
     if (Boolean.FALSE.equals(devMode)){
-        String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());         
         Object[][] mandatoryFieldsCheck = LPPlatform.mandatoryFieldsCheck(procInstanceName, GlobalVariables.Schemas.DATA.getName(), fieldsName, fieldsValue, tableName, actionName);                
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(mandatoryFieldsCheck[0][0].toString())){ return mandatoryFieldsCheck;}
         for (Integer i=0;i<mandatoryFieldsCheck[1].length;i++){

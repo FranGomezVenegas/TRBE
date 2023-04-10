@@ -71,7 +71,6 @@ public class ErrorMessageCodesToRequirements {
                 try (       io.github.classgraph.ScanResult scanResult = new ClassGraph().enableAllInfo()//.acceptPackages("com.xyz")
                 .scan()) {    
                     ClassInfoList classesImplementing = scanResult.getClassesImplementing("trazit.enums.EnumIntMessages");
-                    ClassInfoList allEnums = scanResult.getAllEnums();
                     
                     classesImplementingInt=classesImplementing.size();
                     for (int i=0;i<classesImplementing.size();i++){
@@ -184,9 +183,7 @@ public class ErrorMessageCodesToRequirements {
                         (String[]) docInfoForMessage[1],
                         new String[]{TblsTrazitDocTrazit.MessageCodeDeclaration.ID.getName()}, 
                         new Object[]{fldValues[fldIdPosic]});        */
-                    String s="";
             }
-            //        }
         }catch(Exception e){
             String errMsg=e.getMessage();
         }
@@ -232,11 +229,7 @@ public class ErrorMessageCodesToRequirements {
     public void addCodeInErrorTrapping(String entryName, String entryValue){
         Parameter parm=new Parameter();
         String propFileName=PropertyFilesType.ERROR_TRAPING.toString();
-        String propValue = "";    
         try{
-            Object[] data=new Object[2];
-            String[] fldsToRetrieve=new String[]{};
-            String[] fldsValuesToRetrieve=new String[]{};
             if (Boolean.FALSE.equals(errorTrapFileEn.containsKey(entryName))) 
                 parm.addTagInPropertiesFile(propFileName, errorTrapFilePathEn, entryName, LPNulls.replaceNull("X"));
             if (Boolean.FALSE.equals(errorTrapFileEs.containsKey(entryName))) 

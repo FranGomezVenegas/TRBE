@@ -31,7 +31,6 @@ public class LPTestingParams {
         if (alternativeTokenFldPosic==null) return;
         if (alternativeTokenFldPosic==-1) return;
         Token token = reqSession.getToken();
-        String userName = token.getUserName();
         Object altTokenValue=null;
         if (testingContent[0].length>=alternativeTokenFldPosic)
             altTokenValue=testingContent[lineNumber][alternativeTokenFldPosic];

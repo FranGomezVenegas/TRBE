@@ -40,7 +40,6 @@ import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
-import trazit.session.ProcedureRequestSession;
 /**
  *
  * @author User
@@ -89,7 +88,6 @@ public class ClassMasterData {
         }        
         JsonObject jsonObject=(JsonObject) objToJsonObj[1];
         
-        Object[] actionDiagnoses = null;
         JSONArray jLogArr=new JSONArray();
         if (jsonObject.has("parsing_type")&&"SIMPLE_TABLE".equalsIgnoreCase(jsonObject.get("parsing_type").getAsString())){
             JsonArray asJsonArray = jsonObject.get(GlobalAPIsParams.LBL_VALUES).getAsJsonArray();
@@ -200,7 +198,6 @@ public class ClassMasterData {
                     ConfigAnalysisStructure cAna = new ConfigAnalysisStructure();
                     for (JsonElement jO: asJsonArray){
                         String methodName = jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.METHOD_NAME.getName()).getAsString();
-                        ProcedureRequestSession procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null);
                         String[] fldNames=new String[]{TblsCnfg.Methods.CODE.getName(), TblsCnfg.Methods.CONFIG_VERSION.getName()
                                 , TblsCnfg.Methods.CREATED_ON.getName(), TblsCnfg.Methods.CREATED_BY.getName()};
                         Object[] fldValues=new Object[]{methodName, 1, LPDate.getCurrentTimeStamp(), userCreator};
@@ -235,7 +232,7 @@ public class ClassMasterData {
                             String uom=jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.UOM.getName()).getAsString();
                             String currFld="Tipo Importación";
                             if (jO.getAsJsonObject().has(currFld) && uom.length()>0)
-                                actionDiagnoses=getUomFromConfig(uom, jO.getAsJsonObject().get(currFld).getAsString());
+                                getUomFromConfig(uom, jO.getAsJsonObject().get(currFld).getAsString());
                         }
                     }   
                     this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new analysis params", null);
@@ -355,7 +352,6 @@ public class ClassMasterData {
                 case MD_INCUBATORS:    
                     asJsonArray = jsonObject.get(GlobalAPIsParams.LBL_VALUES).getAsJsonArray();
                     for (JsonElement jO: asJsonArray){
-                        String diagn="";
                         JSONObject jLog=new JSONObject();
                         Object[] fldsInfo=getFldsNamesAndValues(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, jO);
                         if (fldsInfo.length==3)
@@ -390,7 +386,6 @@ public class ClassMasterData {
                 case MD_INCUB_BATCHES:    
                     asJsonArray = jsonObject.get(GlobalAPIsParams.LBL_VALUES).getAsJsonArray();
                     for (JsonElement jO: asJsonArray){
-                        String diagn="";
                         JSONObject jLog=new JSONObject();
                         Object[] fldsInfo=getFldsNamesAndValues(TblsEnvMonitConfig.TablesEnvMonitConfig.INCUB_BATCH, jO);
                         if (fldsInfo.length==3)
@@ -593,8 +588,6 @@ public class ClassMasterData {
                         else{   
                             String[] fldsName=(String[]) fldsInfo[0];
                             Object[] fldsValue=(Object[])fldsInfo[1];
-                            //fldsName=LPArray.addValueToArray1D(fldsName, new String[]{TblsProcedureConfig.IncubBatch.CREATED_BY.getName(), TblsEnvMonitConfig.IncubBatch.CREATED_ON.getName()});
-                            //fldsValue=LPArray.addValueToArray1D(fldsValue, new Object[]{userCreator, LPDate.getCurrentTimeStamp()});
                             RdbmsObject insertRecord = Rdbms.insertRecord(TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL, 
                                 fldsName, fldsValue, instanceName);
                             this.diagnostic=insertRecord.getApiMessage();

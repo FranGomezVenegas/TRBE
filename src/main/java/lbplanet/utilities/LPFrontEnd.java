@@ -291,8 +291,6 @@ public class LPFrontEnd {
                 // if you want to use a relative path to context root:
                 try (FileInputStream inStream = new FileInputStream(downloadFile)) {
                     // if you want to use a relative path to context root:
-                    String relativePath = srv.getServletContext().getRealPath("");
-                    //System.out.println("relativePath = " + relativePath);
                     ServletContext context = srv.getServletContext();
                     // gets MIME type of the file
                     String mimeType = context.getMimeType(fileWithPath);

@@ -80,7 +80,6 @@ public class ProcedureDefinitionToInstanceUtility {
      */
     public static final void procedureAddUserSops( String procInstanceName, Integer procVersion, String schemaName){
         String tableName = "procedure";  
-        String methodName = "addUserSop";
         String newEntry = "";
         StringBuilder sopListBuilder = new StringBuilder(0);
         

@@ -186,14 +186,12 @@ public class DataInspectionLotDecision {
         //Object[] diagnoses=new Object[]{};
         EnumIntTables tblObj=null;
         EnumIntEndpoints endpointObj=null;
-        String auditAction=null;
         EnumIntAuditEvents auditEvObj=null;
         SqlWhere sqlWhere = new SqlWhere();
         if (Boolean.FALSE.equals(forBulks)){
             sqlWhere.addConstraint(TblsInspLotRMData.LotDecision.LOT_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{lotName}, "");
             tblObj=TblsInspLotRMData.TablesInspLotRMData.LOT_DECISION;
             endpointObj=InspLotRMAPIactionsEndpoints.LOT_TAKE_DECISION;
-            auditAction=InspLotRMAPIactionsEndpoints.LOT_TAKE_DECISION.getAuditActionName();
             if (decision!=null && decision.length()>0){
                 lotFieldName = LPArray.addValueToArray1D(lotFieldName, new String[]{TblsInspLotRMData.LotDecision.DECISION.getName(), TblsInspLotRMData.LotDecision.DECISION_TAKEN_BY.getName(), TblsInspLotRMData.LotDecision.DECISION_TAKEN_ON.getName()});
                 lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, new Object[]{decision, token.getPersonName(), LPDate.getCurrentTimeStamp()});
@@ -202,7 +200,6 @@ public class DataInspectionLotDecision {
         }else{
             tblObj=TblsInspLotRMData.TablesInspLotRMData.LOT;
             endpointObj=InspLotRMAPIactionsEndpoints.LOT_ALL_BULKS_TAKE_DECISION;
-            auditAction=InspLotRMAPIactionsEndpoints.LOT_ALL_BULKS_TAKE_DECISION.getAuditActionName();
             if (decision!=null && decision.length()>0){
                 lotFieldName = LPArray.addValueToArray1D(lotFieldName, new String[]{TblsInspLotRMData.Lot.BULK_DECISION.getName(), TblsInspLotRMData.Lot.BULK_DECISION_BY.getName(), TblsInspLotRMData.Lot.BULK_DECISION_ON.getName()});
                 lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, new Object[]{decision, token.getPersonName(), LPDate.getCurrentTimeStamp()});

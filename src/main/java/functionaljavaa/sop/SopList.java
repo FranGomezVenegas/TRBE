@@ -120,9 +120,6 @@ public class SopList {
      * @return
      */
     public Object[] dbInsertSopList( String procInstanceName, String userInfoId){
-        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
-
-        //requires added_on
         String[] fieldNames = new String[0];
         Object[] fieldValues = new Object[0];
         

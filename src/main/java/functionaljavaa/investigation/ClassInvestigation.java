@@ -13,7 +13,6 @@ import com.labplanet.servicios.app.InvestigationAPI;
 import com.labplanet.servicios.app.InvestigationAPI.InvestigationAPIactionsEndpoints;
 import databases.RdbmsObject;
 import databases.TblsProcedure;
-import databases.features.Token;
 import trazit.session.ResponseMessages;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
@@ -64,9 +63,6 @@ public class ClassInvestigation {
     
     public ClassInvestigation(HttpServletRequest request, InvestigationAPIactionsEndpoints endPoint){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        Boolean isForTesting = procReqSession.getIsForTesting();
-        String procInstanceName = procReqSession.getProcedureInstance();
-        Token token=procReqSession.getToken();
         ResponseMessages messages = procReqSession.getMessages();
         Object[] actionDiagnoses=null;
         Object[] dynamicDataObjects=new Object[]{};        

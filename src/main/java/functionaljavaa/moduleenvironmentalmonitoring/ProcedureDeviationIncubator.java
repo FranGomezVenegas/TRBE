@@ -21,7 +21,6 @@ public class ProcedureDeviationIncubator {
     public enum ProcDevIncubStatus{CREATED, CLOSED} 
     
     public static Object[] createNew(String incubator, String[] fieldNames, Object[] fieldValues){    
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
         String statusFirst=ProcDevIncubStatus.CREATED.toString();

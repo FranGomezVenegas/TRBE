@@ -160,7 +160,7 @@ public class ClassEnvMon {
                     break;
                 default:      
                     Rdbms.closeRdbms(); 
-                    RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);                    
+                    request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);                    
             }    
         this.diagnostic=actionDiagnoses;
         this.relatedObj=rObj;

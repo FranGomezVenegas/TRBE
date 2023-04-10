@@ -53,7 +53,6 @@ public class LPMath {
      */
     public static Object[] extractPortion(String procInstanceName, BigDecimal volume, String volumeUOM, Integer volumeObjectId, BigDecimal portion, String portionUOM, Integer portionObjectId){
         volumeUOM = volumeUOM == null ? "" : volumeUOM;
-        String errorCode="";
         Object[] errorDetailVariables = new Object[0];
         
         if (volume==null){
@@ -98,12 +97,7 @@ public class LPMath {
         try  {            
             for (int i=0;i<strNum.length();i++){
                 curDigit=strNum.substring(i, i+1);
-                if (Boolean.FALSE.equals("-".equalsIgnoreCase(curDigit)) && Boolean.FALSE.equals(".".equalsIgnoreCase(curDigit))){
-                    Double valueParsed=Double.parseDouble(strNum.substring(i, i+1));}
             }
-            //Float f = Float.valueOf(strNum);
-            //System.out.print(valueParsed);
-            
         }catch (Exception nfe){
             if (",".equalsIgnoreCase(curDigit))
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.COMMA_IS_DECIMAL_SEPARATOR, null);

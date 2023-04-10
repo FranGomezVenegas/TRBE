@@ -70,12 +70,8 @@ public class GenomaDataProject {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
-        String classVersionProj = "0.1";
         String[] mandatoryFieldsProj = null;
         Object[] mandatoryFieldsValueProj = fieldsValue;
-        String[] javaDocFieldsProj = new String[0];
-        Object[] javaDocValuesProj = new Object[0];
-        String javaDocLineNameProj = "";
         DataDataIntegrity labIntChecker = new DataDataIntegrity();
         if (fieldsName == null) {
             fieldsName = new String[0];

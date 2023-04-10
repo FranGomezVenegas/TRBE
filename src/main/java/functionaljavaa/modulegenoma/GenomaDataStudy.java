@@ -39,18 +39,13 @@ public InternalMessage createStudy(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints
     InternalMessage projectOpenToChanges = GenomaDataProject.isProjectOpenToChanges2(projectName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projectOpenToChanges.getDiagnostic())) return projectOpenToChanges;
    
-    String classVersionProj = "0.1";
     String[] mandatoryFieldsProj = null;
     Object[] mandatoryFieldsValueProj = fieldsValue;
-    String[] javaDocFieldsProj = new String[0];
-    Object[] javaDocValuesProj = new Object[0];
-    String javaDocLineNameProj = "";
     DataDataIntegrity labIntChecker = new DataDataIntegrity();
     if (fieldsName==null) fieldsName=new String[0];
     if (fieldsValue==null) fieldsValue=new Object[0];
 
     String actionName = "Insert";
-    String schemaDataName = GlobalVariables.Schemas.DATA.getName();
     mandatoryFieldsProj = labIntChecker.getTableMandatoryFields(TblsGenomaData.TablesGenomaData.STUDY.getTableName(), actionName);
     if (Boolean.FALSE.equals(devMode)){
             InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldsName, fieldsValue);

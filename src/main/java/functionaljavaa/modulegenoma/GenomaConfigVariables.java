@@ -9,7 +9,6 @@ import com.labplanet.servicios.modulegenoma.TblsGenomaConfig;
 import static functionaljavaa.modulegenoma.GenomaUtilities.addObjectToUnstructuredField;
 import static functionaljavaa.modulegenoma.GenomaUtilities.removeObjectToUnstructuredField;
 import lbplanet.utilities.LPPlatform;
-import trazit.session.ProcedureRequestSession;
 /**
  *
  * @author User
@@ -33,8 +32,6 @@ public static Object[] variableSetAddVariable(String variableSetName, String var
 }
 
 public static Object[] variableSetRemoveVariable(String variableSetName, String variableName) {
-    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-    
     Object[] updateFamilyIndividuals=removeObjectToUnstructuredField(TblsGenomaConfig.TablesGenomaConfig.VARIABLES_SET, 
             new String[]{TblsGenomaConfig.VariablesSet.NAME.getName()}, new Object[]{variableSetName}, 
             TblsGenomaConfig.VariablesSet.VARIABLES_LIST.getName(), TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableName(), variableName, variableName);  

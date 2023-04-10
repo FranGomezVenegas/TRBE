@@ -253,7 +253,7 @@ if (1==1){return "ERROR";}
             SqlWhere sqlWhere = new SqlWhere();
             sqlWhere.addConstraint(TblsCnfg.Analysis.CODE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{code}, "");
             sqlWhere.addConstraint(TblsCnfg.Analysis.CONFIG_VERSION, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{configVersion}, "");
-            Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TblsCnfg.TablesConfig.ANALYSIS,
+            Rdbms.updateRecordFieldsByFilter(TblsCnfg.TablesConfig.ANALYSIS,
                     EnumIntTableFields.getTableFieldsFromString(TblsCnfg.TablesConfig.ANALYSIS, specFieldName), specFieldValue, sqlWhere, null);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
                 ConfigTablesAudit.analysisAuditAdd(ConfigAnalysisAuditEvents.ANALYSIS_UPDATE.toString(), TblsCnfg.TablesConfig.ANALYSIS, code, 

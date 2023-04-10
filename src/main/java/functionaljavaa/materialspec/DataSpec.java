@@ -103,7 +103,6 @@ public class DataSpec {
         ConfigSpecRule matQualit = new ConfigSpecRule();
         Object [] errorVariables = new Object[0];        
 
-        String errorCode = "";        
         if (result==null || "".equals(result)){
             errorVariables = LPArray.addValueToArray1D(errorVariables, ResultCheckErrorsErrorTrapping.MANDATORY_FIELD_ARGUMENT_RESULT);
             Object[] diagnoses =  ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrorsErrorTrapping.NULL_MANDATORY_FIELD, errorVariables);

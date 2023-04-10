@@ -70,7 +70,6 @@ public class ApiMessageReturn {
         return trapMessage(evaluation, endpoint.getErrorCode(), msgVariables, language, callerInfo, false);
     }
     public static Object[] trapMessage(String evaluation, EnumIntMessages endpoint, Object[] msgVariables) {
-        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         int length = Thread.currentThread().getStackTrace().length;
         if (length>CLIENT_CODE_STACK_INDEX) length=CLIENT_CODE_STACK_INDEX;
         else length=3;

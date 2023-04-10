@@ -5,12 +5,10 @@
  */
 package functionaljavaa.samplestructure;
 
-import lbplanet.utilities.LPPlatform;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleBusinessRules;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import trazit.session.ProcedureRequestSession;
-import trazit.globalvariables.GlobalVariables;
 import static trazit.globalvariables.GlobalVariables.DEFAULTLANGUAGE;
 /**
  *
@@ -36,7 +34,6 @@ public class DataSampleUtilities {
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(null, null, false);
         String procInstanceName=procReqInstance.getProcedureInstance();
         String stList = "";
-        String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
         if (language==null){language=DEFAULTLANGUAGE;}
        switch (language){
            case DEFAULTLANGUAGE:

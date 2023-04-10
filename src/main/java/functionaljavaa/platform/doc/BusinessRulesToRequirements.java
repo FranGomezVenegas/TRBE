@@ -56,7 +56,6 @@ public class BusinessRulesToRequirements {
         return vList;
     }
     public BusinessRulesToRequirements(HttpServletRequest request, HttpServletResponse response){
-        ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);    
         JSONArray busRulesVisitedSuccess = new JSONArray();
         JSONArray eventsFound = new JSONArray();
         JSONArray eventsNotFound = new JSONArray();        
@@ -72,7 +71,6 @@ public class BusinessRulesToRequirements {
             try (       io.github.classgraph.ScanResult scanResult = new ClassGraph().enableAllInfo()//.acceptPackages("com.xyz")
             .scan()) {    
                 ClassInfoList classesImplementing = scanResult.getClassesImplementing("trazit.enums.EnumIntBusinessRules");
-                ClassInfoList allEnums = scanResult.getAllEnums();
                 classesImplementingInt=classesImplementing.size();
                 for (int i=0;i<classesImplementing.size();i++){
                     ClassInfo getMine = classesImplementing.get(i);  
@@ -166,11 +164,10 @@ private static void declareBusinessRuleInDatabaseOld(String apiName, String area
                 SqlWhere sqlWhere = new SqlWhere();
                 sqlWhere.addConstraint(TblsTrazitDocTrazit.BusinessRulesDeclaration.ID,
                         SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{reqEndpointInfo[0][0]}, "");
-                Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TblsTrazitDocTrazit.TablesTrazitDocTrazit.BUSINESS_RULES_DECLARATION, 
+                Rdbms.updateRecordFieldsByFilter(TblsTrazitDocTrazit.TablesTrazitDocTrazit.BUSINESS_RULES_DECLARATION, 
                     EnumIntTableFields.getTableFieldsFromString(TblsTrazitDocTrazit.TablesTrazitDocTrazit.BUSINESS_RULES_DECLARATION,
                     (String[]) docInfoForBusinessRule[0]), (String[]) docInfoForBusinessRule[1], sqlWhere, null);
             }
-//        }
     }else{
         fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTrazitDocTrazit.BusinessRulesDeclaration.CREATION_DATE.getName());
         fieldValues=LPArray.addValueToArray1D(fieldValues, LPDate.getCurrentTimeStamp());   
@@ -221,7 +218,6 @@ private static void declareBusinessRuleInDatabaseWithValuesList(String apiName, 
                 return;
             }else{
     */
-                String[] flds=(String[]) docInfoForBusinessRule[0];
                 if (updFldName.length>0){
                     SqlWhere sqlWhere = new SqlWhere();
                     sqlWhere.addConstraint(TblsTrazitDocTrazit.BusinessRulesDeclaration.ID,
@@ -230,7 +226,6 @@ private static void declareBusinessRuleInDatabaseWithValuesList(String apiName, 
                         EnumIntTableFields.getTableFieldsFromString(TblsTrazitDocTrazit.TablesTrazitDocTrazit.BUSINESS_RULES_DECLARATION,
                         updFldName), updFldValue, sqlWhere, null);
                 }
-            //        }
         }else{
             fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTrazitDocTrazit.BusinessRulesDeclaration.CREATION_DATE.getName());
             fieldValues=LPArray.addValueToArray1D(fieldValues, LPDate.getCurrentTimeStamp());   
@@ -241,7 +236,7 @@ private static void declareBusinessRuleInDatabaseWithValuesList(String apiName, 
             Rdbms.insertRecordInTable(TblsTrazitDocTrazit.TablesTrazitDocTrazit.BUSINESS_RULES_DECLARATION, fieldNames, fieldValues);    
         }
     }catch(Exception e){
-        String errMsg=e.getMessage();
+        Logger.getLogger("").log(Level.SEVERE, null, e);
     }
     
 }

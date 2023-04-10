@@ -84,8 +84,6 @@ public class DataInstrumentsEvents {
     }
 
     public static Object[] addVariableSetToObject(String instrName, Integer instrEventId, String variableSetName, String ownerId) {
-        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        String appProcInstance = LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName());
         Object[] diagn = new Object[0];
         Object[] isStudyOpenToChanges = isEventOpenToChanges(instrEventId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())) {

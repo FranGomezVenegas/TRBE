@@ -161,7 +161,6 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
 
     public static JSONArray allMyAnalysisMethodCertif(HttpServletRequest request, HttpServletResponse response){
     try{
-        String language = LPFrontEnd.setLanguage(request); 
         String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);        
         if (finalToken==null || finalToken.length()==0)
             finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
@@ -219,7 +218,6 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
     }
     public static JSONArray myPendingAnalysisMethodCertif(HttpServletRequest request, HttpServletResponse response){
     try{
-        String language = LPFrontEnd.setLanguage(request); 
         String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);        
         if (finalToken==null || finalToken.length()==0)
             finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
@@ -284,7 +282,6 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
     }
     public static JSONArray proceduresAnalysisMethodCertif(HttpServletRequest request, HttpServletResponse response){
     try{
-        String language = LPFrontEnd.setLanguage(request); 
         String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);        
         if (finalToken==null || finalToken.length()==0)
             finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();

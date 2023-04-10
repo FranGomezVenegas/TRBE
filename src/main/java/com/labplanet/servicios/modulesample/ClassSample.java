@@ -453,7 +453,8 @@ public class ClassSample {
                     String custodianCandidate = argValues[1].toString();
                     ChangeOfCustody coc = new ChangeOfCustody();
                     Integer appSessionId=null;
-                    if (token.getAppSessionId()!=null){appSessionId=Integer.valueOf(token.getAppSessionId());}
+                    if (token.getAppSessionId()!=null){
+                        appSessionId=Integer.valueOf(token.getAppSessionId());}
                     diagn = coc.cocStartChange(TblsData.TablesData.SAMPLE_COC, TblsData.SampleCoc.SAMPLE_ID, objectId, custodianCandidate);
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
                     this.messageDynamicData=new Object[]{sampleId};

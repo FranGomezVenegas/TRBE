@@ -59,13 +59,6 @@ public class CertifGlobalVariables {
         return getScriptToAddCertifToAnyObjectPostgres(procInstanceName, schemaGroupName, tableName);
     }
     private static String getScriptToAddCertifToAnyObjectPostgres(String procInstanceName, String schemaGroupName, String tableName){            
-        String[] fields=new String[]{
-        TblsData.CertifUserAnalysisMethod.CERTIFICATION_DATE.getName(),
-        TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_STARTED.getName(),
-        TblsData.CertifUserAnalysisMethod.CERTIF_COMPLETED.getName(),// TblsData.CertifUserAnalysisMethod.SOP_NAME.getName(),
-        //TblsData.CertifUserAnalysisMethod.USER_NAME.getName(), TblsData.CertifUserAnalysisMethod.LIGHT.getName(),
-        TblsData.CertifUserAnalysisMethod.TRAINING_ID.getName()};
-
         HashMap<String[], Object[][]> dbTableGetFieldDefinition = dbTableGetFieldDefinition(LPPlatform.buildSchemaName(procInstanceName, schemaGroupName), tableName);
 
         String[] fldDefinitionColName= dbTableGetFieldDefinition.keySet().iterator().next();    

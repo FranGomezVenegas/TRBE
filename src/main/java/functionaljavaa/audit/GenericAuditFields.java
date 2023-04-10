@@ -124,7 +124,6 @@ public class GenericAuditFields {
         if (actionPrettyEsPosic>-1)
             actionPrettyEs=LPNulls.replaceNull(fieldValues[actionPrettyEsPosic]).toString();
         if (auditActions!=null && auditActions.getLastAuditAction()!=null){
-            String action=auditActions.getLastAuditAction().getActionName()+" > "+auditEventObj.toString();
             actionPrettyEn=auditActions.getLastAuditAction().getActionPrettyEn()+" > "+actionPrettyEn;
             actionPrettyEs=auditActions.getLastAuditAction().getActionPrettyEs()+" > "+actionPrettyEs;
         }

@@ -159,7 +159,6 @@ public final class DataBatchIncubatorUnstructured {
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(setSampleIncubStarted[0].toString())) {
                 return setSampleIncubStarted;
             }else{
-                Object[] auditInfo=(Object[]) setSampleIncubStarted[1];
                 setSampleIncubStarted=(Object[]) setSampleIncubStarted[0];
                 DataSampleStages smpStage=new DataSampleStages();
                 if (Boolean.TRUE.equals(smpStage.isSampleStagesEnable()) && (sampleId!=null))
@@ -188,7 +187,6 @@ public final class DataBatchIncubatorUnstructured {
             Integer incubStage = Integer.valueOf(currSampleArr[1]);
             BigDecimal tempReading = null;
             Object[] setSampleIncubEnded = DataSampleIncubation.setSampleEndIncubationDateTime(sampleId, incubStage, incubName, tempReading, batchName);
-            Object[] auditInfo=(Object[]) setSampleIncubEnded[1];
             setSampleIncubEnded=(Object[])setSampleIncubEnded[0];
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(setSampleIncubEnded[0].toString())) {
                 return setSampleIncubEnded;
@@ -203,8 +201,6 @@ public final class DataBatchIncubatorUnstructured {
 
     
     static Object[] createBatchUnstructured(String bName, Integer bTemplateId, Integer bTemplateVersion, String[] fldName, Object[] fldValue) {        
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-
         if (LPArray.valuePosicInArray(fldName, TblsEnvMonitData.IncubBatch.INCUB_BATCH_CONFIG_ID.getName()) == -1) {
             fldName = LPArray.addValueToArray1D(fldName, TblsEnvMonitData.IncubBatch.INCUB_BATCH_CONFIG_ID.getName());
             fldValue = LPArray.addValueToArray1D(fldValue, bTemplateId);

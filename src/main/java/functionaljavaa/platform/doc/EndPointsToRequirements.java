@@ -76,27 +76,19 @@ public final class EndPointsToRequirements {
         String evName = "";
         int i = 0;
         int totalEndpointsVisitedInjection = 0;
-        String iStr = "";
         Integer classesImplementingInt = -999;
         Integer totalEndpointsVisitedInt = 0;
         try (io.github.classgraph.ScanResult scanResult = new ClassGraph().enableAllInfo()//.acceptPackages("com.xyz")
                 .scan()) {
             ClassInfoList classesImplementing = scanResult.getClassesImplementing("trazit.enums.EnumIntEndpoints");
-            ClassInfoList allEnums = scanResult.getAllEnums();
             classesImplementingInt = classesImplementing.size();
             for (i = 0; i < classesImplementing.size(); i++) {
                 ClassInfo getMine = classesImplementing.get(i);
                 audEvObjStr = getMine.getSimpleName();
-                if ("ReqProcedureDefinitionAPIQueriesEndpoints".equalsIgnoreCase(audEvObjStr)) {
-                    iStr = "1";
-                }
                 List<Object> enumConstantObjects = getMine.getEnumConstantObjects();
                 JSONArray enumsIncomplete = new JSONArray();
                 totalEndpointsVisitedInt = totalEndpointsVisitedInt + enumConstantObjects.size();
                 for (int j = 0; j < enumConstantObjects.size(); j++) {
-                    if (totalEndpointsVisitedInjection == 232) {
-                        iStr = "2";
-                    }
                     EnumIntEndpoints curEndpoint = (EnumIntEndpoints) enumConstantObjects.get(j);
                     evName = curEndpoint.getName();
                     String[] fieldNames = LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.API_NAME.getName(), EndpointsDeclaration.ENDPOINT_NAME.getName()});

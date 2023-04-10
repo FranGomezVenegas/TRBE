@@ -24,11 +24,8 @@ public class ConfigMasterData {
             procInstanceName=procReqInstance.getProcedureInstance();
         }        
         JSONObject masterDataObj = new JSONObject();
-        JSONObject blockObj = new JSONObject();
         String ruleName="samplerPersonalAreas";
-        JSONObject blockDetailObj = new JSONObject();    
         String objStr;
-        String objEsStr;
         if (bi==null){
             objStr=Parameter.getBusinessRuleProcedureFile(procInstanceName, "config", ruleName);
         }else{

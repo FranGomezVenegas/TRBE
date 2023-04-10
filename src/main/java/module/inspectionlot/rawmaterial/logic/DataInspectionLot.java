@@ -350,7 +350,6 @@ public class DataInspectionLot {
         return new InternalMessage(LPPlatform.LAB_TRUE, InspLotRMEnums.InspLotRMAPIactionsEndpoints.NEW_LOT, null);
     }
     public InternalMessage applyInventoryPlan(String lotName, String materialName, String specCode, Integer specCodeVersion, Double quant, Integer numCont, String[] lotFldName, Object[] lotFldValue, InventoryPlanEntry invEntry){
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         List<InventoryPlanEntryItem> invPlanInfoList = invEntry.getInvEntries();// SamplingPlanEntry.getSamplingPlanInfo(procPrefix, materialName, specCode, specCodeVersion, quant, numCont);
         for (int i=0;i<invPlanInfoList.size();i++){
@@ -369,7 +368,6 @@ public class DataInspectionLot {
         String[] lotFldName, Object[] lotFldValue, String containerAlgorithm, Double smpQuant, String smpQuantUom){
         if (numBulks==null)
             return new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.NO_NUMBER_OF_BULKS_SPECIFIED, null);        
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();                
         
         for (int i=0;i<numBulks;i++){                
@@ -384,7 +382,6 @@ public class DataInspectionLot {
 
     public InternalMessage applyBulkSamplingPlan(String lotName, Integer numBulks, String materialName, String specCode, Integer specCodeVersion, 
             Double quant, Integer numCont, String[] lotFldName, Object[] lotFldValue, String containerAlgorithm, Double smpQuant, String smpQuantUom){
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Integer totalContainers=Integer.valueOf("0");
         if (numBulks!=null)

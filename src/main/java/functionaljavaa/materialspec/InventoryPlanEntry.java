@@ -74,7 +74,6 @@ public final class InventoryPlanEntry {
             return;
         }
         for (Object[] curMatInvPlan: materialInvPlanInfo){
-            String errorMsg="";
             if(Boolean.FALSE.equals(invLocations.RETAIN.toString().equalsIgnoreCase(curMatInvPlan[1].toString()))){
                 String errMsg="for "+curMatInvPlan[0]+" inventory type"+curMatInvPlan[1]+" not recognized.";
                 this.errorsArr=LPArray.addValueToArray1D(this.getErrorsArr(), errMsg);

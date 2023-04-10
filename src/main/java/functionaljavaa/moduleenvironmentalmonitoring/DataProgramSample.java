@@ -277,14 +277,11 @@ public class DataProgramSample{
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Nothing pending in procedure "+procInstanceName+" for the filter "+programCalendarDatePending[0][6].toString(), new Object[]{});
         StringBuilder newSamplesLogged=new StringBuilder();
         Integer newSamplesCounter=0;
-        String missingFld="";
         for (Object[] curRecord: programCalendarDatePending){
             Object[] fieldValue = new Object[0];
             for (String curFld: fieldName){
                 Integer fldPosic=EnumIntViewFields.getFldPosicInArray(viewFieldsFromString, curFld);
-                if (fldPosic==-1)
-                    missingFld=curFld;
-                else
+                if (fldPosic!=-1)                    
                     fieldValue=LPArray.addValueToArray1D(fieldValue, curRecord[fldPosic]);
             }
             Object[] diagn=logProgramSample(

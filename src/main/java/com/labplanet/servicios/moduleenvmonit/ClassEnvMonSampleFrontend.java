@@ -1849,7 +1849,7 @@ public class ClassEnvMonSampleFrontend {
             default:
                 viewName = "";
         }
-        jObj.put("viewName", "SamplePendingSampling");
+        jObj.put("viewName", viewName);
         jObj.put("filterName", filterName);
         jObj.put("objectId", sampleId);
         return jObj;

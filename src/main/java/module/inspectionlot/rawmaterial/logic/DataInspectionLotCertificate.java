@@ -89,7 +89,6 @@ public class DataInspectionLotCertificate {
         Object[] lotFieldValue=new Object[]{lotName, certifId, eventName, token.getPersonName(), LPDate.getCurrentTimeStamp()};
         Object[] errorDetailVariables=new Object[]{};
         try{
-            DataInspLotCertificateTrackActions action = DataInspLotCertificateTrackActions.valueOf(eventName);
             RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInspLotRMData.TablesInspLotRMData.LOT_CERTIFICATE_TRACK, lotFieldName, lotFieldValue);
             if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess())){
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, insertRecordInTable.getApiMessage());

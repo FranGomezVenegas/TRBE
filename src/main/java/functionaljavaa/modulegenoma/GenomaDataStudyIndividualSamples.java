@@ -24,7 +24,6 @@ import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
-import trazit.session.ResponseMessages;
 /**
  *
  * @author User
@@ -32,25 +31,19 @@ import trazit.session.ResponseMessages;
 public class GenomaDataStudyIndividualSamples {
 
 public InternalMessage createStudyIndividualSample(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, Integer indivId, String[] fieldsName, Object[] fieldsValue, Boolean devMode){
-    ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
     String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
     Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
         InternalMessage studyOpenToChanges = GenomaDataStudy.isStudyOpenToChanges2(studyName);    
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(studyOpenToChanges.getDiagnostic())) return studyOpenToChanges;        
 
-        String classVersionProj = "0.1";
         String[] mandatoryFields = null;
         Object[] mandatoryFieldsValue = fieldsValue;
-        String[] javaDocFields = new String[0];
-        Object[] javaDocValues = new Object[0];
-        String javaDocLineName = "";
         DataDataIntegrity labIntChecker = new DataDataIntegrity();
         if (fieldsName==null) fieldsName=new String[0];
         if (fieldsValue==null) fieldsValue=new Object[0];
 
         String actionName = "Insert";
-        String schemaDataName = GlobalVariables.Schemas.DATA.getName();
         mandatoryFields = labIntChecker.getTableMandatoryFields(TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName(), actionName);
         if (Boolean.FALSE.equals(devMode)){
             InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldsName, fieldsValue);

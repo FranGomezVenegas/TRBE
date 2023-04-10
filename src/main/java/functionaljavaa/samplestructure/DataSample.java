@@ -423,7 +423,6 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
      * @return
      */    
     public Object[] changeSamplingDate(Integer sampleId, LocalDateTime newDate){
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()); 
@@ -456,7 +455,6 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
     }
 
     public Object[] changeSamplingDateEnd(Integer sampleId, LocalDateTime newDate){
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()); 
@@ -494,7 +492,6 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
      * @return
      */
     public Object[] sampleReceptionCommentAdd(Integer sampleId, String comment){
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()); 
 
@@ -521,7 +518,6 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
      * @return
      */
     public Object[] sampleReceptionCommentRemove(Integer sampleId) {
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()); 
 
@@ -595,7 +591,6 @@ Object[] logSample(String sampleTemplate, Integer sampleTemplateVersion, String[
             diagnoses=Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE,
                     EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, sampleFieldName), sampleFieldValue, sqlWhere, null);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
-            String[] fieldsForAudit = new String[0];
             SampleAudit smpAudit = new SampleAudit();        
             smpAudit.sampleAuditAdd(auditActionName, TblsData.TablesData.SAMPLE.getTableName(), sampleId, sampleId, null, null, new String[]{TblsData.Sample.STATUS.getName()}, new Object[]{smpNewStatus});        
         }      

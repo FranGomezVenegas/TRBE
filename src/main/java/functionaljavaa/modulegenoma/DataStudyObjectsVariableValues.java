@@ -51,7 +51,6 @@ public class DataStudyObjectsVariableValues {
     }
 
     public static InternalMessage addVariableSetToObject(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endPoint, String studyName, String variableSetName, String ownerTable, String ownerId) {
-        String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         InternalMessage studyOpenToChanges = GenomaDataStudy.isStudyOpenToChanges2(studyName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(studyOpenToChanges.getDiagnostic())) {
             return studyOpenToChanges;

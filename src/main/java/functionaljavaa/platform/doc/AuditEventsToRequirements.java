@@ -76,12 +76,10 @@ public final class AuditEventsToRequirements {
             try (       io.github.classgraph.ScanResult scanResult = new ClassGraph().enableAllInfo()//.acceptPackages("com.xyz")
             .scan()) {    
                 ClassInfoList classesImplementing = scanResult.getClassesImplementing("trazit.enums.EnumIntAuditEvents");
-                ClassInfoList allEnums = scanResult.getAllEnums();
                 classesImplementingInt=classesImplementing.size();
                 for (i=0;i<classesImplementing.size();i++){
                     ClassInfo getMine = classesImplementing.get(i); 
                     audEvObjStr=getMine.getSimpleName();
-                    String st="";
                     List<Object> enumConstantObjects = getMine.getEnumConstantObjects();
                     JSONArray enumsIncomplete = new JSONArray();
                     totalEndpointsVisitedInt=totalEndpointsVisitedInt+enumConstantObjects.size();
@@ -157,7 +155,7 @@ private static void declareInDatabase(String objectName, String eventName){
             new String[]{AuditEventsDeclaration.AUDIT_OBJECT.getName(), AuditEventsDeclaration.EVENT_NAME.getName()},
             new Object[]{objectName, eventName}, 
             new String[]{AuditEventsDeclaration.ID.getName(), AuditEventsDeclaration.EVENT_PRETTY_EN.getName(), AuditEventsDeclaration.EVENT_PRETTY_ES.getName()});
-    Object[] docInfoForEndPoint = getDocInfoForAuditEvent(objectName, eventName);
+    getDocInfoForAuditEvent(objectName, eventName);
     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(reqEvAuditInfo[0][0].toString()))){
         String[] updFldName=new String[]{};
         Object[] updFldValue=new Object[]{};
@@ -168,7 +166,7 @@ private static void declareInDatabase(String objectName, String eventName){
             updFldName=LPArray.addValueToArray1D(updFldName, AuditEventsDeclaration.EVENT_PRETTY_EN.getName());
             updFldValue=LPArray.addValueToArray1D(updFldValue, propValueEn);
         }
-        String propValueEs = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
+        Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
             objectName, null, eventName, "es", false, null);        
         if (Boolean.FALSE.equals(propValueEn.equalsIgnoreCase(reqEvAuditInfo[0][2].toString()))){
             updFldName=LPArray.addValueToArray1D(updFldName, AuditEventsDeclaration.EVENT_PRETTY_ES.getName());
@@ -179,7 +177,7 @@ private static void declareInDatabase(String objectName, String eventName){
             updFldValue=LPArray.addValueToArray1D(updFldValue, LPDate.getCurrentTimeStamp());            
             SqlWhere sqlWhere = new SqlWhere();
             sqlWhere.addConstraint(TblsTrazitDocTrazit.AuditEventsDeclaration.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{reqEvAuditInfo[0][0]}, "");
-            Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TblsTrazitDocTrazit.TablesTrazitDocTrazit.AUDIT_EVENTS_DECLARATION,
+            Rdbms.updateRecordFieldsByFilter(TblsTrazitDocTrazit.TablesTrazitDocTrazit.AUDIT_EVENTS_DECLARATION,
                     EnumIntTableFields.getTableFieldsFromString(TblsTrazitDocTrazit.TablesTrazitDocTrazit.AUDIT_EVENTS_DECLARATION, updFldName), updFldValue, sqlWhere, null);            
         }
     }else{
@@ -206,8 +204,6 @@ public static Object[] getDocInfoForAuditEvent(String object, String auditEvent)
     String propValue = "";    
     try{
         Object[] data=new Object[2];
-        String[] fldsToRetrieve=new String[]{};
-        String[] fldsValuesToRetrieve=new String[]{};
         for (Languages curLang: GlobalVariables.Languages.values()){            
             propName=auditEvent;
             propValue = Parameter.getMessageCodeValue(PropertyFilesType.AUDITEVENTS.toString(), object, null, auditEvent, curLang.getName(), false, null);
@@ -219,9 +215,6 @@ public static Object[] getDocInfoForAuditEvent(String object, String auditEvent)
                 }
             }
         }
-        //if (fldsToRetrieve.length==0) data[0]=LPPlatform.LAB_FALSE;
-        //data[0]=fldsToRetrieve;
-        //data[1]=fldsValuesToRetrieve;
         return data;
     }catch(Exception e){
         String s=e.getMessage();

@@ -79,7 +79,6 @@ public class UserMethod {
  */    
     public String userMethodCertificationLevel( String procInstanceName, String analysis, String methodName, Integer methodVersion, String userName){
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());  
-        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());   
         
         String userMethodNotAssigned = Parameter.getBusinessRuleProcedureFile(procInstanceName, UserMethodBusinessRules.CERTIFICATE_NOTASSIGNED.getAreaName(), UserMethodBusinessRules.CERTIFICATE_NOTASSIGNED.getTagName(), true);
         if (userMethodNotAssigned.length()==0)

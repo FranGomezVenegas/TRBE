@@ -128,8 +128,6 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())){
             return dbTableExists;
         }
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
-
         EnumIntAuditEvents auditActionName = SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_SET_READY_FOR_REVISION;
 //AuditEvent To Object, commented	        if (parentAuditAction != null) auditActionName = parentAuditAction +LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR+ auditActionName;
         
@@ -225,7 +223,6 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {            
             if (sampleAnalysisStatusComplete.equalsIgnoreCase(smpAnaNewStatus))                
                 sampleAnalysisEvaluateStatusAutomatismForComplete(sampleId, testId); 
-            String[] fieldsForAudit = new String[0];
             SampleAudit smpAudit = new SampleAudit();
             smpAudit.sampleAuditAdd(auditActionName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 
                 testId, sampleId, testId, null, new String[]{TblsData.SampleAnalysis.STATUS.getName()}, new Object[]{smpAnaNewStatus});
@@ -623,7 +620,6 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
             fieldValue = LPArray.addValueToArray1D(fieldValue, specAnalysisTestingGroup);
         }
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsData.TablesData.SAMPLE_ANALYSIS, fieldName, fieldValue);
-        Object[] diagnoses = insertRecordInTable.getApiMessage();
         Integer testId = Integer.parseInt(insertRecordInTable.getNewRowId().toString());
         SampleAudit smpAudit = new SampleAudit();
         smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_ADDED, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), 

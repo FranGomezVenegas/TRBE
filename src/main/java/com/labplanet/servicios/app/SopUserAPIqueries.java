@@ -300,7 +300,6 @@ public class SopUserAPIqueries extends HttpServlet {
 
     public static JSONObject AllMyPendingSignSops(HttpServletRequest request, HttpServletResponse response) {
         try {
-            String language = LPFrontEnd.setLanguage(request);
             String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
             if (finalToken == null || finalToken.length() == 0) {
                 finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
@@ -353,8 +352,6 @@ public class SopUserAPIqueries extends HttpServlet {
             }
             JSONArray mySops = new JSONArray();
             JSONObject mySopsList = new JSONObject();
-            JSONArray mySopsListArr = new JSONArray();
-
             for (Object[] curSop : userSops) {
                 JSONObject sop = new JSONObject();
                 procedureFldPosic = LPArray.valuePosicInArray(fieldsToRetrieve, TblsData.ViewUserAndMetaDataSopView.PROCEDURE.getName());
@@ -382,7 +379,6 @@ public class SopUserAPIqueries extends HttpServlet {
 
     public static JSONArray AllMySops(HttpServletRequest request, HttpServletResponse response) {
         try {
-            String language = LPFrontEnd.setLanguage(request);
             String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
             if (finalToken == null || finalToken.length() == 0) {
                 finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
@@ -458,7 +454,6 @@ public class SopUserAPIqueries extends HttpServlet {
 
     public static JSONArray MyPendingSops(HttpServletRequest request, HttpServletResponse response) {
         try {
-            String language = LPFrontEnd.setLanguage(request);
             String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
             if (finalToken == null || finalToken.length() == 0) {
                 finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
@@ -467,18 +462,15 @@ public class SopUserAPIqueries extends HttpServlet {
             if (finalToken == null || finalToken.length() == 0) {
                 finalToken = LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN)).toString();
             }
-
             SopUserAPIqueriesEndpoints endPoint = SopUserAPIqueriesEndpoints.MY_PENDING_SOPS;
             Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
             if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))) {
                 return new JSONArray();
             }
-
             if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))) {
                 return new JSONArray();
             }
             UserProfile usProf = new UserProfile();
-
             usProf = new UserProfile();
             String[] allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedurePrefix[0])) {
@@ -496,11 +488,9 @@ public class SopUserAPIqueries extends HttpServlet {
             } else {
                 fieldsToRetrieve = EnumIntViewFields.getAllFieldNames(TblsData.ViewUserAndMetaDataSopView.values());
             }
-
             JSONArray myPendingSopsByProc = new JSONArray();
             UserSop userSop = new UserSop();
             for (String currProc : allUserProcedurePrefix) {
-
                 Object[][] userProcSops = userSop.getNotCompletedUserSOP(token.getPersonName(), currProc, fieldsToRetrieve,
                         Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING))));
                 if (userProcSops != null && userProcSops.length > 0) {

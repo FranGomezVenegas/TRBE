@@ -143,8 +143,6 @@ public class SampleAudit {
         String[] fieldNames=gAuditFlds.getFieldNames();
         Object[] fieldValues=gAuditFlds.getFieldValues();
         
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-
         fieldNames = LPArray.addValueToArray1D(fieldNames, new String[]{ 
             TblsDataAudit.Sample.TABLE_NAME.getName(), TblsDataAudit.Sample.TABLE_ID.getName()});
         fieldValues = LPArray.addValueToArray1D(fieldValues, new Object[]{tableName, tableId});
@@ -376,8 +374,6 @@ public class SampleAudit {
         }
         if (Boolean.FALSE.equals(auditRevisionModeRecognized))return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.PARAMETER_MISSING, 
                   new Object[]{SampleAuditBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName(), procInstanceName});
-        Integer isActions=LPArray.valuePosicInArray(auditRevisionModeArr, "ACTIONS");
-        Integer actionIsThere=LPArray.valuePosicInArray(auditRevisionModeArr, actionName);
         if ((LPArray.valuePosicInArray(auditRevisionModeArr, "ACTIONS")>-1) && (LPArray.valuePosicInArray(auditRevisionModeArr, actionName)==-1)) {
             
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SampleAuditErrorTrapping.AUDIT_RECORDS_PENDING_REVISION, new Object[]{sampleId, procInstanceName});

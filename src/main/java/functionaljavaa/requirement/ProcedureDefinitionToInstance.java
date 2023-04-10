@@ -159,7 +159,7 @@ public class ProcedureDefinitionToInstance {
     public static final JSONObject createDBProcedureEvents(String procedure, Integer procVersion, String procInstanceName) {
         SqlWhere sw = new SqlWhere();
         sw.addConstraint(TblsProcedure.ProcedureEvents.NAME, WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, "");
-        RdbmsObject removeRecordInTable = Rdbms.removeRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS, sw, procInstanceName);
+        Rdbms.removeRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS, sw, procInstanceName);
         Object[] insertRecordInTableFromTable = insertRecordInTableFromTable(true,
                 getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_USER_REQS_EVENTS.getTableFields()),
                 GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS_EVENTS.getTableName(),
@@ -247,31 +247,31 @@ public class ProcedureDefinitionToInstance {
         SqlWhere sw = new SqlWhere();
         sw.addConstraint(TblsProcedure.ProcedureBusinessRules.RULE_NAME, WHERECLAUSE_TYPES.EQUAL, new Object[]{LPPlatform.LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName()}, "");
         sw.addConstraint(TblsProcedure.ProcedureBusinessRules.AREA, WHERECLAUSE_TYPES.EQUAL, new Object[]{LPPlatform.LpPlatformBusinessRules.PROCEDURE_ACTIONS.getAreaName()}, "");
-        RdbmsObject removeRecordInTable = Rdbms.removeRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, sw, procInstanceName);
+        Rdbms.removeRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, sw, procInstanceName);
         sw = new SqlWhere();
         sw.addConstraint(TblsProcedure.ProcedureBusinessRules.RULE_NAME, WHERECLAUSE_TYPES.LIKE, new Object[]{"%" + LPPlatform.LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName().toLowerCase() + "%"}, "");
         sw.addConstraint(TblsProcedure.ProcedureBusinessRules.AREA, WHERECLAUSE_TYPES.EQUAL, new Object[]{LPPlatform.LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getAreaName()}, "");
-        removeRecordInTable = Rdbms.removeRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, sw, procInstanceName);
+        Rdbms.removeRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, sw, procInstanceName);
         sw = new SqlWhere();
         sw.addConstraint(TblsProcedure.ProcedureBusinessRules.RULE_NAME, WHERECLAUSE_TYPES.LIKE, new Object[]{"%" + LPPlatform.LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName().toLowerCase() + "%"}, "");
         sw.addConstraint(TblsProcedure.ProcedureBusinessRules.AREA, WHERECLAUSE_TYPES.EQUAL, new Object[]{LPPlatform.LpPlatformBusinessRules.ESIGN_REQUIRED.getAreaName()}, "");
-        removeRecordInTable = Rdbms.removeRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, sw, procInstanceName);
+        Rdbms.removeRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, sw, procInstanceName);
         sw = new SqlWhere();
         sw.addConstraint(TblsProcedure.ProcedureBusinessRules.RULE_NAME, WHERECLAUSE_TYPES.LIKE, new Object[]{"%" + LPPlatform.LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName().toLowerCase() + "%"}, "");
         sw.addConstraint(TblsProcedure.ProcedureBusinessRules.AREA, WHERECLAUSE_TYPES.EQUAL, new Object[]{LPPlatform.LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getAreaName()}, "");
-        removeRecordInTable = Rdbms.removeRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, sw, procInstanceName);
+        Rdbms.removeRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, sw, procInstanceName);
         sw = new SqlWhere();
         sw.addConstraint(TblsProcedure.ProcedureBusinessRules.RULE_NAME, WHERECLAUSE_TYPES.LIKE, new Object[]{"%" + LPPlatform.LpPlatformBusinessRules.ACTIONCONFIRM_REQUIRED.getTagName().toLowerCase() + "%"}, "");
         sw.addConstraint(TblsProcedure.ProcedureBusinessRules.AREA, WHERECLAUSE_TYPES.EQUAL, new Object[]{LPPlatform.LpPlatformBusinessRules.ACTIONCONFIRM_REQUIRED.getAreaName()}, "");
-        removeRecordInTable = Rdbms.removeRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, sw, procInstanceName);
+        Rdbms.removeRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, sw, procInstanceName);
         sw = new SqlWhere();
         sw.addConstraint(TblsProcedure.ProcedureBusinessRules.RULE_NAME, WHERECLAUSE_TYPES.LIKE, new Object[]{"%" + LPPlatform.LpPlatformBusinessRules.AUDIT_JUSTIF_REASON_REQUIRED.getTagName().toLowerCase() + "%"}, "");
         sw.addConstraint(TblsProcedure.ProcedureBusinessRules.AREA, WHERECLAUSE_TYPES.EQUAL, new Object[]{LPPlatform.LpPlatformBusinessRules.AUDIT_JUSTIF_REASON_REQUIRED.getAreaName()}, "");
-        removeRecordInTable = Rdbms.removeRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, sw, procInstanceName);
+        Rdbms.removeRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, sw, procInstanceName);
         sw = new SqlWhere();
         sw.addConstraint(TblsProcedure.ProcedureBusinessRules.RULE_NAME, WHERECLAUSE_TYPES.LIKE, new Object[]{"%" + LPPlatform.LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName().toLowerCase() + "%"}, "");
         sw.addConstraint(TblsProcedure.ProcedureBusinessRules.AREA, WHERECLAUSE_TYPES.EQUAL, new Object[]{LPPlatform.LpPlatformBusinessRules.AUDITREASON_PHRASE.getAreaName()}, "");
-        removeRecordInTable = Rdbms.removeRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, sw, procInstanceName);
+        Rdbms.removeRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, sw, procInstanceName);
         Object[][] procUsrReqs = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS.getTableName(),
                 new String[]{TblsReqs.ProcedureUserRequirements.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRequirements.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureUserRequirements.PROC_INSTANCE_NAME.getName()},
                 new Object[]{procedure, procVersion, procInstanceName},
@@ -343,7 +343,6 @@ public class ProcedureDefinitionToInstance {
                             justifReason.append(actionName);
                         }
                     }
-                    String[] confirmDialogDetail = LPNulls.replaceNull(curAction[3]).toString().split("\\|");
                     String confirmDialogPhrase = curAction[3].toString();
                     if (confirmDialogPhrase.length() > 0) {
                         fldValues = new Object[]{false, LPPlatform.LpPlatformBusinessRules.AUDITREASON_PHRASE.getAreaName(),
@@ -1143,7 +1142,7 @@ public class ProcedureDefinitionToInstance {
                     String diagnosesForLog = (sopRolePosic == -1) ? JsonTags.NO.getTagValue() : JsonTags.YES.getTagValue();
                     jsSopRoleObj.put("SOP " + sopFromArr + " exists for role " + roleFromArr + " ?", diagnosesForLog);
                     if (sopRolePosic == -1) {
-                        Object[][] procedureAddSopToUsersByRole = ProcedureDefinitionToInstanceUtility.procedureAddSopToUsersByRole(procedure, procVersion, procInstanceName,
+                        ProcedureDefinitionToInstanceUtility.procedureAddSopToUsersByRole(procedure, procVersion, procInstanceName,
                                 roleFromArr, sopFromArr, null, null);
                     }
                     jsSopRoleArr.add(jsSopRoleObj);

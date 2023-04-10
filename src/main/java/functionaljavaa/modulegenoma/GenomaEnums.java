@@ -102,8 +102,6 @@ public enum GenomaSuccess implements EnumIntMessages{
     public static Boolean activateOnCreation(String schemaSuffix, String tableName){
 if (1==1) return true;        
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, schemaSuffix);
-        
         String propertyEntryValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, GenomaBusnessRules.SUFFIX_ACTIVEONCREATION.getAreaName(), GenomaBusnessRules.SUFFIX_ACTIVEONCREATION.getTagName());        
         if (propertyEntryValue.length()==0) return false;
         return ("YES".equalsIgnoreCase(propertyEntryValue)) || ("SI".equalsIgnoreCase(propertyEntryValue));
@@ -111,8 +109,6 @@ if (1==1) return true;
 
     public static Object[] specialFieldsInUpdateArray(String schemaSuffix, String tableName, String[] fieldsToCheck){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, schemaSuffix);
-        
         String propertyEntryValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, GenomaBusnessRules.SUFFIX_SPECIALFIELDS_LOCKEDFORPROJECTUPDATEENDPOINT.getAreaName(), GenomaBusnessRules.SUFFIX_SPECIALFIELDS_LOCKEDFORPROJECTUPDATEENDPOINT.getTagName(), true);        
 
         if (propertyEntryValue.length()==0) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "", null);

@@ -529,15 +529,14 @@ specialFunctionReturn=DIAGNOSES_SUCCESS;
                         }    
                     }
                 }
-                Object[] actionDiagnoses=null;
                 RdbmsObject insertDiagn = Rdbms.insertRecordInTable(TblsCnfg.TablesConfig.SPEC_RULES, 
                         specRulesFldNames,specRulesFldValues); 
                 if (Boolean.TRUE.equals(insertDiagn.getRunSuccess())){
                     ConfigTablesAudit.specAuditAdd(ConfigSpecAuditEvents.SPEC_NEW.toString(), TblsCnfg.TablesConfig.SPEC_RULES, specCode, 
                         specCode, specCodeVersion, LPArray.joinTwo1DArraysInOneOf1DString(specRulesFldNames, specRulesFldValues, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);                
-                    actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());                    
+                    ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());                    
                 }else
-                    actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
+                    ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
             }            
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, specCode);
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, specCodeVersion.toString());

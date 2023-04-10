@@ -136,7 +136,6 @@ public class DataSampleIncubation {
         return setSampleEndIncubationDateTime(sampleId, incubationStage, incubName, tempReading, null);
     }
     public static Object[] setSampleEndIncubationDateTime(Integer sampleId, Integer incubationStage, String incubName, BigDecimal tempReading, String batchName) {
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         Object[] sampleIncubatorModeCheckerInfo=sampleIncubatorModeChecker(incubationStage, SampleIncubationMoment.END.toString(), incubName, tempReading, batchName);
@@ -178,7 +177,6 @@ public class DataSampleIncubation {
         return setSampleStartIncubationDateTime(sampleId, incubationStage, incubName, tempReading, null);
     }
     public static Object[] setSampleStartIncubationDateTime(Integer sampleId, Integer incubationStage, String incubName, BigDecimal tempReading, String batchName) {
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] sampleIncubatorModeCheckerInfo=sampleIncubatorModeChecker(incubationStage, SampleIncubationMoment.START.toString(), incubName, tempReading, batchName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleIncubatorModeCheckerInfo[0].toString())) return sampleIncubatorModeCheckerInfo;

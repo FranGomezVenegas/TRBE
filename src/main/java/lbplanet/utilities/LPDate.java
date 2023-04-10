@@ -67,7 +67,6 @@ public class LPDate {
         return cal.getTime();
     } 
     public static Object[] getDaysInRangeByIntervals(Calendar startDate, Calendar endDate, String dayOfWeek, String inverval, Integer numIterations){
-        Object[] dt = new Object[0];
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
     }
     

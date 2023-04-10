@@ -330,7 +330,6 @@ public class AnalysisMethodCertif {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userCertificationEnabled[0].toString())) 
             return userCertificationEnabled;
             
-        String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
         Object[][] userMethodInfo = getUserAnalysisMethod(procInstanceName, userName, methodName);
         if(LPPlatform.LAB_FALSE.equalsIgnoreCase(userMethodInfo[0][0].toString())){return LPArray.array2dTo1d(userMethodInfo);}
         if (userSopStatuses.PASS.getLightCode().equalsIgnoreCase(userMethodInfo[0][3].toString())){
