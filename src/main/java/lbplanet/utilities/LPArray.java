@@ -121,12 +121,12 @@ public class LPArray {
                         myObjectsArray[i] = Boolean.valueOf(rowParse[0]);
                         break;
                     case "DATETIME":
-                        myObjectsArray[i] = stringFormatToLocalDateTime((String) rowParse[0]);
+                        myObjectsArray[i] = stringFormatToLocalDateTime(rowParse[0]);
                         break;
                     case "DATE":
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                         try {
-                            myObjectsArray[i] = format.parse((String) rowParse[0]);
+                            myObjectsArray[i] = format.parse(rowParse[0]);
                         } catch (ParseException ex) {
                             Logger.getLogger(LPArray.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -169,12 +169,12 @@ public class LPArray {
                         myObjectsArray[i] = Boolean.valueOf(rowParse[0]);
                         break;
                     case "DATETIME":
-                        myObjectsArray[i] = stringFormatToLocalDateTime((String) rowParse[0]);
+                        myObjectsArray[i] = stringFormatToLocalDateTime(rowParse[0]);
                         break;
                     case "DATE":
                         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
                         try {
-                            myObjectsArray[i] = format.parse((String) rowParse[0]);
+                            myObjectsArray[i] = format.parse(rowParse[0]);
                         } catch (ParseException ex) {
                             Logger.getLogger(LPArray.class.getName()).log(Level.SEVERE, null, ex);
                         }
