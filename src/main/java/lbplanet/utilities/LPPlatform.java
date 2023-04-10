@@ -512,7 +512,7 @@ public class LPPlatform {
     }
 
     private static HashMap<String, String> encryptEncryptableFields(Boolean override, String fieldName, String fieldValue) {
-        HashMap<String, String> hm = new HashMap();
+        HashMap<String, String> hm = new HashMap<>();
         StringBuilder newFieldValueBuilder = new StringBuilder(0);
         if (Boolean.FALSE.equals(fieldName.toUpperCase().contains("IN"))) {
             Object[] encStr = encryptString(fieldValue);

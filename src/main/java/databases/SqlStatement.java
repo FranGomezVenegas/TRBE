@@ -136,7 +136,7 @@ public class SqlStatement {
      * @return
      */
     public HashMap<String, Object[]> buildSqlStatement(String operation, String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, String[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct) {
-        HashMap<String, Object[]> hm = new HashMap();
+        HashMap<String, Object[]> hm = new HashMap<>();
 
         DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
         String queryWhere = "";
@@ -146,7 +146,7 @@ public class SqlStatement {
         Object[] whereFieldValuesNew = new Object[0];
         if (whereFieldNames != null) {
             Object[] whereClauseContent = buildWhereClause(whereFieldNames, whereFieldValues, true);
-            queryWhere = (String) whereClauseContent[0];
+            queryWhere = whereClauseContent[0].toString();
             whereFieldValuesNew = (Object[]) whereClauseContent[1];
         }
         String fieldsToRetrieveStr = buildFieldsToRetrieve(fieldsToRetrieve);
@@ -188,7 +188,7 @@ public class SqlStatement {
     }
 
     public HashMap<String, Object[]> buildSqlStatementCounter(String schemaName, String tableName, String[] whereFields, Object[] whereFieldValues, String[] fieldsToGroup, String[] fieldsToOrder) {
-        HashMap<String, Object[]> hm = new HashMap();
+        HashMap<String, Object[]> hm = new HashMap<>();
 
         String queryWhere = "";
         schemaName = setSchemaName(schemaName);
@@ -196,7 +196,7 @@ public class SqlStatement {
         Object[] whereFieldValuesNew = new Object[0];
         if (whereFields != null) {
             Object[] whereClauseContent = buildWhereClause(whereFields, whereFieldValues, true);
-            queryWhere = (String) whereClauseContent[0];
+            queryWhere = whereClauseContent[0].toString();
             whereFieldValuesNew = (Object[]) whereClauseContent[1];
         }
         String fieldsToOrderStr = buildOrderBy(fieldsToOrder);
@@ -227,7 +227,7 @@ public class SqlStatement {
                 whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, Boolean.TRUE.equals(caseSensitive) ? whereFieldValues[iwhereFieldNames] : whereFieldValues[iwhereFieldNames].toString().toLowerCase());
             } else if (fn.toUpperCase().contains(" " + WHERECLAUSE_TYPES.NOT_IN.getSqlClause())) {
                 String separator = inNotInSeparator(fn);
-                String textSpecs = (String) whereFieldValues[iwhereFieldNames];
+                String textSpecs = whereFieldValues[iwhereFieldNames].toString();
                 String[] textSpecArray = textSpecs.split("\\" + separator);
                 Integer posicINClause = fn.toUpperCase().indexOf(" " + WHERECLAUSE_TYPES.NOT_IN.getSqlClause());
                 queryWhere.append(fn.substring(0, posicINClause + WHERECLAUSE_TYPES.NOT_IN.getSqlClause().length() + 1)).append(" (");
@@ -239,7 +239,7 @@ public class SqlStatement {
                 queryWhere.append(")");
             } else if (fn.toUpperCase().contains(" " + WHERECLAUSE_TYPES.IN.getSqlClause())) {
                 String separator = inNotInSeparator(fn);
-                String textSpecs = (String) whereFieldValues[iwhereFieldNames];
+                String textSpecs = whereFieldValues[iwhereFieldNames].toString();
                 String[] textSpecArray = textSpecs.split("\\" + separator);
                 Integer posicINClause = fn.toUpperCase().indexOf(" " + WHERECLAUSE_TYPES.IN.getSqlClause());
                 queryWhere.append(fn.substring(0, posicINClause + (" " + WHERECLAUSE_TYPES.IN.getSqlClause()).length())).append(" (");
@@ -420,7 +420,7 @@ public class SqlStatement {
             
             EnumIntTableFields[] whereFields, Object[] whereFieldValues, 
             EnumIntTableFields[] fieldsToRetrieve, String[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct) {        
-        HashMap<String, Object[]> hm = new HashMap();        
+        HashMap<String, Object[]> hm = new HashMap<>();        
         
         String queryWhere = "";
         schemaName = setSchemaName(schemaName);

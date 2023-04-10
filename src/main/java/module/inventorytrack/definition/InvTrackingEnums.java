@@ -57,7 +57,7 @@ public class InvTrackingEnums {
         NOT_AVAILABLEFOR_USE, AVAILABLE_FOR_USE, CANCELED;
 
         public static String getStatusFirstCode(EnumIntTableFields[] invReferenceFlds, Object[] invReferenceVls) {
-            ArrayList<String[]> preReqs = new ArrayList();
+            ArrayList<String[]> preReqs = new ArrayList<>();
             preReqs.add(0, new String[]{"data", "sampleStatusesByBusinessRules"});
             if (Boolean.TRUE.equals(Boolean.valueOf(
                     invReferenceVls[EnumIntTableFields.getFldPosicInArray(invReferenceFlds, TblsInvTrackingConfig.Reference.LOT_REQUIRES_QUALIF.getName())].toString()))) {
@@ -226,7 +226,7 @@ public class InvTrackingEnums {
         }
 
         public HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex) {
-            HashMap<HttpServletRequest, Object[]> hm = new HashMap();
+            HashMap<HttpServletRequest, Object[]> hm = new HashMap<>();
             Object[] argValues = new Object[0];
             for (LPAPIArguments curArg : this.arguments) {
                 argValues = LPArray.addValueToArray1D(argValues, curArg.getName() + ":" + getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
@@ -330,7 +330,7 @@ public class InvTrackingEnums {
         }
 
         public HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex) {
-            HashMap<HttpServletRequest, Object[]> hm = new HashMap();
+            HashMap<HttpServletRequest, Object[]> hm = new HashMap<>();
             Object[] argValues = new Object[0];
             for (LPAPIArguments curArg : this.arguments) {
                 argValues = LPArray.addValueToArray1D(argValues, curArg.getName() + ":" + getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));

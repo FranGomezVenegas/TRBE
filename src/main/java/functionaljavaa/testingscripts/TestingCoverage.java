@@ -117,10 +117,10 @@ public final class TestingCoverage {
         this.scriptsInfoArr = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT.getTableName(),
                 new String[]{TblsTesting.Script.SCRIPT_ID.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause() + "|"}, new Object[]{scrId},
                 this.scriptsFldNameArr);
-        List<String> calcProcedureBusRules = new ArrayList();
-        List<String> calcDataBusRules = new ArrayList();
-        List<String> calcConfigBusRules = new ArrayList();
-        List<String> calcEndpoints = new ArrayList();
+        List<String> calcProcedureBusRules = new ArrayList<>();
+        List<String> calcDataBusRules = new ArrayList<>();
+        List<String> calcConfigBusRules = new ArrayList<>();
+        List<String> calcEndpoints = new ArrayList<>();
 //        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptsBusRul[0][0].toString())){
         for (Object[] curScript : this.scriptsInfoArr) {
             if (curScript[1] != null && curScript[1].toString().length() > 0) {

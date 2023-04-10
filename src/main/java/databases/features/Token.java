@@ -175,7 +175,7 @@ public final class Token {
      */
     public String  createToken(String userDBId, String userDBPassword, String userId, String userRole, String appSessionId, String appSessionStartedDate, String eSign, String dbName, String userMail){        
         Algorithm algorithm = Algorithm.HMAC256(KEY); 
-        Map <String, Object> myParams = new HashMap();
+        Map <String, Object> myParams = new HashMap<>();
         myParams.put(TOKEN_PARAM_USERDB, userDBId);
         myParams.put(TOKEN_PARAM_USERPW, userDBPassword);
         myParams.put(TOKEN_PARAM_INTERNAL_USERID, userId);

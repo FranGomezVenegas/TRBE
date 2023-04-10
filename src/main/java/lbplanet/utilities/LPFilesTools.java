@@ -37,7 +37,7 @@ public final class LPFilesTools {
         Path myPath = Paths.get(fileName);
 
         CSVParser parser = new CSVParserBuilder().withSeparator(separator).build();
-List<String[]> rows=new ArrayList();
+List<String[]> rows=new ArrayList<>();
         try (BufferedReader br = Files.newBufferedReader(myPath,  StandardCharsets.UTF_8);
              CSVReader reader = new CSVReaderBuilder(br).withCSVParser(parser)
                      .build()) {
@@ -57,7 +57,7 @@ List<String[]> rows=new ArrayList();
         List<String[]> fileContent=null;
         if (Boolean.FALSE.equals(cleanFileIfExist))
             fileContent=fromCsvToArray(fileName, ','); 
-        if (fileContent==null) fileContent=new ArrayList();
+        if (fileContent==null) fileContent=new ArrayList<>();
         fileContent.add(entries);
         try (FileOutputStream fos = new FileOutputStream(fileName); 
              OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);

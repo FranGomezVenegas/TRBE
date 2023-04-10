@@ -49,7 +49,7 @@ public class DataProgramCorrectiveAction {
             this.busRulName=busRulName;
         }
         public static String getStatusFirstCode(){
-            ArrayList<String[]> preReqs = new ArrayList();
+            ArrayList<String[]> preReqs = new ArrayList<>();
             preReqs.add(0, new String[]{"data","sampleAnalysisResultStatusesByBusinessRules"});
             String procInstanceName=ProcedureRequestSession.getInstanceForQueries(null, null, null).getProcedureInstance();
             String sampleStatusFirst = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleStructureEnums.DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getAreaName(), "sampleAnalysisResult"+DataSampleStructureEnums.DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getTagName(), preReqs, true );     
@@ -58,7 +58,7 @@ public class DataProgramCorrectiveAction {
             return sampleStatusFirst;        
         }
         public String getStatusCode(){
-            ArrayList<String[]> preReqs = new ArrayList();
+            ArrayList<String[]> preReqs = new ArrayList<>();
             preReqs.add(0, new String[]{"data","sampleAnalysisResultStatusesByBusinessRules"});
             String procInstanceName=ProcedureRequestSession.getInstanceForQueries(null, null, null).getProcedureInstance();
             String statusPropertyValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, this.busRulName.getAreaName(), this.busRulName.getTagName(), preReqs, true);     

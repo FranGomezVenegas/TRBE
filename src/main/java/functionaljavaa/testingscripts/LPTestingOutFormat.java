@@ -86,7 +86,7 @@ public class LPTestingOutFormat {
         Integer numEvalArgs = 0;
         numEvalArgs = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.NUM_EVAL_ARGS).toString()));
         StringBuilder htmlStyleHdr = new StringBuilder(0);
-        HashMap<String, Object> headerTags = new HashMap();
+        HashMap<String, Object> headerTags = new HashMap<>();
         Integer actionNmePosic = numEvalArgs + 1;
         String[] fieldsName = new String[]{TblsTesting.ScriptSteps.EXPECTED_SYNTAXIS.getName(), TblsTesting.ScriptSteps.EXPECTED_CODE.getName(), TblsTesting.ScriptSteps.ESIGN_TO_CHECK.getName(),
             TblsTesting.ScriptSteps.CONFIRMUSER_USER_TO_CHECK.getName(), TblsTesting.ScriptSteps.CONFIRMUSER_PW_TO_CHECK.getName(),
@@ -611,7 +611,7 @@ public class LPTestingOutFormat {
      * @return
      */
     public static HashMap<String, Object> getCSVHeaderTester(String[][] csvContent) {
-        HashMap<String, Object> fieldsRequired = new HashMap();
+        HashMap<String, Object> fieldsRequired = new HashMap<>();
         fieldsRequired.put(FileHeaderTags.MAX_NUM_HEADER_LINES.toString(), "");
         fieldsRequired.put(FileHeaderTags.NUM_TABLES.toString(), "");
         fieldsRequired.put(FileHeaderTags.TESTER_NAME.toString(), "");
@@ -621,7 +621,7 @@ public class LPTestingOutFormat {
     }
 
     public static HashMap<String, Object> getCSVHeader(String[][] csvContent) {
-        HashMap<String, Object> fieldsRequired = new HashMap();
+        HashMap<String, Object> fieldsRequired = new HashMap<>();
         fieldsRequired.put(FileHeaderTags.MAX_NUM_HEADER_LINES.toString(), "");
         fieldsRequired.put(FileHeaderTags.NUM_TABLES.toString(), "");
         fieldsRequired.put(FileHeaderTags.NUM_EVALUATION_ARGUMENTS.toString(), "");
@@ -629,7 +629,7 @@ public class LPTestingOutFormat {
     }
 
     private static HashMap<String, Object> getCSVHeaderManager(HashMap<String, Object> fieldsRequired, String[][] csvContent) {
-        HashMap<String, Object> hm = new HashMap();
+        HashMap<String, Object> hm = new HashMap<>();
         Integer maxHeaderLines = Integer.valueOf(FileHeaderTags.MAX_NUM_HEADER_LINES.getTagValue().toString());
         if (csvContent.length < maxHeaderLines) {
             maxHeaderLines = csvContent.length - 1;

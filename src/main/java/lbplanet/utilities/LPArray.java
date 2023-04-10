@@ -348,7 +348,7 @@ public class LPArray {
      */
     public static String[] array2dTo1d(String[][] array2d) {
         List<String> list;
-        list = new ArrayList();
+        list = new ArrayList<>();
         for (String[] array2d1 : array2d) {
             list.addAll(Arrays.asList(array2d1)); // java.util.Arrays
         }
@@ -366,7 +366,7 @@ public class LPArray {
      */
     public static Object[] array2dTo1d(Object[][] array2d) {
         List<Object> list;
-        list = new ArrayList();
+        list = new ArrayList<>();
         for (Object[] array2d1 : array2d) {
             list.addAll(Arrays.asList(array2d1)); // java.util.Arrays
         }
@@ -470,7 +470,7 @@ public class LPArray {
      * @return
      */
     public static HashMap<String, Object[]> evaluateValuesAreInArray(Object[] theArray, Object[] valuesToCheck) {
-        HashMap<String, Object[]> hm = new HashMap();
+        HashMap<String, Object[]> hm = new HashMap<>();
         String evaluation = "";
         Object[] valuesNotIncluded = new Object[0];
         for (Object currField : valuesToCheck) {
@@ -840,7 +840,7 @@ public class LPArray {
             }
         }
 
-        List<String> unique = new ArrayList();
+        List<String> unique = new ArrayList<>();
 
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
             if (entry.getValue() == 1) {

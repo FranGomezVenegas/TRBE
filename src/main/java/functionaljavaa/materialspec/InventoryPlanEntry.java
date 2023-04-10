@@ -62,7 +62,7 @@ public final class InventoryPlanEntry {
         this.errorsArr=new String[]{};
         this.errorsjArr=new JSONArray();
         this.hasErrors=false;
-        List<InventoryPlanEntryItem> myList = new ArrayList();
+        List<InventoryPlanEntryItem> myList = new ArrayList<>();
         Object[][] materialInvPlanInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsInspLotRMConfig.TablesInspLotRMConfig.MATERIAL_INVENTORY_PLAN.getTableName(), 
             new String[]{TblsInspLotRMConfig.MaterialInventoryPlan.MATERIAL.getName()}, new Object[]{materialName}, 
             new String[]{TblsInspLotRMConfig.MaterialInventoryPlan.ENTRY_NAME.getName(), TblsInspLotRMConfig.MaterialInventoryPlan.ENTRY_TYPE.getName(), TblsInspLotRMConfig.MaterialInventoryPlan.QUANTITY.getName(), TblsInspLotRMConfig.MaterialInventoryPlan.QUANTITY_UOM.getName(),

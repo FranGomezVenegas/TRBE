@@ -31,9 +31,9 @@ public class BusinessRules {
 
     public BusinessRules(String procedureInstanceName, Integer scriptId, JsonArray busRulesList){
         this.procedureInstanceName=procedureInstanceName;
-        this.procedure=new ArrayList();
-        this.data=new ArrayList();
-        this.config=new ArrayList();
+        this.procedure=new ArrayList<>();
+        this.data=new ArrayList<>();
+        this.config=new ArrayList<>();
         for (int i = 0; i < busRulesList.size(); i++) {
             JsonObject object = (JsonObject) busRulesList.get(i);
             String suffix=object.get("suffix").getAsString();
@@ -50,9 +50,9 @@ public class BusinessRules {
     }
     public BusinessRules(String procedureInstanceName, Integer scriptId){
         this.procedureInstanceName=procedureInstanceName;
-        this.procedure=new ArrayList();
-        this.data=new ArrayList();
-        this.config=new ArrayList();
+        this.procedure=new ArrayList<>();
+        this.data=new ArrayList<>();
+        this.config=new ArrayList<>();
 //        if(1==1) return;
         Object[][] testingBusRulsInfo = null;
         if (scriptId!=null && scriptId>0)
