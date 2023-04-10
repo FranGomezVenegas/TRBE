@@ -37,7 +37,6 @@ import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
-import trazit.session.SessionAuditActions;
 
 /**
  *

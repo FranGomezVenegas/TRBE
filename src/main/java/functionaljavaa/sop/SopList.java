@@ -15,7 +15,6 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import java.util.Arrays;
 import trazit.enums.EnumIntTableFields;
-import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 /**
  *
