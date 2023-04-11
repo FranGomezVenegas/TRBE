@@ -7,6 +7,7 @@ package databases;
 
 import static databases.SqlStatementEnums.inNotInSeparator;
 import java.util.ArrayList;
+import java.util.List;
 import lbplanet.utilities.LPArray;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
@@ -114,7 +115,7 @@ public class SqlWhere {
     public void addOrClauseConstraint(SqlWhereEntry[] orClauses){
          this.getAllWhereEntries().add(new SqlWhereEntry(orClauses));
     }
-    public ArrayList<SqlWhereEntry> getAllWhereEntries() {
+    public List<SqlWhereEntry> getAllWhereEntries() {
         return allWhereEntries;
     }
     public Object[] getAllWhereEntriesFldValues(){

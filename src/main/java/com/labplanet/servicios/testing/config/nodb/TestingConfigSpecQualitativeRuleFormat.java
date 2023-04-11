@@ -18,7 +18,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -52,7 +52,7 @@ public class TestingConfigSpecQualitativeRuleFormat extends HttpServlet {
 
         String testerFileName = LPTestingParams.TestingServletsConfig.NODB_SCHEMACONFIG_SPECQUAL_RULEFORMAT.getTesterFileName();
         LPTestingOutFormat tstOut = new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.NODB_SCHEMACONFIG_SPECQUAL_RULEFORMAT.name(), testerFileName);
-        HashMap<String, Object> csvHeaderTags = tstOut.getCsvHeaderTags();
+        Map<String, Object> csvHeaderTags = tstOut.getCsvHeaderTags();
 
         StringBuilder fileContentBuilder = new StringBuilder(0);
         fileContentBuilder.append(tstOut.getHtmlStyleHeader());

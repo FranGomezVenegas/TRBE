@@ -12,7 +12,7 @@ import databases.SqlWhere;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lbplanet.utilities.LPArray;
@@ -98,7 +98,7 @@ private QueryUtilitiesEnums() {throw new IllegalStateException("Utility class");
         //if (orderBy==null) orderBy=new String[]{};
         try {
             SqlStatementEnums sql = new SqlStatementEnums();
-            HashMap<String, Object[]> hmQuery = sql.buildSqlStatementTable(Rdbms.SQLSELECT, tblObj,
+            Map<String, Object[]> hmQuery = sql.buildSqlStatementTable(Rdbms.SQLSELECT, tblObj,
                     whereFieldNames, whereFieldValues,
                     fieldsToRetrieve, null, null, orderBy, null, inforceDistinct, alternativeProcInstanceName, avoidMask);
             query = hmQuery.keySet().iterator().next();
@@ -141,10 +141,9 @@ private QueryUtilitiesEnums() {throw new IllegalStateException("Utility class");
 
     private static Object[][] getRecordFieldsByFilter(EnumIntTables tblObj, EnumIntTableFields[] fieldsToRetrieve, SqlWhere where, String[] orderBy, Boolean inforceDistinct, String alternativeProcInstanceName) {
         String query = null;
-        //if (orderBy==null) orderBy=new String[]{};
         try {
             SqlStatementEnums sql = new SqlStatementEnums();
-            HashMap<String, Object[]> hmQuery = sql.buildSqlStatementTable(Rdbms.SQLSELECT, tblObj, where,
+            Map<String, Object[]> hmQuery = sql.buildSqlStatementTable(Rdbms.SQLSELECT, tblObj, where,
                     fieldsToRetrieve, null, null, orderBy, null, inforceDistinct, alternativeProcInstanceName);
             query = hmQuery.keySet().iterator().next();
             Object[] keyFieldValueNew = hmQuery.get(query);
@@ -190,7 +189,7 @@ private QueryUtilitiesEnums() {throw new IllegalStateException("Utility class");
 
     private static Object[][] getViewRecordFieldsByFilter(EnumIntViews viewObj, EnumIntViewFields[] fieldsToRetrieve, SqlWhere where, String[] orderBy, Boolean inforceDistinct, String alternativeProcInstanceName, Boolean isCaseSensitive) {
         SqlStatementEnums sql = new SqlStatementEnums();
-        HashMap<String, Object[]> hmQuery = sql.buildSqlStatementView(viewObj, where, fieldsToRetrieve, orderBy, null, inforceDistinct, alternativeProcInstanceName, isCaseSensitive);
+        Map<String, Object[]> hmQuery = sql.buildSqlStatementView(viewObj, where, fieldsToRetrieve, orderBy, null, inforceDistinct, alternativeProcInstanceName, isCaseSensitive);
         String query = hmQuery.keySet().iterator().next();
         Object[] keyFieldValueNew = hmQuery.get(query);
 

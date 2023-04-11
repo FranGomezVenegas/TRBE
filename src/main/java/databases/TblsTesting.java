@@ -6,7 +6,7 @@
 package databases;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import java.util.HashMap;
+import java.util.Map;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDatabase;
 import lbplanet.utilities.LPPlatform;
@@ -278,7 +278,7 @@ public class TblsTesting {
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
         if (procInstanceName==null)
             procInstanceName=instanceForActions.getProcedureInstance();        
-        HashMap<String[], Object[][]> dbTableGetFieldDefinition = Rdbms.dbTableGetFieldDefinition(LPPlatform.buildSchemaName(procInstanceName, tblObj.getRepositoryName()), tblObj.getTableName());
+        Map<String[], Object[][]> dbTableGetFieldDefinition = Rdbms.dbTableGetFieldDefinition(LPPlatform.buildSchemaName(procInstanceName, tblObj.getRepositoryName()), tblObj.getTableName());
         String[] fldDefinitionColName= dbTableGetFieldDefinition.keySet().iterator().next();    
         Object[][] tableFldsInfo = dbTableGetFieldDefinition.get(fldDefinitionColName);
         String[] tableFldsInfoColumns = LPArray.convertObjectArrayToStringArray(LPArray.getColumnFromArray2D(tableFldsInfo, LPArray.valuePosicInArray(fldDefinitionColName, "column_name")));

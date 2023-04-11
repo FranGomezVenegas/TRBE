@@ -9,7 +9,7 @@ import databases.DbObjects;
 import databases.Rdbms;
 import databases.TblsCnfg;
 import functionaljavaa.businessrules.BusinessRules;
-import java.util.HashMap;
+import java.util.Map;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDatabase;
 import lbplanet.utilities.LPNulls;
@@ -51,7 +51,7 @@ public class DeployTables {
                 }
             }
             if (Boolean.TRUE.equals(refreshTableIfExists)) {
-                HashMap<String[], Object[][]> dbTableGetFieldDefinition = Rdbms.dbTableGetFieldDefinition(schemaName, tableObj.getTableName());
+                Map<String[], Object[][]> dbTableGetFieldDefinition = Rdbms.dbTableGetFieldDefinition(schemaName, tableObj.getTableName());
                 String[] fldName = dbTableGetFieldDefinition.keySet().iterator().next();
                 Integer valuePosicInArray = LPArray.valuePosicInArray(fldName, "column_name");
                 if (valuePosicInArray > -1) {

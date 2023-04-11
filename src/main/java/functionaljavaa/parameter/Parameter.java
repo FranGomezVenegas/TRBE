@@ -24,6 +24,7 @@ import trazit.session.ProcedureRequestSession;
 import databases.Rdbms;
 import databases.RdbmsObject;
 import databases.TblsProcedure;
+import java.util.List;
 
 /**
  *
@@ -172,13 +173,13 @@ public class Parameter {
     public static String getBusinessRuleProcedureFile(String procInstanceName, String suffixFile, String parameterName, Boolean isOptional) {
         return getBusinessRuleProcedureFile(procInstanceName, suffixFile, parameterName, isOptional, null, null);
     }    
-    public static String getBusinessRuleProcedureFile(String procInstanceName, String suffixFile, String parameterName, ArrayList<String[]> rulePreReqs) {
+    public static String getBusinessRuleProcedureFile(String procInstanceName, String suffixFile, String parameterName, List<String[]> rulePreReqs) {
         return getBusinessRuleProcedureFile(procInstanceName, suffixFile, parameterName, false, rulePreReqs, null);
     }    
-    public static String getBusinessRuleProcedureFile(String procInstanceName, String suffixFile, String parameterName, ArrayList<String[]> rulePreReqs, Boolean isOptional) {
+    public static String getBusinessRuleProcedureFile(String procInstanceName, String suffixFile, String parameterName, List<String[]> rulePreReqs, Boolean isOptional) {
         return getBusinessRuleProcedureFile(procInstanceName, suffixFile, parameterName, isOptional, rulePreReqs, null);
     }        
-    public static String getBusinessRuleProcedureFile(String procInstanceName, String suffixFile, String parameterName, Boolean isOptional, ArrayList<String[]> rulePreReqs, BusinessRules biProcInst) {
+    public static String getBusinessRuleProcedureFile(String procInstanceName, String suffixFile, String parameterName, Boolean isOptional, List<String[]> rulePreReqs, BusinessRules biProcInst) {
         String className ="NO_TRACE";
         String classFullName = "NO_TRACE";
         String methodName = "NO TRACE"; 

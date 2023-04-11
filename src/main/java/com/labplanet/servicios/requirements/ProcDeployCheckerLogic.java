@@ -17,6 +17,7 @@ import static functionaljavaa.requirement.ProcedureDefinitionToInstance.FLDSTORE
 import functionaljavaa.requirement.masterdata.ClassMasterData;
 import functionaljavaa.user.UserAndRolesViews;
 import java.util.HashMap;
+import java.util.Map;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
@@ -60,7 +61,7 @@ public class ProcDeployCheckerLogic {
         detailsObj.put("expected_and_checked_repositories", LPJson.convertToJSON(schemaNames));
         Object[] dbSchemasList = Rdbms.dbSchemasList(procInstanceName);
         dbSchemasList=LPArray.getUniquesArray(dbSchemasList);
-        HashMap<String, Object[]> evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(dbSchemasList, schemaNames);
+        Map<String, Object[]> evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(dbSchemasList, schemaNames);
         String evaluation= evaluateValuesAreInArray.keySet().iterator().next();        
         if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation))){
             anyMismatch=true;
@@ -160,7 +161,7 @@ public class ProcDeployCheckerLogic {
                 sourceInfo[i]=procUserAndRolesRecordsSource[i][personNameFldPosic]+"-"+procUserAndRolesRecordsSource[i][roleNameFldPosic];
                 destInfo[i]=personProfileRecordsDestination[i][0]+"-"+personProfileRecordsDestination[i][1];                
             }
-            HashMap<String, Object[]> evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(sourceInfo, destInfo);
+            Map<String, Object[]> evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(sourceInfo, destInfo);
             String evaluation= evaluateValuesAreInArray.keySet().iterator().next();        
             if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation))){
                 anyMismatch=true;
@@ -278,7 +279,7 @@ public class ProcDeployCheckerLogic {
                 sourceInfo[i]=procUserAndRolesRecordsSource[i][srcAreaFldPosic]+"-"+procUserAndRolesRecordsSource[i][srcRuleNameFldPosic]+"-"+procUserAndRolesRecordsSource[i][srcRuleValueFldPosic];
                 destInfo[i]=personProfileRecordsDestination[i][destAreaFldPosic]+"-"+personProfileRecordsDestination[i][destRuleNameFldPosic]+"-"+personProfileRecordsDestination[i][destRuleValueFldPosic];
             }
-            HashMap<String, Object[]> evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(destInfo, sourceInfo);
+            Map<String, Object[]> evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(destInfo, sourceInfo);
             String evaluation= evaluateValuesAreInArray.keySet().iterator().next();        
             if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation))){
                 anyMismatch=true;
@@ -334,7 +335,7 @@ public class ProcDeployCheckerLogic {
                 sourceInfo[i]=procUserAndRolesRecordsSource[i][srcSopNameFldPosic].toString();
                 destInfo[i]=personProfileRecordsDestination[i][destSopNameFldPosic].toString();
             }
-            HashMap<String, Object[]> evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(destInfo, sourceInfo);
+            Map<String, Object[]> evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(destInfo, sourceInfo);
             String evaluation= evaluateValuesAreInArray.keySet().iterator().next();        
             if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation))){
                 anyMismatch=true;
@@ -392,7 +393,7 @@ public class ProcDeployCheckerLogic {
                 sourceInfo[i]=procUserAndRolesRecordsSource[i][srcSopNameFldPosic].toString();
                 destInfo[i]=personProfileRecordsDestination[i][destSopNameFldPosic].toString();
             }
-            HashMap<String, Object[]> evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(destInfo, sourceInfo);
+            Map<String, Object[]> evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(destInfo, sourceInfo);
             String evaluation= evaluateValuesAreInArray.keySet().iterator().next();        
             if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation))){
                 anyMismatch=true;
@@ -429,7 +430,7 @@ public class ProcDeployCheckerLogic {
         detailsObj.put("expected_and_checked_tables", LPJson.convertToJSON(moduleBaseTablesArr));
         Object[] dbSchemasTablesList = Rdbms.dbSchemaAndTableList(procInstanceName);
         dbSchemasTablesList=LPArray.getUniquesArray(dbSchemasTablesList);
-        HashMap<String, Object[]> evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(dbSchemasTablesList, moduleBaseTablesArr);
+        Map<String, Object[]> evaluateValuesAreInArray = LPArray.evaluateValuesAreInArray(dbSchemasTablesList, moduleBaseTablesArr);
         String evaluation = evaluateValuesAreInArray.keySet().iterator().next();        
         if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation))){
             anyMismatch=true;

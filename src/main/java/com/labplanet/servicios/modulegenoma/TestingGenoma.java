@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServlet;
@@ -76,7 +76,7 @@ public class TestingGenoma extends HttpServlet {
 
         String testerFileName=LPTestingParams.TestingServletsConfig.DB_SCHEMADATA_GENOMA.getTesterFileName();                         
         LPTestingOutFormat tstOut=new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.DB_SCHEMADATA_GENOMA.name(), testerFileName);
-        HashMap<String, Object> csvHeaderTags=tstOut.getCsvHeaderTags();
+        Map<String, Object> csvHeaderTags=tstOut.getCsvHeaderTags();
         
         StringBuilder fileContentBuilder = new StringBuilder(0);        
         fileContentBuilder.append(tstOut.getHtmlStyleHeader());

@@ -5,7 +5,7 @@
  */
 package lbplanet.utilities;
 
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -19,7 +19,7 @@ public class LPHashMap {
      * @param separator
      * @return
      */
-    public static String hashMapToStringKeys(HashMap<String, Object> map, String separator){ 
+    public static String hashMapToStringKeys(Map<String, Object> map, String separator){ 
         String keys="";
         if (map.isEmpty()){return "";}
         StringBuilder myKeys = new StringBuilder(0); 

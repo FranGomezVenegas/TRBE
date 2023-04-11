@@ -469,7 +469,7 @@ public class LPArray {
      * @param valuesToCheck
      * @return
      */
-    public static HashMap<String, Object[]> evaluateValuesAreInArray(Object[] theArray, Object[] valuesToCheck) {
+    public static Map<String, Object[]> evaluateValuesAreInArray(Object[] theArray, Object[] valuesToCheck) {
         HashMap<String, Object[]> hm = new HashMap<>();
         String evaluation = "";
         Object[] valuesNotIncluded = new Object[0];

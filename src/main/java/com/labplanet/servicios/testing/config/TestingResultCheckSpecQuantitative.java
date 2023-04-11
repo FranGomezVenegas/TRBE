@@ -17,7 +17,7 @@ import lbplanet.utilities.LPFrontEnd;
 import functionaljavaa.testingscripts.TestingAssert;
 import functionaljavaa.testingscripts.TestingAssertSummary;
 import java.time.LocalDateTime;
-import java.util.HashMap;
+import java.util.Map;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 /**
@@ -66,7 +66,7 @@ public class TestingResultCheckSpecQuantitative extends HttpServlet {
 
         String testerFileName=LPTestingParams.TestingServletsConfig.NODB_SCHEMACONFIG_SPECQUANTI_RESULTCHECK.getTesterFileName();                         
         LPTestingOutFormat tstOut=new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.NODB_SCHEMACONFIG_SPECQUANTI_RESULTCHECK.name(), testerFileName);
-        HashMap<String, Object> csvHeaderTags=tstOut.getCsvHeaderTags();
+        Map<String, Object> csvHeaderTags=tstOut.getCsvHeaderTags();
 
         StringBuilder fileContentBuilder = new StringBuilder(0);        
         fileContentBuilder.append(tstOut.getHtmlStyleHeader());

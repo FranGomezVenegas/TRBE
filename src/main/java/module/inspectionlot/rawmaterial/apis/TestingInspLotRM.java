@@ -21,7 +21,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -66,7 +66,7 @@ public class TestingInspLotRM extends HttpServlet {
 
         String testerFileName=LPTestingParams.TestingServletsConfig.DB_SCHEMADATA_INSPECTION_LOT_RM.getTesterFileName();                         
         LPTestingOutFormat tstOut=new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.DB_SCHEMADATA_INSPECTION_LOT_RM.name(), testerFileName);
-        HashMap<String, Object> csvHeaderTags=tstOut.getCsvHeaderTags();
+        Map<String, Object> csvHeaderTags=tstOut.getCsvHeaderTags();
         
         StringBuilder fileContentBuilder = new StringBuilder(0);        
         fileContentBuilder.append(tstOut.getHtmlStyleHeader());

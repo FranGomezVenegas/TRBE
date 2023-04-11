@@ -27,6 +27,7 @@ import functionaljavaa.businessrules.BusinessRules;
 import static functionaljavaa.parameter.Parameter.getBusinessRuleAppFile;
 import functionaljavaa.testingscripts.TestingBusinessRulesVisited;
 import java.util.ArrayList;
+import java.util.Map;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;
@@ -497,7 +498,7 @@ public class LPPlatform {
      * @param fieldValue
      * @return
      */
-    public static HashMap<String, String> encryptEncryptableFieldsAddBoth(String fieldName, String fieldValue) {
+    public static Map<String, String> encryptEncryptableFieldsAddBoth(String fieldName, String fieldValue) {
         return encryptEncryptableFields(false, fieldName, fieldValue);
     }
 
@@ -507,7 +508,7 @@ public class LPPlatform {
      * @param fieldValue
      * @return
      */
-    public static HashMap<String, String> encryptEncryptableFieldsOverride(String fieldName, String fieldValue) {
+    public static Map<String, String> encryptEncryptableFieldsOverride(String fieldName, String fieldValue) {
         return encryptEncryptableFields(true, fieldName, fieldValue);
     }
 

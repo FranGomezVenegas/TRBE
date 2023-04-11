@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Timestamp;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -143,7 +143,7 @@ public class SampleAPIfrontend extends HttpServlet {
                     whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(whereFieldsValue.split("\\|")));                                          
                     for (int iFields=0; iFields<whereFieldsNameArr.length; iFields++){
                         if (Boolean.TRUE.equals(LPPlatform.isEncryptedField(procInstanceName, GlobalVariables.Schemas.DATA.getName(), TblsData.TablesData.SAMPLE.getTableName(), whereFieldsNameArr[iFields]))){
-                            HashMap<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsNameArr[iFields]);
+                            Map<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsNameArr[iFields]);
                             whereFieldsNameArr[iFields]= hm.keySet().iterator().next();    
                             if ( hm.get(whereFieldsNameArr[iFields]).length()!=whereFieldsNameArr[iFields].length()){
                                 String newWhereFieldValues = hm.get(whereFieldsNameArr[iFields]);
@@ -217,7 +217,7 @@ public class SampleAPIfrontend extends HttpServlet {
                     whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(whereFieldsValue.split("\\|")));                                          
                     for (int iFields=0; iFields<whereFieldsNameArr.length; iFields++){
                         if (Boolean.TRUE.equals(LPPlatform.isEncryptedField(procInstanceName, GlobalVariables.Schemas.DATA.getName(), TblsData.TablesData.SAMPLE.getTableName(), whereFieldsNameArr[iFields]))){
-                            HashMap<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsValueArr[iFields].toString());
+                            Map<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsValueArr[iFields].toString());
                             whereFieldsNameArr[iFields]= hm.keySet().iterator().next();    
                             if ( hm.get(whereFieldsNameArr[iFields]).length()!=whereFieldsNameArr[iFields].length()){
                                 String newWhereFieldValues = hm.get(whereFieldsNameArr[iFields]);
@@ -732,7 +732,7 @@ public class SampleAPIfrontend extends HttpServlet {
         whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(whereFieldsValue.split("\\|")));                                          
         for (int iFields=0; iFields<whereFieldsNameArr.length; iFields++){
             if (Boolean.TRUE.equals(LPPlatform.isEncryptedField(procInstanceName, GlobalVariables.Schemas.DATA.getName(), TblsData.TablesData.SAMPLE.getTableName(), whereFieldsNameArr[iFields]))){
-                HashMap<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsValueArr[iFields].toString());
+                Map<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsValueArr[iFields].toString());
                 whereFieldsNameArr[iFields]= hm.keySet().iterator().next();    
                 if ( hm.get(whereFieldsNameArr[iFields]).length()!=whereFieldsNameArr[iFields].length()){
                     String newWhereFieldValues = hm.get(whereFieldsNameArr[iFields]);
@@ -875,7 +875,7 @@ public class SampleAPIfrontend extends HttpServlet {
             whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(whereFieldsValue.split("\\|")));                                          
             for (int iFields=0; iFields<whereFieldsNameArr.length; iFields++){
                 if (Boolean.TRUE.equals(LPPlatform.isEncryptedField(procInstanceName, GlobalVariables.Schemas.DATA.getName(), TblsData.TablesData.SAMPLE.getTableName(), whereFieldsNameArr[iFields]))){
-                    HashMap<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsValueArr[iFields].toString());
+                    Map<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsValueArr[iFields].toString());
                     whereFieldsNameArr[iFields]= hm.keySet().iterator().next();    
                     if ( hm.get(whereFieldsNameArr[iFields]).length()!=whereFieldsNameArr[iFields].length()){
                         String newWhereFieldValues = hm.get(whereFieldsNameArr[iFields]);
@@ -956,7 +956,7 @@ public class SampleAPIfrontend extends HttpServlet {
             whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(whereFieldsValue.split("\\|")));                                          
             for (int iFields=0; iFields<whereFieldsNameArr.length; iFields++){
                 if (Boolean.TRUE.equals(LPPlatform.isEncryptedField(procInstanceName, GlobalVariables.Schemas.DATA.getName(), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), whereFieldsNameArr[iFields]))){
-                    HashMap<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsValueArr[iFields].toString());
+                    Map<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsValueArr[iFields].toString());
                     whereFieldsNameArr[iFields]= hm.keySet().iterator().next();    
                     if ( hm.get(whereFieldsNameArr[iFields]).length()!=whereFieldsNameArr[iFields].length()){
                         String newWhereFieldValues = hm.get(whereFieldsNameArr[iFields]);

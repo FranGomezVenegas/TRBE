@@ -21,7 +21,7 @@ import functionaljavaa.user.UserAndRolesViews;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -152,7 +152,7 @@ public class ProcedureDeployment extends HttpServlet {
             if (Boolean.TRUE.equals(PROCCHECKR_INSTNC_REQSOPSINSOPTBL)){
                 Object[] procSopMetaDataSopName = LPArray.getColumnFromArray2D(procSopInMetaData, LPArray.valuePosicInArray(PROCDISP_PROCINSTNC_SOPS_FLD_NAME.split("\\|"), TblsCnfg.SopMetaData.SOP_NAME.getName()));
                 String matching=LPTestingOutFormat.TST_ICON_UNDEFINED + " Not Implemented Yet";
-                HashMap<String, Object[]> procSopsInMetaData = LPArray.evaluateValuesAreInArray(
+                Map<String, Object[]> procSopsInMetaData = LPArray.evaluateValuesAreInArray(
                         procSopMetaDataSopName, procEventSOPS);
                 String evaluation= procSopsInMetaData.keySet().iterator().next();
                 Object[] missingSOPs = procSopsInMetaData.get(evaluation);

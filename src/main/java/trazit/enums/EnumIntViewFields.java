@@ -6,7 +6,7 @@
 package trazit.enums;
 
 import databases.Rdbms;
-import java.util.HashMap;
+import java.util.Map;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
@@ -68,7 +68,7 @@ public interface EnumIntViewFields {
             procInstanceName=alternativeProcInstanceName;
         else
             procInstanceName=instanceForActions.getProcedureInstance();        
-        HashMap<String[], Object[][]> dbTableGetFieldDefinition = Rdbms.dbTableGetFieldDefinition(LPPlatform.buildSchemaName(procInstanceName, tblObj.getRepositoryName()), tblObj.getViewName());
+        Map<String[], Object[][]> dbTableGetFieldDefinition = Rdbms.dbTableGetFieldDefinition(LPPlatform.buildSchemaName(procInstanceName, tblObj.getRepositoryName()), tblObj.getViewName());
         String[] fldDefinitionColName= dbTableGetFieldDefinition.keySet().iterator().next();    
         Object[][] tableFldsInfo = dbTableGetFieldDefinition.get(fldDefinitionColName);
         String[] tableFldsInfoColumns = LPArray.convertObjectArrayToStringArray(LPArray.getColumnFromArray2D(tableFldsInfo, LPArray.valuePosicInArray(fldDefinitionColName, "column_name")));        

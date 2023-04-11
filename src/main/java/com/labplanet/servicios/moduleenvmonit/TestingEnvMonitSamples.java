@@ -21,7 +21,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -65,7 +65,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
 
         String testerFileName=LPTestingParams.TestingServletsConfig.DB_SCHEMADATA_ENVMONIT_SAMPLES.getTesterFileName();                         
         LPTestingOutFormat tstOut=new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.DB_SCHEMADATA_ENVMONIT_SAMPLES.name(), testerFileName);
-        HashMap<String, Object> csvHeaderTags=tstOut.getCsvHeaderTags();
+        Map<String, Object> csvHeaderTags=tstOut.getCsvHeaderTags();
         
         StringBuilder fileContentBuilder = new StringBuilder(0);        
 

@@ -28,6 +28,7 @@ import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,7 +58,7 @@ public class LPTestingOutFormat {
     /**
      * @return the csvHeaderTags
      */
-    public HashMap<String, Object> getCsvHeaderTags() {
+    public Map<String, Object> getCsvHeaderTags() {
         return csvHeaderTags;
     }
 
@@ -68,7 +69,7 @@ public class LPTestingOutFormat {
     private Object[][] testingContent = new Object[0][0];
     private String filePathName = "";
     private String fileName = "";
-    private HashMap<String, Object> csvHeaderTags = null;
+    private Map<String, Object> csvHeaderTags = null;
     private StringBuilder htmlStyleHeader = new StringBuilder(0);
     private Integer numEvaluationArguments = -1;
     private Integer actionNamePosic = -1;
@@ -86,7 +87,7 @@ public class LPTestingOutFormat {
         Integer numEvalArgs = 0;
         numEvalArgs = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.NUM_EVAL_ARGS).toString()));
         StringBuilder htmlStyleHdr = new StringBuilder(0);
-        HashMap<String, Object> headerTags = new HashMap<>();
+        Map<String, Object> headerTags = new HashMap<>();
         Integer actionNmePosic = numEvalArgs + 1;
         String[] fieldsName = new String[]{TblsTesting.ScriptSteps.EXPECTED_SYNTAXIS.getName(), TblsTesting.ScriptSteps.EXPECTED_CODE.getName(), TblsTesting.ScriptSteps.ESIGN_TO_CHECK.getName(),
             TblsTesting.ScriptSteps.CONFIRMUSER_USER_TO_CHECK.getName(), TblsTesting.ScriptSteps.CONFIRMUSER_PW_TO_CHECK.getName(),
@@ -610,7 +611,7 @@ public class LPTestingOutFormat {
      * @param csvContent
      * @return
      */
-    public static HashMap<String, Object> getCSVHeaderTester(String[][] csvContent) {
+    public static Map<String, Object> getCSVHeaderTester(String[][] csvContent) {
         HashMap<String, Object> fieldsRequired = new HashMap<>();
         fieldsRequired.put(FileHeaderTags.MAX_NUM_HEADER_LINES.toString(), "");
         fieldsRequired.put(FileHeaderTags.NUM_TABLES.toString(), "");
@@ -620,7 +621,7 @@ public class LPTestingOutFormat {
         return getCSVHeaderManager(fieldsRequired, csvContent);
     }
 
-    public static HashMap<String, Object> getCSVHeader(String[][] csvContent) {
+    public static Map<String, Object> getCSVHeader(String[][] csvContent) {
         HashMap<String, Object> fieldsRequired = new HashMap<>();
         fieldsRequired.put(FileHeaderTags.MAX_NUM_HEADER_LINES.toString(), "");
         fieldsRequired.put(FileHeaderTags.NUM_TABLES.toString(), "");

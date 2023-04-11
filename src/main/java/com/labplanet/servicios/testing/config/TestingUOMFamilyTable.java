@@ -15,7 +15,7 @@ import functionaljavaa.testingscripts.TestingAssert;
 import functionaljavaa.testingscripts.TestingAssertSummary;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -59,7 +59,7 @@ public class TestingUOMFamilyTable extends HttpServlet {
         
         
         try (PrintWriter out = response.getWriter()) {
-            HashMap<String, Object> csvHeaderTags = LPTestingOutFormat.getCSVHeader(LPArray.convertCSVinArray(csvPathName, "="));
+            Map<String, Object> csvHeaderTags = LPTestingOutFormat.getCSVHeader(LPArray.convertCSVinArray(csvPathName, "="));
             if (csvHeaderTags.containsKey(LPPlatform.LAB_FALSE)){
                 fileContentBuilder.append("There are missing tags in the file header: ").append(csvHeaderTags.get(LPPlatform.LAB_FALSE));
                 out.println(fileContentBuilder.toString()); 

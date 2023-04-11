@@ -11,6 +11,8 @@ import databases.TblsTesting;
 import java.util.ArrayList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import java.util.Collections;
+import java.util.List;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
@@ -79,7 +81,7 @@ public class BusinessRules {
     }
     public Integer getTotalBusinessRules(){
         return this.totalBusinessRules;}
-    public ArrayList<RuleInfo> getProcedureBusinessRules(){return this.procedure;}    
+    public List<RuleInfo> getProcedureBusinessRules(){return Collections.unmodifiableList(this.procedure);}    
     public String getProcedureBusinessRule(String ruleName){
         if (this.procedure!=null){
             for (RuleInfo curElement : this.procedure) {
@@ -90,7 +92,7 @@ public class BusinessRules {
         }
         return "";
     }
-    public ArrayList<RuleInfo> getConfigBusinessRules(){return this.config;}
+    public List<RuleInfo> getConfigBusinessRules(){return Collections.unmodifiableList(this.config);}
     public String getConfigBusinessRule(String ruleName){
         if (this.config!=null){        
             for (RuleInfo curElement : this.config) {
@@ -101,7 +103,7 @@ public class BusinessRules {
         }
         return "";
     }
-    public ArrayList<RuleInfo> getDataBusinessRules(){return this.data;}    
+    public List<RuleInfo> getDataBusinessRules(){return Collections.unmodifiableList(this.data);}    
     public String getDataBusinessRule(String ruleName){
         if (this.data!=null){
             for (RuleInfo curElement : this.data) {

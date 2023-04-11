@@ -30,6 +30,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 import javax.json.JsonArray;
 import lbplanet.utilities.LPAPIArguments;
@@ -76,7 +77,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
             this.arguments=argums;  
             this.outputObjectTypes=outputObjectTypes;            
         } 
-        public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
+        public  Map<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap<>();
             Object[] argValues=new Object[0];
             for (LPAPIArguments curArg: this.arguments){                

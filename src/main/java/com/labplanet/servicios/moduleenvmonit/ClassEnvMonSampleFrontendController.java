@@ -6,7 +6,7 @@
 package com.labplanet.servicios.moduleenvmonit;
 
 import functionaljavaa.testingscripts.LPTestingOutFormat;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
@@ -33,7 +33,7 @@ public class ClassEnvMonSampleFrontendController {
         ClassEnvMonSampleFrontend.EnvMonSampleAPIqueriesEndpoints endPoint = null;
         try{
             endPoint = ClassEnvMonSampleFrontend.EnvMonSampleAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
-                    HashMap<HttpServletRequest, Object[]> hmQuery = endPoint.testingSetAttributesAndBuildArgsArray(request, testingContent, iLines);
+                    Map<HttpServletRequest, Object[]> hmQuery = endPoint.testingSetAttributesAndBuildArgsArray(request, testingContent, iLines);
                     HttpServletRequest query= hmQuery.keySet().iterator().next();   
                     argsForLogFiles = hmQuery.get(query);
             for (int inumArg=argsForLogFiles.length+3;inumArg<table1NumArgs;inumArg++){

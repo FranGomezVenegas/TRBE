@@ -331,7 +331,7 @@ public final class TestingCoverage {
 
         JSONArray procBusRulesJArr = new JSONArray();
         JSONObject procBusRulesJObj = new JSONObject();
-        ArrayList<RuleInfo> configBusinessRules = this.procBusRules.getConfigBusinessRules();
+        List<RuleInfo> configBusinessRules = this.procBusRules.getConfigBusinessRules();
         JSONArray procBusRulesAreaJArr = new JSONArray();
         for (RuleInfo curRule : configBusinessRules) {
             JSONObject ruleJObj = new JSONObject();
@@ -346,7 +346,7 @@ public final class TestingCoverage {
         }
         procBusRulesJObj.put("config", procBusRulesAreaJArr);
 
-        ArrayList<RuleInfo> dataBusinessRules = this.procBusRules.getDataBusinessRules();
+        List<RuleInfo> dataBusinessRules = this.procBusRules.getDataBusinessRules();
         procBusRulesAreaJArr = new JSONArray();
         for (RuleInfo curRule : dataBusinessRules) {
             JSONObject ruleJObj = new JSONObject();
@@ -361,7 +361,7 @@ public final class TestingCoverage {
         }
         procBusRulesJObj.put("data", procBusRulesAreaJArr);
 
-        ArrayList<RuleInfo> procedureBusinessRules = this.procBusRules.getProcedureBusinessRules();
+        List<RuleInfo> procedureBusinessRules = this.procBusRules.getProcedureBusinessRules();
 
         procBusRulesAreaJArr = new JSONArray();
         for (RuleInfo curRule : procedureBusinessRules) {
@@ -558,7 +558,7 @@ public final class TestingCoverage {
     }
 
     void removeProcBusRulesByEndpointExclusion() {
-        ArrayList<RuleInfo> procedureBusinessRules = this.procBusRules.getProcedureBusinessRules();
+        List<RuleInfo> procedureBusinessRules = this.procBusRules.getProcedureBusinessRules();
         if (this.coverageEndpointsExcludeList == null) {
             return;
         }

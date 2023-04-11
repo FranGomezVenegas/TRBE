@@ -31,7 +31,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Map;
 import javax.script.Invocable;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -115,7 +115,7 @@ public class TstDataSample extends HttpServlet {
         StringBuilder fileContentBuilder = new StringBuilder(0);
         fileContentBuilder.append(LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), csvFileName, null, null));
         try (PrintWriter out = response.getWriter()) {
-            HashMap<String, Object> csvHeaderTags = LPTestingOutFormat.getCSVHeader(LPArray.convertCSVinArray(csvPathName, "="));
+            Map<String, Object> csvHeaderTags = LPTestingOutFormat.getCSVHeader(LPArray.convertCSVinArray(csvPathName, "="));
             if (csvHeaderTags.containsKey(LPPlatform.LAB_FALSE)){
                 fileContentBuilder.append("There are missing tags in the file header: ").append(csvHeaderTags.get(LPPlatform.LAB_FALSE));
                 out.println(fileContentBuilder.toString()); 

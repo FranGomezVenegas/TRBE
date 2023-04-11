@@ -22,7 +22,7 @@ import functionaljavaa.testingscripts.TestingAssertSummary;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Map;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPDate;
 import trazit.session.ProcedureRequestSession;
@@ -94,7 +94,7 @@ public class TestingResultCheckSpecQualitative extends HttpServlet {
 
         String testerFileName=LPTestingParams.TestingServletsConfig.NODB_SCHEMACONFIG_SPECQUAL_RESULTCHECK.getTesterFileName();                         
         LPTestingOutFormat tstOut=new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.NODB_SCHEMACONFIG_SPECQUAL_RESULTCHECK.name(), testerFileName);
-        HashMap<String, Object> csvHeaderTags=tstOut.getCsvHeaderTags();
+        Map<String, Object> csvHeaderTags=tstOut.getCsvHeaderTags();
 
         StringBuilder fileContentBuilder = new StringBuilder(0);        
         fileContentBuilder.append(tstOut.getHtmlStyleHeader());

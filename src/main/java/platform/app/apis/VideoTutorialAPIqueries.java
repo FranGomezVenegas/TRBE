@@ -16,6 +16,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lbplanet.utilities.LPAPIArguments;
@@ -149,7 +150,7 @@ public class VideoTutorialAPIqueries extends HttpServlet {
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
         } 
-        public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
+        public Map<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap<>();
             Object[] argValues=new Object[0];
             for (LPAPIArguments curArg: this.arguments){                

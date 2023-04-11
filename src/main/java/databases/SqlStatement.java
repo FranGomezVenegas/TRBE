@@ -9,6 +9,7 @@ import functionaljavaa.parameter.Parameter;
 import java.util.Date;
 import lbplanet.utilities.LPArray;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.ResourceBundle;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
@@ -116,7 +117,7 @@ public class SqlStatement {
      * @param fieldsToGroup
      * @return
      */
-    public HashMap<String, Object[]> buildSqlStatement(String operation, String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, String[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup) {
+    public Map<String, Object[]> buildSqlStatement(String operation, String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, String[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup) {
         return buildSqlStatement(operation, schemaName, tableName, whereFieldNames, whereFieldValues, fieldsToRetrieve, setFieldNames, setFieldValues, fieldsToOrder, fieldsToGroup, false);
     }
 
@@ -135,7 +136,7 @@ public class SqlStatement {
      * @param forceDistinct
      * @return
      */
-    public HashMap<String, Object[]> buildSqlStatement(String operation, String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, String[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct) {
+    public Map<String, Object[]> buildSqlStatement(String operation, String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, String[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct) {
         HashMap<String, Object[]> hm = new HashMap<>();
 
         DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
@@ -187,7 +188,7 @@ public class SqlStatement {
         return hm;
     }
 
-    public HashMap<String, Object[]> buildSqlStatementCounter(String schemaName, String tableName, String[] whereFields, Object[] whereFieldValues, String[] fieldsToGroup, String[] fieldsToOrder) {
+    public Map<String, Object[]> buildSqlStatementCounter(String schemaName, String tableName, String[] whereFields, Object[] whereFieldValues, String[] fieldsToGroup, String[] fieldsToOrder) {
         HashMap<String, Object[]> hm = new HashMap<>();
 
         String queryWhere = "";

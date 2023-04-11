@@ -33,6 +33,7 @@ import functionaljavaa.samplestructure.DataSampleStructureStatuses.SampleStatuse
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.sql.Timestamp;
 import java.util.HashMap;
+import java.util.Map;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.servlet.http.HttpServletRequest;
@@ -248,8 +249,8 @@ public class ClassEnvMonSampleFrontend {
             this.devCommentTag = LPNulls.replaceNull(devCommentTag);
         }
 
-        public HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex) {
-            HashMap<HttpServletRequest, Object[]> hm = new HashMap<>();
+        public Map<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex) {
+            Map<HttpServletRequest, Object[]> hm = new HashMap<>();
             Object[] argValues = new Object[0];
             for (LPAPIArguments curArg : this.arguments) {
                 argValues = LPArray.addValueToArray1D(argValues, curArg.getName() + ":" + getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
@@ -460,7 +461,7 @@ public class ClassEnvMonSampleFrontend {
                         whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(whereFieldsValue.split("\\|")));
                         for (int iFields = 0; iFields < whereFieldsNameArr.length; iFields++) {
                             if (Boolean.TRUE.equals(LPPlatform.isEncryptedField(procInstanceName, GlobalVariables.Schemas.DATA.getName(), TblsData.TablesData.SAMPLE.getTableName(), whereFieldsNameArr[iFields]))) {
-                                HashMap<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsValueArr[iFields].toString());
+                                Map<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsValueArr[iFields].toString());
                                 whereFieldsNameArr[iFields] = hm.keySet().iterator().next();
                                 if (hm.get(whereFieldsNameArr[iFields]).length() != whereFieldsNameArr[iFields].length()) {
                                     String newWhereFieldValues = hm.get(whereFieldsNameArr[iFields]);
@@ -1182,7 +1183,7 @@ public class ClassEnvMonSampleFrontend {
                     }
                     for (int iFields = 0; iFields < whereFieldsNameArr.length; iFields++) {
                         if (Boolean.TRUE.equals(LPPlatform.isEncryptedField(procInstanceName, GlobalVariables.Schemas.DATA.getName(), TblsData.TablesData.SAMPLE.getTableName(), whereFieldsNameArr[iFields]))) {
-                            HashMap<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsNameArr[iFields]);
+                            Map<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsNameArr[iFields]);
                             whereFieldsNameArr[iFields] = hm.keySet().iterator().next();
                             if (hm.get(whereFieldsNameArr[iFields]).length() != whereFieldsNameArr[iFields].length()) {
                                 String newWhereFieldValues = hm.get(whereFieldsNameArr[iFields]);
@@ -1445,7 +1446,7 @@ public class ClassEnvMonSampleFrontend {
             whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(whereFieldsValue.split("\\|")));
             for (int iFields = 0; iFields < whereFieldsNameArr.length; iFields++) {
                 if (Boolean.TRUE.equals(LPPlatform.isEncryptedField(procInstanceName, GlobalVariables.Schemas.DATA.getName(), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), whereFieldsNameArr[iFields]))) {
-                    HashMap<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsValueArr[iFields].toString());
+                    Map<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsValueArr[iFields].toString());
                     whereFieldsNameArr[iFields] = hm.keySet().iterator().next();
                     if (hm.get(whereFieldsNameArr[iFields]).length() != whereFieldsNameArr[iFields].length()) {
                         String newWhereFieldValues = hm.get(whereFieldsNameArr[iFields]);

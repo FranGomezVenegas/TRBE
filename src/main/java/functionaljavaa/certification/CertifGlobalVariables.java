@@ -3,7 +3,7 @@ package functionaljavaa.certification;
 import static databases.Rdbms.dbTableGetFieldDefinition;
 import databases.TblsData;
 import databases.TblsData.CertifUserAnalysisMethod;
-import java.util.HashMap;
+import java.util.Map;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDatabase;
 import lbplanet.utilities.LPDate;
@@ -59,7 +59,7 @@ public class CertifGlobalVariables {
         return getScriptToAddCertifToAnyObjectPostgres(procInstanceName, schemaGroupName, tableName);
     }
     private static String getScriptToAddCertifToAnyObjectPostgres(String procInstanceName, String schemaGroupName, String tableName){            
-        HashMap<String[], Object[][]> dbTableGetFieldDefinition = dbTableGetFieldDefinition(LPPlatform.buildSchemaName(procInstanceName, schemaGroupName), tableName);
+        Map<String[], Object[][]> dbTableGetFieldDefinition = dbTableGetFieldDefinition(LPPlatform.buildSchemaName(procInstanceName, schemaGroupName), tableName);
 
         String[] fldDefinitionColName= dbTableGetFieldDefinition.keySet().iterator().next();    
         Object[][] tableFldsInfo = dbTableGetFieldDefinition.get(fldDefinitionColName);

@@ -14,7 +14,7 @@ import functionaljavaa.testingscripts.LPTestingParams.TestingServletsConfig;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -68,7 +68,7 @@ public class TesterFromUploadFile extends HttpServlet {
                 String csvPathName=saveDirectory+fullFileName;
                 StringBuilder fileContentBuilder = new StringBuilder(0);
                 String[][] headerInfo = LPArray.convertCSVinArray(csvPathName, "=");
-                HashMap<String, Object> csvHeaderTags = LPTestingOutFormat.getCSVHeaderTester(headerInfo);
+                Map<String, Object> csvHeaderTags = LPTestingOutFormat.getCSVHeaderTester(headerInfo);
                 if (csvHeaderTags.containsKey(LPPlatform.LAB_FALSE)){
                     fileContentBuilder.append("There are missing tags in the file header: ").append(csvHeaderTags.get(LPPlatform.LAB_FALSE));
                     Logger.getLogger(fileContentBuilder.toString()); 

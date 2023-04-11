@@ -29,6 +29,7 @@ import org.json.simple.JSONObject;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.JsonArray;
@@ -147,7 +148,7 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                     whereFieldsValueArr=new Object[]{true};
                 for (int iFields=0; iFields<whereFieldsNameArr.length; iFields++){
                     if (Boolean.TRUE.equals(LPPlatform.isEncryptedField(procInstanceName, GlobalVariables.Schemas.DATA.getName(), TblsData.TablesData.SAMPLE.getTableName(), whereFieldsNameArr[iFields]))){
-                        HashMap<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsNameArr[iFields]);
+                        Map<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsNameArr[iFields]);
                         whereFieldsNameArr[iFields]= hm.keySet().iterator().next();    
                         if ( hm.get(whereFieldsNameArr[iFields]).length()!=whereFieldsNameArr[iFields].length()){
                             String newWhereFieldValues = hm.get(whereFieldsNameArr[iFields]);

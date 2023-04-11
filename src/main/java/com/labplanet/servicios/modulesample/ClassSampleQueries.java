@@ -24,7 +24,7 @@ import functionaljavaa.parameter.Parameter;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.samplestructure.DataSampleStructureStatuses.SampleStatuses;
 import java.sql.Timestamp;
-import java.util.HashMap;
+import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
@@ -511,7 +511,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
             whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(whereFieldsValue.split("\\|")));
             for (int iFields = 0; iFields < whereFieldsNameArr.length; iFields++) {
                 if (Boolean.TRUE.equals(LPPlatform.isEncryptedField(procInstanceName, GlobalVariables.Schemas.DATA.getName(), TblsData.TablesData.SAMPLE.getTableName(), whereFieldsNameArr[iFields]))) {
-                    HashMap<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsValueArr[iFields].toString());
+                    Map<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsValueArr[iFields].toString());
                     whereFieldsNameArr[iFields] = hm.keySet().iterator().next();
                     if (hm.get(whereFieldsNameArr[iFields]).length() != whereFieldsNameArr[iFields].length()) {
                         String newWhereFieldValues = hm.get(whereFieldsNameArr[iFields]);

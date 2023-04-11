@@ -38,6 +38,7 @@ import javax.sql.DataSource;
 import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
@@ -605,7 +606,7 @@ public class Rdbms {
      */
     public Object[] zzzexistsRecord(String schemaName, String tableName, String[] keyFieldName, Object keyFieldValue) {
         SqlStatement sql = new SqlStatement();
-        HashMap<String, Object[]> hmQuery = sql.buildSqlStatement(SQLSELECT, schemaName, tableName,
+        Map<String, Object[]> hmQuery = sql.buildSqlStatement(SQLSELECT, schemaName, tableName,
                 keyFieldName, null, keyFieldName, null, null, null, null);
         String query = hmQuery.keySet().iterator().next();
         Object[] keyFieldValueNew = hmQuery.get(query);
@@ -647,7 +648,7 @@ public class Rdbms {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, errorDetailVariables);
         }
         SqlStatement sql = new SqlStatement();
-        HashMap<String, Object[]> hmQuery = sql.buildSqlStatement(SQLSELECT, schemaName, tableName,
+        Map<String, Object[]> hmQuery = sql.buildSqlStatement(SQLSELECT, schemaName, tableName,
                 keyFieldNames, keyFieldValues, new String[]{keyFieldNames[0]}, null, null, null, null);
         String query = hmQuery.keySet().iterator().next();
         Object[] keyFieldValueNew = hmQuery.get(query);
@@ -682,7 +683,7 @@ public class Rdbms {
         EnumIntTableFields[] keyFieldNamesObj = EnumIntTableFields.getTableFieldsFromString(tblObj, keyFieldNames);
         SqlWhere sqlWhere = new SqlWhere(tblObj, keyFieldNames, keyFieldValues);
         SqlStatementEnums sql = new SqlStatementEnums();
-        HashMap<String, Object[]> hmQuery = sql.buildSqlStatementTable(SQLSELECT, tblObj, sqlWhere,
+        Map<String, Object[]> hmQuery = sql.buildSqlStatementTable(SQLSELECT, tblObj, sqlWhere,
                 keyFieldNamesObj, null, null, null, null, false, alternativeProcInstanceName);
         String query = hmQuery.keySet().iterator().next();
         Object[] keyFieldValueNew = hmQuery.get(query);
@@ -723,7 +724,7 @@ public class Rdbms {
             return null;
         }
         SqlStatement sql = new SqlStatement();
-        HashMap<String, Object[]> hmQuery = sql.buildSqlStatement(SQLSELECT, schemaName, tableName,
+        Map<String, Object[]> hmQuery = sql.buildSqlStatement(SQLSELECT, schemaName, tableName,
                 whereFieldNames, whereFieldValues,
                 fieldsToRetrieve, null, null, fieldsSortBy, null);
         String query = hmQuery.keySet().iterator().next();
@@ -779,7 +780,7 @@ public class Rdbms {
         }
 
         SqlStatement sql = new SqlStatement();
-        HashMap<String, Object[]> hmQuery = sql.buildSqlStatement(SQLSELECT, schemaName, tableName,
+        Map<String, Object[]> hmQuery = sql.buildSqlStatement(SQLSELECT, schemaName, tableName,
                 whereFieldNames, whereFieldValues,
                 fieldsToRetrieve, null, null, null, null);
         String query = hmQuery.keySet().iterator().next();
@@ -933,7 +934,7 @@ public class Rdbms {
             return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
         }
         SqlStatement sql = new SqlStatement();
-        HashMap<String, Object[]> hmQuery = sql.buildSqlStatement(SQLSELECT, schemaName, tableName,
+        Map<String, Object[]> hmQuery = sql.buildSqlStatement(SQLSELECT, schemaName, tableName,
                 whereFieldNames, whereFieldValues,
                 fieldsToRetrieve, null, null, orderBy, null, inforceDistinct);
         String query = hmQuery.keySet().iterator().next();
@@ -981,7 +982,7 @@ public class Rdbms {
             return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
         }
         SqlStatement sql = new SqlStatement();
-        HashMap<String, Object[]> hmQuery = sql.buildSqlStatementCounter(schemaName, tableName,
+        Map<String, Object[]> hmQuery = sql.buildSqlStatementCounter(schemaName, tableName,
                 whereFieldNames, whereFieldValues, fieldsToGroup, orderBy);
         String query = hmQuery.keySet().iterator().next();
         Object[] keyFieldValueNew = hmQuery.get(query);
@@ -1041,7 +1042,7 @@ public class Rdbms {
             return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
         }
         SqlStatementEnums sql = new SqlStatementEnums();
-        HashMap<String, Object[]> hmQuery = sql.buildSqlStatementCounter(schemaName, tableName,
+        Map<String, Object[]> hmQuery = sql.buildSqlStatementCounter(schemaName, tableName,
                 sWhere, //whereFieldNames, whereFieldValues                
                 fieldsToGroup, orderBy, caseSensitive);
         String query = hmQuery.keySet().iterator().next();
@@ -1113,7 +1114,7 @@ public class Rdbms {
         }
 
         SqlStatement sql = new SqlStatement();
-        HashMap<String, Object[]> hmQuery = sql.buildSqlStatement(SQLSELECT, schemaName, tableName,
+        Map<String, Object[]> hmQuery = sql.buildSqlStatement(SQLSELECT, schemaName, tableName,
                 whereFieldNames, whereFieldValues,
                 fieldsToRetrieve, null, null, null, null);
         String query = hmQuery.keySet().iterator().next();
@@ -1161,7 +1162,7 @@ public class Rdbms {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "DataSample_FieldArraysDifferentSize", new Object[]{Arrays.toString(fieldNames), Arrays.toString(fieldValues)});
         }
         SqlStatement sql = new SqlStatement();
-        HashMap<String, Object[]> hmQuery = sql.buildSqlStatement("INSERT", schemaName, tableName,
+        Map<String, Object[]> hmQuery = sql.buildSqlStatement("INSERT", schemaName, tableName,
                 null, null, null, fieldNames, fieldValues,
                 null, null);
         String query = hmQuery.keySet().iterator().next();
@@ -1195,7 +1196,7 @@ public class Rdbms {
             return new RdbmsObject(false, "", TrazitUtilitiesErrorTrapping.ARRAYS_DIFFERENT_SIZE, new Object[]{Arrays.toString(fieldNames), Arrays.toString(fieldValues)});
         }
         SqlStatement sql = new SqlStatement();
-        HashMap<String, Object[]> hmQuery = sql.buildSqlStatement("INSERT", schemaName, tableName,
+        Map<String, Object[]> hmQuery = sql.buildSqlStatement("INSERT", schemaName, tableName,
                 null, null, null, fieldNames, fieldValues,
                 null, null);
         String query = hmQuery.keySet().iterator().next();
@@ -1246,7 +1247,7 @@ public class Rdbms {
                 }
             }
         }
-        HashMap<String, Object[]> hmQuery = sql.buildSqlStatement("SELECT", schemaNameFrom, tableNameFrom,
+        Map<String, Object[]> hmQuery = sql.buildSqlStatement("SELECT", schemaNameFrom, tableNameFrom,
                 whereFieldNamesFrom, whereFieldValuesFrom, fldsInBoth, null, null,
                 null, null);
         String query = hmQuery.keySet().iterator().next();
@@ -1285,7 +1286,7 @@ public class Rdbms {
         SqlStatement sql = new SqlStatement();
 
         updateFieldValues = DbEncryption.encryptTableFieldArray(schemaName, tableName, updateFieldNames, updateFieldValues);
-        HashMap<String, Object[]> hmQuery = sql.buildSqlStatement("UPDATE", schemaName, tableName,
+        Map<String, Object[]> hmQuery = sql.buildSqlStatement("UPDATE", schemaName, tableName,
                 whereFieldNames, whereFieldValues, null, updateFieldNames, updateFieldValues,
                 null, null);
         String query = hmQuery.keySet().iterator().next();
@@ -2046,14 +2047,14 @@ public class Rdbms {
      *
      * @return
      */
-    public static HashMap<String[], Object[][]> dbTableGetFieldDefinition(String schemaName, String tableName) {
+    public static Map<String[], Object[][]> dbTableGetFieldDefinition(String schemaName, String tableName) {
         return dbTableGetFieldDefinition(schemaName, tableName, null);
     }
 
-    public static HashMap<String[], Object[][]> dbTableGetFieldDefinition(String schemaName, String tableName, String alternativeProcInstanceName) {
+    public static Map<String[], Object[][]> dbTableGetFieldDefinition(String schemaName, String tableName, String alternativeProcInstanceName) {
         schemaName = addSuffixIfItIsForTesting(schemaName, tableName);
         schemaName = schemaName.replace("\"", "");
-        HashMap<String[], Object[][]> hm = new HashMap<>();
+        Map<String[], Object[][]> hm = new HashMap<>();
         String[] fieldsToRetrieve = new String[]{"table_schema", "table_name", "column_name", "data_type"};
         String[] keyFieldValueNew = new String[]{schemaName, tableName};
 
@@ -2410,7 +2411,7 @@ private static final int CLIENT_CODE_STACK_INDEX;
                 return (RdbmsObject) areMissingDiagn[1];
             }
             EnumIntTableFields[] fldNamesObj = (EnumIntTableFields[]) areMissingDiagn[1];
-            HashMap<String, Object[]> hmQuery = sql.buildSqlStatementTable("INSERT", tblObj,
+            Map<String, Object[]> hmQuery = sql.buildSqlStatementTable("INSERT", tblObj,
                     new SqlWhere(), null, fldNamesObj, fieldValues, null,
                     null, null, alternativeProcInstanceName);
 
@@ -2445,7 +2446,7 @@ private static final int CLIENT_CODE_STACK_INDEX;
         }
         SqlStatementEnums sql = new SqlStatementEnums();
         updateFieldValues = DbEncryptionObject.encryptTableFieldArray(tblObj, updateFieldNames, updateFieldValues, false);
-        HashMap<String, Object[]> hmQuery = sql.buildSqlStatementTable("UPDATE", tblObj,
+        Map<String, Object[]> hmQuery = sql.buildSqlStatementTable("UPDATE", tblObj,
                 whereObj, null, updateFieldNames, updateFieldValues,
                 null, null, null, alternativeProcInstanceName);
         String query = hmQuery.keySet().iterator().next();
@@ -2466,7 +2467,7 @@ private static final int CLIENT_CODE_STACK_INDEX;
         DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
         String schemaName = addSuffixIfItIsForTesting(tblObj.getRepositoryName(), tblObj.getTableName());
         SqlStatementEnums sql = new SqlStatementEnums();
-        HashMap<String, Object[]> hmQuery = sql.buildSqlStatementTable("DELETE", tblObj,
+        Map<String, Object[]> hmQuery = sql.buildSqlStatementTable("DELETE", tblObj,
                 whereObj, null, null, null, null, null, null, alternativeProcInstanceName);
         String query = hmQuery.keySet().iterator().next();
         Object[] whereFieldValues = hmQuery.get(query);
@@ -2496,7 +2497,7 @@ private static final int CLIENT_CODE_STACK_INDEX;
         }
         SqlStatementEnums sql = new SqlStatementEnums();
         updateFieldValues = DbEncryptionObject.encryptTableFieldArray(tblObj, updateFieldNames, updateFieldValues, false);
-        HashMap<String, Object[]> hmQuery = sql.buildSqlStatementTable("UPDATE", tblObj,
+        Map<String, Object[]> hmQuery = sql.buildSqlStatementTable("UPDATE", tblObj,
                 whereObj, null, updateFieldNames, updateFieldValues,
                 null, null, null, alternativeProcInstanceName);
         String query = hmQuery.keySet().iterator().next();

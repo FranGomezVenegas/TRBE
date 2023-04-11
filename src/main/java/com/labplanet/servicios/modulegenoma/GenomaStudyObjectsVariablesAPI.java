@@ -13,6 +13,7 @@ import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValu
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.JsonArray;
@@ -59,7 +60,7 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
             this.outputObjectTypes=outputObjectTypes;            
             this.actionEventObj=actionEventObj;
         } 
-        public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
+        public  Map<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap<>();
             Object[] argValues=new Object[0];
             for (LPAPIArguments curArg: this.arguments){                

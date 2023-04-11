@@ -7,7 +7,7 @@ package trazit.enums;
 
 import databases.Rdbms;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
@@ -43,7 +43,7 @@ public interface EnumIntTableFields {
             procInstanceName=instanceForActions.getProcedureInstance();       
         else
             procInstanceName = alternativeProcInstanceName;     
-        HashMap<String[], Object[][]> dbTableGetFieldDefinition = Rdbms.dbTableGetFieldDefinition(LPPlatform.buildSchemaName(procInstanceName, tblObj.getRepositoryName()), tblObj.getTableName(), alternativeProcInstanceName);
+        Map<String[], Object[][]> dbTableGetFieldDefinition = Rdbms.dbTableGetFieldDefinition(LPPlatform.buildSchemaName(procInstanceName, tblObj.getRepositoryName()), tblObj.getTableName(), alternativeProcInstanceName);
         String[] fldDefinitionColName= dbTableGetFieldDefinition.keySet().iterator().next();    
         Object[][] tableFldsInfo = dbTableGetFieldDefinition.get(fldDefinitionColName);
         return LPArray.convertObjectArrayToStringArray(LPArray.getColumnFromArray2D(tableFldsInfo, LPArray.valuePosicInArray(fldDefinitionColName, "column_name")));
@@ -60,7 +60,7 @@ public interface EnumIntTableFields {
             procInstanceName = alternativeProcInstanceName;
         
         
-        HashMap<String[], Object[][]> dbTableGetFieldDefinition = Rdbms.dbTableGetFieldDefinition(LPPlatform.buildSchemaName(procInstanceName, tblObj.getRepositoryName()), tblObj.getTableName());
+        Map<String[], Object[][]> dbTableGetFieldDefinition = Rdbms.dbTableGetFieldDefinition(LPPlatform.buildSchemaName(procInstanceName, tblObj.getRepositoryName()), tblObj.getTableName());
         String[] fldDefinitionColName= dbTableGetFieldDefinition.keySet().iterator().next();    
         Object[][] tableFldsInfo = dbTableGetFieldDefinition.get(fldDefinitionColName);
         String[] tableFldsInfoColumns = LPArray.convertObjectArrayToStringArray(LPArray.getColumnFromArray2D(tableFldsInfo, LPArray.valuePosicInArray(fldDefinitionColName, "column_name")));        

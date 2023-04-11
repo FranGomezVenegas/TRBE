@@ -11,7 +11,7 @@ import functionaljavaa.testingscripts.TestingAssertSummary;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -55,7 +55,7 @@ public class TestingUOMConversionTable extends HttpServlet {
         }
                 
         try (PrintWriter out = response.getWriter()) {
-            HashMap<String, Object> csvHeaderTags = LPTestingOutFormat.getCSVHeader(LPArray.convertCSVinArray(csvPathName, "="));
+            Map<String, Object> csvHeaderTags = LPTestingOutFormat.getCSVHeader(LPArray.convertCSVinArray(csvPathName, "="));
             if (csvHeaderTags.containsKey(LPPlatform.LAB_FALSE)){
                 fileContentBuilder.append("There are missing tags in the file header: ").append(csvHeaderTags.get(LPPlatform.LAB_FALSE));
                 out.println(fileContentBuilder.toString()); 

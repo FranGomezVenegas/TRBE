@@ -8,11 +8,12 @@ package databases;
 import static databases.Rdbms.addSuffixIfItIsForTesting;
 import databases.features.DbFieldValueMask;
 import functionaljavaa.parameter.Parameter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import lbplanet.utilities.LPArray;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import lbplanet.utilities.LPDatabase;
 import lbplanet.utilities.LPDate;
@@ -150,7 +151,7 @@ public class SqlStatementEnums {
      * @param alternativeProcInstanceName
      * @return
      */
-    public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIntTables tblObj, SqlWhere whereObj,
+    public Map<String, Object[]> buildSqlStatementTable(String operation, EnumIntTables tblObj, SqlWhere whereObj,
             EnumIntTableFields[] fieldsToRetrieve, EnumIntTableFields[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct, String alternativeProcInstanceName) {
         HashMap<String, Object[]> hm = new HashMap<>();
 
@@ -215,11 +216,11 @@ public class SqlStatementEnums {
         return hm;
     }
 
-    public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIntTables tblObj, String[] whereFieldNames, Object[] whereFieldValues, EnumIntTableFields[] fieldsToRetrieve, EnumIntTableFields[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct, String alternativeProcInstanceName) {
+    public Map<String, Object[]> buildSqlStatementTable(String operation, EnumIntTables tblObj, String[] whereFieldNames, Object[] whereFieldValues, EnumIntTableFields[] fieldsToRetrieve, EnumIntTableFields[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct, String alternativeProcInstanceName) {
         return buildSqlStatementTable(operation, tblObj, whereFieldNames, whereFieldValues, fieldsToRetrieve, setFieldNames, setFieldValues, fieldsToOrder, fieldsToGroup, forceDistinct, alternativeProcInstanceName, null);
     }
 
-    public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIntTables tblObj, String[] whereFieldNames, Object[] whereFieldValues, EnumIntTableFields[] fieldsToRetrieve, EnumIntTableFields[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct, String alternativeProcInstanceName, Boolean avoidMask) {
+    public Map<String, Object[]> buildSqlStatementTable(String operation, EnumIntTables tblObj, String[] whereFieldNames, Object[] whereFieldValues, EnumIntTableFields[] fieldsToRetrieve, EnumIntTableFields[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct, String alternativeProcInstanceName, Boolean avoidMask) {
         HashMap<String, Object[]> hm = new HashMap<>();
 
         String queryWhere = "";
@@ -272,7 +273,7 @@ public class SqlStatementEnums {
         return hm;
     }
 
-    public HashMap<String, Object[]> buildSqlStatementTable(String operation, EnumIntTables tblObj, String[] whereFieldNames, Object[] whereFieldValues, EnumIntViewFields[] fieldsToRetrieve, EnumIntTableFields[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct) {
+    public Map<String, Object[]> buildSqlStatementTable(String operation, EnumIntTables tblObj, String[] whereFieldNames, Object[] whereFieldValues, EnumIntViewFields[] fieldsToRetrieve, EnumIntTableFields[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct) {
         HashMap<String, Object[]> hm = new HashMap<>();
 
         String queryWhere = "";
@@ -325,7 +326,7 @@ public class SqlStatementEnums {
         return hm;
     }
 
-    public HashMap<String, Object[]> buildSqlStatementCounter(String schemaName, String tableName, SqlWhere sWhere, String[] fieldsToGroup, String[] fieldsToOrder, Boolean caseSensitive) {
+    public Map<String, Object[]> buildSqlStatementCounter(String schemaName, String tableName, SqlWhere sWhere, String[] fieldsToGroup, String[] fieldsToOrder, Boolean caseSensitive) {
         HashMap<String, Object[]> hm = new HashMap<>();
 
         String queryWhere = "";
@@ -407,7 +408,7 @@ public class SqlStatementEnums {
     public static Object[] buildWhereClause(SqlWhere whereObj, Boolean caseSensitive) {
         StringBuilder queryWhere = new StringBuilder(0);
         Object[] whereFieldValuesNew = new Object[0];
-        ArrayList<SqlWhereEntry> allWhereEntries = whereObj.getAllWhereEntries();
+        List<SqlWhereEntry> allWhereEntries = whereObj.getAllWhereEntries();
         for (SqlWhereEntry curEntry : allWhereEntries) {
             if (curEntry.getOrClause() != null) {
                 if (curEntry.getOrClause().length == 1) {
@@ -661,13 +662,13 @@ public class SqlStatementEnums {
         return separator;
     }
 
-    public HashMap<String, Object[]> buildSqlStatementView(EnumIntViews viewObj, SqlWhere whereObj,
+    public Map<String, Object[]> buildSqlStatementView(EnumIntViews viewObj, SqlWhere whereObj,
             EnumIntViewFields[] fieldsToRetrieve, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct, String alternativeProcInstanceName) {
         return buildSqlStatementView(viewObj, whereObj,
                 fieldsToRetrieve, fieldsToOrder, fieldsToGroup, forceDistinct, alternativeProcInstanceName, true);
     }
 
-    public HashMap<String, Object[]> buildSqlStatementView(EnumIntViews viewObj, SqlWhere whereObj,
+    public Map<String, Object[]> buildSqlStatementView(EnumIntViews viewObj, SqlWhere whereObj,
             EnumIntViewFields[] fieldsToRetrieve, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct, String alternativeProcInstanceName, Boolean caseSenstive) {
 
         //private HashMap<String, Object[]> buildSqlStatementViewOld(EnumIntViews viewObj, String[] whereFields, Object[] whereFieldValues, 
