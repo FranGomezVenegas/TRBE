@@ -9,8 +9,6 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.SqlStatement;
 import databases.TblsApp;
 import databases.TblsProcedure;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
@@ -23,7 +21,7 @@ import trazit.queries.QueryUtilitiesEnums;
  */
 public class AppBusinessRules {
     private AppBusinessRules() {throw new IllegalStateException("Utility class");}
-    public static JSONObject allAppBusinessRules(HttpServletRequest request, HttpServletResponse response){
+    public static JSONObject allAppBusinessRules(){
     try{
         Object[][] appBusRulesInfo = QueryUtilitiesEnums.getTableData(TblsApp.TablesApp.APP_BUSINESS_RULES, 
             EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.APP_BUSINESS_RULES, 

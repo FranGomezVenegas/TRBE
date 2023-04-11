@@ -103,7 +103,7 @@ public class PlatformAdminAPIQueries extends HttpServlet {
                     break;
                 case GET_PLATFORM_ADMIN_ALL_INFO:
                     tblsIP=new EnumIntTables[]{TblsApp.TablesApp.IP_BLACK_LIST, TblsApp.TablesApp.IP_WHITE_LIST};
-                    jMainObj.put("business_rules", allAppBusinessRules(request, response));
+                    jMainObj.put("business_rules", allAppBusinessRules());
                     break;
                 case GET_API_LISTS:
                     tblsIP=new EnumIntTables[]{TblsApp.TablesApp.IP_BLACK_LIST, TblsApp.TablesApp.IP_WHITE_LIST};

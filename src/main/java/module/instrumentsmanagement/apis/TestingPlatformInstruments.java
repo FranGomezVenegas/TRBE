@@ -138,7 +138,7 @@ public class TestingPlatformInstruments extends HttpServlet {
                     testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                     
                 }else{    
-                    ClassInstrumentsController clssInstrumentsController=new ClassInstrumentsController(request, actionName.toString(), testingContent, iLines, table1NumArgs, tstOut.getAuditReasonPosic());
+                    ClassInstrumentsController clssInstrumentsController=new ClassInstrumentsController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
                     if (Boolean.TRUE.equals(clssInstrumentsController.getFunctionFound())){
                         functionRelatedObjects=clssInstrumentsController.getFunctionRelatedObjects();
                         functionEvaluation=(Object[]) clssInstrumentsController.getFunctionDiagn();

@@ -23,7 +23,7 @@ public class ClassInvTrackingController {
     private JSONArray functionRelatedObjects=new JSONArray();
     private Boolean functionFound=false;
     
-    public ClassInvTrackingController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs, Integer auditReasonPosic) {        
+    public ClassInvTrackingController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {        
         Object[] argsForLogFiles=new Object[0];
         InvTrackingEnums.InventoryTrackAPIactionsEndpoints endPoint = null;
         try{

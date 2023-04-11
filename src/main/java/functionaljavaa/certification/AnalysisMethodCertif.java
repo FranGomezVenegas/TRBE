@@ -167,7 +167,7 @@ public class AnalysisMethodCertif {
         if (Boolean.FALSE.equals(insertDiagn.getRunSuccess())) return insertDiagn.getApiMessage();
         Integer certifId=Integer.valueOf(insertDiagn.getNewRowId().toString());
         Object[] diagnAudit=CertifTablesAudit.certifTablsAudit(TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD, certifId, 
-            CertifyAnalysisMethodAPIactionsEndpoints.CERTIFY_ASSIGN_METHOD_TO_USER.getAuditEvent(), userIdObj[0].toString(), userName, 
+            CertifyAnalysisMethodAPIactionsEndpoints.CERTIFY_ASSIGN_METHOD_TO_USER.getAuditEvent(), 
             TblsData.CertifUserAnalysisMethod.METHOD_NAME.getName(), methodName, TblsData.CertifUserAnalysisMethod.METHOD_VERSION.getName(), methodVersion, 
             LPArray.joinTwo1DArraysInOneOf1DString(fldsName, fldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), trainingId, null, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnAudit[0].toString())) return diagnAudit;
@@ -194,7 +194,7 @@ public class AnalysisMethodCertif {
         Object[] userIdObj=getPersonByUser(userName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userIdObj[0].toString())) return userIdObj;        
         Object[] diagnAudit=CertifTablesAudit.certifTablsAudit(TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD, fldId,
-            CertifyAnalysisMethodAPIactionsEndpoints.CERTIFY_START_USER_METHOD.getAuditEvent(), userIdObj[0].toString(), userName, 
+            CertifyAnalysisMethodAPIactionsEndpoints.CERTIFY_START_USER_METHOD.getAuditEvent(), 
             TblsData.CertifUserAnalysisMethod.METHOD_NAME.getName(), methodName, TblsData.CertifUserAnalysisMethod.METHOD_VERSION.getName(), null, 
             LPArray.joinTwo1DArraysInOneOf1DString(CertifGlobalVariables.CertifEventUpdateFieldsAndValues.CERTIF_STARTED.getFieldsName(), 
                     CertifGlobalVariables.CertifEventUpdateFieldsAndValues.CERTIF_STARTED.getFieldsValue(), LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null, null);
@@ -244,7 +244,7 @@ public class AnalysisMethodCertif {
         Object[] userIdObj=getPersonByUser(userName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userIdObj[0].toString())) return userIdObj;
         Object[] diagnAudit=CertifTablesAudit.certifTablsAudit(TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD, fldId,
-            auditEvent, userIdObj[0].toString(), userName, 
+            auditEvent, 
             TblsData.CertifUserAnalysisMethod.METHOD_NAME.getName(), methodName, TblsData.CertifUserAnalysisMethod.METHOD_VERSION.getName(), null, 
             LPArray.joinTwo1DArraysInOneOf1DString(CertifGlobalVariables.CertifEventUpdateFieldsAndValues.CERTIFIED.getFieldsName(), 
                     CertifGlobalVariables.CertifEventUpdateFieldsAndValues.CERTIFIED.getFieldsValue(), LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null, null);
@@ -270,7 +270,7 @@ public class AnalysisMethodCertif {
         Object[] userIdObj=getPersonByUser(userName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userIdObj[0].toString())) return userIdObj;
         Object[] diagnAudit=CertifTablesAudit.certifTablsAudit(TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD, fldId,
-            CertifyAnalysisMethodAPIactionsEndpoints.CERTIFY_REVOKE_USER_METHOD.getAuditEvent(), userIdObj[0].toString(), userName, 
+            CertifyAnalysisMethodAPIactionsEndpoints.CERTIFY_REVOKE_USER_METHOD.getAuditEvent(), 
             TblsData.CertifUserAnalysisMethod.METHOD_NAME.getName(), methodName, TblsData.CertifUserAnalysisMethod.METHOD_VERSION.getName(), null, 
             LPArray.joinTwo1DArraysInOneOf1DString(CertifGlobalVariables.CertifEventUpdateFieldsAndValues.REVOKED.getFieldsName(), 
             CertifGlobalVariables.CertifEventUpdateFieldsAndValues.REVOKED.getFieldsValue(), LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null, null);
@@ -312,7 +312,7 @@ public class AnalysisMethodCertif {
             String[] fldIdStrArr=fldIdStr.toString().split("\\|");
             for (String curFldId: fldIdStrArr){
                 Object[] diagnAudit=CertifTablesAudit.certifTablsAudit(TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD, Integer.valueOf(curFldId),
-                    CertifyAnalysisMethodAPIactionsEndpoints.CERTIFY_REVOKE_USER_METHOD.getAuditEvent(), null, null, 
+                    CertifyAnalysisMethodAPIactionsEndpoints.CERTIFY_REVOKE_USER_METHOD.getAuditEvent(), 
                     TblsData.CertifUserAnalysisMethod.METHOD_NAME.getName(), null, TblsData.CertifUserAnalysisMethod.METHOD_VERSION.getName(), null, 
                     LPArray.joinTwo1DArraysInOneOf1DString(CertifGlobalVariables.CertifEventUpdateFieldsAndValues.EXPIRED.getFieldsName(), 
                     CertifGlobalVariables.CertifEventUpdateFieldsAndValues.EXPIRED.getFieldsValue(), LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null, null);

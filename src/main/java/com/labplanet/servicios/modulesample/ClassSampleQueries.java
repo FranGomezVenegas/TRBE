@@ -655,7 +655,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
 
     }
 
-    private JSONArray sampleStageDataJsonArr(String procInstanceName, Integer sampleId, String[] sampleFldName, Object[] sampleFldValue, String[] sampleStageFldName, Object[] sampleStageFldValue) {
+    private JSONArray sampleStageDataJsonArr(Integer sampleId, String[] sampleFldName, Object[] sampleFldValue, String[] sampleStageFldName, Object[] sampleStageFldValue) {
         if (sampleStageFldValue == null) {
             return new JSONArray();
         }

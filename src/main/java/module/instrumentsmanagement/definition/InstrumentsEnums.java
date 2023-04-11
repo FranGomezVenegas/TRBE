@@ -9,6 +9,7 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NUM_DAYS;
+import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME;
 import module.instrumentsmanagement.definition.TblsInstrumentsData.TablesInstrumentsData;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
@@ -326,8 +327,12 @@ public class InstrumentsEnums {
         COMPLETED_EVENTS_LAST_N_DAYS("COMPLETED_EVENTS_LAST_N_DAYS", "",
                 new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6)},
                 EndPointsToRequirements.endpointWithNoOutputObjects,
-                null, null),;
-
+                null, null),
+        EVENTS_ABOUT_OR_EXPIRED("EVENTS_ABOUT_OR_EXPIRED", "",
+                new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_PROCINSTANCENAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6)},
+                EndPointsToRequirements.endpointWithNoOutputObjects,
+                null, null)
+        ;
         private InstrumentsAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
             this.name = name;
             this.successMessageCode = successMessageCode;

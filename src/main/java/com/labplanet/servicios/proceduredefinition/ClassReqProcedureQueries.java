@@ -6,6 +6,7 @@
 package com.labplanet.servicios.proceduredefinition;
 
 import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.TblsReqs;
@@ -99,7 +100,7 @@ public class ClassReqProcedureQueries {
         }  
         return jArr;        
     }
-    static JSONObject dbSingleRowToJsonObj(String procInstanceName, String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue){
+    static JSONObject dbSingleRowToJsonObj(String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue){
         Object[][] procTblRows = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), tblName, 
             whereFldName, whereFldValue, fldsToGet);        
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procTblRows[0][0].toString())){
@@ -107,12 +108,10 @@ public class ClassReqProcedureQueries {
             jObj.put(NO_DATA, NO_DATA);
             return jObj;
         }else{       
-            JSONObject jObj=new JSONObject();
-            jObj=LPJson.convertArrayRowToJSONObject(fldsToGet, procTblRows[0]);                    
-            return jObj;
+            return LPJson.convertArrayRowToJSONObject(fldsToGet, procTblRows[0]);                    
         }
     }
-    static JSONArray dbSingleRowToJsonFldNameAndValueArr(String procInstanceName, String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue){
+    static JSONArray dbSingleRowToJsonFldNameAndValueArr(String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue){
         Object[][] procTblRows = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), tblName, 
             whereFldName, whereFldValue, fldsToGet);        
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procTblRows[0][0].toString())){
@@ -122,9 +121,7 @@ public class ClassReqProcedureQueries {
             jArr.add(jObj);
             return jArr;
         }else{       
-            JSONArray jArr= new JSONArray();
-            jArr=LPJson.convertArrayRowToJSONFieldNameAndValueObject(fldsToGet, procTblRows[0], null);                    
-            return jArr;
+            return LPJson.convertArrayRowToJSONFieldNameAndValueObject(fldsToGet, procTblRows[0], null);                    
         }
     }
     
@@ -143,14 +140,13 @@ public class ClassReqProcedureQueries {
                 if (jsonFlds==null)
                     jBlockArr.add(LPJson.convertArrayRowToJSONObject(fldsToGet, curRow));
                 else{
-                    JSONObject jObj = new JSONObject();
-                    jObj=(LPJson.convertArrayRowToJSONObject(fldsToGet, curRow, jsonFlds));                    
+                    JSONObject jObj=(LPJson.convertArrayRowToJSONObject(fldsToGet, curRow, jsonFlds));                    
                     for (String curJsonFld: jsonFlds)
                         jObj.put(TblsReqs.ProcedureMasterData.JSON_OBJ.getName(), JsonParser.parseString(curRow[LPArray.valuePosicInArray(fldsToGet, curJsonFld)].toString()).getAsJsonObject());
                     jBlockArr.add(jObj);
                 }
             }
-            }catch(Exception e){                
+            }catch(JsonSyntaxException e){                
                 jBlockArr.add("Errors trying to get the master data records info. "+e.getMessage());
                 return jBlockArr;        
             }

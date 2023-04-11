@@ -222,7 +222,7 @@ public class DataSample {
             LPDate.getCurrentTimeStamp(), token.getPersonName()});
         if (LPArray.valuePosicInArray(sampleFieldName, TblsData.Sample.CUSTODIAN.getName()) == -1) {
             ChangeOfCustody coc = new ChangeOfCustody();
-            Object[] changeOfCustodyEnable = coc.isChangeOfCustodyEnable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName());
+            Object[] changeOfCustodyEnable = coc.isChangeOfCustodyEnable(TblsData.TablesData.SAMPLE.getTableName());
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(changeOfCustodyEnable[0].toString())) {
                 sampleFieldName = LPArray.addValueToArray1D(sampleFieldName, TblsData.Sample.CUSTODIAN.getName());
                 sampleFieldValue = LPArray.addValueToArray1D(sampleFieldValue, token.getPersonName());

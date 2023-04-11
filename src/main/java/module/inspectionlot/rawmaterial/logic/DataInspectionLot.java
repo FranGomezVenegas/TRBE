@@ -227,7 +227,7 @@ public class DataInspectionLot {
 
         if (LPArray.valuePosicInArray(lotFieldName, TblsInspLotRMData.Lot.CUSTODIAN.getName())==-1){
             ChangeOfCustody coc = new ChangeOfCustody();
-            Object[] changeOfCustodyEnable = coc.isChangeOfCustodyEnable(schemaDataName, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName());
+            Object[] changeOfCustodyEnable = coc.isChangeOfCustodyEnable(TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName());
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(changeOfCustodyEnable[0].toString())){
                 lotFieldName = LPArray.addValueToArray1D(lotFieldName, TblsInspLotRMData.Lot.CUSTODIAN.getName());    
                 lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, token.getPersonName());             
@@ -371,7 +371,7 @@ public class DataInspectionLot {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();                
         
         for (int i=0;i<numBulks;i++){                
-            InternalMessage createContainer = createBulk(lotName, materialName, smpQuant, smpQuantUom, (i+1), false);
+            InternalMessage createContainer = createBulk(lotName, smpQuant, smpQuantUom, (i+1), false);
             RelatedObjects rObj=RelatedObjects.getInstanceForActions();
             rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), 
                     TblsInspLotRMData.TablesInspLotRMData.LOT_BULK.getTableName(), 
@@ -403,7 +403,7 @@ public class DataInspectionLot {
             }
         }
         for (int i=0;i<totalContainers;i++){                
-            InternalMessage createContainer = createBulk(lotName, materialName, smpQuant, smpQuantUom, (i+1), false);
+            InternalMessage createContainer = createBulk(lotName, smpQuant, smpQuantUom, (i+1), false);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(createContainer.getDiagnostic()))
                 return createContainer;
             RelatedObjects rObj=RelatedObjects.getInstanceForActions();

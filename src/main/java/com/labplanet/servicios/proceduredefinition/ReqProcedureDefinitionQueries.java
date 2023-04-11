@@ -308,7 +308,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         mainObj.put("subtitle", procInstanceName);
         JSONArray fieldsArr=new JSONArray();
         
-        fieldsArr= ClassReqProcedureQueries.dbSingleRowToJsonFldNameAndValueArr(procInstanceName, TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName(),
+        fieldsArr= ClassReqProcedureQueries.dbSingleRowToJsonFldNameAndValueArr(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName(),
                 getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableFields()), new String[]{TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procInstanceName});
         mainObj.put("fields", fieldsArr);
         JSONArray summaryArr=new JSONArray();
@@ -358,7 +358,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
     }            
     private static JSONObject procInstanceDefinitionInRequirements(String procInstanceName) {
         JSONObject jMainObj = new JSONObject();
-        jMainObj.put("procedure_info", ClassReqProcedureQueries.dbSingleRowToJsonObj(procInstanceName, TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName(),
+        jMainObj.put("procedure_info", ClassReqProcedureQueries.dbSingleRowToJsonObj(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName(),
                 getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableFields()), new String[]{TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procInstanceName}));
 
         jMainObj.put("business_rules", ClassReqProcedureQueries.dbRowsGroupedToJsonArr(TblsReqs.TablesReqs.PROC_BUS_RULES.getTableName(),

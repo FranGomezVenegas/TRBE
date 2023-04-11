@@ -175,7 +175,7 @@ public enum IncubatorBatchSuccess implements EnumIntMessages{
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.INCUBATORBATCH_TEMPLATE_NOT_ACTIVE, new Object[]{bTemplateId, bTemplateVersion});
 
         String batchType=templateInfo[0][1].toString();
-        Object[] batchTypeCheckerDiagn= createBatchTypeChecker(batchType, bName, bTemplateId, bTemplateVersion, fldName, fldValue);
+        Object[] batchTypeCheckerDiagn= createBatchTypeChecker(batchType, bTemplateVersion, fldName, fldValue);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchTypeCheckerDiagn[0].toString())) return batchTypeCheckerDiagn;
         
         if (batchType.equalsIgnoreCase(BatchIncubatorType.UNSTRUCTURED.toString())){ 
@@ -215,7 +215,7 @@ public enum IncubatorBatchSuccess implements EnumIntMessages{
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.INCUBATORBATCH_NOTEMPTY_TOBEREMOVED, new Object[]{bName, procInstanceName});        
         }
     }
-    private static Object[] createBatchTypeChecker(String batchType, String bName, Integer bTemplateId, Integer bTemplateVersion, String[] fldName, Object[] fldValue){
+    private static Object[] createBatchTypeChecker(String batchType, Integer bTemplateVersion, String[] fldName, Object[] fldValue){
         Object[] batchTypeExist=batchTypeExists(batchType);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchTypeExist[0].toString())) return batchTypeExist;
         

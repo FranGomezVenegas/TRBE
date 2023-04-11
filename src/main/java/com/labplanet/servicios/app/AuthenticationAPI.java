@@ -232,7 +232,7 @@ public class AuthenticationAPI extends HttpServlet {
                     jsonObj.put("procedures_sops", SopUserAPIqueries.ProceduresSops(request, response));
                     jsonObj.put("sop_tree_list_element", SopUserAPIqueries.SopTreeListElements(request, response));
                     jsonObj.put("all_my_analysis_methods", CertifyAnalysisMethodAPIfrontend.allMyAnalysisMethodCertif(request, response));
-                    jsonObj.put("platform_business_rules", allAppBusinessRules(request, response));
+                    jsonObj.put("platform_business_rules", allAppBusinessRules());
 
                     Integer sizeValue = SIZE_WHEN_CONSIDERED_MOBILE + 1;
                     String sizeValueStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SIZE_VALUE);

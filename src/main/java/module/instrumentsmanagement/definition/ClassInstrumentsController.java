@@ -23,7 +23,7 @@ public class ClassInstrumentsController {
     private JSONArray functionRelatedObjects=new JSONArray();
     private Boolean functionFound=false;
     
-    public ClassInstrumentsController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs, Integer auditReasonPosic) {        
+    public ClassInstrumentsController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {        
         Object[] argsForLogFiles=new Object[0];
         InstrumentsEnums.InstrumentsAPIactionsEndpoints endPoint = null;
         try{

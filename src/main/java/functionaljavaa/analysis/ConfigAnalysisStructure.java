@@ -104,31 +104,12 @@ public class ConfigAnalysisStructure {
 
     private static String[] getSpecMandatoryFields() {
         return new String[]{};
-        //TblsCnfg.Analysis.FLD_CODE.getName(), TblsCnfg.Analysis.FLD_CONFIG_VERSION.getName()};
     }
 
     private String[] getSpecLimitsMandatoryFields() {
         return new String[]{//TblsCnfg.AnalysisMethodParams.FLD_ANALYSIS.getName(),
             //    TblsCnfg.AnalysisMethodParams.METHOD_NAME.getName(), TblsCnfg.AnalysisMethodParams.METHOD_VERSION.getName(),
             TblsCnfg.AnalysisMethodParams.PARAM_NAME.getName(), TblsCnfg.AnalysisMethodParams.PARAM_TYPE.getName()};
-    }
-
-    /**
-     *
-     * @param parameters
-     * @return
-     */
-    public Object specialFieldCheckSpecAnalyses(Object[] parameters) {
-        return DIAGNOSES_SUCCESS;
-    }
-
-    /**
-     *
-     * @param parameters
-     * @return
-     */
-    public Object specialFieldCheckSpecVariationNames(Object[] parameters) {
-        return "ERROR";
     }
 
     /**
@@ -141,13 +122,8 @@ public class ConfigAnalysisStructure {
      * @return
      */
     public String specialFieldCheckSpecLimitsVariationName(String procInstanceName, String specCode, Integer specCodeVersion, String[] mandatoryFields, Object[] mandatoryFieldValue) {
-        //    Object[] mandatoryFieldValue = new String[0];
-
         String schemaName = GlobalVariables.Schemas.CONFIG.getName();
-
-//        String[]  mandatoryFields = getSpecLimitsMandatoryFields();
         schemaName = LPPlatform.buildSchemaName(procInstanceName, schemaName);
-
         if (1 == 1) {
             return "ERROR";
         }
@@ -164,9 +140,6 @@ public class ConfigAnalysisStructure {
      * @return
      */
     public String specialFieldCheckSpecLimitsAnalysis(String procInstanceName, String specCode, Integer specCodeVersion, String[] mandatoryFields, Object[] mandatoryFieldValue) {
-//        String[] mandatoryFields = new String[1];
-//        Object[] mandatoryFieldValue = new String[0];
-
         String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
 
         Integer specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(TblsCnfg.AnalysisMethodParams.ANALYSIS.getName());

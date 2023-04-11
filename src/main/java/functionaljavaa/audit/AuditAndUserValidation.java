@@ -11,7 +11,6 @@ import functionaljavaa.businessrules.BusinessRules;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import static lbplanet.utilities.LPAPIArguments.buildAPIArgsumentsArgsValues;
 import lbplanet.utilities.LPArray;
@@ -84,10 +83,10 @@ public class AuditAndUserValidation {
 
     private static AuditAndUserValidation auditUserVal;
 
-     public static AuditAndUserValidation getInstanceForActions(HttpServletRequest request, HttpServletResponse response, String language, BusinessRules busRulesProcInstance, Boolean isPlatform) { 
+     public static AuditAndUserValidation getInstanceForActions(HttpServletRequest request, String language, BusinessRules busRulesProcInstance, Boolean isPlatform) { 
         if (auditUserVal == null) {
             if (request==null) return null;
-            auditUserVal = new AuditAndUserValidation(request, response, language, busRulesProcInstance, isPlatform);
+            auditUserVal = new AuditAndUserValidation(request, language, busRulesProcInstance, isPlatform);
             return auditUserVal;
         } else {
          return auditUserVal;
@@ -113,7 +112,7 @@ public class AuditAndUserValidation {
     private String auditReasonPhrase="";
     private Object[] checkUserValidationPassesDiag;
     
-    private AuditAndUserValidation(HttpServletRequest request, HttpServletResponse response, String language, BusinessRules busRulesProcInstance, Boolean isPlatform){
+    private AuditAndUserValidation(HttpServletRequest request, String language, BusinessRules busRulesProcInstance, Boolean isPlatform){
         
         String[] mandatoryParams = new String[]{};
         LPAPIArguments[] argsDef=null;

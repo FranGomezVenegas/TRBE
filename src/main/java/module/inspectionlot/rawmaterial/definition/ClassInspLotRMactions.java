@@ -127,7 +127,7 @@ public class ClassInspLotRMactions {
             }
             if (fieldValue!=null &&fieldValue.length()>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValueArr[0].toString()))
                 actionDiagnoses=(InternalMessage) fieldValueArr[1];
-            actionDiagnoses=DataBulk.lotBulkAdjustQuantity(lotName, bulkId, BigDecimal.valueOf(Double.valueOf(quantityStr)), quantityUomStr, fieldNameArr, fieldValueArr);
+            actionDiagnoses=DataBulk.lotBulkAdjustQuantity(lotName, bulkId, BigDecimal.valueOf(Double.valueOf(quantityStr)), fieldNameArr, fieldValueArr);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())){
                 actionDiagnoses=new InternalMessage(LPPlatform.LAB_TRUE, InspLotRMEnums.InspLotRMAPIactionsEndpoints.LOT_BULK_ADJUST_QUANTITY, new Object[]{lotName, quantityStr, fieldNameArr, fieldValueArr, ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance()});                                        
                 rObj.addSimpleNode(ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance(), TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), lotName);

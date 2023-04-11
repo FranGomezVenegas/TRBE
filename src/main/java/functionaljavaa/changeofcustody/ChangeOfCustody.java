@@ -180,7 +180,7 @@ public class ChangeOfCustody {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ChangeOfCustodyErrorTrapping.SAME_CUSTODIAN, new Object[]{currCustodian, objectId, tblObj.getTableName(), procInstanceName});
         }
 
-        Object[] changeOfCustodyEnable = isChangeOfCustodyEnable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), tblObj.getTableName());
+        Object[] changeOfCustodyEnable = isChangeOfCustodyEnable(tblObj.getTableName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(changeOfCustodyEnable[0].toString())) {
             return changeOfCustodyEnable;
         }
@@ -252,7 +252,7 @@ public class ChangeOfCustody {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String cocTableName = tblObj.getTableName().toLowerCase() + "_coc";
 
-        Object[] changeOfCustodyEnable = isChangeOfCustodyEnable(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), tblObj.getTableName());
+        Object[] changeOfCustodyEnable = isChangeOfCustodyEnable(tblObj.getTableName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(changeOfCustodyEnable[0].toString())) {
             return changeOfCustodyEnable;
         }
@@ -323,7 +323,7 @@ public class ChangeOfCustody {
      * @param objectTable
      * @return
      */
-    public Object[] isChangeOfCustodyEnable(String schemaName, String objectTable) {
+    public Object[] isChangeOfCustodyEnable(String objectTable) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         // Este método no está implementado y es necesario.
         String bundleProcedureCustodianFunctionalityMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, ChangeOfCustodyBusinessRules.CUSTODIAN_FUNCTIONALITY_MODE.getAreaName(), ChangeOfCustodyBusinessRules.CUSTODIAN_FUNCTIONALITY_MODE.getTagName(), true);
