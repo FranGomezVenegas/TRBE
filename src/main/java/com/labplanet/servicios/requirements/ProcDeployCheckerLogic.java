@@ -16,7 +16,6 @@ import static functionaljavaa.requirement.ProcedureDefinitionToInstance.FLDSTORE
 import static functionaljavaa.requirement.ProcedureDefinitionToInstance.FLDSTORETR_REQS_PROCINFOSRC;
 import functionaljavaa.requirement.masterdata.ClassMasterData;
 import functionaljavaa.user.UserAndRolesViews;
-import java.util.HashMap;
 import java.util.Map;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;

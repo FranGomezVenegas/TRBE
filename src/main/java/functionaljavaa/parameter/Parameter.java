@@ -11,7 +11,6 @@ import functionaljavaa.testingscripts.TestingMessageCodeVisited;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
