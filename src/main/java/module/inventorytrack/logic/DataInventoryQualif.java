@@ -21,7 +21,6 @@ import lbplanet.utilities.LPDate;
 import static lbplanet.utilities.LPMath.isNumeric;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import module.instrumentsmanagement.definition.InstrumentsEnums;
 import module.inventorytrack.definition.TblsInvTrackingConfig;
 import module.inventorytrack.definition.TblsInvTrackingData;
 import module.inventorytrack.definition.TblsInvTrackingData.TablesInvTrackingData;
@@ -57,8 +56,8 @@ private DataInventoryQualif() {throw new IllegalStateException("Utility class");
                     new String[]{TblsInvTrackingConfig.Reference.NAME.getName(), TblsInvTrackingConfig.Reference.CATEGORY.getName()}, new Object[]{reference, category},
                     allFieldNames);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceInfo[0][0].toString())) {
-                messages.addMainForError(InvTrackingEnums.InventoryTrackingErrorTrapping.REFERENCE_NOT_FOUND, new Object[]{reference});
-                return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.REFERENCE_NOT_FOUND, new Object[]{reference}, null);
+                messages.addMainForError(InvTrackingEnums.InventoryTrackingErrorTrapping.REFERENCE_NOT_FOUND, new Object[]{reference, category});
+                return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.REFERENCE_NOT_FOUND, new Object[]{reference, category}, null);
             }
         }
         fldNames = LPArray.addValueToArray1D(fldNames, TblsInvTrackingData.LotCertification.REFERENCE.getName());
@@ -120,8 +119,8 @@ private DataInventoryQualif() {throw new IllegalStateException("Utility class");
         inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.COMPLETE_QUALIFICATION,
                 invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(),
                 invLot.getLotName(), fldNames, fldValues);
-        fldNames = new String[]{TblsInvTrackingData.Lot.IS_LOCKED.getName(), TblsInvTrackingData.Lot.LOCKED_REASON.getName()};
-        fldValues = new Object[]{false, ""};
+        fldNames = new String[]{TblsInvTrackingData.Lot.IS_LOCKED.getName(), TblsInvTrackingData.Lot.LOCKED_REASON.getName(), TblsInvTrackingData.Lot.STATUS.getName(), TblsInvTrackingData.Lot.STATUS_PREVIOUS.getName()};
+        fldValues = new Object[]{false, "", "QUARANTINE_"+decision.toUpperCase(), "QUARANTINE"};
         invLot.updateInventoryLot(fldNames, fldValues, InvTrackingEnums.AppInventoryTrackingAuditEvents.UNLOCK_LOT_ONCE_QUALIFIED.toString());
         inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.UNLOCK_LOT_ONCE_QUALIFIED,
                 invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(),
@@ -217,10 +216,10 @@ private DataInventoryQualif() {throw new IllegalStateException("Utility class");
         Object[][] eventInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION.getTableName(),
                 wFldName, wFldValue, new String[]{TblsInvTrackingData.LotCertification.COMPLETED_BY.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(eventInfo[0][0].toString())) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.NOT_FOUND, new Object[]{lotCertifId, appProcInstance});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.NOT_FOUND, new Object[]{lotCertifId, appProcInstance});
         }
         if (LPNulls.replaceNull(eventInfo[0][0]).toString().length() > 0) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES, new Object[]{lotCertifId, appProcInstance});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.NO_PENDING_QUALIFICATION, new Object[]{lotCertifId, appProcInstance});
         }
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "<*1*> is open to changes in procedure <*2*>", new Object[]{lotCertifId, appProcInstance});
     }
@@ -278,7 +277,7 @@ private DataInventoryQualif() {throw new IllegalStateException("Utility class");
         if (lotCertifId == null) {
             DataInventory invLot = new DataInventory(lotName, reference, category, null);
             if ((Boolean.TRUE.equals(invLot.getHasError())) || (Boolean.FALSE.equals(invLot.getRequiresQualification()))) {
-                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES, null, null);
+                return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.NO_PENDING_QUALIFICATION, null, null);
             }
             String lotCertifIdStr = LPNulls.replaceNull(
                     invLot.getQualificationFieldValues()[LPArray.valuePosicInArray(
@@ -288,7 +287,7 @@ private DataInventoryQualif() {throw new IllegalStateException("Utility class");
 
         Object[] isStudyOpenToChanges = isCertificationOpenToChanges(lotCertifId, lotName, category, reference);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())) {
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES, null, null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.NO_PENDING_QUALIFICATION, null, null);
         }
 
         String[] fieldsToRetrieve = new String[]{TblsInvTrackingData.LotCertificationVariableValues.ID.getName(),
@@ -305,20 +304,20 @@ private DataInventoryQualif() {throw new IllegalStateException("Utility class");
             Object[][] instEvVariables = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES.getTableName(),
                     new String[]{TblsInvTrackingData.LotCertificationVariableValues.CERTIF_ID.getName()}, new Object[]{lotCertifId}, fieldsToRetrieve);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instEvVariables[0][0].toString())) {
-                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.VARIABLE_NOT_EXISTS_EVENT_WITHNOVARIABLES, null);
+                return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.VARIABLE_NOT_EXISTS_EVENT_WITHNOVARIABLES, null);
             }
             /*else{
-                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.VARIABLE_NOT_EXISTS, 
+                return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.VARIABLE_NOT_EXISTS, 
                 new Object[]{Arrays.toString(LPArray.getColumnFromArray2D(instEvVariables, 1))});
             }*/
         }
         if (objectVariablePropInfo.length != 1) {
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.MORE_THAN_ONE_VARIABLE,
+            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.MORE_THAN_ONE_VARIABLE,
                     new Object[]{objectVariablePropInfo.length, Arrays.toString(fieldsName), appProcInstance});
         }
         String currentValue = LPNulls.replaceNull(objectVariablePropInfo[0][5]).toString();
         if (currentValue.length() > 0) {
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.USE_REENTER_WHEN_PARAM_ALREADY_HAS_VALUE,
+            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.USE_REENTER_WHEN_PARAM_ALREADY_HAS_VALUE,
                     new Object[]{});
         }
         String fieldType = objectVariablePropInfo[0][2].toString().toUpperCase();
@@ -326,7 +325,7 @@ private DataInventoryQualif() {throw new IllegalStateException("Utility class");
             case LIST:
                 String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
                 if (Boolean.FALSE.equals(LPArray.valueInArray(allowedValuesArr, newValue))) {
-                    return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.VARIABLE_VALUE_NOTONEOFTHEEXPECTED,
+                    return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.VARIABLE_VALUE_NOTONEOFTHEEXPECTED,
                             new Object[]{newValue, Arrays.toString(allowedValuesArr), variableName, appProcInstance});
                 }
                 break;
@@ -334,13 +333,13 @@ private DataInventoryQualif() {throw new IllegalStateException("Utility class");
             case INTEGER:
                 Object[] isNumeric = isNumeric(newValue);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isNumeric[0].toString())) {
-                    return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.NOT_NUMERIC_VALUE, null, null);
+                    return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.NOT_NUMERIC_VALUE, null, null);
                 }
                 break;
             case TEXT:
                 break;
             default:
-                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.VARIABLE_TYPE_NOT_RECOGNIZED, new Object[]{fieldType}, null);
+                return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.VARIABLE_TYPE_NOT_RECOGNIZED, new Object[]{fieldType}, null);
         }
         String[] updFieldsName = new String[]{TblsInvTrackingData.LotCertificationVariableValues.VALUE.getName()};
         Object[] updFieldsValue = new Object[]{newValue};
@@ -360,7 +359,7 @@ private DataInventoryQualif() {throw new IllegalStateException("Utility class");
         String appProcInstance = LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName());
         Object[] isStudyOpenToChanges = isCertificationOpenToChanges(lotCertifId, lotName, category, reference);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())) {
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES, null, null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES, null, null);
         }
 
         String[] fieldsToRetrieve = new String[]{TblsInvTrackingData.LotCertificationVariableValues.ID.getName(), TblsInvTrackingData.LotCertificationVariableValues.PARAM_NAME.getName(), TblsInvTrackingData.LotCertificationVariableValues.PARAM_TYPE.getName(), TblsInvTrackingData.LotCertificationVariableValues.REQUIRED.getName(),
@@ -375,23 +374,23 @@ private DataInventoryQualif() {throw new IllegalStateException("Utility class");
             Object[][] instEvVariables = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES.getTableName(),
                     new String[]{TblsInvTrackingData.LotCertificationVariableValues.CERTIF_ID.getName()}, new Object[]{lotCertifId}, fieldsToRetrieve);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instEvVariables[0][0].toString())) {
-                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.VARIABLE_NOT_EXISTS_EVENT_WITHNOVARIABLES, null);
+                return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.VARIABLE_NOT_EXISTS_EVENT_WITHNOVARIABLES, null);
             } else {
-                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.VARIABLE_NOT_EXISTS,
+                return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.VARIABLE_NOT_EXISTS,
                         new Object[]{Arrays.toString(LPArray.getColumnFromArray2D(instEvVariables, 1))});
             }
         }
         if (objectVariablePropInfo.length != 1) {
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.MORE_THAN_ONE_VARIABLE,
+            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.MORE_THAN_ONE_VARIABLE,
                     new Object[]{objectVariablePropInfo.length, Arrays.toString(fieldsName), appProcInstance});
         }
         String currentValue = LPNulls.replaceNull(objectVariablePropInfo[0][5]).toString();
         if (currentValue.length() == 0) {
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.USE_ENTER_WHEN_PARAM_HAS_NO_VALUE,
+            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.USE_ENTER_WHEN_PARAM_HAS_NO_VALUE,
                     new Object[]{});
         }
         if (currentValue.equalsIgnoreCase(newValue)) {
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.SAME_RESULT_VALUE,
+            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InvTrackingEventsErrorTrapping.SAME_RESULT_VALUE,
                     new Object[]{variableName, appProcInstance, newValue});
         }
         String fieldType = objectVariablePropInfo[0][2].toString().toUpperCase();
@@ -399,7 +398,7 @@ private DataInventoryQualif() {throw new IllegalStateException("Utility class");
             case LIST:
                 String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
                 if (Boolean.FALSE.equals(LPArray.valueInArray(allowedValuesArr, newValue))) {
-                    return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.MORE_THAN_ONE_VARIABLE,
+                    return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.MORE_THAN_ONE_VARIABLE,
                             new Object[]{newValue, Arrays.toString(allowedValuesArr), variableName, appProcInstance});
                 }
                 break;
@@ -407,13 +406,13 @@ private DataInventoryQualif() {throw new IllegalStateException("Utility class");
             case INTEGER:
                 Object[] isNumeric = isNumeric(newValue);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isNumeric[0].toString())) {
-                    return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.NOT_NUMERIC_VALUE, null, null);
+                    return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.NOT_NUMERIC_VALUE, null, null);
                 }
                 break;
             case TEXT:
                 break;
             default:
-                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.VARIABLE_TYPE_NOT_RECOGNIZED, new Object[]{fieldType}, null);
+                return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.VARIABLE_TYPE_NOT_RECOGNIZED, new Object[]{fieldType}, null);
         }
         String[] updFieldsName = new String[]{TblsInvTrackingData.LotCertificationVariableValues.VALUE.getName()};
         Object[] updFieldsValue = new Object[]{newValue};
@@ -434,8 +433,8 @@ private DataInventoryQualif() {throw new IllegalStateException("Utility class");
         Object[] isStudyOpenToChanges = isCertificationOpenToChanges(lotCertifId, null, null, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())) {
             ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();
-            messages.addMainForError(InstrumentsEnums.InstrEventsErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES, new Object[]{lotCertifId});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES, new Object[]{lotCertifId}, null);
+            messages.addMainForError(InvTrackingEnums.InventoryTrackingErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES, new Object[]{lotCertifId});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES, new Object[]{lotCertifId}, null);
         }
 
         Object[][] diagn = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES.getTableName(),
@@ -443,40 +442,40 @@ private DataInventoryQualif() {throw new IllegalStateException("Utility class");
                     TblsInvTrackingData.LotCertificationVariableValues.CERTIF_ID.getName(), TblsInvTrackingData.LotCertificationVariableValues.REQUIRED.getName(), TblsInvTrackingData.LotCertificationVariableValues.VALUE.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()},
                 new Object[]{lotName, lotCertifId, "Y"}, new String[]{TblsInvTrackingData.LotCertificationVariableValues.ID.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0][0].toString())) {
-            return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrEventsErrorTrapping.EVENT_NOTHING_PENDING, null, null);
+            return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackingErrorTrapping.EVENT_NOTHING_PENDING, null, null);
         } else {
             ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();
-            messages.addMainForError(InstrumentsEnums.InstrEventsErrorTrapping.EVENT_HAS_PENDING_RESULTS, new Object[]{diagn.length});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.EVENT_HAS_PENDING_RESULTS, new Object[]{diagn.length}, null);
+            messages.addMainForError(InvTrackingEnums.InventoryTrackingErrorTrapping.EVENT_HAS_PENDING_RESULTS, new Object[]{diagn.length});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.EVENT_HAS_PENDING_RESULTS, new Object[]{diagn.length}, null);
         }
     }
 
     public static InternalMessage invTrackingAuditSetAuditRecordAsReviewed(Integer auditId, String personName) {
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();
         String appProcInstance = GlobalVariables.Schemas.APP_PROC_DATA_AUDIT.getName();
-        String auditReviewMode = Parameter.getBusinessRuleProcedureFile(appProcInstance, InstrumentsEnums.InstrumentsBusinessRules.REVISION_MODE.getAreaName(), InstrumentsEnums.InstrumentsBusinessRules.REVISION_MODE.getTagName());
+        String auditReviewMode = Parameter.getBusinessRuleProcedureFile(appProcInstance, InvTrackingEnums.InventoryTrackBusinessRules.REVISION_MODE.getAreaName(), InvTrackingEnums.InventoryTrackBusinessRules.REVISION_MODE.getTagName());
         if (Boolean.FALSE.equals(isTagValueOneOfEnableOnes(auditReviewMode))) {
-            messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.DISABLED, new Object[]{});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.DISABLED, new Object[]{});
+            messages.addMainForError(InvTrackingEnums.InventoryTrackingErrorTrapping.DISABLED, new Object[]{});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.DISABLED, new Object[]{});
         }
-        String auditAuthorCanBeReviewerMode = Parameter.getBusinessRuleProcedureFile(appProcInstance, InstrumentsEnums.InstrumentsBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getAreaName(), InstrumentsEnums.InstrumentsBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName());
+        String auditAuthorCanBeReviewerMode = Parameter.getBusinessRuleProcedureFile(appProcInstance, InvTrackingEnums.InventoryTrackBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getAreaName(), InvTrackingEnums.InventoryTrackBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName());
         Object[][] auditInfo = QueryUtilitiesEnums.getTableData(TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT,
                 EnumIntTableFields.getTableFieldsFromString(TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT, new String[]{TblsInvTrackingDataAudit.Lot.PERSON.getName(), TblsInvTrackingDataAudit.Lot.REVIEWED.getName()}),
                 new String[]{TblsInvTrackingDataAudit.Lot.AUDIT_ID.getName()}, new Object[]{auditId},
                 new String[]{TblsInvTrackingDataAudit.Lot.AUDIT_ID.getName()});
         if (Boolean.FALSE.equals(isTagValueOneOfEnableOnes(auditAuthorCanBeReviewerMode))) {
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(auditInfo[0][0].toString())) {
-                messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.DISABLED, new Object[]{});
-                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.DISABLED, new Object[]{});
+                messages.addMainForError(InvTrackingEnums.InventoryTrackingErrorTrapping.DISABLED, new Object[]{});
+                return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.DISABLED, new Object[]{});
             }
             if (personName.equalsIgnoreCase(auditInfo[0][0].toString())) {
-                messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.AUTHOR_CANNOT_BE_REVIEWER, new Object[]{});
-                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.AUTHOR_CANNOT_BE_REVIEWER, new Object[]{});
+                messages.addMainForError(InvTrackingEnums.InventoryTrackingErrorTrapping.AUTHOR_CANNOT_BE_REVIEWER, new Object[]{});
+                return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.AUTHOR_CANNOT_BE_REVIEWER, new Object[]{});
             }
         }
         if (Boolean.TRUE.equals(Boolean.valueOf(auditInfo[0][1].toString()))) {
-            messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.AUDIT_RECORD_ALREADY_REVIEWED, new Object[]{auditId});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.AUDIT_RECORD_ALREADY_REVIEWED, new Object[]{auditId});
+            messages.addMainForError(InvTrackingEnums.InventoryTrackingErrorTrapping.AUDIT_RECORD_ALREADY_REVIEWED, new Object[]{auditId});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.AUDIT_RECORD_ALREADY_REVIEWED, new Object[]{auditId});
         }
         String[] updFieldsName = new String[]{TblsInvTrackingDataAudit.Lot.REVIEWED.getName(), TblsInvTrackingDataAudit.Lot.REVIEWED_BY.getName(), TblsInvTrackingDataAudit.Lot.REVIEWED_ON.getName()};
         Object[] updFieldsValue = new Object[]{true, personName, LPDate.getCurrentTimeStamp()};
@@ -485,9 +484,9 @@ private DataInventoryQualif() {throw new IllegalStateException("Utility class");
         Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT,
                 EnumIntTableFields.getTableFieldsFromString(TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT, updFieldsName), updFieldsValue, sqlWhere, null);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(updateRecordFieldsByFilter[0].toString())) {
-            return new InternalMessage(updateRecordFieldsByFilter[0].toString(), InstrumentsEnums.InstrumentsAPIactionsEndpoints.INSTRUMENTAUDIT_SET_AUDIT_ID_REVIEWED, new Object[]{auditId});
+            return new InternalMessage(updateRecordFieldsByFilter[0].toString(), InvTrackingEnums.InventoryTrackAPIactionsEndpoints.LOTAUDIT_SET_AUDIT_ID_REVIEWED, new Object[]{auditId});
         } else {
-            return new InternalMessage(updateRecordFieldsByFilter[0].toString(), InstrumentsEnums.InstrumentsErrorTrapping.AUDIT_RECORD_NOT_FOUND, new Object[]{auditId});
+            return new InternalMessage(updateRecordFieldsByFilter[0].toString(), InvTrackingEnums.InventoryTrackingErrorTrapping.AUDIT_RECORD_NOT_FOUND, new Object[]{auditId});
         }
     }
 

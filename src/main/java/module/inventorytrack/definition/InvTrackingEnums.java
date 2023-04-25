@@ -53,7 +53,7 @@ public class InvTrackingEnums {
     }
 
     public enum InvLotStatuses {
-        NEW, QUARANTINE, RETIRED,
+        NEW, QUARANTINE, QUARANTINE_ACCEPTED, QUARANTINE_REJECTED, RETIRED,
         NOT_AVAILABLEFOR_USE, AVAILABLE_FOR_USE, CANCELED;
 
         public static String getStatusFirstCode(EnumIntTableFields[] invReferenceFlds, Object[] invReferenceVls) {
@@ -298,10 +298,10 @@ public class InvTrackingEnums {
             new LPAPIArguments("lotCertifId", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6),
             new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
             new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
-            new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9)}, EndPointsToRequirements.endpointWithNoOutputObjects, 
+            new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9)}, EndPointsToRequirements.endpointWithNoOutputObjects,
                 "This endpoint requires the object to get its variables, by lot or by lot_certifification. "
-                        + "In case of lot_certif then certifId is the required argument."
-                        + "In case of lot then requires lotName, category and reference.", null),
+                + "In case of lot_certif then certifId is the required argument."
+                + "In case of lot then requires lotName, category and reference.", null),
         EXPIRED_LOTS("EXPIRED_LOTS", "",
                 new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
                     new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
@@ -317,7 +317,12 @@ public class InvTrackingEnums {
                 new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
                     new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8)}, EndPointsToRequirements.endpointWithNoOutputObjects, null, null),
         LOT_PRINT_LABEL("LOT_PRINT_LABEL", "",
-                new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects, null, null),;
+                new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects, null, null),
+        COMPLETED_EVENTS_LAST_N_DAYS("COMPLETED_EVENTS_LAST_N_DAYS", "",
+                new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6),
+                    new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
+                    new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8)},
+                EndPointsToRequirements.endpointWithNoOutputObjects, null, null),;
 
         private InventoryTrackAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes,
                 String devComment, String devCommentTag) {
@@ -383,9 +388,9 @@ public class InvTrackingEnums {
     }
 
     public enum InventoryTrackBusinessRules implements EnumIntBusinessRules {
-        XREVISION_MODE("instrumentAuditRevisionMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
-        XAUTHOR_CAN_REVIEW_AUDIT_TOO("instrumentAuditAuthorCanBeReviewerToo", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
-        XCHILD_REVISION_REQUIRED("instrumentAuditChildRevisionRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null);
+        REVISION_MODE("inventoryAuditRevisionMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
+        AUTHOR_CAN_REVIEW_AUDIT_TOO("inventoryAuditAuthorCanBeReviewerToo", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
+        CHILD_REVISION_REQUIRED("inventoryAuditChildRevisionRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null);
 
         private InventoryTrackBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator,
                 Boolean isOpt, ArrayList<String[]> preReqs) {
@@ -466,8 +471,26 @@ public class InvTrackingEnums {
         PROCEDURE_NOT_DECLARED_IN_AUTHORIZED_FOR_CONSUME_EXTERNALLY("InventoryLotProcedureNotDeclaredAsReferenceConsumableExternally", "", ""),
         REFERENCE_LOT_OR_USE_OPEN_REFERENCE_LOT_SHOULDBESPECIFIED("InventoryLotReferenceLotNameOrUseOpenReferenceLotShouldBeSpecified", "", ""),
         MORE_THAN_ONE_OPEN_REFERENCE_LOT("InventoryLotMoreThanOneOpenReferenceLots", "", ""),
-        VOLUME_IS_ALREADY_THIS("InventoryLotVolumeIsAlreadyThis", "", "")        
-        ;
+        VOLUME_IS_ALREADY_THIS("InventoryLotVolumeIsAlreadyThis", "", ""),
+        MORE_THAN_ONE_VARIABLE("inventoryLotEvent_moreThanOneVariable", "Found more than one record, <*1*> for the query <*2*> on <*3*>", "Found more than one record, <*1*> for the query <*2*> on <*3*>"),
+        EVENT_NOT_OPEN_FOR_CHANGES("inventoryLotEvent_NotOpenedForChanges", "The event is not open for changes", "Evento no abierto a cambios"),
+        VARIABLE_NOT_EXISTS_EVENT_WITHNOVARIABLES("inventoryLotEvent_variableNotExists_eventWithNoVariables", "This event has no this variable and the event has no variables", "Este evento no contiene esta variable y el evento no tiene variables"),
+        VARIABLE_NOT_EXISTS("inventoryLotEvent_variableNotExists", "The parameter <*1*> is not one of the event parameters <*2*>", "El parámetro <*1*> no es uno de los que tiene el evento, <*2*>"),
+        EVENT_HAS_PENDING_RESULTS("inventoryLotEvent_eventWithPendingResults", "The event has <*1*> pending results", "El evento tiene <*1*> resultado(s) pendiente(s)"),
+        EVENT_NOTHING_PENDING("inventoryLotEvent_eventHasMothingPending", "The event has nothing pending", "El evento no tiene nada pendiente"),
+        VARIABLE_VALUE_NOTONEOFTHEEXPECTED("inventoryLotEvent_valueNotOneOfExpected", "The value <*1*> is not one of the accepted values <*2*> for variable <*3*> in procedure <*4*>", "The value <*1*> is not one of the accepted values <*2*> for variable <*3*> in procedure <*4*>"),
+        
+        VARIABLE_TYPE_NOT_RECOGNIZED("variableTypeNotRecognized", "", ""),
+        NOT_NUMERIC_VALUE("DataSampleAnalysisResult_ValueNotNumericForQuantitativeParam", "", ""),
+        USE_REENTER_WHEN_PARAM_ALREADY_HAS_VALUE("inventoryLotEvent_whenParamAlreadyHasValueRequiresToUseReenterAction", "", ""),
+        USE_ENTER_WHEN_PARAM_HAS_NO_VALUE("inventoryLotEvent_whenParamHasNoValueRequiresToUseEnterResultAction", "", ""),
+        AUDIT_RECORDS_PENDING_REVISION("inventoryLotAuditRecordsPendingRevision", "The sample <*1*> has pending sign audit records.", "La muestra <*1*> tiene registros de auditoría sin firmar"),
+        AUDIT_RECORD_NOT_FOUND("AuditRecordNotFound", "The audit record <*1*> for sample does not exist", "No encontrado un registro de audit para muestra con id <*1*>"),
+        AUDIT_RECORD_ALREADY_REVIEWED("AuditRecordAlreadyReviewed", "The audit record <*1*> was reviewed therefore cannot be reviewed twice.", "El registro de audit para muestra con id <*1*> ya fue revisado, no se puede volver a revisar."),
+        AUTHOR_CANNOT_BE_REVIEWER("AuditSamePersonCannotBeAuthorAndReviewer", "Same person cannot review its own actions", "La misma persona no puede revisar sus propias acciones"),
+        PARAMETER_MISSING("inventoryLotAuditRevisionMode_ParameterMissing", "", ""),
+        DISABLED("inventoryLotAuditRevisionMode_Disable", "", ""),;
+
         private InventoryTrackingErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs) {
             this.errorCode = errCode;
             this.defaultTextWhenNotInPropertiesFileEn = defaultTextEn;
