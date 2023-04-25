@@ -1,4 +1,4 @@
-package com.labplanet.servicios.requirements;
+package trazit.procedureinstance.deployment.definition;
 
 import databases.TblsCnfg;
 import databases.TblsData;

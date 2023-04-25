@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.labplanet.servicios.platformdefinition;
+package trazit.platforminstance.definition;
 
-import com.labplanet.servicios.proceduredefinition.ReqProcedureEnums.ProcedureDefinitionpParametersEndpoints;
+import trazit.procedureinstance.definition.definition.ReqProcedureEnums.ProcedureDefinitionpParametersEndpoints;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.util.HashMap;

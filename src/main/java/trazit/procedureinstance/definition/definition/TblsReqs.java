@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package databases;
+package trazit.procedureinstance.definition.definition;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import lbplanet.utilities.LPDatabase;
@@ -386,6 +386,7 @@ public class TblsReqs {
         FIELD_NAME(GlobalAPIsParams.LBL_FIELD_NAME, LPDatabase.string(), null, null, null, null),
         ACTIVE("active", LPDatabase.booleanFld(), null, null, null, null),
         ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, null, null),        
+        DEFINITION("definition", LPDatabase.string(), null, null, null, null),
         ;
         private ProcedureModuleTables(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){

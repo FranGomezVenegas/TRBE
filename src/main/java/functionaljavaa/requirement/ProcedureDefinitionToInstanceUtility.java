@@ -9,7 +9,7 @@ import lbplanet.utilities.LPPlatform;
 import databases.Rdbms;
 import databases.TblsCnfg;
 import databases.TblsProcedure;
-import databases.TblsReqs;
+import trazit.procedureinstance.definition.definition.TblsReqs;
 import functionaljavaa.sop.UserSop;
 import lbplanet.utilities.LPArray;
 import trazit.globalvariables.GlobalVariables;
@@ -22,6 +22,14 @@ public class ProcedureDefinitionToInstanceUtility {
     private ProcedureDefinitionToInstanceUtility(){    throw new IllegalStateException("Utility class");}
 
 
+    public static final Object[] procedureUsersList(String procInstanceName, Integer procVersion){
+        Object[][] procedureRolesListArr = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USERS.getTableName(), 
+                new String[]{TblsReqs.ProcedureUsers.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUsers.PROCEDURE_VERSION.getName()}, new Object[]{procInstanceName, procVersion}, 
+                new String[]{TblsReqs.ProcedureUsers.USER_NAME.getName()}, new String[]{TblsReqs.ProcedureUsers.USER_NAME.getName()});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureRolesListArr[0][0].toString()))
+            return new Object[]{};
+        return LPArray.getColumnFromArray2D(procedureRolesListArr, 0);
+    }
     
     public static final Object[] procedureRolesList(String procInstanceName, Integer procVersion){
         Object[][] procedureRolesListArr = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_ROLES.getTableName(), 

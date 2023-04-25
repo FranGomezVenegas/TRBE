@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.labplanet.servicios.proceduredefinition;
+package trazit.procedureinstance.definition.definition;
 
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
@@ -66,20 +66,20 @@ public class ReqProcedureEnums {
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DEPLOY_PROC_BUSINESS_RULES_PROP_FILES.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 17),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DEPLOY_MODULE_TABLES_AND_FIELDS.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 18),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DEPLOY_PROC_MASTER_DATA.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 19)}, EndPointsToRequirements.endpointWithNoOutputObjects,
-                 null, null),
+                null, null),
         PROC_DEPLOY_CHECKER("PROC_DEPLOY_CHECKER", "deployRequirements_success",
                 new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROC_INSTANCENAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DB_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9)}, EndPointsToRequirements.endpointWithNoOutputObjects,
-                 null, null),
+                null, null),
         DEPLOY_REQUIREMENTS_CLONE_SPRINT("DEPLOY_REQUIREMENTS_CLONE_SPRINT", "sprintRequirementsCloned_success",
                 new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROC_INSTANCENAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
                     new LPAPIArguments("NEW" + ProcedureDefinitionpParametersEndpoints.PROC_INSTANCENAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
                     new LPAPIArguments("continueIfExistsNew", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 10)}, EndPointsToRequirements.endpointWithNoOutputObjects,
-                 null, null),
+                null, null),
         SET_PROCEDURE_BUSINESS_RULES("SET_PROCEDURE_BUSINESS_RULES", "setProcedureBusinessRules_success",
                 new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
@@ -87,27 +87,34 @@ public class ReqProcedureEnums {
                     new LPAPIArguments("suffixName", LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                     new LPAPIArguments("propName", LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
                     new LPAPIArguments("propValue", LPAPIArguments.ArgumentType.STRING.toString(), false, 9)}, EndPointsToRequirements.endpointWithNoOutputObjects,
-                 null, null),
+                null, null),
         ADD_USER("ADD_USER", "addUserToProcedure_success",
                 new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROC_INSTANCENAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.USER_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9)}, EndPointsToRequirements.endpointWithNoOutputObjects,
-                 null, null),
+                null, null),
+        ADD_ROLE("ADD_ROLE", "addRoleToProcedure_success",
+                new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
+                    new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROC_INSTANCENAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
+                    new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.ROLE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9)}, EndPointsToRequirements.endpointWithNoOutputObjects,
+                null, null),
         ADD_ROLE_TO_USER("ADD_ROLE_TO_USER", "addRoleToUser_success",
                 new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROC_INSTANCENAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
-                    new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.ROLE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
-                    new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.USER_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 10)}, EndPointsToRequirements.endpointWithNoOutputObjects,
-                 null, null),
+                    new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.USER_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
+                    new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.ROLE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 10)}, EndPointsToRequirements.endpointWithNoOutputObjects,
+                null, null),
         GET_UOM("GET_UOM", "addRoleToUser_success",
                 new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROC_INSTANCENAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.UOM_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
-                    new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.UOM_IMPORT_TYPE.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 10)}, EndPointsToRequirements.endpointWithNoOutputObjects
-, null, null);
+                    new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.UOM_IMPORT_TYPE.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 10)}, EndPointsToRequirements.endpointWithNoOutputObjects,
+                 null, null);
+
         private ProcedureDefinitionAPIActionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
             this.name = name;
             this.successMessageCode = successMessageCode;
@@ -128,13 +135,40 @@ public class ReqProcedureEnums {
             return hm;
         }
 
-        @Override        public String getName() {            return this.name;        }
-        @Override        public String getSuccessMessageCode() {           return this.successMessageCode;        }
-        @Override        public JsonArray getOutputObjectTypes() {            return outputObjectTypes;        }
-        @Override        public LPAPIArguments[] getArguments() {            return arguments;        }
-        @Override        public String getApiUrl() {            return ApiUrls.PROCEDURE_DEFINITION_ACTIONS.getUrl();        }
-        @Override        public String getDeveloperComment() {return this.devComment;        }
-        @Override public String getDeveloperCommentTag() {return this.devCommentTag;}
+        @Override
+        public String getName() {
+            return this.name;
+        }
+
+        @Override
+        public String getSuccessMessageCode() {
+            return this.successMessageCode;
+        }
+
+        @Override
+        public JsonArray getOutputObjectTypes() {
+            return outputObjectTypes;
+        }
+
+        @Override
+        public LPAPIArguments[] getArguments() {
+            return arguments;
+        }
+
+        @Override
+        public String getApiUrl() {
+            return ApiUrls.PROCEDURE_DEFINITION_ACTIONS.getUrl();
+        }
+
+        @Override
+        public String getDeveloperComment() {
+            return this.devComment;
+        }
+
+        @Override
+        public String getDeveloperCommentTag() {
+            return this.devCommentTag;
+        }
         private final String name;
         private final String successMessageCode;
         private final LPAPIArguments[] arguments;
@@ -225,7 +259,11 @@ public class ReqProcedureEnums {
     }
 
     public enum ReqProcedureDefinitionErrorTraping implements EnumIntMessages {
-        INSTANCE_LOCKED_FOR_ACTIONS("instanceLockedForActions", "", ""),;
+        INSTANCE_LOCKED_FOR_ACTIONS("procDefinition_instanceLockedForActions", "", ""),
+        USER_NOT_FOUND("procDefinition_userNotFound", "", ""),
+        USER_ALREADY_EXISTS("procDefinition_userAlreadyExists", "", ""),
+        ROLE_NOT_FOUND("procDefinition_roleNotFound", "", ""),
+        ROLE_ALREADY_EXISTS("procDefinition_roleAlreadyExists", "", "");
 
         private ReqProcedureDefinitionErrorTraping(String errCode, String defaultTextEn, String defaultTextEs) {
             this.errorCode = errCode;

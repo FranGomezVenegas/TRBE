@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package functionaljavaa.platformadmin;
+package trazit.codedocumentation.logic;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.TblsApp;

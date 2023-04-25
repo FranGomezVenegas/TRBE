@@ -1,7 +1,8 @@
-package com.labplanet.servicios.proceduredefinition;
+package trazit.procedureinstance.definition.apis;
 
+import trazit.procedureinstance.definition.logic.ClassReqProcedureActions;
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import com.labplanet.servicios.proceduredefinition.ReqProcedureEnums.ProcedureDefinitionAPIActionsEndpoints;
+import trazit.procedureinstance.definition.definition.ReqProcedureEnums.ProcedureDefinitionAPIActionsEndpoints;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
@@ -51,6 +52,7 @@ public class ReqProcedureDefinitionAPIActions extends HttpServlet {
 
         Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+            procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseError(request, response, 
                 LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
             return;          

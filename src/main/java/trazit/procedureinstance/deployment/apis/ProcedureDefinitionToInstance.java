@@ -3,10 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.labplanet.servicios.requirements;
+package trazit.procedureinstance.deployment.apis;
 
+import trazit.procedureinstance.deployment.logic.ProcDeployCheckerLogic;
 import com.labplanet.servicios.ResponseSuccess;
-import com.labplanet.servicios.proceduredefinition.ReqProcedureEnums.ProcedureDefinitionAPIActionsEndpoints;
+import trazit.procedureinstance.definition.definition.ReqProcedureEnums.ProcedureDefinitionAPIActionsEndpoints;
 import databases.DbObjects;
 import lbplanet.utilities.LPFrontEnd;
 import databases.Rdbms;

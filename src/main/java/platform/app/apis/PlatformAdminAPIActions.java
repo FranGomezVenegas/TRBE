@@ -7,7 +7,7 @@ package platform.app.apis;
 
 import platform.app.logic.ClassPlatformAdmin;
 import static trazit.session.ProcedureRequestSession.MANDATPRMS_MAIN_SERVLET_PROCEDURE;
-import functionaljavaa.platformadmin.PlatformAdminEnums;
+import trazit.codedocumentation.logic.PlatformAdminEnums;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.io.IOException;
 import java.io.PrintWriter;

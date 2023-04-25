@@ -34,7 +34,7 @@ import databases.TblsProcedure.ViewsProcedure;
 import databases.TblsProcedureAudit;
 import databases.TblsProcedureAudit.TablesProcedureAudit;
 import databases.TblsProcedureConfig.TablesProcedureConfig;
-import databases.TblsReqs;
+import trazit.procedureinstance.definition.definition.TblsReqs;
 import databases.features.DbEncryption;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.requirement.masterdata.ClassMasterData;

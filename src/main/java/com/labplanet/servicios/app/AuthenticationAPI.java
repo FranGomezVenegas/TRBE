@@ -46,7 +46,7 @@ import static lbplanet.utilities.LPSession.frontEndIpChecker;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 import trazit.session.ResponseMessages;
-import static functionaljavaa.platformadmin.AppBusinessRules.allAppBusinessRules;
+import static trazit.codedocumentation.logic.AppBusinessRules.allAppBusinessRules;
 
 /**
  *

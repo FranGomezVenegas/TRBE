@@ -3,15 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.labplanet.servicios.requirements;
+package trazit.procedureinstance.deployment.logic;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.app.TestingRegressionUAT;
+import trazit.procedureinstance.deployment.definition.ProcDeployEnums;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.TblsCnfg;
 import databases.TblsProcedure;
-import databases.TblsReqs;
+import trazit.procedureinstance.definition.definition.TblsReqs;
 import static functionaljavaa.requirement.ProcedureDefinitionToInstance.FLDSTORETR_PROCEDURE_INFO_SOURCE;
 import static functionaljavaa.requirement.ProcedureDefinitionToInstance.FLDSTORETR_REQS_PROCINFOSRC;
 import functionaljavaa.requirement.masterdata.ClassMasterData;

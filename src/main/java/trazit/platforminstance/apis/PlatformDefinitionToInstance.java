@@ -3,10 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.labplanet.servicios.requirements;
+package trazit.platforminstance.apis;
 
 import com.labplanet.servicios.ResponseSuccess;
-import com.labplanet.servicios.platformdefinition.PlatformDefinition.PlatformDefinitionAPIactionsEndpoints;
+import trazit.platforminstance.definition.PlatformDefinition.PlatformDefinitionAPIactionsEndpoints;
 import databases.DbObjects;
 import static databases.DbObjects.createSchemas;
 import lbplanet.utilities.LPFrontEnd;
@@ -61,7 +61,7 @@ public class PlatformDefinitionToInstance extends HttpServlet {
         PlatformDefinitionAPIactionsEndpoints endPoint = PlatformDefinitionAPIactionsEndpoints.CREATE_PLATFORM_INSTANCE_STRUCTURE;
         LPAPIArguments[] arguments = endPoint.getArguments();
         Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){            
             LPFrontEnd.servletReturnResponseError(request, response,
                     LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, "", LPPlatform.ApiErrorTraping.class.getSimpleName());
             return;

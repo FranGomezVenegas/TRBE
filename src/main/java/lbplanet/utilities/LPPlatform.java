@@ -21,7 +21,7 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 import databases.Rdbms;
 import databases.TblsCnfg;
-import databases.TblsReqs;
+import trazit.procedureinstance.definition.definition.TblsReqs;
 import databases.features.Token;
 import functionaljavaa.businessrules.BusinessRules;
 import static functionaljavaa.parameter.Parameter.getBusinessRuleAppFile;

@@ -7,7 +7,7 @@ package functionaljavaa.requirement;
 
 import databases.Rdbms;
 import databases.TblsProcedure;
-import databases.TblsReqs;
+import trazit.procedureinstance.definition.definition.TblsReqs;
 import trazit.globalvariables.GlobalVariables;
 /**
  *
