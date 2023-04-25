@@ -66,6 +66,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
         try {
             Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())) {
+                procReqInstance.killIt();
                 LPFrontEnd.servletReturnResponseError(request, response,
                         LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
                 return;
@@ -242,8 +243,8 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     return;
                 case RETIRED_INVENTORY_LOTS_LAST_N_DAYS:
                     String numDays = LPNulls.replaceNull(argValues[0]).toString();
-                    category = LPNulls.replaceNull(argValues[0]).toString();
-                    reference = LPNulls.replaceNull(argValues[1]).toString();
+                    category = LPNulls.replaceNull(argValues[1]).toString();
+                    reference = LPNulls.replaceNull(argValues[2]).toString();
                     if (numDays.length() == 0) {
                         numDays = String.valueOf(7);
                     }
@@ -444,6 +445,39 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     Rdbms.closeRdbms();
                     LPFrontEnd.servletReturnSuccess(request, response, jSummaryObj);
                     break;
+                case COMPLETED_EVENTS_LAST_N_DAYS:
+                    numDays = LPNulls.replaceNull(argValues[0]).toString();
+                    category = LPNulls.replaceNull(argValues[1]).toString();
+                    reference = LPNulls.replaceNull(argValues[2]).toString();
+                    if (numDays.length() == 0) {
+                        numDays = String.valueOf(7);
+                    }
+                    numDaysInt = 0 - Integer.valueOf(numDays);
+
+                    sW = new SqlWhere();
+                    sW.addConstraint(TblsInvTrackingData.LotCertification.COMPLETED_DECISION, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, null);
+                    sW.addConstraint(TblsInvTrackingData.LotCertification.COMPLETED_ON, SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN, new Object[]{LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, null);
+                    if (category.length() > 0) {
+                        sW.addConstraint(TblsInvTrackingData.LotCertification.CATEGORY, SqlStatement.WHERECLAUSE_TYPES.IN, category.split("\\|"), "|");
+                    }
+                    if (reference.length() > 0) {
+                        sW.addConstraint(TblsInvTrackingData.LotCertification.REFERENCE, SqlStatement.WHERECLAUSE_TYPES.IN, reference.split("\\|"), "|");
+                    }
+
+                    fieldsToRetrieve = getAllFieldNames(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION);
+                    Object[][] invEventsCompletedLastDays = QueryUtilitiesEnums.getTableData(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION,
+                            EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION),
+                            sW, new String[]{TblsInvTrackingData.LotCertification.COMPLETED_ON.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
+                    jArr = new JSONArray();
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(invEventsCompletedLastDays[0][0].toString()))) {
+                        for (Object[] currIncident : invEventsCompletedLastDays) {
+                            JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
+                            jArr.add(jObj);
+                        }
+                    }
+                    Rdbms.closeRdbms();
+                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                    return;             
                 case LOT_PRINT_LABEL:
                     lotName = LPNulls.replaceNull(argValues[0]).toString();
                     JSONObject jObj = new JSONObject();

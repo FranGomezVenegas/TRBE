@@ -98,7 +98,7 @@ public class EndpointsDocAPIqueries extends HttpServlet {
             try {
                 endPoint = EndpointsDocAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
             } catch (Exception e) {
-                //procReqInstance.killIt();
+                procReqInstance.killIt();
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
                 return;
             }

@@ -7,7 +7,7 @@ package module.instrumentsmanagement.apis;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import module.instrumentsmanagement.definition.ClassInstrumentsController;
-import com.labplanet.servicios.proceduredefinition.ReqProcedureEnums.ProcedureDefinitionAPIActionsEndpoints;
+import trazit.procedureinstance.definition.definition.ReqProcedureEnums.ProcedureDefinitionAPIActionsEndpoints;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.testingscripts.LPTestingParams;

@@ -5,15 +5,16 @@
  */
 package databases;
 
+import trazit.procedureinstance.definition.definition.TblsReqs;
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import com.labplanet.servicios.requirements.ProcDeployEnums;
+import trazit.procedureinstance.deployment.definition.ProcDeployEnums;
 import static databases.Rdbms.insertRecordInTableFromTable;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsApp.TablesApp;
 import databases.TblsAppAudit.TablesAppAudit;
 import databases.TblsAppConfig.TablesAppConfig;
 import databases.TblsProcedure.TablesProcedure;
-import databases.TblsReqs.TablesReqs;
+import trazit.procedureinstance.definition.definition.TblsReqs.TablesReqs;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
 import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.requirement.ProcedureDefinitionToInstance.SCHEMA_AUTHORIZATION_ROLE;

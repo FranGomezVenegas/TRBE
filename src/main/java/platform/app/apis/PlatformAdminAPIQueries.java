@@ -14,7 +14,7 @@ import databases.SqlWhere;
 import databases.TblsApp;
 import databases.TblsProcedure;
 import databases.features.Token;
-import functionaljavaa.platformadmin.PlatformAdminEnums.PlatformAdminAPIqueriesEndpoints;
+import trazit.codedocumentation.logic.PlatformAdminEnums.PlatformAdminAPIqueriesEndpoints;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -33,7 +33,7 @@ import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntTables;
 import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ProcedureRequestSession;
-import static functionaljavaa.platformadmin.AppBusinessRules.allAppBusinessRules;
+import static trazit.codedocumentation.logic.AppBusinessRules.allAppBusinessRules;
 
 /**
  *
@@ -56,8 +56,16 @@ public class PlatformAdminAPIQueries extends HttpServlet {
 
             String language = LPFrontEnd.setLanguage(request); 
         try{
+            ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false, true);
+            if (Boolean.TRUE.equals(procReqInstance.getHasErrors())){
+                procReqInstance.killIt();
+                LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
+                return;
+            }
+
             Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                procReqInstance.killIt();
                 LPFrontEnd.servletReturnResponseError(request, response, 
                     LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
                 return;          
@@ -77,12 +85,6 @@ public class PlatformAdminAPIQueries extends HttpServlet {
             }catch(Exception e){
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                 return;                   
-            }
-            ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false, true);
-            if (Boolean.TRUE.equals(procReqInstance.getHasErrors())){
-                procReqInstance.killIt();
-                LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
-                return;
             }
                 
             if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return;}          

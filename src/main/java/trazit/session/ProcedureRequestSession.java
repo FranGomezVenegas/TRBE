@@ -64,6 +64,7 @@ public class ProcedureRequestSession {
     private TestingAuditIds tstAuditObj;
     private TestingBusinessRulesVisited busRuleVisited;
     private TestingMessageCodeVisited msgCodeVisited;
+    private String testingOutputFormat;
     private ResponseMessages rspMessages;
     private BusinessRules busRulesProcInstance;
     private BusinessRules busRulesTesting;
@@ -96,6 +97,12 @@ public class ProcedureRequestSession {
             String paramIsTesting = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING);
             if (paramIsTesting != null && Boolean.valueOf(paramIsTesting)) {
                 this.isForTesting = true;
+            }
+            if (Boolean.TRUE.equals(this.isForTesting)) {
+                this.testingOutputFormat = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_TESTING_OUTPUT_FORMAT);
+                if (LPNulls.replaceNull(this.testingOutputFormat).length() == 0) {
+                    this.testingOutputFormat = "JSON";
+                }
             }
             this.sessionAuditActions = new SessionAuditActions();
 
@@ -204,7 +211,7 @@ public class ProcedureRequestSession {
                 this.procedureVersion = this.token.getProcedureInstanceVersion(procInstanceName);
                 this.procedureHashCode = this.token.getProcedureInstanceHashCode(procInstanceName);
             }
-            if (Boolean.FALSE.equals(isForTesting) && Boolean.FALSE.equals(isForUAT) && Boolean.FALSE.equals(isQuery) 
+            if (Boolean.FALSE.equals(isForTesting) && Boolean.FALSE.equals(isForUAT) && Boolean.FALSE.equals(isQuery)
                     && Boolean.FALSE.equals(isPlatform) && Boolean.FALSE.equals(isForDocumentation)) {
                 Object[] theProcActionEnabled = isTheProcActionEnabled(tokn, procInstanceName, actionName, this.busRulesProcInstance);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(theProcActionEnabled[0].toString())) {
@@ -214,7 +221,7 @@ public class ProcedureRequestSession {
                 }
 
             }
-            if (Boolean.FALSE.equals(isForTesting) && Boolean.FALSE.equals(isForUAT) && Boolean.FALSE.equals(isQuery) 
+            if (Boolean.FALSE.equals(isForTesting) && Boolean.FALSE.equals(isForUAT) && Boolean.FALSE.equals(isQuery)
                     && Boolean.FALSE.equals(isPlatform) && Boolean.FALSE.equals(isForDocumentation)) {
                 Object[] actionEnabled = LPPlatform.procActionEnabled(procInstanceName, token, actionName, this.busRulesProcInstance);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) {
@@ -229,7 +236,7 @@ public class ProcedureRequestSession {
                     return;
                 }
             }
-            if (Boolean.FALSE.equals(isForTesting) && Boolean.FALSE.equals(isForUAT) && Boolean.FALSE.equals(isQuery) && Boolean.FALSE.equals(isForDocumentation)){
+            if (Boolean.FALSE.equals(isForTesting) && Boolean.FALSE.equals(isForUAT) && Boolean.FALSE.equals(isQuery) && Boolean.FALSE.equals(isForDocumentation)) {
                 this.auditAndUsrValid = AuditAndUserValidation.getInstanceForActions(request, language, this.busRulesProcInstance, this.isPlatform);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())) {
                     this.hasErrors = true;
@@ -244,7 +251,7 @@ public class ProcedureRequestSession {
                 }
                 Rdbms.setTransactionId(schemaConfigName);
             }
-            if (Boolean.TRUE.equals(isForTesting)){
+            if (Boolean.TRUE.equals(isForTesting)) {
                 this.tstAuditObj = TestingAuditIds.getInstance();
                 this.busRuleVisited = TestingBusinessRulesVisited.getInstance();
                 this.msgCodeVisited = TestingMessageCodeVisited.getInstance();
@@ -542,6 +549,7 @@ public class ProcedureRequestSession {
         this.token = new Token(this.tokenStr);
         this.previousToken = new Token(this.tokenStr);
     }
+
     public void setProcInstanceName(String newProcInstanceName) {
         this.procedureInstance = newProcInstanceName;
     }
@@ -615,6 +623,13 @@ public class ProcedureRequestSession {
             this.dbLogSummary = new DbLogSummary();
         }
         return dbLogSummary;
+    }
+
+    /**
+     * @return the testingOutputFormat
+     */
+    public String getTestingOutputFormat() {
+        return testingOutputFormat;
     }
 
 }

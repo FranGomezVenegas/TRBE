@@ -39,6 +39,7 @@ public class SchedInstruments {
     }
 
     public static JSONArray logNextEventWhenExpiredOrClose(String procInstanceName, Boolean readOnly) {
+        if ( 1==1) return new JSONArray();
         Object[] dbViewExists = Rdbms.dbViewExists(procInstanceName, ViewsInstrumentsData.CALIB_PM_EXPIRED_OR_EXPIRING.getRepositoryName(), ViewsInstrumentsData.CALIB_PM_EXPIRED_OR_EXPIRING.getViewName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbViewExists[0].toString())) {
             new JSONArray();

@@ -135,11 +135,11 @@
     </servlet>
     <servlet>
         <servlet-name>PlatformDefinitionToInstance</servlet-name>
-        <servlet-class>com.labplanet.servicios.requirements.PlatformDefinitionToInstance</servlet-class>
+        <servlet-class>trazit.platforminstance.apis.PlatformDefinitionToInstance</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ProcedureDefinitionToInstance</servlet-name>
-        <servlet-class>com.labplanet.servicios.requirements.ProcedureDefinitionToInstance</servlet-class>
+        <servlet-class>trazit.procedureinstance.deployment.apis.ProcedureDefinitionToInstance</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>DbTestingLimitAndResult</servlet-name>
@@ -255,11 +255,11 @@
     </servlet>
     <servlet>
         <servlet-name>RequirementsProcedureDefinitionAPIQueries</servlet-name>
-        <servlet-class>com.labplanet.servicios.proceduredefinition.ReqProcedureDefinitionQueries</servlet-class>
+        <servlet-class>trazit.procedureinstance.definition.apis.ReqProcedureDefinitionQueries</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>RequirementsProcedureDefinitionAPIActions</servlet-name>
-        <servlet-class>com.labplanet.servicios.proceduredefinition.ReqProcedureDefinitionAPIActions</servlet-class>
+        <servlet-class>trazit.procedureinstance.definition.apis.ReqProcedureDefinitionAPIActions</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ModulesConfigMasterDataAPI</servlet-name>

@@ -30,6 +30,7 @@ public class GlobalAPIsParams extends HttpServlet {
     public static final String REQUEST_PARAM_VIEW_NAME = "viewName";
     public static final String REQUEST_PARAM_ACTION_NAME = "actionName";
     public static final String REQUEST_PARAM_SIZE_VALUE = "sizeValue";
+    public static final String REQUEST_PARAM_TESTING_OUTPUT_FORMAT = "outputFormat";
 
     /**
      *

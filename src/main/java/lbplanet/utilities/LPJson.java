@@ -6,12 +6,15 @@
 package lbplanet.utilities;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 
 import java.util.Arrays;
+import java.util.Map;
+import java.util.TreeMap;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -88,7 +91,7 @@ public class LPJson {
                             || (clase.toUpperCase().equalsIgnoreCase("class java.sql.Timestamp"))) {
                         jObj.put(setAlias(header[iField]), row[iField].toString());
                     } else {
-                        if (row[iField].toString().toUpperCase().contains("NULL")) {
+                        if ("NULL".equalsIgnoreCase(row[iField].toString())) {
                             row[iField] = "null";
                         }
                         jObj.put(setAlias(header[iField]), row[iField]);
@@ -178,6 +181,10 @@ public class LPJson {
 
     public static JsonArray convertToJsonArrayStringedObject(String value) {
         try {
+            if (LPNulls.replaceNull(value).length() == 0) {
+                JsonArray jArr = new JsonArray();
+                return jArr;
+            }
             if ("TBD".equalsIgnoreCase(value)) {
                 JsonArray jArr = new JsonArray();
                 jArr.add(value);
@@ -214,4 +221,53 @@ public class LPJson {
         }
     }
 
+    public static JsonObject sortJsonObjectContent(JsonObject objectToSort) {
+        TreeMap<String, JsonElement> sortedProcEndPoints = new TreeMap<>();
+        for (Map.Entry<String, JsonElement> entry : objectToSort.entrySet()) {
+            sortedProcEndPoints.put(entry.getKey(), entry.getValue());
+            objectToSort.remove(entry.getKey());
+        }
+        for (Map.Entry<String, JsonElement> entry : sortedProcEndPoints.entrySet()) {
+            objectToSort.add(entry.getKey(), entry.getValue());
+        }
+        return objectToSort;
+    }
+
+    /*    
+    public static JSONArray  sortJsonArrayContent(JSONArray objectToSort) {
+List<JsonElement> list = objectToSort.toList();
+
+// sort the list
+Collections.sort(list, new Comparator<JsonElement>() {
+    @Override
+    public int compare(JsonElement o1, JsonElement o2) {
+        // compare the values of the two JsonElements
+        // return -1 if o1 is less than o2, 0 if they are equal, and 1 if o1 is greater than o2
+        // for example, to sort by a string property:
+        // return o1.getAsJsonObject().get("propertyName").getAsString().compareTo(o2.getAsJsonObject().get("propertyName").getAsString());
+        return 0; // replace this line with your own comparison logic
+    }
+});
+
+// convert the sorted list back to a JSONArray
+JSONArray sortedJsonArray = new JSONArray();
+for (JsonElement element : list) {
+    sortedJsonArray.put(element);
+}        
+    }    
+     */
+
+    public static boolean ValueInJsonArray(JsonArray  jArr, String valueToFind) {
+        JsonParser parser = new JsonParser();
+
+// check if "demo" is part of the JsonArray
+        boolean containsDemo = false;
+        for (JsonElement element : jArr) {
+            if (parser.parse(element.toString()).getAsString().equals(valueToFind)) {
+                containsDemo = true;
+                break;
+            }
+        }
+        return containsDemo;
+    }
 }

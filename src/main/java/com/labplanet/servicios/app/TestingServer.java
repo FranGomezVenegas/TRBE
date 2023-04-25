@@ -21,7 +21,7 @@ import databases.TblsData;
 import databases.TblsData.TablesData;
 import databases.TblsProcedure;
 import databases.TblsProcedureAudit.TablesProcedureAudit;
-import databases.TblsReqs;
+import trazit.procedureinstance.definition.definition.TblsReqs;
 import databases.TblsTesting;
 import databases.features.Token;
 import functionaljavaa.datatransfer.FromInstanceToInstance;

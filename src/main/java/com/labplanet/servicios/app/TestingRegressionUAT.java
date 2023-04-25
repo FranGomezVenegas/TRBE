@@ -82,6 +82,7 @@ public class TestingRegressionUAT extends HttpServlet {
             LPFrontEnd.servletReturnResponseError(request, response, "Argument scriptId not numeric", null, language, null);
             return;
         }
+        
         Integer scriptId = Integer.valueOf(scriptIdStr);
         String procInstanceName = request.getParameter("procInstanceName");
         String isProcManagementStr = LPNulls.replaceNull(request.getParameter("procManagement"));

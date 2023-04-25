@@ -17,7 +17,7 @@ import databases.Rdbms;
 import databases.SqlStatement;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsProcedure;
-import databases.TblsReqs;
+import trazit.procedureinstance.definition.definition.TblsReqs;
 import databases.features.Token;
 import functionaljavaa.businessrules.BusinessRules;
 import functionaljavaa.moduleenvironmentalmonitoring.ConfigMasterData;
@@ -96,7 +96,7 @@ public class AppProcedureListAPI extends HttpServlet {
             String language = LPFrontEnd.setLanguage(request); 
             
             Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){                
                  LPFrontEnd.servletReturnResponseError(request, response, 
                          LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
                  return new JSONObject();          

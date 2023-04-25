@@ -78,6 +78,9 @@ public class LPTestingOutFormat {
     private Integer stopSyntaxisUnmatchPosic = -1;
     private Integer stopSyntaxisFalsePosic = -1;
     private Integer alternativeTokenFldPosic = -1;
+    private String executionSummaryPhrase;
+    private BigDecimal totalTimeConsume;
+    private Object[] fieldsForSessionObjects;
 
     public LPTestingOutFormat(HttpServletRequest request, String testerName, String testerFileName) {
         String csvPathName = "";
@@ -96,7 +99,7 @@ public class LPTestingOutFormat {
             TblsTesting.ScriptSteps.ARGUMENT_03.getName(), TblsTesting.ScriptSteps.ARGUMENT_04.getName(),
             TblsTesting.ScriptSteps.ARGUMENT_05.getName(), TblsTesting.ScriptSteps.ARGUMENT_06.getName(),
             TblsTesting.ScriptSteps.ARGUMENT_07.getName(), TblsTesting.ScriptSteps.ARGUMENT_08.getName(),
-            TblsTesting.ScriptSteps.ARGUMENT_09.getName(), TblsTesting.ScriptSteps.ARGUMENT_10.getName(), 
+            TblsTesting.ScriptSteps.ARGUMENT_09.getName(), TblsTesting.ScriptSteps.ARGUMENT_10.getName(),
             TblsTesting.ScriptSteps.ARGUMENT_11.getName(), TblsTesting.ScriptSteps.ARGUMENT_12.getName(),
             TblsTesting.ScriptSteps.ARGUMENT_13.getName(), TblsTesting.ScriptSteps.ARGUMENT_14.getName(),
             TblsTesting.ScriptSteps.ARGUMENT_15.getName(),
@@ -262,9 +265,11 @@ public class LPTestingOutFormat {
                         summaryPhrase=summaryPhrase+"(with Property Errors)";
                 }
                  */
+                totalTimeConsume = secondsInDateRange;
+                executionSummaryPhrase = summaryPhrase;
                 String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments, summaryPhrase, secondsInDateRange);
                 fileContentBuilder.append(fileContentSummary);
-                fileContentSummary = LPTestingOutFormat.createLogsTable(scriptId);
+//                fileContentSummary = LPTestingOutFormat.createLogsTable(scriptId);
                 fileContentBuilder.append(fileContentSummary);
 
                 if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, null))) {
@@ -281,7 +286,7 @@ public class LPTestingOutFormat {
                 updFldNames = LPArray.addValueToArray1D(updFldNames, TblsTesting.Script.RUN_SUMMARY.getName());
                 updFldValues = LPArray.addValueToArray1D(updFldValues, summaryPhrase);
 
-                Object[] fieldsForSessionObjects = getFieldsForSessionObjects();
+                fieldsForSessionObjects = getFieldsForSessionObjects();
                 if (fieldsForSessionObjects != null && fieldsForSessionObjects.length > 0) {
                     updFldNames = LPArray.addValueToArray1D(updFldNames, (String[]) fieldsForSessionObjects[0]);
                 }
@@ -292,7 +297,7 @@ public class LPTestingOutFormat {
                 sqlWhere.addConstraint(TblsTesting.Script.SCRIPT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{scriptId}, "");
                 Rdbms.updateRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPT,
                         EnumIntTableFields.getTableFieldsFromString(TblsTesting.TablesTesting.SCRIPT, updFldNames), updFldValues, sqlWhere, null);
-                procReqInstance.killIt();
+               // procReqInstance.killIt();
             }
         }
         return fileContentBuilder;
@@ -519,7 +524,7 @@ public class LPTestingOutFormat {
      */
     public static String rowAddField(String field) {
         StringBuilder content = new StringBuilder(0);
-        content.append(HEADER_START).append(LPNulls.replaceNull(field)).append(HEADER_END);
+        content.append(FIELD_START).append(LPNulls.replaceNull(field)).append(FIELD_END);
         return content.toString();
     }
 
@@ -1293,4 +1298,19 @@ public class LPTestingOutFormat {
         fileContentTable1Builder.append(LPTestingOutFormat.TABLE_END);
         return fileContentTable1Builder;
     }
+
+    /**
+     * @return the executionSummaryPhrase
+     */
+    public String getExecutionSummaryPhrase() {
+        return executionSummaryPhrase;
+    }
+
+    /**
+     * @return the totalTimeConsume
+     */
+    public BigDecimal getTotalTimeConsume() {
+        return totalTimeConsume;
+    }
+
 }

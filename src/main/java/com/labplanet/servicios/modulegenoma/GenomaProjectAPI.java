@@ -145,7 +145,7 @@ public class GenomaProjectAPI extends HttpServlet {
             HashMap<HttpServletRequest, Object[]> hm = new HashMap<>();
             Object[] argValues = new Object[0];
             for (LPAPIArguments curArg : this.arguments) {
-                argValues = LPArray.addValueToArray1D(argValues, curArg.getName() + ":" + getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+                argValues = LPArray.addValueToArray1D(argValues, curArg.getName() + "^" + getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
                 request.setAttribute(curArg.getName(), getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
             }
             hm.put(request, argValues);

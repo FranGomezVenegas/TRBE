@@ -110,6 +110,7 @@ public class SampleAPIfrontend extends HttpServlet {
             case UNRECEIVESAMPLES_LIST:   
                 Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, SampleAPIParams.MANDATPARMS_FE_UNRECSMPS_LIST.split("\\|"));
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                    procReqInstance.killIt();
                     LPFrontEnd.servletReturnResponseError(request, response, 
                             LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
                     return;                  
@@ -396,6 +397,7 @@ public class SampleAPIfrontend extends HttpServlet {
                 case GET_SAMPLE_ANALYSIS_LIST:    
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, SampleAPIParams.MANDATPARMS_FE_GETSMPANA_LIST.split("\\|"));
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                        procReqInstance.killIt();
                         LPFrontEnd.servletReturnResponseError(request, response, 
                                 LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
                         return;                  
@@ -430,6 +432,7 @@ public class SampleAPIfrontend extends HttpServlet {
                 case GET_SAMPLE_ANALYSIS_RESULT_LIST:
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, LPArray.getUniquesArray(SampleAPIParams.MANDATORY_PARAMS_FRONTEND_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|")));
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                        procReqInstance.killIt();
                         LPFrontEnd.servletReturnResponseError(request, response, 
                                 LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                         return;                  
@@ -537,6 +540,7 @@ public class SampleAPIfrontend extends HttpServlet {
                 case CHANGEOFCUSTODY_SAMPLE_HISTORY:     
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, SampleAPIParams.MANDATORY_PARAMS_FRONTEND_CHANGEOFCUSTODY_SAMPLE_HISTORY.split("\\|"));
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                        procReqInstance.killIt();
                         LPFrontEnd.servletReturnResponseError(request, response, 
                                 LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                         return;                  

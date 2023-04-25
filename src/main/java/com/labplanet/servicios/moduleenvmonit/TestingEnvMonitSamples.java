@@ -8,7 +8,7 @@ package com.labplanet.servicios.moduleenvmonit;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.app.TestingRegressionUAT;
 import com.labplanet.servicios.modulesample.ClassSampleController;
-import com.labplanet.servicios.proceduredefinition.ReqProcedureEnums.ProcedureDefinitionAPIActionsEndpoints;
+import trazit.procedureinstance.definition.definition.ReqProcedureEnums.ProcedureDefinitionAPIActionsEndpoints;
 import functionaljavaa.investigation.ClassInvestigationController;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
@@ -101,10 +101,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
                 TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);                
 
                 Object actionName = LPNulls.replaceNull(testingContent[iLines][5]).toString();
-/*out.println(iLines+" "+actionName);      
-if (iLines==25){
-    out.println("stop here");
-}*/
+
                 request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, actionName);
                 instanceForActions.setActionNameForTesting(scriptId, iLines, actionName.toString());                
                 if (tstOut.getAuditReasonPosic()!=-1)
