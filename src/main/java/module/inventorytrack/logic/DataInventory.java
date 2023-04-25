@@ -283,8 +283,8 @@ public class DataInventory {
                     new String[]{TblsInvTrackingConfig.Reference.NAME.getName(), TblsInvTrackingConfig.Reference.CATEGORY.getName()}, new Object[]{reference, category},
                     getAllFieldNames(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableFields()));
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceInfo[0][0].toString())) {
-                messages.addMainForError(InvTrackingEnums.InventoryTrackingErrorTrapping.REFERENCE_NOT_FOUND, new Object[]{reference});
-                return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.REFERENCE_NOT_FOUND, new Object[]{reference}, null);
+                messages.addMainForError(InvTrackingEnums.InventoryTrackingErrorTrapping.REFERENCE_NOT_FOUND, new Object[]{reference, category});
+                return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.REFERENCE_NOT_FOUND, new Object[]{reference, category}, null);
             }
             fldNames = LPArray.addValueToArray1D(fldNames, TblsInvTrackingData.Lot.REFERENCE.getName());
             fldValues = LPArray.addValueToArray1D(fldValues, reference);
@@ -390,8 +390,11 @@ public class DataInventory {
     }
 
     public InternalMessage turnUnAvailable(String[] fldNames, Object[] fldValues) {
+        if (Boolean.TRUE.equals(this.getRequiresQualification()) && Boolean.FALSE.equals(this.getIsQualified())){
+            return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.LOT_NOTQUALIFIED_YET, new Object[]{this.getLotName()}, null);
+        }
         return updateLotTransaction(InvLotStatuses.NOT_AVAILABLEFOR_USE.toString(), InvTrackingEnums.InventoryTrackAPIactionsEndpoints.TURN_LOT_UNAVAILABLE,
-                InvTrackingEnums.AppInventoryTrackingAuditEvents.TURN_UNAVAILABLE, null, null, InventoryTrackingErrorTrapping.ALREADY_AVAILABLE);
+                InvTrackingEnums.AppInventoryTrackingAuditEvents.TURN_UNAVAILABLE, null, null, InventoryTrackingErrorTrapping.ALREADY_UNAVAILABLE);
     }
 
     public InternalMessage updateInventoryLot(String[] fldNames, Object[] fldValues) {
