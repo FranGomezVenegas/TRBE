@@ -44,6 +44,8 @@ public class TblsApp {
             new String[]{VideoTutorialJson.AREA.getName()}, null, "Video Tutorial JSON entries table"),
         APP_BUSINESS_RULES(null, "business_rules", GlobalVariables.Schemas.APP_BUSINESS_RULES.getName(), IS_PRODEDURE_INSTANCE, TblsProcedure.ProcedureBusinessRules.values(), null,
             new String[]{VideoTutorialJson.AREA.getName()}, null, "App business rules entries table"),
+        LDAP_SETTINGS(null, "ldap_setting", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, LdapSetting.values(), null,
+            new String[]{LdapSetting.NAME.getName()}, null, "LDAP Settings declaration"),
         ;
         private TablesApp(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){
@@ -196,7 +198,11 @@ public class TblsApp {
         ESIGN("e_sign", LPDatabase.string(),null, null, "", null),
         PASSWORD("password", LPDatabase.string(),null, null, "", null),
         PERSON_NAME("person_name", LPDatabase.string(),null, null, "", null),
-        TABS_ON_LOGIN("tabs_on_login", LPDatabase.string(),null, null, "", null)
+        TABS_ON_LOGIN("tabs_on_login", LPDatabase.string(),null, null, "", null),
+        USES_LDAP("uses_ldap", LPDatabase.booleanFld(false),null, null, "", null),
+        LDAP_SETTING("ldap_setting", LPDatabase.string(),null, null, "", null),
+        LDAP_USER_NAME("ldap_user_name", LPDatabase.string(),null, null, "", null),
+        LDAP_DN("ldap_dn", LPDatabase.string(),null, null, "", null),
         //, FLD_PROCEDURES("procedures", "character varying[] COLLATE pg_catalog.\"default\"")
         ;
         private Users(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
@@ -340,6 +346,35 @@ public class TblsApp {
         CONTENT("content", LPDatabase.json(), null, null, "", null),
         ;
         private VideoTutorialJson(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName; @Override        public String getName(){return this.fieldName;}
+        private final String fieldType; @Override        public String getFieldType() {return this.fieldType;}
+        private final String fieldMask; @Override        public String getFieldMask() {return this.fieldMask;}
+        private final ReferenceFld reference; @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
+        private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }    
+    public enum LdapSetting implements EnumIntTableFields{
+        NAME("name", LPDatabase.stringNotNull(),null, null, "", null),
+        ACTIVE("active", LPDatabase.booleanFld(),null, null, "", null),
+        CREATED_ON("created_on", LPDatabase.dateTime(),null, null, "", null),
+        CREATED_BY("created_by", LPDatabase.string(),null, null, "", null),
+        DESCRIPTION("description", LPDatabase.string(),null, null, "", null),
+        URL("url", LPDatabase.string(),null, null, "", null),
+        PORT("port_number", LPDatabase.integer(),null, null, "", null),
+        LDAP_ADMIN_USER("ldap_admin_user", LPDatabase.string(),null, null, "", null),
+        LDAP_ADMIN_PW("ldap_admin_pw", LPDatabase.string(),null, null, "", null),
+        LDAP_SEC_PRINCIPAL("ldap_security_principal", LPDatabase.string(),null, null, "", null),
+        LDAP_SEC_AUTHENTICATION("ldap_security_authentication", LPDatabase.string(),null, null, "", null)
+        ;
+        private LdapSetting(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
             this.fieldName=dbObjName;
             this.fieldType=dbObjType;

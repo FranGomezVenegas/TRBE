@@ -74,6 +74,8 @@ import trazit.enums.EnumIntViews;
 import trazit.enums.deployrepository.DeployTables;
 import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import static lbplanet.utilities.LPDate.secondsInDateRange;
+import static lbplanet.utilities.LPLdap.LdapValidateUser;
+import static lbplanet.utilities.LPLdap.createLdapNewUser;
 
 /**
  *
@@ -95,7 +97,13 @@ public class TestingServer extends HttpServlet {
         request = LPHttp.requestPreparation(request);
         response = LPHttp.responsePreparation(response);
         try (PrintWriter out = response.getWriter()) {
-
+//out.println(connectToOpenLDAP("demo"));
+Rdbms.stablishDBConection("labplanet");
+String newUser="carmsantos";
+out.println(newUser+": "+createLdapNewUser("TRAZIT", newUser, "dc=example,dc=org"));
+out.println(newUser+": "+LdapValidateUser("TRAZIT", newUser, "demo", "dc=example,dc=org"));
+out.println("fgomez "+LdapValidateUser("TRAZIT", "fgomez", "demo", "dc=example,dc=org"));
+out.println("uName "+LdapValidateUser("TRAZIT", "uName", "demo", "dc=example,dc=org"));
             if (1 == 2) {
                 Rdbms.stablishDBConection("labplanet");
                 InvTrackingFrontendMasterData mdObj = new InvTrackingFrontendMasterData();
