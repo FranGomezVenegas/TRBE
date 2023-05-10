@@ -175,6 +175,7 @@ public class ClassReqProcedureActions {
             actionDiagnoses = personByUserObj;
             break;
             }*/
+/*                
                 procedureUsersList = procedureRolesList(procedureName, procedureVersion);
                 if (Boolean.FALSE.equals(LPArray.valueInArray(procedureUsersList, userName))) {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_NOT_FOUND, new Object[]{userName, procedureName, procedureVersion});
@@ -182,7 +183,7 @@ public class ClassReqProcedureActions {
                     this.messageDynamicData = new Object[]{userName, procedureName, procedureVersion};
                     break;
                 }
-
+*/
                 procedureRolesList = procedureRolesList(procedureName, procedureVersion);
                 if (Boolean.FALSE.equals(LPArray.valueInArray(procedureRolesList, roleName))) {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.ROLE_NOT_FOUND, new Object[]{roleName, procedureName, procedureVersion});
@@ -193,7 +194,7 @@ public class ClassReqProcedureActions {
                 insertDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROC_USER_ROLES,
                         new String[]{TblsReqs.ProcedureUserRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRoles.PROCEDURE_VERSION.getName(),
                             TblsReqs.ProcedureUserRoles.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUserRoles.USER_NAME.getName(), TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()},
-                        new Object[]{procedureName, procedureVersion, procInstanceName, roleName, roleName});
+                        new Object[]{procedureName, procedureVersion, procInstanceName, userName, roleName});
                 if (Boolean.TRUE.equals(insertDiagn.getRunSuccess())) {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
                 } else {

@@ -12,6 +12,8 @@ import trazit.procedureinstance.definition.logic.ReqProcDefTestingCoverageSummar
 import trazit.procedureinstance.definition.definition.ReqProcedureEnums.ReqProcedureDefinitionAPIQueriesEndpoints;
 import databases.Rdbms;
 import databases.SqlStatement;
+import databases.SqlStatementEnums;
+import databases.TblsProcedure;
 import databases.TblsTesting;
 import databases.features.Token;
 import static functionaljavaa.requirement.ProcedureDefinitionQueries.*;
@@ -40,6 +42,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.procedureinstance.definition.definition.TblsReqs;
 import trazit.procedureinstance.definition.logic.ClassReqProcedUserAndActions;
+import trazit.queries.QueryUtilitiesEnums;
 
 public class ReqProcedureDefinitionQueries extends HttpServlet {
 
@@ -118,6 +121,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                             curProcObj.put("master_data", procInstanceMasterDataInRequirements(curProc[valuePosicInArray].toString()));
                             curProcObj.put("views", procInstanceViewsInRequirements());
                             curProcObj.put("testing", ReqProcDefTestingCoverageSummary.procInstanceTestingInfo(curProc[valuePosicInArray].toString()));
+                            curProcObj.put("manuals", procInstanceManualsInRequirements(curProc[valuePosicInArray].toString()));
                         }
                         proceduresList.add(curProcObj);
 
@@ -152,7 +156,8 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                 case ONE_PROCEDURE_DEFINITION:
                     Rdbms.closeRdbms();
                     JSONObject mainRespDef = new JSONObject();
-                    mainRespDef.put("definition", procInstanceDefinitionInRequirements(procInstanceName));
+                    JSONObject procDef = procInstanceDefinitionInRequirements(procInstanceName);
+                    mainRespDef.put("definition", procDef);
                     LPFrontEnd.servletReturnSuccess(request, response, mainRespDef);
                     return;
                 case ENABLE_ACTIONS_AND_ROLES:
@@ -350,11 +355,12 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
 
     }
 
-
     private static JSONObject procInstanceDefinitionInRequirements(String procInstanceName) {
         JSONObject jMainObj = new JSONObject();
+
         jMainObj.put("procedure_info", ClassReqProcedureQueries.dbSingleRowToJsonObj(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName(),
                 getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableFields()), new String[]{TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procInstanceName}));
+
         JSONArray dbRowsToJsonArr = ClassReqProcedureQueries.dbRowsToJsonArr(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_BUS_RULES.getTableName(),
                 new String[]{TblsReqs.ProcedureBusinessRules.CATEGORY.getName(),
                     TblsReqs.ProcedureBusinessRules.RULE_NAME.getName(), TblsReqs.ProcedureBusinessRules.RULE_VALUE.getName(),
@@ -370,10 +376,11 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         JSONObject jViewsAccObj = new JSONObject();
         jViewsAccObj.put("roles_views", ClassReqProcedureQueries.procViewsBlockInRequirements(procInstanceName));
 
-        jViewsAccObj.put("view_actions", ClassReqProcedureQueries.dbRowsGroupedToJsonArr(TblsReqs.TablesReqs.PROCEDURE_USER_REQS.getTableName(),
-                new String[]{TblsReqs.ProcedureUserRequirements.WINDOW_NAME.getName(), TblsReqs.ProcedureUserRequirements.WINDOW_ACTION.getName()},
-                new String[]{TblsReqs.ProcedureUserRequirements.PROC_INSTANCE_NAME.getName()}, new Object[]{procInstanceName},
-                new String[]{TblsReqs.ProcedureUserRequirements.ORDER_NUMBER.getName(), TblsReqs.ProcedureUserRequirements.WINDOW_NAME.getName()}));
+        jViewsAccObj.put("view_actions", ClassReqProcedureQueries.dbRowsGroupedToJsonArr(TblsReqs.ViewsReqs.PROC_REQ_USER_REQUIREMENTS_ACTIONS.getViewName(),
+                new String[]{TblsReqs.ProcReqUserRequirementsActions.WINDOW_NAME.getName(), TblsReqs.ProcReqUserRequirementsActions.WINDOW_NAME.getName(), TblsReqs.ProcReqUserRequirementsActions.PRETTY_EN.getName()},
+                new String[]{TblsReqs.ProcReqUserRequirementsActions.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcReqUserRequirementsActions.WINDOW_ACTION.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
+                new Object[]{procInstanceName},
+                new String[]{TblsReqs.ProcReqUserRequirementsActions.ORDER_NUMBER.getName(), TblsReqs.ProcReqUserRequirementsActions.ENTITY.getName(), TblsReqs.ProcReqUserRequirementsActions.PRETTY_EN.getName()}));
 
         jViewsAccObj.put("view_sops", ClassReqProcedUserAndActions.viewsBySops(procInstanceName));
 
@@ -384,7 +391,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                 new String[]{TblsReqs.ProcedureSopMetaData.SOP_NAME.getName()}, null, true));
 
         JSONObject dbRowsGroupedToJsonArr = ClassReqProcedureQueries.dbRowsGroupedToJsonArr(TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableName(),
-                new String[]{TblsReqs.ProcedureModuleTables.SCHEMA_NAME.getName(), TblsReqs.ProcedureModuleTables.TABLE_NAME.getName(), TblsReqs.ProcedureModuleTables.DEFINITION.getName(), TblsReqs.ProcedureModuleTables.IS_VIEW.getName()},
+                new String[]{TblsReqs.ProcedureModuleTables.SCHEMA_NAME.getName(), TblsReqs.ProcedureModuleTables.TABLE_NAME.getName(), TblsReqs.ProcedureModuleTables.DEFINITION_EN.getName(), TblsReqs.ProcedureModuleTables.DEFINITION_ES.getName(), TblsReqs.ProcedureModuleTables.IS_VIEW.getName()},
                 new String[]{TblsReqs.ProcedureModuleTables.PROC_INSTANCE_NAME.getName()}, new Object[]{procInstanceName},
                 new String[]{TblsReqs.ProcedureModuleTables.SCHEMA_NAME.getName(), TblsReqs.ProcedureModuleTables.ORDER_NUMBER.getName()});
         jMainObj.put("tables", dbRowsGroupedToJsonArr);
@@ -401,6 +408,12 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         return ClassReqProcedureQueries.dbRowsToJsonArr(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_MASTER_DATA.getTableName(),
                 getAllFieldNames(TblsReqs.TablesReqs.PROC_MASTER_DATA.getTableFields()), new String[]{TblsReqs.ProcedureMasterData.PROC_INSTANCE_NAME.getName()}, new Object[]{procInstanceName},
                 null, new String[]{TblsReqs.ProcedureMasterData.JSON_OBJ.getName()}, true);
+    }
+
+    private static JSONArray procInstanceManualsInRequirements(String procInstanceName) {
+        return ClassReqProcedureQueries.dbRowsToJsonArr(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_MANUALS.getTableName(),
+                getAllFieldNames(TblsReqs.TablesReqs.PROC_MANUALS.getTableFields()), new String[]{TblsReqs.ProcedureManuals.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureManuals.ACTIVE.getName()}, new Object[]{procInstanceName, true},
+                new String[]{TblsReqs.ProcedureManuals.ORDER_NUMBER.getName()}, new String[]{}, true);
     }
 
     private JSONObject getScriptWithSteps(Integer scriptId, String procInstanceName, String[] fieldsToRetrieveScripts, Object[] curTest) {

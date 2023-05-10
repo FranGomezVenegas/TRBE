@@ -45,6 +45,7 @@ import module.instrumentsmanagement.definition.TblsInstrumentsConfig.TablesInstr
 import module.instrumentsmanagement.definition.TblsInstrumentsData.TablesInstrumentsData;
 import module.instrumentsmanagement.definition.TblsInstrumentsData.ViewsInstrumentsData;
 import module.instrumentsmanagement.definition.TblsInstrumentsDataAudit.TablesInstrumentsDataAudit;
+import module.instrumentsmanagement.definition.TblsInstrumentsProcedure.TablesInstrumentsProcedure;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
@@ -575,7 +576,7 @@ public class ProcedureDefinitionToInstance {
                 Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, curSchemaName), curTableName);
                 Object[] dbTableTestingExists = dbTableExists;
                 String schemaForTesting = Rdbms.suffixForTesting(LPPlatform.buildSchemaName(procInstanceName, curSchemaName), curTableName);
-                if (Boolean.FALSE.equals(schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName))) ) {
+                if (Boolean.FALSE.equals(schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName)))) {
                     dbTableTestingExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, schemaForTesting), curTableName);
                 }
                 String diagn = "";
@@ -644,7 +645,7 @@ public class ProcedureDefinitionToInstance {
                                     }
                                     break;
                                     case "procedure":
-                                        if (curIsView == null || Boolean.FALSE.equals(Boolean.valueOf(curIsView)) ){
+                                        if (curIsView == null || Boolean.FALSE.equals(Boolean.valueOf(curIsView))) {
                                             try {
                                                 tblCreateScript = createTableScript(TablesEnvMonitProcedure.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
                                                 if (Boolean.FALSE.equals(schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName)))) {
@@ -672,7 +673,7 @@ public class ProcedureDefinitionToInstance {
                                     case "procedure-config":
                                         if (curIsView == null || Boolean.FALSE.equals(Boolean.valueOf(curIsView))) {
                                             tblCreateScript = createTableScript(TablesProcedureConfig.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
-                                            if (Boolean.FALSE.equals(schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName))) ) {
+                                            if (Boolean.FALSE.equals(schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName)))) {
                                                 tblCreateScriptTesting = createTableScript(TablesProcedureConfig.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
                                             }
                                         } else {
@@ -692,11 +693,11 @@ public class ProcedureDefinitionToInstance {
                                     case "procedure-audit":
                                     try {
                                         tblCreateScript = createTableScript(TablesProcedureAudit.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
-                                        if (Boolean.FALSE.equals(schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName))) ){
+                                        if (Boolean.FALSE.equals(schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName)))) {
                                             tblCreateScriptTesting = createTableScript(TablesProcedureAudit.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
                                         }
                                     } catch (Exception e) {
-                                        tblCreateScriptTesting=e.getMessage();
+                                        tblCreateScriptTesting = e.getMessage();
                                     }
                                     break;
                                     default:
@@ -707,7 +708,7 @@ public class ProcedureDefinitionToInstance {
                                 cont = false;
                                 curTblJsonObj.put("unexpected_error", e.getMessage());
                             }
-                            if (Boolean.TRUE.equals(cont)){
+                            if (Boolean.TRUE.equals(cont)) {
                                 Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curSchemaName, curTableName, tblCreateScript, new Object[]{});
                                 if ("-999".equalsIgnoreCase(prepUpQuery[0].toString())) {
                                     diagn = diagn + " and not created, " + prepUpQuery[prepUpQuery.length - 1];
@@ -805,15 +806,13 @@ public class ProcedureDefinitionToInstance {
                                     case "procedure":
                                         if (curIsView == null || !Boolean.valueOf(curIsView)) {
                                             try {
-                                                tblCreateScript = "TablesInstrumentsProcedure collection not exists";
-                                                //tblCreateScript = createTableScript(TablesInstrumentsProcedure.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
-                                                if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName))) {
-                                                    tblCreateScript = "TablesInstrumentsProcedure collection not exists";
-                                                }
-                                                //    tblCreateScriptTesting = createTableScript(TablesInstrumentsProcedure.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
+                                                tblCreateScript = createTableScript(TablesInstrumentsProcedure.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
+                                                if (schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName))) {
+                                                    tblCreateScriptTesting = createTableScript(TablesInstrumentsProcedure.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
+                                                }                                                    
                                             } catch (Exception e) {
                                                 tblCreateScript = createTableScript(TablesProcedure.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
-                                                if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName))) {
+                                                if (schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName))) {
                                                     tblCreateScriptTesting = createTableScript(TablesProcedure.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
                                                 }
                                             }
@@ -837,7 +836,7 @@ public class ProcedureDefinitionToInstance {
                                             tblCreateScriptTesting = createTableScript(TablesProcedureAudit.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
                                         }
                                     } catch (Exception e) {
-                                        tblCreateScriptTesting=e.getMessage();
+                                        tblCreateScriptTesting = e.getMessage();
                                     }
                                     break;
                                     default:
@@ -848,7 +847,7 @@ public class ProcedureDefinitionToInstance {
                                 cont = false;
                                 curTblJsonObj.put("unexpected_error", e.getMessage());
                             }
-                            if (Boolean.TRUE.equals(cont)){
+                            if (Boolean.TRUE.equals(cont)) {
                                 Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curSchemaName, curTableName, tblCreateScript, new Object[]{});
                                 if ("-999".equalsIgnoreCase(prepUpQuery[0].toString())) {
                                     diagn = diagn + " and not created, " + prepUpQuery[prepUpQuery.length - 1];
@@ -950,7 +949,7 @@ public class ProcedureDefinitionToInstance {
                                             tblCreateScriptTesting = createTableScript(TablesProcedureAudit.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
                                         }
                                     } catch (Exception e) {
-                                        tblCreateScriptTesting=e.getMessage();
+                                        tblCreateScriptTesting = e.getMessage();
                                     }
                                     break;
                                     default:
@@ -961,7 +960,7 @@ public class ProcedureDefinitionToInstance {
                                 cont = false;
                                 curTblJsonObj.put("unexpected_error", e.getMessage());
                             }
-                            if (Boolean.TRUE.equals(cont)){
+                            if (Boolean.TRUE.equals(cont)) {
                                 Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curSchemaName, curTableName, tblCreateScript, new Object[]{});
                                 if ("-999".equalsIgnoreCase(prepUpQuery[0].toString())) {
                                     diagn = diagn + " and not created, " + prepUpQuery[prepUpQuery.length - 1];
@@ -1003,8 +1002,7 @@ public class ProcedureDefinitionToInstance {
                             tableCreationScriptTable = TblsEnvMonitDataAudit.getTableCreationScriptFromDataAuditTableEnvMonit(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
                         if (GlobalVariables.Schemas.PROCEDURE.getName().equalsIgnoreCase(curSchemaName.toString()))
                             tableCreationScriptTable = TblsEnvMonitProcedure.getTableCreationScriptFromDataProcedureTableEnvMonit(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
-                             */ break;
-
+                             */ break;                        
                         case "INSPECTION_LOT_RAW_MATERIAL":
                             /*                    if (GlobalVariables.Schemas.CONFIG.getName().equalsIgnoreCase(curSchemaName.toString())){
                             Object[] tableExists=dbTableExists(procInstanceName+"-"+GlobalVariables.Schemas.CONFIG.getName(), curTableName.toString());
@@ -1025,6 +1023,8 @@ public class ProcedureDefinitionToInstance {
                              */ break;
                         case "GENOME":
                             break;
+                        case "INSPECTION_LOTS_RAW_MAT":
+                        case "INVENTORY_TRACKING":
                         case "INVENTORY_TRACK":
                             ModuleTableOrViewGet tblDiagn = new ModuleTableOrViewGet(Boolean.valueOf(curIsView), moduleName, curSchemaName, curTableName.toUpperCase());
                             if (curIsView == null || !Boolean.valueOf(curIsView)) {
@@ -1200,7 +1200,7 @@ public class ProcedureDefinitionToInstance {
     public static final JSONArray createBusinessRules(String procedure, Integer procVersion, String instanceName) {
         try {
 
-            String[] fieldsRequired = new String[]{TblsReqs.ProcedureBusinessRules.FILE_SUFFIX.getName(), TblsReqs.ProcedureBusinessRules.RULE_NAME.getName(), TblsReqs.ProcedureBusinessRules.RULE_VALUE.getName()};            
+            String[] fieldsRequired = new String[]{TblsReqs.ProcedureBusinessRules.FILE_SUFFIX.getName(), TblsReqs.ProcedureBusinessRules.RULE_NAME.getName(), TblsReqs.ProcedureBusinessRules.RULE_VALUE.getName()};
             String[] fildsToGet = new String[]{TblsReqs.ProcedureBusinessRules.FILE_SUFFIX.getName(), TblsReqs.ProcedureBusinessRules.RULE_NAME.getName(),
                 TblsReqs.ProcedureBusinessRules.RULE_VALUE.getName()};
             for (String curFldReq : fieldsRequired) {
