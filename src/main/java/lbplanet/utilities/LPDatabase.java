@@ -50,6 +50,8 @@ public class LPDatabase {
     public static final String FIELDS_NAMES_DESCRIPTION="description";
     public static final String FIELDS_NAMES_METHOD_NAME="method_name";
     public static final String FIELDS_NAMES_METHOD_VERSION="method_version";
+    public static final String FIELDS_NAMES_MODULE_NAME="module_name";
+    public static final String FIELDS_NAMES_MODULE_VERSION="module_version";
     public static final String FIELDS_NAMES_PROCEDURE_NAME="procedure_name";
     public static final String FIELDS_NAMES_PROCEDURE_VERSION="procedure_version";
     public static final String FIELDS_NAMES_TESTING_GROUP="testing_group";
