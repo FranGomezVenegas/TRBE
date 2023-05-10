@@ -55,10 +55,7 @@ public class LPJson {
             } else {
                 if (fieldsToExclude == null || !LPArray.valueInArray(fieldsToExclude, header[iField])) {
                     String clase = row[iField].getClass().toString();
-                    if ((clase.toUpperCase().equalsIgnoreCase("class java.sql.Date"))
-                            || (clase.toUpperCase().equalsIgnoreCase("class java.time.LocalDateTime"))
-                            || (clase.toUpperCase().equalsIgnoreCase("class java.time.LocalDate"))
-                            || (clase.toUpperCase().equalsIgnoreCase("class java.sql.Timestamp"))) {
+                    if ((clase.toUpperCase().contains("DATE"))|| (clase.toUpperCase().contains("TIME"))){
                         jObj.put(setAlias(header[iField]), row[iField].toString());
                     } else {
                         if (row[iField].toString().toUpperCase().contains("NULL")) {
@@ -85,10 +82,7 @@ public class LPJson {
             } else {
                 if (fieldsToExclude == null || !LPArray.valueInArray(fieldsToExclude, header[iField])) {
                     String clase = row[iField].getClass().toString();
-                    if ((clase.toUpperCase().equalsIgnoreCase("class java.sql.Date"))
-                            || (clase.toUpperCase().equalsIgnoreCase("class java.time.LocalDateTime"))
-                            || (clase.toUpperCase().equalsIgnoreCase("class java.time.LocalDate"))
-                            || (clase.toUpperCase().equalsIgnoreCase("class java.sql.Timestamp"))) {
+                    if ((clase.toUpperCase().contains("DATE"))|| (clase.toUpperCase().contains("TIME"))){
                         jObj.put(setAlias(header[iField]), row[iField].toString());
                     } else {
                         if ("NULL".equalsIgnoreCase(row[iField].toString())) {
