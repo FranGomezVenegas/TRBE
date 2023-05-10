@@ -213,23 +213,7 @@ public class TblsData {
         private final String extraFilters;
         @Override  public EnumIntTablesJoin[] getTablesRequiredInView() {return this.tablesInTheView;}
     }
-/*    public static final String getTableCreationScriptFromDataTable(String tableName, String schemaNamePrefix, String[] fields){
-        switch (tableName.toUpperCase()){
-            case "SAMPLE": return createTableScript(TablesData.SAMPLE, schemaNamePrefix);
-            case "SAMPLE_ALIQ": return createTableScript(TablesData.SAMPLE_ALIQ, schemaNamePrefix);
-            case "SAMPLE_ALIQ_SUB": return createTableScript(TablesData.SAMPLE_ALIQ_SUB, schemaNamePrefix);
-            case "SAMPLE_ANALYSIS": return createTableScript(TablesData.SAMPLE_ANALYSIS, schemaNamePrefix);
-            case "SAMPLE_ANALYSIS_RESULT": return createTableScript(TablesData.SAMPLE_ANALYSIS_RESULT, schemaNamePrefix);
-            case "SAMPLE_COC": return createTableScript(TablesData.SAMPLE_COC, schemaNamePrefix);
-            case "CERTIF_USER_ANALYSIS_METHOD": return createTableScript(TablesData.CERTIF_USER_ANALYSIS_METHOD, schemaNamePrefix);
-            case "USER_ANALYSIS_METHOD": return createTableScript(TablesData.USER_ANALYSIS_METHOD, schemaNamePrefix);
-            case "USER_SOP": return createTableScript(TablesData.USER_SOP, schemaNamePrefix);
-            case "SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW": return ViewSampleAnalysisResultWithSpecLimits.createTableScript(schemaNamePrefix, fields);
-            case "SAMPLE_COC_NAMES_VIEW": return ViewSampleCocNames.createTableScript(schemaNamePrefix, fields);
-            case "USER_AND_META_DATA_SOP_VIEW": return ViewUserAndMetaDataSopView.createTableScript(schemaNamePrefix, fields);
-            default: return "TABLE "+tableName+" NOT IN TBLDATA "+LPPlatform.LAB_FALSE;
-        }        
-    }*/
+
     private static final java.lang.String FIELDS_NAMES_LIGHT = "light";
     public static final String FIELDS_NAMES_USER_ID="user_id";
     public static final String FIELDS_NAMES_USER_NAME="user_name";
