@@ -5,6 +5,7 @@
  */
 package com.labplanet.servicios.app;
 
+
 import static com.labplanet.servicios.app.AppProcedureListAPI.PROC_NEW_EVENT_FLD_NAME;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData.ViewsEnvMonData;
 import databases.features.DbEncryption;
@@ -76,6 +77,8 @@ import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import static lbplanet.utilities.LPDate.secondsInDateRange;
 import static lbplanet.utilities.LPLdap.LdapValidateUser;
 import static lbplanet.utilities.LPLdap.createLdapNewUser;
+import trazit.thirdparties.sap.ExcelExporter;
+import trazit.thirdparties.sap.PDFDataExtractor;
 
 /**
  *
@@ -97,13 +100,40 @@ public class TestingServer extends HttpServlet {
         request = LPHttp.requestPreparation(request);
         response = LPHttp.responsePreparation(response);
         try (PrintWriter out = response.getWriter()) {
+if (1==2){
+            try{
+out.println("***** "+"getCarbohydratesByHPLCPDF"+" *****");       
+out.println(PDFDataExtractor.getCarbohydratesByHPLCPDF());
+out.println("***** "+"getDataFromPDF"+" *****");
+out.println(PDFDataExtractor.getDataFromPDF());
+out.println("***** "+"getAmoxicilinaPDF"+" *****");
+out.println(PDFDataExtractor.getAmoxicilinaPDF());
+
+
+}catch(Exception e){
+    out.print(e.getMessage());
+    return;
+}
+
+String[][] data1 = {{"Name", "Age", "Gender"}, {"John", "25", "Male"}, {"Mary", "30", "Female"}};
+String[][] data2 = {{"ID", "Salary"}, {"001", "5000"}, {"002", "6000"}, {"003", "7000"}};
+String filename = "M:/LW-LIMS-V6-PROCAPS/trazit_excel_output.xlsx";
+
+ExcelExporter.exportToExcel(data1, data2, filename);
+}
 //out.println(connectToOpenLDAP("demo"));
 Rdbms.stablishDBConection("labplanet");
+            out.println(EnumIntViews.getViewScriptCreation(TblsReqs.ViewsReqs.PROC_REQ_USER_REQUIREMENTS_ACTIONS, "", false, false, false));
+            out.println("************ ViewsReqs.PROC_REQ_USER_REQUIREMENTS_ACTIONS NO testing. End");
+
+
+        if(1==1)return;
 String newUser="carmsantos";
 out.println(newUser+": "+createLdapNewUser("TRAZIT", newUser, "dc=example,dc=org"));
 out.println(newUser+": "+LdapValidateUser("TRAZIT", newUser, "demo", "dc=example,dc=org"));
 out.println("fgomez "+LdapValidateUser("TRAZIT", "fgomez", "demo", "dc=example,dc=org"));
 out.println("uName "+LdapValidateUser("TRAZIT", "uName", "demo", "dc=example,dc=org"));
+if (1==1)return;
             if (1 == 2) {
                 Rdbms.stablishDBConection("labplanet");
                 InvTrackingFrontendMasterData mdObj = new InvTrackingFrontendMasterData();
@@ -190,7 +220,6 @@ out.println("uName "+LdapValidateUser("TRAZIT", "uName", "demo", "dc=example,dc=
             out.println("************ ViewsData.SAMPLE_COC_NAMES_VIEW NO testing. Begin");
             out.println(EnumIntViews.getViewScriptCreation(TblsData.ViewsData.SAMPLE_COC_NAMES_VIEW, "sample-coa-rel1", false, false, false));
             out.println("************ ViewsData.SAMPLE_COC_NAMES_VIEW NO testing. End");
-
             /*out.println("************ ViewsData.SAMPLE_COC testing. Begin");  
 out.println(createTableScript(TablesData.SAMPLE_COC, "sample-coa-rel1_testing", true, true));
 out.println("************ ViewsData.SAMPLE_COC testing. End");  
