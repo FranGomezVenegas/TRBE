@@ -92,8 +92,8 @@ public class ClassReqProcedUserAndActions {
             rolesActionsOutput.put(header);
             for (Object[] curActRow : roleActions2d) {
                 JSONArray curActionRow = new JSONArray();
-                curActionRow.put(curActRow[1]);
-                curActionRow.put(curActRow[2]);
+                curActionRow.put(((LPNulls.replaceNull(curActRow[1]).toString().length())>0) ? curActRow[1]:curActRow[0]);
+                curActionRow.put(((LPNulls.replaceNull(curActRow[2]).toString().length())>0) ? curActRow[2]:curActRow[0]);
                 String[] allActionRoles = LPNulls.replaceNull(curActRow[3]).toString().split("\\|");
                 for (String curRole : procRoles1D) {
                     if ((LPArray.valueInArray(allActionRoles, curRole)) || (LPArray.valueInArray(allActionRoles, "ALL"))) {
@@ -145,8 +145,8 @@ public class ClassReqProcedUserAndActions {
             viewSopsOutput.put(header);
             for (Object[] curActRow : views2d) {
                 JSONArray curActionRow = new JSONArray();
-                curActionRow.put(curActRow[1]);
-                curActionRow.put(curActRow[2]);
+                curActionRow.put(((LPNulls.replaceNull(curActRow[1]).toString().length())>0) ? curActRow[1]:curActRow[0]);
+                curActionRow.put(((LPNulls.replaceNull(curActRow[2]).toString().length())>0) ? curActRow[2]:curActRow[0]);
                 String[] allActionRoles = LPNulls.replaceNull(curActRow[3]).toString().split("\\|");
                 for (String curRole : procSops1D) {
                     if (LPArray.valueInArray(allActionRoles, curRole)) {
