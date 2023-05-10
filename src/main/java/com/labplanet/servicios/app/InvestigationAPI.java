@@ -50,10 +50,12 @@ public class InvestigationAPI extends HttpServlet {
         NEW_INVESTIGATION("NEW_INVESTIGATION", "investigationCreated_success",
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6),
                     new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 7),
-                    new LPAPIArguments(ParamsList.OBJECTS_TO_ADD.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8)},
+                    new LPAPIArguments(ParamsList.OBJECT_TO_ADD_TYPE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
+                new LPAPIArguments(ParamsList.OBJECT_TO_ADD_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
+                new LPAPIArguments(ParamsList.OBJECTS_TO_ADD.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 10)},
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.PROCEDURE.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TblsProcedure.TablesProcedure.INVESTIGATION.getTableName()).build()).build(),
-                 null, null),
+                "This action accepts one single object (by objectToAddObjectType/Name) or several (by objectsToAdd, in case objects should be separated by | and for each object the format is type*name)", null), 
         CLOSE_INVESTIGATION("CLOSE_INVESTIGATION", "investigationClosed_success",
                 new LPAPIArguments[]{new LPAPIArguments(ParamsList.INVESTIGATION_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),},
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.PROCEDURE.getName())
@@ -70,10 +72,12 @@ public class InvestigationAPI extends HttpServlet {
                  null, null),
         ADD_INVEST_OBJECTS("ADD_INVEST_OBJECTS", "investObjectsAdded_success",
                 new LPAPIArguments[]{new LPAPIArguments(ParamsList.INVESTIGATION_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
-                    new LPAPIArguments(ParamsList.OBJECTS_TO_ADD.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)},
+                    new LPAPIArguments(ParamsList.OBJECT_TO_ADD_TYPE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
+                new LPAPIArguments(ParamsList.OBJECT_TO_ADD_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
+                new LPAPIArguments(ParamsList.OBJECTS_TO_ADD.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 9)},
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.PROCEDURE.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TblsProcedure.TablesProcedure.INVESTIGATION.getTableName()).build()).build(),
-                 null, null), 
+                 "This action accepts one single object (by objectToAddObjectType/Name) or several (by objectsToAdd, in case objects should be separated by | and for each object the format is type*name)", null), 
         /*        ADD_NOTE_INVESTIGATION("ADD_NOTE_INVESTIGATION", "investigationNoteAdded_success",  
             new LPAPIArguments[]{ new LPAPIArguments(ParamsList.INVESTIGATION_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
                 new LPAPIArguments(ParamsList.NOTE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
@@ -215,7 +219,7 @@ public class InvestigationAPI extends HttpServlet {
     }
 
     public enum ParamsList {
-        INVESTIGATION_ID("investigationId"), OBJECTS_TO_ADD("objectsToAdd"),
+        INVESTIGATION_ID("investigationId"), OBJECTS_TO_ADD("objectsToAdd"), OBJECT_TO_ADD_TYPE("objectToAddObjectType"), OBJECT_TO_ADD_NAME("objectToAddObjectName"),
         CAPA_REQUIRED("capaRequired"), CAPA_FIELD_NAME("capaFieldName"), CAPA_FIELD_VALUE("capaFieldValue"), CLOSE_INVESTIGATION("closeInvestigation");
 
         private ParamsList(String requestName) {

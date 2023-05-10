@@ -10,6 +10,7 @@ import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_FIELD_N
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NUM_DAYS;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME;
+import com.labplanet.servicios.app.InvestigationAPI;
 import module.instrumentsmanagement.definition.TblsInstrumentsData.TablesInstrumentsData;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
@@ -331,6 +332,14 @@ public class InstrumentsEnums {
         EVENTS_ABOUT_OR_EXPIRED("EVENTS_ABOUT_OR_EXPIRED", "",
                 new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_PROCINSTANCENAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6)},
                 EndPointsToRequirements.endpointWithNoOutputObjects,
+                null, null),
+        OPEN_INVESTIGATIONS("OPEN_INVESTIGATIONS", "", new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects,
+                null, null),
+        INVESTIGATION_DEVIATION_PENDING_DECISION("INVESTIGATION_DEVIATION_PENDING_DECISION", "", new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects,
+                null, null),
+        INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION("INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION", "", new LPAPIArguments[]{new LPAPIArguments(InvestigationAPI.ParamsList.INVESTIGATION_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects,
+                null, null),
+        INVESTIGATION_RESULTS_PENDING_DECISION("INVESTIGATION_RESULTS_PENDING_DECISION", "", new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects,
                 null, null)
         ;
         private InstrumentsAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
@@ -412,7 +421,9 @@ public class InstrumentsEnums {
     public enum InstrumentsBusinessRules implements EnumIntBusinessRules {
         REVISION_MODE("instrumentAuditRevisionMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
         AUTHOR_CAN_REVIEW_AUDIT_TOO("instrumentAuditAuthorCanBeReviewerToo", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
-        CHILD_REVISION_REQUIRED("instrumentAuditChildRevisionRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null);
+        CHILD_REVISION_REQUIRED("instrumentAuditChildRevisionRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
+        CORRECTIVE_ACTION_FOR_REJECTED_EVENT("instrumentEventCreateCorrectiveActionForRejectedEvent", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
+        ;
 
         private InstrumentsBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator,
                 Boolean isOpt, ArrayList<String[]> preReqs) {

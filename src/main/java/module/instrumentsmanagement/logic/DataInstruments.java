@@ -13,6 +13,8 @@ import module.instrumentsmanagement.definition.TblsInstrumentsConfig;
 import module.instrumentsmanagement.definition.TblsInstrumentsData;
 import module.instrumentsmanagement.definition.TblsInstrumentsData.TablesInstrumentsData;
 import databases.features.Token;
+import functionaljavaa.parameter.Parameter;
+import static functionaljavaa.parameter.Parameter.isTagValueOneOfEnableOnes;
 import module.instrumentsmanagement.definition.InstrumentsEnums;
 import static module.instrumentsmanagement.logic.AppInstrumentsAudit.instrumentsAuditAdd;
 import static module.instrumentsmanagement.logic.DataInstrumentsEvents.addVariableSetToObject;
@@ -29,6 +31,10 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
+import module.instrumentsmanagement.definition.InstrumentsEnums.InstrumentsBusinessRules;
+import module.instrumentsmanagement.definition.TblsInstrumentsProcedure;
+import module.inventorytrack.definition.InvTrackingEnums;
+import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
@@ -448,6 +454,9 @@ public class DataInstruments {
             fldNames=LPArray.addValueToArray1D(fldNames, TblsInstrumentsData.Instruments.NEXT_CALIBRATION.getName());
             fldValues=LPArray.addValueToArray1D(fldValues, nextEventDate);
         }
+        if (decision.toUpperCase().contains("REJEC")) {
+            createInstrumentCorrectiveAction(instrName, eventId, InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_CALIBRATION);
+        }        
         if (Boolean.FALSE.equals(this.onLine) && Boolean.TRUE.equals(decisionAndFamilyRuleToTurnOn(decision, TblsInstrumentsConfig.InstrumentsFamily.CALIB_TURN_ON_WHEN_COMPLETED.getName())) ){
             turnOnLine(fldNames, fldValues, InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_CALIBRATION.toString());
         }else{
@@ -457,6 +466,18 @@ public class DataInstruments {
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_CALIBRATION, new Object[]{name, decision}, name);
     }
 
+    public static InternalMessage createInstrumentCorrectiveAction(String instrName, Integer eventId, EnumIntEndpoints endpoint) {        
+        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();
+        String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        String createInvCorrectiveAction = Parameter.getBusinessRuleProcedureFile(procInstanceName, InstrumentsBusinessRules.CORRECTIVE_ACTION_FOR_REJECTED_EVENT.getAreaName(), InstrumentsBusinessRules.CORRECTIVE_ACTION_FOR_REJECTED_EVENT.getTagName());
+        if (Boolean.FALSE.equals(isTagValueOneOfEnableOnes(createInvCorrectiveAction))) {
+            messages.addMainForError(InvTrackingEnums.InventoryTrackingErrorTrapping.DISABLED, new Object[]{});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.DISABLED, new Object[]{});
+        }
+        return DataInstrumentsCorrectiveAction.createNew(eventId, endpoint,
+            new String[]{TblsInstrumentsProcedure.InstrumentsCorrectiveAction.INSTRUMENT.getName()},            
+            new Object[]{instrName});
+    }    
     public InternalMessage startPrevMaint(Boolean isScheduled){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        
         if (Boolean.TRUE.equals(this.isDecommissioned))
@@ -542,6 +563,10 @@ public class DataInstruments {
                         fldNames, fldValues);        
         fldNames=new String[]{TblsInstrumentsData.Instruments.LAST_PM.getName(), TblsInstrumentsData.Instruments.IS_LOCKED.getName(), TblsInstrumentsData.Instruments.LOCKED_REASON.getName()};
         fldValues=new Object[]{LPDate.getCurrentTimeStamp(),false, ""};
+
+        if (decision.toUpperCase().contains("REJEC")) {
+            createInstrumentCorrectiveAction(instrName, eventId, InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_PREVENTIVE_MAINTENANCE);
+        }        
 
         Date nextEventDate = nextEventDate(TblsInstrumentsConfig.InstrumentsFamily.PM_INTERVAL.getName());
         if (nextEventDate!=null){
@@ -641,6 +666,9 @@ public class DataInstruments {
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length-1].toString(), new Object[]{name}, null);
         instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_VERIFICATION, name, TablesInstrumentsData.INSTRUMENTS.getTableName(), name,
                         fldNames, fldValues);        
+        if (decision.toUpperCase().contains("REJEC")) {
+            createInstrumentCorrectiveAction(instrName, eventId, InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_VERIFICATION);
+        }        
         fldNames=new String[]{TblsInstrumentsData.Instruments.LAST_VERIF.getName(), TblsInstrumentsData.Instruments.IS_LOCKED.getName(), TblsInstrumentsData.Instruments.LOCKED_REASON.getName()};
         fldValues=new Object[]{LPDate.getCurrentTimeStamp(),false, ""};
         if (Boolean.FALSE.equals(this.onLine)){
@@ -735,6 +763,9 @@ public class DataInstruments {
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length-1].toString(), new Object[]{name}, null);
         instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.COMPLETE_SERVICE, name, TablesInstrumentsData.INSTRUMENTS.getTableName(), name,
                         fldNames, fldValues);        
+        if (decision.toUpperCase().contains("REJEC")) {
+            createInstrumentCorrectiveAction(instrName, eventId, InstrumentsEnums.InstrumentsAPIactionsEndpoints.COMPLETE_SERVICE);
+        }                
         fldNames=new String[]{TblsInstrumentsData.Instruments.LAST_VERIF.getName(), TblsInstrumentsData.Instruments.IS_LOCKED.getName(), TblsInstrumentsData.Instruments.LOCKED_REASON.getName()};
         fldValues=new Object[]{LPDate.getCurrentTimeStamp(),false, ""};
         if (Boolean.FALSE.equals(this.onLine)){
