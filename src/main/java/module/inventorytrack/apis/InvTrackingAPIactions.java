@@ -5,6 +5,8 @@
  */
 package module.inventorytrack.apis;
 
+import com.labplanet.servicios.app.InvestigationAPI.InvestigationAPIactionsEndpoints;
+import functionaljavaa.investigation.ClassInvestigation;
 import static trazit.session.ProcedureRequestSession.MANDATPRMS_MAIN_SERVLET_PROCEDURE;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.io.IOException;
@@ -20,6 +22,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.ApiErrorTraping;
+import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import module.inventorytrack.definition.ClassInvTracking;
 import module.inventorytrack.definition.TblsInvTrackingData;
 import module.inventorytrack.definition.InvTrackingEnums.InventoryTrackAPIactionsEndpoints;
@@ -27,80 +30,78 @@ import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntEndpoints;
 import trazit.session.InternalMessage;
+
 /**
  *
  * @author User
  */
 public class InvTrackingAPIactions extends HttpServlet {
 
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws IOException {
-        request=LPHttp.requestPreparation(request);
-        response=LPHttp.responsePreparation(response);     
-        
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        request = LPHttp.requestPreparation(request);
+        response = LPHttp.responsePreparation(response);
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, false);
-        if (Boolean.TRUE.equals(procReqInstance.getHasErrors())){
+        if (Boolean.TRUE.equals(procReqInstance.getHasErrors())) {
             procReqInstance.killIt();
-            LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
+            LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);
             return;
         }
-        String actionName=procReqInstance.getActionName();
-        String language=procReqInstance.getLanguage();
-        InventoryTrackAPIactionsEndpoints endPoint = null;
-        try{
-            endPoint = InventoryTrackAPIactionsEndpoints.valueOf(actionName.toUpperCase());
-        }catch(Exception e){
-            procReqInstance.killIt();
-            LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
-            return;                   
-        }
-        String[] argList=new String[]{};
-        LPAPIArguments[] arguments = endPoint.getArguments();
-        for (LPAPIArguments curArg: arguments){
-            argList=LPArray.addValueToArray1D(argList, curArg.getName());
-        }
-        argList=LPArray.addValueToArray1D(argList, MANDATPRMS_MAIN_SERVLET_PROCEDURE.split("\\|"));
-                
-        Object[] areMandatoryParamsInResponse = new Object[]{};
-        if (endPoint != null && endPoint.getArguments() != null) {
-            areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
-        }
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())) {
-            procReqInstance.killIt();
-            LPFrontEnd.servletReturnResponseError(request, response,
-                    LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
-            return;
-        }
-        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  
-
-        String lotName=argValues[0].toString();
         try (PrintWriter out = response.getWriter()) {
-            ClassInvTracking clss = new ClassInvTracking(request, endPoint);
-            Object[] diagnostic=clss.getDiagnostic();
-            if (diagnostic!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){ 
-                InternalMessage diagnosticObj=clss.getDiagnosticObj();
-                procReqInstance.killIt();
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnosticObj.getMessageCodeObj(), diagnosticObj.getMessageCodeVariables());   
-            }else{
-                RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsInvTrackingData.TablesInvTrackingData.LOT.getTableName(), lotName);                
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, new Object[]{lotName}, rObj.getRelatedObject());
-                rObj.killInstance();
-                procReqInstance.killIt();
-                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
-            }           
-        }catch(Exception e){  
+            String actionName = procReqInstance.getActionName();
+            String language = procReqInstance.getLanguage();
+            EnumIntEndpoints endPoint = null;
+            try {
+                endPoint = InventoryTrackAPIactionsEndpoints.valueOf(actionName.toUpperCase());
+                Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())) {
+                    procReqInstance.killIt();
+                    LPFrontEnd.servletReturnResponseError(request, response,
+                            TrazitUtilitiesErrorTrapping.UNHANDLED_EXCEPTION.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, "en", LPPlatform.ApiErrorTraping.class.getSimpleName());
+                    return;
+                }
+                ClassInvTracking clss = new ClassInvTracking(request, InventoryTrackAPIactionsEndpoints.valueOf(actionName.toUpperCase()));
+                publishResult(request, response, procReqInstance, endPoint, clss.getDiagnostic(), clss.getDiagnosticObj());
+            } catch (Exception e) {
+                try {
+                    endPoint = InvestigationAPIactionsEndpoints.valueOf(actionName.toUpperCase());
+                    Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())) {
+                        procReqInstance.killIt();
+                        LPFrontEnd.servletReturnResponseError(request, response,
+                                TrazitUtilitiesErrorTrapping.UNHANDLED_EXCEPTION.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, "en", LPPlatform.ApiErrorTraping.class.getSimpleName());
+                        return;
+                    }                    
+                    ClassInvestigation clss = new ClassInvestigation(request, InvestigationAPIactionsEndpoints.valueOf(actionName.toUpperCase()));
+                    publishResult(request, response, procReqInstance, endPoint, clss.getDiagnostic(), clss.getDiagnosticObj());
+                } catch (Exception e2) {
+                    procReqInstance.killIt();
+                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
+                    return;
+                }
+            }
+            
+            String[] argList = new String[]{};
+            LPAPIArguments[] arguments = endPoint.getArguments();
+            for (LPAPIArguments curArg : arguments) {
+                argList = LPArray.addValueToArray1D(argList, curArg.getName());
+            }
+            argList = LPArray.addValueToArray1D(argList, MANDATPRMS_MAIN_SERVLET_PROCEDURE.split("\\|"));
+
+        } catch (Exception e) {
             procReqInstance.killIt();
-            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, ApiErrorTraping.EXCEPTION_RAISED, new Object[]{e.getMessage()});   
+            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, ApiErrorTraping.EXCEPTION_RAISED, new Object[]{e.getMessage()});
             String[] errObject = new String[]{e.getMessage()};
             LPFrontEnd.responseError(errObject);
         } finally {
             // release database resources
-            try {           
+            try {
                 procReqInstance.killIt();
-            } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
-        }          
+        }
 
     }
 
@@ -129,7 +130,7 @@ public class InvTrackingAPIactions extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
 
-/*        JSONArray hdrJArr=new JSONArray();
+        /*        JSONArray hdrJArr=new JSONArray();
         Enumeration headerNames = request.getHeaderNames();
         while(headerNames.hasMoreElements()) {
             String headerName = (String)headerNames.nextElement();
@@ -160,7 +161,7 @@ public class InvTrackingAPIactions extends HttpServlet {
             this.diagnostic=new Object[]{LPPlatform.LAB_FALSE, "objectType in record and objectType in the JsonObject mismatch"};
             return;
         }
-*/
+         */
         //HttpResponse.BodyHandler<String> ofString = HttpResponse.BodyHandlers.ofString();
         //String ofStringStr=ofString.toString();
 /*                    String requestArgValue=request.getParameter("reduxState");
@@ -174,16 +175,15 @@ public class InvTrackingAPIactions extends HttpServlet {
         firstNamev=LPNulls.replaceNull(request.getAttribute("firstName")).toString();
         dataV=LPNulls.replaceNull(request.getAttribute("data")).toString();
         //dbNameV=LPNulls.replaceNull(request.getAttribute("reduxState")).toString();
-  */      
+         */
 //        Scanner s = new Scanner(request.getInputStream(), "UTF-8").useDelimiter("\A");
 //        String  s.hasNext() ? s.next() : ""; 
-        
         try {
             processRequest(request, response);
         } catch (IOException ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
         }
-        
+
     }
 
     /**
@@ -196,4 +196,21 @@ public class InvTrackingAPIactions extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    private static void publishResult(HttpServletRequest request, HttpServletResponse response, ProcedureRequestSession procReqInstance, EnumIntEndpoints endPoint, Object[] diagnostic, InternalMessage diagnosticObj) {
+        Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
+        String lotName = argValues[0].toString();
+
+        if (diagnostic != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
+            procReqInstance.killIt();
+            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnosticObj.getMessageCodeObj(), diagnosticObj.getMessageCodeVariables());
+        } else {
+            RelatedObjects rObj = RelatedObjects.getInstanceForActions();
+            rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsInvTrackingData.TablesInvTrackingData.LOT.getTableName(), lotName);
+            JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, new Object[]{lotName}, rObj.getRelatedObject());
+            rObj.killInstance();
+            procReqInstance.killIt();
+            LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
+        }
+
+    }
 }
