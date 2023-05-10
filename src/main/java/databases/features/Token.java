@@ -29,72 +29,75 @@ import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
+
 /**
  *
  * @author Administrator
  */
-public final class Token {   
+public final class Token {
+
     private static final String KEY = "miclave";
     private static final String ISSUER = "LabPLANETdestrangisInTheNight";
-    
-    private static final String TOKEN_PARAM_USERDB="userDB";
-    private static final String TOKEN_PARAM_USERPW="userDBPassword";
-    private static final String TOKEN_PARAM_INTERNAL_USERID="internalUserID";
-    private static final String TOKEN_PARAM_USERMAIL="userMail";
-    private static final String TOKEN_PARAM_USER_ROLE="userRole";
-    private static final String TOKEN_PARAM_USER_ESIGN="eSign";
-    private static final String TOKEN_PARAM_APP_SESSION_ID="appSessionId";
-    private static final String TOKEN_PARAM_PROCS_MODULE_NAME="procsModuleName";
-    private static final String TKNPRM_APP_SESSION_STARTED_DATE="appSessionStartedDate";
-    private static final String TOKEN_PARAM_USER_PROCEDURES="user_procedures";
-    private static final String TOKEN_PARAM_DB_NAME="dbName";
-    private static final String TKNPRM_USR_PROCS_VERSIONS_HASHCODES="user_procedure_hashcodes";
-    private static final String TKNPRM_DATETIME_FORMT_AT_PLATFM_LVL="datetimeFormatAtPlatformLevel";
-    
+
+    private static final String TOKEN_PARAM_USERDB = "userDB";
+    private static final String TOKEN_PARAM_USERPW = "userDBPassword";
+    private static final String TOKEN_PARAM_INTERNAL_USERID = "internalUserID";
+    private static final String TOKEN_PARAM_USERMAIL = "userMail";
+    private static final String TOKEN_PARAM_USER_ROLE = "userRole";
+    private static final String TOKEN_PARAM_USER_ESIGN = "eSign";
+    private static final String TOKEN_PARAM_APP_SESSION_ID = "appSessionId";
+    private static final String TOKEN_PARAM_PROCS_MODULE_NAME = "procsModuleName";
+    private static final String TKNPRM_APP_SESSION_STARTED_DATE = "appSessionStartedDate";
+    private static final String TOKEN_PARAM_USER_PROCEDURES = "user_procedures";
+    private static final String TOKEN_PARAM_DB_NAME = "dbName";
+    private static final String TKNPRM_USR_PROCS_VERSIONS_HASHCODES = "user_procedure_hashcodes";
+    private static final String TKNPRM_DATETIME_FORMT_AT_PLATFM_LVL = "datetimeFormatAtPlatformLevel";
+
     private static final String TOKEN_PARAM_PREFIX = "TOKEN_";
-    
-    private String userName="";
-    private String userMail="";
-    private String usrPw="";
-    private String personName="";
-    private String userRole="";
-    private String eSign="";
-    private String appSessionId="";
+
+    private String userName = "";
+    private String userMail = "";
+    private String usrPw = "";
+    private String personName = "";
+    private String userRole = "";
+    private String eSign = "";
+    private String appSessionId = "";
     private Date appSessionStartedDate;
-    private String userProcedures="";    
-    private String userProceduresVersionsAndHashCodes="";     
-    private String dbName="";
+    private String userProcedures = "";
+    private String userProceduresVersionsAndHashCodes = "";
+    private String dbName = "";
     private String procsModuleNames;
     private String datetimeFormatAtPlatformLvl;
+
     /**
      *
      * @param tokenString
      */
-    public Token(String tokenString){
+    public Token(String tokenString) {
         String[] tokenParams = tokenParamsList();
         String[] tokenParamsValues = getTokenParamValue(tokenString, tokenParams);
 
         this.userName = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USERDB)];
         this.userMail = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USERMAIL)];
         this.usrPw = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USERPW)];
-        this.personName = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_INTERNAL_USERID)];         
-        this.userRole = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USER_ROLE)];                             
-        this.eSign = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USER_ESIGN)];     
-        this.appSessionId = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_APP_SESSION_ID)];    
-        this.userProcedures = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USER_PROCEDURES)]; 
-        this.userProceduresVersionsAndHashCodes=tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TKNPRM_USR_PROCS_VERSIONS_HASHCODES)]; 
-        this.dbName = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_DB_NAME)]; 
+        this.personName = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_INTERNAL_USERID)];
+        this.userRole = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USER_ROLE)];
+        this.eSign = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USER_ESIGN)];
+        this.appSessionId = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_APP_SESSION_ID)];
+        this.userProcedures = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_USER_PROCEDURES)];
+        this.userProceduresVersionsAndHashCodes = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TKNPRM_USR_PROCS_VERSIONS_HASHCODES)];
+        this.dbName = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_DB_NAME)];
         this.procsModuleNames = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TOKEN_PARAM_PROCS_MODULE_NAME)];
         this.datetimeFormatAtPlatformLvl = tokenParamsValues[LPArray.valuePosicInArray(tokenParams, TKNPRM_DATETIME_FORMT_AT_PLATFM_LVL)];
-        
+
     }
 
     /**
      *
      * @return
      */
-    private String[] tokenParamsList(){
-        String[] diagnoses = new String[0];        
+    private String[] tokenParamsList() {
+        String[] diagnoses = new String[0];
         diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_USERDB);
         diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_USERPW);
         diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_INTERNAL_USERID);
@@ -109,56 +112,57 @@ public final class Token {
         diagnoses = LPArray.addValueToArray1D(diagnoses, TOKEN_PARAM_PROCS_MODULE_NAME);
         diagnoses = LPArray.addValueToArray1D(diagnoses, TKNPRM_DATETIME_FORMT_AT_PLATFM_LVL);
         return diagnoses;
-    }  
-    
-    private Object[] isValidToken(String token){
-        if (token.length()==0) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE , "tokenIsEmptyOrInvalid", new Object[]{});
+    }
+
+    private Object[] isValidToken(String token) {
+        if (token.length() == 0) {
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "tokenIsEmptyOrInvalid", new Object[]{});
+        }
         Object[] diagnoses = new Object[0];
         try {
-            
+
             Algorithm algorithm = Algorithm.HMAC256(KEY);
             JWTVerifier verifier = JWT.require(algorithm)
-                .withIssuer(new String[]{ISSUER})
-                .build(); //Reusable verifier instance
+                    .withIssuer(new String[]{ISSUER})
+                    .build(); //Reusable verifier instance
             DecodedJWT decode = JWT.decode(token); // This is need for the check that should be implemented
-            DecodedJWT jwt = verifier.verify(token);            
-            
+            DecodedJWT jwt = verifier.verify(token);
+
             // Check that the fields in the header are present, not just verify that the token construction is ok.
-            
             diagnoses = LPArray.addValueToArray1D(diagnoses, true);
             diagnoses = LPArray.addValueToArray1D(diagnoses, jwt);
             return diagnoses;
-            
-        } catch (JWTVerificationException exception){
+
+        } catch (JWTVerificationException exception) {
             diagnoses = LPArray.addValueToArray1D(diagnoses, false);
             return diagnoses;
-        }       
+        }
     }
-    
+
     /**
      *
      * @param token
      * @return
      */
-    public String validateToken(String token){
+    public String validateToken(String token) {
         return isValidToken(token)[0].toString();
     }
-    
+
     /**
      *
      * @param token
      * @param paramName
      * @return
      */
-    public String[] getTokenParamValue(String token, String[] paramName){
+    public String[] getTokenParamValue(String token, String[] paramName) {
         String[] infoFromToken = new String[0];
-        
-        for (String pn: paramName){
+
+        for (String pn : paramName) {
             String paramValue = getTokenParamValue(token, pn);
             infoFromToken = LPArray.addValueToArray1D(infoFromToken, paramValue);
         }
-        return infoFromToken;            
-    }    
+        return infoFromToken;
+    }
 
     /**
      *
@@ -173,9 +177,9 @@ public final class Token {
      * @param userMail
      * @return
      */
-    public String  createToken(String userDBId, String userDBPassword, String userId, String userRole, String appSessionId, String appSessionStartedDate, String eSign, String dbName, String userMail){        
-        Algorithm algorithm = Algorithm.HMAC256(KEY); 
-        Map <String, Object> myParams = new HashMap<>();
+    public String createToken(String userDBId, String userDBPassword, String userId, String userRole, String appSessionId, String appSessionStartedDate, String eSign, String dbName, String userMail) {
+        Algorithm algorithm = Algorithm.HMAC256(KEY);
+        Map<String, Object> myParams = new HashMap<>();
         myParams.put(TOKEN_PARAM_USERDB, userDBId);
         myParams.put(TOKEN_PARAM_USERPW, userDBPassword);
         myParams.put(TOKEN_PARAM_INTERNAL_USERID, userId);
@@ -188,70 +192,80 @@ public final class Token {
         UserProfile usProf = new UserProfile();
         Object[] allUserProcedurePrefix = usProf.getAllUserProcedurePrefix(userDBId);
         myParams.put(TOKEN_PARAM_USER_PROCEDURES, Arrays.toString(allUserProcedurePrefix));
-        StringBuilder procHashCodes=new StringBuilder(0);  
-        StringBuilder procModulesArr=new StringBuilder(0);  
-        for (Object curProcPrefix: allUserProcedurePrefix){            
-            if (Boolean.FALSE.equals(GlobalVariables.PROC_MANAGEMENT_SPECIAL_ROLE.equalsIgnoreCase(curProcPrefix.toString()))){
-                if (procHashCodes.length()>0)
+        StringBuilder procHashCodes = new StringBuilder(0);
+        StringBuilder procModulesArr = new StringBuilder(0);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedurePrefix[0].toString())) {
+            return "ERROR: The user has no procedures assigned at the platform level";
+        }
+        for (Object curProcPrefix : allUserProcedurePrefix) {
+            if (Boolean.FALSE.equals(GlobalVariables.PROC_MANAGEMENT_SPECIAL_ROLE.equalsIgnoreCase(curProcPrefix.toString()))) {
+                if (procHashCodes.length() > 0) {
                     procHashCodes.append("|");
-                Object[][] procInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(curProcPrefix.toString(), GlobalVariables.Schemas.PROCEDURE.getName()), 
-                    TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), 
-                    new String[]{TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{curProcPrefix.toString()}, 
-                    new String[]{TblsProcedure.ProcedureInfo.VERSION.getName(), TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE.getName(), TblsProcedure.ProcedureInfo.MODULE_NAME.getName()});
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfo[0][0].toString()))
-                    return "ERROR: procedure_info into node procedure not found for instance "+curProcPrefix.toString();  
-                else{
+                }
+                Object[][] procInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(curProcPrefix.toString(), GlobalVariables.Schemas.PROCEDURE.getName()),
+                        TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(),
+                        new String[]{TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{curProcPrefix.toString()},
+                        new String[]{TblsProcedure.ProcedureInfo.VERSION.getName(), TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE.getName(), TblsProcedure.ProcedureInfo.MODULE_NAME.getName()});
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfo[0][0].toString())) {
+                    return "ERROR: procedure_info into node procedure not found for instance " + curProcPrefix.toString();
+                } else {
                     procHashCodes.append(curProcPrefix.toString()).append("*").append(procInfo[0][0].toString()).append("*").append(procInfo[0][1].toString());
-                    if (procModulesArr.length()>0)
+                    if (procModulesArr.length() > 0) {
                         procModulesArr.append("|");
+                    }
                     procModulesArr.append(curProcPrefix.toString()).append("*").append(procInfo[0][2].toString());
                 }
             }
-        }   
-        SqlWhere sql=new SqlWhere();
-        sql.addConstraint(TblsProcedure.ProcedureBusinessRules.RULE_NAME, 
+        }
+        SqlWhere sql = new SqlWhere();
+        sql.addConstraint(TblsProcedure.ProcedureBusinessRules.RULE_NAME,
                 SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{"datetimeFormat"}, null);
-        Object[][] appBusRulesInfo = QueryUtilitiesEnums.getTableData(TblsApp.TablesApp.APP_BUSINESS_RULES, 
-            EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.APP_BUSINESS_RULES, 
-                new String[]{TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()}), 
+        Object[][] appBusRulesInfo = QueryUtilitiesEnums.getTableData(TblsApp.TablesApp.APP_BUSINESS_RULES,
+                EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.APP_BUSINESS_RULES,
+                        new String[]{TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()}),
                 sql, null, "app");
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(appBusRulesInfo[0][0].toString())){
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(appBusRulesInfo[0][0].toString())) {
             myParams.put(TKNPRM_DATETIME_FORMT_AT_PLATFM_LVL, "DISABLED");
-            this.datetimeFormatAtPlatformLvl="DISABLED";
-        }else{
+            this.datetimeFormatAtPlatformLvl = "DISABLED";
+        } else {
             myParams.put(TKNPRM_DATETIME_FORMT_AT_PLATFM_LVL, appBusRulesInfo[0][0].toString());
-            this.datetimeFormatAtPlatformLvl=appBusRulesInfo[0][0].toString();
+            this.datetimeFormatAtPlatformLvl = appBusRulesInfo[0][0].toString();
         }
         myParams.put(TKNPRM_USR_PROCS_VERSIONS_HASHCODES, procHashCodes);
-        this.procsModuleNames=procModulesArr.toString();
+        this.procsModuleNames = procModulesArr.toString();
         myParams.put(TOKEN_PARAM_PROCS_MODULE_NAME, procModulesArr);
-        try{
+        try {
             return JWT.create()
                     .withHeader(myParams)
-                    .withIssuer(ISSUER)                    
+                    .withIssuer(ISSUER)
                     .sign(algorithm);
-       } catch (JWTCreationException exception){
-            return "ERROR: You need to enable Algorithm.HMAC256";        
+        } catch (JWTCreationException exception) {
+            return "ERROR: You need to enable Algorithm.HMAC256";
         }
-    }    
-        
+    }
+
     /**
      *
      * @param token
      * @param paramName
      * @return
      */
-    public String getTokenParamValue(String token, String paramName){
-       Object[] tokenObj = isValidToken(token);
-        
-       if (Boolean.FALSE.equals(Boolean.valueOf(tokenObj[0].toString()))) return LPPlatform.LAB_FALSE;
+    public String getTokenParamValue(String token, String paramName) {
+        Object[] tokenObj = isValidToken(token);
 
-       DecodedJWT jwt = (DecodedJWT) tokenObj[1];
-       Claim header1 = jwt.getHeaderClaim(paramName);            
-       return header1.asString();                    
+        if (Boolean.FALSE.equals(Boolean.valueOf(tokenObj[0].toString()))) {
+            return LPPlatform.LAB_FALSE;
+        }
+
+        DecodedJWT jwt = (DecodedJWT) tokenObj[1];
+        Claim header1 = jwt.getHeaderClaim(paramName);
+        return header1.asString();
     }
+
     /**
-     * The fieldName should include one prefix that is "TOKEN_" otherwise it will not be interpreted as a correct param.
+     * The fieldName should include one prefix that is "TOKEN_" otherwise it
+     * will not be interpreted as a correct param.
+     *
      * @param token
      * @param fieldName
      * @return
@@ -271,46 +285,55 @@ public final class Token {
             return new String[]{LPPlatform.LAB_FALSE, ""};
         }
     }
-    public String getProcedureInstanceName(String procInstanceName){        
+
+    public String getProcedureInstanceName(String procInstanceName) {
         return getInfoFromProcedureInstanceVersionsAndHashCode(procInstanceName, TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME);
     }
-    public String getProcedureInstanceHashCode(String procInstanceName){        
+
+    public String getProcedureInstanceHashCode(String procInstanceName) {
         return getInfoFromProcedureInstanceVersionsAndHashCode(procInstanceName, TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE);
     }
-    public Integer getProcedureInstanceVersion(String procInstanceName){
+
+    public Integer getProcedureInstanceVersion(String procInstanceName) {
         String procVersion = getInfoFromProcedureInstanceVersionsAndHashCode(procInstanceName, TblsProcedure.ProcedureInfo.VERSION);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isNumeric(procVersion)[0].toString())) 
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isNumeric(procVersion)[0].toString())) {
             return Integer.valueOf(procVersion);
+        }
         return -999;
     }
-    private String getInfoFromProcedureInstanceVersionsAndHashCode(String procInstanceName, TblsProcedure.ProcedureInfo field){
+
+    private String getInfoFromProcedureInstanceVersionsAndHashCode(String procInstanceName, TblsProcedure.ProcedureInfo field) {
         String[] splitted = this.userProceduresVersionsAndHashCodes.split("\\|");
-        for (String curVal: splitted){
-            if (curVal.toUpperCase().contains(procInstanceName.toUpperCase())){
+        for (String curVal : splitted) {
+            if (curVal.toUpperCase().contains(procInstanceName.toUpperCase())) {
                 String[] splittedEntry = curVal.split("\\*");
-                switch (field){
+                switch (field) {
                     case PROC_INSTANCE_NAME:
-                        if (splittedEntry.length>=1)
+                        if (splittedEntry.length >= 1) {
                             return splittedEntry[0];
-                        else
+                        } else {
                             return "ERROR.array has no column [0]";
+                        }
                     case VERSION:
-                        if (splittedEntry.length>=2)
+                        if (splittedEntry.length >= 2) {
                             return splittedEntry[1];
-                        else
+                        } else {
                             return "ERROR.array has no column [1]";
+                        }
                     case PROCEDURE_HASH_CODE:
-                        if (splittedEntry.length>=3)
+                        if (splittedEntry.length >= 3) {
                             return splittedEntry[2];
-                        else
+                        } else {
                             return "ERROR.array has no column [2]";
+                        }
                     default:
-                        return "";                        
+                        return "";
                 }
             }
         }
         return "";
     }
+
     /**
      * @return the userName
      */
@@ -331,10 +354,10 @@ public final class Token {
     public String getPersonName() {
         return this.personName;
     }
+
     public String getUserMailAddress() {
         return this.userMail;
     }
-    
 
     /**
      * @return the userRole
@@ -363,37 +386,41 @@ public final class Token {
     public Date getAppSessionStartedDate() {
         return this.appSessionStartedDate;
     }
+
     /**
      * @return the userProceduresList in a Arrays.strings format
      */
     public String getUserProcedures() {
         return this.userProcedures;
-    }    
+    }
+
     /**
      * @return the userProceduresList in a Arrays.strings format
      */
     public String getDbName() {
         return this.dbName;
-    }    
+    }
+
     /**
      * @return the userProceduresList in a Arrays.strings format
      */
     public String getProcsModuleNames() {
         return this.procsModuleNames;
-    }    
-    
-    public String getModuleNameFromProcInstance(String instanceName){
-        if (this.procsModuleNames==null||!this.procsModuleNames.contains(instanceName))
+    }
+
+    public String getModuleNameFromProcInstance(String instanceName) {
+        if (this.procsModuleNames == null || !this.procsModuleNames.contains(instanceName)) {
             return "notFound";
-        
-        for (String curFld: this.procsModuleNames.split("\\|")){
-            if (curFld.contains(instanceName)){
+        }
+
+        for (String curFld : this.procsModuleNames.split("\\|")) {
+            if (curFld.contains(instanceName)) {
                 String[] split = curFld.split("\\*");
                 return split[1];
-            }                
-        }        
+            }
+        }
         return "notFound";
-        
+
     }
 
     /**
@@ -402,5 +429,5 @@ public final class Token {
     public String getDateFormatAtPlatformLvl() {
         return datetimeFormatAtPlatformLvl;
     }
-    
+
 }
