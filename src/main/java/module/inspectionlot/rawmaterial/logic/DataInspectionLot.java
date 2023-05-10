@@ -432,6 +432,9 @@ public class DataInspectionLot {
                 new String[]{TblsInspLotRMData.LotBulk.QUANTITY.getName(), TblsInspLotRMData.LotBulk.QUANTITY_UOM.getName()});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(lotBulkInfo[0][0].toString())) 
                 new InternalMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{lotName, bulkId, TblsInspLotRMData.TablesInspLotRMData.LOT_BULK.getTableName(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())}, null);
+            Object[] numeric = LPMath.isNumeric(lotBulkInfo[0][0].toString());
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(numeric[0].toString())) 
+                return new InternalMessage(LPPlatform.LAB_TRUE, numeric[numeric.length-1].toString(), null, null);
             Double lotBulkQuantity = Double.valueOf(lotBulkInfo[0][0].toString());
             String lotBulkQuantityUOM = lotBulkInfo[0][1].toString();
             UnitsOfMeasurement uom=new UnitsOfMeasurement(BigDecimal.valueOf(lotBulkQuantity), lotBulkQuantityUOM);

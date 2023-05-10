@@ -12,6 +12,8 @@ import databases.SqlWhere;
 import databases.TblsCnfg;
 import databases.features.Token;
 import functionaljavaa.materialspec.SamplingPlanEntry;
+import functionaljavaa.parameter.Parameter;
+import static functionaljavaa.parameter.Parameter.isTagValueOneOfEnableOnes;
 import module.inspectionlot.rawmaterial.definition.LotAudit;
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -20,14 +22,18 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import module.inspectionlot.rawmaterial.definition.InspLotRMEnums;
+import module.inspectionlot.rawmaterial.definition.InspLotRMEnums.InspLotRMBusinessRules;
 import module.inspectionlot.rawmaterial.definition.InspLotRMEnums.InspectionLotRMAuditEvents;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMConfig;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMData;
+import module.inspectionlot.rawmaterial.definition.TblsInspLotRMProcedure;
 import trazit.enums.EnumIntAuditEvents;
+import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
+import trazit.session.ResponseMessages;
 
 /**
  *
@@ -164,11 +170,25 @@ public class DataBulk {
         InternalMessage lotContainerDecisionRecordCreateOrUpdate = lotBulkDecisionRecordCreateOrUpdate(lotName, bulkId, decision);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(lotContainerDecisionRecordCreateOrUpdate.getDiagnostic()))
             return lotContainerDecisionRecordCreateOrUpdate;
+        if (decision.toUpperCase().contains("REJEC")) {
+            createInspLotCorrectiveAction(lotName, bulkId, InspLotRMEnums.InspLotRMAPIactionsEndpoints.LOT_BULK_TAKE_DECISION);
+        }        
 
         return new InternalMessage(LPPlatform.LAB_TRUE, 
             InspLotRMEnums.InspLotRMAPIactionsEndpoints.LOT_BULK_TAKE_DECISION, new Object[]{lotName});        
     }
-    
+    public static InternalMessage createInspLotCorrectiveAction(String lotName, Integer bulkId, EnumIntEndpoints endpoint) {        
+        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();
+        String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        String createInvCorrectiveAction = Parameter.getBusinessRuleProcedureFile(procInstanceName, InspLotRMBusinessRules.CORRECTIVE_ACTION_FOR_REJECTED_BULK.getAreaName(), InspLotRMBusinessRules.CORRECTIVE_ACTION_FOR_REJECTED_BULK.getTagName());
+        if (Boolean.FALSE.equals(isTagValueOneOfEnableOnes(createInvCorrectiveAction))) {
+            messages.addMainForError(InspLotRMEnums.DataInspLotErrorTrapping.DISABLED, new Object[]{});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.DISABLED, new Object[]{});
+        }
+        return DataInsLotsCorrectiveAction.createNew(bulkId, endpoint,
+            new String[]{TblsInspLotRMProcedure.LotsCorrectiveAction.LOT_NAME.getName()},            
+            new Object[]{lotName});
+    }        
     public static InternalMessage lotBulkDecisionRecordCreateOrUpdate(String lotName, Integer bulkId, String decision){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
@@ -181,9 +201,13 @@ public class DataBulk {
             lotFieldName = LPArray.addValueToArray1D(lotFieldName, new String[]{TblsInspLotRMData.LotBulk.DECISION.getName(), TblsInspLotRMData.LotBulk.DECISION_TAKEN_BY.getName(), TblsInspLotRMData.LotBulk.DECISION_TAKEN_ON.getName()});    
             lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, new Object[]{decision, token.getPersonName(), LPDate.getCurrentTimeStamp()});                                         
         }
-        Object[] lotBulkExists=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.LOT_BULK.getTableName(), 
-                new String[]{TblsInspLotRMData.LotBulk.LOT_NAME.getName(), TblsInspLotRMData.LotBulk.BULK_ID.getName()}, new Object[]{lotName, bulkId});
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(lotBulkExists[0].toString())){      
+        Object[][] lotBulkExists=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.LOT_BULK.getTableName(), 
+            new String[]{TblsInspLotRMData.LotBulk.LOT_NAME.getName(), TblsInspLotRMData.LotBulk.BULK_ID.getName()}, new Object[]{lotName, bulkId},
+            new String[]{TblsInspLotRMData.LotBulk.DECISION.getName(), TblsInspLotRMData.LotBulk.BULK_NAME.getName()});
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(lotBulkExists[0][0]).toString()))){
+            if (LPNulls.replaceNull(lotBulkExists[0][0]).toString().length()>0){
+                return new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.LOT_BULK_ALREADY_HAS_DECISION, new Object[]{LPNulls.replaceNull(lotBulkExists[0][1]).toString(), lotName});
+            }
             SqlWhere sqlWhere = new SqlWhere();
             sqlWhere.addConstraint(TblsInspLotRMData.LotBulk.LOT_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{lotName}, "");
             sqlWhere.addConstraint(TblsInspLotRMData.LotBulk.BULK_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{bulkId}, "");
