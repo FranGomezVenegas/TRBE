@@ -139,9 +139,11 @@ public class LPJson {
     }
 
     public static JSONArray convertArrayJsonToJSON(JsonArray jsonArr) {
-        JSONArray allResults = new JSONArray();
-        allResults.add(jsonArr.asList());
-        return allResults;
+        JSONArray jsonArray = new JSONArray();
+        jsonArr.forEach(jsonElement -> {
+            jsonArray.add(jsonElement);
+        });
+        return jsonArray;
     }
 
     public static Object[] convertToJsonObjectStringedObject(String value) {
