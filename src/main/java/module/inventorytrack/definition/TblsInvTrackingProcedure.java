@@ -19,13 +19,12 @@ import trazit.globalvariables.GlobalVariables;
 public class TblsInvTrackingProcedure {
     
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.PROCEDURE.getName();
-    public enum TablesEnvMonitProcedure implements EnumIntTables{        
-        DEVIATION_INCUBATOR(null, "deviation_incubator", SCHEMA_NAME, true, ProcedureDeviationIncubator.values(), 
-            ProcedureDeviationIncubator.ID.getName(), new String[]{ProcedureDeviationIncubator.ID.getName()}, null, "ProcedureDeviationIncubator table"),
-        INCUB_TEMP_READING_VIOLATIONS(null, "incubator_temp_reading_violations", SCHEMA_NAME, true, IncubatorTempReadingViolations.values(), IncubatorTempReadingViolations.ID.getName(), 
-            new String[]{IncubatorTempReadingViolations.ID.getName()}, null, "IncubatorTempReadingViolations table"),
+    private static final Boolean IS_PRODEDURE_INSTANCE = true;
+    public enum TablesInvTrackingProcedure implements EnumIntTables{        
+        INVENTORY_CORRECTIVE_ACTION(null, "inventory_corrective_action", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsInvTrackingProcedure.InventoryCorrectiveAction.values(), TblsInvTrackingProcedure.InventoryCorrectiveAction.ID.getName(),
+            new String[]{TblsInvTrackingProcedure.InventoryCorrectiveAction.ID.getName()}, null, "Inventory Corrective Action for results OOS and/or OOC Info"),
         ;
-        private TablesEnvMonitProcedure(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
+        private TablesInvTrackingProcedure(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){
             this.getTblBusinessRules=fldBusRules;
             this.tableName=dbTblName;
@@ -57,18 +56,20 @@ public class TblsInvTrackingProcedure {
         private final String tableComment;
     }
 
-    public enum IncubatorTempReadingViolations implements EnumIntTableFields{
-        ID("id", LPDatabase.integerNotNull(), null, null, null, null), 
-        INCUBATOR("incubator", LPDatabase.string(), null, null, null, null), 
-        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTime(), null, null, null, null), 
-        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null), 
-        STARTED_ON("started_on", dateTime(), null, null, null, null), 
-        ENDED_ON("ended_on", dateTime(), null, null, null, null), 
-        REASON("reason", LPDatabase.string(), null, null, null, null), 
-        STAGE_CURRENT("current_stage", LPDatabase.stringNotNull(), null, null, null, null), 
-        STAGE_PREVIOUS("stage_previous", LPDatabase.string(), null, null, null, null), 
+    public enum InventoryCorrectiveAction implements EnumIntTableFields{
+        ID("id", LPDatabase.integerNotNull(), null, null, null, null),
+        STATUS("status", LPDatabase.stringNotNull(), null, null, null, null),
+        STATUS_PREVIOUS("status_previous", LPDatabase.string(), null, null, null, null),
+        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTime(), null, null, null, null),
+        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
+        INVEST_ID("invest_id", LPDatabase.integer(), null, null, null, null),
+        OBJECT_TYPE("object_type", LPDatabase.integer(), null, null, null, null),
+        CERTIF_ID("certif_id", LPDatabase.integerNotNull(), null, null, null, null),
+        LOT_NAME(TblsInvTrackingData.Lot.LOT_NAME.getName(), LPDatabase.string(), null, null, null, null),//, null, new ReferenceFld(GlobalVariables.Schemas.DATA.getName(), TablesInvTrackingData.LOT.getTableName(), Lot.LOT_NAME.getName()), null, null),
+        CATEGORY(TblsInvTrackingData.Lot.CATEGORY.getName(), LPDatabase.stringNotNull(), null, null, null, null),         
+        REFERENCE(TblsInvTrackingData.Lot.REFERENCE.getName(), LPDatabase.stringNotNull(), null, null, null, null),         
         ;
-        private IncubatorTempReadingViolations(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+        private InventoryCorrectiveAction(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
             this.fieldName=dbObjName;
             this.fieldType=dbObjType;
@@ -77,58 +78,12 @@ public class TblsInvTrackingProcedure {
             this.fieldComment=comment;
             this.fldBusinessRules=fldBusRules;
         }
-        private final String fieldName;
-        private final String fieldType;
-        private final String fieldMask;
-        private final ReferenceFld reference;
-        private final String fieldComment;
-        private final FldBusinessRules[] fldBusinessRules;
-
-        @Override        public String getName(){return this.fieldName;}
-        @Override        public String getFieldType() {return this.fieldType;}
-        @Override        public String getFieldMask() {return this.fieldMask;}
-        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
-        @Override        public String getFieldComment(){return this.fieldComment;}
-        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
-    }            
-    
-    /**
-     *
-     */
-
-    public enum ProcedureDeviationIncubator implements EnumIntTableFields{
-        ID("id", LPDatabase.integerNotNull(), null, null, null, null), 
-        STATUS("status", LPDatabase.stringNotNull(), null, null, null, null), 
-        STATUS_PREVIOUS("status_previous", LPDatabase.stringNotNull(), null, null, null, null), 
-        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTime(), null, null, null, null), 
-        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null), 
-        INCUB_NAME("incubator_name", LPDatabase.string(), null, null, null, null), 
-        INCUB_NOTEBOOK_ID("notebook_id", LPDatabase.integer(), null, null, null, null), 
-        BATCH_NAME("batch_name", LPDatabase.string(), null, null, null, null), 
-        REASON("reason", LPDatabase.string(), null, null, null, null), 
-        ;
-        private ProcedureDeviationIncubator(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
-                FldBusinessRules[] fldBusRules){
-            this.fieldName=dbObjName;
-            this.fieldType=dbObjType;
-            this.fieldMask=fieldMask;
-            this.reference=refer;
-            this.fieldComment=comment;
-            this.fldBusinessRules=fldBusRules;
-        }
-        private final String fieldName;
-        private final String fieldType;
-        private final String fieldMask;
-        private final ReferenceFld reference;
-        private final String fieldComment;
-        private final FldBusinessRules[] fldBusinessRules;
-
-        @Override        public String getName(){return this.fieldName;}
-        @Override        public String getFieldType() {return this.fieldType;}
-        @Override        public String getFieldMask() {return this.fieldMask;}
-        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
-        @Override        public String getFieldComment(){return this.fieldComment;}
-        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+        private final String fieldName; @Override        public String getName(){return this.fieldName;}
+        private final String fieldType; @Override        public String getFieldType() {return this.fieldType;}
+        private final String fieldMask; @Override        public String getFieldMask() {return this.fieldMask;}
+        private final ReferenceFld reference; @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
+        private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }            
     
 }

@@ -26,6 +26,7 @@ import module.inventorytrack.definition.TblsInvTrackingData;
 import module.inventorytrack.definition.TblsInvTrackingData.TablesInvTrackingData;
 import module.inventorytrack.definition.InvTrackingEnums.InventoryTrackingErrorTrapping;
 import module.inventorytrack.definition.TblsInvTrackingDataAudit;
+import module.inventorytrack.definition.TblsInvTrackingProcedure;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
@@ -41,7 +42,11 @@ import static module.inventorytrack.logic.AppInventoryLotAudit.inventoryLotAudit
  * @author Administrator
  */
 public class DataInventoryQualif {
-private DataInventoryQualif() {throw new IllegalStateException("Utility class");}
+
+    private DataInventoryQualif() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static InternalMessage createInventoryLotQualif(String lotName, String category, String reference, Boolean requiresConfigChecks) {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         ResponseMessages messages = procReqSession.getMessages();
@@ -101,12 +106,13 @@ private DataInventoryQualif() {throw new IllegalStateException("Utility class");
         RelatedObjects rObj = RelatedObjects.getInstanceForActions();
         rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TablesInvTrackingData.LOT_CERTIFICATION.getTableName(), eventId);
 
-        InternalMessage eventHasNotEnteredVariables = eventHasNotEnteredVariables(invLot.getLotName(), eventId);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(eventHasNotEnteredVariables.getDiagnostic())) {
-            messages.addMainForError(eventHasNotEnteredVariables.getMessageCodeObj(), eventHasNotEnteredVariables.getMessageCodeVariables());
-            return eventHasNotEnteredVariables;
+        if (decision.toUpperCase().contains("ACCEPT")) {
+            InternalMessage eventHasNotEnteredVariables = eventHasNotEnteredVariables(invLot.getLotName(), eventId);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(eventHasNotEnteredVariables.getDiagnostic())) {
+                messages.addMainForError(eventHasNotEnteredVariables.getMessageCodeObj(), eventHasNotEnteredVariables.getMessageCodeVariables());
+                return eventHasNotEnteredVariables;
+            }
         }
-
         String[] fldNames = new String[]{TblsInvTrackingData.LotCertification.COMPLETED_DECISION.getName(), TblsInvTrackingData.LotCertification.COMPLETED_ON.getName(), TblsInvTrackingData.LotCertification.COMPLETED_BY.getName()};
         Object[] fldValues = new Object[]{decision, LPDate.getCurrentTimeStamp(), token.getPersonName()};
         SqlWhere sqlWhere = new SqlWhere();
@@ -120,7 +126,7 @@ private DataInventoryQualif() {throw new IllegalStateException("Utility class");
                 invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(),
                 invLot.getLotName(), fldNames, fldValues);
         fldNames = new String[]{TblsInvTrackingData.Lot.IS_LOCKED.getName(), TblsInvTrackingData.Lot.LOCKED_REASON.getName(), TblsInvTrackingData.Lot.STATUS.getName(), TblsInvTrackingData.Lot.STATUS_PREVIOUS.getName()};
-        fldValues = new Object[]{false, "", "QUARANTINE_"+decision.toUpperCase(), "QUARANTINE"};
+        fldValues = new Object[]{false, "", "QUARANTINE_" + decision.toUpperCase(), "QUARANTINE"};
         invLot.updateInventoryLot(fldNames, fldValues, InvTrackingEnums.AppInventoryTrackingAuditEvents.UNLOCK_LOT_ONCE_QUALIFIED.toString());
         inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.UNLOCK_LOT_ONCE_QUALIFIED,
                 invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(),
@@ -128,13 +134,25 @@ private DataInventoryQualif() {throw new IllegalStateException("Utility class");
         if (turnLotAvailable != null && turnLotAvailable && decision.toUpperCase().contains("ACCEPT")) {
             invLot.turnAvailable(null, null);
         }
-//        if (!invLot.availableForUse && decisionAndFamilyRuleToTurnOn(decision, TblsAppProcConfig.InstrumentsFamily.CALIB_TURN_ON_WHEN_COMPLETED.getName())){
-//            turnAvailable(fldNames, fldValues); //, InvTrackingEnums.AppInventoryTrackingAuditEvents.COMPLETE_CALIBRATION.toString());
-//        }else{
-//            updateInventoryLot(fldNames, fldValues, InvTrackingEnums.AppInventoryTrackingAuditEvents.COMPLETE_QUALIFICATION.toString());            
-//        }
+        if (decision.toUpperCase().contains("REJEC")) {
+            createInventoryCorrectiveAction(invLot, eventId);
+        }
         messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.COMPLETE_QUALIFICATION, new Object[]{invLot.getLotName(), decision});
         return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.COMPLETE_QUALIFICATION, new Object[]{invLot.getLotName(), decision}, invLot.getLotName());
+    }
+
+    public static InternalMessage createInventoryCorrectiveAction(DataInventory invLot, Integer eventId) {
+        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();
+        String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        String createInvCorrectiveAction = Parameter.getBusinessRuleProcedureFile(procInstanceName, InvTrackingEnums.InventoryTrackBusinessRules.CORRECTIVE_ACTION_FOR_REJECTED_QUALIFICATION.getAreaName(), InvTrackingEnums.InventoryTrackBusinessRules.CORRECTIVE_ACTION_FOR_REJECTED_QUALIFICATION.getTagName());
+        if (Boolean.FALSE.equals(isTagValueOneOfEnableOnes(createInvCorrectiveAction))) {
+            messages.addMainForError(InvTrackingEnums.InventoryTrackingErrorTrapping.DISABLED, new Object[]{});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.DISABLED, new Object[]{});
+        }        
+        return DataInventoryCorrectiveAction.createNew(eventId,
+                new String[]{TblsInvTrackingProcedure.InventoryCorrectiveAction.LOT_NAME.getName(), TblsInvTrackingProcedure.InventoryCorrectiveAction.OBJECT_TYPE.getName(),
+                    TblsInvTrackingProcedure.InventoryCorrectiveAction.CATEGORY.getName(), TblsInvTrackingProcedure.InventoryCorrectiveAction.REFERENCE.getName()},
+                new Object[]{invLot.getLotName(), TablesInvTrackingData.LOT_CERTIFICATION.getTableName(), invLot.getCategory(), invLot.getReference()});
     }
 
     public static InternalMessage reopenInventoryLotQualif(DataInventory invLot) {
@@ -149,9 +167,9 @@ private DataInventoryQualif() {throw new IllegalStateException("Utility class");
             return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.QUALIFICATION_NOT_CLOSED, new Object[]{invLot.getLotName()}, invLot.getLotName());
         }
         Integer eventId = Integer.valueOf(eventIdStr);
-        String[] fldNames = new String[]{TblsInvTrackingData.LotCertification.COMPLETED_DECISION.getName(), TblsInvTrackingData.LotCertification.COMPLETED_BY.getName()};
+        String[] fldNames = new String[]{TblsInvTrackingData.LotCertification.COMPLETED_DECISION.getName(), TblsInvTrackingData.LotCertification.COMPLETED_BY.getName(), TblsInvTrackingData.LotCertification.COMPLETED_ON.getName()};
         //TblsInvTrackingData.LotCertification.COMPLETED_ON.getName(), 
-        Object[] fldValues = new Object[]{"", ""}; //"null", 
+        Object[] fldValues = new Object[]{"null>>>STRING", "null>>>STRING", "null>>>DATETIME"};
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsInvTrackingData.LotCertification.CERTIF_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{eventId}, "");
         Object[] instCreationDiagn = Rdbms.updateRecordFieldsByFilter(TablesInvTrackingData.LOT_CERTIFICATION,
@@ -452,7 +470,7 @@ private DataInventoryQualif() {throw new IllegalStateException("Utility class");
 
     public static InternalMessage invTrackingAuditSetAuditRecordAsReviewed(Integer auditId, String personName) {
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();
-        String appProcInstance = GlobalVariables.Schemas.APP_PROC_DATA_AUDIT.getName();
+        String appProcInstance = GlobalVariables.Schemas.APP_PROC_DATA_AUDIT.getName();        
         String auditReviewMode = Parameter.getBusinessRuleProcedureFile(appProcInstance, InvTrackingEnums.InventoryTrackBusinessRules.REVISION_MODE.getAreaName(), InvTrackingEnums.InventoryTrackBusinessRules.REVISION_MODE.getTagName());
         if (Boolean.FALSE.equals(isTagValueOneOfEnableOnes(auditReviewMode))) {
             messages.addMainForError(InvTrackingEnums.InventoryTrackingErrorTrapping.DISABLED, new Object[]{});
