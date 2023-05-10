@@ -6,7 +6,6 @@
 package functionaljavaa.audit;
 
 import databases.Rdbms;
-import static databases.Rdbms.dbSchemaTablesList;
 import databases.RdbmsObject;
 import databases.TblsApp;
 import databases.TblsDataAudit;
@@ -29,6 +28,7 @@ public final class AuditUtilities {
         return applyTheInsert(gAuditFlds, tblObj, fldN, fldV, null);
     }
     public static Object[] applyTheInsert(GenericAuditFields gAuditFlds, EnumIntTables tblObj, String[] fldN, Object[] fldV, String externalProcInstanceName){
+        
         RdbmsObject insertDiagn = Rdbms.insertRecord(tblObj, fldN, fldV, externalProcInstanceName);
 	if (Boolean.TRUE.equals(insertDiagn.getRunSuccess())){
             SessionAuditActions auditActions = ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditActions();
@@ -49,11 +49,6 @@ public final class AuditUtilities {
             }
         }
         return new String[]{};
-    }
-    public static Object[] xgetProcAuditTablesList(String procInstanceName){
-        if (procInstanceName.length()>0)
-            return dbSchemaTablesList(procInstanceName);
-        return new Object[]{};
     }
     public static String[] getAuditTableAllFields(String repository, String tableName){
         if (GlobalVariables.Schemas.DATA.getName().equalsIgnoreCase(repository)){  
