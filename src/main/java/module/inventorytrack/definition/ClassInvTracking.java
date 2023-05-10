@@ -13,7 +13,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
-import lbplanet.utilities.LPMath;
+import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.ApiErrorTraping;
@@ -42,10 +42,17 @@ public class ClassInvTracking {
     private Boolean isSuccess;
 
     public ClassInvTracking(HttpServletRequest request, InventoryTrackAPIactionsEndpoints endPoint) {
+        this.functionFound = true;
 
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         RelatedObjects rObj = RelatedObjects.getInstanceForActions();
         InternalMessage actionDiagnoses = null;
+        Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())) {
+            LPFrontEnd.servletReturnResponseError(request, null,
+                    LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, "en", LPPlatform.ApiErrorTraping.class.getSimpleName());
+            return;
+        }
         Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
 
         DataInventory invLot = null;
@@ -81,8 +88,8 @@ public class ClassInvTracking {
                 String conservCondition = argValues[12].toString();
                 String fldNamesStr = argValues[13].toString();
                 String fldValuesStr = argValues[14].toString();
-                Integer numEntries = LPPlatform.LAB_FALSE.equalsIgnoreCase(LPMath.isNumeric(LPNulls.replaceNull(argValues[15]).toString())[0].toString())
-                        ? 1 : Integer.valueOf(LPNulls.replaceNull(argValues[15].toString()));
+                Integer numEntries = Integer.valueOf(LPNulls.replaceNull(argValues[15].toString()));//LPPlatform.LAB_FALSE.equalsIgnoreCase(LPMath.isNumeric(LPNulls.replaceNull(argValues[15]).toString())[0].toString())
+                //? 1 : Integer.valueOf(LPNulls.replaceNull(argValues[15].toString()));
                 String[] fieldNames = null;
                 Object[] fieldValues = null;
                 if (fldValuesStr != null && fldValuesStr.length() > 0) {
