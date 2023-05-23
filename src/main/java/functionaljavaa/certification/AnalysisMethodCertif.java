@@ -339,8 +339,9 @@ public class AnalysisMethodCertif {
         Object[] updFldValues=new Object[]{true, userSopStatuses.PASS.getCode(), userSopStatuses.PASS.getLightCode()};
         Object[] expiryIntervalInfo = applyExpiryInterval(TblsCnfg.TablesConfig.METHODS.getTableName(), 
                 new String[]{TblsCnfg.Methods.CODE.getName()}, new Object[]{methodName});
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(expiryIntervalInfo[1].toString())) return expiryIntervalInfo;
-        else{
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(expiryIntervalInfo[0].toString())) return expiryIntervalInfo;
+        
+        if (expiryIntervalInfo.length>=2){
             updFldNames=LPArray.addValueToArray1D(updFldNames, TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName());
             updFldValues=LPArray.addValueToArray1D(updFldValues, expiryIntervalInfo[1]);
         }        
