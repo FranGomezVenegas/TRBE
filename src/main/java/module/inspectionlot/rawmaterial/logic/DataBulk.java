@@ -245,7 +245,7 @@ public class DataBulk {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(specInfo[0][0].toString()))
            return new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.MISSING_SPEC_CONFIG_CODE, new Object[]{materialInfo[0][0], materialInfo[0][1], procInstanceName});    
         Object[][] lotBulksInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.LOT_BULK.getTableName(), 
-                new String[]{TblsInspLotRMData.LotBulk.LOT_NAME.getName()}, new Object[]{lotName}, 
+                new String[]{TblsInspLotRMData.LotBulk.LOT_NAME.getName(), TblsInspLotRMData.LotBulk.DECISION.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.LIKE.getSqlClause()}, new Object[]{lotName, "AC%"}, 
                 new String[]{TblsInspLotRMData.LotBulk.LOT_NAME.getName(), TblsInspLotRMData.LotBulk.DECISION.getName(),
                     TblsInspLotRMData.LotBulk.SAMPLE_QUANTITY.getName(), TblsInspLotRMData.LotBulk.SAMPLE_QUANTITY_UOM.getName(),
                     TblsInspLotRMData.LotBulk.BULK_ID.getName(), TblsInspLotRMData.LotBulk.BULK_NAME.getName()});

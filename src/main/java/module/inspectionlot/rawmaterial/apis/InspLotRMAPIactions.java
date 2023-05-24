@@ -42,6 +42,7 @@ public class InspLotRMAPIactions extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)         throws ServletException, IOException {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
+        
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false);
         if (Boolean.TRUE.equals(procReqInstance.getHasErrors())){
             procReqInstance.killIt();
@@ -81,15 +82,26 @@ public class InspLotRMAPIactions extends HttpServlet {
             LPFrontEnd.servletReturnResponseError(request, response,
                     LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, procReqInstance.getLanguage(), LPPlatform.ApiErrorTraping.class.getSimpleName());
             return;
-        }                        
+        }    
+        
+                    
+        
+        
+        
             ClassInspLotRMactions clss=new ClassInspLotRMactions(request, endPoint);
             
-            InternalMessage diagnostic=clss.getDiagnosticObj();
+            InternalMessage diagnosticObj=clss.getDiagnosticObj();
+            Object[] diagnostic=clss.getDiagnostic();
             
-            if (diagnostic!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic.getDiagnostic())){                 
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic.getMessageCodeObj(), diagnostic.getMessageCodeVariables());   
+            if (diagnosticObj!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosticObj.getDiagnostic())){                 
+                procReqInstance.killIt();
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnosticObj.getMessageCodeObj(), diagnosticObj.getMessageCodeVariables());   
+            }else if (diagnosticObj==null && LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){   
+                procReqInstance.killIt();
+                LPFrontEnd.responseError(diagnostic);   
             }else{
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());
+                procReqInstance.killIt();
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
             }           
         }catch(Exception e){   

@@ -141,6 +141,8 @@ public class TblsInspLotRMData {
 
 public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         LOT_NAME(Sample.LOT_NAME.getName(), "s.lot_name", Sample.LOT_NAME, null, null, null),
+        BULK_ID(Sample.BULK_ID.getName(), "s.bulk_id", Sample.BULK_ID, null, null, null),
+        BULK_NAME(Sample.BULK_NAME.getName(), "s.bulk_name", Sample.BULK_NAME, null, null, null),
         RESULT_ID(TblsData.SampleAnalysisResult.RESULT_ID.getName(), "sar.result_id", TblsData.SampleAnalysisResult.RESULT_ID, null, null, null),
         TEST_ID(TblsData.SampleAnalysis.TEST_ID.getName(), "sar.test_id", TblsData.SampleAnalysisResult.TEST_ID, null, null, null),
         SAMPLE_ID(TblsData.Sample.SAMPLE_ID.getName(), "sar.sample_id", TblsData.SampleAnalysisResult.SAMPLE_ID, null, null, null),
@@ -176,14 +178,12 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         PROGRAM_NAME("program_name", "s.program_name", TblsEnvMonitData.Sample.PROGRAM_NAME, null, null, null),
         SAMPLING_DATE("sampling_date", "s.sampling_date", TblsData.Sample.SAMPLING_DATE, null, null, null),
         SHIFT("shift", "s.shift", TblsEnvMonitData.Sample.SHIFT, null, null, null),
-        AREA("area", "s.area", TblsEnvMonitData.Sample.AREA, null, null, null),
-        LOCATION_NAME("location_name", "s.location_name", TblsEnvMonitData.Sample.LOCATION_NAME, null, null, null),
-        PRODUCTION_LOT("production_lot", "s.production_lot", TblsEnvMonitData.Sample.PRODUCTION_LOT, null, null, null),
         PROGRAM_DAY_ID("program_day_id", "s.program_day_id", TblsEnvMonitData.Sample.PROG_DAY_ID, null, null, null),
         PROGRAM_DAY_DATE("program_day_date", "s.program_day_date", TblsEnvMonitData.Sample.PROG_DAY_DATE, null, null, null),
         SAMPLE_ANALYSIS_STATUS("sample_analysis_status", "sa.status", TblsData.SampleAnalysis.STATUS, null, null, null),
         SAMPLE_ANALYSIS_READY_FOR_REVISION("sample_analysis_"+TblsData.SampleAnalysis.READY_FOR_REVISION.getName(), "sa."+TblsData.Sample.READY_FOR_REVISION.getName(), TblsData.SampleAnalysis.READY_FOR_REVISION, null, null, null),
         TESTING_GROUP("testing_group", "sa.testing_group", TblsData.SampleAnalysis.TESTING_GROUP, null, null, null),
+        SAMPLE_ANALYSIS_REVIEWER("sample_analysis_reviewer", "sa.reviewer", TblsData.SampleAnalysis.REVIEWER, null, null, null),        
         LOGGED_ON("logged_on", "s.logged_on", TblsData.Sample.LOGGED_ON, null, null, null),
         SAMPLER("sampler", "s.sampler", TblsData.Sample.SAMPLER, null, null, null),
         SAMPLER_AREA("sampler_area", "s.sampler_area", TblsEnvMonitData.Sample.SAMPLER_AREA, null, null, null),
@@ -214,8 +214,6 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         INVEST_ID("invest_id", "io.invest_id", TblsProcedure.InvestObjects.INVEST_ID, null, null, null),
         INVEST_OBJECT_ID("invest_object_id", "io.id", TblsProcedure.InvestObjects.OBJECT_ID, null, null, null),
         SAMPLE_REVIEWER("sample_reviewer", "s.reviewer", TblsData.Sample.REVIEWER, null, null, null),
-        TEST_REVIEWER("test_reviewer", "sa.reviewer", TblsData.SampleAnalysis.REVIEWER, null, null, null),        
-        TEST_STATUS("test_status", "sa.status", TblsData.SampleAnalysis.STATUS, null, null, null),
         ;
         private ViewSampleAnalysisResultWithSpecLimits(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
 //            try{
@@ -277,6 +275,7 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         CLOSED_ON("closed_on", LPDatabase.dateTime(), null, null, null, null),
         CLOSED_BY("closed_by", LPDatabase.string(), null, null, null, null),
         CLOSURE_REASON("closure_reason", LPDatabase.string(), null, null, null, null),
+        READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld(false), null, null, null, null),
         
         // ...
         

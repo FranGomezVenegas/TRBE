@@ -72,7 +72,7 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
             this.functionFound = true;
             Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
             this.functionFound = true;
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
+            if (argValues.length > 0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(argValues[0]).toString())) {
                 this.diagnostic = (Object[]) argValues[1];
                 this.messageDynamicData = new Object[]{argValues[2].toString()};
                 return;
@@ -133,6 +133,23 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                                 lotInfoJsonArr.add(jLotSectionInfoObj);
                             }
                             lotJsonObj.put(TblsInspLotRMData.TablesInspLotRMData.LOT_BULK.getTableName(), lotInfoJsonArr);
+                        }
+                        
+                        tableFieldsBulk = TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN.getTableFields();
+                        fieldsToRetrieveBulk = EnumIntTableFields.getAllFieldNames(tableFieldsBulk);
+                        lotInfo = QueryUtilitiesEnums.getTableData(TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN,
+                                tableFieldsBulk, new SqlWhere(TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN, new String[]{TblsInspLotRMData.InventoryRetain.LOT_NAME.getName()}, new Object[]{lotName}),
+                                new String[]{TblsInspLotRMData.InventoryRetain.LOT_NAME.getName()}, null);
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(lotInfo[0][0].toString())) {
+                            JSONObject jLotSectionInfoObj = new JSONObject();
+                            lotJsonObj.put(TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN.getTableName(), jLotSectionInfoObj);
+                        } else {
+                            JSONArray lotInfoJsonArr = new JSONArray();
+                            for (Object[] curRow : lotInfo) {
+                                JSONObject jLotSectionInfoObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieveBulk, curRow);
+                                lotInfoJsonArr.add(jLotSectionInfoObj);
+                            }
+                            lotJsonObj.put(TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN.getTableName(), lotInfoJsonArr);
                         }
 
                         EnumIntTableFields[] tableFieldsSample = TblsInspLotRMData.TablesInspLotRMData.SAMPLE.getTableFields();
@@ -211,19 +228,44 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                     Rdbms.closeRdbms();
                     LPFrontEnd.servletReturnSuccess(request, response, lotsJsonArr);
                     break;
+                case GET_LOTS_PENDING_USAGE_DECISION:
+                    lotName = LPNulls.replaceNull(argValues[0]).toString();
+                    fieldsToRetrieveStr = LPNulls.replaceNull(argValues[1]).toString();
+                    /*                    if (LPNulls.replaceNull(fieldsToRetrieveStr).length() == 0) {
+                        fieldsToRetrieve = EnumIntTableFields.getAllFieldNames(TblsInspLotRMDataAudit.TablesInspLotRMDataAudit.LOT.getTableFields());
+                    } else {
+                        fieldsToRetrieve = fieldsToRetrieveStr.split("\\|");
+                    }
+                     */
+                    EnumIntTableFields[] fieldsToRetrieveObj = TblsInspLotRMData.TablesInspLotRMData.LOT.getTableFields();
+                    Object[][] lotsPendingDecisionInfo = QueryUtilitiesEnums.getTableData(TblsInspLotRMData.TablesInspLotRMData.LOT,
+                            fieldsToRetrieveObj,
+                            new String[]{TblsInspLotRMData.Lot.READY_FOR_REVISION.getName()}, new Object[]{true},
+                            new String[]{TblsInspLotRMData.Lot.CREATED_ON.getName()});
+                    JSONArray jArr = new JSONArray();
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(lotsPendingDecisionInfo[0][0].toString())) {
+                        LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                        return;
+                    }
+                    for (Object[] curRow : lotsPendingDecisionInfo) {
+                        JSONObject jObj = LPJson.convertArrayRowToJSONObject(getAllFieldNames(fieldsToRetrieveObj), curRow);
+                        jArr.add(jObj);
+                    }
+                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                    break;
 
                 case GET_LOT_SAMPLES_INFO:
                     lotName = LPNulls.replaceNull(argValues[0]).toString();
                     fieldsToRetrieveStr = LPNulls.replaceNull(argValues[1].toString());
                     Boolean includesSampleAnalysisInfo = Boolean.valueOf(LPNulls.replaceNull(argValues[2]).toString());
                     Boolean includesSampleAnalysisResultInfo = Boolean.valueOf(LPNulls.replaceNull(argValues[3]).toString());
-                    JSONArray jArr = new JSONArray();
+                    jArr = new JSONArray();
                     jArr.add(dataSampleStructure(lotName, null, fieldsToRetrieveStr, new String[]{TblsInspLotRMData.Sample.SAMPLE_ID.getName()}, includesSampleAnalysisInfo, includesSampleAnalysisResultInfo));
                     Rdbms.closeRdbms();
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     break;
                 case GET_LOT_AUDIT:
-                    String[] fieldsToRetrieve;
+                    String[] fieldsToRetrieve=null;
                     lotName = LPNulls.replaceNull(argValues[0]).toString();
                     fieldsToRetrieveStr = LPNulls.replaceNull(argValues[1]).toString();
                     if (LPNulls.replaceNull(fieldsToRetrieveStr).length() == 0) {
@@ -239,8 +281,6 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                             new String[]{TblsInspLotRMDataAudit.Lot.AUDIT_ID.getName()});
                     jArr = new JSONArray();
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditInfo[0][0].toString())) {
-                        //jArr.add(sampleAuditInfo[0]);
-                        //LPFrontEnd.responseError(sampleAuditInfo, language, procInstanceName);
                         LPFrontEnd.servletReturnSuccess(request, response, jArr);
                         return;
                     }
@@ -284,7 +324,7 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     return;
                 case OPEN_INVESTIGATIONS:
-                    EnumIntTableFields[] fieldsToRetrieveObj = TblsProcedure.TablesProcedure.INVESTIGATION.getTableFields();
+                    fieldsToRetrieveObj = TblsProcedure.TablesProcedure.INVESTIGATION.getTableFields();
                     Object[][] incidentsNotClosed = QueryUtilitiesEnums.getTableData(TblsProcedure.TablesProcedure.INVESTIGATION,
                             fieldsToRetrieveObj,
                             new String[]{TblsProcedure.Investigation.CLOSED.getName() + "<>"},
@@ -388,6 +428,27 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                     }
                     Rdbms.closeRdbms();
                     LPFrontEnd.servletReturnSuccess(request, response, investigationJArr);
+                    break;
+                case GET_MATERIALS:
+                    jArr = new JSONArray();
+                    SqlWhere whereObj = new SqlWhere();
+                    whereObj.addConstraint(TblsInspLotRMConfig.Material.NAME, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, null, null);
+                    EnumIntTableFields[] flds = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInspLotRMConfig.TablesInspLotRMConfig.MATERIAL);
+                    Object[][] materialInfo = QueryUtilitiesEnums.getTableData(TblsInspLotRMConfig.TablesInspLotRMConfig.MATERIAL,
+                            flds, whereObj,
+                            new String[]{TblsInspLotRMConfig.Material.NAME.getName()});
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(materialInfo[0][0].toString())) {
+                        LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                        return;
+                    }
+                    for (Object[] curRow : materialInfo) {
+                        JSONObject jObj2 = new JSONObject();
+                        jObj2 = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(flds), curRow);
+                        jArr.add(jObj2);
+                    }
+
+                    Rdbms.closeRdbms();
+                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     break;
                 default:
                     procReqInstance.killIt();
