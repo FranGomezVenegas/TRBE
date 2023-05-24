@@ -21,13 +21,18 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import static lbplanet.utilities.LPMath.isNumeric;
 import lbplanet.utilities.LPPlatform;
+import module.inspectionlot.rawmaterial.logic.DataInsLotsCorrectiveAction;
+import module.instrumentsmanagement.logic.DataInstrumentsCorrectiveAction;
+import module.inventorytrack.logic.DataInventoryCorrectiveAction;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.globalvariables.GlobalVariables.TrazitModules;
 import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 
 
 
@@ -85,12 +90,12 @@ public final class Investigation {
     
     private Investigation() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
 
-    public static Object[] newInvestigation(String[] fldNames, Object[] fldValues, String objectsToAdd){ 
+    public static InternalMessage newInvestigation(String[] fldNames, Object[] fldValues, String objectsToAdd){ 
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
         Token token=instanceForActions.getToken();
 
-        Object[] newInvestigationChecks = newInvestigationChecks(fldNames, fldValues, objectsToAdd);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newInvestigationChecks[0].toString())){
+        InternalMessage newInvestigationChecks = newInvestigationChecks(fldNames, fldValues, objectsToAdd);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newInvestigationChecks.getDiagnostic())){
             return newInvestigationChecks;
         }  
         
@@ -104,20 +109,20 @@ public final class Investigation {
             Object[] investigationAuditAdd = ProcedureInvestigationAudit.investigationAuditAdd(DataInvestigationAuditEvents.NEW_INVESTIGATION_CREATED.toString(), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(), Integer.valueOf(investIdStr), investIdStr,  
                     LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationAuditAdd[0].toString())) 
-                return investigationAuditAdd; 
+                return new InternalMessage(investigationAuditAdd[0].toString(), investigationAuditAdd[investigationAuditAdd.length-1].toString(), null, null);
             RdbmsObject auditObjDiagn=(RdbmsObject) investigationAuditAdd[investigationAuditAdd.length-1];
             if (objectsToAdd!=null && objectsToAdd.length()>0)
                 addInvestObjects(Integer.valueOf(investIdStr), objectsToAdd, Integer.valueOf(auditObjDiagn.getNewRowId().toString()));
-            Object[] trapMessage = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());                    
-            return LPArray.addValueToArray1D(trapMessage, insertDiagn);
+            return new InternalMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables(), investIdStr);                    
         }else
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());                  
+            return new InternalMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());                  
     }
     public static Object[] closeInvestigation(Integer investId){ 
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
-        Object[] investigationClosed = isInvestigationClosed(investId);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationClosed[0].toString())) return investigationClosed;
+        InternalMessage investigationClosed = isInvestigationClosed(investId);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationClosed.getDiagnostic())) 
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, investigationClosed.getMessageCodeObj(), investigationClosed.getMessageCodeVariables());
 
         String[] updFieldName=new String[]{TblsProcedure.Investigation.CLOSED.getName(), TblsProcedure.Investigation.CLOSED_ON.getName(), TblsProcedure.Investigation.CLOSED_BY.getName()};
         Object[] updFieldValue=new Object[]{true, LPDate.getCurrentTimeStamp(), token.getPersonName()};        
@@ -143,20 +148,21 @@ public final class Investigation {
         return diagnostic;               
     }
 
-    public static Object[] addInvestObjects(Integer investId, String objectsToAdd, Integer parentAuditId){ 
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
-        Object[] investigationClosed = isInvestigationClosed(investId); 
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationClosed[0].toString())) return investigationClosed;
+    public static InternalMessage addInvestObjects(Integer investId, String objectsToAdd, Integer parentAuditId){ 
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);    
+        Token token=procReqSession.getToken();
+        InternalMessage investigationClosed = isInvestigationClosed(investId); 
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationClosed.getDiagnostic())) return investigationClosed;
         String[] baseFieldName=new String[]{TblsProcedure.InvestObjects.INVEST_ID.getName(), TblsProcedure.InvestObjects.ADDED_ON.getName(), TblsProcedure.InvestObjects.ADDED_BY.getName()};
         Object[] baseFieldValue=new Object[]{investId, LPDate.getCurrentTimeStamp(), token.getPersonName()};
         Object[] diagnostic=new Object[0];
         
         for (String curObj: objectsToAdd.split("\\|")){
             Object[] decodeObjectDetail=decodeObjectInfo(curObj);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(decodeObjectDetail[0].toString())) return decodeObjectDetail;
-            Object[] objectAlreadyInInvestigation = isObjectAlreadyInInvestigation(curObj, investId);            
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(objectAlreadyInInvestigation[0].toString())) {
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.OBJECT_ALREADY_ADDED, new Object[]{curObj, investId});                
+            if (decodeObjectDetail.length!=2) return (InternalMessage)decodeObjectDetail[0];
+            InternalMessage objectAlreadyInInvestigation = isObjecNotAlreadyInInvestigation(curObj, investId);            
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objectAlreadyInInvestigation.getDiagnostic())) {
+                return objectAlreadyInInvestigation;
             }
         }
         for (String curObj: objectsToAdd.split("\\|")){
@@ -177,10 +183,31 @@ public final class Investigation {
             RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.INVEST_OBJECTS, 
                     updFieldName, updFieldValue);
             diagnostic=insertRecordInTable.getApiMessage();
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) return diagnostic;
-            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){                
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) 
+                return new InternalMessage(insertRecordInTable.getApiMessage()[0].toString(), insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), insertRecordInTable.getNewRowId());
+            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){    
+                
+        String moduleNameFromProcInstance = token.getModuleNameFromProcInstance(procReqSession.getProcedureInstance());
+        TrazitModules moduleNameObj = TrazitModules.valueOf(moduleNameFromProcInstance);
+        switch (moduleNameObj){            
+            case ENVIRONMENTAL_MONITORING:
                 diagnostic=DataProgramCorrectiveAction.markAsAddedToInvestigation(investId, curObjDetail[0], curObjDetail[1]);
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) return diagnostic;
+                break;
+            case INSTRUMENTS:
+                diagnostic=DataInstrumentsCorrectiveAction.markAsAddedToInvestigation(investId, curObjDetail[0], curObjDetail[1]);
+                break;
+            case INVENTORY_TRACKING:
+                diagnostic=DataInventoryCorrectiveAction.markAsAddedToInvestigation(investId, curObjDetail[0], curObjDetail[1]);
+                break;
+            case INSPECTION_LOTS_RAW_MAT:
+                diagnostic=DataInsLotsCorrectiveAction.markAsAddedToInvestigation(investId, curObjDetail[0], curObjDetail[1]);
+                break;
+            default:
+                return new InternalMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.OBJECT_NOT_RECOGNIZED, new Object[]{moduleNameFromProcInstance}, null);
+        }
+                
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) 
+                    return new InternalMessage(LPPlatform.LAB_FALSE, diagnostic[diagnostic.length-1].toString(), null, null);
 
                 String incIdStr=diagnostic[diagnostic.length-1].toString();
                 ProcedureInvestigationAudit.investigationAuditAdd(DataInvestigationAuditEvents.OBJECT_ADDED_TO_INVESTIGATION.toString(), TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(), investId, incIdStr,  
@@ -188,30 +215,30 @@ public final class Investigation {
                 addAuditRecordForObject(curObj, investId, SampleAudit.DataSampleAuditEvents.ADDED_TO_INVESTIGATION);
             }
         }
-        return diagnostic;        
+        return new InternalMessage(diagnostic[0].toString(), diagnostic[diagnostic.length-1].toString(), null, null);        
     }
-    public static Object[] newInvestigationChecks(String[] fldNames, Object[] fldValues, String objectsToAdd){
+    public static InternalMessage newInvestigationChecks(String[] fldNames, Object[] fldValues, String objectsToAdd){
         for (String curObj: objectsToAdd.split("\\|")){
             Object[] decodeObjectDetail=decodeObjectInfo(curObj);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(decodeObjectDetail[0].toString())) return decodeObjectDetail;
+            if (decodeObjectDetail.length!=2) return (InternalMessage) decodeObjectDetail[0];
 
-            Object[] objectAlreadyInInvestigation = isObjectAlreadyInInvestigation(curObj);
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(objectAlreadyInInvestigation[0].toString())){  
-                objectAlreadyInInvestigation[0]=LPPlatform.LAB_FALSE;
+            InternalMessage objectAlreadyInInvestigation = isObjectNotAlreadyInInvestigation(curObj);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objectAlreadyInInvestigation.getDiagnostic())){  
                 return objectAlreadyInInvestigation;
             }                          
         }
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "AllWell", null);
+        return new InternalMessage(LPPlatform.LAB_TRUE, "AllWell", null, null);
     }
 
-    public static Object[] isObjectAlreadyInInvestigation(String objectToAdd){
-        return isObjectAlreadyInInvestigation(objectToAdd, null);
+    public static InternalMessage isObjectNotAlreadyInInvestigation(String objectToAdd){
+        return isObjecNotAlreadyInInvestigation(objectToAdd, null);
     }
-    public static Object[] isObjectAlreadyInInvestigation(String objectToAdd, Integer investId){
+    public static InternalMessage isObjecNotAlreadyInInvestigation(String objectToAdd, Integer investId){
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);        
         String procInstanceName=instanceForActions.getProcedureInstance();
         Object[] decodeObjectDetail=decodeObjectInfo(objectToAdd);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(decodeObjectDetail[0].toString())) return decodeObjectDetail;
+        
+        if (decodeObjectDetail.length!=2) return (InternalMessage) decodeObjectDetail[0];
         String[] checkFieldName=(String[]) decodeObjectDetail[0];
         Object[] checkFieldValue=(Object[]) decodeObjectDetail[1];
         if (investId!=null){
@@ -223,12 +250,12 @@ public final class Investigation {
                 TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(), 
                 checkFieldName, checkFieldValue, fldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(invObjectInfo[0][0].toString()))
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.OBJECT_NOT_IN_INVESTIGATION_YET, checkFieldValue);
+            return new InternalMessage(LPPlatform.LAB_TRUE, InvestigationErrorTrapping.OBJECT_NOT_IN_INVESTIGATION_YET, checkFieldValue);
         else{
             ResponseMessages messages = instanceForActions.getMessages();
             messages.addMainForError(InvestigationErrorTrapping.OBJECT_ALREADY_ADDED, new Object[]{checkFieldValue[0], checkFieldValue[1], investId});
             investId=(Integer) invObjectInfo[0][LPArray.valuePosicInArray(fldsToRetrieve, TblsProcedure.InvestObjects.INVEST_ID.getName())];
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, InvestigationErrorTrapping.OBJECT_ALREADY_ADDED, new Object[]{checkFieldValue[0], checkFieldValue[1], investId});        
+            return new InternalMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.OBJECT_ALREADY_ADDED, new Object[]{checkFieldValue[0], checkFieldValue[1], investId});        
         }
     }    
     private static Object[] decodeObjectInfo(String objInfo){
@@ -239,7 +266,7 @@ public final class Investigation {
 
         String[] curObjDetail=objInfo.split("\\*");
         if (curObjDetail.length!=2)
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.OBJECT_NOT_RECOGNIZED, new Object[]{objInfo});
+            return new Object[]{new InternalMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.OBJECT_NOT_RECOGNIZED, new Object[]{objInfo})};
         checkFieldName=LPArray.addValueToArray1D(checkFieldName, TblsProcedure.InvestObjects.OBJECT_TYPE.getName());
         checkFieldValue=LPArray.addValueToArray1D(checkFieldValue, curObjDetail[dataStructObjectTypePosic]);
 
@@ -260,8 +287,9 @@ public final class Investigation {
             return capaFieldValues;
         Object[] areCapaFields = isCapaField(capaFieldName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areCapaFields[0].toString())) return areCapaFields;
-        Object[] investigationClosed = isInvestigationClosed(investId);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationClosed[0].toString())) return investigationClosed;
+        InternalMessage investigationClosed = isInvestigationClosed(investId);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationClosed.getDiagnostic())) 
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, investigationClosed.getMessageCodeObj(), investigationClosed.getMessageCodeVariables());
         String[] updFieldName=new String[]{TblsProcedure.Investigation.CAPA_REQUIRED.getName(), TblsProcedure.Investigation.CAPA_DECISION_ON.getName(), TblsProcedure.Investigation.CAPA_DECISION_BY.getName()};
         Object[] updFieldValue=new Object[]{capaRequired, LPDate.getCurrentTimeStamp(), token.getPersonName()};
         if (capaFieldName!=null) updFieldName=LPArray.addValueToArray1D(updFieldName, capaFieldName);        
@@ -279,15 +307,15 @@ public final class Investigation {
         return diagnostic;               
     }
     
-    private static Object[] isInvestigationClosed(Integer investId){
+    private static InternalMessage isInvestigationClosed(Integer investId){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[][] investigationInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(), 
             new String[]{TblsProcedure.Investigation.ID.getName()}, new Object[]{investId}, new String[]{TblsProcedure.Investigation.CLOSED.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationInfo[0][0].toString()))
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.NOT_FOUND, new Object[]{investId});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.NOT_FOUND, new Object[]{investId});
         if ("FALSE".equalsIgnoreCase(investigationInfo[0][0].toString()))
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, InvestigationSuccess.IS_OPEN, new Object[]{investId});
-        else return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.IS_CLOSED, new Object[]{investId});
+            return new InternalMessage(LPPlatform.LAB_TRUE, InvestigationSuccess.IS_OPEN, new Object[]{investId});
+        else return new InternalMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.IS_CLOSED, new Object[]{investId});
     }
     private static Object[] isCapaField(String[] fields){
         String[] allFieldNames = getAllFieldNames(TblsProcedure.TablesProcedure.INVESTIGATION.getTableFields());
