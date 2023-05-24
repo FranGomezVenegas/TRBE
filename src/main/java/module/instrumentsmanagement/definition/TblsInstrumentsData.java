@@ -261,7 +261,7 @@ public class TblsInstrumentsData {
         ENTERED_ON("entered_on", LPDatabase.dateTime(), null, null, null, null),
         ENTERED_BY("entered_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         REENTERED("reentered", LPDatabase.booleanFld(false), null, null, null, null),
-        
+        ATTACHMENT("attachment", LPDatabase.embeddedFile(), null, null, null, null),
         ;
         private InstrEventVariableValues(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){

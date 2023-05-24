@@ -475,8 +475,8 @@ public class DataInstruments {
             return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.DISABLED, new Object[]{});
         }
         return DataInstrumentsCorrectiveAction.createNew(eventId, endpoint,
-            new String[]{TblsInstrumentsProcedure.InstrumentsCorrectiveAction.INSTRUMENT.getName()},            
-            new Object[]{instrName});
+            new String[]{TblsInstrumentsProcedure.InstrumentsCorrectiveAction.INSTRUMENT.getName(), TblsInstrumentsProcedure.InstrumentsCorrectiveAction.OBJECT_TYPE.getName()},
+            new Object[]{instrName, TblsInstrumentsData.TablesInstrumentsData.INSTRUMENT_EVENT.getTableName()});
     }    
     public InternalMessage startPrevMaint(Boolean isScheduled){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);        

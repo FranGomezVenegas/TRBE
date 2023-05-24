@@ -42,7 +42,11 @@ import trazit.session.ResponseMessages;
  * @author User
  */
 public class DataInstrumentsEvents {
-private DataInstrumentsEvents() {throw new IllegalStateException("Utility class");}
+
+    private DataInstrumentsEvents() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static Object[][] getVariableSetVariablesProperties(String variableSetName) {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         String appProcInstance = LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName());
@@ -121,6 +125,10 @@ private DataInstrumentsEvents() {throw new IllegalStateException("Utility class"
     }
 
     public static InternalMessage objectVariableSetValue(String instrName, Integer instrEventId, String variableName, String newValue) {
+        return objectVariableSetValue(instrName, instrEventId, variableName, newValue, null);
+    }
+
+    public static InternalMessage objectVariableSetValue(String instrName, Integer instrEventId, String variableName, String newValue, byte[] attachment) {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         String appProcInstance = LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName());
         Object[] isStudyOpenToChanges = isEventOpenToChanges(instrEventId);
@@ -157,8 +165,11 @@ private DataInstrumentsEvents() {throw new IllegalStateException("Utility class"
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.USE_REENTER_WHEN_PARAM_ALREADY_HAS_VALUE,
                     new Object[]{});
         }
-        String fieldType = objectVariablePropInfo[0][2].toString().toUpperCase();
 
+        String[] updFieldsName = new String[]{TblsInstrumentsData.InstrEventVariableValues.VALUE.getName()};
+        Object[] updFieldsValue = new Object[]{newValue};
+
+        String fieldType = objectVariablePropInfo[0][2].toString().toUpperCase();
         switch (DataStudyObjectsVariableValues.VariableTypes.valueOf(fieldType)) {
             case LIST:
                 String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
@@ -176,18 +187,24 @@ private DataInstrumentsEvents() {throw new IllegalStateException("Utility class"
                 break;
             case TEXT:
                 break;
+            case FILE:
+                if (attachment == null) {
+                    return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.ATTACHMENT_NOT_FOUND, null, null);
+                }
+                updFieldsName = LPArray.addValueToArray1D(updFieldsName, TblsInstrumentsData.InstrEventVariableValues.ATTACHMENT.getName());
+                updFieldsValue = LPArray.addValueToArray1D(updFieldsValue, attachment);
+                break;
             default:
                 return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.VARIABLE_TYPE_NOT_RECOGNIZED, new Object[]{fieldType}, null);
         }
-        String[] updFieldsName=new String[]{TblsInstrumentsData.InstrEventVariableValues.VALUE.getName()};
-        Object[] updFieldsValue=new Object[]{newValue};
-	SqlWhere sqlWhere = new SqlWhere();
-	sqlWhere.addConstraint(TblsInstrumentsData.InstrEventVariableValues.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{Integer.valueOf(objectVariablePropInfo[0][0].toString())}, "");
-	Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES,
-		EnumIntTableFields.getTableFieldsFromString(TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES, updFieldsName), updFieldsValue, sqlWhere, null);
-        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())))
+        SqlWhere sqlWhere = new SqlWhere();
+        sqlWhere.addConstraint(TblsInstrumentsData.InstrEventVariableValues.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{Integer.valueOf(objectVariablePropInfo[0][0].toString())}, "");
+        Object[] diagnostic = Rdbms.updateRecordFieldsByFilter(TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES,
+                EnumIntTableFields.getTableFieldsFromString(TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES, updFieldsName), updFieldsValue, sqlWhere, null);
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString()))) {
             instrumentsAuditAdd(InstrumentsEnums.AppInstrumentsAuditEvents.VALUE_ENTERED, instrName, TablesInstrumentsData.INSTRUMENTS.getTableName(), instrEventId.toString(),
-                updFieldsName, updFieldsValue);        
+                    updFieldsName, updFieldsValue);
+        }
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.ENTER_EVENT_RESULT, new Object[]{instrName, instrEventId, variableName, newValue}, null);
     }
 

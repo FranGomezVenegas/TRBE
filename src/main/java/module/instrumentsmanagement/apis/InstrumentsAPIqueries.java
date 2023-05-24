@@ -5,6 +5,8 @@
  */
 package module.instrumentsmanagement.apis;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import static platform.app.apis.IncidentAPIactions.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
@@ -25,7 +27,11 @@ import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction
 import module.instrumentsmanagement.definition.InstrumentsEnums.InstrumentsAPIqueriesEndpoints;
 import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.parameter.Parameter.isTagValueOneOfEnableOnes;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -44,6 +50,8 @@ import module.instrumentsmanagement.definition.InstrumentsEnums;
 import module.instrumentsmanagement.definition.TblsInstrumentsProcedure;
 import module.instrumentsmanagement.logic.DataInstrumentsCorrectiveAction;
 import static module.instrumentsmanagement.logic.SchedInstruments.logNextEventWhenExpiredOrClose;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
@@ -266,9 +274,49 @@ public class InstrumentsAPIqueries extends HttpServlet {
                             new Object[]{instrEventId},
                             new String[]{TblsInstrumentsData.InstrEventVariableValues.ID.getName(), TblsInstrumentsData.InstrEventVariableValues.CREATED_ON.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                     jArr = new JSONArray();
+                    Integer attachFldPosic = LPArray.valuePosicInArray(tblFieldsToRetrieve, TblsInstrumentsData.InstrEventVariableValues.ATTACHMENT.getName());
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(appInstrumentsAuditEvents[0][0].toString()))) {
                         for (Object[] currInstrEv : appInstrumentsAuditEvents) {
+
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(tblFieldsToRetrieve, currInstrEv);
+
+                            if (LPNulls.replaceNull(currInstrEv[attachFldPosic]).toString().length() > 0) {
+                                String text = "";
+                                String pdfPath = "D:/LP/Interfaces/HPLC_VALIDACIONES_FRAN_382.pdf";
+                                File pdfFile = new File(pdfPath);
+
+/*                                PDDocument document = PDDocument.load(pdfFile);
+
+                                PDFTextStripper textStripper = new PDFTextStripper();
+                                text = textStripper.getText(document);
+                                byte[] textInBytes = text.getBytes(StandardCharsets.UTF_8);
+                                ObjectMapper objectMapper = new ObjectMapper();
+                                JsonNode jsonNode = objectMapper.convertValue(textInBytes, JsonNode.class);
+                                String jsonString = objectMapper.writeValueAsString(jsonNode);
+                                document.close();*/
+                                byte[] buffer=new byte[1024];
+                                ByteArrayOutputStream os=new ByteArrayOutputStream();
+                                FileInputStream fis=new FileInputStream(pdfFile);
+                                int read;
+                                while ((read = fis.read(buffer)) != -1){
+                                    os.write(buffer, 0, read);
+                                }
+                                fis.close();
+                                ObjectMapper objectMapper = new ObjectMapper();
+                                JsonNode jsonNode = null;
+                                try{
+                                jsonNode = objectMapper.convertValue(os, JsonNode.class);
+                                }catch(Exception e){
+                                    String s=e.getMessage();
+                                }
+                                String jsonString = objectMapper.writeValueAsString(jsonNode);
+                                
+                                os.close();
+                                
+                                jObj.put("attachment_text", text);
+                                jObj.put("attachment_jsonNode", jsonNode);
+                                jObj.put("attachment_jsonstring", jsonString);
+                            }
                             jArr.add(jObj);
                         }
                     }
@@ -376,7 +424,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                     LPFrontEnd.servletReturnSuccess(request, response, investigationJArr);
                     break;
 
-                case INVESTIGATION_DEVIATION_PENDING_DECISION:
+                case INVESTIGATION_EVENTS_PENDING_DECISION:
                     JSONArray jArray = new JSONArray();
                     String statusClosed = DataInstrumentsCorrectiveAction.InstrumentsCorrectiveActionStatuses.STATUS_CLOSED.getStatusCode();
                     String createInvCorrectiveAction = Parameter.getBusinessRuleProcedureFile(procReqInstance.getProcedureInstance(), InstrumentsEnums.InstrumentsBusinessRules.CORRECTIVE_ACTION_FOR_REJECTED_EVENT.getAreaName(), InstrumentsEnums.InstrumentsBusinessRules.CORRECTIVE_ACTION_FOR_REJECTED_EVENT.getTagName());
@@ -449,7 +497,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                     break;
                 case INVESTIGATION_RESULTS_PENDING_DECISION:
                     jArray = new JSONArray();
-                    statusClosed = DataProgramCorrectiveAction.ProgramCorrectiveActionStatuses.STATUS_CLOSED.getStatusCode();                    
+                    statusClosed = DataProgramCorrectiveAction.ProgramCorrectiveActionStatuses.STATUS_CLOSED.getStatusCode();
                     createInvCorrectiveAction = Parameter.getBusinessRuleProcedureFile(procReqInstance.getProcedureInstance(), InstrumentsEnums.InstrumentsBusinessRules.CORRECTIVE_ACTION_FOR_REJECTED_EVENT.getAreaName(), InstrumentsEnums.InstrumentsBusinessRules.CORRECTIVE_ACTION_FOR_REJECTED_EVENT.getTagName());
                     if (Boolean.FALSE.equals(isTagValueOneOfEnableOnes(createInvCorrectiveAction))) {
                         JSONObject jObj = new JSONObject();

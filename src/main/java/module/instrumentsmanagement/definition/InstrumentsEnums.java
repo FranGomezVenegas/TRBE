@@ -209,7 +209,8 @@ public class InstrumentsEnums {
                 new LPAPIArguments[]{new LPAPIArguments("instrumentName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments("eventId", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
                     new LPAPIArguments("variableName", LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
-                    new LPAPIArguments("newValue", LPAPIArguments.ArgumentType.STRING.toString(), true, 9),},
+                    new LPAPIArguments("newValue", LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
+                new LPAPIArguments("containsAttachment", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 10),},
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build(),
                 null, null),
@@ -335,7 +336,7 @@ public class InstrumentsEnums {
                 null, null),
         OPEN_INVESTIGATIONS("OPEN_INVESTIGATIONS", "", new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects,
                 null, null),
-        INVESTIGATION_DEVIATION_PENDING_DECISION("INVESTIGATION_DEVIATION_PENDING_DECISION", "", new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects,
+        INVESTIGATION_EVENTS_PENDING_DECISION("INVESTIGATION_EVENTS_PENDING_DECISION", "", new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects,
                 null, null),
         INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION("INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION", "", new LPAPIArguments[]{new LPAPIArguments(InvestigationAPI.ParamsList.INVESTIGATION_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects,
                 null, null),
@@ -551,7 +552,9 @@ public class InstrumentsEnums {
         NOT_NUMERIC_VALUE("DataSampleAnalysisResult_ValueNotNumericForQuantitativeParam", "", ""),
         USE_REENTER_WHEN_PARAM_ALREADY_HAS_VALUE("instEvent_whenParamAlreadyHasValueRequiresToUseReenterAction", "", ""),
         USE_ENTER_WHEN_PARAM_HAS_NO_VALUE("instEvent_whenParamHasNoValueRequiresToUseEnterResultAction", "", ""),
-        SAME_RESULT_VALUE("DataSampleAnalysisResult_SampleAnalysisResultSameValue", "", ""),;
+        SAME_RESULT_VALUE("DataSampleAnalysisResult_SampleAnalysisResultSameValue", "", ""),
+        ATTACHMENT_NOT_FOUND("DataSampleAnalysisResult_attachmentNotFound", "", ""),
+        ;
 
         private InstrEventsErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs) {
             this.errorCode = errCode;
