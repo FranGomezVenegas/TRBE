@@ -35,6 +35,7 @@ import module.inventorytrack.definition.InvTrackingEnums;
 import module.inventorytrack.definition.TblsInvTrackingDataAudit;
 import module.inventorytrack.definition.InvTrackingEnums.InvLotStatuses;
 import module.inventorytrack.definition.InvTrackingEnums.InventoryTrackAPIqueriesEndpoints;
+import module.inventorytrack.definition.TblsInvTrackingConfig;
 import module.inventorytrack.definition.TblsInvTrackingData;
 import module.inventorytrack.definition.TblsInvTrackingProcedure;
 import module.inventorytrack.logic.DataInventory;
@@ -137,20 +138,44 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     Rdbms.closeRdbms();
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     return;
+                case ALL_INVENTORY_REFERENCES:
+                    category = LPNulls.replaceNull(argValues[0]).toString();
+
+                    sW = new SqlWhere();
+                    sW.addConstraint(TblsInvTrackingConfig.Reference.CATEGORY, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, null);
+                    if (category.length() > 0) {
+                        sW.addConstraint(TblsInvTrackingData.Lot.CATEGORY, SqlStatement.WHERECLAUSE_TYPES.IN, category.split("\\|"), "|");
+                    }
+
+                    EnumIntTableFields[] fieldsToRetrieveObj = TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableFields();
+                    Object[][] configReferencesInfo = QueryUtilitiesEnums.getTableData(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE,
+                            fieldsToRetrieveObj,
+                            sW, new String[]{TblsInvTrackingConfig.Reference.CATEGORY.getName()});
+                    jArr = new JSONArray();
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(configReferencesInfo[0][0].toString()))) {
+                        for (Object[] currInstr : configReferencesInfo) {
+                            JSONObject jObj = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(fieldsToRetrieveObj), currInstr);
+                            jArr.add(jObj);
+                        }
+                    }
+                    Rdbms.closeRdbms();
+                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                    return;
+
                 case AUDIT_FOR_GIVEN_INVENTORY_LOT:
                     String lotName = LPNulls.replaceNull(argValues[0]).toString();
                     fieldsToRetrieve = getAllFieldNames(TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT);
                     if (Boolean.FALSE.equals(LPArray.valueInArray(fieldsToRetrieve, TblsInvTrackingDataAudit.Lot.AUDIT_ID.getName()))) {
                         fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, TblsInvTrackingDataAudit.Lot.AUDIT_ID.getName());
                     }
-                    instrumentsInfo = QueryUtilitiesEnums.getTableData(TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT,
+                    configReferencesInfo = QueryUtilitiesEnums.getTableData(TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT,
                             EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT),
                             new String[]{TblsInvTrackingDataAudit.Lot.LOT_NAME.getName(), TblsInvTrackingDataAudit.Lot.PARENT_AUDIT_ID.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()},
                             new Object[]{lotName, ""},
                             new String[]{TblsInvTrackingDataAudit.Lot.LOT_NAME.getName(), TblsInvTrackingDataAudit.Lot.DATE.getName() + " asc"}, null, false);
                     jArr = new JSONArray();
-                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentsInfo[0][0].toString()))) {
-                        for (Object[] currInstrAudit : instrumentsInfo) {
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(configReferencesInfo[0][0].toString()))) {
+                        for (Object[] currInstrAudit : configReferencesInfo) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrAudit);
 
                             Object[] convertToJsonObjectStringedObject = LPJson.convertToJsonObjectStringedObject(currInstrAudit[LPArray.valuePosicInArray(fieldsToRetrieve, TblsInvTrackingDataAudit.Lot.FIELDS_UPDATED.getName())].toString());
@@ -196,7 +221,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     sW.addConstraint(TblsInvTrackingData.LotCertification.COMPLETED_BY,
                             SqlStatement.WHERECLAUSE_TYPES.IS_NULL, null, null);
                     //TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION, whereFldName, whereFldValue);
-                    EnumIntTableFields[] fieldsToRetrieveObj = EnumIntTableFields.getTableFieldsFromString(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION, "ALL");
+                    fieldsToRetrieveObj = EnumIntTableFields.getTableFieldsFromString(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION, "ALL");
                     fieldsToRetrieve = EnumIntTableFields.getAllFieldNames(fieldsToRetrieveObj);
                     Object[][] qualifsInProgress = QueryUtilitiesEnums.getTableData(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION,
                             fieldsToRetrieveObj, sW, new String[]{TblsInvTrackingData.LotCertification.CATEGORY.getName(), TblsInvTrackingData.LotCertification.CREATED_ON.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});

@@ -62,7 +62,7 @@ public class InvTrackingAPIactions extends HttpServlet {
                     return;
                 }
                 ClassInvTracking clss = new ClassInvTracking(request, InventoryTrackAPIactionsEndpoints.valueOf(actionName.toUpperCase()));
-                publishResult(request, response, procReqInstance, endPoint, clss.getDiagnostic(), clss.getDiagnosticObj());
+                publishResult(request, response, procReqInstance, endPoint, clss.getDiagnostic(), clss.getDiagnosticObj(), clss.getMessageDynamicData(), clss.getRelatedObj());
             } catch (Exception e) {
                 try {
                     endPoint = InvestigationAPIactionsEndpoints.valueOf(actionName.toUpperCase());
@@ -74,7 +74,7 @@ public class InvTrackingAPIactions extends HttpServlet {
                         return;
                     }                    
                     ClassInvestigation clss = new ClassInvestigation(request, InvestigationAPIactionsEndpoints.valueOf(actionName.toUpperCase()));
-                    publishResult(request, response, procReqInstance, endPoint, clss.getDiagnostic(), clss.getDiagnosticObj());
+                    publishResult(request, response, procReqInstance, endPoint, clss.getDiagnostic(), clss.getDiagnosticObj(), clss.getMessageDynamicData(), clss.getRelatedObj());
                 } catch (Exception e2) {
                     procReqInstance.killIt();
                     LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
@@ -196,9 +196,19 @@ public class InvTrackingAPIactions extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private static void publishResult(HttpServletRequest request, HttpServletResponse response, ProcedureRequestSession procReqInstance, EnumIntEndpoints endPoint, Object[] diagnostic, InternalMessage diagnosticObj) {
+    private static void publishResult(HttpServletRequest request, HttpServletResponse response, ProcedureRequestSession procReqInstance, EnumIntEndpoints endPoint, Object[] diagnostic, InternalMessage diagnosticObj, Object[] messageDynamicData, RelatedObjects relatedObj) {
         Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
         String lotName = argValues[0].toString();
+
+        if (diagnosticObj != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosticObj.getDiagnostic())) {
+            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnosticObj.getMessageCodeObj(), diagnosticObj.getMessageCodeVariables());
+        } else if (diagnosticObj == null && diagnostic!=null && diagnostic.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
+            LPFrontEnd.responseError(diagnostic);
+        } else {
+            JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, messageDynamicData, relatedObj.getRelatedObject());
+            LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
+        }
+
 
         if (diagnostic != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
             procReqInstance.killIt();

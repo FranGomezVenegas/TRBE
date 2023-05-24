@@ -6,6 +6,7 @@
 package module.inventorytrack.definition;
 
 import functionaljavaa.audit.SampleAudit;
+import functionaljavaa.requirement.masterdata.ClassMasterData;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.math.BigDecimal;
 import javax.servlet.http.HttpServletRequest;
@@ -17,15 +18,18 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.ApiErrorTraping;
-import module.inventorytrack.definition.TblsInvTrackingConfig.TablesInvTrackingConfig;
 import module.inventorytrack.definition.TblsInvTrackingData.TablesInvTrackingData;
 import module.inventorytrack.logic.DataInventory;
 import module.inventorytrack.definition.InvTrackingEnums.InventoryTrackAPIactionsEndpoints;
+import module.inventorytrack.definition.TblsInvTrackingConfig.TablesInvTrackingConfig;
 import static module.inventorytrack.logic.DataInventoryQualif.invTrackingAuditSetAuditRecordAsReviewed;
 import static module.inventorytrack.logic.DataInventoryQualif.objectVariableChangeValue;
 import static module.inventorytrack.logic.DataInventoryQualif.objectVariableSetValue;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
+import trazit.globalvariables.GlobalVariables.TrazitModules;
 import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
@@ -59,7 +63,7 @@ public class ClassInvTracking {
         String lotName = argValues[0].toString();
         String category = argValues[1].toString();
         String reference = argValues[2].toString();
-        if (Boolean.FALSE.equals("NEW_INVENTORY_LOT".equalsIgnoreCase(endPoint.getName()))) {
+        if (Boolean.FALSE.equals("NEW_INVENTORY_LOT".equalsIgnoreCase(endPoint.getName())) && Boolean.FALSE.equals("CONFIG_ADD_REFERENCE".equalsIgnoreCase(endPoint.getName()))) {
             invLot = new DataInventory(lotName, reference, category, null);
             if (Boolean.TRUE.equals(invLot.getHasError())) {
                 this.actionDiagnosesObj = invLot.getErrorDetail();
@@ -343,24 +347,55 @@ public class ClassInvTracking {
                     break;
                 }
                 break;
+            case CONFIG_ADD_REFERENCE: 
+                String[] tblFields = new String[]{TblsInvTrackingConfig.Reference.NAME.getName(), TblsInvTrackingConfig.Reference.CATEGORY.getName(), TblsInvTrackingConfig.Reference.LOT_REQUIRES_QUALIF.getName(),
+                    TblsInvTrackingConfig.Reference.MIN_STOCK.getName(), TblsInvTrackingConfig.Reference.MIN_STOCK_UOM.getName(), TblsInvTrackingConfig.Reference.ALLOWED_UOMS.getName(),
+                    TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE.getName(), TblsInvTrackingConfig.Reference.REQUIRES_AVAILABLES_FOR_USE.getName(), TblsInvTrackingConfig.Reference.MIN_AVAILABLES_FOR_USE.getName(),
+                    TblsInvTrackingConfig.Reference.MIN_AVAILABLES_FOR_USE_TYPE.getName(), TblsInvTrackingConfig.Reference.QUALIF_VARIABLES_SET.getName()};
+
+                JSONObject jsonObj = new JSONObject();
+                jsonObj.put("parsing_type", "SIMPLE_TABLE");
+                jsonObj.put("object_type", TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName());
+                JSONArray jArr = new JSONArray();
+                JSONObject jsonValuesObj = new JSONObject();
+                for (int i = 0; i < argValues.length; i++) {
+                    if (LPNulls.replaceNull(argValues[i]).toString().length() > 0) {
+                        jsonValuesObj.put(tblFields[i], argValues[i]);
+                    }
+                }
+                jArr.add(jsonValuesObj);
+                jsonObj.put("values", jArr);
+                ClassMasterData clss = new ClassMasterData(procReqSession.getProcedureInstance(), TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName(), jsonObj.toJSONString(), TrazitModules.INVENTORY_TRACKING.toString());
+                actionDiagnoses = clss.getDiagnostic();
+                this.messageDynamicData = new Object[]{argValues[0].toString()};
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(clss.getDiagnostic().getDiagnostic())) {
+                    this.messageDynamicData = clss.getDiagnostic().getMessageCodeVariables();
+                }
+                break;
+
             default:
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, null, ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, null);
                 invLot = null;
                 return;
         }
+
         this.actionDiagnosesObj = actionDiagnoses;
+
         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), lotName);
         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TablesInvTrackingConfig.INV_REFERENCE.getTableName(), reference);
         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TablesInvTrackingConfig.INV_CATEGORY.getTableName(), category);
-        if (actionDiagnoses != null) {
+        if (actionDiagnoses
+                != null) {
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
                 this.diagnostic = ApiMessageReturn.trapMessage(actionDiagnoses.getDiagnostic(), actionDiagnoses.getMessageCodeObj(), actionDiagnoses.getMessageCodeVariables());
             } else {
                 this.diagnostic = ApiMessageReturn.trapMessage(actionDiagnoses.getDiagnostic(), endPoint, actionDiagnoses.getMessageCodeVariables());
             }
         }
+
         this.relatedObj = rObj;
         invLot = null;
+
         rObj.killInstance();
     }
 
