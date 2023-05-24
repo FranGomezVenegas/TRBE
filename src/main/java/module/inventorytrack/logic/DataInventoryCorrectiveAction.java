@@ -12,8 +12,6 @@ import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.SqlWhere;
 import databases.features.Token;
 import functionaljavaa.parameter.Parameter;
-import static functionaljavaa.parameter.Parameter.isTagValueOneOfDisableOnes;
-import functionaljavaa.samplestructure.DataSampleStructureEnums;
 import java.util.ArrayList;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
@@ -51,25 +49,11 @@ public class DataInventoryCorrectiveAction {
         }
 
         public static String getStatusFirstCode() {
-            ArrayList<String[]> preReqs = new ArrayList<>();
-            preReqs.add(0, new String[]{"data", "sampleAnalysisResultStatusesByBusinessRules"});
-            String procInstanceName = ProcedureRequestSession.getInstanceForQueries(null, null, null).getProcedureInstance();
-            String sampleStatusFirst = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleStructureEnums.DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getAreaName(), "sampleAnalysisResult" + DataSampleStructureEnums.DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getTagName(), preReqs, true);
-            if (sampleStatusFirst == null || sampleStatusFirst.length() == 0 || (Boolean.TRUE.equals(isTagValueOneOfDisableOnes(sampleStatusFirst)))) {
-                return "CREATED";
-            }
-            return sampleStatusFirst;
+            return "CREATED";
         }
 
         public String getStatusCode() {
-            ArrayList<String[]> preReqs = new ArrayList<>();
-            preReqs.add(0, new String[]{"data", "sampleAnalysisResultStatusesByBusinessRules"});
-            String procInstanceName = ProcedureRequestSession.getInstanceForQueries(null, null, null).getProcedureInstance();
-            String statusPropertyValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, this.busRulName.getAreaName(), this.busRulName.getTagName(), preReqs, true);
-            if (statusPropertyValue == null || statusPropertyValue.length() == 0 || (Boolean.TRUE.equals(isTagValueOneOfDisableOnes(statusPropertyValue)))) {
-                return this.toString();
-            }
-            return statusPropertyValue;
+            return "CLOSED";
         }
         private final DataProgramCorrectiveActionBusinessRules busRulName;
     }
@@ -83,7 +67,7 @@ public class DataInventoryCorrectiveAction {
         ;
 
         private DataProgramCorrectiveActionBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator,
-                 Boolean isOpt, ArrayList<String[]> preReqs) {
+                Boolean isOpt, ArrayList<String[]> preReqs) {
             this.tagName = tgName;
             this.areaName = areaNm;
             this.valuesList = valuesList;
@@ -249,9 +233,9 @@ public class DataInventoryCorrectiveAction {
             myFldValue[posicInArray] = LPDate.getCurrentTimeStamp();
         }
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInvTrackingProcedure.TablesInvTrackingProcedure.INVENTORY_CORRECTIVE_ACTION, myFldName, myFldValue);
-        return new InternalMessage(LPPlatform.LAB_TRUE, 
-            InvTrackingEnums.InventoryTrackAPIactionsEndpoints.COMPLETE_QUALIFICATION, new Object[]{certifId}, insertRecordInTable.getNewRowId());
-        
+        return new InternalMessage(LPPlatform.LAB_TRUE,
+                InvTrackingEnums.InventoryTrackAPIactionsEndpoints.COMPLETE_QUALIFICATION, new Object[]{certifId}, insertRecordInTable.getNewRowId());
+
     }
 
     /**

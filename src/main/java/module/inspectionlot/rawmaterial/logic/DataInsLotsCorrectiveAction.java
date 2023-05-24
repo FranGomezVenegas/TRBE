@@ -12,8 +12,6 @@ import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.SqlWhere;
 import databases.features.Token;
 import functionaljavaa.parameter.Parameter;
-import static functionaljavaa.parameter.Parameter.isTagValueOneOfDisableOnes;
-import functionaljavaa.samplestructure.DataSampleStructureEnums;
 import java.util.ArrayList;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
@@ -51,25 +49,11 @@ public class DataInsLotsCorrectiveAction {
         }
 
         public static String getStatusFirstCode() {
-            ArrayList<String[]> preReqs = new ArrayList<>();
-            preReqs.add(0, new String[]{"data", "sampleAnalysisResultStatusesByBusinessRules"});
-            String procInstanceName = ProcedureRequestSession.getInstanceForQueries(null, null, null).getProcedureInstance();
-            String sampleStatusFirst = Parameter.getBusinessRuleProcedureFile(procInstanceName, DataSampleStructureEnums.DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getAreaName(), "sampleAnalysisResult" + DataSampleStructureEnums.DataSampleBusinessRules.SUFFIX_STATUS_FIRST.getTagName(), preReqs, true);
-            if (sampleStatusFirst == null || sampleStatusFirst.length() == 0 || (Boolean.TRUE.equals(isTagValueOneOfDisableOnes(sampleStatusFirst)))) {
-                return "CREATED";
-            }
-            return sampleStatusFirst;
+            return "CREATED";
         }
 
         public String getStatusCode() {
-            ArrayList<String[]> preReqs = new ArrayList<>();
-            preReqs.add(0, new String[]{"data", "sampleAnalysisResultStatusesByBusinessRules"});
-            String procInstanceName = ProcedureRequestSession.getInstanceForQueries(null, null, null).getProcedureInstance();
-            String statusPropertyValue = Parameter.getBusinessRuleProcedureFile(procInstanceName, this.busRulName.getAreaName(), this.busRulName.getTagName(), preReqs, true);
-            if (statusPropertyValue == null || statusPropertyValue.length() == 0 || (Boolean.TRUE.equals(isTagValueOneOfDisableOnes(statusPropertyValue)))) {
-                return this.toString();
-            }
-            return statusPropertyValue;
+            return "CLOSED";
         }
         private final DataProgramCorrectiveActionBusinessRules busRulName;
     }
@@ -83,7 +67,7 @@ public class DataInsLotsCorrectiveAction {
         ;
 
         private DataProgramCorrectiveActionBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator,
-                 Boolean isOpt, ArrayList<String[]> preReqs) {
+                Boolean isOpt, ArrayList<String[]> preReqs) {
             this.tagName = tgName;
             this.areaName = areaNm;
             this.valuesList = valuesList;
@@ -179,9 +163,9 @@ public class DataInsLotsCorrectiveAction {
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String[] keyFldsN = new String[]{TblsInspLotRMProcedure.LotsCorrectiveAction.LOT_NAME.getName()};
         Object[] keyFldsV = new Object[]{lotName};
-        if (bulkId!=null){
-            keyFldsN=LPArray.addValueToArray1D(keyFldsN, TblsInspLotRMProcedure.LotsCorrectiveAction.BULK_ID.getName());
-            keyFldsV=LPArray.addValueToArray1D(keyFldsV, bulkId);
+        if (bulkId != null) {
+            keyFldsN = LPArray.addValueToArray1D(keyFldsN, TblsInspLotRMProcedure.LotsCorrectiveAction.BULK_ID.getName());
+            keyFldsV = LPArray.addValueToArray1D(keyFldsV, bulkId);
         }
         Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsInspLotRMProcedure.TablesInspLotRMProcedure.LOT_CORRECTIVE_ACTION.getTableName(),
                 keyFldsN, keyFldsV);
@@ -254,29 +238,30 @@ public class DataInsLotsCorrectiveAction {
 
     }
 
-    public static InternalMessage createNew(Integer bulkId, EnumIntEndpoints endpoint, String[] instrumentFieldNames, Object[] instrumentFieldValues){    
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+    public static InternalMessage createNew(Integer bulkId, EnumIntEndpoints endpoint, String[] instrumentFieldNames, Object[] instrumentFieldValues) {
+        String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
-        Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsInspLotRMProcedure.TablesInspLotRMProcedure.LOT_CORRECTIVE_ACTION.getTableName(), 
+        Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsInspLotRMProcedure.TablesInspLotRMProcedure.LOT_CORRECTIVE_ACTION.getTableName(),
                 new String[]{TblsInspLotRMProcedure.LotsCorrectiveAction.BULK_ID.getName()}, new Object[]{bulkId});
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString()))
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, ProgramCorrectiveActionErrorTrapping.RECORD_ALREADY_EXISTS, new Object[]{bulkId, procInstanceName});
-        
-        String statusFirst=LotsCorrectiveActionStatuses.getStatusFirstCode();
+        }
+
+        String statusFirst = LotsCorrectiveActionStatuses.getStatusFirstCode();
         //String[] sampleFldsToGet= new String[]{TblsInspLotRMProcedure.LotsCorrectiveAction.LOT_NAME.getName()};
-        String[] myFldName=new String[]{TblsInspLotRMProcedure.LotsCorrectiveAction.BULK_ID.getName()};    
-        Object[] myFldValue=new Object[]{bulkId};        
-        for (TblsInspLotRMProcedure.LotsCorrectiveAction obj: TblsInspLotRMProcedure.LotsCorrectiveAction.values()){
-            if (Boolean.FALSE.equals("TBL".equalsIgnoreCase(obj.name()))){
+        String[] myFldName = new String[]{TblsInspLotRMProcedure.LotsCorrectiveAction.BULK_ID.getName()};
+        Object[] myFldValue = new Object[]{bulkId};
+        for (TblsInspLotRMProcedure.LotsCorrectiveAction obj : TblsInspLotRMProcedure.LotsCorrectiveAction.values()) {
+            if (Boolean.FALSE.equals("TBL".equalsIgnoreCase(obj.name()))) {
                 Integer posicInArray = LPArray.valuePosicInArray(instrumentFieldNames, obj.getName());
-                if (posicInArray>-1){
-                  myFldName=LPArray.addValueToArray1D(myFldName, obj.getName());
-                  myFldValue=LPArray.addValueToArray1D(myFldValue, instrumentFieldValues[posicInArray]);            
+                if (posicInArray > -1) {
+                    myFldName = LPArray.addValueToArray1D(myFldName, obj.getName());
+                    myFldValue = LPArray.addValueToArray1D(myFldValue, instrumentFieldValues[posicInArray]);
                 }
-            } 
-        } 
-/*        
+            }
+        }
+        /*        
         String programName="";
         Integer posicInArray=LPArray.valuePosicInArray(instrumentFieldNames, TblsInspLotRMProcedure.LotsCorrectiveAction.INSTRUMENT.getName());
         if (posicInArray==-1){
@@ -291,7 +276,7 @@ public class DataInsLotsCorrectiveAction {
         }else{programName=instrumentFieldValues[posicInArray].toString();}
 
         myFldValue[0]=programName; */
-/*
+ /*
         Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInstrumentsData.TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(), 
                 new String[]{TblsInstrumentsData.InstrumentEvent.ID.getName()}, new Object[]{eventId}, sampleFldsToGet);
         for (int iFld=0;iFld<sampleFldsToGet.length;iFld++){
@@ -303,26 +288,32 @@ public class DataInsLotsCorrectiveAction {
           }else{myFldValue[posicInArray]=sampleInfo[0][iFld];}      
         }*/
         Integer posicInArray = LPArray.valuePosicInArray(myFldName, TblsInspLotRMProcedure.LotsCorrectiveAction.STATUS.getName());
-        if (posicInArray==-1){
-          myFldName=LPArray.addValueToArray1D(myFldName, TblsInspLotRMProcedure.LotsCorrectiveAction.STATUS.getName());
-          myFldValue=LPArray.addValueToArray1D(myFldValue, statusFirst);      
-        }else{myFldValue[posicInArray]=statusFirst;}
-        posicInArray=LPArray.valuePosicInArray(myFldName, TblsInspLotRMProcedure.LotsCorrectiveAction.CREATED_BY.getName());
-        if (posicInArray==-1){
-          myFldName=LPArray.addValueToArray1D(myFldName, TblsInspLotRMProcedure.LotsCorrectiveAction.CREATED_BY.getName());
-          myFldValue=LPArray.addValueToArray1D(myFldValue, token.getPersonName());      
-        }else{myFldValue[posicInArray]=token.getPersonName();}
-        posicInArray=LPArray.valuePosicInArray(myFldName, TblsInspLotRMProcedure.LotsCorrectiveAction.CREATED_ON.getName());
-        if (posicInArray==-1){
-          myFldName=LPArray.addValueToArray1D(myFldName, TblsInspLotRMProcedure.LotsCorrectiveAction.CREATED_ON.getName());
-          myFldValue=LPArray.addValueToArray1D(myFldValue, LPDate.getCurrentTimeStamp());      
-        }else{myFldValue[posicInArray]=LPDate.getCurrentTimeStamp();}
+        if (posicInArray == -1) {
+            myFldName = LPArray.addValueToArray1D(myFldName, TblsInspLotRMProcedure.LotsCorrectiveAction.STATUS.getName());
+            myFldValue = LPArray.addValueToArray1D(myFldValue, statusFirst);
+        } else {
+            myFldValue[posicInArray] = statusFirst;
+        }
+        posicInArray = LPArray.valuePosicInArray(myFldName, TblsInspLotRMProcedure.LotsCorrectiveAction.CREATED_BY.getName());
+        if (posicInArray == -1) {
+            myFldName = LPArray.addValueToArray1D(myFldName, TblsInspLotRMProcedure.LotsCorrectiveAction.CREATED_BY.getName());
+            myFldValue = LPArray.addValueToArray1D(myFldValue, token.getPersonName());
+        } else {
+            myFldValue[posicInArray] = token.getPersonName();
+        }
+        posicInArray = LPArray.valuePosicInArray(myFldName, TblsInspLotRMProcedure.LotsCorrectiveAction.CREATED_ON.getName());
+        if (posicInArray == -1) {
+            myFldName = LPArray.addValueToArray1D(myFldName, TblsInspLotRMProcedure.LotsCorrectiveAction.CREATED_ON.getName());
+            myFldValue = LPArray.addValueToArray1D(myFldValue, LPDate.getCurrentTimeStamp());
+        } else {
+            myFldValue[posicInArray] = LPDate.getCurrentTimeStamp();
+        }
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInspLotRMProcedure.TablesInspLotRMProcedure.LOT_CORRECTIVE_ACTION, myFldName, myFldValue);
-        return new InternalMessage(LPPlatform.LAB_TRUE, 
-            endpoint, new Object[]{bulkId}, insertRecordInTable.getNewRowId());
+        return new InternalMessage(LPPlatform.LAB_TRUE,
+                endpoint, new Object[]{bulkId}, insertRecordInTable.getNewRowId());
 
-      }
-    
+    }
+
     /**
      *
      * @param correctiveActionId
