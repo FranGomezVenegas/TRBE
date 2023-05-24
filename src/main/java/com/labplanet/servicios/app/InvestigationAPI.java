@@ -48,8 +48,8 @@ public class InvestigationAPI extends HttpServlet {
 
     public enum InvestigationAPIactionsEndpoints implements EnumIntEndpoints {
         NEW_INVESTIGATION("NEW_INVESTIGATION", "investigationCreated_success",
-                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6),
-                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 7),
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 7),
                     new LPAPIArguments(ParamsList.OBJECT_TO_ADD_TYPE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
                 new LPAPIArguments(ParamsList.OBJECT_TO_ADD_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
                 new LPAPIArguments(ParamsList.OBJECTS_TO_ADD.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 10)},
