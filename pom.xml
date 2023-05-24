@@ -24,6 +24,13 @@
     <scope>provided</scope>
 </dependency>
 
+<!-- https://mvnrepository.com/artifact/com.itextpdf/itextpdf -->
+<dependency>
+    <groupId>com.itextpdf</groupId>
+    <artifactId>html2pdf</artifactId>
+    <version>3.0.5</version>
+</dependency>
+
 <dependency>
     <groupId>com.github.opendevl</groupId>
     <artifactId>json2flat</artifactId>
@@ -98,7 +105,7 @@
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20160810</version>
+            <version>20230227</version>
             <type>jar</type>
         </dependency>
         <dependency>
