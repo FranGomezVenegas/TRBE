@@ -51,9 +51,9 @@ public class ClassSampleQueriesController implements EnumIntQueriesEndpoints{
             this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject();   
             
             if (Boolean.TRUE.equals(clss.getIsSuccess())){
-                if (clss.getResponseSuccessJArr()!=null&&Boolean.FALSE.equals(clss.getResponseSuccessJArr().isEmpty()))
+                if (clss.getResponseSuccessJArr()!=null)//&&Boolean.FALSE.equals(clss.getResponseSuccessJArr().isEmpty()))
                     LPFrontEnd.servletReturnSuccess(request, response, clss.getResponseSuccessJArr());
-                if (clss.getResponseSuccessJObj()!=null&&Boolean.FALSE.equals(clss.getResponseSuccessJObj().isEmpty()))
+                if (clss.getResponseSuccessJObj()!=null)//&&Boolean.FALSE.equals(clss.getResponseSuccessJObj().isEmpty()))
                     LPFrontEnd.servletReturnSuccess(request, response, clss.getResponseSuccessJObj());
             
                 this.functionDiagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "queriesHaveNoMsgCode", null);

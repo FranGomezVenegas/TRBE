@@ -180,7 +180,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                 }
                 return;
             case SAMPLES_VIEW:
-                String[] fieldToRetrieveArr;
+                EnumIntTableFields[] fieldToRetrieveArr;
                 String whereFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME);
                 if (whereFieldsName == null) {
                     whereFieldsName = "";
@@ -189,9 +189,9 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
 
                 String sampleFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE);
                 if (sampleFieldToRetrieve == null || sampleFieldToRetrieve.length() == 0 || "ALL".equalsIgnoreCase(sampleFieldToRetrieve)) {
-                    fieldToRetrieveArr = getAllFieldNames(TblsData.TablesData.SAMPLE.getTableFields());
+                    fieldToRetrieveArr = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsData.TablesData.SAMPLE);
                 } else {
-                    fieldToRetrieveArr = sampleFieldToRetrieve.split("\\|");
+                    fieldToRetrieveArr = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, sampleFieldToRetrieve.split("\\|"));
                 }
 
                 String sampleAnalysisResultFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_TEST_FIELD_TO_RETRIEVE);
@@ -253,11 +253,11 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
 
                 String fieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE);
                 if (fieldToRetrieve == null || fieldToRetrieve.length() == 0 || "ALL".equalsIgnoreCase(fieldToRetrieve)) {
-                    fieldToRetrieveArr = getAllFieldNames(TblsData.TablesData.SAMPLE_ANALYSIS.getTableFields());
+                    fieldToRetrieveArr = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsData.TablesData.SAMPLE_ANALYSIS);
                 } else {
-                    fieldToRetrieveArr = fieldToRetrieve.split("\\|");
+                    fieldToRetrieveArr = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS, fieldToRetrieve.split("\\|"));
                 }
-
+                
                 sampleAnalysisResultFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_TEST_FIELD_TO_RETRIEVE);
                 addSampleAnalysisResult = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT);
                 if (addSampleAnalysisResult == null) {
@@ -279,7 +279,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                 includeOnlyWhenResultsInProgress = Boolean.valueOf(LPNulls.replaceNull(argValues[14]).toString());
 
                 sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME);
-                JSONArray samplesAnalysisArray = sampleAnalysisView(fieldToRetrieveArr, whereFieldsName,
+                JSONArray samplesAnalysisArray = sampleAnalysisView(EnumIntTableFields.getAllFieldNames(fieldToRetrieveArr), whereFieldsName,
                         whereFieldsValue, sortFieldsName,
                         addSampleAnalysisResult, sampleAnalysisResultFieldToRetrieveArr, sampleAnalysisResultWhereFieldsName, sampleAnalysisResultWhereFieldsValue,
                         includeOnlyWhenResultsInProgress);
@@ -345,13 +345,14 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
 
                 fieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE);
                 if (fieldToRetrieve == null || fieldToRetrieve.length() == 0 || "ALL".equalsIgnoreCase(fieldToRetrieve)) {
-                    fieldToRetrieveArr = getAllFieldNames(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableFields());
+                    fieldToRetrieveArr = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT);
                 } else {
-                    fieldToRetrieveArr = fieldToRetrieve.split("\\|");
+                    fieldToRetrieveArr = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, fieldToRetrieve.split("\\|"));
                 }
+                
 
                 sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME);
-                JSONArray samplesAnalysisResultArray = sampleAnalysisResultView(fieldToRetrieveArr, whereFieldsName,
+                JSONArray samplesAnalysisResultArray = sampleAnalysisResultView(EnumIntTableFields.getAllFieldNames(fieldToRetrieveArr), whereFieldsName,
                         whereFieldsValue, sortFieldsName);
                 this.isSuccess = true;
                 this.responseSuccessJArr = samplesAnalysisResultArray;
@@ -362,14 +363,13 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                     whereFieldsName = "";
                 }
                 whereFieldsValue = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE);
-                String[] sampleFieldToRetrieveArr = new String[]{};
+                EnumIntTableFields[] sampleFieldToRetrieveArr = null;
                 sampleFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE);
                 if (sampleFieldToRetrieve == null || sampleFieldToRetrieve.length() == 0 || "ALL".equalsIgnoreCase(sampleFieldToRetrieve)) {
-                    sampleFieldToRetrieveArr = getAllFieldNames(EnumIntTableFields.getAllFieldNamesFromDatabase(TblsData.TablesData.SAMPLE));
+                    sampleFieldToRetrieveArr = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsData.TablesData.SAMPLE);
                 } else {
-                    sampleFieldToRetrieveArr = sampleFieldToRetrieve.split("\\|");
-                }
-
+                    sampleFieldToRetrieveArr = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, sampleFieldToRetrieve.split("\\|"));
+                }                    
                 sampleAnalysisResultFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_TEST_FIELD_TO_RETRIEVE);
                 sampleLastLevel = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_LAST_LEVEL);
 
@@ -426,20 +426,21 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
             case SAMPLES_PENDING_TESTINGGROUP_REVISION:
                 String testingGroup = argValues[0].toString();
                 fieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE);
+                String[] fieldToRetrieveViewArr = null;
                 if (fieldToRetrieve == null || fieldToRetrieve.length() == 0 || "ALL".equalsIgnoreCase(fieldToRetrieve)) {
                     EnumIntViewFields[] viewFieldsFromString = EnumIntViewFields.getAllFieldNamesFromDatabase(TblsData.ViewsData.SAMPLE_TESTING_GROUP_VIEW, null);
-                    fieldToRetrieveArr = EnumIntViewFields.getAllFieldNames(viewFieldsFromString);
+                    fieldToRetrieveViewArr = EnumIntViewFields.getAllFieldNames(viewFieldsFromString);
                 } else {
-                    fieldToRetrieveArr = fieldToRetrieve.split("\\|");
+                    fieldToRetrieveViewArr = fieldToRetrieve.split("\\|");                    
                 }
-
                 String myData = Rdbms.getRecordFieldsByFilterJSON(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsData.ViewsData.SAMPLE_TESTING_GROUP_VIEW.getViewName(),
                         new String[]{TblsData.ViewSampleTestingGroup.READY_FOR_REVISION.getName(), TblsData.ViewSampleTestingGroup.REVIEWED.getName(), TblsData.ViewSampleTestingGroup.TESTING_GROUP.getName()},
                         new Object[]{true, false, testingGroup},
-                        fieldToRetrieveArr,
+                        fieldToRetrieveViewArr,
                         new String[]{TblsData.ViewSampleTestingGroup.SAMPLE_ID.getName(), TblsData.ViewSampleTestingGroup.TESTING_GROUP.getName()});
                 if (myData == null || myData.contains(LPPlatform.LAB_FALSE)) {
                     this.isSuccess = false;
+                    this.responseSuccessJArr = new JSONArray();
                 } else {
                     this.isSuccess = true;
                     this.responseSuccessJArr = LPJson.convertArrayJsonToJSON(LPJson.convertToJsonArrayStringedObject(myData));
@@ -447,25 +448,22 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                 return;
 
             case SAMPLES_PENDING_SAMPLE_REVISION:
+                sampleFieldToRetrieveArr = null;
                 sampleFieldToRetrieve = argValues[0].toString();
-                sampleFieldToRetrieveArr = new String[]{TblsData.Sample.SAMPLE_ID.getName()};
-
-                if ((sampleFieldToRetrieve == null) || (sampleFieldToRetrieve.length() == 0) || ("ALL".equalsIgnoreCase(sampleFieldToRetrieve))) {
-
-                    EnumIntTableFields[] tableFieldsFromString = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, "ALL");
-                    sampleFieldToRetrieveArr = EnumIntTableFields.getAllFieldNames(tableFieldsFromString);
-
+                if (sampleFieldToRetrieve == null || sampleFieldToRetrieve.length() == 0 || "ALL".equalsIgnoreCase(sampleFieldToRetrieve)) {
+                    sampleFieldToRetrieveArr = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsData.TablesData.SAMPLE);
                 } else {
-                    sampleFieldToRetrieveArr = LPArray.addValueToArray1D(sampleFieldToRetrieveArr, sampleFieldToRetrieve.split("\\|"));
-                }
+                    sampleFieldToRetrieveArr = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, sampleFieldToRetrieve.split("\\|"));
+                }                    
 
                 myData = Rdbms.getRecordFieldsByFilterJSON(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(),
                         new String[]{TblsData.Sample.READY_FOR_REVISION.getName(), "(" + TblsData.Sample.REVIEWED.getName(), SqlStatement.WHERECLAUSE_TYPES.OR.getSqlClause() + " " + TblsData.Sample.REVIEWED.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause() + ")"},
                         new Object[]{true, false, null},
-                        sampleFieldToRetrieveArr,
+                        EnumIntTableFields.getAllFieldNames(sampleFieldToRetrieveArr),
                         new String[]{TblsData.Sample.SAMPLE_ID.getName()});
                 if (myData == null || myData.contains(LPPlatform.LAB_FALSE)) {
-                    this.isSuccess = false;
+                    this.isSuccess = true;
+                    this.responseSuccessJArr = new JSONArray();
                 } else {
                     this.isSuccess = true;
                     this.responseSuccessJArr = LPJson.convertArrayJsonToJSON(LPJson.convertToJsonArrayStringedObject(myData));
@@ -481,7 +479,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
         rObj.killInstance();
     }
 
-    private static JSONArray samplesByStageData(String sampleLastLevel, String[] sampleFieldToRetrieveArr, String whereFieldsName, String whereFieldsValue, String sortFieldsName,
+    private static JSONArray samplesByStageData(String sampleLastLevel, EnumIntTableFields[] sampleFieldToRetrieveArr, String whereFieldsName, String whereFieldsValue, String sortFieldsName,
             String addSampleAnalysis, String[] sampleAnalysisFieldToRetrieveArr, String sampleAnalysisWhereFieldsName, String sampleAnalysisWhereFieldsValue,
             String addSampleAnalysisResult, String[] sampleAnalysisResultFieldToRetrieveArr, String sampleAnalysisResultWhereFieldsName, String sampleAnalysisResultWhereFieldsValue, Boolean includeOnlyWhenResultsInProgress) {
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(null, null, false);
@@ -491,8 +489,8 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
         if (sampleLastLevel == null) {
             sampleLastLevel = TblsData.TablesData.SAMPLE.getTableName();
         }
-        if (sampleFieldToRetrieveArr == null || sampleFieldToRetrieveArr[0].length() == 0) {
-            sampleFieldToRetrieveArr = new String[]{TblsData.Sample.SAMPLE_ID.getName()};
+        if (sampleFieldToRetrieveArr == null || sampleFieldToRetrieveArr.length==0) {
+            sampleFieldToRetrieveArr = new EnumIntTableFields[]{TblsData.Sample.SAMPLE_ID};
         }
 
         if (sampleAnalysisFieldToRetrieveArr == null || sampleAnalysisFieldToRetrieveArr[0].length() == 0) {
@@ -544,10 +542,10 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
         }
         if (TblsData.TablesData.SAMPLE.getTableName().equals(sampleLastLevel)) {
 
-            EnumIntTableFields[] tableFieldsFromString = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, sampleFieldToRetrieveArr);
-            sampleFieldToRetrieveArr = getAllFieldNames(tableFieldsFromString);
+            //EnumIntTableFields[] tableFieldsFromString = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, sampleFieldToRetrieveArr);
+            //sampleFieldToRetrieveArr = getAllFieldNames(tableFieldsFromString);
             Object[][] mySamples = QueryUtilitiesEnums.getTableData(TblsData.TablesData.SAMPLE,
-                    tableFieldsFromString,
+                    sampleFieldToRetrieveArr,
                     whereFieldsNameArr, whereFieldsValueArr, sortFieldsNameArr, null, false);
             if (mySamples == null) {
                 return new JSONArray();
@@ -557,8 +555,8 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
             } else {
                 JSONArray mySamplesJSArr = new JSONArray();
                 for (Object[] mySample : mySamples) {
-                    JSONObject mySampleJSObj = LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, mySample);
-                    if (Boolean.TRUE.equals(includeOnlyWhenResultsInProgress) && Boolean.FALSE.equals(isThereResultsInProgress(sampleFieldToRetrieveArr, mySample))) {
+                    JSONObject mySampleJSObj = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(sampleFieldToRetrieveArr), mySample);
+                    if (Boolean.TRUE.equals(includeOnlyWhenResultsInProgress) && Boolean.FALSE.equals(isThereResultsInProgress(EnumIntTableFields.getAllFieldNames(sampleFieldToRetrieveArr), mySample))) {
                         continue;
                     }
 
@@ -622,13 +620,13 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
             JSONArray samplesArray = new JSONArray();
             JSONArray sampleArray = new JSONArray();
             Object[][] mySamples = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(),
-                    whereFieldsNameArr, whereFieldsValueArr, sampleFieldToRetrieveArr);
+                    whereFieldsNameArr, whereFieldsValueArr, EnumIntTableFields.getAllFieldNames(sampleFieldToRetrieveArr));
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(mySamples[0][0].toString())) {
                 return new JSONArray();
             }
             for (Object[] currSample : mySamples) {
                 Integer sampleId = Integer.valueOf(currSample[0].toString());
-                JSONObject sampleObj = LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, currSample);
+                JSONObject sampleObj = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(sampleFieldToRetrieveArr), currSample);
                 if (("TEST".equals(sampleLastLevel)) || ("RESULT".equals(sampleLastLevel))) {
                     String[] testWhereFieldsNameArr = new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName()};
                     Object[] testWhereFieldsValueArr = new Object[]{sampleId};
