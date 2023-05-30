@@ -12,7 +12,6 @@ package functionaljavaa.investigation;
  */
 import com.labplanet.servicios.app.InvestigationAPI;
 import com.labplanet.servicios.app.InvestigationAPI.InvestigationAPIactionsEndpoints;
-import databases.RdbmsObject;
 import databases.TblsProcedure;
 import trazit.session.ResponseMessages;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
@@ -77,6 +76,7 @@ public class ClassInvestigation {
             ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
             ResponseMessages messages = procReqSession.getMessages();
             Object[] actionDiagnoses = null;
+            this.diagnosticObj = null;
             Object[] dynamicDataObjects = new Object[]{};
             this.functionFound = true;
             Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
@@ -88,7 +88,12 @@ public class ClassInvestigation {
             Integer investigationId = null;
             switch (endPoint) {
                 case NEW_INVESTIGATION:
-                    Object[] fieldValues = LPArray.convertStringWithDataTypeToObjectArray(argValues[1].toString().split(("\\|")));
+                    String[] fieldNames = null;
+                    if (argValues[0]!=null && argValues[0].toString().length()>0)
+                        fieldNames=argValues[0].toString().split(("\\|"));
+                    Object[] fieldValues = null;
+                    if (argValues[1]!=null && argValues[1].toString().length()>0)
+                        fieldValues=LPArray.convertStringWithDataTypeToObjectArray(argValues[1].toString().split(("\\|")));
                     if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                         actionDiagnoses = fieldValues;
                         break;
@@ -101,16 +106,17 @@ public class ClassInvestigation {
                             objectsToAdd = argValues[2].toString() + "*" + argValues[3].toString();
                         }
                     }
-                    actionDiagnoses = Investigation.newInvestigation(argValues[0].toString().split(("\\|")), fieldValues, objectsToAdd);
+                    this.diagnosticObj = Investigation.newInvestigation(fieldNames, fieldValues, objectsToAdd);
                     String investigationIdStr = "";
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())) {
-                        RdbmsObject rdbmsDiagn = (RdbmsObject) actionDiagnoses[actionDiagnoses.length - 1];
-                        investigationIdStr = rdbmsDiagn.getNewRowId().toString();
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())) {
+                        investigationIdStr = this.diagnosticObj.getNewObjectId().toString();
                         if (investigationIdStr != null && investigationIdStr.length() > 0) {
                             investigationId = Integer.valueOf(investigationIdStr);
                         }
                         messages.addMainForSuccess(endPoint, new Object[]{investigationId, objectsToAdd});
                         dynamicDataObjects = new Object[]{investigationId, objectsToAdd};
+                    }else{
+                        this.messageDynamicData=this.diagnosticObj.getMessageCodeVariables();
                     }
                     break;
                 case ADD_INVEST_OBJECTS:
@@ -122,12 +128,12 @@ public class ClassInvestigation {
                             objectsToAdd = argValues[1].toString() + "*" + argValues[2].toString();
                         }
                     }
-                    actionDiagnoses = Investigation.addInvestObjects(Integer.valueOf(argValues[0].toString()), objectsToAdd, null);
+                    this.diagnosticObj = Investigation.addInvestObjects(Integer.valueOf(argValues[0].toString()), objectsToAdd, null);
                     investigationIdStr = argValues[0].toString();
                     if (investigationIdStr != null && investigationIdStr.length() > 0) {
                         investigationId = Integer.valueOf(investigationIdStr);
                     }
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())) {
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())) {
                         messages.addMainForSuccess(endPoint, new Object[]{investigationId, objectsToAdd});
                         dynamicDataObjects = new Object[]{investigationId, objectsToAdd};
                     }
