@@ -29,6 +29,7 @@ public class LPDatabase {
     public static final String date(){ return "date";}
     public static final String dateTime(){ return "timestamp(4) without time zone";}
     public static final String dateTimeWithDefaultNow(){ return "timestamp default now()";}
+    public static final String embeddedFile(){ return "bytea";}
     
     private static final String notNulllClause(){return " not null";}
     

@@ -33,7 +33,7 @@ import trazit.session.InternalMessage;
 public class DataStudyObjectsVariableValues {
 
     public enum VariableTypes {
-        LIST, INTEGER, REAL, TEXT
+        LIST, INTEGER, REAL, TEXT, FILE
     }
 
     private static Object[][] objectFieldExtraFields(String studyName, String variableSetName, String ownerTable, String ownerId) {
