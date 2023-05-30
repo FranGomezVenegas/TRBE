@@ -36,6 +36,7 @@ import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
 import trazit.globalvariables.GlobalVariables.ApiUrls;
+import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -189,7 +190,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
         Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
         Object[] messageDynamicData = new Object[]{};
         RelatedObjects rObj = RelatedObjects.getInstanceForActions();
-        Object[] diagnostic = new Object[0];
+        InternalMessage diagnostic = null;
         try (PrintWriter out = response.getWriter()) {
             switch (endPoint) {
                 case SPEC_NEW:
@@ -207,14 +208,15 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                         specFieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|"));
                     }
                     if (specFieldValueArr != null && specFieldValueArr.length > 0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(specFieldValueArr[0].toString())) {
-                        diagnostic = specFieldValueArr;
+                        Object[] diagn = specFieldValueArr;
+                        diagnostic=new InternalMessage(diagn[0].toString(), diagn[diagn.length-1].toString(), null, null);
                     } else {
                         diagnostic = spcStr.specNew(specCode, specCodeVersion, specFieldNameArr, specFieldValueArr, null, null);
-                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic.getDiagnostic())) {
                             messageDynamicData = new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                         } else {
                             messageDynamicData = new Object[]{specFieldName};
-                            rObj.addSimpleNode(GlobalVariables.Schemas.CONFIG.getName(), TblsCnfg.TablesConfig.SPEC.getTableName(), diagnostic[diagnostic.length - 2]);
+                            rObj.addSimpleNode(GlobalVariables.Schemas.CONFIG.getName(), TblsCnfg.TablesConfig.SPEC.getTableName(), diagnostic.getNewObjectId());
                         }
                     }
                     break;
@@ -229,15 +231,16 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     }
                     specFieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|"));
                     if (specFieldValueArr != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(specFieldValueArr[0].toString())) {
-                        diagnostic = specFieldValueArr;
+                        Object[] diagn = specFieldValueArr;
+                        diagnostic=new InternalMessage(diagn[0].toString(), diagn[diagn.length-1].toString(), null, null);
                     } else {
                         diagnostic = spcStr.specUpdate(specCode, specCodeVersion, specFieldName.split("\\|"), specFieldValueArr);
                     }
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic.getDiagnostic())) {
                         messageDynamicData = new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                     } else {
                         messageDynamicData = new Object[]{specFieldName};
-                        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsCnfg.TablesConfig.SPEC.getTableName(), diagnostic[diagnostic.length - 2]);
+                        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsCnfg.TablesConfig.SPEC.getTableName(), diagnostic.getNewObjectId());
                     }
                     break;
                 case ANALYSIS_NEW:
@@ -255,15 +258,16 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                         specFieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|"));
                     }
                     if (specFieldValueArr != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(specFieldValueArr[0].toString())) {
-                        diagnostic = specFieldValueArr;
+                        Object[] diagn = specFieldValueArr;
+                        diagnostic=new InternalMessage(diagn[0].toString(), diagn[diagn.length-1].toString(), null, null);
                     } else {
                         diagnostic = anaStr.analysisNew(specCode, specCodeVersion, specFieldNameArr, specFieldValueArr);
                     }
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic.getDiagnostic())) {
                         messageDynamicData = new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                     } else {
                         messageDynamicData = new Object[]{specFieldName};
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ANALYSIS.getTableName(), diagnostic[diagnostic.length - 2]);
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ANALYSIS.getTableName(), diagnostic.getNewObjectId());
                     }
                     break;
                 case ANALYSIS_UPDATE:
@@ -274,15 +278,16 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     specFieldValue = argValues[3].toString();
                     specFieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|"));
                     if (specFieldValueArr != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(specFieldValueArr[0].toString())) {
-                        diagnostic = specFieldValueArr;
+                        Object[] diagn = specFieldValueArr;
+                        diagnostic=new InternalMessage(diagn[0].toString(), diagn[diagn.length-1].toString(), null, null);
                     } else {
                         diagnostic = anaStr.analysisUpdate(specCode, specCodeVersion, specFieldName.split("\\|"), specFieldValueArr);
                     }
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic.getDiagnostic())) {
                         messageDynamicData = new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                     } else {
                         messageDynamicData = new Object[]{specFieldName};
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ANALYSIS.getTableName(), diagnostic[diagnostic.length - 2]);
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ANALYSIS.getTableName(), diagnostic.getNewObjectId());
                     }
                     break;
                 case SPEC_LIMIT_NEW:
@@ -336,23 +341,24 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                         specFieldValueArr = LPArray.addValueToArray1D(specFieldValueArr, ruleVariables);
                     }
                     if (specFieldValueArr != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(specFieldValueArr[0].toString())) {
-                        diagnostic = specFieldValueArr;
+                        Object[] diagn = specFieldValueArr;
+                        diagnostic=new InternalMessage(diagn[0].toString(), diagn[diagn.length-1].toString(), null, null);
                     } else {
                         diagnostic = spcStr.specLimitNew(specCode, specCodeVersion, specFieldNameArr, specFieldValueArr);
                     }
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic.getDiagnostic())) {
                         messageDynamicData = new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                     } else {
                         messageDynamicData = new Object[]{specFieldName};
-                        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsCnfg.TablesConfig.SPEC.getTableName(), diagnostic[diagnostic.length - 2]);
+                        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsCnfg.TablesConfig.SPEC.getTableName(), diagnostic.getNewObjectId());
                     }
                     break;
                 default:
                     LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
                     return;
             }
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[diagnostic.length - 1].toString(), messageDynamicData);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic.getDiagnostic())) {
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic.getMessageCodeObj(), messageDynamicData);
             } else {
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, messageDynamicData, rObj.getRelatedObject());
                 rObj.killInstance();
