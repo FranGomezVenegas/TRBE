@@ -1314,7 +1314,10 @@ public class ProcedureDefinitionToInstance {
                     try {
                         ClassMasterData clssMD = new ClassMasterData(instanceName, curRow[0].toString(), curRow[1].toString(), moduleName);
                         JSONObject jsonRowObj = new JSONObject();
-                        jsonRowObj.put(curRow[0], clssMD.getDiagnostic()[clssMD.getDiagnostic().length - 1]);
+                        jsonRowObj.put(curRow[0], clssMD.getjMainLogArr());
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(clssMD.getDiagnostic().getDiagnostic())){
+                            jsonRowObj.put("error_detail", clssMD.getDiagnostic().getMessageCodeObj().getErrorCode());
+                        }                            
                         jsonRowArr.add(jsonRowObj);
                     } catch (Exception e) {
                         JSONObject jsonRowObj = new JSONObject();

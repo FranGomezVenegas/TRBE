@@ -11,6 +11,7 @@ import com.google.gson.JsonObject;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import databases.Rdbms;
+import databases.Rdbms.RdbmsErrorTrapping;
 import databases.RdbmsObject;
 import module.instrumentsmanagement.definition.TblsInstrumentsConfig;
 import databases.TblsCnfg;
@@ -26,7 +27,6 @@ import functionaljavaa.responserelatedobjects.RelatedObjects.RelatedObjectsEleme
 import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement;
 import static functionaljavaa.unitsofmeasurement.UnitsOfMeasurement.getUomFromConfig;
 import functionaljavaa.user.UserProfile;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lbplanet.utilities.LPArray;
@@ -40,7 +40,7 @@ import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.globalvariables.GlobalVariables;
-import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 
 /**
  *
@@ -49,8 +49,9 @@ import trazit.session.ApiMessageReturn;
 public class ClassMasterData {
 
     private Boolean objectTypeExists = true;
-    private Object[] diagnostic = new Object[0];
+    private InternalMessage diagnostic = null;
     private String globalDiagn = LPPlatform.LAB_TRUE;
+    private JSONObject jMainLogArr;
 
     public enum MasterDataObjectTypes {
         MD_METHODS(new EnumIntTables[]{TblsCnfg.TablesConfig.METHODS}),
@@ -89,7 +90,8 @@ public class ClassMasterData {
         String start = "START";
         Object[] objToJsonObj = convertToJsonObjectStringedObject(jsonObj, true);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objToJsonObj[0].toString())) {
-            this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, objToJsonObj[1].toString() + ".Object: <*1*>", new Object[]{jsonObj});
+            this.diagnostic = new InternalMessage(LPPlatform.LAB_FALSE, objToJsonObj[1].toString() + ".Object: <*1*>", new Object[]{jsonObj}, null);
+            calculateDiagnostic(new JSONArray());
             return;
         }
         JsonObject jsonObject = (JsonObject) objToJsonObj[1];
@@ -100,17 +102,17 @@ public class ClassMasterData {
             for (JsonElement jO : asJsonArray) {
                 JSONObject jLog = new JSONObject();
                 if (Boolean.FALSE.equals(jsonObject.has(RelatedObjectsElementNames.OBJECT_TYPE.toString().toLowerCase()))) {
-                    this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE,
-                            "object_type property not found in this json model which is required for 'simple_table' parsing_type", null);
+                    this.diagnostic = new InternalMessage(LPPlatform.LAB_FALSE,
+                            "object_type property not found in this json model which is required for 'simple_table' parsing_type", null, null);
                 }
                 String tableName = jsonObject.get(RelatedObjectsElementNames.OBJECT_TYPE.toString().toLowerCase()).getAsString();
                 ModuleTableOrViewGet tblDiagn = new ModuleTableOrViewGet(Boolean.FALSE, moduleName, GlobalVariables.Schemas.CONFIG.getName(), tableName);
                 if (Boolean.FALSE.equals(tblDiagn.getFound())) {
-                    this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, tblDiagn.getErrorMsg(), null);
+                    this.diagnostic = new InternalMessage(LPPlatform.LAB_FALSE, tblDiagn.getErrorMsg(), null, null);
                 } else {
                     Object[] fldsInfo = getFldsNamesAndValues(tblDiagn.getTableObj(), jO);
                     if (fldsInfo.length == 3) {
-                        this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null);
+                        this.diagnostic = new InternalMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null, null);
                     } else {
                         String[] fldsName = (String[]) fldsInfo[0];
                         Object[] fldsValue = (Object[]) fldsInfo[1];
@@ -120,10 +122,20 @@ public class ClassMasterData {
                             fldsValue = LPArray.addValueToArray1D(fldsValue, new Object[]{userCreator, LPDate.getCurrentTimeStamp()});
                         }
                         RdbmsObject insertRecord = Rdbms.insertRecord(tblDiagn.getTableObj(), fldsName, fldsValue, instanceName);
-                        this.diagnostic = insertRecord.getApiMessage();
+                        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(globalDiagn) && Boolean.FALSE.equals(insertRecord.getRunSuccess())) {
+                            this.diagnostic = new InternalMessage(LPPlatform.LAB_FALSE, insertRecord.getErrorMessageCode(), insertRecord.getErrorMessageVariables(), insertRecord.getNewRowId());
+                            globalDiagn = this.diagnostic.getDiagnostic();
+                            jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, this.diagnostic.getDiagnostic());
+                            jLogArr.add(jLog);
+                            calculateDiagnostic(jLogArr);
+                            return;
+                        }
                     }
                 }
-                jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, Arrays.toString(this.diagnostic));
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(globalDiagn)) {
+                    this.diagnostic = new InternalMessage(globalDiagn, "created with success", new Object[]{tableName}, null);
+                }
+                jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, this.diagnostic.getDiagnostic());
                 jLogArr.add(jLog);
             }
             calculateDiagnostic(jLogArr);
@@ -134,21 +146,27 @@ public class ClassMasterData {
                 endPoint = MasterDataObjectTypes.valueOf(objectType.toUpperCase());
             } catch (Exception ex) {
                 Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-                this.diagnostic = new Object[]{LPPlatform.LAB_FALSE, ex.getMessage()};
+                this.diagnostic = new InternalMessage(LPPlatform.LAB_FALSE, ex.getMessage(), null, null);
+                this.globalDiagn = LPPlatform.LAB_FALSE;
                 this.objectTypeExists = false;
+                calculateDiagnostic(new JSONArray());
                 return;
             }
 
             String jsonObjType = jsonObject.get(RelatedObjectsElementNames.OBJECT_TYPE.toString().toLowerCase()).getAsString();
             if (Boolean.FALSE.equals(objectType.toUpperCase().contains(jsonObjType.toUpperCase()))) {
-                this.diagnostic = new Object[]{LPPlatform.LAB_FALSE, "objectType in record and objectType in the JsonObject mismatch"};
+                this.diagnostic = new InternalMessage(LPPlatform.LAB_FALSE, "objectType in record and objectType in the JsonObject mismatch", null, null);
+                this.globalDiagn = LPPlatform.LAB_FALSE;
+                calculateDiagnostic(new JSONArray());
                 return;
             }
             if (endPoint.getInvolvedTables() != null && endPoint.getInvolvedTables().length > 0) {
                 for (EnumIntTables curTbl : endPoint.getInvolvedTables()) {
                     Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(instanceName, curTbl.getRepositoryName()), curTbl.getTableName());
                     if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString()))) {
-                        this.diagnostic = dbTableExists;
+                        this.diagnostic = new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_TABLE_NOT_FOUND, new Object[]{curTbl.getTableName()}, null);
+                        this.globalDiagn = LPPlatform.LAB_FALSE;
+                        calculateDiagnostic(new JSONArray());
                         return;
                     }
                 }
@@ -179,6 +197,8 @@ public class ClassMasterData {
                                 if ("ALL".equalsIgnoreCase(userNameStr)) {
                                     Object[] procedureUsers = UserProfile.getProcedureUsers(instanceName, null);
                                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureUsers[0].toString()))) {
+                                        this.globalDiagn = LPPlatform.LAB_FALSE;
+
                                         usersArr = LPArray.convertObjectArrayToStringArray(procedureUsers);
                                     }
                                 } else {
@@ -210,7 +230,7 @@ public class ClassMasterData {
                     for (JsonElement jO : asJsonArray) {
                         String methodName = jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.METHOD_NAME.getName()).getAsString();
                         String[] fldNames = new String[]{TblsCnfg.Methods.CODE.getName(), TblsCnfg.Methods.CONFIG_VERSION.getName(),
-                             TblsCnfg.Methods.CREATED_ON.getName(), TblsCnfg.Methods.CREATED_BY.getName()};
+                            TblsCnfg.Methods.CREATED_ON.getName(), TblsCnfg.Methods.CREATED_BY.getName()};
                         Object[] fldValues = new Object[]{methodName, 1, LPDate.getCurrentTimeStamp(), userCreator};
 
                         Object[] existMethod = Rdbms.existsRecord(TblsCnfg.TablesConfig.METHODS, fldNames, fldValues, instanceName);
@@ -248,7 +268,7 @@ public class ClassMasterData {
                             }
                         }
                     }
-                    this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted " + asJsonArray.size() + " new analysis params", null);
+                    this.diagnostic = new InternalMessage(LPPlatform.LAB_TRUE, "Inserted " + asJsonArray.size() + " new analysis params", null, null);
                     break;
                 case MD_SPECS:
                     asJsonArray = jsonObject.get(GlobalAPIsParams.LBL_VALUES).getAsJsonArray();
@@ -266,7 +286,7 @@ public class ClassMasterData {
                                 specFieldName, specFldValues, specRulesFieldName, specRulesFldValues);
 
                     }
-                    this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted " + asJsonArray.size() + " new specs", null);
+                    this.diagnostic = new InternalMessage(LPPlatform.LAB_TRUE, "Inserted " + asJsonArray.size() + " new specs", null, null);
                     break;
                 case MD_SPEC_LIMITS:
                     globalDiagn = LPPlatform.LAB_TRUE;
@@ -284,13 +304,16 @@ public class ClassMasterData {
                             jO.getAsJsonObject().get(TblsCnfg.SpecLimits.VARIATION_NAME.getName()).getAsString(), //jO.getAsJsonObject().get(TblsCnfg.SpecLimits.TESTING_GROUP.getName()).getAsString(), 
                             jO.getAsJsonObject().get(TblsCnfg.SpecLimits.ANALYSIS.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.SpecLimits.METHOD_NAME.getName()).getAsString(),
                             jO.getAsJsonObject().get(TblsCnfg.SpecLimits.PARAMETER.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.SpecLimits.RULE_TYPE.getName()).getAsString()};
-
                         String[] fldsToAdd = new String[]{TblsCnfg.SpecLimits.MIN_VAL_ALLOWED.getName(), TblsCnfg.SpecLimits.MIN_VAL_FOR_UNDETERMINED.getName(),
-                            TblsCnfg.SpecLimits.MAX_VAL_ALLOWED.getName(), TblsCnfg.SpecLimits.MAX_VAL_FOR_UNDETERMINED.getName(), TblsCnfg.SpecLimits.TESTING_GROUP.getName(),};
+                            TblsCnfg.SpecLimits.MAX_VAL_ALLOWED.getName(), TblsCnfg.SpecLimits.MAX_VAL_FOR_UNDETERMINED.getName(), TblsCnfg.SpecLimits.TESTING_GROUP.getName()};
                         for (String curFldName : fldsToAdd) {
                             if (jO.getAsJsonObject().has(curFldName)) {
                                 fieldName = LPArray.addValueToArray1D(fieldName, curFldName);
-                                fieldValue = LPArray.addValueToArray1D(fieldValue, jO.getAsJsonObject().get(curFldName).getAsFloat());
+                                if (TblsCnfg.SpecLimits.TESTING_GROUP.getName().equalsIgnoreCase(curFldName)) {
+                                    fieldValue = LPArray.addValueToArray1D(fieldValue, jO.getAsJsonObject().get(curFldName).getAsString());
+                                } else {
+                                    fieldValue = LPArray.addValueToArray1D(fieldValue, jO.getAsJsonObject().get(curFldName).getAsFloat());
+                                }
                             }
                         }
                         String ruleType = jO.getAsJsonObject().get(TblsCnfg.SpecLimits.RULE_TYPE.getName()).getAsString();
@@ -354,17 +377,19 @@ public class ClassMasterData {
                                 fieldValue = LPArray.addValueToArray1D(fieldValue, LPNulls.replaceNull(paramUOM[0][1].toString()));
                             }
                         }
-                        this.diagnostic = resSpecEvaluation;
+                        Object[] diagn = resSpecEvaluation;
                         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluation[0].toString()))) {
                             curFldName = TblsCnfg.SpecLimits.RULE_VARIABLES.getName();
                             fieldName = LPArray.addValueToArray1D(fieldName, curFldName);
                             fieldValue = LPArray.addValueToArray1D(fieldValue, ruleValues);
                             this.diagnostic = cSpec.specLimitNew(jO.getAsJsonObject().get(TblsCnfg.SpecLimits.CODE.getName()).getAsString(), 1, fieldName, fieldValue);
-                            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) {
-                                globalDiagn = this.diagnostic[0].toString();
+                            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic.getDiagnostic())) {
+                                globalDiagn = diagn[0].toString();
                             }
+                        }else{
+                            jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, resSpecEvaluation[0].toString());
                         }
-                        jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, Arrays.toString(this.diagnostic));
+                        jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, this.diagnostic.getDiagnostic());
                         jLogArr.add(jLog);
                     }
                     calculateDiagnostic(jLogArr);
@@ -375,7 +400,7 @@ public class ClassMasterData {
                         JSONObject jLog = new JSONObject();
                         Object[] fldsInfo = getFldsNamesAndValues(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, jO);
                         if (fldsInfo.length == 3) {
-                            this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null);
+                            this.diagnostic = new InternalMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null, null);
                         } else {
                             String[] fldsName = (String[]) fldsInfo[0];
                             Object[] fldsValue = (Object[]) fldsInfo[1];
@@ -383,9 +408,9 @@ public class ClassMasterData {
                             fldsValue = LPArray.addValueToArray1D(fldsValue, new Object[]{userCreator, LPDate.getCurrentTimeStamp()});
                             RdbmsObject insertRecord = Rdbms.insertRecord(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR,
                                     fldsName, fldsValue, instanceName);
-                            this.diagnostic = insertRecord.getApiMessage();
+                            this.diagnostic = new InternalMessage(insertRecord.getSqlStatement(), insertRecord.getErrorMessageCode(), insertRecord.getErrorMessageVariables(), insertRecord.getNewRowId());
                         }
-                        jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, Arrays.toString(this.diagnostic));
+                        jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, this.diagnostic.getDiagnostic());
                         jLogArr.add(jLog);
                     }
                     calculateDiagnostic(jLogArr);
@@ -400,7 +425,7 @@ public class ClassMasterData {
                         this.diagnostic=insertRecord.getApiMessage();
                         if (Boolean.FALSE.equals(insertRecord.getRunSuccess())) return;
                     }                    
-                    this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new incubators", null);
+                    this.diagnostic=new InternalMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new incubators", null);
                      */
                     break;
                 case MD_INCUB_BATCHES:
@@ -409,7 +434,7 @@ public class ClassMasterData {
                         JSONObject jLog = new JSONObject();
                         Object[] fldsInfo = getFldsNamesAndValues(TblsEnvMonitConfig.TablesEnvMonitConfig.INCUB_BATCH, jO);
                         if (fldsInfo.length == 3) {
-                            this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null);
+                            this.diagnostic = new InternalMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null, null);
                         } else {
                             String[] fldsName = (String[]) fldsInfo[0];
                             Object[] fldsValue = (Object[]) fldsInfo[1];
@@ -417,9 +442,9 @@ public class ClassMasterData {
                             fldsValue = LPArray.addValueToArray1D(fldsValue, new Object[]{userCreator, LPDate.getCurrentTimeStamp()});
                             RdbmsObject insertRecord = Rdbms.insertRecord(TblsEnvMonitConfig.TablesEnvMonitConfig.INCUB_BATCH,
                                     fldsName, fldsValue, instanceName);
-                            this.diagnostic = insertRecord.getApiMessage();
+                            this.diagnostic = new InternalMessage(insertRecord.getSqlStatement(), insertRecord.getErrorMessageCode(), insertRecord.getErrorMessageVariables(), insertRecord.getNewRowId());
                         }
-                        jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, Arrays.toString(this.diagnostic));
+                        jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, this.diagnostic.getDiagnostic());
                         jLogArr.add(jLog);
                     }
                     calculateDiagnostic(jLogArr);
@@ -430,12 +455,12 @@ public class ClassMasterData {
                         RdbmsObject insertRecord = Rdbms.insertRecord(TblsEnvMonitConfig.TablesEnvMonitConfig.MICROORGANISM,
                                 new String[]{TblsEnvMonitConfig.MicroOrganism.NAME.getName()},
                                 new Object[]{jO.getAsJsonObject().get(TblsEnvMonitConfig.MicroOrganism.NAME.getName()).getAsString()}, instanceName);
-                        this.diagnostic = insertRecord.getApiMessage();
+                        this.diagnostic = new InternalMessage(insertRecord.getSqlStatement(), insertRecord.getErrorMessageCode(), insertRecord.getErrorMessageVariables(), insertRecord.getNewRowId());
                         if (Boolean.FALSE.equals(insertRecord.getRunSuccess())) {
                             return;
                         }
                     }
-                    this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted " + asJsonArray.size() + " new microorganisms", null);
+                    this.diagnostic = new InternalMessage(LPPlatform.LAB_TRUE, "Inserted " + asJsonArray.size() + " new microorganisms", null, null);
                     break;
                 case MD_SAMPLES:
                     asJsonArray = jsonObject.get(GlobalAPIsParams.LBL_VALUES).getAsJsonArray();
@@ -444,12 +469,12 @@ public class ClassMasterData {
                                 new String[]{TblsCnfg.Sample.CODE.getName(), TblsCnfg.Sample.CODE_VERSION.getName(), TblsCnfg.Sample.CREATED_ON.getName(), TblsCnfg.Sample.CREATED_BY.getName()},
                                 new Object[]{jO.getAsJsonObject().get(TblsCnfg.Sample.CODE.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.Sample.CODE_VERSION.getName()).getAsInt(), LPDate.getCurrentTimeStamp(), userCreator},
                                 instanceName);
-                        this.diagnostic = insertRecord.getApiMessage();
+                        this.diagnostic = new InternalMessage(insertRecord.getSqlStatement(), insertRecord.getErrorMessageCode(), insertRecord.getErrorMessageVariables(), insertRecord.getNewRowId());
                         if (Boolean.FALSE.equals(insertRecord.getRunSuccess())) {
                             break;
                         }
                     }
-                    this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted " + asJsonArray.size() + " new samples", null);
+                    this.diagnostic = new InternalMessage(LPPlatform.LAB_TRUE, "Inserted " + asJsonArray.size() + " new samples", null, null);
                     break;
                 case MD_SAMPLE_RULES:
                     asJsonArray = jsonObject.get(GlobalAPIsParams.LBL_VALUES).getAsJsonArray();
@@ -462,16 +487,16 @@ public class ClassMasterData {
                                     jO.getAsJsonObject().get(TblsCnfg.SampleRules.ANALYST_ASSIGNMENT_MODE.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.SampleRules.TEST_ANALYST_REQUIRED.getName()).getAsBoolean(),
                                     LPDate.getCurrentTimeStamp(), userCreator},
                                 instanceName);
-                        this.diagnostic = insertRecord.getApiMessage();
+                        this.diagnostic = new InternalMessage(insertRecord.getSqlStatement(), insertRecord.getErrorMessageCode(), insertRecord.getErrorMessageVariables(), insertRecord.getNewRowId());
                     }
-                    this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted " + asJsonArray.size() + " new sample rules", null);
+                    this.diagnostic = new InternalMessage(LPPlatform.LAB_TRUE, "Inserted " + asJsonArray.size() + " new sample rules", null, null);
                     break;
                 case MD_PROGRAMS:
                     asJsonArray = jsonObject.get(GlobalAPIsParams.LBL_VALUES).getAsJsonArray();
                     for (JsonElement jO : asJsonArray) {
                         Object[] fldsInfo = getFldsNamesAndValues(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM, jO);
                         if (fldsInfo.length == 3) {
-                            this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null);
+                            this.diagnostic = new InternalMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null, null);
                         } else {
                             String[] fldsName = (String[]) fldsInfo[0];
                             Object[] fldsValue = (Object[]) fldsInfo[1];
@@ -479,7 +504,7 @@ public class ClassMasterData {
                             fldsValue = LPArray.addValueToArray1D(fldsValue, new Object[]{userCreator, LPDate.getCurrentTimeStamp()});
                             RdbmsObject insertRecord = Rdbms.insertRecord(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM,
                                     fldsName, fldsValue, instanceName);
-                            this.diagnostic = insertRecord.getApiMessage();
+                            this.diagnostic = new InternalMessage(insertRecord.getSqlStatement(), insertRecord.getErrorMessageCode(), insertRecord.getErrorMessageVariables(), insertRecord.getNewRowId());
                         }
                         /*                        
                         String[] fldName=new String[]{TblsEnvMonitConfig.Program.PROGRAM_CONFIG_ID.getName(), TblsEnvMonitConfig.Program.PROGRAM_CONFIG_VERSION.getName(),
@@ -515,18 +540,18 @@ public class ClassMasterData {
                         if (Boolean.FALSE.equals(insertRecord.getRunSuccess())) return;                        */
                     }
 
-                    //this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new program", null);
+                    //this.diagnostic=new InternalMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new program", null);
                     break;
                 case MD_PROGRAM_LOCATIONS:
                     asJsonArray = jsonObject.get(GlobalAPIsParams.LBL_VALUES).getAsJsonArray();
                     for (JsonElement jO : asJsonArray) {
                         Object[] fldsInfo = getFldsNamesAndValues(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_LOCATION, jO);
                         if (fldsInfo.length == 3) {
-                            this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null);
+                            this.diagnostic = new InternalMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null, null);
                         } else {
                             RdbmsObject insertRecord = Rdbms.insertRecord(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_LOCATION,
                                     (String[]) fldsInfo[0], (Object[]) fldsInfo[1], instanceName);
-                            this.diagnostic = insertRecord.getApiMessage();
+                            this.diagnostic = new InternalMessage(insertRecord.getSqlStatement(), insertRecord.getErrorMessageCode(), insertRecord.getErrorMessageVariables(), insertRecord.getNewRowId());
                         }
                         /*                        
                         String[] fldName=new String[]{TblsEnvMonitConfig.ProgramLocation.PROGRAM_CONFIG_ID.getName(), 
@@ -557,7 +582,7 @@ public class ClassMasterData {
                         if (Boolean.FALSE.equals(insertRecord.getRunSuccess()) ) return;
                          */
                     }
-                    //this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new program locations", null);
+                    //this.diagnostic=new InternalMessage(LPPlatform.LAB_TRUE, "Inserted "+asJsonArray.size()+" new program locations", null);
                     break;
                 case MD_STAGES:
                     asJsonArray = jsonObject.get(GlobalAPIsParams.LBL_VALUES).getAsJsonArray();
@@ -594,7 +619,7 @@ public class ClassMasterData {
                                         "sampleStage" + curStage + "Next", jO.getAsJsonObject().get(curFldName).getAsString());
                             }
                         }
-                        this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted " + asJsonArray.size() + " new stages", null);
+                        this.diagnostic = new InternalMessage(LPPlatform.LAB_TRUE, "Inserted " + asJsonArray.size() + " new stages", null, null);
                     }
                     parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(), "sampleStagesList_en", allStages + "|END");
                     parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(), "sampleStagesList_es", allStages + "|FIN");
@@ -613,15 +638,15 @@ public class ClassMasterData {
                         JSONObject jLog = new JSONObject();
                         Object[] fldsInfo = getFldsNamesAndValues(TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL, jO);
                         if (fldsInfo.length == 3) {
-                            this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null);
+                            this.diagnostic = new InternalMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null, null);
                         } else {
                             String[] fldsName = (String[]) fldsInfo[0];
                             Object[] fldsValue = (Object[]) fldsInfo[1];
                             RdbmsObject insertRecord = Rdbms.insertRecord(TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL,
                                     fldsName, fldsValue, instanceName);
-                            this.diagnostic = insertRecord.getApiMessage();
+                            this.diagnostic = new InternalMessage(insertRecord.getSqlStatement(), insertRecord.getErrorMessageCode(), insertRecord.getErrorMessageVariables(), insertRecord.getNewRowId());
                         }
-                        jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, Arrays.toString(this.diagnostic));
+                        jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, this.diagnostic.getDiagnostic());
                         jLogArr.add(jLog);
                     }
                     calculateDiagnostic(jLogArr);
@@ -631,42 +656,42 @@ public class ClassMasterData {
                     for (JsonElement jO : asJsonArray) {
                         Object[] fldsInfo = getFldsNamesAndValues(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS, jO);
                         if (fldsInfo.length == 3) {
-                            this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null);
+                            this.diagnostic = new InternalMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null, null);
                         } else {
                             RdbmsObject insertRecord = Rdbms.insertRecord(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS,
                                     (String[]) fldsInfo[0], (Object[]) fldsInfo[1], instanceName);
-                            this.diagnostic = insertRecord.getApiMessage();
+                            this.diagnostic = new InternalMessage(insertRecord.getSqlStatement(), insertRecord.getErrorMessageCode(), insertRecord.getErrorMessageVariables(), insertRecord.getNewRowId());
                         }
                     }
-                    this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted " + asJsonArray.size() + " new " + endPoint.name().toLowerCase(), null);
+                    this.diagnostic = new InternalMessage(LPPlatform.LAB_TRUE, "Inserted " + asJsonArray.size() + " new " + endPoint.name().toLowerCase(), null, null);
                     break;
                 case MD_VARIABLES:
                     asJsonArray = jsonObject.get(GlobalAPIsParams.LBL_VALUES).getAsJsonArray();
                     for (JsonElement jO : asJsonArray) {
                         Object[] fldsInfo = getFldsNamesAndValues(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES, jO);
                         if (fldsInfo.length == 3) {
-                            this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null);
+                            this.diagnostic = new InternalMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null, null);
                         } else {
                             RdbmsObject insertRecord = Rdbms.insertRecord(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES,
                                     (String[]) fldsInfo[0], (Object[]) fldsInfo[1], instanceName);
-                            this.diagnostic = insertRecord.getApiMessage();
+                            this.diagnostic = new InternalMessage(insertRecord.getSqlStatement(), insertRecord.getErrorMessageCode(), insertRecord.getErrorMessageVariables(), insertRecord.getNewRowId());
                         }
                     }
-                    this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted " + asJsonArray.size() + " new " + endPoint.name().toLowerCase(), null);
+                    this.diagnostic = new InternalMessage(LPPlatform.LAB_TRUE, "Inserted " + asJsonArray.size() + " new " + endPoint.name().toLowerCase(), null, null);
                     break;
                 case MD_VARIABLES_SET:
                     asJsonArray = jsonObject.get(GlobalAPIsParams.LBL_VALUES).getAsJsonArray();
                     for (JsonElement jO : asJsonArray) {
                         Object[] fldsInfo = getFldsNamesAndValues(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES_SET, jO);
                         if (fldsInfo.length == 3) {
-                            this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null);
+                            this.diagnostic = new InternalMessage(LPPlatform.LAB_FALSE, fldsInfo[2].toString(), null, null);
                         } else {
                             RdbmsObject insertRecord = Rdbms.insertRecord(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES_SET,
                                     (String[]) fldsInfo[0], (Object[]) fldsInfo[1], instanceName);
-                            this.diagnostic = insertRecord.getApiMessage();
+                            this.diagnostic = new InternalMessage(insertRecord.getSqlStatement(), insertRecord.getErrorMessageCode(), insertRecord.getErrorMessageVariables(), insertRecord.getNewRowId());
                         }
                     }
-                    this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Inserted " + asJsonArray.size() + " new " + endPoint.name().toLowerCase(), null);
+                    this.diagnostic = new InternalMessage(LPPlatform.LAB_TRUE, "Inserted " + asJsonArray.size() + " new " + endPoint.name().toLowerCase(), null, null);
                     break;
                 case MD_UOM:
                     asJsonArray = jsonObject.get(GlobalAPIsParams.LBL_VALUES).getAsJsonArray();
@@ -676,11 +701,11 @@ public class ClassMasterData {
                         if (jO.getAsJsonObject().has("import_all_family") && jO.getAsJsonObject().get("import_all_family").getAsBoolean()) {
                             UnitsOfMeasurement.UomImportType.FAMIL.toString();
                         }
-                        this.diagnostic = getUomFromConfig(uomName, importType);
+                        this.diagnostic = new InternalMessage(LPPlatform.LAB_TRUE, "Inserted " + asJsonArray.size() + " new " + endPoint.name().toLowerCase(), null, null);
                     }
                     break;
                 default:
-                    this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "mdParserNotFound", new Object[]{endPoint.name()});
+                    this.diagnostic = new InternalMessage(LPPlatform.LAB_FALSE, "mdParserNotFound", new Object[]{endPoint.name()}, null);
                     break;
             }
         }
@@ -696,7 +721,7 @@ public class ClassMasterData {
     /**
      * @return the diagnostic
      */
-    public Object[] getDiagnostic() {
+    public InternalMessage getDiagnostic() {
         return diagnostic;
     }
 
@@ -753,6 +778,14 @@ public class ClassMasterData {
             jMainLogArr.put("global_diagnostic", "success");
         }
         jMainLogArr.put("detail", jLogArr);
-        this.diagnostic = new Object[]{globalDiagn, jMainLogArr};
+        this.jMainLogArr = jMainLogArr;
+        //this.diagnostic = new InternalMessage(globalDiagn, globalDiagn, new Object[]{}, null);
+    }
+
+    /**
+     * @return the jMainLogArr
+     */
+    public JSONObject getjMainLogArr() {
+        return jMainLogArr;
     }
 }
