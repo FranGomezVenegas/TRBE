@@ -382,6 +382,7 @@ public class TblsCnfg {
         ANALYSES("analyses", LPDatabase.string(), null, null, null, null),
         VARIATION_NAMES("variation_names", LPDatabase.string(), null, null, null, null),
         REPORTING_ACCEPTANCE_CRITERIA("reporting_acceptance_criteria", LPDatabase.string(), null, null, null, null),
+        TESTING_SCRIPTS("testing_scripts", LPDatabase.string(), null, null, null, null),        
         ;
         private Spec(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
