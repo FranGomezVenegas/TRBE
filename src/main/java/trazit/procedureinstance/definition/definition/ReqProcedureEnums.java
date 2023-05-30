@@ -67,6 +67,16 @@ public class ReqProcedureEnums {
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DEPLOY_MODULE_TABLES_AND_FIELDS.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 18),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DEPLOY_PROC_MASTER_DATA.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 19)}, EndPointsToRequirements.endpointWithNoOutputObjects,
                 null, null),
+    
+        SUGGEST_SPEC_LIMITS_TESTING("SUGGEST_SPEC_LIMITS_TESTING", "deployRequirements_success",
+                new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
+                    new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROC_INSTANCENAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
+                    new LPAPIArguments("spec", LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
+                    new LPAPIArguments("specVersion", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 10),
+                    new LPAPIArguments("idToSaveTheScript", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 11)}, EndPointsToRequirements.endpointWithNoOutputObjects,
+                null, null),
+
         PROC_DEPLOY_CHECKER("PROC_DEPLOY_CHECKER", "deployRequirements_success",
                 new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
