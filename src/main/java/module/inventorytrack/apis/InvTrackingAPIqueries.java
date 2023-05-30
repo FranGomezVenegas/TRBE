@@ -11,6 +11,8 @@ import databases.Rdbms;
 import databases.SqlStatement;
 import databases.SqlStatementEnums;
 import databases.SqlWhere;
+import databases.SqlWhereEntry;
+import databases.TblsData;
 import databases.TblsProcedure;
 import databases.features.Token;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
@@ -119,7 +121,6 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     if (reference.length() > 0) {
                         sW.addConstraint(TblsInvTrackingData.Lot.REFERENCE, SqlStatement.WHERECLAUSE_TYPES.IN, reference.split("\\|"), "|");
                     }
-
                     String[] fieldsToRetrieve = getAllFieldNames(TblsInvTrackingData.TablesInvTrackingData.LOT);
                     Object[][] instrumentsInfo = QueryUtilitiesEnums.getTableData(TblsInvTrackingData.TablesInvTrackingData.LOT,
                             EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInvTrackingData.TablesInvTrackingData.LOT),
@@ -309,6 +310,9 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     category = LPNulls.replaceNull(argValues[0]).toString();
                     reference = LPNulls.replaceNull(argValues[1]).toString();
                     lotName = LPNulls.replaceNull(argValues[2]).toString();
+                    String samplingDayStart = request.getParameter(TblsInvTrackingData.Lot.EXPIRY_DATE.getName().toLowerCase() + "_start");
+                    String samplingDayEnd = request.getParameter(TblsInvTrackingData.Lot.EXPIRY_DATE.getName().toLowerCase() + "_end");
+
                     if (category.length() > 0) {
                         sWhere.addConstraint(TblsInvTrackingData.ViewExpiredLots.CATEGORY,
                                 category.contains("%") ? SqlStatement.WHERECLAUSE_TYPES.LIKE : SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{category}, null);
@@ -321,8 +325,23 @@ public class InvTrackingAPIqueries extends HttpServlet {
                         sWhere.addConstraint(TblsInvTrackingData.ViewExpiredLots.LOT_NAME,
                                 lotName.contains("%") ? SqlStatement.WHERECLAUSE_TYPES.LIKE : SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{lotName}, null);
                     }
-
                     sWhere.addConstraint(TblsInvTrackingData.Lot.LOT_NAME, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, null, null);
+                    Object[] buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsData.CertifUserAnalysisMethod.CERTIFICATION_DATE.getName().toLowerCase(), samplingDayStart, samplingDayEnd);
+                    SqlWhereEntry[] orClauses = null;
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString())) {
+                        if (buildDateRangeFromStrings.length > 3) {
+                            orClauses = new SqlWhereEntry[]{
+                                new SqlWhereEntry(TblsInvTrackingData.Lot.EXPIRY_DATE, SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{buildDateRangeFromStrings[2], buildDateRangeFromStrings[3]}, "|"),
+                                new SqlWhereEntry(TblsInvTrackingData.Lot.EXPIRY_DATE_IN_USE, SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{buildDateRangeFromStrings[2], buildDateRangeFromStrings[3]}, "|")
+                            };
+                        } else {
+                            orClauses = new SqlWhereEntry[]{
+                                new SqlWhereEntry(TblsInvTrackingData.Lot.EXPIRY_DATE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{buildDateRangeFromStrings[2]}, "|"),
+                                new SqlWhereEntry(TblsInvTrackingData.Lot.EXPIRY_DATE_IN_USE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{buildDateRangeFromStrings[2]}, "|")
+                            };
+                        }
+                        sWhere.addOrClauseConstraint(orClauses);                        
+                    }
                     reference = LPNulls.replaceNull(argValues[0]).toString();
                     category = LPNulls.replaceNull(argValues[1]).toString();
                     fieldsToRetrieve = EnumIntViewFields.getAllFieldNames(TblsInvTrackingData.ViewsInvTrackingData.LOTS_EXPIRED.getViewFields());
@@ -341,6 +360,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     jSummaryObj.put("datatable", jArr);
                     LPFrontEnd.servletReturnSuccess(request, response, jSummaryObj);
                     return;
+
                 case REFERENCES_UNDER_MIN_STOCK:
                     sWhere = new SqlWhere();
                     category = LPNulls.replaceNull(argValues[0]).toString();

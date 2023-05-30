@@ -16,6 +16,7 @@ import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_REFEREN
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_VOLUME;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_VOLUME_UOM;
 import com.labplanet.servicios.app.InvestigationAPI.ParamsList;
+import databases.TblsData;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.util.ArrayList;
@@ -72,6 +73,7 @@ public class InvTrackingEnums {
     }
     public static final String INVENTORY_LOT_CAT = "inventoryLot";
 //checkerController.
+
     public enum InventoryTrackAPIactionsEndpoints implements EnumIntEndpoints {
         NEW_INVENTORY_LOT("NEW_INVENTORY_LOT", INVENTORY_LOT_CAT, "", "invTrackingNewLotCreated_success",
                 new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
@@ -232,8 +234,8 @@ public class InvTrackingEnums {
                 },
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TablesInvTrackingData.LOT.getTableName()).build()).build(),
-                null, null),        
-        ;
+                null, null),;
+
         private InventoryTrackAPIactionsEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
             this.name = name;
             this.mandatoryParams = mandatoryParams;
@@ -329,7 +331,10 @@ public class InvTrackingEnums {
                 new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
                     new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
                     new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9),
-                    new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 10),}, EndPointsToRequirements.endpointWithNoOutputObjects, null, null),
+                    new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 10),
+                    new LPAPIArguments(TblsInvTrackingData.Lot.EXPIRY_DATE.getName().toLowerCase() + "_start", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 11),
+                    new LPAPIArguments(TblsInvTrackingData.Lot.EXPIRY_DATE.getName().toLowerCase() + "_end", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 12)
+                }, EndPointsToRequirements.endpointWithNoOutputObjects, null, null),
         REFERENCES_UNDER_MIN_STOCK("REFERENCES_UNDER_MIN_STOCK", "",
                 new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
                     new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8)}, EndPointsToRequirements.endpointWithNoOutputObjects, null, null),
@@ -338,7 +343,10 @@ public class InvTrackingEnums {
                     new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8)}, EndPointsToRequirements.endpointWithNoOutputObjects, null, null),
         REFERENCE_WITH_CONTROL_ISSUES("REFERENCE_WITH_CONTROL_ISSUES", "",
                 new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
-                    new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8)}, EndPointsToRequirements.endpointWithNoOutputObjects, null, null),
+                    new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
+                    new LPAPIArguments(TblsData.CertifUserAnalysisMethod.CERTIFICATION_DATE.getName().toLowerCase() + "_start", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9),
+                    new LPAPIArguments(TblsData.CertifUserAnalysisMethod.CERTIFICATION_DATE.getName().toLowerCase() + "_end", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10)
+                }, EndPointsToRequirements.endpointWithNoOutputObjects, null, null),
         LOT_PRINT_LABEL("LOT_PRINT_LABEL", "",
                 new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects, null, null),
         COMPLETED_EVENTS_LAST_N_DAYS("COMPLETED_EVENTS_LAST_N_DAYS", "",
@@ -353,8 +361,7 @@ public class InvTrackingEnums {
         INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION("INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION", "", new LPAPIArguments[]{new LPAPIArguments(ParamsList.INVESTIGATION_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects,
                 null, null),
         INVESTIGATION_RESULTS_PENDING_DECISION("INVESTIGATION_RESULTS_PENDING_DECISION", "", new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects,
-                null, null)
-        ;
+                null, null);
 
         private InventoryTrackAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes,
                 String devComment, String devCommentTag) {
@@ -423,8 +430,7 @@ public class InvTrackingEnums {
         REVISION_MODE("inventoryAuditRevisionMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
         AUTHOR_CAN_REVIEW_AUDIT_TOO("inventoryAuditAuthorCanBeReviewerToo", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
         CHILD_REVISION_REQUIRED("inventoryAuditChildRevisionRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
-        CORRECTIVE_ACTION_FOR_REJECTED_QUALIFICATION("inventoryCreateCorrectiveActionForRejectedQualification", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null)
-        ;
+        CORRECTIVE_ACTION_FOR_REJECTED_QUALIFICATION("inventoryCreateCorrectiveActionForRejectedQualification", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null);
 
         private InventoryTrackBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator,
                 Boolean isOpt, ArrayList<String[]> preReqs) {
@@ -513,7 +519,6 @@ public class InvTrackingEnums {
         EVENT_HAS_PENDING_RESULTS("inventoryLotEvent_eventWithPendingResults", "The event has <*1*> pending results", "El evento tiene <*1*> resultado(s) pendiente(s)"),
         EVENT_NOTHING_PENDING("inventoryLotEvent_eventHasMothingPending", "The event has nothing pending", "El evento no tiene nada pendiente"),
         VARIABLE_VALUE_NOTONEOFTHEEXPECTED("inventoryLotEvent_valueNotOneOfExpected", "The value <*1*> is not one of the accepted values <*2*> for variable <*3*> in procedure <*4*>", "The value <*1*> is not one of the accepted values <*2*> for variable <*3*> in procedure <*4*>"),
-        
         VARIABLE_TYPE_NOT_RECOGNIZED("variableTypeNotRecognized", "", ""),
         NOT_NUMERIC_VALUE("DataSampleAnalysisResult_ValueNotNumericForQuantitativeParam", "", ""),
         USE_REENTER_WHEN_PARAM_ALREADY_HAS_VALUE("inventoryLotEvent_whenParamAlreadyHasValueRequiresToUseReenterAction", "", ""),
