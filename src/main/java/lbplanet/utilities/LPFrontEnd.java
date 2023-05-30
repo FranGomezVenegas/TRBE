@@ -1,6 +1,7 @@
 package lbplanet.utilities;
 
 import com.github.opendevl.JFlat;
+import static com.labplanet.servicios.app.AppProcedureListAPI.getMasterData;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import databases.features.Token;
@@ -259,6 +260,11 @@ public class LPFrontEnd {
         if (jsonObj == null) {
             request.setAttribute(GlobalVariables.ServletsResponse.SUCCESS.getAttributeName(), "");
         } else {
+            ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, false);
+            if (procReqInstance.getToken() != null) {
+                JSONObject masterData = getMasterData(procReqInstance.getToken(), procReqInstance.getProcedureInstance());
+                jsonObj.put("master_data", masterData);
+            }
             request.setAttribute(GlobalVariables.ServletsResponse.SUCCESS.getAttributeName(), jsonObj.toString());
         }
         servetInvokeResponseSuccessServlet(request, response);
