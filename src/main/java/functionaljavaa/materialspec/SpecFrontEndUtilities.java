@@ -9,6 +9,7 @@ import databases.Rdbms;
 import databases.TblsCnfg;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -69,11 +70,12 @@ public class SpecFrontEndUtilities {
      * @param sortFields
      * @return
      */
-    public static JSONArray configSpecLimitsInfo(String code, Integer configVersion, String[] fieldsName, String[] sortFields){
+    public static JSONArray configSpecLimitsInfo(String code, Integer configVersion, String specAnalysisName, String[] fieldsName, String[] sortFields){
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(null, null, false);
-        return configSpecLimitsInfo(procReqInstance, code, configVersion, fieldsName, sortFields);
+        return configSpecLimitsInfo(procReqInstance, code, configVersion, specAnalysisName, fieldsName, sortFields);
     }
-    public static JSONArray configSpecLimitsInfo(ProcedureRequestSession procReqInstance, String code, Integer configVersion, String[] fieldsName, String[] sortFields){
+    public static JSONArray configSpecLimitsInfo(ProcedureRequestSession procReqInstance, String code, Integer configVersion, String specAnalysisName, 
+            String[] fieldsName, String[] sortFields){
         String procInstanceName=procReqInstance.getProcedureInstance();
         ConfigSpecRule specRule = new ConfigSpecRule();
         if (fieldsName==null || fieldsName.length==0){
@@ -83,10 +85,14 @@ public class SpecFrontEndUtilities {
                 fieldsName=LPArray.addValueToArray1D(fieldsName, obj.getName());
           }      
         }
+        String[] wFlds=new String[]{TblsCnfg.SpecLimits.CODE.getName(), TblsCnfg.SpecLimits.CONFIG_VERSION.getName()};
+        Object[] wValues=new Object[]{code, configVersion};
+        if (LPNulls.replaceNull(specAnalysisName).toString().length()>0){
+            wFlds=LPArray.addValueToArray1D(wFlds, TblsCnfg.SpecLimits.VARIATION_NAME.getName());
+            wValues=LPArray.addValueToArray1D(wValues, specAnalysisName);
+        }
         Object[][] records=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(), 
-                new String[]{TblsCnfg.SpecLimits.CODE.getName(), TblsCnfg.SpecLimits.CONFIG_VERSION.getName()}, 
-                new Object[]{code, configVersion}, 
-                fieldsName, sortFields);
+                wFlds, wValues, fieldsName, sortFields);
         JSONArray jArr = new JSONArray();
         for (Object[] curRec: records){
           Integer posicInArr=LPArray.valuePosicInArray(fieldsName, TblsCnfg.SpecLimits.LIMIT_ID.getName());
