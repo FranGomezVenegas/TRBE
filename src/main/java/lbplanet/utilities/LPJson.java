@@ -5,6 +5,9 @@
  */
 package lbplanet.utilities;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -15,6 +18,8 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -82,8 +87,17 @@ public class LPJson {
             } else {
                 if (fieldsToExclude == null || !LPArray.valueInArray(fieldsToExclude, header[iField])) {
                     String clase = row[iField].getClass().toString();
-                    if ((clase.toUpperCase().contains("DATE"))|| (clase.toUpperCase().contains("TIME"))){
+                    if ((clase.toUpperCase().contains("DATE"))|| (clase.toUpperCase().contains("TIME"))){                        
                         jObj.put(setAlias(header[iField]), row[iField].toString());
+                    }else if ((clase.toUpperCase().contains("CLASS [B"))){    
+                        try {
+                            ObjectMapper objectMapper = new ObjectMapper();
+                            JsonNode jsonNode = objectMapper.convertValue(row[iField], JsonNode.class);
+                            String jsonString = objectMapper.writeValueAsString(jsonNode);
+                            jObj.put(setAlias(header[iField]), jsonString);
+                        } catch (JsonProcessingException ex) {
+                            Logger.getLogger(LPJson.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     } else {
                         if ("NULL".equalsIgnoreCase(row[iField].toString())) {
                             row[iField] = "null";
