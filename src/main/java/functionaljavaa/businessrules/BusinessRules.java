@@ -62,6 +62,14 @@ public class BusinessRules {
         this.config = new ArrayList<>();
 //        if(1==1) return;
         Object[][] testingBusRulsInfo = null;
+
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, false);
+        if (procReqInstance != null) {
+            String procedureInstance = procReqInstance.getProcedureInstance();
+            if (procedureInstance != null) {
+                procedureInstanceName = procedureInstance;
+            }
+        }
         if (scriptId != null && scriptId > 0) {
             testingBusRulsInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procedureInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT_BUS_RULES.getTableName(),
                     new String[]{TblsTesting.ScriptBusinessRules.SCRIPT_ID.getName(), TblsTesting.ScriptBusinessRules.ACTIVE.getName()}, new Object[]{scriptId, true},
@@ -152,11 +160,11 @@ public class BusinessRules {
         BusinessRules bRTesting = null;
         if (busRulesProcInstance == null) {
             procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, false);
-        bRProcInstance = procReqInstance.getBusinessRulesProcInstance();
-        bRTesting = procReqInstance.getBusinessRulesTesting();
+            bRProcInstance = procReqInstance.getBusinessRulesProcInstance();
+            bRTesting = procReqInstance.getBusinessRulesTesting();
         } else {
             bRProcInstance = busRulesProcInstance;
-            bRTesting=busRulesTesting;
+            bRTesting = busRulesTesting;
         }
         Object[] ruleNameArr = new Object[]{};
         if (bRTesting != null) {

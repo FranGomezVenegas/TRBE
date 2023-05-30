@@ -5,7 +5,6 @@
  */
 package com.labplanet.servicios.app;
 
-
 import static com.labplanet.servicios.app.AppProcedureListAPI.PROC_NEW_EVENT_FLD_NAME;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData.ViewsEnvMonData;
 import databases.features.DbEncryption;
@@ -25,6 +24,8 @@ import databases.TblsProcedureAudit.TablesProcedureAudit;
 import trazit.procedureinstance.definition.definition.TblsReqs;
 import databases.TblsTesting;
 import databases.features.Token;
+import functionaljavaa.analysis.UserMethod;
+import static functionaljavaa.certification.FrontendCertifObjsUtilities.certifObjCertifModeOwnUserAction;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
 import functionaljavaa.intervals.IntervalsUtilities;
 import functionaljavaa.inventory.batch.DataBatchIncubator;
@@ -40,6 +41,8 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -77,6 +80,13 @@ import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import static lbplanet.utilities.LPDate.secondsInDateRange;
 import static lbplanet.utilities.LPLdap.LdapValidateUser;
 import static lbplanet.utilities.LPLdap.createLdapNewUser;
+import static module.instrumentsmanagement.logic.DataInstrumentsEvents.objectVariableSetValue;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
+import org.json.simple.JSONArray;
+import trazit.enums.EnumIntViewFields;
+import trazit.session.InternalMessage;
+import trazit.session.ProcedureRequestSession;
 import trazit.thirdparties.sap.ExcelExporter;
 import trazit.thirdparties.sap.PDFDataExtractor;
 
@@ -100,40 +110,107 @@ public class TestingServer extends HttpServlet {
         request = LPHttp.requestPreparation(request);
         response = LPHttp.responsePreparation(response);
         try (PrintWriter out = response.getWriter()) {
-if (1==2){
-            try{
-out.println("***** "+"getCarbohydratesByHPLCPDF"+" *****");       
-out.println(PDFDataExtractor.getCarbohydratesByHPLCPDF());
-out.println("***** "+"getDataFromPDF"+" *****");
-out.println(PDFDataExtractor.getDataFromPDF());
-out.println("***** "+"getAmoxicilinaPDF"+" *****");
-out.println(PDFDataExtractor.getAmoxicilinaPDF());
+            Rdbms.stablishDBConection("labplanet");
 
+            String[] fieldsToRetrieve = EnumIntViewFields.getAllFieldNames(TblsData.ViewUserAndAnalysisMethodCertificationView.values());
+            fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, FIELDS_NAMES_PROCEDURE_NAME);
 
-}catch(Exception e){
-    out.print(e.getMessage());
-    return;
-}
+            String[] allUserProcedurePrefix = new String[]{"mp-release1"};
+            Object[][] userAnaMethCertifByProcess = UserMethod.getUserAnalysisMethodCerttifByProcess(
+                    new String[]{TblsData.ViewUserAndAnalysisMethodCertificationView.USER_NAME.getName()}, new Object[]{"lots"}, fieldsToRetrieve, allUserProcedurePrefix);
+            if (userAnaMethCertifByProcess == null) {
+                return;
+            }
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(userAnaMethCertifByProcess[0][0]).toString())) {
+                LPFrontEnd.responseError(allUserProcedurePrefix);
+                Rdbms.closeRdbms();
+                return;
+            }
+            JSONArray myAnaMethCertif = new JSONArray();
+            JSONObject myAnaMethCertifList = new JSONObject();
+            JSONArray myAnaMethCertifListArr = new JSONArray();
 
-String[][] data1 = {{"Name", "Age", "Gender"}, {"John", "25", "Male"}, {"Mary", "30", "Female"}};
-String[][] data2 = {{"ID", "Salary"}, {"001", "5000"}, {"002", "6000"}, {"003", "7000"}};
-String filename = "M:/LW-LIMS-V6-PROCAPS/trazit_excel_output.xlsx";
+            Integer procedureFldPosic = LPArray.valuePosicInArray(fieldsToRetrieve, TblsData.ViewUserAndAnalysisMethodCertificationView.PROCEDURE.getName());
 
-ExcelExporter.exportToExcel(data1, data2, filename);
-}
+            for (Object[] curCertif : userAnaMethCertifByProcess) {
+                JSONObject anaMethodJObj = new JSONObject();
+                if (procedureFldPosic > -1) {
+                    curCertif[procedureFldPosic] = curCertif[procedureFldPosic].toString().replace("-config", "").replace("\"", "");
+                }
+                anaMethodJObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curCertif);
+                anaMethodJObj.put(GlobalAPIsParams.REQUEST_PARAM_CERTIF_OBJECTS_LEVEL, certifObjCertifModeOwnUserAction(fieldsToRetrieve, curCertif));
+                myAnaMethCertif.add(anaMethodJObj);
+            }
+            myAnaMethCertifList.put("my_analysis_method_certifications", myAnaMethCertif);
+            myAnaMethCertifListArr.add(myAnaMethCertifList);
+
+            if (1 == 1) {
+                return;
+            }
+            request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME, "app-proc");
+            request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, "eyJ1c2VyREIiOiJtYXJjIiwiZVNpZ24iOiJsb2NvbyIsInVzZXJEQlBhc3N3b3JkIjoiYXVsaW4iLCJkYk5hbWUiOiJsYWJwbGFuZXQiLCJ1c2VyX3Byb2NlZHVyZXMiOiJbZW0tZGVtby1hLCBhcHAtcHJvY10iLCJ0eXAiOiJKV1QiLCJhcHBTZXNzaW9uSWQiOiIyMDQ0OSIsImFwcFNlc3Npb25TdGFydGVkRGF0ZSI6IldlZCBNYXIgMDkgMTg6MDE6NTIgVVRDIDIwMjIiLCJ1c2VyUm9sZSI6ImNvb3JkaW5hdG9yIiwidXNlcl9wcm9jZWR1cmVfaGFzaGNvZGVzIjoiZW0tZGVtby1hKjEqMTIzNDV8YXBwLXByb2MqMSoiLCJhbGciOiJIUzI1NiIsImludGVybmFsVXNlcklEIjoiMTIifQ.eyJpc3MiOiJMYWJQTEFORVRkZXN0cmFuZ2lzSW5UaGVOaWdodCJ9.3U3juu38GRIQnlY43g1Bf_Uj6tc0gk1_m8dHvJ9CEeA");
+            request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_DB_NAME, "labplanet");
+            request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, "ENTER_EVENT_RESULT");
+
+            ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(request, response, false);
+            if (instanceForActions.getHasErrors()) {
+                out.println(instanceForActions.getErrorMessage());
+                instanceForActions.killIt();
+                return;
+            }
+            String url2 = "https://example.com/path/to/example.pdf";
+            String text = "";
+            String pdfPath = "D:/LP/Interfaces/HPLC_VALIDACIONES_FRAN_382.pdf";
+            File pdfFile = new File(pdfPath);
+
+            PDDocument document = PDDocument.load(pdfFile);
+
+            PDFTextStripper textStripper = new PDFTextStripper();
+            text = textStripper.getText(document);
+
+            InputStream requestBody = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
+            InternalMessage actionDiagnoses = objectVariableSetValue("qwer", 261, "¿Es Correcto?", "-");
+            out.println(actionDiagnoses.getDiagnostic() + " " + actionDiagnoses.getMessageCodeObj().getErrorCode());
+            instanceForActions.killIt();
+            if (1 == 1) {
+                return;
+            }
+            if (1 == 2) {
+                try {
+                    out.println("***** " + "getCarbohydratesByHPLCPDF" + " *****");
+                    out.println(PDFDataExtractor.getCarbohydratesByHPLCPDF());
+                    out.println("***** " + "getDataFromPDF" + " *****");
+                    out.println(PDFDataExtractor.getDataFromPDF());
+                    out.println("***** " + "getAmoxicilinaPDF" + " *****");
+                    out.println(PDFDataExtractor.getAmoxicilinaPDF());
+
+                } catch (Exception e) {
+                    out.print(e.getMessage());
+                    return;
+                }
+
+                String[][] data1 = {{"Name", "Age", "Gender"}, {"John", "25", "Male"}, {"Mary", "30", "Female"}};
+                String[][] data2 = {{"ID", "Salary"}, {"001", "5000"}, {"002", "6000"}, {"003", "7000"}};
+                String filename = "M:/LW-LIMS-V6-PROCAPS/trazit_excel_output.xlsx";
+
+                ExcelExporter.exportToExcel(data1, data2, filename);
+            }
 //out.println(connectToOpenLDAP("demo"));
-Rdbms.stablishDBConection("labplanet");
+            Rdbms.stablishDBConection("labplanet");
             out.println(EnumIntViews.getViewScriptCreation(TblsReqs.ViewsReqs.PROC_REQ_USER_REQUIREMENTS_ACTIONS, "", false, false, false));
             out.println("************ ViewsReqs.PROC_REQ_USER_REQUIREMENTS_ACTIONS NO testing. End");
 
-
-        if(1==1)return;
-String newUser="carmsantos";
-out.println(newUser+": "+createLdapNewUser("TRAZIT", newUser, "dc=example,dc=org"));
-out.println(newUser+": "+LdapValidateUser("TRAZIT", newUser, "demo", "dc=example,dc=org"));
-out.println("fgomez "+LdapValidateUser("TRAZIT", "fgomez", "demo", "dc=example,dc=org"));
-out.println("uName "+LdapValidateUser("TRAZIT", "uName", "demo", "dc=example,dc=org"));
-if (1==1)return;
+            if (1 == 1) {
+                return;
+            }
+            String newUser = "carmsantos";
+            out.println(newUser + ": " + createLdapNewUser("TRAZIT", newUser, "dc=example,dc=org"));
+            out.println(newUser + ": " + LdapValidateUser("TRAZIT", newUser, "demo", "dc=example,dc=org"));
+            out.println("fgomez " + LdapValidateUser("TRAZIT", "fgomez", "demo", "dc=example,dc=org"));
+            out.println("uName " + LdapValidateUser("TRAZIT", "uName", "demo", "dc=example,dc=org"));
+            if (1 == 1) {
+                return;
+            }
             if (1 == 2) {
                 Rdbms.stablishDBConection("labplanet");
                 InvTrackingFrontendMasterData mdObj = new InvTrackingFrontendMasterData();
