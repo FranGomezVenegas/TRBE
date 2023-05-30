@@ -5,6 +5,7 @@ import trazit.procedureinstance.definition.definition.ReqProcedureEnums.ReqProce
 import databases.Rdbms;
 import databases.Rdbms.RdbmsErrorTrapping;
 import databases.RdbmsObject;
+import functionaljavaa.materialspec.DataSpec;
 import trazit.procedureinstance.definition.definition.TblsReqs;
 import trazit.procedureinstance.definition.definition.TblsReqs.TablesReqs;
 import functionaljavaa.parameter.Parameter;
@@ -23,10 +24,12 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
+import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
+import org.json.simple.JSONArray;
 import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
@@ -175,7 +178,7 @@ public class ClassReqProcedureActions {
             actionDiagnoses = personByUserObj;
             break;
             }*/
-/*                
+ /*                
                 procedureUsersList = procedureRolesList(procedureName, procedureVersion);
                 if (Boolean.FALSE.equals(LPArray.valueInArray(procedureUsersList, userName))) {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_NOT_FOUND, new Object[]{userName, procedureName, procedureVersion});
@@ -183,7 +186,7 @@ public class ClassReqProcedureActions {
                     this.messageDynamicData = new Object[]{userName, procedureName, procedureVersion};
                     break;
                 }
-*/
+                 */
                 procedureRolesList = procedureRolesList(procedureName, procedureVersion);
                 if (Boolean.FALSE.equals(LPArray.valueInArray(procedureRolesList, roleName))) {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.ROLE_NOT_FOUND, new Object[]{roleName, procedureName, procedureVersion});
@@ -310,6 +313,27 @@ public class ClassReqProcedureActions {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_FINE, null);
                 }
                 break;
+            case SUGGEST_SPEC_LIMITS_TESTING:
+                procedureName = argValues[0].toString();
+                procedureVersion = (Integer) argValues[1];
+                procInstanceName = argValues[2].toString();
+                String spec = argValues[3].toString();
+                Integer specVersion = null;
+                if (LPNulls.replaceNull(argValues[4]).toString().length() > 0) {
+                    specVersion = (Integer) argValues[4];
+                }
+                Integer testScriptId = null;
+                if (LPNulls.replaceNull(argValues[5]).toString().length() > 0) {
+                    testScriptId = (Integer) argValues[5];
+                }
+                Object[] testing = DataSpec.suggestTestingForSpec("Calcium Carbonate", specVersion, testScriptId);
+                JSONArray jArr = new JSONArray();
+                for (Object[] curRow : (Object[][]) testing[1]) {
+                    jArr.add(LPJson.convertArrayRowToJSONObject((String[]) testing[0], curRow));
+                }
+                LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                break;
+
         }
         this.diagnostic = actionDiagnoses;
         this.relatedObj = rObj;
