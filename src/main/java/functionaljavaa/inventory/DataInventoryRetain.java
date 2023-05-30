@@ -63,7 +63,7 @@ public final class DataInventoryRetain {
         }        
         String[] updFldName=new String[]{TblsInspLotRMData.InventoryRetain.RECEPTION_BY.getName(), TblsInspLotRMData.InventoryRetain.RECEPTION_ON.getName()};
         Object[] updFldValue=new Object[]{procReqSession.getToken().getPersonName(), LPDate.getCurrentTimeStamp()};
-        return updateRetainRecordWithAuditInsert(lotName, updFldName, updFldValue, fldName, fldValue, InspLotRMAPIactionsEndpoints.LOT_RETAIN_RECEPTION.getAuditActionName());
+        return updateRetainRecordWithAuditInsert(lotName, updFldName, updFldValue, fldName, fldValue, InspLotRMAPIactionsEndpoints.LOT_RETAIN_RECEPTION.getAuditActionName().toString());
     }    
     public static InternalMessage retainMovement(String lotName, Integer id, String newLocation){
         Object[] isRetAvailable=isRetainAvailable(lotName, id, null, null, null);
@@ -77,7 +77,7 @@ public final class DataInventoryRetain {
         }        
         String[] updFldName=new String[]{TblsInspLotRMData.InventoryRetain.STORAGE_NAME.getName()};
         Object[] updFldValue=new Object[]{newLocation};
-        return updateRetainRecordWithAuditInsert(lotName, updFldName, updFldValue, fldName, fldValue, InspLotRMAPIactionsEndpoints.LOT_RETAIN_MOVEMENT.getAuditActionName());
+        return updateRetainRecordWithAuditInsert(lotName, updFldName, updFldValue, fldName, fldValue, InspLotRMAPIactionsEndpoints.LOT_RETAIN_MOVEMENT.getAuditActionName().toString());
     }    
     public static InternalMessage retainMovement(String lotName, Integer id, Integer newLocationId){
         Object[] isRetAvailable=isRetainAvailable(lotName, id, null, null, null);
@@ -91,7 +91,7 @@ public final class DataInventoryRetain {
         }        
         String[] updFldName=new String[]{TblsInspLotRMData.InventoryRetain.STORAGE_ID.getName()};
         Object[] updFldValue=new Object[]{newLocationId};
-        return updateRetainRecordWithAuditInsert(lotName, updFldName, updFldValue, fldName, fldValue, InspLotRMAPIactionsEndpoints.LOT_RETAIN_MOVEMENT.getAuditActionName());
+        return updateRetainRecordWithAuditInsert(lotName, updFldName, updFldValue, fldName, fldValue, InspLotRMAPIactionsEndpoints.LOT_RETAIN_MOVEMENT.getAuditActionName().toString());
     }    
     public static InternalMessage retainUnlock(String lotName, Integer id){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
@@ -106,7 +106,7 @@ public final class DataInventoryRetain {
         }        
         String[] updFldName=new String[]{TblsInspLotRMData.InventoryRetain.LOCKED.getName(), TblsInspLotRMData.InventoryRetain.LOCKED_BY.getName(), TblsInspLotRMData.InventoryRetain.LOCKED_ON.getName()};
         Object[] updFldValue=new Object[]{false, procReqSession.getToken().getPersonName(), LPDate.getCurrentTimeStamp()};
-        return updateRetainRecordWithAuditInsert(lotName, updFldName, updFldValue, fldName, fldValue, InspLotRMAPIactionsEndpoints.LOT_RETAIN_UNLOCK.getAuditActionName());
+        return updateRetainRecordWithAuditInsert(lotName, updFldName, updFldValue, fldName, fldValue, InspLotRMAPIactionsEndpoints.LOT_RETAIN_UNLOCK.getAuditActionName().toString());
     }
     public static InternalMessage retainLock(String lotName, Integer id){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
@@ -121,7 +121,7 @@ public final class DataInventoryRetain {
         }        
         String[] updFldName=new String[]{TblsInspLotRMData.InventoryRetain.LOCKED.getName(), TblsInspLotRMData.InventoryRetain.LOCKED_BY.getName(), TblsInspLotRMData.InventoryRetain.LOCKED_ON.getName()};
         Object[] updFldValue=new Object[]{true, procReqSession.getToken().getPersonName(), LPDate.getCurrentTimeStamp()};
-        return updateRetainRecordWithAuditInsert(lotName, updFldName, updFldValue, fldName, fldValue, InspLotRMAPIactionsEndpoints.LOT_RETAIN_LOCK.getAuditActionName());
+        return updateRetainRecordWithAuditInsert(lotName, updFldName, updFldValue, fldName, fldValue, InspLotRMAPIactionsEndpoints.LOT_RETAIN_LOCK.getAuditActionName().toString());
     }    
     public static InternalMessage retainExtract(String lotName, Integer id, BigDecimal q, String qUom){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
@@ -155,7 +155,7 @@ public final class DataInventoryRetain {
             return new InternalMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.NOT_ENOUGH_QUANTITY, new Object[]{newAmount, newAmountUom, resultConverted, procReqSession.getProcedureInstance()});
         String[] updFldName=new String[]{TblsInspLotRMData.InventoryRetain.AMOUNT.getName(), TblsInspLotRMData.InventoryRetain.AMOUNT_UOM.getName()};
         Object[] updFldValue=new Object[]{newAmount, newAmountUom};
-        return updateRetainRecordWithAuditInsert(lotName, updFldName, updFldValue, fldName, fldValue, InspLotRMAPIactionsEndpoints.LOT_RETAIN_EXTRACT.getAuditActionName());
+        return updateRetainRecordWithAuditInsert(lotName, updFldName, updFldValue, fldName, fldValue, InspLotRMAPIactionsEndpoints.LOT_RETAIN_EXTRACT.getAuditActionName().toString());
     }    
     private static InternalMessage updateRetainRecordWithAuditInsert(String lotName, String[] updFldName, Object[] updFldValue, String[] whereFldName, Object[] whereFldValue, String auditActionName){
         SqlWhere sqlWhere = new SqlWhere(TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN, whereFldName, whereFldValue);
