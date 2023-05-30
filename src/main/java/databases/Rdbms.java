@@ -975,6 +975,59 @@ public class Rdbms {
         }
     }
 
+    public static Object[][] getRecordFieldsByFilter(String alternativeProcedure, EnumIntTables tblObj, SqlWhere sWhere, EnumIntTableFields[] fieldsToRetrieve, String[] orderBy, Boolean inforceDistinct) {
+        String schemaName = addSuffixIfItIsForTesting(tblObj.getRepositoryName(), tblObj.getTableName());
+        if (sWhere.getAllWhereEntries().isEmpty()) {
+            Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tblObj.getTableName(), tblObj.getRepositoryName()});
+            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
+        }
+        SqlStatementEnums sql = new SqlStatementEnums();
+        Map<String, Object[]> hmQuery = sql.buildSqlStatementTable(SQLSELECT, tblObj,
+                sWhere, fieldsToRetrieve, null, null, orderBy, null, inforceDistinct,alternativeProcedure);
+        
+//public Map<String, Object[]> buildSqlStatementTable(String operation, EnumIntTables tblObj, SqlWhere whereObj,
+//            EnumIntTableFields[] fieldsToRetrieve, EnumIntTableFields[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct, String alternativeProcInstanceName) {
+//        Map<String, Object[]> hmQuery = sql.buildSqlStatementCounter(schemaName, tableName,
+//                sWhere, //whereFieldNames, whereFieldValues                
+//                fieldsToGroup, orderBy, caseSensitive);        
+        String query = hmQuery.keySet().iterator().next();
+        Object[] keyFieldValueNew = hmQuery.get(query);
+
+        try {
+            ResultSet res = Rdbms.prepRdQuery(query, keyFieldValueNew);
+            if (res == null) {
+                Object[] errorLog = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL, query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES + Arrays.toString(sWhere.getAllWhereEntriesFldValues())});
+                return LPArray.array1dTo2d(errorLog, errorLog.length);
+            }
+            res.last();
+
+            if (res.getRow() > 0) {
+                Integer totalLines = res.getRow();
+                res.first();
+                Integer icurrLine = 0;
+
+                Object[][] diagnoses2 = new Object[totalLines][fieldsToRetrieve.length];
+                while (icurrLine <= totalLines - 1) {
+                    for (Integer icurrCol = 0; icurrCol < fieldsToRetrieve.length; icurrCol++) {
+                        Object currValue = res.getObject(icurrCol + 1);
+                        diagnoses2[icurrLine][icurrCol] = LPNulls.replaceNull(currValue);
+                    }
+                    res.next();
+                    icurrLine++;
+                }
+                //diagnoses2 = DbEncryption.decryptTableFieldArray(schemaName, tableName, fieldsToRetrieve, diagnoses2);
+                return diagnoses2;
+            } else {
+                Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{query, Arrays.toString(sWhere.getAllWhereEntriesFldValues()), schemaName});
+                return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
+            }
+        } catch (SQLException er) {
+            Logger.getLogger(query).log(Level.SEVERE, null, er);
+            Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{er.getLocalizedMessage() + er.getCause(), query});
+            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
+        }
+    }
+
     public static Object[][] getGrouper(String schemaName, String tableName, String[] fieldsToGroup, String[] whereFieldNames, Object[] whereFieldValues, String[] orderBy) {
         schemaName = addSuffixIfItIsForTesting(schemaName, tableName);
         if (whereFieldNames.length == 0) {
@@ -1342,7 +1395,7 @@ public class Rdbms {
         } catch (Exception ex) {
             ProcedureRequestSession instanceForDocumentation = ProcedureRequestSession.getInstanceForDocumentation(null, null);
             ResponseMessages messages = instanceForDocumentation.getMessages();
-            messages.addMainForError(RdbmsErrorTrapping.DB_ERROR, new Object[]{ex.getMessage()});
+            messages.addMainForError(RdbmsErrorTrapping.DB_ERROR, new Object[]{ex.getMessage()+". Query:"+consultaconinterrogaciones+". Values:"+Arrays.toString(valoresinterrogaciones)});
             String className = "";
             String classFullName = "";
             String methodName = "";
@@ -1658,7 +1711,7 @@ public class Rdbms {
                             prepsta.setTimestamp(indexval, (java.sql.Timestamp) obj);
                             break;
                         case "class java.sql.Date":
-                            prepsta.setDate(indexval, (java.sql.Date) obj);
+                            prepsta.setDate(indexval, (java.sql.Date) obj);                            
                             break;
                         case "class java.util.Date":
                             Date dt = (Date) obj;
@@ -1693,7 +1746,9 @@ public class Rdbms {
                             JSONObject jObj = (JSONObject) obj;
                             prepsta.setString(indexval, jObj.toString());
                             break;
-
+                        case "class [B": //"class java.io.ByteArrayInputStream"://"class java.io.ByteArrayInputStream":                            
+                            prepsta.setBytes(indexval, (byte[]) obj);
+                            break;                            
                         default:
                             prepsta.setString(indexval, (String) obj);
                             break;
