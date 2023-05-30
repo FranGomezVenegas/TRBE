@@ -6,9 +6,15 @@
 package lbplanet.utilities;
 
 import functionaljavaa.analysis.ConfigAnalysisStructure.ConfigAnalysisErrorTrapping;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import trazit.session.ApiMessageReturn;
 
@@ -19,7 +25,7 @@ import trazit.session.ApiMessageReturn;
 public class LPAPIArguments {
 
     public enum ArgumentType {
-        STRING, INTEGER, BIGDECIMAL, STRINGARR, STRINGOFOBJECTS, DATE, DATETIME, BOOLEAN, BOOLEANARR
+        STRING, INTEGER, BIGDECIMAL, STRINGARR, STRINGOFOBJECTS, DATE, DATETIME, BOOLEAN, BOOLEANARR, FILE
     }
     private final String name;
     private String type = ArgumentType.STRING.toString();
@@ -107,7 +113,7 @@ public class LPAPIArguments {
             if (requestArgValue == null) {
                 requestArgValue = LPNulls.replaceNull(request.getParameter(currArg.getName()));
             }
-            if (LPNulls.replaceNull(requestArgValue).length() == 0) {
+            if (LPNulls.replaceNull(requestArgValue).length() == 0 && Boolean.FALSE.equals(ArgumentType.FILE.toString().equalsIgnoreCase(currArg.getType()))) {
                 if (Boolean.TRUE.equals(currArg.getMandatory())) {
                     return new Object[]{LPPlatform.LAB_FALSE, ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{currArg.getName()}), currArg.getName()};
                 } else {
@@ -164,6 +170,20 @@ public class LPAPIArguments {
                             //Object[] valueConvertedTopObjectArr = LPArray.convertStringWithDataTypeToObjectArray(requestArgValue.split("\\|"));   
                             returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
                             break;
+                        case FILE:
+                            StringBuilder requestBody = new StringBuilder();
+                            String line;
+                            BufferedReader reader = null;
+                            try {
+                                reader = request.getReader();
+                                while ((line = reader.readLine()) != null) {
+                                    requestBody.append(line);
+                                }
+                                reader.close();
+                                returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, requestBody.toString());
+                            } catch (IOException ex) {
+                                Logger.getLogger(LPAPIArguments.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                         default:
                             returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
                             break;
@@ -175,6 +195,27 @@ public class LPAPIArguments {
             }
         }
         return returnArgsDef;
+    }
+
+    public static InputStream getRequestBody(HttpServletRequest request) {
+        try {
+            return request.getInputStream();
+        } catch (IOException ex) {
+            Logger.getLogger(LPAPIArguments.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    public static byte[] inputStreamToByteArray(InputStream inputStream) throws IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        int bytesRead;
+        byte[] data = new byte[4096]; // Adjust buffer size as needed
+
+        while ((bytesRead = inputStream.read(data, 0, data.length)) != -1) {
+            buffer.write(data, 0, bytesRead);
+        }
+        buffer.flush();
+        return buffer.toByteArray();
     }
 
     public static String specialTagFilter(String value) {
@@ -208,6 +249,7 @@ public class LPAPIArguments {
     public String getDevCommentTags() {
         return this.argCommentTag;
     }
+
     public LPAPIArgumentsSpecialChecks.specialCheckersList getSpecialCheck() {
         return this.specialCheck;
     }
