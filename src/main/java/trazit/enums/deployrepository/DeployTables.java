@@ -138,7 +138,7 @@ public class DeployTables {
                 refTable = " REFERENCES " + LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), curForKey.getReferencedSchema()) + "." + curForKey.getReferencedTable();
             }
             frKeys.deleteCharAt(frKeys.length() - 2).deleteCharAt(frKeys.length() - 1).append(")");
-            refKeys.deleteCharAt(frKeys.length() - 2).deleteCharAt(frKeys.length() - 1).append(")");
+            refKeys.deleteCharAt(refKeys.length() - 2).deleteCharAt(refKeys.length() - 1).append(")");
             seqScript = seqScript + frKeys + refTable + " " + refKeys + " MATCH SIMPLE ";
             seqScript = seqScript + "   ON UPDATE CASCADE ";
             seqScript = seqScript + "   ON DELETE CASCADE ";
