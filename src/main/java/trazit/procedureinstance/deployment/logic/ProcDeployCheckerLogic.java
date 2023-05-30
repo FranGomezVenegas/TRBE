@@ -460,7 +460,7 @@ public class ProcDeployCheckerLogic {
                 for (Object[] curRow: procMasterDataObjs){
                     ClassMasterData clssMD= new ClassMasterData(instanceName, curRow[0].toString(), curRow[1].toString(), moduleName);
                     JSONObject jsonRowObj = new JSONObject();
-                    jsonRowObj.put(curRow[0], clssMD.getDiagnostic()[clssMD.getDiagnostic().length-1]);
+                    jsonRowObj.put(curRow[0], clssMD.getDiagnostic().getNewObjectId());
                     jsonRowArr.add(jsonRowObj);
                 }            
             }
