@@ -111,6 +111,9 @@ public class ProcedureRequestSession {
             String dbNameProp = "";
 
             dbNameProp = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_DB_NAME);
+            if (dbNameProp == null) {
+                dbNameProp = (String) request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_DB_NAME);
+            }
             finalToken = (String) request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
             if (finalToken == null || finalToken.length() == 0) {
                 finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
@@ -173,7 +176,12 @@ public class ProcedureRequestSession {
             } else {
                 this.actionName = theActionName;
             }
-            String procInstanceName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME);
+            
+            String procInstanceName = (String) request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME);
+            if (procInstanceName == null || procInstanceName.length() == 0) {
+                procInstanceName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME);
+            }
+            
             if (dbNameProp == null || dbNameProp.length() == 0) {
                 Rdbms.stablishDBConection();
             } else {
