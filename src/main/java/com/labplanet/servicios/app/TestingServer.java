@@ -148,7 +148,6 @@ public class TestingServer extends HttpServlet {
                 return;
             }
             request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME, "app-proc");
-            request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, "eyJ1c2VyREIiOiJtYXJjIiwiZVNpZ24iOiJsb2NvbyIsInVzZXJEQlBhc3N3b3JkIjoiYXVsaW4iLCJkYk5hbWUiOiJsYWJwbGFuZXQiLCJ1c2VyX3Byb2NlZHVyZXMiOiJbZW0tZGVtby1hLCBhcHAtcHJvY10iLCJ0eXAiOiJKV1QiLCJhcHBTZXNzaW9uSWQiOiIyMDQ0OSIsImFwcFNlc3Npb25TdGFydGVkRGF0ZSI6IldlZCBNYXIgMDkgMTg6MDE6NTIgVVRDIDIwMjIiLCJ1c2VyUm9sZSI6ImNvb3JkaW5hdG9yIiwidXNlcl9wcm9jZWR1cmVfaGFzaGNvZGVzIjoiZW0tZGVtby1hKjEqMTIzNDV8YXBwLXByb2MqMSoiLCJhbGciOiJIUzI1NiIsImludGVybmFsVXNlcklEIjoiMTIifQ.eyJpc3MiOiJMYWJQTEFORVRkZXN0cmFuZ2lzSW5UaGVOaWdodCJ9.3U3juu38GRIQnlY43g1Bf_Uj6tc0gk1_m8dHvJ9CEeA");
             request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_DB_NAME, "labplanet");
             request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, "ENTER_EVENT_RESULT");
 
