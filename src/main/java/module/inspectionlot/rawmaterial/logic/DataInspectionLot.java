@@ -186,12 +186,11 @@ public class DataInspectionLot {
          */
         Object[][] materialInfo = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsInspLotRMConfig.TablesInspLotRMConfig.MATERIAL.getTableName(),
                 new String[]{TblsInspLotRMConfig.Material.NAME.getName()}, new Object[]{materialName},
-                new String[]{TblsInspLotRMConfig.Material.SPEC_CODE.getName(), TblsInspLotRMConfig.Material.SPEC_CODE_VERSION.getName(),
+                new String[]{TblsInspLotRMConfig.Material.SPEC_CODE.getName(), TblsInspLotRMConfig.Material.SPEC_CODE_VERSION.getName(), TblsInspLotRMConfig.Material.ANALYSIS_VARIATION_NAME.getName(),
                     TblsInspLotRMConfig.Material.INVENTORY_MANAGEMENT.getName(), TblsInspLotRMConfig.Material.PERFORM_BULK_CONTROL.getName(), TblsInspLotRMConfig.Material.BULK_SAMPLING_DEFAULT_ALGORITHM.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(materialInfo[0][0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{lotName, TblsInspLotRMConfig.TablesInspLotRMConfig.MATERIAL.getTableName(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())}, lotName);
-        }
-        //materialInfo;
+        }        
 
         Object[][] specInfo = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsInspLotRMConfig.TablesInspLotRMConfig.SPEC.getTableName(),
                 new String[]{TblsCnfg.Spec.CODE.getName(), TblsCnfg.Spec.CONFIG_VERSION.getName()}, new Object[]{materialInfo[0][0], materialInfo[0][1]},
@@ -274,6 +273,8 @@ public class DataInspectionLot {
         lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, LPDate.getCurrentTimeStamp());
         lotFieldName = LPArray.addValueToArray1D(lotFieldName, TblsInspLotRMData.Lot.CREATED_BY.getName());
         lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, token.getPersonName());
+        lotFieldName = LPArray.addValueToArray1D(lotFieldName, TblsInspLotRMData.Lot.SPEC_VARIATION_NAME.getName());
+        lotFieldValue = LPArray.addValueToArray1D(lotFieldValue,  materialInfo[0][2]);
 
         if (LPArray.valuePosicInArray(lotFieldName, TblsInspLotRMData.Lot.CUSTODIAN.getName()) == -1) {
             ChangeOfCustody coc = new ChangeOfCustody();
@@ -307,7 +308,7 @@ public class DataInspectionLot {
             return new InternalMessage(LPPlatform.LAB_FALSE, DataInspLotErrorTrapping.SAMPLEPLAN_CHECKER_ERROR, new Object[]{Arrays.toString(spEntry.getErrorsArr())});
         }
 
-        Boolean inventoryManagement = Boolean.valueOf(LPNulls.replaceNull(materialInfo[0][2]).toString());
+        Boolean inventoryManagement = Boolean.valueOf(LPNulls.replaceNull(materialInfo[0][3]).toString());
         InventoryPlanEntry invPlanEntry = null;
         if (Boolean.TRUE.equals(inventoryManagement)) {
             invPlanEntry = new InventoryPlanEntry(materialName, specCode, specCodeVersion, quant, numCont);
@@ -339,8 +340,8 @@ public class DataInspectionLot {
             DataInspectionLotDecision lotDec = new DataInspectionLotDecision();
             lotDec.lotDecisionRecordCreateOrUpdate(lotName, null, false);
             lotDec = null;
-            String requiresBulkControl = LPNulls.replaceNull(materialInfo[0][3].toString());
-            String bulkDefaultSamplingAlgorithm = LPNulls.replaceNull(materialInfo[0][4].toString());
+            String requiresBulkControl = LPNulls.replaceNull(materialInfo[0][4].toString());
+            String bulkDefaultSamplingAlgorithm = LPNulls.replaceNull(materialInfo[0][5].toString());
 
             if (requiresBulkControl == null || !Boolean.valueOf(requiresBulkControl)) {
                 InternalMessage applySamplingPlan = applySamplesSamplingPlan(lotName, materialName, specCode, specCodeVersion, quant, numCont, lotFieldName, lotFieldValue, spEntry, null, null, null, null, null);

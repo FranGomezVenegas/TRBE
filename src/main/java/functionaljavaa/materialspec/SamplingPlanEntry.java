@@ -87,12 +87,12 @@ public class SamplingPlanEntry {
                 switch (algEntry){
                     case FIX_NUM_SAMPLES:
                         if (curMatSampPlan[3]==null || curMatSampPlan[3].toString().length()==0)
-                            errorMsg="For the algorithm"+algEntry+" and entry "+curMatSampPlan[0].toString()+" no number of fix samples was specified";
+                            errorMsg="For the algorithm "+algEntry+" and entry "+curMatSampPlan[0].toString()+" no number of fix samples was specified";
                         else{
                             try{
                                 numSamples=Integer.valueOf(curMatSampPlan[3].toString());
                             }catch(NumberFormatException e){
-                                errorMsg="For the algorithm"+algEntry+" and entry "+curMatSampPlan[0].toString()+" occurred the error "+e.getMessage();
+                                errorMsg="For the algorithm "+algEntry+" and entry "+curMatSampPlan[0].toString()+" occurred the error "+e.getMessage();
                             }
                         }
                         break;
@@ -100,7 +100,7 @@ public class SamplingPlanEntry {
                     case Q_N_ROOT_PLUS_ONE_TRUNC:
                     case Q_N_ROOT_PLUS_ONE_UP:
                         if (quant==null || quant.toString().length()==0)
-                            errorMsg="For the algorithm"+algEntry+" and entry "+curMatSampPlan[0].toString()+" the lot quantity is required but not specified";
+                            errorMsg="For the algorithm "+algEntry+" and entry "+curMatSampPlan[0].toString()+" the lot quantity is required but not specified";
                         else{
                             if (algorithm.equalsIgnoreCase(SamplingPlanAlgorithms.ONE_PER_EACH_QUANTITY.toString())) numSamples=quant.intValue();  
                             else{
@@ -115,7 +115,7 @@ public class SamplingPlanEntry {
                     case NUMCONT_N_ROOT_PLUS_ONE_TRUNC:
                     case NUMCONT_N_ROOT_PLUS_ONE_UP:
                         if (numCont==null || numCont.toString().length()==0)
-                            errorMsg="For the algorithm"+algEntry+" and entry "+curMatSampPlan[0].toString()+" the lot number of Containers is required but not specified";                            
+                            errorMsg="For the algorithm "+algEntry+" and entry "+curMatSampPlan[0].toString()+" the lot number of Containers is required but not specified";                            
                         else{
                             if (algorithm.equalsIgnoreCase(SamplingPlanAlgorithms.ONE_PER_EACH_CONTAINER.toString())) numSamples=numCont;  
                             else{

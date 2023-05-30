@@ -97,6 +97,8 @@ public class ClassInspLotRMactions {
                 Integer numBulks = null;
                 if (numBulksStr.length() > 0) {
                     numBulks = Integer.valueOf(numBulksStr);
+                    fieldNameArr = LPArray.addValueToArray1D(fieldNameArr, TblsInspLotRMData.Lot.NUM_BULKS.getName());
+                    fieldValueArr = LPArray.addValueToArray1D(fieldValueArr, Integer.valueOf(numBulks));
                 }
                 Integer numLotsToCreate = 1;
                 if (fieldValueArr != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValueArr[0].toString())) {

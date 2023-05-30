@@ -7,7 +7,6 @@ package module.inspectionlot.rawmaterial.definition;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import static com.labplanet.servicios.moduleenvmonit.EnvMonAPIqueries.JSON_TAG_SPEC_DEFINITION;
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.SqlStatementEnums;
@@ -33,6 +32,7 @@ import static module.inspectionlot.rawmaterial.definition.InspLotQueries.configM
 import static module.inspectionlot.rawmaterial.definition.InspLotQueries.dataSampleStructure;
 import module.inspectionlot.rawmaterial.definition.InspLotRMEnums.InspLotRMBusinessRules;
 import module.inspectionlot.rawmaterial.logic.DataInsLotsCorrectiveAction;
+import module.inspectionlot.rawmaterial.logic.DataInspLotRMCertificate;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntQueriesObj;
@@ -134,7 +134,7 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                             }
                             lotJsonObj.put(TblsInspLotRMData.TablesInspLotRMData.LOT_BULK.getTableName(), lotInfoJsonArr);
                         }
-                        
+
                         tableFieldsBulk = TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN.getTableFields();
                         fieldsToRetrieveBulk = EnumIntTableFields.getAllFieldNames(tableFieldsBulk);
                         lotInfo = QueryUtilitiesEnums.getTableData(TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN,
@@ -207,22 +207,28 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                             }
                             lotJsonObj.put(TblsInspLotRMData.TablesInspLotRMData.SAMPLE.getTableName(), jLotSampleSectionInfoArr);
                         }
-
                         Object specCode = jLotInfoObj.get(TblsInspLotRMData.Lot.SPEC_CODE.getName());
-                        Object specConfigVersion = jLotInfoObj.get(TblsEnvMonitConfig.Program.SPEC_CONFIG_VERSION.getName());
+                        Object specConfigVersion = jLotInfoObj.get(TblsInspLotRMData.Lot.SPEC_CODE_VERSION.getName());
+                        Object specVariationName = jLotInfoObj.get(TblsInspLotRMData.Lot.SPEC_VARIATION_NAME.getName());
                         JSONObject specDefinition = new JSONObject();
+                        String[] specFlds = null;
+                        JSONArray specLimitsInfo = null;
                         if (Boolean.FALSE.equals(specCode == null || specCode == "" || specConfigVersion == null || "".equals(specConfigVersion.toString()))) {
                             JSONObject specInfo = SpecFrontEndUtilities.configSpecInfo(procReqInstance, (String) specCode, (Integer) specConfigVersion,
                                     null, null);
                             specDefinition.put(TblsCnfg.TablesConfig.SPEC.getTableName(), specInfo);
-                            JSONArray specLimitsInfo = SpecFrontEndUtilities.configSpecLimitsInfo(procReqInstance, (String) specCode, (Integer) specConfigVersion,
-                                    null, new String[]{TblsCnfg.SpecLimits.VARIATION_NAME.getName(), TblsCnfg.SpecLimits.ANALYSIS.getName(),
-                                        TblsCnfg.SpecLimits.METHOD_NAME.getName(), TblsCnfg.SpecLimits.LIMIT_ID.getName(),
-                                        TblsCnfg.SpecLimits.SPEC_TEXT_EN.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_RED_AREA_EN.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_YELLOW_AREA_EN.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_GREEN_AREA_EN.getName(),
-                                        TblsCnfg.SpecLimits.SPEC_TEXT_ES.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_RED_AREA_ES.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_YELLOW_AREA_ES.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_GREEN_AREA_ES.getName()});
+                            specFlds = new String[]{TblsCnfg.SpecLimits.VARIATION_NAME.getName(), TblsCnfg.SpecLimits.ANALYSIS.getName(),
+                                TblsCnfg.SpecLimits.METHOD_NAME.getName(), TblsCnfg.SpecLimits.LIMIT_ID.getName(), TblsInspLotRMConfig.SpecLimits.ADD_IN_COA.getName(),
+                                TblsCnfg.SpecLimits.SPEC_TEXT_EN.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_RED_AREA_EN.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_YELLOW_AREA_EN.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_GREEN_AREA_EN.getName(),
+                                TblsCnfg.SpecLimits.SPEC_TEXT_ES.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_RED_AREA_ES.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_YELLOW_AREA_ES.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_GREEN_AREA_ES.getName()};
+                            specLimitsInfo = SpecFrontEndUtilities.configSpecLimitsInfo(procReqInstance, specCode.toString(), (Integer) specConfigVersion,
+                                    specVariationName.toString(), specFlds, new String[]{TblsInspLotRMConfig.SpecLimits.COA_ORDER.getName(), TblsInspLotRMConfig.SpecLimits.ANALYSIS.getName()});
                             specDefinition.put(TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(), specLimitsInfo);
                             lotJsonObj.put(JSON_TAG_SPEC_DEFINITION, specDefinition);
                         }
+                        lotJsonObj.put("lot_coa", DataInspLotRMCertificate.getLotCoAInfo(lotName, "CC", jLotInfoObj, fieldsToRetrieveSample, lotSampleInfo, specFlds, specLimitsInfo));
+                        
+
                         lotsJsonArr.add(lotJsonObj);
                     }
                     Rdbms.closeRdbms();
@@ -265,7 +271,7 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     break;
                 case GET_LOT_AUDIT:
-                    String[] fieldsToRetrieve=null;
+                    String[] fieldsToRetrieve = null;
                     lotName = LPNulls.replaceNull(argValues[0]).toString();
                     fieldsToRetrieveStr = LPNulls.replaceNull(argValues[1]).toString();
                     if (LPNulls.replaceNull(fieldsToRetrieveStr).length() == 0) {

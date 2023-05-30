@@ -5,7 +5,6 @@
  */
 package module.inspectionlot.rawmaterial.definition;
 
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.SqlStatementEnums;
 import databases.TblsCnfg;
 import databases.TblsData;
@@ -37,10 +36,18 @@ public class TblsInspLotRMData {
     private static final Boolean IS_PRODEDURE_INSTANCE = true;
     public enum TablesInspLotRMData implements EnumIntTables{        
         LOT(null, "lot", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Lot.values(), null, new String[]{Lot.NAME.getName()}, null, "Lot table"),
-        LOT_DECISION(null, "lot_decision", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, LotDecision.values(), null, new String[]{LotDecision.LOT_NAME.getName()}, null, "LotDecision table"),
-        LOT_CERTIFICATE(null, "lot_certificate", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, LotCertificate.values(), LotCertificate.CERTIFICATE_ID.getName(), new String[]{LotCertificate.CERTIFICATE_ID.getName()}, null, "LotCertificate table"),
-        LOT_CERTIFICATE_TRACK(null, "lot_certificate_track", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, LotCertificateTrack.values(), LotCertificateTrack.ID.getName(), new String[]{LotCertificateTrack.ID.getName()}, null, "LotCertificateTrack table"),
-        LOT_BULK(null, "lot_bulk", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, LotBulk.values(), LotBulk.BULK_ID.getName(), new String[]{LotBulk.BULK_ID.getName()}, null, "LotBulk table"),
+        LOT_DECISION(null, "lot_decision", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, LotDecision.values(), null, new String[]{LotDecision.LOT_NAME.getName()}, 
+            new Object[]{new ForeignkeyFld(LotDecision.LOT_NAME.getName(), SCHEMA_NAME, LOT.getTableName(), Lot.NAME.getName())}, "LotDecision table"),
+        LOT_CERTIFICATE(null, "lot_certificate", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, LotCertificate.values(), LotCertificate.CERTIFICATE_ID.getName(), new String[]{LotCertificate.CERTIFICATE_ID.getName()}, 
+            new Object[]{new ForeignkeyFld(LotCertificate.LOT_NAME.getName(), SCHEMA_NAME, LOT.getTableName(), Lot.NAME.getName())}, "LotCertificate table"),
+        LOT_CERTIFICATE_TRACK(null, "lot_certificate_track", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, LotCertificateTrack.values(), LotCertificateTrack.ID.getName(), new String[]{LotCertificateTrack.ID.getName()}, 
+            new Object[]{new ForeignkeyFld(LotCertificateTrack.LOT_NAME.getName(), SCHEMA_NAME, LOT.getTableName(), Lot.NAME.getName())}, "LotCertificateTrack table"),
+        LOT_BULK(null, "lot_bulk", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, LotBulk.values(), LotBulk.BULK_ID.getName(), new String[]{LotBulk.BULK_ID.getName()}, 
+            new Object[]{new ForeignkeyFld(LotBulk.LOT_NAME.getName(), SCHEMA_NAME, LOT.getTableName(), Lot.NAME.getName())}, "LotBulk table"),
+
+        LOT_NOT_ANALYZED_RESULT(null, "lot_not_analyzed_result", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, LotNotAnalyzedResult.values(), null, new String[]{LotNotAnalyzedResult.LOT_NAME.getName(), LotNotAnalyzedResult.ANALYSIS.getName()}, 
+            new Object[]{new ForeignkeyFld(LotNotAnalyzedResult.LOT_NAME.getName(), SCHEMA_NAME, LOT.getTableName(), Lot.NAME.getName())}, "Lot Not Analyzed Result table"),
+
         SAMPLE(null, "sample", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Sample.values(), Sample.SAMPLE_ID.getName(), new String[]{Sample.SAMPLE_ID.getName()}, null, "Sample table"),
         SAMPLE_ANALYSIS_RESULT(null, "sample_analysis_result", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, SampleAnalysisResult.values(), SampleAnalysisResult.RESULT_ID.getName(),
             new String[]{SampleAnalysisResult.RESULT_ID.getName()}, 
@@ -175,18 +182,11 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         SAMPLE_CONFIG_CODE("sample_config_code", "s."+TblsData.Sample.CONFIG_CODE.getName(), TblsData.Sample.CONFIG_CODE, null, null, null),
         SAMPLE_STATUS("sample_status", "s.status", TblsData.Sample.STATUS, null, null, null),
         CURRENT_STAGE("current_stage", "s.current_stage", TblsData.Sample.CURRENT_STAGE, null, null, null),
-        PROGRAM_NAME("program_name", "s.program_name", TblsEnvMonitData.Sample.PROGRAM_NAME, null, null, null),
-        SAMPLING_DATE("sampling_date", "s.sampling_date", TblsData.Sample.SAMPLING_DATE, null, null, null),
-        SHIFT("shift", "s.shift", TblsEnvMonitData.Sample.SHIFT, null, null, null),
-        PROGRAM_DAY_ID("program_day_id", "s.program_day_id", TblsEnvMonitData.Sample.PROG_DAY_ID, null, null, null),
-        PROGRAM_DAY_DATE("program_day_date", "s.program_day_date", TblsEnvMonitData.Sample.PROG_DAY_DATE, null, null, null),
         SAMPLE_ANALYSIS_STATUS("sample_analysis_status", "sa.status", TblsData.SampleAnalysis.STATUS, null, null, null),
         SAMPLE_ANALYSIS_READY_FOR_REVISION("sample_analysis_"+TblsData.SampleAnalysis.READY_FOR_REVISION.getName(), "sa."+TblsData.Sample.READY_FOR_REVISION.getName(), TblsData.SampleAnalysis.READY_FOR_REVISION, null, null, null),
         TESTING_GROUP("testing_group", "sa.testing_group", TblsData.SampleAnalysis.TESTING_GROUP, null, null, null),
         SAMPLE_ANALYSIS_REVIEWER("sample_analysis_reviewer", "sa.reviewer", TblsData.SampleAnalysis.REVIEWER, null, null, null),        
         LOGGED_ON("logged_on", "s.logged_on", TblsData.Sample.LOGGED_ON, null, null, null),
-        SAMPLER("sampler", "s.sampler", TblsData.Sample.SAMPLER, null, null, null),
-        SAMPLER_AREA("sampler_area", "s.sampler_area", TblsEnvMonitData.Sample.SAMPLER_AREA, null, null, null),
         READY_FOR_REVISION(TblsData.Sample.READY_FOR_REVISION.getName(), "s."+TblsData.Sample.READY_FOR_REVISION.getName(), TblsData.Sample.READY_FOR_REVISION, null, null, null),
         LIMIT_ID("limit_id", "spcLim.limit_id", TblsCnfg.SpecLimits.LIMIT_ID, null, null, null),
         SPEC_CODE("spec_code", "spcLim.code", TblsCnfg.SpecLimits.CODE, null, null, null),
@@ -252,6 +252,7 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         MATERIAL_NAME("material_name", LPDatabase.string(), null, null, null, null),
         SPEC_CODE("spec_code", LPDatabase.string(), null, null, null, null),
         SPEC_CODE_VERSION("spec_config_version", LPDatabase.integer(), null, null, null, null),
+        SPEC_VARIATION_NAME("spec_variation_name", LPDatabase.string(), null, null, null, null),
         SAMPLING_PLAN("sampling_plan", LPDatabase.string(), null, null, null, null),
 //        CONFIG_CODE("config_code", LPDatabase.string()),        
 //        CONFIG_CODE_VERSION("config_code_version", LPDatabase.integer()),        
@@ -260,6 +261,7 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         QUANTITY("quantity", LPDatabase.integer(), null, null, null, null),
         QUANTITY_UOM("quantity_uom", LPDatabase.string(), null, null, null, null),
         NUM_CONTAINERS("num_containers", LPDatabase.integer(), null, null, null, null),
+        NUM_BULKS("num_bulks", LPDatabase.integer(), null, null, null, null),
         VENDOR("vendor", LPDatabase.string(), null, null, null, null),
         VENDOR_TRUST_LEVEL("vendor_trust_level", LPDatabase.string(), null, null, null, null),
         ANALYSIS_STATUS("analysis_status", LPDatabase.string(), null, null, null, null),
@@ -482,6 +484,41 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         @Override        public String getFieldComment(){return this.fieldComment;}
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }
+    
+    public enum LotNotAnalyzedResult implements EnumIntTableFields{
+        LOT_NAME("lot_name",  LPDatabase.stringNotNull(100), null, null, null, null),
+        ANALYSIS("analysis",  LPDatabase.string(100), null, null, null, null),        
+        //CERTIFICATE_VERSION("certificate_version", LPDatabase.integer(), null, null, null, null),
+        VALUE("value",LPDatabase.stringNotNull(), null, null, null, null),
+        CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null),
+        CREATED_BY("created_by", LPDatabase.string(), null, null, null, null),
+        REASON("reason", LPDatabase.string(), null, null, null, null),
+        ;
+        private LotNotAnalyzedResult(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }
+    
+    
     public enum Sample implements EnumIntTableFields{
         SAMPLE_ID("sample_id", LPDatabase.integerNotNull(), null, null, null, null),
         LOT_NAME("lot_name",  LPDatabase.stringNotNull(), null, null, null, null),
