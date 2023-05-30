@@ -128,8 +128,9 @@ public class GlobalAPIsParams extends HttpServlet {
     public static final String REQUEST_PARAM_VOLUME_UOM = "volumeUom";
     
     public static final String REQUEST_PARAM_INCLUDE_MATERIAL = "includesMaterial";
+    public static final String REQUEST_PARAM_NAME = "name";
     public static final String REQUEST_PARAM_LOT_NAME = "lotName";
-    public static final String REQUEST_PARAM_LOT_DECISION = "lotDecision";
+    public static final String REQUEST_PARAM_LOT_USAGE_DECISION = "lotUsageDecision";
     public static final String REQUEST_PARAM_RETAIN_ID = "retainId";
     public static final String REQUEST_PARAM_NEW_LOCATION_NAME = "newLocationName";
     public static final String REQUEST_PARAM_NEW_LOCATION_ID = "newLocationId";
@@ -281,7 +282,7 @@ public class GlobalAPIsParams extends HttpServlet {
     public static final String REQUEST_PARAM_BATCH_FIELD_TO_DISPLAY = "batchFieldsToDisplay";
     public static final String REQUEST_PARAM_INCUBATOR_FIELD_TO_RETRIEVE = "incubatorFieldToRetrieve";
     public static final String REQUEST_PARAM_INCUBATOR_FIELD_TO_DISPLAY = "incubatorFieldsToDisplay";
-    public static final String REQUEST_PARAM_NAME = "name";
+    
     public static final String REQUEST_PARAM_OUTPUT_IS_FILE = "outputIsFile";
 
     public static final String REQUEST_PARAM_PRODLOT_FIELD_TO_RETRIEVE = "prodLotFieldToRetrieve";
