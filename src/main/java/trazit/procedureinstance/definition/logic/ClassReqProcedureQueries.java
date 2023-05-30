@@ -10,6 +10,7 @@ import com.google.gson.JsonSyntaxException;
 import static trazit.procedureinstance.definition.logic.ClassReqProcedUserAndActions.actionsByRoles;
 import static trazit.procedureinstance.definition.logic.ClassReqProcedUserAndActions.viewsByRoles;
 import databases.Rdbms;
+import databases.SqlWhere;
 import trazit.procedureinstance.definition.definition.TblsReqs;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
@@ -17,6 +18,8 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntTableFields;
+import trazit.enums.EnumIntTables;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -145,10 +148,18 @@ public class ClassReqProcedureQueries {
             return LPJson.convertArrayRowToJSONFieldNameAndValueObject(fldsToGet, procTblRows[0], null);
         }
     }
-
+    public static JSONArray dbRowsToJsonArr(String procInstanceName, EnumIntTables tblObj, EnumIntTableFields[] fldsToGet, SqlWhere wObj, String[] sortFlds, String[] jsonFlds, Boolean emptyWhenNoData) {
+        Object[][] procTblRows = Rdbms.getRecordFieldsByFilter(procInstanceName, tblObj,
+                wObj, fldsToGet, sortFlds, false);
+        return convertArray2DtoJArr(procTblRows, EnumIntTableFields.getAllFieldNames(fldsToGet), jsonFlds, emptyWhenNoData);
+    }
     public static JSONArray dbRowsToJsonArr(String procInstanceName, String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue, String[] sortFlds, String[] jsonFlds, Boolean emptyWhenNoData) {
         Object[][] procTblRows = Rdbms.getRecordFieldsByFilter(procInstanceName, tblName,
                 whereFldName, whereFldValue, fldsToGet, sortFlds);
+        return convertArray2DtoJArr(procTblRows, fldsToGet, jsonFlds, emptyWhenNoData);
+    }
+    
+    private static JSONArray convertArray2DtoJArr(Object[][] procTblRows, String[] fldsToGet, String[] jsonFlds, Boolean emptyWhenNoData){
         JSONArray jBlockArr = new JSONArray();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procTblRows[0][0].toString())) {
             if (Boolean.TRUE.equals(emptyWhenNoData))
