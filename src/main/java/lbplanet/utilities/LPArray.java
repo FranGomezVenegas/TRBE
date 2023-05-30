@@ -505,6 +505,43 @@ public class LPArray {
         return -1;
     }
 
+    public static Integer[] valueAllPosicInArray(Object[] array, Object value) {
+        Integer[] matchIndexesArr = new Integer[]{};
+        if (array == null) {
+            return matchIndexesArr;
+        }
+        Integer specialFieldIndex = Arrays.asList(array).indexOf(value);
+        if (specialFieldIndex != -1) {
+            matchIndexesArr = (Integer[]) addValueToArray1D(matchIndexesArr, specialFieldIndex);
+        }
+        return matchIndexesArr;
+    }
+
+    public static Integer valuePosicInArray2D(Object[][] array, Object value, Integer colIndex) {
+        if (array == null) {
+            return -1;
+        }
+        for (int i = 0; i < array.length; i++) {
+            if (array[i][colIndex].equals(value)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static Integer[] valueAllPosicInArray2D(Object[][] array, Object value, Integer colIndex) {
+        if (array == null) {
+            return new Integer[]{};
+        }
+        List<Integer> positions = new ArrayList<>();
+        for (int i = 0; i < array.length; i++) {
+            if (array[i][colIndex].equals(value)) {
+                positions.add(i);
+            }
+        }
+        return positions.toArray(new Integer[0]);
+    }
+
     /**
      * Add one new position to the array at the bottom for the new incoming
      * value
