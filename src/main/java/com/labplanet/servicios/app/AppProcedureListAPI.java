@@ -218,7 +218,7 @@ public class AppProcedureListAPI extends HttpServlet {
             InvTrackingFrontendMasterData mdObj=new InvTrackingFrontendMasterData();
             jObj=mdObj.getMasterDataJsonObject(procInstanceName);                
         }else{ 
-            jObj.put(procInstanceName, "no master date logic defined");
+            jObj.put(procInstanceName, "no master data logic defined");
             return jObj;
         }
         JSONArray usArr=new JSONArray();
