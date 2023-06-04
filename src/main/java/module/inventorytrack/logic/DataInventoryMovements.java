@@ -26,10 +26,10 @@ public class DataInventoryMovements {
         throw new IllegalStateException("Utility class");
     }
 
-    public static InternalMessage adjustInventoryLotVolume(DataInventory invLot, BigDecimal newVolume, String newVolumeUom) {
+    public static InternalMessage adjustInventoryLotQuantity(DataInventory invLot, BigDecimal newVolume, String newVolumeUom) {
         InternalMessage availableForMovements = isAvailableForMovements(invLot, newVolume, newVolumeUom);
         if ((invLot.getCurrentVolume().equals(newVolume)) && (invLot.getCurrentVolumeUom().equals(newVolumeUom))) {
-            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.VOLUME_IS_ALREADY_THIS, new Object[]{newVolume, newVolumeUom, invLot.getLotName()}, null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.QUANTITY_IS_ALREADY_THIS, new Object[]{newVolume, newVolumeUom, invLot.getLotName()}, null);
         }
 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(availableForMovements.getDiagnostic())) {
@@ -54,17 +54,17 @@ public class DataInventoryMovements {
         sqlWhere.addConstraint(TblsInvTrackingData.Lot.CATEGORY, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{invLot.getCategory()}, "");        
         Object[] fldValues = new Object[]{newVolume, newVolumeUom};
         RdbmsObject invLotTurnAvailableDiagn = Rdbms.updateTableRecordFieldsByFilter(TablesInvTrackingData.LOT,
-                new EnumIntTableFields[]{TblsInvTrackingData.Lot.VOLUME, TblsInvTrackingData.Lot.VOLUME_UOM},
+                new EnumIntTableFields[]{TblsInvTrackingData.Lot.QUANTITY, TblsInvTrackingData.Lot.QUANTITY_UOM},
                 fldValues, sqlWhere, null);
-        String[] fldNames = new String[]{"new_" + TblsInvTrackingData.Lot.VOLUME.getName(), "new_" + TblsInvTrackingData.Lot.VOLUME_UOM.getName(),
-            "previous_" + TblsInvTrackingData.Lot.VOLUME.getName(), "previous_" + TblsInvTrackingData.Lot.VOLUME_UOM.getName()};
+        String[] fldNames = new String[]{"new_" + TblsInvTrackingData.Lot.QUANTITY.getName(), "new_" + TblsInvTrackingData.Lot.QUANTITY_UOM.getName(),
+            "previous_" + TblsInvTrackingData.Lot.QUANTITY.getName(), "previous_" + TblsInvTrackingData.Lot.QUANTITY_UOM.getName()};
         fldValues = LPArray.addValueToArray1D(fldValues,
-                new Object[]{LPNulls.replaceNull(invLot.getLotFieldValues()[LPArray.valuePosicInArray(invLot.getLotFieldNames(), TblsInvTrackingData.Lot.VOLUME.getName())]).toString(),
-                    LPNulls.replaceNull(invLot.getLotFieldValues()[LPArray.valuePosicInArray(invLot.getLotFieldNames(), TblsInvTrackingData.Lot.VOLUME_UOM.getName())]).toString()});
+                new Object[]{LPNulls.replaceNull(invLot.getLotFieldValues()[LPArray.valuePosicInArray(invLot.getLotFieldNames(), TblsInvTrackingData.Lot.QUANTITY.getName())]).toString(),
+                    LPNulls.replaceNull(invLot.getLotFieldValues()[LPArray.valuePosicInArray(invLot.getLotFieldNames(), TblsInvTrackingData.Lot.QUANTITY_UOM.getName())]).toString()});
         if (Boolean.FALSE.equals(invLotTurnAvailableDiagn.getRunSuccess())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, invLotTurnAvailableDiagn.getErrorMessageCode(), new Object[]{invLot.getLotName()}, null);
         }
-        inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.LOT_VOLUME_ADJUSTED, invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(), invLot.getLotName(),
+        inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.LOT_QUANTITY_ADJUSTED, invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(), invLot.getLotName(),
                 fldNames, fldValues);
 
         if (checkVolumeCoherencyDiagn.length > 1) {
@@ -77,23 +77,23 @@ public class DataInventoryMovements {
             SqlWhere whereObj = new SqlWhere(TablesInvTrackingData.LOT,
                     new String[]{TblsInvTrackingData.Lot.REFERENCE.getName(), TblsInvTrackingData.Lot.CATEGORY.getName(), TblsInvTrackingData.Lot.LOT_NAME.getName()},
                     new Object[]{invLot.getReference(), invLot.getCategory(), invLot.getLotName()});
-            String[] updateFieldNames = new String[]{TblsInvTrackingData.Lot.VOLUME.getName(), TblsInvTrackingData.Lot.VOLUME_UOM.getName()};
+            String[] updateFieldNames = new String[]{TblsInvTrackingData.Lot.QUANTITY.getName(), TblsInvTrackingData.Lot.QUANTITY_UOM.getName()};
             Object[] updateFieldValues = new Object[]{myUom.getConvertedQuantity(), myUom.getConvertedQuantityUom()};
             Rdbms.updateTableRecordFieldsByFilter(TablesInvTrackingData.LOT,
                     EnumIntTableFields.getTableFieldsFromString(TablesInvTrackingData.LOT, updateFieldNames), updateFieldValues, whereObj, null);
             updateFieldNames = new String[]{"converted_volume", "converted_volume_uom", "creation_volume", "creation_volume_uom"};
             updateFieldValues = LPArray.addValueToArray1D(updateFieldValues, new Object[]{myUom.getOrigQuantity(), myUom.getOrigQuantityUom()});
-            inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.LOT_VOLUME_ADJUSTED, invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(), invLot.getLotName(),
+            inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.LOT_QUANTITY_ADJUSTED, invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(), invLot.getLotName(),
                     updateFieldNames, updateFieldValues);
         }
         if (myUom != null) {
             myUom = null;
         }
-        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ADJUST_INV_LOT_VOLUME, new Object[]{newVolume, newVolumeUom, invLot.getLotName()});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ADJUST_INV_LOT_VOLUME, new Object[]{newVolume, newVolumeUom, invLot.getLotName()}, invLot.getLotName());
+        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ADJUST_INV_LOT_QUANTITY, new Object[]{newVolume, newVolumeUom, invLot.getLotName()});
+        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ADJUST_INV_LOT_QUANTITY, new Object[]{newVolume, newVolumeUom, invLot.getLotName()}, invLot.getLotName());
     }
 
-    public static InternalMessage consumeInventoryLotVolume(DataInventory invLot, BigDecimal newVolume, String newVolumeUom, String externalProcInstanceName) {
+    public static InternalMessage consumeInventoryLotQuantity(DataInventory invLot, BigDecimal newVolume, String newVolumeUom, String externalProcInstanceName) {
         Boolean requiredConversion = false;
         BigDecimal reducedVolume = null;
         UnitsOfMeasurement myUom = null;
@@ -102,7 +102,7 @@ public class DataInventoryMovements {
             return availableForMovements;
         }
         if (invLot.getCurrentVolume() == null) {
-            return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.INV_LOT_HAS_NO_VOLUME_SET, new Object[]{invLot.getLotName()}, null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.INV_LOT_HAS_NO_QUANTITY_SET, new Object[]{invLot.getLotName()}, null);
         }
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
 
@@ -127,7 +127,7 @@ public class DataInventoryMovements {
         }
 
         if (BigDecimal.ZERO.compareTo(reducedVolume) > 0) {
-            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.INV_LOT_HAS_NOT_ENOUGH_VOLUME, new Object[]{invLot.getLotName(), invLot.getCurrentVolume(), newVolume, newVolumeUom}, invLot.getLotName());
+            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.INV_LOT_HAS_NOT_ENOUGH_QUANTITY, new Object[]{invLot.getLotName(), invLot.getCurrentVolume(), newVolume, newVolumeUom}, invLot.getLotName());
         }
 
         SqlWhere sqlWhere = new SqlWhere();
@@ -135,16 +135,16 @@ public class DataInventoryMovements {
         sqlWhere.addConstraint(TblsInvTrackingData.Lot.REFERENCE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{invLot.getReference()}, "");
         sqlWhere.addConstraint(TblsInvTrackingData.Lot.CATEGORY, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{invLot.getCategory()}, "");
 
-        String[] fldNames = new String[]{TblsInvTrackingData.Lot.VOLUME.getName()};
+        String[] fldNames = new String[]{TblsInvTrackingData.Lot.QUANTITY.getName()};
         Object[] fldValues = new Object[]{reducedVolume};
         RdbmsObject invLotTurnAvailableDiagn = Rdbms.updateTableRecordFieldsByFilter(TablesInvTrackingData.LOT,
-                new EnumIntTableFields[]{TblsInvTrackingData.Lot.VOLUME},
+                new EnumIntTableFields[]{TblsInvTrackingData.Lot.QUANTITY},
                 fldValues, sqlWhere, externalProcInstanceName);
-        fldNames = new String[]{"new_" + TblsInvTrackingData.Lot.VOLUME.getName(), "new_" + TblsInvTrackingData.Lot.VOLUME_UOM.getName(),
-            "previous_" + TblsInvTrackingData.Lot.VOLUME.getName(), "previous_" + TblsInvTrackingData.Lot.VOLUME_UOM.getName()};
+        fldNames = new String[]{"new_" + TblsInvTrackingData.Lot.QUANTITY.getName(), "new_" + TblsInvTrackingData.Lot.QUANTITY_UOM.getName(),
+            "previous_" + TblsInvTrackingData.Lot.QUANTITY.getName(), "previous_" + TblsInvTrackingData.Lot.QUANTITY_UOM.getName()};
         fldValues = LPArray.addValueToArray1D(fldValues,
-                new Object[]{newVolumeUom, LPNulls.replaceNull(invLot.getLotFieldValues()[LPArray.valuePosicInArray(invLot.getLotFieldNames(), TblsInvTrackingData.Lot.VOLUME.getName())]).toString(),
-                    LPNulls.replaceNull(invLot.getLotFieldValues()[LPArray.valuePosicInArray(invLot.getLotFieldNames(), TblsInvTrackingData.Lot.VOLUME_UOM.getName())]).toString()});
+                new Object[]{newVolumeUom, LPNulls.replaceNull(invLot.getLotFieldValues()[LPArray.valuePosicInArray(invLot.getLotFieldNames(), TblsInvTrackingData.Lot.QUANTITY.getName())]).toString(),
+                    LPNulls.replaceNull(invLot.getLotFieldValues()[LPArray.valuePosicInArray(invLot.getLotFieldNames(), TblsInvTrackingData.Lot.QUANTITY_UOM.getName())]).toString()});
         fldNames = LPArray.addValueToArray1D(fldNames, "operation_en");
         fldValues = LPArray.addValueToArray1D(fldValues, "The new volume is " + reducedVolume + " as reducing " + newVolume + " " + newVolumeUom + " to the current volume " + invLot.getCurrentVolume() + " " + invLot.getCurrentVolumeUom());
         fldNames = LPArray.addValueToArray1D(fldNames, "operation_es");
@@ -164,13 +164,13 @@ public class DataInventoryMovements {
         if (Boolean.FALSE.equals(invLotTurnAvailableDiagn.getRunSuccess())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, invLotTurnAvailableDiagn.getErrorMessageCode(), new Object[]{invLot.getLotName()}, null);
         }
-        inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.LOT_VOLUME_CONSUMED, invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(), invLot.getLotName(),
+        inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.LOT_QUANTITY_CONSUMED, invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(), invLot.getLotName(),
                 fldNames, fldValues, externalProcInstanceName);
-        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.CONSUME_INV_LOT_VOLUME, new Object[]{newVolume, newVolumeUom, invLot.getLotName()});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.CONSUME_INV_LOT_VOLUME, new Object[]{newVolume, newVolumeUom}, invLot.getLotName());
+        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.CONSUME_INV_LOT_QUANTITY, new Object[]{newVolume, newVolumeUom, invLot.getLotName()});
+        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.CONSUME_INV_LOT_QUANTITY, new Object[]{newVolume, newVolumeUom}, invLot.getLotName());
     }
 
-    public static InternalMessage addInventoryLotVolume(DataInventory invLot, BigDecimal newVolume, String newVolumeUom) {
+    public static InternalMessage addInventoryLotQuantity(DataInventory invLot, BigDecimal newVolume, String newVolumeUom) {
         Boolean requiredConversion = false;
         BigDecimal increasedVolume = null;
         UnitsOfMeasurement myUom = null;
@@ -179,7 +179,7 @@ public class DataInventoryMovements {
             return availableForMovements;
         }
         if (invLot.getCurrentVolume() == null) {
-            return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.INV_LOT_HAS_NO_VOLUME_SET, new Object[]{invLot.getLotName()}, null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.INV_LOT_HAS_NO_QUANTITY_SET, new Object[]{invLot.getLotName()}, null);
         }
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
 
@@ -207,16 +207,16 @@ public class DataInventoryMovements {
         sqlWhere.addConstraint(TblsInvTrackingData.Lot.REFERENCE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{invLot.getReference()}, "");
         sqlWhere.addConstraint(TblsInvTrackingData.Lot.CATEGORY, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{invLot.getCategory()}, "");
 
-        String[] fldNames = new String[]{TblsInvTrackingData.Lot.VOLUME.getName()};
+        String[] fldNames = new String[]{TblsInvTrackingData.Lot.QUANTITY.getName()};
         Object[] fldValues = new Object[]{increasedVolume};
         RdbmsObject invLotTurnAvailableDiagn = Rdbms.updateTableRecordFieldsByFilter(TablesInvTrackingData.LOT,
-                new EnumIntTableFields[]{TblsInvTrackingData.Lot.VOLUME},
+                new EnumIntTableFields[]{TblsInvTrackingData.Lot.QUANTITY},
                 fldValues, sqlWhere, null);
-        fldNames = new String[]{"new_" + TblsInvTrackingData.Lot.VOLUME.getName(), "new_" + TblsInvTrackingData.Lot.VOLUME_UOM.getName(),
-            "previous_" + TblsInvTrackingData.Lot.VOLUME.getName(), "previous_" + TblsInvTrackingData.Lot.VOLUME_UOM.getName()};
+        fldNames = new String[]{"new_" + TblsInvTrackingData.Lot.QUANTITY.getName(), "new_" + TblsInvTrackingData.Lot.QUANTITY_UOM.getName(),
+            "previous_" + TblsInvTrackingData.Lot.QUANTITY.getName(), "previous_" + TblsInvTrackingData.Lot.QUANTITY_UOM.getName()};
         fldValues = LPArray.addValueToArray1D(fldValues,
-                new Object[]{newVolumeUom, LPNulls.replaceNull(invLot.getLotFieldValues()[LPArray.valuePosicInArray(invLot.getLotFieldNames(), TblsInvTrackingData.Lot.VOLUME.getName())]).toString(),
-                    LPNulls.replaceNull(invLot.getLotFieldValues()[LPArray.valuePosicInArray(invLot.getLotFieldNames(), TblsInvTrackingData.Lot.VOLUME_UOM.getName())]).toString()});
+                new Object[]{newVolumeUom, LPNulls.replaceNull(invLot.getLotFieldValues()[LPArray.valuePosicInArray(invLot.getLotFieldNames(), TblsInvTrackingData.Lot.QUANTITY.getName())]).toString(),
+                    LPNulls.replaceNull(invLot.getLotFieldValues()[LPArray.valuePosicInArray(invLot.getLotFieldNames(), TblsInvTrackingData.Lot.QUANTITY_UOM.getName())]).toString()});
         fldNames = LPArray.addValueToArray1D(fldNames, "operation_en");
         fldValues = LPArray.addValueToArray1D(fldValues, "The new volume is " + increasedVolume + " as adding " + newVolume + " " + newVolumeUom + " to the current volume " + invLot.getCurrentVolume() + " " + invLot.getCurrentVolumeUom());
         fldNames = LPArray.addValueToArray1D(fldNames, "operation_es");
@@ -236,10 +236,10 @@ public class DataInventoryMovements {
         if (Boolean.FALSE.equals(invLotTurnAvailableDiagn.getRunSuccess())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, invLotTurnAvailableDiagn.getErrorMessageCode(), new Object[]{invLot.getLotName()}, null);
         }
-        inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.LOT_VOLUME_ADDITION, invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(), invLot.getLotName(),
+        inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.LOT_QUANTITY_ADDITION, invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(), invLot.getLotName(),
                 fldNames, fldValues);
-        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ADD_INV_LOT_VOLUME, new Object[]{newVolume, newVolumeUom, invLot.getLotName()});
-        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ADD_INV_LOT_VOLUME, new Object[]{newVolume, newVolumeUom, invLot.getLotName()}, invLot.getLotName());
+        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ADD_INV_LOT_QUANTITY, new Object[]{newVolume, newVolumeUom, invLot.getLotName()});
+        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ADD_INV_LOT_QUANTITY, new Object[]{newVolume, newVolumeUom, invLot.getLotName()}, invLot.getLotName());
     }
 
     private static InternalMessage isAvailableForMovements(DataInventory invLot, BigDecimal newVolume, String newVolumeUom) {
@@ -250,8 +250,8 @@ public class DataInventoryMovements {
             return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.NOT_AVAILABLE, new Object[]{invLot.getLotName()}, null);
         }
         if (invLot.getCurrentVolume() == null) {
-            messages.addMainForError(InventoryTrackingErrorTrapping.INV_LOT_HAS_NO_VOLUME_SET, new Object[]{invLot.getLotName()});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.INV_LOT_HAS_NO_VOLUME_SET, new Object[]{invLot.getLotName()}, null);
+            messages.addMainForError(InventoryTrackingErrorTrapping.INV_LOT_HAS_NO_QUANTITY_SET, new Object[]{invLot.getLotName()});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.INV_LOT_HAS_NO_QUANTITY_SET, new Object[]{invLot.getLotName()}, null);
         }
         if (invLot.getIsRetired() != null && invLot.getIsRetired()) {
             messages.addMainForError(InventoryTrackingErrorTrapping.ALREADY_RETIRED, new Object[]{invLot.getLotName()});
@@ -261,6 +261,6 @@ public class DataInventoryMovements {
             messages.addMainForError(InventoryTrackingErrorTrapping.IS_LOCKED, new Object[]{invLot.getLotName()});
             return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.IS_LOCKED, new Object[]{invLot.getLotName()}, null);
         }
-        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ADD_INV_LOT_VOLUME, new Object[]{invLot.getLotName(), newVolume, newVolumeUom}, invLot.getLotName());
+        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ADD_INV_LOT_QUANTITY, new Object[]{invLot.getLotName(), newVolume, newVolumeUom}, invLot.getLotName());
     }
 }

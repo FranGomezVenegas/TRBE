@@ -124,13 +124,13 @@ public class DataInventory {
             this.lotName = LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.LOT_NAME.getName())]).toString();
             this.status = LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.STATUS.getName())]).toString();
             this.statusPrevious = LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.STATUS_PREVIOUS.getName())]).toString();
-            String value = LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.VOLUME.getName())]).toString();
+            String value = LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.QUANTITY.getName())]).toString();
             if (value.length() > 0) {
-                this.currentVolume = BigDecimal.valueOf(Double.valueOf(LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.VOLUME.getName())]).toString()));
+                this.currentVolume = BigDecimal.valueOf(Double.valueOf(LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.QUANTITY.getName())]).toString()));
             }
-            value = LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.VOLUME_UOM.getName())]).toString();
+            value = LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.QUANTITY_UOM.getName())]).toString();
             if (value.length() > 0) {
-                this.currentVolumeUom = LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.VOLUME_UOM.getName())]).toString();
+                this.currentVolumeUom = LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.QUANTITY_UOM.getName())]).toString();
             }
             this.lotIsAvailableForUse();
             this.isLocked = Boolean.valueOf(LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.IS_LOCKED.getName())]).toString());
@@ -182,18 +182,18 @@ public class DataInventory {
         if (Boolean.FALSE.equals(this.getRequiresQualification())) {
             return;
         }
-        Object[][] invLotCertifInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(externalProcedure, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION.getTableName(),
-                new String[]{TblsInvTrackingData.LotCertification.LOT_NAME.getName(), TblsInvTrackingData.LotCertification.CATEGORY.getName(), TblsInvTrackingData.LotCertification.REFERENCE.getName()},
-                new Object[]{this.getLotName(), this.getCategory(), this.getReference()}, getAllFieldNames(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION.getTableFields()));
+        Object[][] invLotCertifInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(externalProcedure, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION.getTableName(),
+                new String[]{TblsInvTrackingData.LotQualification.LOT_NAME.getName(), TblsInvTrackingData.LotQualification.CATEGORY.getName(), TblsInvTrackingData.LotQualification.REFERENCE.getName()},
+                new Object[]{this.getLotName(), this.getCategory(), this.getReference()}, getAllFieldNames(TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION.getTableFields()));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(invLotCertifInfo[0][0].toString())) {
             qualificationFieldNames = null;
             qualificationFieldValues = null;
             return;
         }
-        qualificationFieldNames = getAllFieldNames(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION.getTableFields());
+        qualificationFieldNames = getAllFieldNames(TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION.getTableFields());
         qualificationFieldValues = invLotCertifInfo[0];
 
-        String qualifCompletedDecision = LPNulls.replaceNull(invLotCertifInfo[0][LPArray.valuePosicInArray(getQualificationFieldNames(), TblsInvTrackingData.LotCertification.COMPLETED_DECISION.getName())]).toString();
+        String qualifCompletedDecision = LPNulls.replaceNull(invLotCertifInfo[0][LPArray.valuePosicInArray(getQualificationFieldNames(), TblsInvTrackingData.LotQualification.COMPLETED_DECISION.getName())]).toString();
         this.isQualified = qualifCompletedDecision.toUpperCase().contains("ACCEPT");
     }
 
@@ -231,13 +231,13 @@ public class DataInventory {
             return new Object[]{new InternalMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.CORRECT, null, null)};
         }
         String minStock = LPNulls.replaceNull(invReferenceVls[EnumIntTableFields.getFldPosicInArray(invReferenceFlds, TblsInvTrackingConfig.Reference.MIN_STOCK.getName())].toString());
-        if (minStockType.equalsIgnoreCase(InvReferenceStockControlTypes.VOLUME.toString()) && LPNulls.replaceNull(minStock).length() > 0 && LPNulls.replaceNull(lotVolume).toString().length() == 0) {
-            return new Object[]{new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.NO_LOT_VOLUME_SPECIFIED_AND_REQUIRED, null, null)};
+        if (minStockType.equalsIgnoreCase(InvReferenceStockControlTypes.QUANTITY.toString()) && LPNulls.replaceNull(minStock).length() > 0 && LPNulls.replaceNull(lotVolume).toString().length() == 0) {
+            return new Object[]{new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.NO_LOT_QUANTITY_SPECIFIED_AND_REQUIRED, null, null)};
         }
         if (invLot != null) {
             refUOM = LPNulls.replaceNull(invLot.getReferenceFieldValues()[LPArray.valuePosicInArray(invLot.getReferenceFieldNames(), TblsInvTrackingConfig.Reference.MIN_STOCK_UOM.getName())].toString());
             refAllowedUOMS = LPNulls.replaceNull(invLot.getReferenceFieldValues()[LPArray.valuePosicInArray(invLot.getReferenceFieldNames(), TblsInvTrackingConfig.Reference.ALLOWED_UOMS.getName())].toString()).split("\\|");
-        } else if (InvReferenceStockControlTypes.VOLUME.toString().equalsIgnoreCase(LPNulls.replaceNull(invReferenceVls[EnumIntTableFields.getFldPosicInArray(invReferenceFlds, TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE.getName())].toString()))) {
+        } else if (InvReferenceStockControlTypes.QUANTITY.toString().equalsIgnoreCase(LPNulls.replaceNull(invReferenceVls[EnumIntTableFields.getFldPosicInArray(invReferenceFlds, TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE.getName())].toString()))) {
             refUOM = LPNulls.replaceNull(invReferenceVls[EnumIntTableFields.getFldPosicInArray(invReferenceFlds, TblsInvTrackingConfig.Reference.MIN_STOCK_UOM.getName())].toString());
             refAllowedUOMS = LPNulls.replaceNull(invReferenceVls[EnumIntTableFields.getFldPosicInArray(invReferenceFlds, TblsInvTrackingConfig.Reference.ALLOWED_UOMS.getName())].toString()).split("\\|");
         }
@@ -335,7 +335,7 @@ public class DataInventory {
                 SqlWhere whereObj = new SqlWhere(TablesInvTrackingData.LOT,
                         new String[]{TblsInvTrackingData.Lot.REFERENCE.getName(), TblsInvTrackingData.Lot.CATEGORY.getName(), TblsInvTrackingData.Lot.LOT_NAME.getName()},
                         new Object[]{reference, category, newName});
-                String[] updateFieldNames = new String[]{TblsInvTrackingData.Lot.VOLUME.getName(), TblsInvTrackingData.Lot.VOLUME_UOM.getName()};
+                String[] updateFieldNames = new String[]{TblsInvTrackingData.Lot.QUANTITY.getName(), TblsInvTrackingData.Lot.QUANTITY_UOM.getName()};
                 Object[] updateFieldValues = new Object[]{myUom.getConvertedQuantity(), myUom.getConvertedQuantityUom()};
                 Rdbms.updateTableRecordFieldsByFilter(TablesInvTrackingData.LOT,
                         EnumIntTableFields.getTableFieldsFromString(TablesInvTrackingData.LOT, updateFieldNames), updateFieldValues, whereObj, null);
@@ -494,7 +494,7 @@ public class DataInventory {
     public InternalMessage consumeInvLotVolume(BigDecimal nwVolume, String nwVolumeUom) {
         InternalMessage volumeIsPositive = volumeIsPositive(nwVolume);
         if (LPPlatform.LAB_FALSE.equals(volumeIsPositive.getDiagnostic())) return volumeIsPositive;
-        return DataInventoryMovements.consumeInventoryLotVolume(this, nwVolume, nwVolumeUom, null);
+        return DataInventoryMovements.consumeInventoryLotQuantity(this, nwVolume, nwVolumeUom, null);
     }
 
     private static InternalMessage volumeIsPositive(BigDecimal nwVolume) {
@@ -518,19 +518,19 @@ public class DataInventory {
         if (Boolean.TRUE.equals(invLot.getHasError())) {
             return invLot.getErrorDetail();
         }
-        return DataInventoryMovements.consumeInventoryLotVolume(invLot, nwVolume, nwVolumeUom, externalProcInstanceName);
+        return DataInventoryMovements.consumeInventoryLotQuantity(invLot, nwVolume, nwVolumeUom, externalProcInstanceName);
     }
 
     public InternalMessage addInvLotVolume(BigDecimal nwVolume, String nwVolumeUom) {
         InternalMessage volumeIsPositive = volumeIsPositive(nwVolume);
         if (LPPlatform.LAB_FALSE.equals(volumeIsPositive.getDiagnostic())) return volumeIsPositive;
-        return DataInventoryMovements.addInventoryLotVolume(this, nwVolume, nwVolumeUom);
+        return DataInventoryMovements.addInventoryLotQuantity(this, nwVolume, nwVolumeUom);
     }
 
     public InternalMessage adjustInvLotVolume(BigDecimal nwVolume, String nwVolumeUom) {
         InternalMessage volumeIsPositive = volumeIsPositive(nwVolume);
         if (LPPlatform.LAB_FALSE.equals(volumeIsPositive.getDiagnostic())) return volumeIsPositive;
-        return DataInventoryMovements.adjustInventoryLotVolume(this, nwVolume, nwVolumeUom);
+        return DataInventoryMovements.adjustInventoryLotQuantity(this, nwVolume, nwVolumeUom);
     }
 
     public Boolean getHasError() {

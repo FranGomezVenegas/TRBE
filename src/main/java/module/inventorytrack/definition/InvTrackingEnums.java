@@ -12,9 +12,9 @@ import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_FIELD_V
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_LOT_NAME;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NAME;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NUM_DAYS;
+import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_QUANTITY;
+import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_QUANTITY_UOM;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_REFERENCE;
-import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_VOLUME;
-import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_VOLUME_UOM;
 import com.labplanet.servicios.app.InvestigationAPI.ParamsList;
 import databases.TblsData;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
@@ -44,14 +44,14 @@ import trazit.globalvariables.GlobalVariables;
 public class InvTrackingEnums {
 
     public enum InvReferenceStockControlTypes {
-        VOLUME, ITEMS
+        QUANTITY, ITEMS
     }
 
     public enum AppInventoryTrackingAuditEvents implements EnumIntAuditEvents {
         CREATION, UOM_CONVERSION_ON_CREATION, TURN_AVAILABLE, TURN_UNAVAILABLE,
         RETIRED, UNRETIRED,
         CREATED_QUALIFICATION, ADDED_VARIABLE, COMPLETE_QUALIFICATION, REOPEN_QUALIFICATION, UNLOCK_LOT_ONCE_QUALIFIED, TURN_AVAILABLE_ONCE_QUALIFIED,
-        LOT_VOLUME_ADJUSTED, LOT_VOLUME_CONSUMED, LOT_VOLUME_ADDITION,
+        LOT_QUANTITY_ADJUSTED, LOT_QUANTITY_CONSUMED, LOT_QUANTITY_ADDITION,
         UPDATE_INVENTORY_LOT,
         VALUE_ENTERED, VALUE_REENTERED
     }
@@ -82,8 +82,8 @@ public class InvTrackingEnums {
                     new LPAPIArguments("expiryDate", LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
                     new LPAPIArguments("expiryDateInUse", LPAPIArguments.ArgumentType.STRING.toString(), false, 10),
                     new LPAPIArguments("retestDate", LPAPIArguments.ArgumentType.STRING.toString(), false, 11),
-                    new LPAPIArguments(REQUEST_PARAM_VOLUME, LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), false, 12, null, null, LPAPIArgumentsSpecialChecks.specialCheckersList.NONEGATIVEVALUE),
-                    new LPAPIArguments(REQUEST_PARAM_VOLUME_UOM, LPAPIArguments.ArgumentType.STRING.toString(), false, 13),
+                    new LPAPIArguments(REQUEST_PARAM_QUANTITY, LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), false, 12, null, null, LPAPIArgumentsSpecialChecks.specialCheckersList.NONEGATIVEVALUE),
+                    new LPAPIArguments(REQUEST_PARAM_QUANTITY_UOM, LPAPIArguments.ArgumentType.STRING.toString(), false, 13),
                     new LPAPIArguments("vendor", LPAPIArguments.ArgumentType.STRING.toString(), false, 14),
                     new LPAPIArguments("vendorLot", LPAPIArguments.ArgumentType.STRING.toString(), false, 15),
                     new LPAPIArguments("vendorReference", LPAPIArguments.ArgumentType.STRING.toString(), false, 16),
@@ -165,30 +165,30 @@ public class InvTrackingEnums {
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TablesInvTrackingData.LOT.getTableName()).build()).build(),
                 null, null),
-        CONSUME_INV_LOT_VOLUME("CONSUME_INV_LOT", REQUEST_PARAM_LOT_NAME, "", "inventoryLotConsumed_success",
+        CONSUME_INV_LOT_QUANTITY("CONSUME_INV_LOT_QUANTITY", REQUEST_PARAM_LOT_NAME, "", "inventoryLotConsumed_success",
                 new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                     new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
-                    new LPAPIArguments(REQUEST_PARAM_VOLUME, LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), false, 9, null, null, LPAPIArgumentsSpecialChecks.specialCheckersList.NONEGATIVEVALUE),
-                    new LPAPIArguments(REQUEST_PARAM_VOLUME_UOM, LPAPIArguments.ArgumentType.STRING.toString(), false, 10)},
+                    new LPAPIArguments(REQUEST_PARAM_QUANTITY, LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), false, 9, null, null, LPAPIArgumentsSpecialChecks.specialCheckersList.NONEGATIVEVALUE),
+                    new LPAPIArguments(REQUEST_PARAM_QUANTITY_UOM, LPAPIArguments.ArgumentType.STRING.toString(), false, 10)},
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TablesInvTrackingData.LOT.getTableName()).build()).build(),
                 null, null),
-        ADD_INV_LOT_VOLUME("ADD_INV_LOT_VOLUME", REQUEST_PARAM_LOT_NAME, "", "inventoryLotadded_success",
+        ADD_INV_LOT_QUANTITY("ADD_INV_LOT_QUANTITY", REQUEST_PARAM_LOT_NAME, "", "inventoryLotadded_success",
                 new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                     new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
-                    new LPAPIArguments(REQUEST_PARAM_VOLUME, LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), false, 9, null, null, LPAPIArgumentsSpecialChecks.specialCheckersList.NONEGATIVEVALUE),
-                    new LPAPIArguments(REQUEST_PARAM_VOLUME_UOM, LPAPIArguments.ArgumentType.STRING.toString(), false, 10)},
+                    new LPAPIArguments(REQUEST_PARAM_QUANTITY, LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), false, 9, null, null, LPAPIArgumentsSpecialChecks.specialCheckersList.NONEGATIVEVALUE),
+                    new LPAPIArguments(REQUEST_PARAM_QUANTITY_UOM, LPAPIArguments.ArgumentType.STRING.toString(), false, 10)},
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TablesInvTrackingData.LOT.getTableName()).build()).build(),
                 null, null),
-        ADJUST_INV_LOT_VOLUME("ADJUST_INV_LOT", REQUEST_PARAM_LOT_NAME, "", "inventoryLotAdjusted_success",
+        ADJUST_INV_LOT_QUANTITY("ADJUST_INV_LOT_QUANTITY", REQUEST_PARAM_LOT_NAME, "", "inventoryLotAdjusted_success",
                 new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                     new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
-                    new LPAPIArguments(REQUEST_PARAM_VOLUME, LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), false, 9, null, null, LPAPIArgumentsSpecialChecks.specialCheckersList.NONEGATIVEVALUE),
-                    new LPAPIArguments(REQUEST_PARAM_VOLUME_UOM, LPAPIArguments.ArgumentType.STRING.toString(), false, 10)},
+                    new LPAPIArguments(REQUEST_PARAM_QUANTITY, LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), false, 9, null, null, LPAPIArgumentsSpecialChecks.specialCheckersList.NONEGATIVEVALUE),
+                    new LPAPIArguments(REQUEST_PARAM_QUANTITY_UOM, LPAPIArguments.ArgumentType.STRING.toString(), false, 10)},
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TablesInvTrackingData.LOT.getTableName()).build()).build(),
                 null, null),
@@ -196,7 +196,7 @@ public class InvTrackingEnums {
                 new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
                     new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
                     new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
-                    new LPAPIArguments("certifId", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 9),
+                    new LPAPIArguments("qualifId", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 9),
                     new LPAPIArguments("variableName", LPAPIArguments.ArgumentType.STRING.toString(), true, 10),
                     new LPAPIArguments("newValue", LPAPIArguments.ArgumentType.STRING.toString(), true, 11),},
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
@@ -206,7 +206,7 @@ public class InvTrackingEnums {
                 new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                     new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
-                    new LPAPIArguments("certifId", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 9),
+                    new LPAPIArguments("qualifId", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 9),
                     new LPAPIArguments("variableName", LPAPIArguments.ArgumentType.STRING.toString(), true, 10),
                     new LPAPIArguments("newValue", LPAPIArguments.ArgumentType.STRING.toString(), true, 11),},
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
@@ -320,7 +320,7 @@ public class InvTrackingEnums {
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
             new LPAPIArguments("fielValue", LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 7)}, EndPointsToRequirements.endpointWithNoOutputObjects, null, null),
         QUALIFIFICATION_EVENT_VARIABLES("QUALIFIFICATION_EVENT_VARIABLES", "", new LPAPIArguments[]{
-            new LPAPIArguments("lotCertifId", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6),
+            new LPAPIArguments("lotQualifId", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6),
             new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
             new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
             new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9)}, EndPointsToRequirements.endpointWithNoOutputObjects,
@@ -497,13 +497,13 @@ public class InvTrackingEnums {
         ALREADY_UNAVAILABLE("InventoryLotAlreadyUnAvailable", "The Lot <*1*> is currently available", "El Lote <*1*> está actualmente disponible"),
         ALREADY_EXISTS("InventoryLotAlreadyExists", "", ""),
         ALREADY_RETIRED("instrumentAlreadyRetired", "Inventory lot <*1*> already retired", "Lote <*1*> ya fue retirado"),
-        NO_LOT_VOLUME_SPECIFIED_AND_REQUIRED("inventoryTrackingNoLotVolumeSpecifiedAndRequired", "", ""),
-        INV_LOT_HAS_NOT_ENOUGH_VOLUME("InventoryLotHasNotEnoughVolume", "The lot <*1*> has not enough volume, <*2*>, for a consume of <*3*> <*4*>", "El lote <*1*> no tiene suficiente volumen, <*2*>, para consumir <*3*> de <*4*>"),
+        NO_LOT_QUANTITY_SPECIFIED_AND_REQUIRED("inventoryTrackingNoLotVolumeSpecifiedAndRequired", "", ""),
+        INV_LOT_HAS_NOT_ENOUGH_QUANTITY("InventoryLotHasNotEnoughVolume", "The lot <*1*> has not enough volume, <*2*>, for a consume of <*3*> <*4*>", "El lote <*1*> no tiene suficiente volumen, <*2*>, para consumir <*3*> de <*4*>"),
         NOT_FOUND("InventoryLotNotFound", "The Lot <*1*> is not found in procedure <*2*>", "El Lote <*1*> no se ha encontrado para el proceso <*2*>"),
         NOT_AVAILABLE("InventoryLotNotAvailable", "The Lot <*1*> is not currently available", "El Lote <*1*> no está actualmente disponible"),
         NOT_RETIRED("InventoryLotNotRetired", "The Lot <*1*> is not currently retired", "El Lote <*1*> no está actualmente no retirado"),
         LOT_NOTQUALIFIED_YET("InventoryLotNotQualifiedYet", "", ""),
-        INV_LOT_HAS_NO_VOLUME_SET("InventoryLotHasNoVolumeSet", "The lot <*1*> has no volume set", "El lote <*1*> no tiene volumen asignado"),
+        INV_LOT_HAS_NO_QUANTITY_SET("InventoryLotHasNoVolumeSet", "The lot <*1*> has no volume set", "El lote <*1*> no tiene volumen asignado"),
         IS_LOCKED("InventoryLotIsLocked", "The lot <*1*> is locked, the reason is <*2*>", "El lote <*1*> está actualmente bloqueado, la razón es <*2*>"),
         WRONG_DECISION("InventoryLotWrongDecision", "Wrong Decision <*1*>, it is not one of the accepted values(<*2*>)", "wrongDecision <*1*> is not one of the accepted values(<*2*>)"),
         TRYINGUPDATE_RESERVED_FIELD("InventoryLotTryingToUpdateReservedField", "Not allowed to update the reserved field <*1*>", "No permitido modificar el campo reservado <*1*>"),
@@ -511,7 +511,7 @@ public class InvTrackingEnums {
         PROCEDURE_NOT_DECLARED_IN_AUTHORIZED_FOR_CONSUME_EXTERNALLY("InventoryLotProcedureNotDeclaredAsReferenceConsumableExternally", "", ""),
         REFERENCE_LOT_OR_USE_OPEN_REFERENCE_LOT_SHOULDBESPECIFIED("InventoryLotReferenceLotNameOrUseOpenReferenceLotShouldBeSpecified", "", ""),
         MORE_THAN_ONE_OPEN_REFERENCE_LOT("InventoryLotMoreThanOneOpenReferenceLots", "", ""),
-        VOLUME_IS_ALREADY_THIS("InventoryLotVolumeIsAlreadyThis", "", ""),
+        QUANTITY_IS_ALREADY_THIS("InventoryLotVolumeIsAlreadyThis", "", ""),
         MORE_THAN_ONE_VARIABLE("inventoryLotEvent_moreThanOneVariable", "Found more than one record, <*1*> for the query <*2*> on <*3*>", "Found more than one record, <*1*> for the query <*2*> on <*3*>"),
         EVENT_NOT_OPEN_FOR_CHANGES("inventoryLotEvent_NotOpenedForChanges", "The event is not open for changes", "Evento no abierto a cambios"),
         VARIABLE_NOT_EXISTS_EVENT_WITHNOVARIABLES("inventoryLotEvent_variableNotExists_eventWithNoVariables", "This event has no this variable and the event has no variables", "Este evento no contiene esta variable y el evento no tiene variables"),

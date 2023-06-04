@@ -216,16 +216,16 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     return;
                 case QUALIFICATIONS_INPROGRESS:
-                    //String[] whereFldName = new String[]{TblsInvTrackingData.LotCertification.COMPLETED_BY.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()};
+                    //String[] whereFldName = new String[]{TblsInvTrackingData.LotQualification.COMPLETED_BY.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()};
                     //Object[] whereFldValue = new Object[]{};
                     sW = new SqlWhere();
-                    sW.addConstraint(TblsInvTrackingData.LotCertification.COMPLETED_BY,
+                    sW.addConstraint(TblsInvTrackingData.LotQualification.COMPLETED_BY,
                             SqlStatement.WHERECLAUSE_TYPES.IS_NULL, null, null);
-                    //TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION, whereFldName, whereFldValue);
-                    fieldsToRetrieveObj = EnumIntTableFields.getTableFieldsFromString(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION, "ALL");
+                    //TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION, whereFldName, whereFldValue);
+                    fieldsToRetrieveObj = EnumIntTableFields.getTableFieldsFromString(TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION, "ALL");
                     fieldsToRetrieve = EnumIntTableFields.getAllFieldNames(fieldsToRetrieveObj);
-                    Object[][] qualifsInProgress = QueryUtilitiesEnums.getTableData(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION,
-                            fieldsToRetrieveObj, sW, new String[]{TblsInvTrackingData.LotCertification.CATEGORY.getName(), TblsInvTrackingData.LotCertification.CREATED_ON.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
+                    Object[][] qualifsInProgress = QueryUtilitiesEnums.getTableData(TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION,
+                            fieldsToRetrieveObj, sW, new String[]{TblsInvTrackingData.LotQualification.CATEGORY.getName(), TblsInvTrackingData.LotQualification.CREATED_ON.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                     jArr = new JSONArray();
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(qualifsInProgress[0][0].toString()))) {
                         for (Object[] currInstrEv : qualifsInProgress) {
@@ -252,17 +252,17 @@ public class InvTrackingAPIqueries extends HttpServlet {
                         }
                         lotCertifIdStr = LPNulls.replaceNull(
                                 invLot.getQualificationFieldValues()[LPArray.valuePosicInArray(
-                                invLot.getQualificationFieldNames(), TblsInvTrackingData.LotCertificationVariableValues.CERTIF_ID.getName())]).toString();
+                                invLot.getQualificationFieldNames(), TblsInvTrackingData.LotQualificationVariableValues.QUALIF_ID.getName())]).toString();
                     }
-                    String[] wFldNames = new String[]{TblsInvTrackingData.LotCertificationVariableValues.CERTIF_ID.getName()};
+                    String[] wFldNames = new String[]{TblsInvTrackingData.LotQualificationVariableValues.QUALIF_ID.getName()};
                     Object[] wFldValues = new Object[]{Integer.valueOf(lotCertifIdStr)};
 
-                    EnumIntTableFields[] tblFieldsToRetrieveObj = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES);
+                    EnumIntTableFields[] tblFieldsToRetrieveObj = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION_VARIABLE_VALUES);
                     String[] tblFieldsToRetrieve = EnumIntTableFields.getAllFieldNames(tblFieldsToRetrieveObj);
-                    qualifsInProgress = QueryUtilitiesEnums.getTableData(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES,
+                    qualifsInProgress = QueryUtilitiesEnums.getTableData(TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION_VARIABLE_VALUES,
                             tblFieldsToRetrieveObj,
                             wFldNames, wFldValues,
-                            new String[]{TblsInvTrackingData.LotCertificationVariableValues.ID.getName(), TblsInvTrackingData.LotCertificationVariableValues.CREATED_ON.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
+                            new String[]{TblsInvTrackingData.LotQualificationVariableValues.ID.getName(), TblsInvTrackingData.LotQualificationVariableValues.CREATED_ON.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(qualifsInProgress[0][0].toString()))) {
                         for (Object[] currInstrEv : qualifsInProgress) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(tblFieldsToRetrieve, currInstrEv);
@@ -505,19 +505,19 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     numDaysInt = 0 - Integer.valueOf(numDays);
 
                     sW = new SqlWhere();
-                    sW.addConstraint(TblsInvTrackingData.LotCertification.COMPLETED_DECISION, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, null);
-                    sW.addConstraint(TblsInvTrackingData.LotCertification.COMPLETED_ON, SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN, new Object[]{LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, null);
+                    sW.addConstraint(TblsInvTrackingData.LotQualification.COMPLETED_DECISION, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, null);
+                    sW.addConstraint(TblsInvTrackingData.LotQualification.COMPLETED_ON, SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN, new Object[]{LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, null);
                     if (category.length() > 0) {
-                        sW.addConstraint(TblsInvTrackingData.LotCertification.CATEGORY, SqlStatement.WHERECLAUSE_TYPES.IN, category.split("\\|"), "|");
+                        sW.addConstraint(TblsInvTrackingData.LotQualification.CATEGORY, SqlStatement.WHERECLAUSE_TYPES.IN, category.split("\\|"), "|");
                     }
                     if (reference.length() > 0) {
-                        sW.addConstraint(TblsInvTrackingData.LotCertification.REFERENCE, SqlStatement.WHERECLAUSE_TYPES.IN, reference.split("\\|"), "|");
+                        sW.addConstraint(TblsInvTrackingData.LotQualification.REFERENCE, SqlStatement.WHERECLAUSE_TYPES.IN, reference.split("\\|"), "|");
                     }
 
-                    fieldsToRetrieve = getAllFieldNames(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION);
-                    Object[][] invEventsCompletedLastDays = QueryUtilitiesEnums.getTableData(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION,
-                            EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION),
-                            sW, new String[]{TblsInvTrackingData.LotCertification.COMPLETED_ON.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
+                    fieldsToRetrieve = getAllFieldNames(TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION);
+                    Object[][] invEventsCompletedLastDays = QueryUtilitiesEnums.getTableData(TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION,
+                            EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION),
+                            sW, new String[]{TblsInvTrackingData.LotQualification.COMPLETED_ON.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                     jArr = new JSONArray();
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(invEventsCompletedLastDays[0][0].toString()))) {
                         for (Object[] currIncident : invEventsCompletedLastDays) {

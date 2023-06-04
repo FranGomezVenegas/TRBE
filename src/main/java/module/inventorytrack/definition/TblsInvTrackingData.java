@@ -31,10 +31,10 @@ public class TblsInvTrackingData {
     public enum TablesInvTrackingData implements EnumIntTables{        
         LOT(null, "lot", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsInvTrackingData.Lot.values(), null,
             new String[]{Lot.LOT_NAME.getName(), Lot.REFERENCE.getName(), Lot.CATEGORY.getName()}, null, "lot table"),
-        LOT_CERTIFICATION(null, "lot_certification", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsInvTrackingData.LotCertification.values(), 
-            TblsInvTrackingData.LotCertification.CERTIF_ID.getName(),new String[]{TblsInvTrackingData.LotCertification.CERTIF_ID.getName()}, null, ""),
-        LOT_CERTIFICATION_VARIABLE_VALUES(null, "lot_certification_variable_values", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, LotCertificationVariableValues.values(), 
-            LotCertificationVariableValues.ID.getName(), new String[]{LotCertificationVariableValues.ID.getName()}, null, ""),
+        LOT_QUALIFICATION(null, "lot_qualification", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsInvTrackingData.LotQualification.values(), 
+            TblsInvTrackingData.LotQualification.QUALIF_ID.getName(),new String[]{TblsInvTrackingData.LotQualification.QUALIF_ID.getName()}, null, ""),
+        LOT_QUALIFICATION_VARIABLE_VALUES(null, "lot_qualification_variable_values", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, LotQualificationVariableValues.values(), 
+            LotQualificationVariableValues.ID.getName(), new String[]{LotQualificationVariableValues.ID.getName()}, null, ""),
 
         ;
         ;private TablesInvTrackingData(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
@@ -163,8 +163,8 @@ public class TblsInvTrackingData {
         VENDOR_COA_VERIFIED("vendor_coa_verified", LPDatabase.booleanFld(false), null, null, null, null),
         CONSERV_CONDITION("conservation_condition", LPDatabase.string(), null, null, null, null),
         PURITY("purity", LPDatabase.string(), null, null, null, null),
-        VOLUME("volume",LPDatabase.real(), null, null, null, null),
-        VOLUME_UOM("volume_uom",LPDatabase.string(), null, new ReferenceFld(SCHEMA_NAME, TablesConfig.UOM.getTableName() , TblsCnfg.UnitsOfMeasurement.NAME.getName()), null, null),        
+        QUANTITY("quantity",LPDatabase.real(), null, null, null, null),
+        QUANTITY_UOM("quantity_uom",LPDatabase.string(), null, new ReferenceFld(SCHEMA_NAME, TablesConfig.UOM.getTableName() , TblsCnfg.UnitsOfMeasurement.NAME.getName()), null, null),        
         IS_LOCKED(Instruments.IS_LOCKED.getName(),Instruments.IS_LOCKED.getFieldType(), null, null, null, null),
         LOCKED_REASON(Instruments.LOCKED_REASON.getName(),Instruments.LOCKED_REASON.getFieldType(), null, null, null, null),
         RETIRED("retired", LPDatabase.booleanFld(false), null, null, null, null),
@@ -194,8 +194,8 @@ public class TblsInvTrackingData {
         @Override        public String getFieldComment(){return this.fieldComment;}
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }            
-    public enum LotCertification implements EnumIntTableFields{
-        CERTIF_ID("certif_id", LPDatabase.integerNotNull(), null, null, null, null),
+    public enum LotQualification implements EnumIntTableFields{
+        QUALIF_ID("qualif_id", LPDatabase.integerNotNull(), null, null, null, null),
         LOT_NAME(Lot.LOT_NAME.getName(), LPDatabase.string(), null, null, null, null),//, null, new ReferenceFld(GlobalVariables.Schemas.DATA.getName(), TablesInvTrackingData.LOT.getTableName(), Lot.LOT_NAME.getName()), null, null),
         CATEGORY(Lot.CATEGORY.getName(), LPDatabase.stringNotNull(), null, null, null, null),         
         REFERENCE(Lot.REFERENCE.getName(), LPDatabase.stringNotNull(), null, null, null, null),         
@@ -208,7 +208,7 @@ public class TblsInvTrackingData {
         ATTACHMENT("attachment", LPDatabase.string(), null, null, null, null),         
         VARIABLES_SET("variables_set", LPDatabase.string(), null, null, null, null)//, null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsInvTrackingConfig.TablesInvTrackingConfig.VARIABLES_SET.getTableName(), TblsInvTrackingConfig.VariablesSet.NAME.getName()), null, null),
         ;
-        private LotCertification(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+        private LotQualification(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
             this.fieldName=dbObjName;
             this.fieldType=dbObjType;
@@ -231,10 +231,10 @@ public class TblsInvTrackingData {
         @Override        public String getFieldComment(){return this.fieldComment;}
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }            
-    public enum LotCertificationVariableValues implements EnumIntTableFields{
+    public enum LotQualificationVariableValues implements EnumIntTableFields{
         ID("id", LPDatabase.integerNotNull(), null, null, null, null),
         LOT_NAME(Lot.LOT_NAME.getName(), LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.DATA.getName(), TablesInvTrackingData.LOT.getTableName(), Lot.LOT_NAME.getName()), null, null),
-        CERTIF_ID(LotCertification.CERTIF_ID.getName(), LPDatabase.integerNotNull(), null, new ReferenceFld(GlobalVariables.Schemas.DATA.getName(), TablesInvTrackingData.LOT_CERTIFICATION.getTableName(), LotCertification.CERTIF_ID.getName()), null, null),
+        QUALIF_ID(LotQualification.QUALIF_ID.getName(), LPDatabase.integerNotNull(), null, new ReferenceFld(GlobalVariables.Schemas.DATA.getName(), TablesInvTrackingData.LOT_QUALIFICATION.getTableName(), LotQualification.QUALIF_ID.getName()), null, null),
         CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null),
         CREATED_BY("created_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         DESCRIPTION("description", LPDatabase.string(), null, null, null, null),
@@ -250,7 +250,7 @@ public class TblsInvTrackingData {
         ENTERED_BY("entered_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         REENTERED("reentered", LPDatabase.booleanFld(false), null, null, null, null),        
         ;
-        private LotCertificationVariableValues(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+        private LotQualificationVariableValues(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
             this.fieldName=dbObjName;
             this.fieldType=dbObjType;
@@ -291,8 +291,8 @@ public class TblsInvTrackingData {
         VENDOR_COA_VERIFIED(Lot.VENDOR_COA_VERIFIED.getName(), "l."+Lot.VENDOR_COA_VERIFIED.getName(), Lot.VENDOR_COA_VERIFIED, null, null, null),
         CONSERV_CONDITION(Lot.CONSERV_CONDITION.getName(), "l."+Lot.CONSERV_CONDITION.getName(), Lot.CONSERV_CONDITION, null, null, null),
         PURITY(Lot.PURITY.getName(), "l."+Lot.PURITY.getName(), Lot.PURITY, null, null, null),
-        VOLUME(Lot.VOLUME.getName(), "l."+Lot.VOLUME.getName(), Lot.VOLUME, null, null, null),
-        VOLUME_UOM(Lot.VOLUME_UOM.getName(), "l."+Lot.VOLUME_UOM.getName(), Lot.VOLUME_UOM, null, null, null),
+        VOLUME(Lot.QUANTITY.getName(), "l."+Lot.QUANTITY.getName(), Lot.QUANTITY, null, null, null),
+        VOLUME_UOM(Lot.QUANTITY_UOM.getName(), "l."+Lot.QUANTITY_UOM.getName(), Lot.QUANTITY_UOM, null, null, null),
         IS_LOCKED(Lot.IS_LOCKED.getName(), "l."+Lot.IS_LOCKED.getName(), Lot.IS_LOCKED, null, null, null),
         LOCKED_REASON(Lot.LOCKED_REASON.getName(), "l."+Lot.LOCKED_REASON.getName(), Lot.LOCKED_REASON, null, null, null),
         RETIRED(Lot.RETIRED.getName(), "l."+Lot.RETIRED.getName(), Lot.RETIRED, null, null, null),

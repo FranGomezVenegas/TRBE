@@ -131,11 +131,11 @@ public class ClassInvTracking {
                     fieldValues = LPArray.addValueToArray1D(fieldValues, conservCondition);
                 }
                 if (LPNulls.replaceNull(volume).toString().length() > 0) {
-                    fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInvTrackingData.Lot.VOLUME.getName());
+                    fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInvTrackingData.Lot.QUANTITY.getName());
                     fieldValues = LPArray.addValueToArray1D(fieldValues, volume);
                 }
                 if (LPNulls.replaceNull(volumeUom).length() > 0) {
-                    fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInvTrackingData.Lot.VOLUME_UOM.getName());
+                    fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInvTrackingData.Lot.QUANTITY_UOM.getName());
                     fieldValues = LPArray.addValueToArray1D(fieldValues, volumeUom);
                 }
                 actionDiagnoses = DataInventory.createNewInventoryLot(lotName, reference, category, volume, volumeUom, fieldNames, fieldValues, numEntries, null);
@@ -253,7 +253,7 @@ public class ClassInvTracking {
                     actionDiagnoses = invLot.unRetireInventoryLot(fieldNames, fieldValues);
                 }
                 break;
-            case CONSUME_INV_LOT_VOLUME:
+            case CONSUME_INV_LOT_QUANTITY:
                 volume = null;
                 if (argValues[3] != null && argValues[3].toString().length() > 0) {
                     volume = BigDecimal.valueOf(Double.valueOf(argValues[3].toString()));
@@ -264,7 +264,7 @@ public class ClassInvTracking {
                 }
                 actionDiagnoses = invLot.consumeInvLotVolume(volume, volumeUom);
                 break;
-            case ADD_INV_LOT_VOLUME:
+            case ADD_INV_LOT_QUANTITY:
                 volume = null;
                 if (argValues[3] != null && argValues[3].toString().length() > 0) {
                     volume = BigDecimal.valueOf(Double.valueOf(argValues[3].toString()));
@@ -275,7 +275,7 @@ public class ClassInvTracking {
                 }
                 actionDiagnoses = invLot.addInvLotVolume(volume, volumeUom);
                 break;
-            case ADJUST_INV_LOT_VOLUME:
+            case ADJUST_INV_LOT_QUANTITY:
                 volume = null;
                 if (argValues[3] != null && argValues[3].toString().length() > 0) {
                     volume = BigDecimal.valueOf(Double.valueOf(argValues[3].toString()));

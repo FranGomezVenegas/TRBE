@@ -64,7 +64,7 @@ public class TblsInvTrackingProcedure {
         CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
         INVEST_ID("invest_id", LPDatabase.integer(), null, null, null, null),
         OBJECT_TYPE("object_type", LPDatabase.integer(), null, null, null, null),
-        CERTIF_ID("certif_id", LPDatabase.integerNotNull(), null, null, null, null),
+        QUALIF_ID("qualif_id", LPDatabase.integerNotNull(), null, null, null, null),
         LOT_NAME(TblsInvTrackingData.Lot.LOT_NAME.getName(), LPDatabase.string(), null, null, null, null),//, null, new ReferenceFld(GlobalVariables.Schemas.DATA.getName(), TablesInvTrackingData.LOT.getTableName(), Lot.LOT_NAME.getName()), null, null),
         CATEGORY(TblsInvTrackingData.Lot.CATEGORY.getName(), LPDatabase.stringNotNull(), null, null, null, null),         
         REFERENCE(TblsInvTrackingData.Lot.REFERENCE.getName(), LPDatabase.stringNotNull(), null, null, null, null),         

@@ -163,7 +163,7 @@ public class DataInventoryCorrectiveAction {
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
         Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsInvTrackingProcedure.TablesInvTrackingProcedure.INVENTORY_CORRECTIVE_ACTION.getTableName(),
-                new String[]{TblsInvTrackingProcedure.InventoryCorrectiveAction.CERTIF_ID.getName()}, new Object[]{certifId});
+                new String[]{TblsInvTrackingProcedure.InventoryCorrectiveAction.QUALIF_ID.getName()}, new Object[]{certifId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, ProgramCorrectiveActionErrorTrapping.RECORD_ALREADY_EXISTS, new Object[]{certifId, procInstanceName});
         }
@@ -171,7 +171,7 @@ public class DataInventoryCorrectiveAction {
         String statusFirst = InventoryCorrectiveActionStatuses.getStatusFirstCode();
         String[] sampleFldsToGet = new String[]{TblsInvTrackingProcedure.InventoryCorrectiveAction.LOT_NAME.getName(),
             TblsInvTrackingProcedure.InventoryCorrectiveAction.REFERENCE.getName(), TblsInvTrackingProcedure.InventoryCorrectiveAction.CATEGORY.getName()};
-        String[] myFldName = new String[]{TblsInvTrackingProcedure.InventoryCorrectiveAction.CERTIF_ID.getName()};
+        String[] myFldName = new String[]{TblsInvTrackingProcedure.InventoryCorrectiveAction.QUALIF_ID.getName()};
         Object[] myFldValue = new Object[]{certifId};
         for (TblsInvTrackingProcedure.InventoryCorrectiveAction obj : TblsInvTrackingProcedure.InventoryCorrectiveAction.values()) {
             if (Boolean.FALSE.equals("TBL".equalsIgnoreCase(obj.name()))) {
@@ -185,12 +185,12 @@ public class DataInventoryCorrectiveAction {
         /*        String programName="";
         Integer posicInArray=LPArray.valuePosicInArray(invTrackingFieldNames, TblsInvTrackingProcedure.InventoryCorrectiveAction.LOT_NAME.getName());
         if (posicInArray==-1){
-          posicInArray=LPArray.valuePosicInArray(invTrackingFieldNames, TblsInvTrackingProcedure.InventoryCorrectiveAction.CERTIF_ID.getName());
+          posicInArray=LPArray.valuePosicInArray(invTrackingFieldNames, TblsInvTrackingProcedure.InventoryCorrectiveAction.QUALIF_ID.getName());
           if (posicInArray==-1)  
                 return new InternalMessage{LPPlatform.LAB_FALSE, null, null};
           certifId=Integer.valueOf(LPNulls.replaceNull(invTrackingFieldValues[posicInArray].toString()));
-          Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION.getTableName(), 
-                  new String[]{TblsInvTrackingData.LotCertification.CERTIF_ID.getName()}, new Object[]{certifId}, 
+          Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION.getTableName(), 
+                  new String[]{TblsInvTrackingData.LotQualification.QUALIF_ID.getName()}, new Object[]{certifId}, 
                   new String[]{TblsInvTrackingProcedure.InventoryCorrectiveAction.LOT_NAME.getName()});
           if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())){
               return new InternalMessage(LPPlatform.LAB_FALSE, LPArray.array2dTo1d(sampleInfo));
@@ -199,8 +199,8 @@ public class DataInventoryCorrectiveAction {
         }else{programName=invTrackingFieldValues[posicInArray].toString();}
 
         myFldValue[0]=programName;*/
-        Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION.getTableName(),
-                new String[]{TblsInvTrackingData.LotCertification.CERTIF_ID.getName()}, new Object[]{certifId}, sampleFldsToGet);
+        Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION.getTableName(),
+                new String[]{TblsInvTrackingData.LotQualification.QUALIF_ID.getName()}, new Object[]{certifId}, sampleFldsToGet);
         for (int iFld = 0; iFld < sampleFldsToGet.length; iFld++) {
             String currFld = sampleFldsToGet[iFld];
             Integer posicInArray = LPArray.valuePosicInArray(myFldName, currFld);
@@ -282,8 +282,8 @@ public class DataInventoryCorrectiveAction {
         String statusClosed = InventoryCorrectiveActionStatuses.STATUS_CLOSED.getStatusCode();
         String objectIdClass = null;
         String fieldToFindRecord = null;
-        if (TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION.getTableName().equalsIgnoreCase(objectType)) {
-            fieldToFindRecord = TblsInvTrackingProcedure.InventoryCorrectiveAction.CERTIF_ID.getName();
+        if (TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION.getTableName().equalsIgnoreCase(objectType)) {
+            fieldToFindRecord = TblsInvTrackingProcedure.InventoryCorrectiveAction.QUALIF_ID.getName();
         }
         if (fieldToFindRecord == null) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Object Type <*1*> not recognized", new Object[]{objectType});

@@ -65,15 +65,15 @@ public class DataInventoryQualif {
                 return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.REFERENCE_NOT_FOUND, new Object[]{reference, category}, null);
             }
         }
-        fldNames = LPArray.addValueToArray1D(fldNames, TblsInvTrackingData.LotCertification.REFERENCE.getName());
+        fldNames = LPArray.addValueToArray1D(fldNames, TblsInvTrackingData.LotQualification.REFERENCE.getName());
         fldValues = LPArray.addValueToArray1D(fldValues, reference);
-        fldNames = LPArray.addValueToArray1D(fldNames, TblsInvTrackingData.LotCertification.CATEGORY.getName());
+        fldNames = LPArray.addValueToArray1D(fldNames, TblsInvTrackingData.LotQualification.CATEGORY.getName());
         fldValues = LPArray.addValueToArray1D(fldValues, category);
-        fldNames = LPArray.addValueToArray1D(fldNames, new String[]{TblsInvTrackingData.LotCertification.LOT_NAME.getName(),
-            TblsInvTrackingData.LotCertification.CREATED_ON.getName(), TblsInvTrackingData.LotCertification.CREATED_BY.getName()});
+        fldNames = LPArray.addValueToArray1D(fldNames, new String[]{TblsInvTrackingData.LotQualification.LOT_NAME.getName(),
+            TblsInvTrackingData.LotQualification.CREATED_ON.getName(), TblsInvTrackingData.LotQualification.CREATED_BY.getName()});
         fldValues = LPArray.addValueToArray1D(fldValues, new Object[]{lotName, LPDate.getCurrentTimeStamp(), token.getPersonName()});
 
-        RdbmsObject invLotQualifCreationDiagn = Rdbms.insertRecordInTable(TablesInvTrackingData.LOT_CERTIFICATION, fldNames, fldValues);
+        RdbmsObject invLotQualifCreationDiagn = Rdbms.insertRecordInTable(TablesInvTrackingData.LOT_QUALIFICATION, fldNames, fldValues);
         if (Boolean.FALSE.equals(invLotQualifCreationDiagn.getRunSuccess())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, invLotQualifCreationDiagn.getErrorMessageCode(), new Object[]{lotName}, null);
         }
@@ -97,14 +97,14 @@ public class DataInventoryQualif {
             return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.ALREADY_RETIRED, new Object[]{invLot.getLotName()}, null);
         }
         Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
-        String eventIdStr = LPNulls.replaceNull(invLot.getQualificationFieldValues()[LPArray.valuePosicInArray(invLot.getQualificationFieldNames(), TblsInvTrackingData.LotCertification.CERTIF_ID.getName())]).toString();
+        String eventIdStr = LPNulls.replaceNull(invLot.getQualificationFieldValues()[LPArray.valuePosicInArray(invLot.getQualificationFieldNames(), TblsInvTrackingData.LotQualification.QUALIF_ID.getName())]).toString();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(invLot.getQualificationFieldValues()[0].toString()) || eventIdStr.length() == 0) {
             messages.addMainForError(InvTrackingEnums.InventoryTrackingErrorTrapping.NO_PENDING_QUALIFICATION, new Object[]{invLot.getLotName()});
             return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.NO_PENDING_QUALIFICATION, new Object[]{invLot.getLotName()}, invLot.getLotName());
         }
         Integer eventId = Integer.valueOf(eventIdStr);
         RelatedObjects rObj = RelatedObjects.getInstanceForActions();
-        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TablesInvTrackingData.LOT_CERTIFICATION.getTableName(), eventId);
+        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TablesInvTrackingData.LOT_QUALIFICATION.getTableName(), eventId);
 
         if (decision.toUpperCase().contains("ACCEPT")) {
             InternalMessage eventHasNotEnteredVariables = eventHasNotEnteredVariables(invLot.getLotName(), eventId);
@@ -113,12 +113,12 @@ public class DataInventoryQualif {
                 return eventHasNotEnteredVariables;
             }
         }
-        String[] fldNames = new String[]{TblsInvTrackingData.LotCertification.COMPLETED_DECISION.getName(), TblsInvTrackingData.LotCertification.COMPLETED_ON.getName(), TblsInvTrackingData.LotCertification.COMPLETED_BY.getName()};
+        String[] fldNames = new String[]{TblsInvTrackingData.LotQualification.COMPLETED_DECISION.getName(), TblsInvTrackingData.LotQualification.COMPLETED_ON.getName(), TblsInvTrackingData.LotQualification.COMPLETED_BY.getName()};
         Object[] fldValues = new Object[]{decision, LPDate.getCurrentTimeStamp(), token.getPersonName()};
         SqlWhere sqlWhere = new SqlWhere();
-        sqlWhere.addConstraint(TblsInvTrackingData.LotCertification.CERTIF_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{eventId}, "");
-        Object[] instCreationDiagn = Rdbms.updateRecordFieldsByFilter(TablesInvTrackingData.LOT_CERTIFICATION,
-                EnumIntTableFields.getTableFieldsFromString(TablesInvTrackingData.LOT_CERTIFICATION, fldNames), fldValues, sqlWhere, null);
+        sqlWhere.addConstraint(TblsInvTrackingData.LotQualification.QUALIF_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{eventId}, "");
+        Object[] instCreationDiagn = Rdbms.updateRecordFieldsByFilter(TablesInvTrackingData.LOT_QUALIFICATION,
+                EnumIntTableFields.getTableFieldsFromString(TablesInvTrackingData.LOT_QUALIFICATION, fldNames), fldValues, sqlWhere, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length - 1].toString(), new Object[]{invLot.getLotName()}, null);
         }
@@ -152,28 +152,28 @@ public class DataInventoryQualif {
         return DataInventoryCorrectiveAction.createNew(eventId,
                 new String[]{TblsInvTrackingProcedure.InventoryCorrectiveAction.LOT_NAME.getName(), TblsInvTrackingProcedure.InventoryCorrectiveAction.OBJECT_TYPE.getName(),
                     TblsInvTrackingProcedure.InventoryCorrectiveAction.CATEGORY.getName(), TblsInvTrackingProcedure.InventoryCorrectiveAction.REFERENCE.getName()},
-                new Object[]{invLot.getLotName(), TablesInvTrackingData.LOT_CERTIFICATION.getTableName(), invLot.getCategory(), invLot.getReference()});
+                new Object[]{invLot.getLotName(), TablesInvTrackingData.LOT_QUALIFICATION.getTableName(), invLot.getCategory(), invLot.getReference()});
     }
 
     public static InternalMessage reopenInventoryLotQualif(DataInventory invLot) {
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
-        String eventIdStr = LPNulls.replaceNull(invLot.getQualificationFieldValues()[LPArray.valuePosicInArray(invLot.getQualificationFieldNames(), TblsInvTrackingData.LotCertification.CERTIF_ID.getName())]).toString();
+        String eventIdStr = LPNulls.replaceNull(invLot.getQualificationFieldValues()[LPArray.valuePosicInArray(invLot.getQualificationFieldNames(), TblsInvTrackingData.LotQualification.QUALIF_ID.getName())]).toString();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(invLot.getQualificationFieldValues()[0].toString()) || eventIdStr.length() == 0) {
             messages.addMainForError(InvTrackingEnums.InventoryTrackingErrorTrapping.NO_PENDING_QUALIFICATION, new Object[]{invLot.getLotName()});
             return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.NO_PENDING_QUALIFICATION, new Object[]{invLot.getLotName()}, invLot.getLotName());
         }
-        String qualifDecision = LPNulls.replaceNull(invLot.getQualificationFieldValues()[LPArray.valuePosicInArray(invLot.getQualificationFieldNames(), TblsInvTrackingData.LotCertification.COMPLETED_DECISION.getName())]).toString();
+        String qualifDecision = LPNulls.replaceNull(invLot.getQualificationFieldValues()[LPArray.valuePosicInArray(invLot.getQualificationFieldNames(), TblsInvTrackingData.LotQualification.COMPLETED_DECISION.getName())]).toString();
         if (qualifDecision.length() == 0) {
             return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.QUALIFICATION_NOT_CLOSED, new Object[]{invLot.getLotName()}, invLot.getLotName());
         }
         Integer eventId = Integer.valueOf(eventIdStr);
-        String[] fldNames = new String[]{TblsInvTrackingData.LotCertification.COMPLETED_DECISION.getName(), TblsInvTrackingData.LotCertification.COMPLETED_BY.getName(), TblsInvTrackingData.LotCertification.COMPLETED_ON.getName()};
-        //TblsInvTrackingData.LotCertification.COMPLETED_ON.getName(), 
+        String[] fldNames = new String[]{TblsInvTrackingData.LotQualification.COMPLETED_DECISION.getName(), TblsInvTrackingData.LotQualification.COMPLETED_BY.getName(), TblsInvTrackingData.LotQualification.COMPLETED_ON.getName()};
+        //TblsInvTrackingData.LotQualification.COMPLETED_ON.getName(), 
         Object[] fldValues = new Object[]{"null>>>STRING", "null>>>STRING", "null>>>DATETIME"};
         SqlWhere sqlWhere = new SqlWhere();
-        sqlWhere.addConstraint(TblsInvTrackingData.LotCertification.CERTIF_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{eventId}, "");
-        Object[] instCreationDiagn = Rdbms.updateRecordFieldsByFilter(TablesInvTrackingData.LOT_CERTIFICATION,
-                EnumIntTableFields.getTableFieldsFromString(TablesInvTrackingData.LOT_CERTIFICATION, fldNames), fldValues, sqlWhere, null);
+        sqlWhere.addConstraint(TblsInvTrackingData.LotQualification.QUALIF_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{eventId}, "");
+        Object[] instCreationDiagn = Rdbms.updateRecordFieldsByFilter(TablesInvTrackingData.LOT_QUALIFICATION,
+                EnumIntTableFields.getTableFieldsFromString(TablesInvTrackingData.LOT_QUALIFICATION, fldNames), fldValues, sqlWhere, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length - 1].toString(), new Object[]{invLot.getLotName()}, null);
         }
@@ -224,15 +224,15 @@ public class DataInventoryQualif {
         String[] wFldName = new String[]{};
         Object[] wFldValue = new Object[]{};
         if (lotCertifId != null) {
-            wFldName = new String[]{TblsInvTrackingData.LotCertification.CERTIF_ID.getName()};
+            wFldName = new String[]{TblsInvTrackingData.LotQualification.QUALIF_ID.getName()};
             wFldValue = new Object[]{lotCertifId};
         } else {
-            wFldName = new String[]{TblsInvTrackingData.LotCertification.LOT_NAME.getName(), TblsInvTrackingData.LotCertification.CATEGORY.getName(), TblsInvTrackingData.LotCertification.REFERENCE.getName()};
+            wFldName = new String[]{TblsInvTrackingData.LotQualification.LOT_NAME.getName(), TblsInvTrackingData.LotQualification.CATEGORY.getName(), TblsInvTrackingData.LotQualification.REFERENCE.getName()};
             wFldValue = new Object[]{lotName, category, ref};
         }
         String appProcInstance = LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName());
-        Object[][] eventInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION.getTableName(),
-                wFldName, wFldValue, new String[]{TblsInvTrackingData.LotCertification.COMPLETED_BY.getName()});
+        Object[][] eventInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION.getTableName(),
+                wFldName, wFldValue, new String[]{TblsInvTrackingData.LotQualification.COMPLETED_BY.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(eventInfo[0][0].toString())) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.NOT_FOUND, new Object[]{lotCertifId, appProcInstance});
         }
@@ -266,8 +266,8 @@ public class DataInventoryQualif {
                 for (Object currVar1 : currVar) {
                     fieldVarProperties = LPArray.addValueToArray1D(fieldVarProperties, currVar1);
                 }
-                String[] fieldsName = new String[]{TblsInvTrackingData.LotCertificationVariableValues.LOT_NAME.getName(), TblsInvTrackingData.LotCertificationVariableValues.CERTIF_ID.getName(), TblsInvTrackingData.LotCertificationVariableValues.OWNER_ID.getName(),
-                    TblsInvTrackingData.LotCertificationVariableValues.VARIABLE_SET.getName()};
+                String[] fieldsName = new String[]{TblsInvTrackingData.LotQualificationVariableValues.LOT_NAME.getName(), TblsInvTrackingData.LotQualificationVariableValues.QUALIF_ID.getName(), TblsInvTrackingData.LotQualificationVariableValues.OWNER_ID.getName(),
+                    TblsInvTrackingData.LotQualificationVariableValues.VARIABLE_SET.getName()};
                 fieldsName = LPArray.addValueToArray1D(fieldsName, fieldHeaders);
                 Object[] fieldsValue = new Object[]{lotName, lotCertifId, ownerId, variableSetName};
                 fieldsValue = LPArray.addValueToArray1D(fieldsValue, fieldVarProperties);
@@ -278,7 +278,7 @@ public class DataInventoryQualif {
                 fieldsValue=LPArray.addValueToArray1D(fieldsValue, curFld[1]);
                 }
                 }*/
-                RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES, fieldsName, fieldsValue);
+                RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION_VARIABLE_VALUES, fieldsName, fieldsValue);
                 if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
                     inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.ADDED_VARIABLE, lotName, null, null, TblsInvTrackingData.TablesInvTrackingData.LOT.getTableName(), lotCertifId.toString(),
                             fieldsName, fieldsValue);
@@ -299,7 +299,7 @@ public class DataInventoryQualif {
             }
             String lotCertifIdStr = LPNulls.replaceNull(
                     invLot.getQualificationFieldValues()[LPArray.valuePosicInArray(
-                    invLot.getQualificationFieldNames(), TblsInvTrackingData.LotCertificationVariableValues.CERTIF_ID.getName())]).toString();
+                    invLot.getQualificationFieldNames(), TblsInvTrackingData.LotQualificationVariableValues.QUALIF_ID.getName())]).toString();
             lotCertifId = Integer.valueOf(lotCertifIdStr);
         }
 
@@ -308,19 +308,19 @@ public class DataInventoryQualif {
             return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.NO_PENDING_QUALIFICATION, null, null);
         }
 
-        String[] fieldsToRetrieve = new String[]{TblsInvTrackingData.LotCertificationVariableValues.ID.getName(),
-            TblsInvTrackingData.LotCertificationVariableValues.PARAM_NAME.getName(), TblsInvTrackingData.LotCertificationVariableValues.PARAM_TYPE.getName(),
-            TblsInvTrackingData.LotCertificationVariableValues.REQUIRED.getName(),
-            TblsInvTrackingData.LotCertificationVariableValues.ALLOWED_VALUES.getName(), TblsInvTrackingData.LotCertificationVariableValues.VALUE.getName()};
+        String[] fieldsToRetrieve = new String[]{TblsInvTrackingData.LotQualificationVariableValues.ID.getName(),
+            TblsInvTrackingData.LotQualificationVariableValues.PARAM_NAME.getName(), TblsInvTrackingData.LotQualificationVariableValues.PARAM_TYPE.getName(),
+            TblsInvTrackingData.LotQualificationVariableValues.REQUIRED.getName(),
+            TblsInvTrackingData.LotQualificationVariableValues.ALLOWED_VALUES.getName(), TblsInvTrackingData.LotQualificationVariableValues.VALUE.getName()};
 
-        String[] fieldsName = new String[]{TblsInvTrackingData.LotCertificationVariableValues.CERTIF_ID.getName(),
-            TblsInvTrackingData.LotCertificationVariableValues.PARAM_NAME.getName()};
+        String[] fieldsName = new String[]{TblsInvTrackingData.LotQualificationVariableValues.QUALIF_ID.getName(),
+            TblsInvTrackingData.LotQualificationVariableValues.PARAM_NAME.getName()};
         Object[] fieldsValue = new Object[]{lotCertifId, variableName};
-        Object[][] objectVariablePropInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES.getTableName(),
+        Object[][] objectVariablePropInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION_VARIABLE_VALUES.getTableName(),
                 fieldsName, fieldsValue, fieldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objectVariablePropInfo[0][0].toString())) {
-            Object[][] instEvVariables = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES.getTableName(),
-                    new String[]{TblsInvTrackingData.LotCertificationVariableValues.CERTIF_ID.getName()}, new Object[]{lotCertifId}, fieldsToRetrieve);
+            Object[][] instEvVariables = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION_VARIABLE_VALUES.getTableName(),
+                    new String[]{TblsInvTrackingData.LotQualificationVariableValues.QUALIF_ID.getName()}, new Object[]{lotCertifId}, fieldsToRetrieve);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instEvVariables[0][0].toString())) {
                 return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.VARIABLE_NOT_EXISTS_EVENT_WITHNOVARIABLES, null);
             }
@@ -359,14 +359,14 @@ public class DataInventoryQualif {
             default:
                 return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.VARIABLE_TYPE_NOT_RECOGNIZED, new Object[]{fieldType}, null);
         }
-        String[] updFieldsName = new String[]{TblsInvTrackingData.LotCertificationVariableValues.VALUE.getName()};
+        String[] updFieldsName = new String[]{TblsInvTrackingData.LotQualificationVariableValues.VALUE.getName()};
         Object[] updFieldsValue = new Object[]{newValue};
         SqlWhere sqlWhere = new SqlWhere();
-        sqlWhere.addConstraint(TblsInvTrackingData.LotCertificationVariableValues.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{Integer.valueOf(objectVariablePropInfo[0][0].toString())}, "");
-        Object[] diagnostic = Rdbms.updateRecordFieldsByFilter(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES,
-                EnumIntTableFields.getTableFieldsFromString(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES, updFieldsName), updFieldsValue, sqlWhere, null);
+        sqlWhere.addConstraint(TblsInvTrackingData.LotQualificationVariableValues.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{Integer.valueOf(objectVariablePropInfo[0][0].toString())}, "");
+        Object[] diagnostic = Rdbms.updateRecordFieldsByFilter(TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION_VARIABLE_VALUES,
+                EnumIntTableFields.getTableFieldsFromString(TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION_VARIABLE_VALUES, updFieldsName), updFieldsValue, sqlWhere, null);
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString()))) {
-            inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.VALUE_ENTERED, lotName, null, null, TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION.getTableName(), lotCertifId.toString(),
+            inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.VALUE_ENTERED, lotName, null, null, TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION.getTableName(), lotCertifId.toString(),
                     updFieldsName, updFieldsValue);
         }
         return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ENTER_EVENT_RESULT, new Object[]{lotName, lotCertifId, variableName, newValue}, null);
@@ -380,17 +380,17 @@ public class DataInventoryQualif {
             return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES, null, null);
         }
 
-        String[] fieldsToRetrieve = new String[]{TblsInvTrackingData.LotCertificationVariableValues.ID.getName(), TblsInvTrackingData.LotCertificationVariableValues.PARAM_NAME.getName(), TblsInvTrackingData.LotCertificationVariableValues.PARAM_TYPE.getName(), TblsInvTrackingData.LotCertificationVariableValues.REQUIRED.getName(),
-            TblsInvTrackingData.LotCertificationVariableValues.ALLOWED_VALUES.getName(), TblsInvTrackingData.LotCertificationVariableValues.VALUE.getName()};
+        String[] fieldsToRetrieve = new String[]{TblsInvTrackingData.LotQualificationVariableValues.ID.getName(), TblsInvTrackingData.LotQualificationVariableValues.PARAM_NAME.getName(), TblsInvTrackingData.LotQualificationVariableValues.PARAM_TYPE.getName(), TblsInvTrackingData.LotQualificationVariableValues.REQUIRED.getName(),
+            TblsInvTrackingData.LotQualificationVariableValues.ALLOWED_VALUES.getName(), TblsInvTrackingData.LotQualificationVariableValues.VALUE.getName()};
 
-        String[] fieldsName = new String[]{TblsInvTrackingData.LotCertificationVariableValues.CERTIF_ID.getName(),
-            TblsInvTrackingData.LotCertificationVariableValues.PARAM_NAME.getName()};
+        String[] fieldsName = new String[]{TblsInvTrackingData.LotQualificationVariableValues.QUALIF_ID.getName(),
+            TblsInvTrackingData.LotQualificationVariableValues.PARAM_NAME.getName()};
         Object[] fieldsValue = new Object[]{lotCertifId, variableName};
-        Object[][] objectVariablePropInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES.getTableName(),
+        Object[][] objectVariablePropInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION_VARIABLE_VALUES.getTableName(),
                 fieldsName, fieldsValue, fieldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objectVariablePropInfo[0][0].toString())) {
-            Object[][] instEvVariables = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES.getTableName(),
-                    new String[]{TblsInvTrackingData.LotCertificationVariableValues.CERTIF_ID.getName()}, new Object[]{lotCertifId}, fieldsToRetrieve);
+            Object[][] instEvVariables = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION_VARIABLE_VALUES.getTableName(),
+                    new String[]{TblsInvTrackingData.LotQualificationVariableValues.QUALIF_ID.getName()}, new Object[]{lotCertifId}, fieldsToRetrieve);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instEvVariables[0][0].toString())) {
                 return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.VARIABLE_NOT_EXISTS_EVENT_WITHNOVARIABLES, null);
             } else {
@@ -432,12 +432,12 @@ public class DataInventoryQualif {
             default:
                 return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.VARIABLE_TYPE_NOT_RECOGNIZED, new Object[]{fieldType}, null);
         }
-        String[] updFieldsName = new String[]{TblsInvTrackingData.LotCertificationVariableValues.VALUE.getName()};
+        String[] updFieldsName = new String[]{TblsInvTrackingData.LotQualificationVariableValues.VALUE.getName()};
         Object[] updFieldsValue = new Object[]{newValue};
         SqlWhere sqlWhere = new SqlWhere();
-        sqlWhere.addConstraint(TblsInvTrackingData.LotCertificationVariableValues.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{Integer.valueOf(objectVariablePropInfo[0][0].toString())}, "");
-        Object[] diagnostic = Rdbms.updateRecordFieldsByFilter(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES,
-                EnumIntTableFields.getTableFieldsFromString(TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES, updFieldsName), updFieldsValue, sqlWhere, null);
+        sqlWhere.addConstraint(TblsInvTrackingData.LotQualificationVariableValues.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{Integer.valueOf(objectVariablePropInfo[0][0].toString())}, "");
+        Object[] diagnostic = Rdbms.updateRecordFieldsByFilter(TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION_VARIABLE_VALUES,
+                EnumIntTableFields.getTableFieldsFromString(TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION_VARIABLE_VALUES, updFieldsName), updFieldsValue, sqlWhere, null);
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString()))) {
             inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.VALUE_REENTERED, lotName, null, null, TblsInvTrackingData.TablesInvTrackingData.LOT.getTableName(), lotCertifId.toString(),
                     updFieldsName, updFieldsValue);
@@ -455,10 +455,10 @@ public class DataInventoryQualif {
             return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES, new Object[]{lotCertifId}, null);
         }
 
-        Object[][] diagn = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_CERTIFICATION_VARIABLE_VALUES.getTableName(),
-                new String[]{TblsInvTrackingData.LotCertificationVariableValues.LOT_NAME.getName(),
-                    TblsInvTrackingData.LotCertificationVariableValues.CERTIF_ID.getName(), TblsInvTrackingData.LotCertificationVariableValues.REQUIRED.getName(), TblsInvTrackingData.LotCertificationVariableValues.VALUE.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()},
-                new Object[]{lotName, lotCertifId, "Y"}, new String[]{TblsInvTrackingData.LotCertificationVariableValues.ID.getName()});
+        Object[][] diagn = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION_VARIABLE_VALUES.getTableName(),
+                new String[]{TblsInvTrackingData.LotQualificationVariableValues.LOT_NAME.getName(),
+                    TblsInvTrackingData.LotQualificationVariableValues.QUALIF_ID.getName(), TblsInvTrackingData.LotQualificationVariableValues.REQUIRED.getName(), TblsInvTrackingData.LotQualificationVariableValues.VALUE.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()},
+                new Object[]{lotName, lotCertifId, "Y"}, new String[]{TblsInvTrackingData.LotQualificationVariableValues.ID.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0][0].toString())) {
             return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackingErrorTrapping.EVENT_NOTHING_PENDING, null, null);
         } else {
