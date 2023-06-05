@@ -57,18 +57,18 @@ public class ConfigSpecRule {
     }
 
     enum qualitativeRules {
-        EQUALTO("EQUALTO", "specLimits_equalTo_Successfully", "Equal to", "Igual a"), 
+        EQUALTO("EQUALTO", "specLimits_equalTo_Successfully", "Equal to", "Igual a"),
         NOTEQUALTO("NOTEQUALTO", "specLimits_notEqualTo_Successfully", "Not equal to", "Diferente a"),
-        CONTAINS("CONTAINS", "specLimits_contains_Successfully", "Contains", "Contiene"), 
+        CONTAINS("CONTAINS", "specLimits_contains_Successfully", "Contains", "Contiene"),
         NOTCONTAINS("NOTCONTAINS", "specLimits_notContains_Successfully", "Not contains", "No contiene"),
-        ISONEOF("ISONEOF", "specLimits_isOneOf_Successfully","Is one of", "Es uno de"), 
+        ISONEOF("ISONEOF", "specLimits_isOneOf_Successfully", "Is one of", "Es uno de"),
         ISNOTONEOF("ISNOTONEOF", "specLimits_isNotOneOf_Successfully", "Is not one of", "No es uno de");
 
         private qualitativeRules(String ruleName, String successCode, String englishPretty, String spanishPretty) {
             this.ruleName = ruleName;
             this.successCode = successCode;
-            this.rulePrettyNameEn=englishPretty;
-            this.rulePrettyNameEs=spanishPretty;
+            this.rulePrettyNameEn = englishPretty;
+            this.rulePrettyNameEs = spanishPretty;
         }
 
         public String getRuleName() {
@@ -78,9 +78,11 @@ public class ConfigSpecRule {
         public String getSuccessCode() {
             return this.successCode;
         }
+
         public String getRulePrettyNameEn() {
             return this.rulePrettyNameEn;
         }
+
         public String getRulePrettyNameEs() {
             return this.rulePrettyNameEs;
         }
@@ -148,20 +150,30 @@ public class ConfigSpecRule {
     }
 
     enum quantitativeRules {
-        MESSAGE_CODE_QUANT_MINSPEC_MAXSPEC_SUCCESS("specLimits_quantitativeMinSpecMaxSpec_Successfully"),
-        MIN_SPEC_SUCCESS("specLimits_quantitativeMinSpecSuccessfully"),
-        MAX_SPEC_SUCCESS("specLimits_quantitativeMaxSpecSuccessfully"),
-        MINSPEC_MINCONTROL_SUCCESS("specLimits_quantitativeMinSpecMinControlSuccessfully"),
-        MINSPEC_MINCONTROL_MAXCONTROL_MAXSPEC_SUCCESS("specLimits_quantitativeMinSpecMinControlMaxControlMaxSpec_Successfully"),
-        MINSPEC_MINCONTROL_MAXSPEC_SUCCESS("specLimits_quantitativeMinSpecMinControlMaxSpec_Successfully"),
-        MINSPEC_MAXCONTROL_MAXSPEC_SUCCESS("specLimits_quantitativeMinSpecMaxControlMaxSpec_Successfully"),;
+        MESSAGE_CODE_QUANT_MINSPEC_MAXSPEC_SUCCESS("specLimits_quantitativeMinSpecMaxSpec_Successfully", "", ""),
+        MIN_SPEC_SUCCESS("specLimits_quantitativeMinSpecSuccessfully", "Min < Result", "Min < Resultado"),
+        MAX_SPEC_SUCCESS("specLimits_quantitativeMaxSpecSuccessfully", "Result < Max", "Resultado < Min"),
+        MINSPEC_MINCONTROL_SUCCESS("specLimits_quantitativeMinSpecMinControlSuccessfully", "", ""),
+        MINSPEC_MINCONTROL_MAXCONTROL_MAXSPEC_SUCCESS("specLimits_quantitativeMinSpecMinControlMaxControlMaxSpec_Successfully", "", ""),
+        MINSPEC_MINCONTROL_MAXSPEC_SUCCESS("specLimits_quantitativeMinSpecMinControlMaxSpec_Successfully", "", ""),
+        MINSPEC_MAXCONTROL_MAXSPEC_SUCCESS("specLimits_quantitativeMinSpecMaxControlMaxSpec_Successfully", "", ""),;
 
-        private quantitativeRules(String successCode) {
+        private quantitativeRules(String successCode, String englishPretty, String spanishPretty) {
             this.successCode = successCode;
+            this.rulePrettyNameEn = englishPretty;
+            this.rulePrettyNameEs = spanishPretty;
         }
 
         public String getSuccessCode() {
             return this.successCode;
+        }
+
+        public String getRulePrettyNameEn() {
+            return this.rulePrettyNameEn;
+        }
+
+        public String getRulePrettyNameEs() {
+            return this.rulePrettyNameEs;
         }
 
         public static String[] getAllRules() {
@@ -175,6 +187,8 @@ public class ConfigSpecRule {
             return tableFields;
         }
         private final String successCode;
+        private final String rulePrettyNameEn;
+        private final String rulePrettyNameEs;
     }
     public static final String JSON_TAG_NAME_SPEC_RULE_DETAILED = "spec_rule_with_detail";
 
@@ -467,18 +481,18 @@ public class ConfigSpecRule {
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, quantitativeRulesErrors.MINCONTROL_GREATEREQUALTO_MINSPEC, errorDetailVariables);
             } else {
                 if (maxControl1 == null) {
-                    this.quantitativeRuleValues = currSpecLimitVariables + specArgumentsSeparator + quantitativeVariables.MINCONTROLSTRICT.toString() +   LPNulls.replaceNull(minControl1).toString()
-                            + quantitativeVariables.MINSPECSTRICT.toString() +  LPNulls.replaceNull(minSpec).toString();
+                    this.quantitativeRuleValues = currSpecLimitVariables + specArgumentsSeparator + quantitativeVariables.MINCONTROLSTRICT.toString() + LPNulls.replaceNull(minControl1).toString()
+                            + quantitativeVariables.MINSPECSTRICT.toString() + LPNulls.replaceNull(minSpec).toString();
                     return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, quantitativeRules.MINSPEC_MINCONTROL_MAXSPEC_SUCCESS.getSuccessCode(), errorDetailVariables);
                 }
             }
         }
-        if (maxControl1!=null&&maxSpec!=null&&maxControl1.compareTo(maxSpec) >= 0) {
+        if (maxControl1 != null && maxSpec != null && maxControl1.compareTo(maxSpec) >= 0) {
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, LPNulls.replaceNull(maxControl1).toString());
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, LPNulls.replaceNull(maxSpec).toString());
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, quantitativeRulesErrors.MAXCONTROL_GREATEROREQUALTO_MAXSPEC, errorDetailVariables);
         } else {
-            this.quantitativeRuleValues = currSpecLimitVariables + specArgumentsSeparator + quantitativeVariables.MAXCONTROLSTRICT.toString() +  LPNulls.replaceNull(maxControl1).toString();
+            this.quantitativeRuleValues = currSpecLimitVariables + specArgumentsSeparator + quantitativeVariables.MAXCONTROLSTRICT.toString() + LPNulls.replaceNull(maxControl1).toString();
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, quantitativeRules.MINSPEC_MINCONTROL_MAXCONTROL_MAXSPEC_SUCCESS.getSuccessCode(), errorDetailVariables);
         }
     }
@@ -625,16 +639,16 @@ public class ConfigSpecRule {
                 for (Integer iField = 0; iField < quantiSpecTestingArray.length; iField++) {
                     String curParam = quantiSpecTestingArray[iField];
 
-                    if (curParam.toUpperCase().contains(quantitativeVariables.MINSPECSTRICT.toString()) ||
-                            curParam.toUpperCase().contains(quantitativeVariables.NLT.toString())) {
+                    if (curParam.toUpperCase().contains(quantitativeVariables.MINSPECSTRICT.toString())
+                            || curParam.toUpperCase().contains(quantitativeVariables.NLT.toString())) {
                         curParam = curParam.replace(quantitativeVariables.MINSPECSTRICT.toString(), "");
                         curParam = curParam.replace(quantitativeVariables.NLT.toString(), "");
                         this.minSpec = BigDecimal.valueOf(Double.valueOf(curParam));
                         this.minSpecIsStrict = true;
                     }
-                    if (curParam.toUpperCase().contains(quantitativeVariables.MINSPEC.toString()) ||
-                            (curParam.toUpperCase().contains(quantitativeVariables.LT.toString())&&
-                             Boolean.FALSE.equals(curParam.toUpperCase().contains(quantitativeVariables.NLT.toString())) ) ){
+                    if (curParam.toUpperCase().contains(quantitativeVariables.MINSPEC.toString())
+                            || (curParam.toUpperCase().contains(quantitativeVariables.LT.toString())
+                            && Boolean.FALSE.equals(curParam.toUpperCase().contains(quantitativeVariables.NLT.toString())))) {
                         curParam = curParam.replace(quantitativeVariables.MINSPEC.toString(), "");
                         curParam = curParam.replace(quantitativeVariables.MT.toString(), "");
                         //Long curParamLong=Long.valueOf(-2.5); 
@@ -665,20 +679,20 @@ public class ConfigSpecRule {
                         this.maxControlIsStrict = false;
                         this.quantitativeHasControl = true;
                     }
-                    if (curParam.toUpperCase().contains(quantitativeVariables.MAXSPECSTRICT.toString()) ||
-                            curParam.toUpperCase().contains(quantitativeVariables.NGT.toString()) ||
-                            curParam.toUpperCase().contains(quantitativeVariables.NMT.toString())) {
+                    if (curParam.toUpperCase().contains(quantitativeVariables.MAXSPECSTRICT.toString())
+                            || curParam.toUpperCase().contains(quantitativeVariables.NGT.toString())
+                            || curParam.toUpperCase().contains(quantitativeVariables.NMT.toString())) {
                         curParam = curParam.replace(quantitativeVariables.MAXSPECSTRICT.toString(), "");
                         curParam = curParam.replace(quantitativeVariables.NGT.toString(), "");
                         curParam = curParam.replace(quantitativeVariables.NMT.toString(), "");
                         this.maxSpec = BigDecimal.valueOf(Double.valueOf(curParam));
                         this.maxSpecIsStrict = true;
                     }
-                    if (curParam.toUpperCase().contains(quantitativeVariables.MAXSPEC.toString()) ||
-                            (curParam.toUpperCase().contains(quantitativeVariables.GT.toString())&&
-                             Boolean.FALSE.equals(curParam.toUpperCase().contains(quantitativeVariables.NGT.toString())) ) ||
-                            (curParam.toUpperCase().contains(quantitativeVariables.MT.toString())&&
-                             Boolean.FALSE.equals(curParam.toUpperCase().contains(quantitativeVariables.NMT.toString())) ) ){
+                    if (curParam.toUpperCase().contains(quantitativeVariables.MAXSPEC.toString())
+                            || (curParam.toUpperCase().contains(quantitativeVariables.GT.toString())
+                            && Boolean.FALSE.equals(curParam.toUpperCase().contains(quantitativeVariables.NGT.toString())))
+                            || (curParam.toUpperCase().contains(quantitativeVariables.MT.toString())
+                            && Boolean.FALSE.equals(curParam.toUpperCase().contains(quantitativeVariables.NMT.toString())))) {
                         curParam = curParam.replace(quantitativeVariables.MAXSPEC.toString(), "");
                         curParam = curParam.replace(quantitativeVariables.GT.toString(), "");
                         curParam = curParam.replace(quantitativeVariables.MT.toString(), "");
@@ -692,8 +706,9 @@ public class ConfigSpecRule {
                     ruleRepr.append(" ");
                     if (Boolean.TRUE.equals(this.minSpecIsStrict)) {
                         ruleRepr.append("<");
-                    }else
-                        ruleRepr.append("\u2264");                                        
+                    } else {
+                        ruleRepr.append("\u2264");
+                    }
                 }
                 if (this.minControl != null) {
                     ruleRepr.append(" ");
@@ -701,9 +716,10 @@ public class ConfigSpecRule {
                     ruleRepr.append(" ");
                     if (Boolean.TRUE.equals(this.minControlIsStrict)) {
                         ruleRepr.append("<");
-                    }else
-                        ruleRepr.append("\u2264");                    
-                    
+                    } else {
+                        ruleRepr.append("\u2264");
+                    }
+
                 }
 
                 ruleRepr.append(" R");
@@ -712,8 +728,9 @@ public class ConfigSpecRule {
                     ruleRepr.append(" ");
                     if (Boolean.TRUE.equals(this.maxControlIsStrict)) {
                         ruleRepr.append("<");
-                    }else
+                    } else {
                         ruleRepr.append("\u2264");
+                    }
                     ruleRepr.append(" ");
                     ruleRepr.append(this.maxControl);
                 }
@@ -721,8 +738,9 @@ public class ConfigSpecRule {
                     ruleRepr.append(" ");
                     if (Boolean.TRUE.equals(this.maxSpecIsStrict)) {
                         ruleRepr.append("<");
-                    }else
+                    } else {
                         ruleRepr.append("\u2264");
+                    }
                     ruleRepr.append(" ");
                     ruleRepr.append(this.maxSpec);
                 }
