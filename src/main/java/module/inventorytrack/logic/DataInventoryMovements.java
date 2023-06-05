@@ -146,9 +146,9 @@ public class DataInventoryMovements {
                 new Object[]{newVolumeUom, LPNulls.replaceNull(invLot.getLotFieldValues()[LPArray.valuePosicInArray(invLot.getLotFieldNames(), TblsInvTrackingData.Lot.QUANTITY.getName())]).toString(),
                     LPNulls.replaceNull(invLot.getLotFieldValues()[LPArray.valuePosicInArray(invLot.getLotFieldNames(), TblsInvTrackingData.Lot.QUANTITY_UOM.getName())]).toString()});
         fldNames = LPArray.addValueToArray1D(fldNames, "operation_en");
-        fldValues = LPArray.addValueToArray1D(fldValues, "The new volume is " + reducedVolume + " as reducing " + newVolume + " " + newVolumeUom + " to the current volume " + invLot.getCurrentVolume() + " " + invLot.getCurrentVolumeUom());
+        fldValues = LPArray.addValueToArray1D(fldValues, "The new quantity is " + reducedVolume + " as reducing " + newVolume + " " + newVolumeUom + " to the current volume " + invLot.getCurrentVolume() + " " + invLot.getCurrentVolumeUom());
         fldNames = LPArray.addValueToArray1D(fldNames, "operation_es");
-        fldValues = LPArray.addValueToArray1D(fldValues, "The nuevo volumen es " + reducedVolume + " al reducir " + newVolume + " " + newVolumeUom + " del volume actual " + invLot.getCurrentVolume() + " " + invLot.getCurrentVolumeUom());
+        fldValues = LPArray.addValueToArray1D(fldValues, "La nueva cantidad es " + reducedVolume + " al reducir " + newVolume + " " + newVolumeUom + " del volume actual " + invLot.getCurrentVolume() + " " + invLot.getCurrentVolumeUom());
         if (Boolean.TRUE.equals(requiredConversion)) {
             fldNames = LPArray.addValueToArray1D(fldNames, "required_conversion");
             fldValues = LPArray.addValueToArray1D(fldValues, true);
@@ -218,9 +218,9 @@ public class DataInventoryMovements {
                 new Object[]{newVolumeUom, LPNulls.replaceNull(invLot.getLotFieldValues()[LPArray.valuePosicInArray(invLot.getLotFieldNames(), TblsInvTrackingData.Lot.QUANTITY.getName())]).toString(),
                     LPNulls.replaceNull(invLot.getLotFieldValues()[LPArray.valuePosicInArray(invLot.getLotFieldNames(), TblsInvTrackingData.Lot.QUANTITY_UOM.getName())]).toString()});
         fldNames = LPArray.addValueToArray1D(fldNames, "operation_en");
-        fldValues = LPArray.addValueToArray1D(fldValues, "The new volume is " + increasedVolume + " as adding " + newVolume + " " + newVolumeUom + " to the current volume " + invLot.getCurrentVolume() + " " + invLot.getCurrentVolumeUom());
+        fldValues = LPArray.addValueToArray1D(fldValues, "The new quantity is " + increasedVolume + " as adding " + newVolume + " " + newVolumeUom + " to the current volume " + invLot.getCurrentVolume() + " " + invLot.getCurrentVolumeUom());
         fldNames = LPArray.addValueToArray1D(fldNames, "operation_es");
-        fldValues = LPArray.addValueToArray1D(fldValues, "The nuevo volumen es " + increasedVolume + " al añadir " + newVolume + " " + newVolumeUom + " del volume actual " + invLot.getCurrentVolume() + " " + invLot.getCurrentVolumeUom());
+        fldValues = LPArray.addValueToArray1D(fldValues, "La nueva cantidad es " + increasedVolume + " al añadir " + newVolume + " " + newVolumeUom + " del volume actual " + invLot.getCurrentVolume() + " " + invLot.getCurrentVolumeUom());
         if (Boolean.TRUE.equals(requiredConversion)) {
             fldNames = LPArray.addValueToArray1D(fldNames, "required_conversion");
             fldValues = LPArray.addValueToArray1D(fldValues, true);

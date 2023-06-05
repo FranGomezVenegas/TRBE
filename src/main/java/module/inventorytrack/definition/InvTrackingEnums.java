@@ -324,8 +324,8 @@ public class InvTrackingEnums {
             new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
             new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
             new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9)}, EndPointsToRequirements.endpointWithNoOutputObjects,
-                "This endpoint requires the object to get its variables, by lot or by lot_certifification. "
-                + "In case of lot_certif then certifId is the required argument."
+                "This endpoint requires the object to get its variables, by lot or by qualifification. "
+                + "In case of lot_qualif then qualifId is the required argument."
                 + "In case of lot then requires lotName, category and reference.", null),
         EXPIRED_LOTS("EXPIRED_LOTS", "",
                 new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),

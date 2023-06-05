@@ -182,18 +182,18 @@ public class DataInventory {
         if (Boolean.FALSE.equals(this.getRequiresQualification())) {
             return;
         }
-        Object[][] invLotCertifInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(externalProcedure, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION.getTableName(),
+        Object[][] invLotQualifInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(externalProcedure, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION.getTableName(),
                 new String[]{TblsInvTrackingData.LotQualification.LOT_NAME.getName(), TblsInvTrackingData.LotQualification.CATEGORY.getName(), TblsInvTrackingData.LotQualification.REFERENCE.getName()},
                 new Object[]{this.getLotName(), this.getCategory(), this.getReference()}, getAllFieldNames(TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION.getTableFields()));
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(invLotCertifInfo[0][0].toString())) {
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(invLotQualifInfo[0][0].toString())) {
             qualificationFieldNames = null;
             qualificationFieldValues = null;
             return;
         }
         qualificationFieldNames = getAllFieldNames(TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION.getTableFields());
-        qualificationFieldValues = invLotCertifInfo[0];
+        qualificationFieldValues = invLotQualifInfo[0];
 
-        String qualifCompletedDecision = LPNulls.replaceNull(invLotCertifInfo[0][LPArray.valuePosicInArray(getQualificationFieldNames(), TblsInvTrackingData.LotQualification.COMPLETED_DECISION.getName())]).toString();
+        String qualifCompletedDecision = LPNulls.replaceNull(invLotQualifInfo[0][LPArray.valuePosicInArray(getQualificationFieldNames(), TblsInvTrackingData.LotQualification.COMPLETED_DECISION.getName())]).toString();
         this.isQualified = qualifCompletedDecision.toUpperCase().contains("ACCEPT");
     }
 
@@ -244,7 +244,8 @@ public class DataInventory {
         if (refAllowedUOMS != null) {
             if (refUOM != null
                     && (Boolean.FALSE.equals(LPArray.valueInArray(refAllowedUOMS, lotVolumeUom) || refUOM.equalsIgnoreCase(lotVolumeUom) || "ALL".equalsIgnoreCase(refAllowedUOMS[0])))) {
-                return new Object[]{new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.UOM_NOT_INTHELIST, new Object[]{lotVolumeUom, invLot.getReference(), invLot.getCategory()}, null)};
+                return new Object[]{new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.UOM_NOT_INTHELIST, new Object[]{lotVolumeUom, 
+                    invLot==null?invReferenceVls[EnumIntTableFields.getFldPosicInArray(invReferenceFlds, TblsInvTrackingConfig.Reference.NAME.getName())]:invLot.getReference(), invLot==null?invReferenceVls[EnumIntTableFields.getFldPosicInArray(invReferenceFlds, TblsInvTrackingConfig.Reference.CATEGORY.getName())]:invLot.getCategory()}, null)};
             }
             if (refUOM != null && refUOM.equalsIgnoreCase(lotVolumeUom)) {
                 return new Object[]{new InternalMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.CORRECT, null, null)};
@@ -345,10 +346,10 @@ public class DataInventory {
                         updateFieldNames, updateFieldValues);
             }
             myUom = null;
-            String reqCertification = referenceInfo[0][EnumIntTableFields.getFldPosicInArray(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableFields(),
+            String reqQualification = referenceInfo[0][EnumIntTableFields.getFldPosicInArray(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableFields(),
                     TblsInvTrackingConfig.Reference.LOT_REQUIRES_QUALIF.getName())].toString();
-            if (reqCertification == null || Boolean.TRUE.equals(Boolean.valueOf(reqCertification))) {
-                DataInventoryQualif.createInventoryLotQualif(newName, category, reference, Boolean.valueOf(reqCertification));
+            if (reqQualification == null || Boolean.TRUE.equals(Boolean.valueOf(reqQualification))) {
+                DataInventoryQualif.createInventoryLotQualif(newName, category, reference, Boolean.valueOf(reqQualification));
             }
         }
         messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.NEW_INVENTORY_LOT, new Object[]{name, category, reference});

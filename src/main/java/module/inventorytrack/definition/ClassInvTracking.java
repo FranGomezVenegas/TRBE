@@ -311,10 +311,10 @@ public class ClassInvTracking {
             case ENTER_EVENT_RESULT:
                 category = argValues[1].toString();
                 reference = argValues[2].toString();
-                Integer lotCertifId = (Integer) argValues[3];
+                Integer lotQualifId = (Integer) argValues[3];
                 String variableName = argValues[4].toString();
                 String newValue = argValues[5].toString();
-                actionDiagnoses = objectVariableSetValue(lotName, category, reference, lotCertifId, variableName, newValue);
+                actionDiagnoses = objectVariableSetValue(lotName, category, reference, lotQualifId, variableName, newValue);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), lotName);
                 }
@@ -323,10 +323,10 @@ public class ClassInvTracking {
             case REENTER_EVENT_RESULT:
                 category = argValues[1].toString();
                 reference = argValues[2].toString();
-                lotCertifId = (Integer) argValues[3];
+                lotQualifId = (Integer) argValues[3];
                 variableName = argValues[4].toString();
                 newValue = argValues[5].toString();
-                actionDiagnoses = objectVariableChangeValue(lotName, category, reference, lotCertifId, variableName, newValue);
+                actionDiagnoses = objectVariableChangeValue(lotName, category, reference, lotQualifId, variableName, newValue);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), lotName);
                 }
