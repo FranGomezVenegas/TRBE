@@ -389,7 +389,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         jViewsAccObj.put("view_actions", ClassReqProcedureQueries.dbRowsGroupedToJsonArr(TblsReqs.ViewsReqs.PROC_REQ_USER_REQUIREMENTS_ACTIONS.getViewName(),
                 new String[]{TblsReqs.ProcReqUserRequirementsActions.WINDOW_NAME.getName(),
                     TblsReqs.ProcReqUserRequirementsActions.WINDOW_NAME.getName(),
-                    TblsReqs.ProcReqUserRequirementsActions.PRETTY_EN.getName()
+                    TblsReqs.ProcReqUserRequirementsActions.PRETTY_EN.getName(),  TblsReqs.ProcReqUserRequirementsActions.PRETTY_ES.getName()
                 },
                 new String[]{
                     TblsReqs.ProcReqUserRequirementsActions.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcReqUserRequirementsActions.WINDOW_ACTION.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()
