@@ -40,7 +40,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.JsonArray;
 import lbplanet.utilities.LPAPIArguments;
-import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPJson;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntTableFields;
@@ -50,6 +49,7 @@ import trazit.globalvariables.GlobalVariables;
 import trazit.globalvariables.GlobalVariables.ApiUrls;
 import static trazit.queries.QueryUtilities.getFieldsListToRetrieve;
 import static trazit.queries.QueryUtilities.getKPIInfoFromRequest;
+import static trazit.queries.QueryUtilities.getNdaysArray;
 import static trazit.queries.QueryUtilities.getTableData;
 import trazit.queries.QueryUtilitiesEnums;
 
@@ -524,19 +524,10 @@ GlobalAPIsParams.
                         numDays = String.valueOf(7);
                     }
                     int numDaysInt = 0 - Integer.valueOf(numDays);
-                    String[] fieldsToRetrieve = EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableFields());
-                    Object[][] prodLotsDeactivatedLastDays = QueryUtilitiesEnums.getTableData(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT,
-                            EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT, "ALL"),
-                            new String[]{TblsEnvMonitData.ProductionLot.ACTIVE.getName(), TblsEnvMonitData.ProductionLot.CLOSED_ON.getName() + SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()},
-                            new Object[]{false, LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)},
+                    jArr=getNdaysArray(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT, numDays, TblsEnvMonitData.ProductionLot.CLOSED_ON, 
+                            new String[]{TblsEnvMonitData.ProductionLot.ACTIVE.getName()}, 
+                            new Object[]{false}, 
                             new String[]{TblsEnvMonitData.ProductionLot.CLOSED_ON.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
-                    jArr = new JSONArray();
-                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(prodLotsDeactivatedLastDays[0][0].toString()))) {
-                        for (Object[] currIncident : prodLotsDeactivatedLastDays) {
-                            JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
-                            jArr.add(jObj);
-                        }
-                    }
                     Rdbms.closeRdbms();
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     return;
