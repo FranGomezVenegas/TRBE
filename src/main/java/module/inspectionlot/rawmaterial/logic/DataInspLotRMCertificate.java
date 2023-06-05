@@ -7,6 +7,7 @@ package module.inspectionlot.rawmaterial.logic;
 
 import databases.SqlStatement;
 import databases.SqlWhere;
+import databases.TblsData;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,8 +30,19 @@ import trazit.queries.QueryUtilitiesEnums;
  */
 public class DataInspLotRMCertificate {
 
+    public enum CertificateSignatureLevels {
+        BULK_DECISION, SAMPLE_REVIEWER, LOT_USAGE_DECISION
+    };
+
     public static JSONObject getLotCoAInfo(String lotName, String coaDef, JSONObject jLotInfoObj, String[] fieldsToRetrieveSample, Object[][] lotSampleInfo, String[] specFlds, JSONArray specLimitsInfo) {
         JSONObject jMainObj = new JSONObject();
+
+        EnumIntTableFields[] tableFieldsLotDecisionObj = TblsInspLotRMData.TablesInspLotRMData.LOT_DECISION.getTableFields();
+        String[] tableFieldsLotDecision = EnumIntTableFields.getAllFieldNames(tableFieldsLotDecisionObj);
+        Object[][] lotDecisionInfo = QueryUtilitiesEnums.getTableData(TblsInspLotRMData.TablesInspLotRMData.LOT_DECISION,
+                tableFieldsLotDecisionObj, new SqlWhere(TblsInspLotRMData.TablesInspLotRMData.LOT_DECISION, new String[]{TblsInspLotRMData.LotDecision.LOT_NAME.getName()}, new Object[]{lotName}),
+                new String[]{TblsInspLotRMData.LotDecision.LOT_NAME.getName()}, null);
+
         EnumIntTables tblObj = TblsInspLotRMConfig.TablesInspLotRMConfig.COA_DEFINITION;
         SqlWhere whereObj = new SqlWhere();
         whereObj.addConstraint(TblsInspLotRMConfig.CoaDefinition.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{coaDef}, null);
@@ -155,8 +167,8 @@ public class DataInspLotRMCertificate {
         jSectionObj = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(flds), coaUsageDecisionInfo[0],
                 new String[]{TblsInspLotRMConfig.CoaUsageDecision.VALUE_ACCEPTED_EN.getName(), TblsInspLotRMConfig.CoaUsageDecision.VALUE_ACCEPTED_ES.getName(),
                     TblsInspLotRMConfig.CoaUsageDecision.VALUE_REJECTED_EN.getName(), TblsInspLotRMConfig.CoaUsageDecision.VALUE_REJECTED_ES.getName()});
-        String usageDecision = jLotInfoObj.get(TblsInspLotRMData.Lot.BULK_DECISION.getName()).toString();
-        jSectionObj.put("decided", usageDecision.length() == 0);
+        String usageDecision = LPNulls.replaceNull(lotDecisionInfo[0][LPArray.valuePosicInArray(tableFieldsLotDecision, TblsInspLotRMData.LotDecision.DECISION.getName())]).toString();
+        jSectionObj.put("decided", usageDecision.length() > 0);
         if (usageDecision.toUpperCase().contains("ACC")) {
             jSectionObj.put("value_en", coaUsageDecisionInfo[0][EnumIntTableFields.getFldPosicInArray(flds, TblsInspLotRMConfig.CoaUsageDecision.VALUE_ACCEPTED_EN.getName())]);
             jSectionObj.put("value_es", coaUsageDecisionInfo[0][EnumIntTableFields.getFldPosicInArray(flds, TblsInspLotRMConfig.CoaUsageDecision.VALUE_ACCEPTED_ES.getName())]);
@@ -165,15 +177,14 @@ public class DataInspLotRMCertificate {
             jSectionObj.put("value_es", coaUsageDecisionInfo[0][EnumIntTableFields.getFldPosicInArray(flds, TblsInspLotRMConfig.CoaUsageDecision.VALUE_REJECTED_ES.getName())]);
         }
         jMainObj.put("usageDecision", jSectionObj);
-
         jSectionObj = new JSONObject();
         tblObj = TblsInspLotRMConfig.TablesInspLotRMConfig.COA_SIGNATURES;
         whereObj = new SqlWhere();
         whereObj.addConstraint(TblsInspLotRMConfig.CoaSignatures.COA_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{coaDef}, null);
         flds = new EnumIntTableFields[]{TblsInspLotRMConfig.CoaSignatures.MANUAL_SIGN, TblsInspLotRMConfig.CoaSignatures.SIGN_LEVEL,
-            TblsInspLotRMConfig.CoaSignatures.SIGN_ELECTRONICALLY_EN, TblsInspLotRMConfig.CoaSignatures.SIGN_ELECTRONICALLY_EN,
+            TblsInspLotRMConfig.CoaSignatures.SIGN_ELECTRONICALLY_EN, TblsInspLotRMConfig.CoaSignatures.SIGN_ELECTRONICALLY_ES,
             TblsInspLotRMConfig.CoaSignatures.TITLE_EN, TblsInspLotRMConfig.CoaSignatures.TITLE_ES,
-            TblsInspLotRMConfig.CoaSignatures.LABEL_WHEN_NOT_SIGNED_EN, TblsInspLotRMConfig.CoaSignatures.LABEL_WHEN_NOT_SIGNED_EN,
+            TblsInspLotRMConfig.CoaSignatures.LABEL_WHEN_NOT_SIGNED_EN, TblsInspLotRMConfig.CoaSignatures.LABEL_WHEN_NOT_SIGNED_ES,
             TblsInspLotRMConfig.CoaSignatures.AUTHOR_EN, TblsInspLotRMConfig.CoaSignatures.AUTHOR_ES,
             TblsInspLotRMConfig.CoaSignatures.DATE_EN, TblsInspLotRMConfig.CoaSignatures.DATE_ES};
         Object[][] coaSignaturesInfo = QueryUtilitiesEnums.getTableData(TblsInspLotRMConfig.TablesInspLotRMConfig.COA_SIGNATURES,
@@ -182,10 +193,12 @@ public class DataInspLotRMCertificate {
         JSONArray jSignsArr = new JSONArray();
         for (Object[] curRow : coaSignaturesInfo) {
             jSectionObj = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(flds), curRow);
-            Map<String, Object> signaturesData = getSignaturesData(lotName, "DD");
+            Map<String, Object> signaturesData = getSignaturesData(lotName, curRow[1].toString(), coaDef, jLotInfoObj, fieldsToRetrieveSample, lotSampleInfo, specFlds, specLimitsInfo, tableFieldsLotDecision, lotDecisionInfo);
             for (Map.Entry<String, Object> entry : signaturesData.entrySet()) {
                 jSectionObj.put(entry.getKey(), entry.getValue());
             }
+            jSectionObj.put("sign_electronically_en", LPNulls.replaceNull(curRow[2]).toString());
+            jSectionObj.put("sign_electronically_es", LPNulls.replaceNull(curRow[3]).toString());
             jSignsArr.add(jSectionObj);
         }
         jMainObj.put("signatures", jSignsArr);
@@ -193,15 +206,71 @@ public class DataInspLotRMCertificate {
         return jMainObj;
     }
 
-    public static Map<String, Object> getSignaturesData(String lotName, String signLevel) {
-        
-        Map<String, Object> etiquetasValores = new HashMap<>();
-        etiquetasValores.put("author_value_en", "F. Gómez");
-        etiquetasValores.put("author_value_es", "F. Gómez");
-        etiquetasValores.put("date_value_en", "1st of May of 2023");
-        etiquetasValores.put("date_value_es", "2023-05-01");
-        etiquetasValores.put("signed", true);
-        return etiquetasValores;
+    public static Map<String, Object> getSignaturesData(String lotName, String signLevel, String coaDef, JSONObject jLotInfoObj, String[] fieldsToRetrieveSample, Object[][] lotSampleInfo, String[] specFlds, JSONArray specLimitsInfo, String[] tableFieldsLotDecision, Object[][] lotDecisionInfo) {
+        Map< String, Object> etiquetasValores = new HashMap<>();
+
+        try {
+            CertificateSignatureLevels signLevelObj = CertificateSignatureLevels.valueOf(signLevel);
+            switch (signLevelObj) {
+                case BULK_DECISION:
+                    String lotBulkDecision = LPNulls.replaceNull(jLotInfoObj.get(TblsInspLotRMData.Lot.BULK_DECISION.getName())).toString();
+                    if (lotBulkDecision.length() == 0) {
+                        etiquetasValores.put("author_value_en", "");
+                        etiquetasValores.put("author_value_es", "");
+                        etiquetasValores.put("date_value_en", "");
+                        etiquetasValores.put("date_value_es", "");
+                        etiquetasValores.put("signed", false);
+                    } else {
+                        etiquetasValores.put("signed", true);
+                        etiquetasValores.put("author_value_en", LPNulls.replaceNull(jLotInfoObj.get(TblsInspLotRMData.Lot.BULK_DECISION_BY.getName())).toString());
+                        etiquetasValores.put("author_value_es", LPNulls.replaceNull(jLotInfoObj.get(TblsInspLotRMData.Lot.BULK_DECISION_BY.getName())).toString());
+                        etiquetasValores.put("date_value_en", LPNulls.replaceNull(jLotInfoObj.get(TblsInspLotRMData.Lot.BULK_DECISION_ON.getName())).toString());
+                        etiquetasValores.put("date_value_es", LPNulls.replaceNull(jLotInfoObj.get(TblsInspLotRMData.Lot.BULK_DECISION_ON.getName())).toString());
+                    }
+                    return etiquetasValores;
+                case SAMPLE_REVIEWER:
+                    Integer revwdFldPosic = LPArray.valuePosicInArray(fieldsToRetrieveSample, TblsData.Sample.REVIEWED.getName());
+                    if (revwdFldPosic == -1) {
+                        etiquetasValores.put("author_value_en", "Sample Review info not found " + signLevel);
+                        etiquetasValores.put("author_value_es", "Info de Revisión de muestra no encontrada " + signLevel);
+                        etiquetasValores.put("date_value_en", "");
+                        etiquetasValores.put("date_value_es", "");
+                        etiquetasValores.put("signed", true);
+                    } else {
+                        etiquetasValores.put("signed", Boolean.valueOf(LPNulls.replaceNull(lotSampleInfo[0][revwdFldPosic]).toString()));
+                        etiquetasValores.put("author_value_en", LPNulls.replaceNull(lotSampleInfo[0][LPArray.valuePosicInArray(fieldsToRetrieveSample, TblsData.Sample.REVIEWED_BY.getName())]));
+                        etiquetasValores.put("author_value_es", LPNulls.replaceNull(lotSampleInfo[0][LPArray.valuePosicInArray(fieldsToRetrieveSample, TblsData.Sample.REVIEWED_BY.getName())]));
+                        etiquetasValores.put("date_value_en", LPNulls.replaceNull(lotSampleInfo[0][LPArray.valuePosicInArray(fieldsToRetrieveSample, TblsData.Sample.REVIEWED_ON.getName())]).toString());
+                        etiquetasValores.put("date_value_es", LPNulls.replaceNull(lotSampleInfo[0][LPArray.valuePosicInArray(fieldsToRetrieveSample, TblsData.Sample.REVIEWED_ON.getName())]).toString());
+                    }
+                    return etiquetasValores;
+                case LOT_USAGE_DECISION:
+                    String usageDecision = LPNulls.replaceNull(lotDecisionInfo[0][LPArray.valuePosicInArray(tableFieldsLotDecision, TblsInspLotRMData.LotDecision.DECISION.getName())]).toString();
+                    String usageDecisionBy = LPNulls.replaceNull(lotDecisionInfo[0][LPArray.valuePosicInArray(tableFieldsLotDecision, TblsInspLotRMData.LotDecision.DECISION_TAKEN_BY.getName())]).toString();
+                    String usageDecisionOn = LPNulls.replaceNull(lotDecisionInfo[0][LPArray.valuePosicInArray(tableFieldsLotDecision, TblsInspLotRMData.LotDecision.DECISION_TAKEN_ON.getName())]).toString();
+                    etiquetasValores.put("author_value_en", usageDecisionBy);
+                    etiquetasValores.put("author_value_es", usageDecisionBy);
+                    etiquetasValores.put("date_value_en", usageDecisionOn);
+                    etiquetasValores.put("date_value_es", usageDecisionOn);
+                    etiquetasValores.put("signed", usageDecision.length() > 0);
+                    return etiquetasValores;
+                default:
+                    etiquetasValores.put("author_value_en", "Not implemented " + signLevel);
+                    etiquetasValores.put("author_value_es", "No implementado " + signLevel);
+                    etiquetasValores.put("date_value_en", "");
+                    etiquetasValores.put("date_value_es", "");
+                    etiquetasValores.put("signed", true);
+                    return etiquetasValores;
+            }
+        } catch (Exception e) {
+            etiquetasValores.put("author_value_en", e.getMessage());
+            etiquetasValores.put("author_value_es", e.getMessage());
+            etiquetasValores.put("date_value_en", "");
+            etiquetasValores.put("date_value_es", "");
+            etiquetasValores.put("signed", true);
+            return etiquetasValores;
+        }
+
     }
 
     public static String getResult(String language, String analysis, EnumIntViewFields[] fldsForSampleResults, Object[][] lotSampleResultInfo,
@@ -226,12 +295,13 @@ public class DataInspLotRMCertificate {
         Integer rawValueFldPosic = EnumIntViewFields.getFldPosicInArray(fldsForSampleResults, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.RAW_VALUE.getName());
         Integer uomFldPosic = EnumIntViewFields.getFldPosicInArray(fldsForSampleResults, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.UOM.getName());
         if (allResultsForThisAnalysisArr.length == 1) {
-            String rsltVal="";
+            String rsltVal = "";
             String rsltRawVal = ("en".equalsIgnoreCase(language)) ? lotSampleResultInfo[allResultsForThisAnalysisArr[0]][rawValueFldPosic].toString() : lotSampleResultInfo[allResultsForThisAnalysisArr[0]][rawValueFldPosic].toString();
             String rsltPrettyVal = ("en".equalsIgnoreCase(language)) ? lotSampleResultInfo[allResultsForThisAnalysisArr[0]][prettyValueFldPosic].toString() : lotSampleResultInfo[allResultsForThisAnalysisArr[0]][prettyValueFldPosic].toString();
-            if (rsltPrettyVal.length()==0&&rsltRawVal.length()==0)
+            if (rsltPrettyVal.length() == 0 && rsltRawVal.length() == 0) {
                 return ("en".equalsIgnoreCase(language)) ? "Not performed" : "No realizado";
-            rsltVal = rsltPrettyVal.length()==0?rsltRawVal:rsltPrettyVal;
+            }
+            rsltVal = rsltPrettyVal.length() == 0 ? rsltRawVal : rsltPrettyVal;
             String rsltUom = LPNulls.replaceNull(lotSampleResultInfo[allResultsForThisAnalysisArr[0]][uomFldPosic]).toString();
             rsltVal = rsltVal + " " + rsltUom;
             return rsltVal;

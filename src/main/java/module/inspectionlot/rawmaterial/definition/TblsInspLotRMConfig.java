@@ -5,6 +5,7 @@
  */
 package module.inspectionlot.rawmaterial.definition;
 
+import databases.TblsAppConfig;
 import lbplanet.utilities.LPDatabase;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
@@ -541,7 +542,7 @@ public class TblsInspLotRMConfig {
         CONFIG_VERSION("config_version", LPDatabase.integer(), null, null, null, null),
         CATEGORY("category", LPDatabase.string(), null, null, null, null),
         ACTIVE_DATE("active_date", "Date", null, null, null, null),
-        CREATED_BY(LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
+        CREATED_BY(LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         CREATED_ON(LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date(), null, null, null, null),
         ANALYSES("analyses", LPDatabase.string(), null, null, null, null),
         VARIATION_NAMES("variation_names", LPDatabase.string(), null, null, null, null),

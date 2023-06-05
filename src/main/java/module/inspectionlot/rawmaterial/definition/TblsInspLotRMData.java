@@ -6,6 +6,7 @@
 package module.inspectionlot.rawmaterial.definition;
 
 import databases.SqlStatementEnums;
+import databases.TblsAppConfig;
 import databases.TblsCnfg;
 import databases.TblsData;
 import static databases.TblsData.FIELDS_NAMES_ALIQUOT_ID;
@@ -216,8 +217,6 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         SAMPLE_REVIEWER("sample_reviewer", "s.reviewer", TblsData.Sample.REVIEWER, null, null, null),
         ;
         private ViewSampleAnalysisResultWithSpecLimits(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
-//            try{
-//            this.fldName="";
             this.fldName=name;
             this.fldAliasInView=vwAliasName;
             this.fldMask=fldMask;
@@ -265,17 +264,17 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         VENDOR("vendor", LPDatabase.string(), null, null, null, null),
         VENDOR_TRUST_LEVEL("vendor_trust_level", LPDatabase.string(), null, null, null, null),
         ANALYSIS_STATUS("analysis_status", LPDatabase.string(), null, null, null, null),
-        CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null),
-        CREATED_BY("created_by", LPDatabase.string(), null, null, null, null),
+        CREATED_ON("created_on", LPDatabase.dateTime(), "to_char("+"created_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        CREATED_BY("created_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
                 
         ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(), null, null, null, null),
-        CUSTODIAN("custodian", LPDatabase.string(), null, null, null, null),
+        CUSTODIAN("custodian", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         BULK_DECISION("bulk_decision", LPDatabase.string(), null, null, null, null),
-        BULK_DECISION_ON("bulk_decision_on", LPDatabase.dateTime(), null, null, null, null),
-        BULK_DECISION_BY("bulk_decision_by", LPDatabase.string(), null, null, null, null),
+        BULK_DECISION_ON("bulk_decision_on", LPDatabase.dateTime(), "to_char("+"bulk_decision_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        BULK_DECISION_BY("bulk_decision_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         CLOSED("closed", LPDatabase.booleanFld(false), null, null, null, null),
-        CLOSED_ON("closed_on", LPDatabase.dateTime(), null, null, null, null),
-        CLOSED_BY("closed_by", LPDatabase.string(), null, null, null, null),
+        CLOSED_ON("closed_on", LPDatabase.dateTime(), "to_char("+"closed_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        CLOSED_BY("closed_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         CLOSURE_REASON("closure_reason", LPDatabase.string(), null, null, null, null),
         READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld(false), null, null, null, null),
         
@@ -353,8 +352,8 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
     public enum LotDecision implements EnumIntTableFields{
         LOT_NAME("lot_name",  LPDatabase.stringNotNull(100), null, null, null, null),
         DECISION("decision",  LPDatabase.string(200), null, null, null, null),
-        DECISION_TAKEN_BY("decision_taken_by",  LPDatabase.string(), null, null, null, null),
-        DECISION_TAKEN_ON("decision_taken_on",  LPDatabase.dateTime(), null, null, null, null),
+        DECISION_TAKEN_BY("decision_taken_by",  LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
+        DECISION_TAKEN_ON("decision_taken_on",  LPDatabase.dateTime(), "to_char("+"decision_taken_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
         // ...
         ;
         private LotDecision(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
@@ -386,8 +385,8 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         CERTIFICATE_VERSION("certificate_version", LPDatabase.integer(), null, null, null, null),
         STATUS("status",LPDatabase.stringNotNull(), null, null, null, null),
         STATUS_PREVIOUS("status_previous",LPDatabase.string(), null, null, null, null),
-        CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null),
-        CREATED_BY("created_by", LPDatabase.string(), null, null, null, null),
+        CREATED_ON("created_on", LPDatabase.dateTime(), "to_char("+"created_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        CREATED_BY("created_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         CERTIFICATE_FORMAT("certificate_format", LPDatabase.string(), null, null, null, null),
         ;
         private LotCertificate(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
@@ -418,8 +417,8 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         LOT_NAME("lot_name",  LPDatabase.stringNotNull(100), null, null, null, null),
         CONFIG_NAME("config_name", LPDatabase.integer(), null, null, null, null),       
         EVENT("event",LPDatabase.stringNotNull(), null, null, null, null),
-        CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null),
-        CREATED_BY("created_by", LPDatabase.string(), null, null, null, null),
+        CREATED_ON("created_on", LPDatabase.dateTime(), "to_char("+"created_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        CREATED_BY("created_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         ;
         private LotCertificateTrack(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
@@ -451,11 +450,11 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         //CERTIFICATE_VERSION("certificate_version", LPDatabase.integer(), null, null, null, null),
         STATUS("status",LPDatabase.stringNotNull(), null, null, null, null),
         STATUS_PREVIOUS("status_previous",LPDatabase.string(), null, null, null, null),
-        CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null),
-        CREATED_BY("created_by", LPDatabase.string(), null, null, null, null),
+        CREATED_ON("created_on", LPDatabase.dateTime(), "to_char("+"created_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        CREATED_BY("created_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         DECISION("decision", LPDatabase.string(), null, null, null, null),
-        DECISION_TAKEN_BY("decision_taken_by",  LPDatabase.string(), null, null, null, null),
-        DECISION_TAKEN_ON("decision_taken_on",  LPDatabase.dateTime(), null, null, null, null),
+        DECISION_TAKEN_BY("decision_taken_by",  LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
+        DECISION_TAKEN_ON("decision_taken_on",  LPDatabase.dateTime(), "to_char("+"decision_taken_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
         QUANTITY("quantity", LPDatabase.real(), null, null, null, null),
         QUANTITY_UOM("quantity_uom", LPDatabase.string(), null, null, null, null),
         SAMPLE_QUANTITY("sample_quantity", LPDatabase.real(), null, null, null, null),
@@ -490,8 +489,8 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         ANALYSIS("analysis",  LPDatabase.string(100), null, null, null, null),        
         //CERTIFICATE_VERSION("certificate_version", LPDatabase.integer(), null, null, null, null),
         VALUE("value",LPDatabase.stringNotNull(), null, null, null, null),
-        CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null),
-        CREATED_BY("created_by", LPDatabase.string(), null, null, null, null),
+        CREATED_ON("created_on", LPDatabase.dateTime(), "to_char("+"created_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        CREATED_BY("created_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         REASON("reason", LPDatabase.string(), null, null, null, null),
         ;
         private LotNotAnalyzedResult(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
@@ -526,10 +525,10 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         CONFIG_CODE_VERSION("sample_config_code_version", LPDatabase.integer(), null, null, null, null),
         STATUS("status",LPDatabase.stringNotNull(), null, null, null, null),
         STATUS_PREVIOUS("status_previous",LPDatabase.string(), null, null, null, null),
-        LOGGED_ON("logged_on", LPDatabase.dateTime(), null, null, null, null),
-        LOGGED_BY("logged_by", LPDatabase.string(), null, null, null, null),
-        RECEIVED_ON("received_on", LPDatabase.dateTime(), null, null, null, null),
-        RECEIVED_BY("received_by", LPDatabase.string(), null, null, null, null),
+        LOGGED_ON("logged_on", LPDatabase.dateTime(), "to_char("+"logged_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        LOGGED_BY("logged_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
+        RECEIVED_ON("received_on", LPDatabase.dateTime(), "to_char("+"received_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        RECEIVED_BY("received_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         VOLUME(LPDatabase.FIELDS_NAMES_VOLUME, LPDatabase.real(), null, null, null, null),
         VOLUME_UOM(LPDatabase.FIELDS_NAMES_VOLUME_UOM,LPDatabase.string(), null, null, null, null),
         ALIQUOTED("aliquoted", LPDatabase.booleanFld(false), null, null, null, null),
@@ -542,13 +541,17 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         SPEC_EVAL("spec_eval",  LPDatabase.string(2), null, null, null, null),
         CUSTODIAN("custodian",  LPDatabase.string(2), null, null, null, null),
         CUSTODIAN_CANDIDATE("custodian_candidate",  LPDatabase.string(2), null, null, null, null),
-        COC_REQUESTED_ON("coc_requested_on", LPDatabase.dateTime(), null, null, null, null),
-        COC_CONFIRMED_ON("coc_confirmed_on", LPDatabase.dateTime(), null, null, null, null),
+        COC_REQUESTED_ON("coc_requested_on", LPDatabase.dateTime(), "to_char("+"coc_requested_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        COC_CONFIRMED_ON("coc_confirmed_on", LPDatabase.dateTime(), "to_char("+"coc_confirmed_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
         CURRENT_STAGE("current_stage",LPDatabase.string(), null, null, null, null),
         PREVIOUS_STAGE("previous_stage",LPDatabase.string(), null, null, null, null),
         READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld(), null, null, null, null),
         BULK_ID("bulk_id", LPDatabase.integer(), null, null, null, null),
         BULK_NAME("bulk_name", LPDatabase.string(), null, null, null, null),
+        REVIEWER("reviewer", LPDatabase.string(), null, null, null, null),
+        REVIEWED("reviewed", LPDatabase.booleanFld(), null, null, null, null), 
+        REVIEWED_BY("reviewed_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null), 
+        REVIEWED_ON("reviewed_on", LPDatabase.dateTime(), "to_char("+"reviewed_on"+",'YYYY-MM-DD HH:MI')", null, null, null)
         ;
         private Sample(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
@@ -583,8 +586,8 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         MANUFACTURER_NAME("manufacturer_name", LPDatabase.string(), null, null, null, null),
         MANUFACTURER_BATCH("manufacturer_batch", LPDatabase.string(), null, null, null, null),
         MANUFACTURER_SITE("manufacturer_site", LPDatabase.string(), null, null, null, null),
-        CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null),
-        CREATED_BY("created_by", LPDatabase.string(), null, null, null, null),
+        CREATED_ON("created_on", LPDatabase.dateTime(), "to_char("+"created_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        CREATED_BY("created_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         EXPIRY_DATE("expiry_date", LPDatabase.date(), null, null, null, null),
         REQUALIF_DATE("requalif_date", LPDatabase.date(), null, null, null, null),
         STORAGE_ID("storage_id", LPDatabase.integer(), null, null, null, null),
@@ -595,11 +598,11 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         UOM_CONVERSION_MODE("uom_conversion_mode", LPDatabase.string(), null, null, null, null),
         CONTAINER_TYPE("container_type", LPDatabase.string(), null, null, null, null),
         RECEPTION_REQUIRED("reception_required", LPDatabase.booleanFld(), null, null, null, null),
-        RECEPTION_ON("reception_on", LPDatabase.date(), null, null, null, null),
-        RECEPTION_BY("reception_by", LPDatabase.string(), null, null, null, null),
+        RECEPTION_ON("reception_on", LPDatabase.date(), "to_char("+"reception_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        RECEPTION_BY("reception_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         LOCKED("locked", LPDatabase.booleanFld(), null, null, null, null),
-        LOCKED_ON("locked_on", LPDatabase.dateTime(), null, null, null, null),
-        LOCKED_BY("locked_by", LPDatabase.string(), null, null, null, null),
+        LOCKED_ON("locked_on", LPDatabase.dateTime(), "to_char("+"locked_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
+        LOCKED_BY("locked_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         ;
         private InventoryRetain(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
@@ -641,7 +644,7 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         RAW_VALUE("raw_value", LPDatabase.string(), null, null, null, null),
         PRETTY_VALUE("pretty_value", LPDatabase.string(), null, null, null, null),
         ENTERED_ON("entered_on", LPDatabase.dateTime(), "to_char("+"entered_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
-        ENTERED_BY("entered_by", LPDatabase.string(), null, null, null, null),
+        ENTERED_BY("entered_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         REENTERED("reentered", LPDatabase.booleanFld(), null, null, null, null),
         SPEC_EVAL(FIELDS_NAMES_SPEC_EVAL, LPDatabase.string(200), null, null, null, null),
         SPEC_EVAL_DETAIL("spec_eval_detail",  LPDatabase.string(200), null, null, null, null),
@@ -652,7 +655,7 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         LIMIT_ID("limit_id", LPDatabase.integer(), null, null, null, null),
         REVIEWED("reviewed", LPDatabase.booleanFld(), null, null, null, null),
         REVIEWED_ON("reviewed_on", LPDatabase.dateTime(), "to_char("+"reviewed_on"+",'YYYY-MM-DD HH:MI')", null, null, null),
-        REVIEWED_BY("reviewed_by", LPDatabase.string(), null, null, null, null),
+        REVIEWED_BY("reviewed_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         MAX_DP("max_dp", LPDatabase.integer(), null, null, null, null),
         MIN_ALLOWED("min_allowed", LPDatabase.real(), null, null, null, null),
         MAX_ALLOWED("max_allowed", LPDatabase.real(), null, null, null, null),
