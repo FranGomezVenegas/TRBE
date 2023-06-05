@@ -121,11 +121,12 @@ public class GlobalAPIsParams extends HttpServlet {
      *
      */
     public static final String REQUEST_PARAM_INCUBATOR_NAME = "incubatorName";
+    public static final String REQUEST_PARAM_INSTRUMENT_NAME = "instrumentName";
 
     public static final String REQUEST_PARAM_CATEGORY = "category";
     public static final String REQUEST_PARAM_REFERENCE = "reference";
-    public static final String REQUEST_PARAM_VOLUME= "volume";
-    public static final String REQUEST_PARAM_VOLUME_UOM = "volumeUom";
+    //public static final String REQUEST_PARAM_VOLUME= "volume";
+    //public static final String REQUEST_PARAM_VOLUME_UOM = "volumeUom";
     
     public static final String REQUEST_PARAM_INCLUDE_MATERIAL = "includesMaterial";
     public static final String REQUEST_PARAM_NAME = "name";
@@ -294,6 +295,7 @@ public class GlobalAPIsParams extends HttpServlet {
     public static final String REQUEST_PARAM_NUM_CONTAINERS = "numContainers";
     public static final String REQUEST_PARAM_NUM_BULKS = "numBulks";
     public static final String REQUEST_PARAM_NUM_DAYS = "numDays";
+    public static final String REQUEST_PARAM_LAST_N_POINTS = "lastPoints";
 
     public static final String INCUBATION_REPORT_JSON_TAG_NAME_FIELD_TO_RETRIEVE = "incubatorFieldToRetrieve";
     public static final String INCUBATION_REPORT_JSON_TAG_NAME_FIELD_TO_DISPLAY = "incubatorFieldsToDisplay";
