@@ -238,6 +238,7 @@ public class TblsCnfg {
         UOM_CONVERSION_MODE("uom_conversion_mode", LPDatabase.string(), null, null, null, null),
         CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
         CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date(), null, null, null, null),
+        CALC_LINKED("calc_linked",  LPDatabase.string(), null, null, null, null),
         ;
         private AnalysisMethodParams(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
@@ -432,7 +433,7 @@ public class TblsCnfg {
         SPEC_TEXT_YELLOW_AREA_ES("spec_text_yellow_area_es",  LPDatabase.string(), null, null, null, null),
         SPEC_TEXT_GREEN_AREA_ES("spec_text_green_area_es",  LPDatabase.string(), null, null, null, null),
         MAX_DP("max_dp", LPDatabase.integer(), null, null, null, null),
-        LIST_ENTRY("list_entry",  LPDatabase.string(), null, null, null, null),
+        LIST_ENTRY("list_entry",  LPDatabase.string(), null, null, null, null),        
         ;
         private SpecLimits(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
