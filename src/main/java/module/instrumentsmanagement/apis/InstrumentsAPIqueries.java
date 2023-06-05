@@ -31,7 +31,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -50,14 +49,13 @@ import module.instrumentsmanagement.definition.InstrumentsEnums;
 import module.instrumentsmanagement.definition.TblsInstrumentsProcedure;
 import module.instrumentsmanagement.logic.DataInstrumentsCorrectiveAction;
 import static module.instrumentsmanagement.logic.SchedInstruments.logNextEventWhenExpiredOrClose;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntViewFields;
 import static trazit.globalvariables.GlobalVariables.DEFAULTLANGUAGE;
+import static trazit.queries.QueryUtilities.getNdaysArray;
 import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ProcedureRequestSession;
 
@@ -267,25 +265,25 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 case INSTRUMENT_EVENT_VARIABLES:
                     Integer instrEventId = (Integer) argValues[0];
                     EnumIntTableFields[] tblFieldsToRetrieveObj = EnumIntTableFields.getAllFieldNamesFromDatabase(TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES);
-                    String[] tblFieldsToRetrieve = EnumIntTableFields.getAllFieldNames(tblFieldsToRetrieveObj);
+                    String[] tblFieldsToRetrieveString = EnumIntTableFields.getAllFieldNames(tblFieldsToRetrieveObj);
                     appInstrumentsAuditEvents = QueryUtilitiesEnums.getTableData(TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES,
                             tblFieldsToRetrieveObj,
                             new String[]{TblsInstrumentsData.InstrEventVariableValues.EVENT_ID.getName()},
                             new Object[]{instrEventId},
                             new String[]{TblsInstrumentsData.InstrEventVariableValues.ID.getName(), TblsInstrumentsData.InstrEventVariableValues.CREATED_ON.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                     jArr = new JSONArray();
-                    Integer attachFldPosic = LPArray.valuePosicInArray(tblFieldsToRetrieve, TblsInstrumentsData.InstrEventVariableValues.ATTACHMENT.getName());
+                    Integer attachFldPosic = LPArray.valuePosicInArray(tblFieldsToRetrieveString, TblsInstrumentsData.InstrEventVariableValues.ATTACHMENT.getName());
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(appInstrumentsAuditEvents[0][0].toString()))) {
                         for (Object[] currInstrEv : appInstrumentsAuditEvents) {
 
-                            JSONObject jObj = LPJson.convertArrayRowToJSONObject(tblFieldsToRetrieve, currInstrEv);
+                            JSONObject jObj = LPJson.convertArrayRowToJSONObject(tblFieldsToRetrieveString, currInstrEv);
 
                             if (LPNulls.replaceNull(currInstrEv[attachFldPosic]).toString().length() > 0) {
                                 String text = "";
                                 String pdfPath = "D:/LP/Interfaces/HPLC_VALIDACIONES_FRAN_382.pdf";
                                 File pdfFile = new File(pdfPath);
 
-/*                                PDDocument document = PDDocument.load(pdfFile);
+                                /*                                PDDocument document = PDDocument.load(pdfFile);
 
                                 PDFTextStripper textStripper = new PDFTextStripper();
                                 text = textStripper.getText(document);
@@ -294,25 +292,25 @@ public class InstrumentsAPIqueries extends HttpServlet {
                                 JsonNode jsonNode = objectMapper.convertValue(textInBytes, JsonNode.class);
                                 String jsonString = objectMapper.writeValueAsString(jsonNode);
                                 document.close();*/
-                                byte[] buffer=new byte[1024];
-                                ByteArrayOutputStream os=new ByteArrayOutputStream();
-                                FileInputStream fis=new FileInputStream(pdfFile);
+                                byte[] buffer = new byte[1024];
+                                ByteArrayOutputStream os = new ByteArrayOutputStream();
+                                FileInputStream fis = new FileInputStream(pdfFile);
                                 int read;
-                                while ((read = fis.read(buffer)) != -1){
+                                while ((read = fis.read(buffer)) != -1) {
                                     os.write(buffer, 0, read);
                                 }
                                 fis.close();
                                 ObjectMapper objectMapper = new ObjectMapper();
                                 JsonNode jsonNode = null;
-                                try{
-                                jsonNode = objectMapper.convertValue(os, JsonNode.class);
-                                }catch(Exception e){
-                                    String s=e.getMessage();
+                                try {
+                                    jsonNode = objectMapper.convertValue(os, JsonNode.class);
+                                } catch (Exception e) {
+                                    String s = e.getMessage();
                                 }
                                 String jsonString = objectMapper.writeValueAsString(jsonNode);
-                                
+
                                 os.close();
-                                
+
                                 jObj.put("attachment_text", text);
                                 jObj.put("attachment_jsonNode", jsonNode);
                                 jObj.put("attachment_jsonstring", jsonString);
@@ -376,6 +374,196 @@ public class InstrumentsAPIqueries extends HttpServlet {
                     Rdbms.closeRdbms();
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     return;
+                case GET_INSTRUMENT_REPORT:
+                    instrName = argValues[0].toString();
+
+                    String startDateStr = argValues[1].toString();
+                    String endDateStr = argValues[2].toString();
+                    String lastNdaysStr = argValues[3].toString();
+                    String numPointsStr = argValues[4].toString();
+
+                    EnumIntTableFields[] fieldsToRetrieveObj = TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS.getTableFields();
+                    Object[][] instrumentInfo = QueryUtilitiesEnums.getTableData(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS,
+                            fieldsToRetrieveObj,
+                            new String[]{TblsInstrumentsData.Instruments.NAME.getName()},
+                            new String[]{instrName},
+                            new String[]{TblsInstrumentsData.Instruments.NAME.getName()});
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentInfo[0][0].toString())) {
+                        LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
+                    }
+                    JSONObject jObjMainObject = LPJson.convertArrayRowToJSONObject(getAllFieldNames(fieldsToRetrieveObj), instrumentInfo[0]);
+                    if (LPNulls.replaceNull(lastNdaysStr).toString().length() > 0) {
+                        JSONArray jArr2 = new JSONArray();
+                        jArr = getNdaysArray(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENT_EVENT, lastNdaysStr, TblsInstrumentsData.InstrumentEvent.CREATED_ON,
+                                new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName()},
+                                new Object[]{instrName},
+                                new String[]{TblsInstrumentsData.InstrumentEvent.CREATED_ON.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
+                        for (int i = 0; i < jArr.size(); i++) {
+
+                            JSONObject jsonObject = (JSONObject) jArr.get(i);
+                            Object curEvId = jsonObject.get(TblsInstrumentsData.InstrumentEvent.ID.getName());
+                            if (LPNulls.replaceNull(curEvId).toString().length() > 0) {
+                                sW = new SqlWhere();
+                                sW.addConstraint(TblsInstrumentsData.InstrEventVariableValues.EVENT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL,
+                                        new Object[]{curEvId}, null);
+                                EnumIntTableFields[] variablesValuesFieldsToRetrieveObj = TblsInstrumentsData.TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES.getTableFields();
+                                Object[][] VariableValuesInfo = QueryUtilitiesEnums.getTableData(TblsInstrumentsData.TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES,
+                                        variablesValuesFieldsToRetrieveObj, sW, new String[]{TblsInstrumentsData.InstrEventVariableValues.EVENT_ID.getName()});
+                                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(VariableValuesInfo[0][0].toString()))) {
+                                    JSONArray varValuesArr = new JSONArray();
+                                    for (Object[] curRow2 : VariableValuesInfo) {
+                                        varValuesArr.add(LPJson.convertArrayRowToJSONObject(getAllFieldNames(variablesValuesFieldsToRetrieveObj), curRow2));
+                                    }
+                                    jsonObject.put(TblsInstrumentsData.TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES.getTableName(), varValuesArr);
+                                    jArr2.add(jsonObject);
+                                }
+                            }
+                        }
+                        jObjMainObject.put("last_n_days_events", jArr2);
+                    }
+                    Integer familyFldPosic = EnumIntTableFields.getFldPosicInArray(fieldsToRetrieveObj, TblsInstrumentsData.Instruments.FAMILY.getName());
+                    if (familyFldPosic > -1 && LPNulls.replaceNull(instrumentInfo[0][familyFldPosic]).toString().length() > 0) {
+                        JSONArray jArrPieceOfInfo = new JSONArray();
+                        fieldsToRetrieveObj = TblsInstrumentsConfig.TablesInstrumentsConfig.INSTRUMENTS_FAMILY.getTableFields();
+                        Object[][] instrumentFamilyInfo = QueryUtilitiesEnums.getTableData(TblsInstrumentsConfig.TablesInstrumentsConfig.INSTRUMENTS_FAMILY,
+                                fieldsToRetrieveObj,
+                                new String[]{TblsInstrumentsConfig.InstrumentsFamily.NAME.getName()},
+                                new String[]{LPNulls.replaceNull(instrumentInfo[0][familyFldPosic]).toString()},
+                                new String[]{TblsInstrumentsConfig.InstrumentsFamily.NAME.getName()});
+                        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentFamilyInfo[0][0].toString()))) {
+                            for (Object[] curRow : instrumentFamilyInfo) {
+                                JSONObject insFamJson = LPJson.convertArrayRowToJSONObject(getAllFieldNames(fieldsToRetrieveObj), curRow);
+                                EnumIntTableFields[] vSetFlds = new EnumIntTableFields[]{TblsInstrumentsConfig.InstrumentsFamily.CALIB_VARIABLES_SET, TblsInstrumentsConfig.InstrumentsFamily.PM_VARIABLES_SET,
+                                    TblsInstrumentsConfig.InstrumentsFamily.SERVICE_VARIABLES_SET, TblsInstrumentsConfig.InstrumentsFamily.VERIF_SAME_DAY_VARIABLES_SET};
+                                for (EnumIntTableFields curFld : vSetFlds) {
+                                    Integer evVarSetFldPosic = EnumIntTableFields.getFldPosicInArray(fieldsToRetrieveObj, curFld.getName());
+                                    if (evVarSetFldPosic > -1 && LPNulls.replaceNull(curRow[evVarSetFldPosic]).toString().length() > 0) {
+                                        Object[][] evVarSetInfo = QueryUtilitiesEnums.getTableData(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES_SET,
+                                                new EnumIntTableFields[]{TblsInstrumentsConfig.VariablesSet.VARIABLES_LIST},
+                                                new String[]{TblsInstrumentsConfig.VariablesSet.NAME.getName()},
+                                                new String[]{LPNulls.replaceNull(curRow[evVarSetFldPosic]).toString()},
+                                                new String[]{TblsInstrumentsConfig.VariablesSet.NAME.getName()});
+                                        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(evVarSetInfo[0][0].toString())) && LPNulls.replaceNull(evVarSetInfo[0][0]).toString().length() > 0) {
+                                            sW = new SqlWhere();
+                                            sW.addConstraint(TblsInstrumentsConfig.Variables.PARAM_NAME, SqlStatement.WHERECLAUSE_TYPES.IN,
+                                                    new Object[]{LPNulls.replaceNull(evVarSetInfo[0][0]).toString().split("\\|")}, "|");
+                                            EnumIntTableFields[] variablesFieldsToRetrieveObj = TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES.getTableFields();
+                                            Object[][] VariablesInfo = QueryUtilitiesEnums.getTableData(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES,
+                                                    variablesFieldsToRetrieveObj, sW, new String[]{TblsInstrumentsConfig.Variables.PARAM_NAME.getName()});
+                                            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(VariablesInfo[0][0].toString()))) {
+                                                JSONArray variablesArr = new JSONArray();
+                                                for (Object[] curRow2 : VariablesInfo) {
+                                                    variablesArr.add(LPJson.convertArrayRowToJSONObject(getAllFieldNames(variablesFieldsToRetrieveObj), curRow2));
+                                                }
+                                                insFamJson.put(curFld.getName() + "_detail", variablesArr);
+                                            }
+                                        }
+                                    }
+                                }
+                                jObjMainObject.put(TblsInstrumentsConfig.TablesInstrumentsConfig.INSTRUMENTS_FAMILY.getTableName(), insFamJson);
+                            }
+
+                        }
+                    }
+                    Rdbms.closeRdbms();
+                    LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
+                    return;
+                /*                    
+
+                    String[] prodLotfieldToRetrieveArr = new String[0];
+                    if ((tblFieldsToRetrieveStr != null) && (tblFieldsToRetrieveStr.length() > 0)) {
+                        if ("ALL".equalsIgnoreCase(tblFieldsToRetrieveStr)) {
+                            prodLotfieldToRetrieveArr = EnumIntTableFields.getAllFieldNames(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS.getTableFields());
+                        } else {
+                            prodLotfieldToRetrieveArr = tblFieldsToRetrieveStr.split("\\|");
+                        }
+                    }
+                    prodLotfieldToRetrieveArr = LPArray.addValueToArray1D(prodLotfieldToRetrieveArr, TblsInstrumentsData.Instruments.NAME.getName());
+                    String[] tblFieldToDisplayArr = new String[0];
+                    if ((tblFieldsToDisplayStr != null) && (tblFieldsToDisplayStr.length() > 0)) {
+                        if ("ALL".equalsIgnoreCase(tblFieldsToDisplayStr)) {
+                            tblFieldToDisplayArr = EnumIntTableFields.getAllFieldNames(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS.getTableFields());
+                        } else {
+                            tblFieldToDisplayArr = tblFieldsToDisplayStr.split("\\|");
+                        }
+                    }
+                    String[] instrumentsTblAllFields = EnumIntTableFields.getAllFieldNames(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS.getTableFields());
+                    Object[][] instrumentInfo = QueryUtilitiesEnums.getTableData(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS,
+                            EnumIntTableFields.getTableFieldsFromString(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS, instrumentsTblAllFields),
+                            new String[]{TblsInstrumentsData.Instruments.NAME.getName()}, new Object[]{instrName}, null);
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentInfo[0][0].toString())) {
+                        return;
+                    }
+                    JSONObject jObjInstrumentInfo = new JSONObject();
+                    JSONObject jObjMainObject = new JSONObject();
+                    JSONObject jObjPieceOfInfo = new JSONObject();
+                    JSONArray jArrPieceOfInfo = new JSONArray();
+                    for (int iFlds = 0; iFlds < instrumentInfo[0].length; iFlds++) {
+                        if (LPArray.valueInArray(prodLotfieldToRetrieveArr, instrumentsTblAllFields[iFlds])) {
+                            jObjInstrumentInfo.put(instrumentsTblAllFields[iFlds], instrumentInfo[0][iFlds].toString());
+                        }
+                    }
+                    String[] instrumentsTblAllFields = EnumIntTableFields.getAllFieldNames(TblsInstrumentsConfig.TablesInstrumentsConfig.INSTRUMENTS_FAMILY.getTableFields());
+                    Object[][] instrumentInfo = QueryUtilitiesEnums.getTableData(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS,
+                            EnumIntTableFields.getTableFieldsFromString(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS, instrumentsTblAllFields),
+                            new String[]{TblsInstrumentsData.Instruments.NAME.getName()}, new Object[]{instrName}, null);
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentInfo[0][0].toString())) {
+                        return;
+                    }
+                    
+                    
+                    for (String fieldToDisplayArr1 : tblFieldToDisplayArr) {
+                        if (LPArray.valueInArray(instrumentsTblAllFields, fieldToDisplayArr1)) {
+                            jObjPieceOfInfo = new JSONObject();
+                            jObjPieceOfInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, fieldToDisplayArr1);
+                            jObjPieceOfInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, instrumentInfo[0][LPArray.valuePosicInArray(instrumentsTblAllFields, fieldToDisplayArr1)].toString());
+                            jArrPieceOfInfo.add(jObjPieceOfInfo);
+                        }
+                    }
+                    jObjMainObject.put(GlobalAPIsParams.INCUBATION_REPORT_JSON_TAG_NAME_FIELD_TO_RETRIEVE, jObjInstrumentInfo);
+                    jObjMainObject.put(GlobalAPIsParams.INCUBATION_REPORT_JSON_TAG_NAME_FIELD_TO_DISPLAY, jArrPieceOfInfo);
+
+                    String numPoints = request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NUM_POINTS);
+                    Integer numPointsInt = null;
+                    fieldsToRetrieve = new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.EVENT_TYPE.getName(),
+                        TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_BY.getName(),
+                        TblsEnvMonitData.InstrIncubatorNoteBook.TEMPERATURE.getName()};
+                    if (numPoints != null) {
+                        numPointsInt = Integer.valueOf(numPoints);
+                    } else {
+                        numPointsInt = 20;
+                    }
+                    Object[][] instrReadings = new Object[0][0];
+                    if (startDateStr == null && endDateStr == null) {
+                        instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(instrName, numPointsInt);
+                    }
+                    if (startDateStr != null && endDateStr == null) {
+
+                        startDateStr = startDateStr.replace(" ", "T");
+                        instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(instrName, numPointsInt, dateStringFormatToLocalDateTime(startDateStr));
+                    }
+                    if (startDateStr != null && endDateStr != null) {
+                        startDateStr = startDateStr.replace(" ", "T");
+                        endDateStr = endDateStr.replace(" ", "T");
+                        instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(instrName, numPointsInt, dateStringFormatToLocalDateTime(startDateStr), dateStringFormatToLocalDateTime(endDateStr), true);
+                    }
+                    jArrLastTempReadings = new JSONArray();
+                    for (Object[] currReading : instrReadings) {
+                        jObj = new JSONObject();
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(currReading[0].toString())) {
+                            jObj.put(GlobalAPIsParams.LBL_ERROR, "No temperature readings found");
+                        } else {
+                            jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currReading);
+                        }
+
+                        jArrLastTempReadings.add(jObj);
+                    }
+                    jObjMainObject.put(GlobalAPIsParams.INCUBATION_REPORT_JSON_TAG_NAME_LAST_N_TEMP_READINGS, jArrLastTempReadings);
+                    jObjMainObject.put(reportInfoTagNAme, endPoint.getReportInfo());
+                    this.isSuccess = true;
+                    this.responseSuccessJObj = jObjMainObject;
+                    break;
+                 */
 
                 case GET_INSTRUMENT_FAMILY_LIST:
                     jArr = instrumentFamiliesList(null);
@@ -390,7 +578,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                     LPFrontEnd.servletReturnSuccess(request, response, logNextEventWhenExpiredOrClose(procInstanceName, true));
                     break;
                 case OPEN_INVESTIGATIONS:
-                    EnumIntTableFields[] fieldsToRetrieveObj = TblsProcedure.TablesProcedure.INVESTIGATION.getTableFields();
+                    fieldsToRetrieveObj = TblsProcedure.TablesProcedure.INVESTIGATION.getTableFields();
                     Object[][] incidentsNotClosed = QueryUtilitiesEnums.getTableData(TblsProcedure.TablesProcedure.INVESTIGATION,
                             fieldsToRetrieveObj,
                             new String[]{TblsProcedure.Investigation.CLOSED.getName() + "<>"},
@@ -450,6 +638,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                     }
                     LPFrontEnd.servletReturnSuccess(request, response, jArray);
                     break;
+
                 case INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION:
                     jArray = new JSONArray();
                     createInvCorrectiveAction = Parameter.getBusinessRuleProcedureFile(procReqInstance.getProcedureInstance(), InstrumentsEnums.InstrumentsBusinessRules.CORRECTIVE_ACTION_FOR_REJECTED_EVENT.getAreaName(), InstrumentsEnums.InstrumentsBusinessRules.CORRECTIVE_ACTION_FOR_REJECTED_EVENT.getTagName());
