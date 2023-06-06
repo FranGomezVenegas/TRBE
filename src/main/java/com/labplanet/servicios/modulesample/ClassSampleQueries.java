@@ -297,16 +297,17 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                 }
                 whereFieldsValue = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_VALUE);
 
-                whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_ANALYSIS_READY_FOR_REVISION.getName());
+                if (whereFieldsValue == null || whereFieldsValue.length() == 0) {
+                    whereFieldsValue ="|BLANK|true*Boolean";
+                } else {
+                    whereFieldsValue = whereFieldsValue+"|BLANK|true*Boolean";
+                } 
                 if (whereFieldsName != null && whereFieldsName.length() > 0) {
                     whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, whereFieldsName.split("\\|"));
                 }
+                whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.STATUS.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause(),
+                TblsData.ViewSampleAnalysisResultWithSpecLimits.TEST_REVIEWER.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()});
 
-                if (whereFieldsValue == null || whereFieldsValue.length() == 0) {
-                    whereFieldsValue = "true*Boolean";
-                } else {
-                    whereFieldsValue = "true*Boolean|" + whereFieldsValue;
-                }
                 whereFieldsValueArr = LPArray.convertStringWithDataTypeToObjectArray(whereFieldsValue.split("\\|"));
                 EnumIntViewFields[] fieldsToGet = null;
                 sampleAnalysisFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE);
