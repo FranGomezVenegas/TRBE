@@ -1,5 +1,6 @@
 package com.labplanet.servicios.moduleenvmonit;
 
+import static com.labplanet.servicios.app.AuthenticationAPIParams.RESPONSE_JSON_DATATABLE;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import databases.SqlStatement;
@@ -556,7 +557,7 @@ public class EnvMonAPIStats extends HttpServlet {
                     }
                 }
 
-                jObjMainObject.put("datatable", sampleJsonArr);
+                jObjMainObject.put(RESPONSE_JSON_DATATABLE, sampleJsonArr);
                 JSONArray filterJArr = new JSONArray();
                 for (SqlWhereEntry curFilterFld : wObj.getAllWhereEntries()) {
                     JSONObject fltJObj = new JSONObject(); 
@@ -612,7 +613,7 @@ public class EnvMonAPIStats extends HttpServlet {
                         investigationJsonArr.add(jObj);
                     }
                 }
-                jObjMainObject.put("datatable", investigationJsonArr);
+                jObjMainObject.put(RESPONSE_JSON_DATATABLE, investigationJsonArr);
                 JSONArray filterJArr = new JSONArray();
                 for (SqlWhereEntry curFilterFld : wObj.getAllWhereEntries()) {
                     JSONObject fltJObj = new JSONObject(); 
