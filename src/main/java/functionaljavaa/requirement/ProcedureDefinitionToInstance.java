@@ -1164,7 +1164,6 @@ public class ProcedureDefinitionToInstance {
      */
     public static final JSONObject createDBProcessSchemas(String schemaNamePrefix) {
         JSONObject jsonObj = new JSONObject();
-
         String[] schemaNames = new String[]{GlobalVariables.Schemas.CONFIG.getName(), GlobalVariables.Schemas.CONFIG_AUDIT.getName(), GlobalVariables.Schemas.DATA.getName(), GlobalVariables.Schemas.DATA_AUDIT.getName(), GlobalVariables.Schemas.PROCEDURE_AUDIT.getName(), GlobalVariables.Schemas.PROCEDURE.getName()};
         jsonObj.put(JsonTags.NUM_RECORDS_IN_DEFINITION.getTagValue(), schemaNames.length);
         for (String fn : schemaNames) {
@@ -1199,7 +1198,6 @@ public class ProcedureDefinitionToInstance {
 
     public static final JSONArray createBusinessRules(String procedure, Integer procVersion, String instanceName) {
         try {
-
             String[] fieldsRequired = new String[]{TblsReqs.ProcedureBusinessRules.FILE_SUFFIX.getName(), TblsReqs.ProcedureBusinessRules.RULE_NAME.getName(), TblsReqs.ProcedureBusinessRules.RULE_VALUE.getName()};
             String[] fildsToGet = new String[]{TblsReqs.ProcedureBusinessRules.FILE_SUFFIX.getName(), TblsReqs.ProcedureBusinessRules.RULE_NAME.getName(),
                 TblsReqs.ProcedureBusinessRules.RULE_VALUE.getName()};
