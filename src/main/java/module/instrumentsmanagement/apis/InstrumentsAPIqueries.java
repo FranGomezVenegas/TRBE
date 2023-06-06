@@ -769,7 +769,56 @@ public class InstrumentsAPIqueries extends HttpServlet {
         }
         return jArr;
     }
+    public static JSONArray instrumentVariablesSetList(String alternativeProcInstanceName) {
+        String[] fieldsToRetrieve = getAllFieldNames(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES_SET, alternativeProcInstanceName);
+        Object[][] instrumentFamily = QueryUtilitiesEnums.getTableData(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES_SET,
+                EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES_SET, alternativeProcInstanceName),
+                new String[]{TblsInstrumentsConfig.VariablesSet.NAME.getName() + "<>"},
+                new Object[]{">>>"},
+                new String[]{TblsInstrumentsConfig.VariablesSet.NAME.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()}, alternativeProcInstanceName);
+        JSONArray jArr = new JSONArray();
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentFamily[0][0].toString()))) {
+            for (Object[] currInstr : instrumentFamily) {
+                JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
+                jArr.add(jObj);
+            }
+        }
+        return jArr;
+    }
+    public static JSONArray instrumentVariablesList(String alternativeProcInstanceName) {
+        String[] fieldsToRetrieve = getAllFieldNames(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES, alternativeProcInstanceName);
+        Object[][] instrumentFamily = QueryUtilitiesEnums.getTableData(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES,
+                EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES, alternativeProcInstanceName),
+                new String[]{TblsInstrumentsConfig.Variables.PARAM_NAME.getName() + "<>"},
+                new Object[]{">>>"},
+                new String[]{TblsInstrumentsConfig.Variables.PARAM_NAME.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()}, alternativeProcInstanceName);
+        JSONArray jArr = new JSONArray();
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentFamily[0][0].toString()))) {
+            for (Object[] currInstr : instrumentFamily) {
+                JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
+                jArr.add(jObj);
+            }
+        }
+        return jArr;
+    }
 
+    public static JSONArray instrumentsList(String alternativeProcInstanceName) {
+        String[] fieldsToRetrieve = getAllFieldNames(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS, alternativeProcInstanceName);
+        Object[][] instrumentFamily = QueryUtilitiesEnums.getTableData(TablesInstrumentsData.INSTRUMENTS,
+                EnumIntTableFields.getAllFieldNamesFromDatabase(TablesInstrumentsData.INSTRUMENTS, alternativeProcInstanceName),
+                new String[]{TblsInstrumentsData.Instruments.NAME.getName() + "<>"},
+                new Object[]{">>>"},
+                new String[]{TblsInstrumentsData.Instruments.NAME.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()}, alternativeProcInstanceName);
+        JSONArray jArr = new JSONArray();
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentFamily[0][0].toString()))) {
+            for (Object[] currInstr : instrumentFamily) {
+                JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
+                jArr.add(jObj);
+            }
+        }
+        return jArr;
+    }
+    
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
