@@ -157,6 +157,7 @@ public enum AuthenticationErrorTrapping  implements EnumIntMessages{
      *
      */
     public static final String RESPONSE_JSON_TAG_MY_TOKEN = "myToken";
+    public static final String RESPONSE_JSON_DATATABLE = "datatable";
 
     /**
      *
