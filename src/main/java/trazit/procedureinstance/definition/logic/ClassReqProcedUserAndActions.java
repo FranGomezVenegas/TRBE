@@ -22,11 +22,12 @@ import trazit.globalvariables.GlobalVariables;
 public class ClassReqProcedUserAndActions {
 
     static JSONArray actionsByRoles(String procInstanceName, Object[][] procRoles) {
-        String[] roleActionsFldsArr = new String[]{TblsReqs.ProcReqUserRequirementsActions.ENTITY.getName(), TblsReqs.ProcReqUserRequirementsActions.PRETTY_EN.getName(), TblsReqs.ProcReqUserRequirementsActions.PRETTY_ES.getName(), TblsReqs.ProcReqUserRequirementsActions.ROLES.getName()};
+        String[] roleActionsFldsArr = new String[]{TblsReqs.ProcReqUserRequirementsActions.ENTITY.getName(), TblsReqs.ProcReqUserRequirementsActions.PRETTY_EN.getName(), TblsReqs.ProcReqUserRequirementsActions.PRETTY_ES.getName(), TblsReqs.ProcReqUserRequirementsActions.ROLES.getName(),
+            TblsReqs.ProcReqUserRequirementsActions.MOD_ORDER_NUMBER.getName(), TblsReqs.ProcReqUserRequirementsActions.WINDOW_ACTION.getName()};
         Object[][] roleActions2d = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.PROC_REQ_USER_REQUIREMENTS_ACTIONS.getViewName(),
                 new String[]{TblsReqs.ProcReqUserRequirementsActions.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcReqUserRequirementsActions.WINDOW_ELEMENT_TYPE.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.LIKE.getSqlClause()},
                 new Object[]{procInstanceName, "%ction%"}, roleActionsFldsArr,
-                new String[]{TblsReqs.ProcReqUserRequirementsActions.MOD_ORDER_NUMBER.getName(), TblsReqs.ProcReqUserRequirementsActions.WINDOW_ACTION.getName()});
+                new String[]{TblsReqs.ProcReqUserRequirementsActions.ENTITY.getName(), TblsReqs.ProcReqUserRequirementsActions.MOD_ORDER_NUMBER.getName(), TblsReqs.ProcReqUserRequirementsActions.WINDOW_ACTION.getName()}, true);
         JSONArray rolesActionsOutput = new JSONArray();
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(roleActions2d[0][0].toString()))) {
             String[] procRoles1D = LPArray.getUniquesArray(LPArray.array2dTo1d(procRoles));
@@ -45,21 +46,25 @@ public class ClassReqProcedUserAndActions {
                 header.put(curRole);
             }
             rolesActionsOutput.put(header);
+            String prevExecuted = "";
             for (Object[] curActRow : roleActions2d) {
                 JSONArray curActionRow = new JSONArray();
                 curActionRow.put(curActRow[0] + ": " + curActRow[1]);
                 curActionRow.put(curActRow[0] + ": " + curActRow[2]);
-                String[] allActionRoles = LPNulls.replaceNull(curActRow[2]).toString().split("\\|");
-                for (String curRole : procRoles1D) {
-                    if (LPArray.valueInArray(allActionRoles, curRole)) {
-                        curActionRow.put("X");
-                    } else if (LPArray.valueInArray(allActionRoles, "ALL")) {
-                        curActionRow.put("ALL");
-                    } else {
-                        curActionRow.put("");
+                if (Boolean.FALSE.equals(prevExecuted.matches(curActRow[0] + ": " + curActRow[1]))) {
+                    String[] allActionRoles = LPNulls.replaceNull(curActRow[2]).toString().split("\\|");
+                    for (String curRole : procRoles1D) {
+                        if (LPArray.valueInArray(allActionRoles, curRole)) {
+                            curActionRow.put("X");
+                        } else if (LPArray.valueInArray(allActionRoles, "ALL")) {
+                            curActionRow.put("ALL");
+                        } else {
+                            curActionRow.put("");
+                        }
                     }
+                    rolesActionsOutput.put(curActionRow);
+                    prevExecuted = curActRow[0] + ": " + curActRow[1];
                 }
-                rolesActionsOutput.put(curActionRow);
             }
         }
         return rolesActionsOutput;
@@ -85,15 +90,15 @@ public class ClassReqProcedUserAndActions {
             fldDef.put("is_translation", true);
             fldDef.put("name", TblsReqs.ProcedureUserRequirements.LABEL_ES.getName());
             header.put(fldDef);
-            
+
             for (String curRole : procRoles1D) {
                 header.put(curRole);
             }
             rolesActionsOutput.put(header);
             for (Object[] curActRow : roleActions2d) {
                 JSONArray curActionRow = new JSONArray();
-                curActionRow.put(((LPNulls.replaceNull(curActRow[1]).toString().length())>0) ? curActRow[1]:curActRow[0]);
-                curActionRow.put(((LPNulls.replaceNull(curActRow[2]).toString().length())>0) ? curActRow[2]:curActRow[0]);
+                curActionRow.put(((LPNulls.replaceNull(curActRow[1]).toString().length()) > 0) ? curActRow[1] : curActRow[0]);
+                curActionRow.put(((LPNulls.replaceNull(curActRow[2]).toString().length()) > 0) ? curActRow[2] : curActRow[0]);
                 String[] allActionRoles = LPNulls.replaceNull(curActRow[3]).toString().split("\\|");
                 for (String curRole : procRoles1D) {
                     if ((LPArray.valueInArray(allActionRoles, curRole)) || (LPArray.valueInArray(allActionRoles, "ALL"))) {
@@ -145,8 +150,8 @@ public class ClassReqProcedUserAndActions {
             viewSopsOutput.put(header);
             for (Object[] curActRow : views2d) {
                 JSONArray curActionRow = new JSONArray();
-                curActionRow.put(((LPNulls.replaceNull(curActRow[1]).toString().length())>0) ? curActRow[1]:curActRow[0]);
-                curActionRow.put(((LPNulls.replaceNull(curActRow[2]).toString().length())>0) ? curActRow[2]:curActRow[0]);
+                curActionRow.put(((LPNulls.replaceNull(curActRow[1]).toString().length()) > 0) ? curActRow[1] : curActRow[0]);
+                curActionRow.put(((LPNulls.replaceNull(curActRow[2]).toString().length()) > 0) ? curActRow[2] : curActRow[0]);
                 String[] allActionRoles = LPNulls.replaceNull(curActRow[3]).toString().split("\\|");
                 for (String curRole : procSops1D) {
                     if (LPArray.valueInArray(allActionRoles, curRole)) {
