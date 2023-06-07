@@ -651,7 +651,6 @@ public class ConfigSpecRule {
                             && Boolean.FALSE.equals(curParam.toUpperCase().contains(quantitativeVariables.NLT.toString())))) {
                         curParam = curParam.replace(quantitativeVariables.MINSPEC.toString(), "");
                         curParam = curParam.replace(quantitativeVariables.MT.toString(), "");
-                        //Long curParamLong=Long.valueOf(-2.5); 
                         this.minSpec = BigDecimal.valueOf(Double.valueOf(curParam));
                         this.minSpecIsStrict = false;
                     }
@@ -744,6 +743,10 @@ public class ConfigSpecRule {
                     ruleRepr.append(" ");
                     ruleRepr.append(this.maxSpec);
                 }
+                if (this.minValAllowed!=null)
+                    ruleRepr.append(". Min allowed valued=").append(this.minValAllowed.toString());
+                if (this.maxValAllowed!=null)
+                    ruleRepr.append(". Max allowed valued=").append(this.maxValAllowed.toString());
                 this.quantitativeRuleRepresentation = ruleRepr.toString();
                 this.ruleRepresentation = this.quantitativeRuleRepresentation;
                 break;

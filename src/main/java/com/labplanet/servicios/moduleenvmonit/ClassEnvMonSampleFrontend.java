@@ -76,9 +76,10 @@ public class ClassEnvMonSampleFrontend {
     private static final String[] SAMPLEANALYSISRESULTLOCKDATA_RETRIEVEDATA_PROGRAMCORRECTIVEACTION = new String[]{TblsProcedure.ProgramCorrectiveAction.RESULT_ID.getName(), TblsProcedure.ProgramCorrectiveAction.STATUS.getName()};
     public static final String MANDATORY_PARAMS_MAIN_SERVLET = GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME + "|" + GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN + "|" + GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
 
-    static final String IS_LOCKED="is_locked";
-    static final String LOCKING_OBJECT="locking_object";
-    static final String LOCKING_REASON="locking_reason";
+    static final String IS_LOCKED = "is_locked";
+    static final String LOCKING_OBJECT = "locking_object";
+    static final String LOCKING_REASON = "locking_reason";
+
     public enum EnvMonSampleAPIqueriesEndpoints implements EnumIntEndpoints {
         GET_SAMPLE_ANALYSIS_RESULT_LIST("GET_SAMPLE_ANALYSIS_RESULT_LIST", "", new LPAPIArguments[]{
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
@@ -88,7 +89,7 @@ public class ClassEnvMonSampleFrontend {
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 11),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 12),}, EndPointsToRequirements.endpointWithNoOutputObjects, null,
-                 null, null),
+                null, null),
         GET_SAMPLE_ANALYSIS_RESULT_LIST_SECONDENTRY("GET_SAMPLE_ANALYSIS_RESULT_LIST_SECONDENTRY", "", new LPAPIArguments[]{
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
@@ -97,35 +98,35 @@ public class ClassEnvMonSampleFrontend {
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 11),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),}, EndPointsToRequirements.endpointWithNoOutputObjects, null,
-                 null, null),
+                null, null),
         GET_MICROORGANISM_LIST("GET_MICROORGANISM_LIST", "", new LPAPIArguments[]{
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects, null,
-                 null, null),
+                null, null),
         GET_SAMPLE_MICROORGANISM_VIEW("GET_SAMPLE_MICROORGANISM_VIEW", "", new LPAPIArguments[]{
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 8),}, EndPointsToRequirements.endpointWithNoOutputObjects, null,
-                 null, null),
+                null, null),
         GET_SAMPLE_STAGES_SUMMARY_REPORT("GET_SAMPLE_STAGES_SUMMARY_REPORT", "", new LPAPIArguments[]{
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects,
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_RPT_INFO, "Name: SAMPLE STAGES SUMMARY REPORT v1.0").build()).build(),
-                 null, null),
+                null, null),
         GET_SAMPLE_BY_TESTINGGROUP_SUMMARY_REPORT("GET_SAMPLE_BY_TESTINGGROUP_SUMMARY_REPORT", "", new LPAPIArguments[]{
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects,
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_RPT_INFO, "Name: SAMPLE BY TESTING GROUP SUMMARY REPORT v1.0").build()).build(),
-                 null, null),
+                null, null),
         GET_BATCH_REPORT("GET_BATCH_REPORT", "", new LPAPIArguments[]{
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_FIELD_TO_DISPLAY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),}, EndPointsToRequirements.endpointWithNoOutputObjects,
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_RPT_INFO, "Name: BATCH REPORT v1.0").build()).build(),
-                 null, null),
+                null, null),
         GET_PRODLOT_REPORT("GET_PRODLOT_REPORT", "", new LPAPIArguments[]{
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_DISPLAY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),}, EndPointsToRequirements.endpointWithNoOutputObjects,
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_RPT_INFO, "Name: PRODUCTION LOT REPORT v1.0").build()).build(),
-                 null, null),
+                null, null),
         GET_INCUBATOR_REPORT("GET_INCUBATOR_REPORT", "", new LPAPIArguments[]{
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
@@ -133,18 +134,18 @@ public class ClassEnvMonSampleFrontend {
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DATE_START, LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DATE_END, LPAPIArguments.ArgumentType.STRING.toString(), false, 10),}, EndPointsToRequirements.endpointWithNoOutputObjects,
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_RPT_INFO, "Name: INCUBATOR REPORT v1.0").build()).build(),
-                 null, null),
+                null, null),
         STATS_SAMPLES_PER_STAGE("STATS_SAMPLES_PER_STAGE", "", new LPAPIArguments[]{
             new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
             new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_STAGES_TO_INCLUDE, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
             new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_STAGES_TO_EXCLUDE, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),}, EndPointsToRequirements.endpointWithNoOutputObjects, null,
-                 null, null),
+                null, null),
         STATS_PROGRAM_LAST_RESULTS("STATS_PROGRAM_LAST_RESULTS", "", new LPAPIArguments[]{
             new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_GROUPED, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
             new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_TOTAL_OBJECTS, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects, null,
-                 null, null),
+                null, null),
         KPIS("KPIS", "", new LPAPIArguments[]{
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJ_GROUP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TABLE_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
@@ -153,7 +154,7 @@ public class ClassEnvMonSampleFrontend {
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 10),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELDS_TO_RETRIEVE_OR_GROUPING, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 12),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_GROUPED, LPAPIArguments.ArgumentType.BOOLEANARR.toString(), true, 11),}, EndPointsToRequirements.endpointWithNoOutputObjects, null,
-                 null, null),
+                null, null),
         GET_PENDING_INCUBATION_SAMPLES_AND_ACTIVE_BATCHES("GET_PENDING_INCUBATION_SAMPLES_AND_ACTIVE_BATCHES", "", new LPAPIArguments[]{
             new LPAPIArguments("includeSplittedByIncubNumber", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 6),
             new LPAPIArguments("includeAllWithAnyPendingIncubation", LPAPIArguments.ArgumentType.BOOLEAN.toString(), true, 7),
@@ -203,7 +204,7 @@ public class ClassEnvMonSampleFrontend {
             new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB + GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 51),
             new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB + GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 52),
             new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB + GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 53),}, EndPointsToRequirements.endpointWithNoOutputObjects, null,
-                 null, null),
+                null, null),
         SAMPLES_BY_STAGE("SAMPLES_BY_STAGE", "",
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6),
                     new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
@@ -220,7 +221,7 @@ public class ClassEnvMonSampleFrontend {
                     new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 18),
                     new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 19),
                     new LPAPIArguments("includeOnlyIfResultsInProgress", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 20),}, null, null,
-                 null, null),
+                null, null),
         SAMPLES_INPROGRESS_LIST("SAMPLES_INPROGRESS_LIST", "",
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6),
                     new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
@@ -237,7 +238,7 @@ public class ClassEnvMonSampleFrontend {
                     new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 18),
                     new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 19),
                     new LPAPIArguments("includeOnlyIfResultsInProgress", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 20),}, null, null,
-                 null, null);
+                null, null);
 
         private EnvMonSampleAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, JsonArray reportInfo, String devComment, String devCommentTag) {
             this.name = name;
@@ -402,16 +403,27 @@ public class ClassEnvMonSampleFrontend {
                             String currRowLimitId = curRow[posicLimitIdFld].toString();
                             JSONObject row = new JSONObject();
 
+                            String[] allFieldNames = EnumIntViewFields.getAllFieldNames(fldsToGet);
+                            Object[] resultWarningData = warningByMinOrMaxAllowed(EnumIntViewFields.getAllFieldNames(fldsToGet), curRow);
+
+                            if (resultWarningData != null && resultWarningData[0] != null) {
+                                allFieldNames = LPArray.addValueToArray1D(allFieldNames, (String[]) resultWarningData[0]);
+                                curRow = LPArray.addValueToArray1D(curRow, (Object[]) resultWarningData[1]);
+                                if (resultWarningData.length > 2) {
+                                }
+                            }
+
                             Object[] resultLockData = sampleAnalysisResultLockData(procInstanceName, EnumIntViewFields.getAllFieldNames(fldsToGet), curRow);
                             if (resultLockData != null && resultLockData[0] != null) {
-                                if (resultLockData.length > 2) {
-                                    row = LPJson.convertArrayRowToJSONObject(LPArray.addValueToArray1D(LPArray.addValueToArray1D(EnumIntViewFields.getAllFieldNames(fldsToGet), (String) resultLockData[2]), (String[]) resultLockData[0]),
-                                            LPArray.addValueToArray1D(LPArray.addValueToArray1D(curRow, resultLockData[3]), (Object[]) resultLockData[1]));
-                                } else {
-                                    row = LPJson.convertArrayRowToJSONObject(LPArray.addValueToArray1D(EnumIntViewFields.getAllFieldNames(fldsToGet), (String[]) resultLockData[0]), LPArray.addValueToArray1D(curRow, (Object[]) resultLockData[1]));
-                                }
-                            } else {
-                                row = LPJson.convertArrayRowToJSONObject(EnumIntViewFields.getAllFieldNames(fldsToGet), curRow);
+                                allFieldNames = LPArray.addValueToArray1D(allFieldNames, (String[]) resultLockData[0]);
+                                curRow = LPArray.addValueToArray1D(curRow, (Object[]) resultLockData[1]);
+                            }
+                            row = LPJson.convertArrayRowToJSONObject(EnumIntViewFields.getAllFieldNames(fldsToGet), curRow);
+                            if (resultWarningData != null && resultWarningData[0] != null && resultWarningData.length > 2) {
+                                row.put(resultWarningData[2], resultWarningData[3]);
+                            }
+                            if (resultLockData != null && resultLockData[0] != null && resultLockData.length > 2) {
+                                row.put(resultLockData[2], resultLockData[3]);
                             }
 
                             if ((currRowLimitId != null) && (currRowLimitId.length() > 0)) {
@@ -1707,7 +1719,7 @@ public class ClassEnvMonSampleFrontend {
                         reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_ES, errorTextEs);
                         return new Object[]{fldNameArr, fldValueArr, "warning_reason", reasonInfo};
                     case "locking":
-                    default: 
+                    default:
                         fldNameArr = LPArray.addValueToArray1D(fldNameArr, IS_LOCKED);
                         fldValueArr = LPArray.addValueToArray1D(fldValueArr, true);
                         fldNameArr = LPArray.addValueToArray1D(fldNameArr, LOCKING_OBJECT);
@@ -1796,6 +1808,37 @@ public class ClassEnvMonSampleFrontend {
             }
         }
         return objIds;
+    }
+
+    static Object[] warningByMinOrMaxAllowed(String[] resultFieldToRetrieveArr, Object[] curResult) {
+        Integer minFldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.MIN_ALLOWED.getName());
+        Integer maxFldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.MAX_ALLOWED.getName());
+        if (minFldPosic == -1 && maxFldPosic == -1) {
+            return null;
+        }
+        String minValue = LPNulls.replaceNull(curResult[minFldPosic]).toString();
+        String maxValue = LPNulls.replaceNull(curResult[maxFldPosic]).toString();
+        if (minValue.length() == 0 && maxValue.length() == 0) {
+            return null;
+        }
+        StringBuilder wEn = new StringBuilder(0);
+        StringBuilder wEs = new StringBuilder(0);
+        if (minValue.length() > 0 && maxValue.length() > 0) {
+            wEn.append("The result is limited to the range ").append(minValue).append(" and ").append(maxValue);
+            wEs.append("El resultado está limitado al rango ").append(minValue).append(" y ").append(maxValue);
+        } else if (minValue.length() == 0 && maxValue.length() > 0) {
+            wEn.append("The result is limited to not accept values less than ").append(minValue);
+            wEs.append("El resultado está limitado para no aceptar valores menores de ").append(minValue);
+        } else {
+            wEn.append("The result is limited to not accept values greater than ").append(maxValue);
+            wEs.append("El resultado está limitado para no aceptar valores mayores de ").append(maxValue);
+        }
+        JSONObject reasonInfo = new JSONObject();
+        reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_EN, wEn.toString());
+        reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_ES, wEs.toString());
+        String[] fldNameArr = new String[]{"has_warning", "warning_object"};
+        Object[] fldValueArr = new Object[]{true, TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName()};
+        return new Object[]{fldNameArr, fldValueArr, "warning_reason", reasonInfo};
     }
 
     static JSONObject buttonActionInfo(Integer sampleId, String[] fields) {
