@@ -182,8 +182,9 @@ public class DataBulk {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String createInvCorrectiveAction = Parameter.getBusinessRuleProcedureFile(procInstanceName, InspLotRMBusinessRules.CORRECTIVE_ACTION_FOR_REJECTED_BULK.getAreaName(), InspLotRMBusinessRules.CORRECTIVE_ACTION_FOR_REJECTED_BULK.getTagName());
         if (Boolean.FALSE.equals(isTagValueOneOfEnableOnes(createInvCorrectiveAction))) {
-            messages.addMainForError(InspLotRMEnums.DataInspLotErrorTrapping.DISABLED, new Object[]{});
-            return new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.DISABLED, new Object[]{});
+            //When disabled it should return TRUE due to it does nothing but is not an error is due to it's disabled
+            // messages.addMainForError(InspLotRMEnums.DataInspLotErrorTrapping.DISABLED, new Object[]{});
+            return new InternalMessage(LPPlatform.LAB_TRUE, InspLotRMEnums.DataInspLotErrorTrapping.DISABLED, new Object[]{});
         }
         return DataInsLotsCorrectiveAction.createNew(bulkId, endpoint,
             new String[]{TblsInspLotRMProcedure.LotsCorrectiveAction.LOT_NAME.getName()},            
