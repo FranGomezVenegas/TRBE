@@ -440,7 +440,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                         fieldToRetrieveViewArr,
                         new String[]{TblsData.ViewSampleTestingGroup.SAMPLE_ID.getName(), TblsData.ViewSampleTestingGroup.TESTING_GROUP.getName()});
                 if (myData == null || myData.contains(LPPlatform.LAB_FALSE)) {
-                    this.isSuccess = false;
+                    this.isSuccess = true;
                     this.responseSuccessJArr = new JSONArray();
                 } else {
                     this.isSuccess = true;
