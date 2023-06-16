@@ -209,6 +209,7 @@ public class DataSampleStructureEnums {
         MARK_READYFORREVISION_WHENALLRESULTSENTERED("revisionSampleAnalysis_markAsReadyForRevisionWhenAllResultsEntered", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false, null),
         SAMPLEANALYSIS_ANALYSTASSIGNMENTMODE("sampleAnalysis_analystAssigmentMode", GlobalVariables.Schemas.DATA.getName(), null, null, '|', false, null),
         SAMPLEANALYSIS_ANALYSTASSIGNMENTMODES("sampleAnalysis_analystAssigmentModes", GlobalVariables.Schemas.DATA.getName(), null, null, '|', false, null),
+        REVISION_SAMPLEANALYSIS_REQUIRED("revisionSampleAnalysisRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false, null),
         REVISION_TESTINGGROUP_REQUIRED("revisionTestinGroupRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false, null),
         SAMPLEANALYSIS_GENERICAUTOAPPROVEENABLED("sampleAnalysisGenericAutoApproveEnabled", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', false, null),;
 
