@@ -407,9 +407,10 @@ public final class Token {
     public String getProcsModuleNames() {
         return this.procsModuleNames;
     }
-
+    
     public String getModuleNameFromProcInstance(String instanceName) {
-        if (this.procsModuleNames == null || !this.procsModuleNames.contains(instanceName)) {
+        if ("APP".equalsIgnoreCase(instanceName)){return instanceName;}
+        if (this.procsModuleNames == null || !this.procsModuleNames.contains(instanceName)) {            
             return "notFound";
         }
 
