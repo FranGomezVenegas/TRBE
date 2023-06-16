@@ -208,7 +208,10 @@ public class AppProcedureListAPI extends HttpServlet {
     public static JSONObject getMasterData(Token token, String procInstanceName){
         String moduleNameFromProcInstance = token.getModuleNameFromProcInstance(procInstanceName);
         JSONObject jObj=new JSONObject();
-        if (procInstanceName.toLowerCase().contains("em-demo-a")){
+        if (GlobalVariables.TrazitModules.ENVIRONMENTAL_MONITORING.name().equalsIgnoreCase(moduleNameFromProcInstance)){
+            BusinessRules bi=new BusinessRules(procInstanceName, null);
+            jObj=ConfigMasterData.getMasterData(procInstanceName, bi);
+        }else if (procInstanceName.toLowerCase().contains("em-demo-a")){
             BusinessRules bi=new BusinessRules(procInstanceName, null);
             jObj=ConfigMasterData.getMasterData(procInstanceName, bi);
         }else if (GlobalVariables.TrazitModules.INSTRUMENTS.name().equalsIgnoreCase(moduleNameFromProcInstance)){
@@ -496,7 +499,8 @@ public class AppProcedureListAPI extends HttpServlet {
             procEventJson.put("Error on get procedure_events records", procEvent[0][procEvent.length-1].toString());                        
             procedure.put(LABEL_ARRAY_PROC_EVENTS_ERROR, procEventJson);
             procedure.put(LABEL_ARRAY_PROC_EVENTS, new JSONArray());
-        }                    
+        }                
+        
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procEvent[0][0].toString()))){
             JSONObject procEventJson = new JSONObject();
             JSONArray childs=new JSONArray();
