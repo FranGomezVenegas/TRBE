@@ -61,7 +61,7 @@ public class ClassSample {
     
     public ClassSample(HttpServletRequest request, SampleAPIactionsEndpoints endPoint){
         
-        String[] exceptionsToSampleReviewArr=new String[]{"UNCANCELSAMPLE", "UNREVIEWSAMPLE"};
+        String[] exceptionsToSampleReviewArr=new String[]{"UNCANCELSAMPLE", "UNREVIEWSAMPLE", "SAMPLESTAGE_MOVETONEXT"};
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         Boolean isForTesting = procReqSession.getIsForTesting();
         String procInstanceName=procReqSession.getProcedureInstance();
