@@ -27,6 +27,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
+import lbplanet.utilities.LPParadigm;
 import lbplanet.utilities.LPPlatform;
 import static module.inspectionlot.rawmaterial.definition.InspLotQueries.configMaterialStructure;
 import static module.inspectionlot.rawmaterial.definition.InspLotQueries.dataSampleStructure;
@@ -227,7 +228,6 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                             lotJsonObj.put(JSON_TAG_SPEC_DEFINITION, specDefinition);
                         }
                         lotJsonObj.put("lot_coa", DataInspLotRMCertificate.getLotCoAInfo(lotName, "CC", jLotInfoObj, fieldsToRetrieveSample, lotSampleInfo, specFlds, specLimitsInfo));
-                        
 
                         lotsJsonArr.add(lotJsonObj);
                     }
@@ -463,6 +463,12 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                             new Object[]{actionName, this.getClass().getSimpleName()}, language,
                             ClassInspLotRMQueries.class.getSimpleName());
             }
+        } catch (Exception e) {
+            LPFrontEnd.servletReturnResponseError(request, response,
+                    LPParadigm.ParadigmErrorTrapping.UNHANDLED_EXCEPTION_IN_CODE.getErrorCode(),
+                    new Object[]{e.getMessage()}, language,
+                    ClassInspLotRMQueries.class.getSimpleName());
+
         } finally {
             procReqInstance.killIt();
         }

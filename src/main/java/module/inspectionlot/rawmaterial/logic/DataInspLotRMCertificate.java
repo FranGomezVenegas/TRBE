@@ -12,6 +12,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import lbplanet.utilities.LPArray;
+import static lbplanet.utilities.LPArray.areAllValuesSame;
+import static lbplanet.utilities.LPArray.getColumnValuesFromSomeRows;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
@@ -43,7 +45,6 @@ public class DataInspLotRMCertificate {
                 tableFieldsLotDecisionObj, new SqlWhere(TblsInspLotRMData.TablesInspLotRMData.LOT_DECISION, new String[]{TblsInspLotRMData.LotDecision.LOT_NAME.getName()}, new Object[]{lotName}),
                 new String[]{TblsInspLotRMData.LotDecision.LOT_NAME.getName()}, null);
 
-        EnumIntTables tblObj = TblsInspLotRMConfig.TablesInspLotRMConfig.COA_DEFINITION;
         SqlWhere whereObj = new SqlWhere();
         whereObj.addConstraint(TblsInspLotRMConfig.CoaDefinition.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{coaDef}, null);
         EnumIntTableFields[] flds = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInspLotRMConfig.TablesInspLotRMConfig.COA_DEFINITION);
@@ -57,7 +58,7 @@ public class DataInspLotRMCertificate {
         jMainObj.put("report_info", LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(flds), materialInfo[0]));
 
         JSONObject jSectionObj = new JSONObject();
-        tblObj = TblsInspLotRMConfig.TablesInspLotRMConfig.COA_HEADER_COLUMNS;
+        EnumIntTables tblObj = TblsInspLotRMConfig.TablesInspLotRMConfig.COA_HEADER_COLUMNS;
         whereObj = new SqlWhere();
         whereObj.addConstraint(TblsInspLotRMConfig.CoaHeaderColumns.COA_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{coaDef}, null);
         flds = new EnumIntTableFields[]{TblsInspLotRMConfig.CoaHeaderColumns.COL_ID, TblsInspLotRMConfig.CoaHeaderColumns.FIELD_NAME,
@@ -135,8 +136,16 @@ public class DataInspLotRMCertificate {
                     for (Object[] curFld : coaResultsTableDef) {
                         if ("result".equalsIgnoreCase(curFld[2].toString())) {
                             jSubSectionObj = new JSONObject();
-                            jSubSectionObj.put("value_en", getResult("en", LPNulls.replaceNull(jsonObject.get(TblsInspLotRMConfig.SpecLimits.ANALYSIS.getName())).toString(), fldsForSampleResults, lotSampleResultInfo, LotNotAnalyzedResultInfo));
-                            jSubSectionObj.put("value_es", getResult("es", LPNulls.replaceNull(jsonObject.get(TblsInspLotRMConfig.SpecLimits.ANALYSIS.getName())).toString(), fldsForSampleResults, lotSampleResultInfo, LotNotAnalyzedResultInfo));
+                            jSubSectionObj.put("value_en", getResult("en",
+                                    LPNulls.replaceNull(jsonObject.get(TblsInspLotRMConfig.SpecLimits.ANALYSIS.getName())).toString(),
+                                    LPNulls.replaceNull(jsonObject.get(TblsInspLotRMConfig.SpecLimits.METHOD_NAME.getName())).toString(),
+                                    LPNulls.replaceNull(jsonObject.get(TblsInspLotRMConfig.SpecLimits.VARIATION_NAME.getName())).toString(),
+                                    fldsForSampleResults, lotSampleResultInfo, LotNotAnalyzedResultInfo));
+                            jSubSectionObj.put("value_es", getResult("es",
+                                    LPNulls.replaceNull(jsonObject.get(TblsInspLotRMConfig.SpecLimits.ANALYSIS.getName())).toString(),
+                                    LPNulls.replaceNull(jsonObject.get(TblsInspLotRMConfig.SpecLimits.METHOD_NAME.getName())).toString(),
+                                    LPNulls.replaceNull(jsonObject.get(TblsInspLotRMConfig.SpecLimits.VARIATION_NAME.getName())).toString(),
+                                    fldsForSampleResults, lotSampleResultInfo, LotNotAnalyzedResultInfo));
                             jSubSectionArr.add(jSubSectionObj);
                         } else {
                             jSubSectionObj = new JSONObject();
@@ -273,43 +282,70 @@ public class DataInspLotRMCertificate {
 
     }
 
-    public static String getResult(String language, String analysis, EnumIntViewFields[] fldsForSampleResults, Object[][] lotSampleResultInfo,
-            Object[][] LotNotAnalyzedResultInfo) {
-        if (LotNotAnalyzedResultInfo != null) {
-            Object[] analysisList = LPArray.getColumnFromArray2D(LotNotAnalyzedResultInfo, 0);
-            Integer analysisPosic = LPArray.valuePosicInArray(analysisList, analysis);
-            if (analysisPosic > -1) {
-                return LotNotAnalyzedResultInfo[analysisPosic][1].toString();
+    public static String getResult(String language, String analysis, String methodName, String variationName, EnumIntViewFields[] fldsForSampleResults, Object[][] lotSampleResultInfo,
+            Object[][] LotResultButNotAnalyzedResultInfo) {
+        try {
+            if (LotResultButNotAnalyzedResultInfo != null) {
+                Object[] analysisList = LPArray.getColumnFromArray2D(LotResultButNotAnalyzedResultInfo, 0);
+                Integer analysisPosic = LPArray.valuePosicInArray(analysisList, analysis);
+                if (analysisPosic > -1) {
+                    return LotResultButNotAnalyzedResultInfo[analysisPosic][1].toString();
+                }
             }
-        }
-
-        Integer analysisFldPosic = EnumIntViewFields.getFldPosicInArray(fldsForSampleResults, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.ANALYSIS.getName());
-        if (analysisFldPosic == -1) {
-            return ("en".equalsIgnoreCase(language)) ? "Error in COA building, analysis column not found" : "Error generando COA: Columna analysis no encontrada";
-        }
-        Integer[] allResultsForThisAnalysisArr = LPArray.valueAllPosicInArray2D(lotSampleResultInfo, analysis, analysisFldPosic);
-        if (allResultsForThisAnalysisArr.length == 0) {
-            return ("en".equalsIgnoreCase(language)) ? "Not performed" : "No realizado";
-        }
-        Integer prettyValueFldPosic = EnumIntViewFields.getFldPosicInArray(fldsForSampleResults, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.PRETTY_VALUE.getName());
-        Integer rawValueFldPosic = EnumIntViewFields.getFldPosicInArray(fldsForSampleResults, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.RAW_VALUE.getName());
-        Integer uomFldPosic = EnumIntViewFields.getFldPosicInArray(fldsForSampleResults, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.UOM.getName());
-        if (allResultsForThisAnalysisArr.length == 1) {
-            String rsltVal = "";
-            String rsltRawVal = ("en".equalsIgnoreCase(language)) ? lotSampleResultInfo[allResultsForThisAnalysisArr[0]][rawValueFldPosic].toString() : lotSampleResultInfo[allResultsForThisAnalysisArr[0]][rawValueFldPosic].toString();
-            String rsltPrettyVal = ("en".equalsIgnoreCase(language)) ? lotSampleResultInfo[allResultsForThisAnalysisArr[0]][prettyValueFldPosic].toString() : lotSampleResultInfo[allResultsForThisAnalysisArr[0]][prettyValueFldPosic].toString();
-            if (rsltPrettyVal.length() == 0 && rsltRawVal.length() == 0) {
+            Integer rawValueFldPosic = EnumIntViewFields.getFldPosicInArray(fldsForSampleResults, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.RAW_VALUE.getName());
+            if (rawValueFldPosic == -1) {
+                return ("en".equalsIgnoreCase(language)) ? "Error in COA building, raw value column not found" : "Error generando COA: Columna raw value no encontrada";
+            }
+            Integer prettyValueFldPosic = EnumIntViewFields.getFldPosicInArray(fldsForSampleResults, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.PRETTY_VALUE.getName());
+            if (prettyValueFldPosic == -1) {
+                return ("en".equalsIgnoreCase(language)) ? "Error in COA building, pretty value column not found" : "Error generando COA: Columna pretty value no encontrada";
+            }
+            Integer analysisFldPosic = EnumIntViewFields.getFldPosicInArray(fldsForSampleResults, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.ANALYSIS.getName());
+            if (analysisFldPosic == -1) {
+                return ("en".equalsIgnoreCase(language)) ? "Error in COA building, analysis column not found" : "Error generando COA: Columna analysis no encontrada";
+            }
+            Integer methodFldPosic = EnumIntViewFields.getFldPosicInArray(fldsForSampleResults, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.METHOD_NAME.getName());
+            if (methodFldPosic == -1) {
+                return ("en".equalsIgnoreCase(language)) ? "Error in COA building, method name column not found" : "Error generando COA: Columna method name no encontrada";
+            }
+            Object[][] criteria = {{analysisFldPosic, analysis}, {methodFldPosic, methodName}};
+            int[] allResultsForThisAnalysisArr = LPArray.valuePosicArray2D(lotSampleResultInfo, criteria);
+//        Integer[] allResultsForThisAnalysisArr = LPArray.valueAllPosicInArray2D(lotSampleResultInfo, analysis, analysisFldPosic);
+            if (allResultsForThisAnalysisArr.length == 0 || allResultsForThisAnalysisArr[0] == -1) {
                 return ("en".equalsIgnoreCase(language)) ? "Not performed" : "No realizado";
             }
-            rsltVal = rsltPrettyVal.length() == 0 ? rsltRawVal : rsltPrettyVal;
-            String rsltUom = LPNulls.replaceNull(lotSampleResultInfo[allResultsForThisAnalysisArr[0]][uomFldPosic]).toString();
-            rsltVal = rsltVal + " " + rsltUom;
-            return rsltVal;
-        }
-        if (allResultsForThisAnalysisArr.length > 1) {
-            return ("en".equalsIgnoreCase(language)) ? "Some" : "Varios";
-        }
+//        Integer prettyValueFldPosic = EnumIntViewFields.getFldPosicInArray(fldsForSampleResults, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.PRETTY_VALUE.getName());
+//        Integer rawValueFldPosic = EnumIntViewFields.getFldPosicInArray(fldsForSampleResults, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.RAW_VALUE.getName());
+            Integer uomFldPosic = EnumIntViewFields.getFldPosicInArray(fldsForSampleResults, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.UOM.getName());
+            if (allResultsForThisAnalysisArr.length == 1) {
+                String rsltVal = "";
+                String rsltRawVal = ("en".equalsIgnoreCase(language)) ? lotSampleResultInfo[allResultsForThisAnalysisArr[0]][rawValueFldPosic].toString() : lotSampleResultInfo[allResultsForThisAnalysisArr[0]][rawValueFldPosic].toString();
+                String rsltPrettyVal = ("en".equalsIgnoreCase(language)) ? lotSampleResultInfo[allResultsForThisAnalysisArr[0]][prettyValueFldPosic].toString() : lotSampleResultInfo[allResultsForThisAnalysisArr[0]][prettyValueFldPosic].toString();
+                if (rsltPrettyVal.length() == 0 && rsltRawVal.length() == 0) {
+                    return ("en".equalsIgnoreCase(language)) ? "Not performed" : "No realizado";
+                }
+                rsltVal = rsltPrettyVal.length() == 0 ? rsltRawVal : rsltPrettyVal;
+                String rsltUom = LPNulls.replaceNull(lotSampleResultInfo[allResultsForThisAnalysisArr[0]][uomFldPosic]).toString();
+                rsltVal = rsltVal + " " + rsltUom;
+                return rsltVal;
+            }
+            if (allResultsForThisAnalysisArr.length > 1) {
+                Object[] columnValuesFromSomeRowsRaw = getColumnValuesFromSomeRows(lotSampleResultInfo, allResultsForThisAnalysisArr, rawValueFldPosic);
+                Object[] columnValuesFromSomeRowsPretty = getColumnValuesFromSomeRows(lotSampleResultInfo, allResultsForThisAnalysisArr, prettyValueFldPosic);
 
-        return ("en".equalsIgnoreCase(language)) ? "Not performed" : "No realizado";
+                if (areAllValuesSame(columnValuesFromSomeRowsPretty)) {
+                    String rsltVal = LPNulls.replaceNull(columnValuesFromSomeRowsPretty[0]).toString().length() == 0 ? LPNulls.replaceNull(columnValuesFromSomeRowsRaw[0]).toString() : LPNulls.replaceNull(columnValuesFromSomeRowsPretty[0]).toString();
+                    String rsltUom = LPNulls.replaceNull(lotSampleResultInfo[allResultsForThisAnalysisArr[0]][uomFldPosic]).toString();
+                    rsltVal = rsltVal + " " + rsltUom;
+                    return rsltVal;
+                } else {
+                    return ("en".equalsIgnoreCase(language)) ? "Some" : "Varios";
+                }
+            }
+
+            return ("en".equalsIgnoreCase(language)) ? "Not performed" : "No realizado";
+        } catch (Exception e) {
+            return "Error: " + e.getMessage();
+        }
     }
 }
