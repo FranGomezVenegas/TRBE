@@ -122,7 +122,7 @@ public class SqlWhere {
         Object[] fldValues=new Object[]{};
         for (SqlWhereEntry curEntry: allWhereEntries){
             fldValues=LPArray.addValueToArray1D(fldValues, 
-                    curEntry.getFldValue()!=null ? curEntry.getFldValue() : "");
+                    curEntry.getFldValue()!=null ? curEntry.getFldValue() : new Object[]{});
         }
         return fldValues;
     }

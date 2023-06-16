@@ -643,21 +643,21 @@ public class SqlStatementEnums {
         Integer fldLen = fn.length();
         if (posicNOTINClause == -1) {
             if (fldLen <= posicINClause + 3) {
-                return "|";
+                return " ";
             }
             separator = separator.substring(posicINClause + 3, posicINClause + 4);
             separator = separator.trim();
             separator = separator.replace(" IN", "");
         } else {
             if (fldLen <= posicNOTINClause + 8) {
-                return "|";
+                return " ";
             }
             separator = separator.substring(posicNOTINClause + 7, posicNOTINClause + 8);
             separator = separator.trim();
             separator = separator.replace(" NOT IN", "");
         }
         if (separator.length() == 0) {
-            separator = "|";
+            separator = " ";
         }
         return separator;
     }
