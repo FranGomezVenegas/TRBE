@@ -146,19 +146,19 @@ public class SopUserAPIqueries extends HttpServlet {
     public enum SopUserAPIqueriesEndpoints implements EnumIntEndpoints {
         ALL_MY_SOPS("ALL_MY_SOPS", "", new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6)},
                 EndPointsToRequirements.endpointWithNoOutputObjects,
-                 null, null),
+                null, null),
         MY_PENDING_SOPS("MY_PENDING_SOPS", "", new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6)},
                 EndPointsToRequirements.endpointWithNoOutputObjects,
-                 null, null),
+                null, null),
         PROCEDURE_SOPS("PROCEDURE_SOPS", "", new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6)},
                 EndPointsToRequirements.endpointWithNoOutputObjects,
-                 null, null),
+                null, null),
         SOP_TREE_LIST_ELEMENT("SOP_TREE_LIST_ELEMENT", "", new LPAPIArguments[]{},
                 EndPointsToRequirements.endpointWithNoOutputObjects,
-                 null, null),
+                null, null),
         ALL_IN_ONE("ALL_IN_ONE", "", new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6)},
                 EndPointsToRequirements.endpointWithNoOutputObjects,
-                 null, null),;
+                null, null),;
 
         private SopUserAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
             this.name = name;
@@ -516,7 +516,7 @@ public class SopUserAPIqueries extends HttpServlet {
             return myPendingSopsByProc;
         } catch (Exception e) {
             return new JSONArray();
-            
+
         }
     }
 
@@ -553,6 +553,10 @@ public class SopUserAPIqueries extends HttpServlet {
             }
             JSONArray myPendingSopsByProc = new JSONArray();
             for (String currProc : allUserProcedurePrefix) {
+                Object[] dbTableExists = Rdbms.dbTableExists(currProc + "-config", TblsCnfg.TablesConfig.SOP_META_DATA.getTableName());
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())) {
+                    return new JSONArray();
+                }
                 Object[][] procSops = Rdbms.getRecordFieldsByFilter(currProc + "-config", TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(),
                         new String[]{TblsCnfg.SopMetaData.SOP_ID.getName() + WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, fieldsToRetrieve);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(procSops[0]))) {
