@@ -165,6 +165,21 @@ public class ProcedureSampleStage {
         }
     }
 
+    public String sampleStageRevisionPreviousChecker(String procInstanceName, Integer sampleId, String sampleData) { 
+        try{
+                return LPPlatform.LAB_TRUE;
+        }catch(Exception e){
+            return LPPlatform.LAB_FALSE+e.getMessage();
+        }        
+    }
+
+    public String sampleStageRevisionNextChecker(String procInstanceName, Integer sampleId, String sampleData) { 
+        try{
+                return LPPlatform.LAB_TRUE;
+        }catch(Exception e){
+            return LPPlatform.LAB_FALSE+e.getMessage();
+        }        
+    }
     public String sampleStagePlateReadingNextChecker(String procInstanceName, Integer sampleId, String sampleData) { 
         try{
             Object[] objToJsonObj = convertToJsonObjectStringedObject(sampleData, true);
@@ -183,15 +198,14 @@ public class ProcedureSampleStage {
             asJsonObject = jGet.getAsJsonObject();
 
             if (asJsonObject.get("raw_value").isJsonNull())
-                return LPPlatform.LAB_FALSE+"SAMPLEWITHNORESULT"+"@"+sampleId; //"raw value not entered yet";
+                return LPPlatform.LAB_FALSE+"SAMPLEWITHNORESULT"+"@"+sampleId; 
 
             String paramName="";
             if (asJsonObject.get("param_name").isJsonNull())
-                return LPPlatform.LAB_FALSE+"PARAMNAMEEMPTY"+"@"+sampleId; //+"Parameter name is empty";
+                return LPPlatform.LAB_FALSE+"PARAMNAMEEMPTY"+"@"+sampleId; 
             else
                 paramName=asJsonObject.get("param_name").getAsString();
             
-            //String paramName=asJsonObject.get("param_name").getAsString();
             if ("Recuento".equals(paramName)){ 
                 return LPPlatform.LAB_TRUE;
             }        

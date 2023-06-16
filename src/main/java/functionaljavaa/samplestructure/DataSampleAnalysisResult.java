@@ -1123,7 +1123,8 @@ public class DataSampleAnalysisResult {
                             currSample, currSample, null, null, updFldNames, updFldValues);
                 }
             } else {
-                diagnoses[5] = "The " + TblsData.TablesData.SAMPLE.getTableName() + " " + currSample + " has status " + currStatus + " then cannot be unreviewed in schema " + schemaDataName;
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "The " + TblsData.TablesData.SAMPLE.getTableName() + " " + currSample + " has status " + currStatus + " then cannot be unreviewed.", new Object[]{testId});
+                
             }
         }
         diagnoses[5] = Arrays.toString(diagPerResult);

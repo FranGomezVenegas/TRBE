@@ -340,7 +340,7 @@ public class DataSampleStages {
                 smpStgErr = ProcedureSampleStageErrorTrapping.valueOf(errorCodeArr[0].toUpperCase());
                 errorCodeArr[0] = smpStgErr.getErrorCode();
             } catch (Exception e) {
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "valueNotFound_" + errorCodeArr[0].toUpperCase(), new Object[]{e.getMessage()});
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "StageChecker_"+errorCodeArr[0].toUpperCase(), new Object[]{e.getMessage()});
             }
             if (messages.getMainMessage() == null) {
                 messages.addMainForError(errorCodeArr[0], msgVariables, null);
