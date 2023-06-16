@@ -226,8 +226,9 @@ public class TblsCnfg {
     /**
      *
      */
-    public enum AnalysisMethodParams implements EnumIntTableFields{
+    public enum AnalysisMethodParams implements EnumIntTableFields{        
         PARAM_NAME("param_name", LPDatabase.stringNotNull(), null, null, null, null),
+        ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, null, null),
         ANALYSIS(TablesConfig.ANALYSIS.getTableName(), LPDatabase.stringNotNull(), null, null, null, null),
         METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
