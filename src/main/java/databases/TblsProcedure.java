@@ -18,6 +18,7 @@ import trazit.enums.EnumIntTablesJoin;
 import trazit.enums.EnumIntViewFields;
 import trazit.enums.EnumIntViews;
 import trazit.enums.FldBusinessRules;
+import trazit.enums.ForeignkeyFld;
 import trazit.enums.ReferenceFld;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -41,6 +42,11 @@ public class TblsProcedure {
             new String[]{TblsProcedure.ProcedureBusinessRules.AREA.getName(), ProcedureBusinessRules.RULE_NAME.getName()}, null, "Procedure Business Rules Info"),
         PROCEDURE_EVENTS(null, "procedure_events", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProcedureEvents.values(), null,
             new String[]{TblsProcedure.ProcedureEvents.NAME.getName(), ProcedureEvents.ROLE_NAME.getName()}, null, "Procedure Events Info"),
+        PROCEDURE_EVENTS_HELP_CONTENT(null, "procedure_events_help_content", SCHEMA_NAME, false, ProcedureEventsHelpContent.values(), null,
+                new String[]{ProcedureEventsHelpContent.LP_FRONTEND_PAGE_NAME.getName(), ProcedureEventsHelpContent.LP_FRONTEND_PAGE_FILTER.getName(), ProcedureEventsHelpContent.ORDER_NUMBER.getName()},
+                new Object[]{new ForeignkeyFld(ProcedureEventsHelpContent.LP_FRONTEND_PAGE_NAME.getName(), SCHEMA_NAME, TablesProcedure.PROCEDURE_EVENTS.getTableName(), ProcedureEvents.LP_FRONTEND_PAGE_NAME.getName()),
+                    new ForeignkeyFld(ProcedureEventsHelpContent.LP_FRONTEND_PAGE_FILTER.getName(), SCHEMA_NAME, TablesProcedure.PROCEDURE_EVENTS.getTableName(), ProcedureEvents.LP_FRONTEND_PAGE_FILTER.getName())
+                },"procedure_events_help_content"),
         PROGRAM_CORRECTIVE_ACTION(null, "program_corrective_action", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsProcedure.ProgramCorrectiveAction.values(), TblsProcedure.ProgramCorrectiveAction.ID.getName(),
             new String[]{TblsProcedure.ProgramCorrectiveAction.ID.getName()}, null, "Program Corrective Action for results OOS and/or OOC Info"),
         SAMPLE_STAGE_TIMING_CAPTURE(null, "sample_stage_timing_capture", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, SampleStageTimingCapture.values(), TblsProcedure.SampleStageTimingCapture.ID.getName(),
@@ -208,6 +214,63 @@ public class TblsProcedure {
         private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }        
 
+public enum ProcedureEventsHelpContent implements EnumIntTableFields {
+        LP_FRONTEND_PAGE_NAME("lp_frontend_page_name", LPDatabase.string(), null, null, null, null),
+        LP_FRONTEND_PAGE_FILTER("lp_frontend_page_filter", LPDatabase.string(), null, null, null, null),
+        ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, null, null),
+        NAME("name", LPDatabase.stringNotNull(), null, null, null, null),
+        DESCRIPTION("description", LPDatabase.string(), null, null, null, null),
+        FILE_LINK("file_link", LPDatabase.string(), null, null, null, null),
+        IS_VIDEO("is_video", LPDatabase.booleanFld(false), null, null, null, null),
+        ACTIVE("active", LPDatabase.booleanFld(true), null, null, null, null)
+        ;
+        private ProcedureEventsHelpContent(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules) {
+            this.fieldName = dbObjName;
+            this.fieldType = dbObjType;
+            this.fieldMask = fieldMask;
+            this.reference = refer;
+            this.fieldComment = comment;
+            this.fldBusinessRules = fldBusRules;
+        }
+        private final String fieldName;
+
+        @Override
+        public String getName() {
+            return this.fieldName;
+        }
+        private final String fieldType;
+
+        @Override
+        public String getFieldType() {
+            return this.fieldType;
+        }
+        private final String fieldMask;
+
+        @Override
+        public String getFieldMask() {
+            return this.fieldMask;
+        }
+        private final ReferenceFld reference;
+
+        @Override
+        public ReferenceFld getReferenceTable() {
+            return this.reference;
+        }
+        private final String fieldComment;
+
+        @Override
+        public String getFieldComment() {
+            return this.fieldComment;
+        }
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override
+        public FldBusinessRules[] getFldBusinessRules() {
+            return this.fldBusinessRules;
+        }
+    }
+    
     public enum ProcedureInfo implements EnumIntTableFields{
         NAME("name", LPDatabase.stringNotNull(), null, null, null, null),
         VERSION("version", LPDatabase.integerNotNull(), null, null, null, null),
