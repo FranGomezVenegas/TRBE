@@ -23,13 +23,18 @@ import trazit.enums.EnumIntTables;
 import trazit.enums.EnumIntViewFields;
 import trazit.enums.EnumIntViews;
 import trazit.session.ApiMessageReturn;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
  * @author User
  */
 public class QueryUtilitiesEnums {
-private QueryUtilitiesEnums() {throw new IllegalStateException("Utility class");}
+
+    private QueryUtilitiesEnums() {
+        throw new IllegalStateException("Utility class");
+    }
+
     public static Object[][] getTableData(EnumIntTables tblObj, EnumIntTableFields[] fldsToRetrieve, SqlWhere whereObj, String[] orderBy) {
         return getRecordFieldsByFilter(tblObj, fldsToRetrieve, whereObj, orderBy, false, null);
     }
@@ -70,7 +75,6 @@ private QueryUtilitiesEnums() {throw new IllegalStateException("Utility class");
         return tblInfo;
     }    
      */
-
     public static Object[][] getViewData(EnumIntViews tblObj, EnumIntViewFields[] fldsToRetrieve, SqlWhere where, String[] orderBy) {
         return getViewRecordFieldsByFilter(tblObj, fldsToRetrieve, where, orderBy, false, null);
     }
@@ -173,7 +177,12 @@ private QueryUtilitiesEnums() {throw new IllegalStateException("Utility class");
                 diagnoses2 = DbEncryptionObject.decryptTableFieldArray(tblObj, fieldsToRetrieve, diagnoses2, false);
                 return diagnoses2;
             } else {
-                Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{query, Arrays.toString(where.getAllWhereEntriesFldValues()), "schemaName"});
+                Object[] allWhereEntriesFldValues = where.getAllWhereEntriesFldValues();
+                String whereFldValues = Arrays.toString(allWhereEntriesFldValues);
+                ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+                String procInstanceName = instanceForActions.getProcedureInstance();
+
+                Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{query, whereFldValues, alternativeProcInstanceName != null ? alternativeProcInstanceName : procInstanceName});
                 return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
             }
         } catch (SQLException er) {
