@@ -28,6 +28,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static lbplanet.utilities.LPDate.stringFormatToLocalDateTime;
@@ -915,5 +916,56 @@ public class LPArray {
         } else {
             return "";
         }
+    }
+
+    public static int[] valuePosicArray2D(Object[][] data, Object[][] criteria) {
+        List<Integer> matchingRows = new ArrayList<>();
+
+        for (int i = 0; i < data.length; i++) {
+            boolean allMatched = true;
+            for (int j = 0; j < criteria.length; j++) {
+                int column = (int) criteria[j][0];
+                Object value = criteria[j][1];
+
+                Object dataValue = data[i][column];
+                if (!dataValue.equals(value)) {
+                    allMatched = false;
+                    break;
+                }
+            }
+
+            if (allMatched) {
+                matchingRows.add(i);
+            }
+        }
+
+        if (matchingRows.isEmpty()) {
+            return new int[]{-1};
+        } else {
+            return matchingRows.stream().mapToInt(Integer::intValue).toArray();
+        }
+    }
+
+    public static Object[] getColumnValuesFromSomeRows(Object[][] data, int[] rowsIndexes, int columnIndex) {
+        List<Object> columnValues = new ArrayList<>();
+
+        for (int row : rowsIndexes) {
+            columnValues.add(data[row][columnIndex]);
+        }
+
+        return columnValues.toArray();
+    }
+
+    public static boolean areAllValuesSame(Object[] columnValues) {
+        if (columnValues.length == 0) {
+            return true;  // Empty array is considered as having the same values
+        }
+        Object firstValue = columnValues[0];
+        for (int i = 1; i < columnValues.length; i++) {
+            if (!Objects.equals(firstValue, columnValues[i])) {
+                return false;  // Different value found
+            }
+        }
+        return true;  // All values are the same
     }
 }
