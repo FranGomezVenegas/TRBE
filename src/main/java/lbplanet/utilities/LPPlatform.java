@@ -229,6 +229,7 @@ public class LPPlatform {
 
     public enum LpPlatformErrorTrapping implements EnumIntMessages {
         RULE_NAME_VALUE("LpPlatform_ruleNameValue", "Rule name = <*1*>", "Nombre de la regla = <*1*>"),
+        BUS_RUL_NOT_FOUND("LpPlatform_BusinessRuleNotFound", "sampleTestingByGroup_ReviewByTestingGroup not found or not define", "Regla de negocio sampleTestingByGroup_ReviewByTestingGroup no encontrada o no definida"),
         BUS_RUL_REVIEWBYTESTINGGROUP_NOT_FOUND("LpPlatform_BusinessRulesampleTestingByGroup_ReviewByTestingGroupNotFound", "sampleTestingByGroup_ReviewByTestingGroup not found or not define", "Regla de negocio sampleTestingByGroup_ReviewByTestingGroup no encontrada o no definida"),
         USER_NOTASSIGNED_TOPROCEDURE("userNotAssignedToProcedure", "", ""),
         USRROLACTIONENABLED_DENIED_RULESNOTFOUND("userRoleActionEnabled_denied_rulesNotFound", "", ""),
@@ -1135,7 +1136,7 @@ public class LPPlatform {
         String[] enableRuleValues = enableValuesStr.split("\\|");
         String ruleValue = Parameter.getBusinessRuleProcedureFile(procName, fileSchemaRepository, ruleName);
         if (ruleValue.length() == 0) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.BUS_RUL_REVIEWBYTESTINGGROUP_NOT_FOUND, null);
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.BUS_RUL_NOT_FOUND, new Object[]{ruleName});
         }
         for (String curVal : enableRuleValues) {
             if (curVal.equalsIgnoreCase(ruleValue)) {
