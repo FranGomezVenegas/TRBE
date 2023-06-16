@@ -279,7 +279,7 @@ public class SampleAPIParams extends HttpServlet {
                         .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE.getTableName()).build()).build(), DataSampleAuditEvents.SAMPLE_REVIEWED,
                  null, null),
         UNREVIEWSAMPLE("UNREVIEWSAMPLE", "unreviewSample_success",
-                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TEST_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)},
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)},
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName()).build()).build(), DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_UNREVIEWED,
                  null, null),
