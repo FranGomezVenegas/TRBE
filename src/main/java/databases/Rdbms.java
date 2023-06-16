@@ -738,6 +738,7 @@ public class Rdbms {
                 return null;
             }
             res.last();
+            int numRows = res.getRow();
             if (res.getRow() > 0) {
                 return res.getString(1);
             } else {
