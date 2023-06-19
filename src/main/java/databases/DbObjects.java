@@ -129,7 +129,7 @@ public class DbObjects {
             {"frontend_locksession", "secondsNextTimeChecker", "60", false},
             {"procedure", "windowOpenableWhenNotSopCertifiedUserSopCertification", "NO", false}};
         for (Object[] curRule: values){
-            RdbmsObject insertRecord = Rdbms.insertRecord(TablesApp.APP_BUSINESS_RULES, fields, curRule, "app-business_rules");
+            RdbmsObject insertRecord = Rdbms.insertRecord(TablesApp.APP_BUSINESS_RULES, fields, curRule, TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
             
             if (Boolean.TRUE.equals(insertRecord.getRunSuccess()))
                 jsonObj.put("inserting_business_rule_diagn", curRule[1]+" "+insertRecord.getRunSuccess());

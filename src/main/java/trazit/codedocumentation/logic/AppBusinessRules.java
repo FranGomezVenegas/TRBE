@@ -27,7 +27,8 @@ public class AppBusinessRules {
             EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.APP_BUSINESS_RULES, 
                 new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()}), 
             new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
-            new Object[]{""}, null, "app");
+            new Object[]{""}, null, TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
+        
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(appBusRulesInfo[0][0]).toString())){
             return new JSONObject();
         }
