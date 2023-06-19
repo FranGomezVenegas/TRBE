@@ -1394,6 +1394,7 @@ public class Rdbms {
                 return crs;
             }
         } catch (Exception ex) {
+            if (ex.getMessage().contains("current transaction is aborted")) return null;
             ProcedureRequestSession instanceForDocumentation = ProcedureRequestSession.getInstanceForDocumentation(null, null);
             ResponseMessages messages = instanceForDocumentation.getMessages();
             messages.addMainForError(RdbmsErrorTrapping.DB_ERROR, new Object[]{ex.getMessage()+". Query:"+consultaconinterrogaciones+". Values:"+Arrays.toString(valoresinterrogaciones)});

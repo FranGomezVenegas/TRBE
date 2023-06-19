@@ -47,7 +47,7 @@ public class GenericAuditFields {
         if (fldNames!=null){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInstrumentsDataAudit.Instruments.FIELDS_UPDATED.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, LPJson.convertArrayRowToJSONObject(fldNames, fldValues).toJSONString());
-        }                
+        }    
     }
     public GenericAuditFields(EnumIntAuditEvents auditEventObj, EnumIntTables tblObj, String[] fldNames, Object[] fldValues, String alternativePerson, Boolean includeUserSessionRole){
         internalAuditFields(alternativePerson, includeUserSessionRole);

@@ -80,8 +80,8 @@ public class ClassInstruments {
         }
         DataInstruments instr = null;
         String instrName = argValues[0].toString();
-        if (Boolean.FALSE.equals("NEW_INSTRUMENT".equalsIgnoreCase(endPoint.getName()))&&
-            Boolean.FALSE.equals(endPoint.getName().toUpperCase().startsWith("CONFIG"))) {
+        if (Boolean.FALSE.equals("NEW_INSTRUMENT".equalsIgnoreCase(endPoint.getName()))
+                && Boolean.FALSE.equals(endPoint.getName().toUpperCase().startsWith("CONFIG"))) {
             instr = new DataInstruments(instrName);
             if (Boolean.TRUE.equals(instr.getHasError())) {
                 this.actionDiagnosesObj = instr.getErrorDetail();
@@ -504,25 +504,25 @@ public class ClassInstruments {
                 String newValue = argValues[3].toString();
                 InputStream requestBody = null;
                 byte[] textInBytes = null;
-                if (Boolean.valueOf(LPNulls.replaceNull(argValues[4]).toString())){
-                    
-            try {
-                //requestBody = LPAPIArguments.getRequestBody(request);
-                
-                String text = "";
-                String pdfPath = "D:/LP/Interfaces/HPLC_VALIDACIONES_FRAN_382.pdf";
-                File pdfFile = new File(pdfPath);
-                
-                PDDocument document = PDDocument.load(pdfFile);
-                
-                PDFTextStripper textStripper = new PDFTextStripper();
-                text = textStripper.getText(document);
-                textInBytes = text.getBytes(StandardCharsets.UTF_8);
-                requestBody = new ByteArrayInputStream(textInBytes);                
-            } catch (IOException ex) {
-                Logger.getLogger(ClassInstruments.class.getName()).log(Level.SEVERE, null, ex);
-            }
-                
+                if (Boolean.valueOf(LPNulls.replaceNull(argValues[4]).toString())) {
+
+                    try {
+                        //requestBody = LPAPIArguments.getRequestBody(request);
+
+                        String text = "";
+                        String pdfPath = "D:/LP/Interfaces/HPLC_VALIDACIONES_FRAN_382.pdf";
+                        File pdfFile = new File(pdfPath);
+
+                        PDDocument document = PDDocument.load(pdfFile);
+
+                        PDFTextStripper textStripper = new PDFTextStripper();
+                        text = textStripper.getText(document);
+                        textInBytes = text.getBytes(StandardCharsets.UTF_8);
+                        requestBody = new ByteArrayInputStream(textInBytes);
+                    } catch (IOException ex) {
+                        Logger.getLogger(ClassInstruments.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
                 }
                 actionDiagnoses = objectVariableSetValue(instrName, instrEventId, variableName, newValue, textInBytes);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
@@ -559,7 +559,7 @@ public class ClassInstruments {
             case CONFIG_UPDATE_INSTRUMENT_FAMILY:
                 instrName = argValues[0].toString();
                 fieldName = argValues[1].toString();
-                fieldValue = argValues[2].toString();                
+                fieldValue = argValues[2].toString();
                 fieldNames = null;
                 fieldValues = null;
                 if (fieldValue != null && fieldValue.length() > 0) {
@@ -573,14 +573,11 @@ public class ClassInstruments {
                 } else {
                     actionDiagnoses = ConfigInstrumentsFamily.configUpdateInstrumentFamily(instrName, fieldNames, fieldValues);
                 }
-
-
-                actionDiagnoses = instr.startCalibration(false);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(), actionDiagnoses.getNewObjectId());
                 }
-                break;                
+                break;
             default:
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, null, ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, null);
                 return;

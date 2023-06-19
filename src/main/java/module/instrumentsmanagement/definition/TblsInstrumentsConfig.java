@@ -65,6 +65,7 @@ public class TblsInstrumentsConfig {
     public enum InstrumentsFamily implements EnumIntTableFields{
         NAME("name", LPDatabase.stringNotNull(), null, null, null, null),
         DESCRIPTION("description", LPDatabase.string(), null, null, null, null),
+        HASHCODE("hashcode", LPDatabase.string(), null, null, null, null),
         CALIB_REQUIRED("calibration_required", LPDatabase.booleanFld(), null, null, null, null),
         CALIB_INTERVAL("calibration_interval", LPDatabase.string(), null, null, null, null),
         CALIB_TURN_OFF_WHEN_STARTED("calibration_turn_off_when_started", LPDatabase.booleanFld(), null, null, null, null),
