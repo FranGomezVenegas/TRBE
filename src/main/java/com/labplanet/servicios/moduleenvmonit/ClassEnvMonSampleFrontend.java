@@ -81,6 +81,13 @@ public class ClassEnvMonSampleFrontend {
     static final String LOCKING_REASON = "locking_reason";
 
     public enum EnvMonSampleAPIqueriesEndpoints implements EnumIntEndpoints {
+        GET_SAMPLE_ANALYSIS_LIST("GET_SAMPLE_ANALYSIS_LIST", "", new LPAPIArguments[]{
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),}, EndPointsToRequirements.endpointWithNoOutputObjects, null,
+                null, null),
         GET_SAMPLE_ANALYSIS_RESULT_LIST("GET_SAMPLE_ANALYSIS_RESULT_LIST", "", new LPAPIArguments[]{
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
@@ -334,12 +341,9 @@ public class ClassEnvMonSampleFrontend {
 
             this.functionFound = true;
             switch (endPoint) {
-                case GET_SAMPLE_ANALYSIS_RESULT_LIST:
-                case GET_SAMPLE_ANALYSIS_RESULT_LIST_SECONDENTRY:
+                case GET_SAMPLE_ANALYSIS_LIST:
                     Integer sampleId = Integer.valueOf(LPNulls.replaceNull(argValues[0]).toString());
-                    String[] resultFieldToRetrieveArr = EnumIntViewFields.getAllFieldNames(EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, "ALL"));
-                    EnumIntViewFields[] fldsToGet = EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, "ALL");
-                    resultFieldToRetrieveArr = LPArray.getUniquesArray(LPArray.addValueToArray1D(resultFieldToRetrieveArr, SampleAPIParams.MANDATORY_FIELDS_FRONTEND_TO_RETRIEVE_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|")));
+                    EnumIntTableFields[] tblFldsToGet = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS, "ALL");
 
                     String[] sampleAnalysisWhereFieldsNameArr = new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName()};
                     Object[] sampleAnalysisWhereFieldsValueArr = new Object[]{sampleId};
@@ -349,6 +353,50 @@ public class ClassEnvMonSampleFrontend {
                         sampleAnalysisWhereFieldsNameArr = LPArray.addValueToArray1D(sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsName.split("\\|"));
                     }
                     String sampleAnalysisWhereFieldsValue = LPNulls.replaceNull(argValues[3]).toString();
+                    if ((sampleAnalysisWhereFieldsValue != null) && (sampleAnalysisWhereFieldsValue.length() > 0)) {
+                        sampleAnalysisWhereFieldsValueArr = LPArray.addValueToArray1D(sampleAnalysisWhereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(sampleAnalysisWhereFieldsValue.split("\\|")));
+                    }
+                    String[] sortFieldsNameArr = null;
+                    String sortFieldsName = LPNulls.replaceNull(argValues[4]).toString();
+                    if ((sortFieldsName != null) && (sortFieldsName.length() > 0)) {
+                        sortFieldsNameArr = sortFieldsName.split("\\|");
+                    } else {
+                        sortFieldsNameArr = LPArray.getUniquesArray(SampleAPIParams.MANDATORY_FIELDS_FRONTEND_WHEN_SORT_NULL_GET_SAMPLE_ANALYSIS_LIST.split("\\|"));
+                    }
+
+                    Object[][] analysisList = QueryUtilitiesEnums.getTableData(TblsData.TablesData.SAMPLE_ANALYSIS,
+                            tblFldsToGet,
+                            new SqlWhere(TblsData.TablesData.SAMPLE_ANALYSIS, sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsValueArr),
+                            sortFieldsNameArr);
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisList[0][0].toString())) {
+                        this.isSuccess = true;
+                        this.responseSuccessJArr = new JSONArray();
+                    } else {
+                        JSONArray jArr = new JSONArray();
+                        for (Object[] curRow : analysisList) {
+                            JSONObject row = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(tblFldsToGet), curRow);
+                            jArr.add(row);
+                        }
+                        Rdbms.closeRdbms();
+                        this.isSuccess = true;
+                        this.responseSuccessJArr = jArr;
+                    }
+                    return;                
+                case GET_SAMPLE_ANALYSIS_RESULT_LIST:
+                case GET_SAMPLE_ANALYSIS_RESULT_LIST_SECONDENTRY:
+                    sampleId = Integer.valueOf(LPNulls.replaceNull(argValues[0]).toString());
+                    String[] resultFieldToRetrieveArr = EnumIntViewFields.getAllFieldNames(EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, "ALL"));
+                    EnumIntViewFields[] fldsToGet = EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, "ALL");
+                    resultFieldToRetrieveArr = LPArray.getUniquesArray(LPArray.addValueToArray1D(resultFieldToRetrieveArr, SampleAPIParams.MANDATORY_FIELDS_FRONTEND_TO_RETRIEVE_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|")));
+
+                    sampleAnalysisWhereFieldsNameArr = new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName()};
+                    sampleAnalysisWhereFieldsValueArr = new Object[]{sampleId};
+
+                    sampleAnalysisWhereFieldsName = LPNulls.replaceNull(argValues[2]).toString();
+                    if ((sampleAnalysisWhereFieldsName != null) && (sampleAnalysisWhereFieldsName.length() > 0)) {
+                        sampleAnalysisWhereFieldsNameArr = LPArray.addValueToArray1D(sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsName.split("\\|"));
+                    }
+                    sampleAnalysisWhereFieldsValue = LPNulls.replaceNull(argValues[3]).toString();
                     if ((sampleAnalysisWhereFieldsValue != null) && (sampleAnalysisWhereFieldsValue.length() > 0)) {
                         sampleAnalysisWhereFieldsValueArr = LPArray.addValueToArray1D(sampleAnalysisWhereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(sampleAnalysisWhereFieldsValue.split("\\|")));
                     }
@@ -362,8 +410,8 @@ public class ClassEnvMonSampleFrontend {
                         sampleAnalysisWhereFieldsValueArr = LPArray.addValueToArray1D(sampleAnalysisWhereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(sampleAnalysisWhereFieldsValue.split("\\|")));
                     }
 
-                    String[] sortFieldsNameArr = null;
-                    String sortFieldsName = LPNulls.replaceNull(argValues[6]).toString();
+                    sortFieldsNameArr = null;
+                    sortFieldsName = LPNulls.replaceNull(argValues[6]).toString();
                     if ((sortFieldsName != null) && (sortFieldsName.length() > 0)) {
                         sortFieldsNameArr = sortFieldsName.split("\\|");
                     } else {

@@ -33,6 +33,7 @@ import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleErrorT
 import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleStructureSuccess;
 import functionaljavaa.samplestructure.DataSampleStructureStatuses.SampleAnalysisResultStatuses;
 import functionaljavaa.samplestructure.DataSampleStructureStatuses.SampleAnalysisStatuses;
+import lbplanet.utilities.TrazitUtiilitiesEnums;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntTableFields;
 import trazit.session.ApiMessageReturn;
@@ -406,6 +407,28 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         return myDiagnoses;
     }
      */
+    
+        
+    public static Object[] sampleAnalysisRemovetoSample(Integer sampleId, String[] fieldName, Object[] fieldValue) {
+        Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        String[] mandatoryFields = null;
+        Object[] mandatoryFieldsValue = null;
+        DataDataIntegrity labIntChecker = new DataDataIntegrity();
+
+        String tableName = TblsData.TablesData.SAMPLE_ANALYSIS.getTableName();
+        String actionName = "Insert";
+        String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
+        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
+        String sampleLevel = TblsData.TablesData.SAMPLE.getTableName();
+        mandatoryFields = labIntChecker.getTableMandatoryFields(sampleLevel + tableName, actionName);
+        InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldName, fieldValue);
+        if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))) {
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
+        }
+        mandatoryFieldsValue = new Object[mandatoryFields.length];  
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
+    }
     /**
      *
      * @param sampleId

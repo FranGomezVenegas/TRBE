@@ -12,7 +12,9 @@ import static com.labplanet.servicios.modulesample.SampleAPIfrontend.sampleAnaly
 import static com.labplanet.servicios.modulesample.SampleAPIfrontend.sampleAnalysisView;
 import databases.Rdbms;
 import databases.SqlStatement;
+import databases.SqlStatementEnums;
 import databases.SqlWhere;
+import databases.TblsCnfg;
 import databases.TblsData;
 import databases.TblsProcedure;
 import databases.features.Token;
@@ -257,7 +259,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                 } else {
                     fieldToRetrieveArr = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS, fieldToRetrieve.split("\\|"));
                 }
-                
+
                 sampleAnalysisResultFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_TEST_FIELD_TO_RETRIEVE);
                 addSampleAnalysisResult = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT);
                 if (addSampleAnalysisResult == null) {
@@ -298,15 +300,15 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                 whereFieldsValue = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_VALUE);
 
                 if (whereFieldsValue == null || whereFieldsValue.length() == 0) {
-                    whereFieldsValue ="|BLANK|true*Boolean";
+                    whereFieldsValue = "|BLANK|true*Boolean";
                 } else {
-                    whereFieldsValue = whereFieldsValue+"|BLANK|true*Boolean";
-                } 
+                    whereFieldsValue = whereFieldsValue + "|BLANK|true*Boolean";
+                }
                 if (whereFieldsName != null && whereFieldsName.length() > 0) {
                     whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, whereFieldsName.split("\\|"));
                 }
-                whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.STATUS.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause(),
-                TblsData.ViewSampleAnalysisResultWithSpecLimits.TEST_REVIEWER.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()});
+                whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.STATUS.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause(),
+                    TblsData.ViewSampleAnalysisResultWithSpecLimits.TEST_REVIEWER.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()});
 
                 whereFieldsValueArr = LPArray.convertStringWithDataTypeToObjectArray(whereFieldsValue.split("\\|"));
                 EnumIntViewFields[] fieldsToGet = null;
@@ -350,7 +352,6 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                 } else {
                     fieldToRetrieveArr = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, fieldToRetrieve.split("\\|"));
                 }
-                
 
                 sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME);
                 JSONArray samplesAnalysisResultArray = sampleAnalysisResultView(EnumIntTableFields.getAllFieldNames(fieldToRetrieveArr), whereFieldsName,
@@ -370,7 +371,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                     sampleFieldToRetrieveArr = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsData.TablesData.SAMPLE);
                 } else {
                     sampleFieldToRetrieveArr = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, sampleFieldToRetrieve.split("\\|"));
-                }                    
+                }
                 sampleAnalysisResultFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_TEST_FIELD_TO_RETRIEVE);
                 sampleLastLevel = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_LAST_LEVEL);
 
@@ -432,7 +433,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                     EnumIntViewFields[] viewFieldsFromString = EnumIntViewFields.getAllFieldNamesFromDatabase(TblsData.ViewsData.SAMPLE_TESTING_GROUP_VIEW, null);
                     fieldToRetrieveViewArr = EnumIntViewFields.getAllFieldNames(viewFieldsFromString);
                 } else {
-                    fieldToRetrieveViewArr = fieldToRetrieve.split("\\|");                    
+                    fieldToRetrieveViewArr = fieldToRetrieve.split("\\|");
                 }
                 String myData = Rdbms.getRecordFieldsByFilterJSON(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsData.ViewsData.SAMPLE_TESTING_GROUP_VIEW.getViewName(),
                         new String[]{TblsData.ViewSampleTestingGroup.READY_FOR_REVISION.getName(), TblsData.ViewSampleTestingGroup.REVIEWED.getName(), TblsData.ViewSampleTestingGroup.TESTING_GROUP.getName()},
@@ -455,7 +456,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                     sampleFieldToRetrieveArr = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsData.TablesData.SAMPLE);
                 } else {
                     sampleFieldToRetrieveArr = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, sampleFieldToRetrieve.split("\\|"));
-                }                    
+                }
 
                 myData = Rdbms.getRecordFieldsByFilterJSON(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(),
                         new String[]{TblsData.Sample.READY_FOR_REVISION.getName(), "(" + TblsData.Sample.REVIEWED.getName(), SqlStatement.WHERECLAUSE_TYPES.OR.getSqlClause() + " " + TblsData.Sample.REVIEWED.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause() + ")"},
@@ -471,6 +472,47 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                 }
                 return;
             case GET_METHOD_CERTIFIED_USERS_LIST:
+                return;
+            case GET_SAMPLE_ANALYSIS_LIST:
+                sampleId = Integer.valueOf(LPNulls.replaceNull(argValues[0]).toString());
+                EnumIntTableFields[] tblFldsToGet = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS, "ALL");
+
+                sampleAnalysisWhereFieldsNameArr = new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName()};
+                sampleAnalysisWhereFieldsValueArr = new Object[]{sampleId};
+
+                sampleAnalysisWhereFieldsName = LPNulls.replaceNull(argValues[2]).toString();
+                if ((sampleAnalysisWhereFieldsName != null) && (sampleAnalysisWhereFieldsName.length() > 0)) {
+                    sampleAnalysisWhereFieldsNameArr = LPArray.addValueToArray1D(sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsName.split("\\|"));
+                }
+                sampleAnalysisWhereFieldsValue = LPNulls.replaceNull(argValues[3]).toString();
+                if ((sampleAnalysisWhereFieldsValue != null) && (sampleAnalysisWhereFieldsValue.length() > 0)) {
+                    sampleAnalysisWhereFieldsValueArr = LPArray.addValueToArray1D(sampleAnalysisWhereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(sampleAnalysisWhereFieldsValue.split("\\|")));
+                }
+                sortFieldsNameArr = null;
+                sortFieldsName = LPNulls.replaceNull(argValues[4]).toString();
+                if ((sortFieldsName != null) && (sortFieldsName.length() > 0)) {
+                    sortFieldsNameArr = sortFieldsName.split("\\|");
+                } else {
+                    sortFieldsNameArr = LPArray.getUniquesArray(SampleAPIParams.MANDATORY_FIELDS_FRONTEND_WHEN_SORT_NULL_GET_SAMPLE_ANALYSIS_LIST.split("\\|"));
+                }
+
+                Object[][] analysisList = QueryUtilitiesEnums.getTableData(TblsData.TablesData.SAMPLE_ANALYSIS,
+                        tblFldsToGet,
+                        new SqlWhere(TblsData.TablesData.SAMPLE_ANALYSIS, sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsValueArr),
+                        sortFieldsNameArr);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisList[0][0].toString())) {
+                    this.isSuccess = true;
+                    this.responseSuccessJArr = new JSONArray();
+                } else {
+                    JSONArray jArr = new JSONArray();
+                    for (Object[] curRow : analysisList) {
+                        JSONObject row = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(tblFldsToGet), curRow);
+                        jArr.add(row);
+                    }
+                    Rdbms.closeRdbms();
+                    this.isSuccess = true;
+                    this.responseSuccessJArr = jArr;
+                }
                 return;
             default:
                 break;
@@ -490,7 +532,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
         if (sampleLastLevel == null) {
             sampleLastLevel = TblsData.TablesData.SAMPLE.getTableName();
         }
-        if (sampleFieldToRetrieveArr == null || sampleFieldToRetrieveArr.length==0) {
+        if (sampleFieldToRetrieveArr == null || sampleFieldToRetrieveArr.length == 0) {
             sampleFieldToRetrieveArr = new EnumIntTableFields[]{TblsData.Sample.SAMPLE_ID};
         }
 
@@ -893,6 +935,23 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
     @Override
     public JSONObject getResponseSuccessJObj() {
         return this.responseSuccessJObj;
+    }
+
+    public static JSONArray configAnalysisList(String alternativeProcInstanceName) {
+        String[] fieldsToRetrieve = getAllFieldNames(TblsCnfg.TablesConfig.ANALYSIS_METHOD, alternativeProcInstanceName);
+        Object[][] analysisMethodsList = QueryUtilitiesEnums.getTableData(TblsCnfg.TablesConfig.ANALYSIS_METHOD,
+                EnumIntTableFields.getAllFieldNamesFromDatabase(TblsCnfg.TablesConfig.ANALYSIS_METHOD, alternativeProcInstanceName),
+                new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName() + "<>"},
+                new Object[]{">>>"},
+                new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()}, alternativeProcInstanceName);
+        JSONArray jArr = new JSONArray();
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisMethodsList[0][0].toString()))) {
+            for (Object[] currAnalysisMeth : analysisMethodsList) {
+                JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currAnalysisMeth);
+                jArr.add(jObj);
+            }
+        }
+        return jArr;
     }
 
 }
