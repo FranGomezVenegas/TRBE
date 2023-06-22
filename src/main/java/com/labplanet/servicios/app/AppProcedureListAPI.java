@@ -35,6 +35,7 @@ import static functionaljavaa.user.UserProfile.getProcedureUsers;
 import static functionaljavaa.user.UserProfile.getProcedureUsersAndRolesList;
 import java.util.Arrays;
 import lbplanet.utilities.LPNulls;
+import module.inspectionlot.rawmaterial.logic.InspLotRawMaterialMasterData;
 import module.instrumentsmanagement.logic.InstrumentsFrontendMasterData;
 import module.inventorytrack.logic.InvTrackingFrontendMasterData;
 import trazit.globalvariables.GlobalVariables;
@@ -219,6 +220,9 @@ public class AppProcedureListAPI extends HttpServlet {
             jObj=mdObj.getMasterDataJsonObject(procInstanceName);                
         }else if (GlobalVariables.TrazitModules.INVENTORY_TRACKING.name().equalsIgnoreCase(moduleNameFromProcInstance)){
             InvTrackingFrontendMasterData mdObj=new InvTrackingFrontendMasterData();
+            jObj=mdObj.getMasterDataJsonObject(procInstanceName);                
+        }else if (GlobalVariables.TrazitModules.INSPECTION_LOTS_RAW_MAT.name().equalsIgnoreCase(moduleNameFromProcInstance)){
+            InspLotRawMaterialMasterData mdObj=new InspLotRawMaterialMasterData();
             jObj=mdObj.getMasterDataJsonObject(procInstanceName);                
         }else{ 
             jObj.put(procInstanceName, "no master data logic defined");
