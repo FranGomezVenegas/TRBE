@@ -298,7 +298,8 @@ public class DataSampleStructureEnums {
         RULE_ANALYST_NOT_ASSIGNED("DataSample_SampleAnalysisRuleAnalystNotAssigned", "", ""),
         RULE_OTHERANALYSIS_ENTER_RESULT("DataSample_SampleAnalysisRuleOtherAnalystEnterResult", "", ""),
         ALREADY_REVIEWED("DataSample_SampleAnalysisAlreadyReviewed", "", ""),
-        SAMPLE_ANALYSIS_CANNOT_BE_UNCANCELLED("DataSample_sampleAnalysisCannotBeUncanceled", "", "");
+        SAMPLE_ANALYSIS_CANNOT_BE_UNCANCELLED("DataSample_sampleAnalysisCannotBeUncanceled", "", ""),
+        SAMPLE_ANALYSIS_CANNOT_BE_REMOVED("DataSample_sampleAnalysisCannotBeRemoved", "", "");
 
         private DataSampleAnalysisErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs) {
             this.errorCode = errCode;

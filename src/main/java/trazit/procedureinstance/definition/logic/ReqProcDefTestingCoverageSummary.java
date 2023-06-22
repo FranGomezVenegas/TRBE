@@ -30,6 +30,15 @@ public class ReqProcDefTestingCoverageSummary {
         for (int i = 0; i < dbRowsToJsonArr.size(); i++) {
             JSONObject jsonObject = (JSONObject) dbRowsToJsonArr.get(i);
             String coverageDetail = LPNulls.replaceNull(jsonObject.get("endpoints_coverage_detail")).toString();
+
+            String scriptId = LPNulls.replaceNull(jsonObject.get(TblsTesting.Script.SCRIPT_ID.getName())).toString();
+            if (scriptId.length() > 0) {
+                JSONArray ScriptStepsJsonArr = ClassReqProcedureQueries.dbRowsToJsonArr(LPPlatform.buildSchemaName(procInstanceName, TblsTesting.TablesTesting.SCRIPT.getRepositoryName()),
+                    TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(), getAllFieldNames(TblsTesting.TablesTesting.SCRIPT_STEPS.getTableFields()), 
+                    new String[]{TblsTesting.ScriptSteps.SCRIPT_ID.getName()}, new Object[]{Integer.valueOf(scriptId)}, new String[]{TblsTesting.ScriptSteps.STEP_ID.getName()}, new String[]{}, true);
+                jsonObject.put(TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(), ScriptStepsJsonArr);
+            }
+
             jsonObject.put("endpoints_summary_json", covSectionDetailEndpoints(coverageDetail));
             coverageDetail = LPNulls.replaceNull(jsonObject.get("bus_rule_coverage_detail")).toString();
             jsonObject.put("business_rules_summary_json", covSectionDetailBusinessRules(coverageDetail));
@@ -102,13 +111,27 @@ public class ReqProcDefTestingCoverageSummary {
     }
 
     static Boolean addBusinessRule(String name) {
-        if (name.toUpperCase().contains(LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName().toUpperCase())) return false;
-        if (name.toUpperCase().contains(LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName().toUpperCase())) return false;
-        if (name.toUpperCase().contains(LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName().toUpperCase())) return false;
-        if (name.toUpperCase().contains(LpPlatformBusinessRules.ACTIONCONFIRM_REQUIRED.getTagName().toUpperCase())) return false;
-        if (name.toUpperCase().contains(LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName().toUpperCase())) return false;
-        if (name.toUpperCase().contains(LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName().toUpperCase())) return false;
-        if (name.toUpperCase().contains(LpPlatformBusinessRules.AUDIT_JUSTIF_REASON_REQUIRED.getTagName().toUpperCase())) return false;
+        if (name.toUpperCase().contains(LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName().toUpperCase())) {
+            return false;
+        }
+        if (name.toUpperCase().contains(LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName().toUpperCase())) {
+            return false;
+        }
+        if (name.toUpperCase().contains(LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName().toUpperCase())) {
+            return false;
+        }
+        if (name.toUpperCase().contains(LpPlatformBusinessRules.ACTIONCONFIRM_REQUIRED.getTagName().toUpperCase())) {
+            return false;
+        }
+        if (name.toUpperCase().contains(LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName().toUpperCase())) {
+            return false;
+        }
+        if (name.toUpperCase().contains(LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName().toUpperCase())) {
+            return false;
+        }
+        if (name.toUpperCase().contains(LpPlatformBusinessRules.AUDIT_JUSTIF_REASON_REQUIRED.getTagName().toUpperCase())) {
+            return false;
+        }
         return true;
     }
 

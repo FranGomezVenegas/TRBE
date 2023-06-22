@@ -38,6 +38,8 @@ import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntTableFields;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
+import trazit.session.ResponseMessages;
+
 /**
  *
  * @author Administrator
@@ -407,28 +409,85 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         return myDiagnoses;
     }
      */
-    
-        
-    public static Object[] sampleAnalysisRemovetoSample(Integer sampleId, String[] fieldName, Object[] fieldValue) {
-        Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+    public static Object[] sampleAnalysisRemovetoSample(Integer sampleId, Integer testId, String[] fieldName, Object[] fieldValue) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        String[] mandatoryFields = null;
-        Object[] mandatoryFieldsValue = null;
-        DataDataIntegrity labIntChecker = new DataDataIntegrity();
-
-        String tableName = TblsData.TablesData.SAMPLE_ANALYSIS.getTableName();
-        String actionName = "Insert";
+        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
-        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
-        String sampleLevel = TblsData.TablesData.SAMPLE.getTableName();
+        String[] mandatoryFields = null;
+        DataDataIntegrity labIntChecker = new DataDataIntegrity();
+        if (sampleId == null) {
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
+        }
+        if (testId == null && fieldName == null) {
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
+        }
+        String[] wFldName = null;
+        Object[] wFldValue = null;
+        Object value = null;
+        if (testId != null) {
+            wFldName = new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName(), TblsData.SampleAnalysis.TEST_ID.getName()};
+            wFldValue = new Object[]{sampleId, testId};
+        } else {
+            wFldName = new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName()};
+            wFldValue = new Object[]{sampleId};
+            InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldName, fieldValue);
+            if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))) {
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
+            }
+            String[] fieldNeed = new String[]{TblsData.SampleAnalysis.ANALYSIS.getName(), TblsData.SampleAnalysis.METHOD_NAME.getName(), TblsData.SampleAnalysis.METHOD_VERSION.getName()};
+            for (String curFld : fieldNeed) {
+                int specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(curFld);
+                if (specialFieldIndex == -1) {
+                    specialFieldIndex = Arrays.asList(fieldName).indexOf(curFld);
+                    if (specialFieldIndex == -1) {
+                        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS,
+                                new String[]{Arrays.toString(fieldNeed), schemaDataName});
+                    }
+                    value = fieldValue[specialFieldIndex];
+                    wFldName = LPArray.addValueToArray1D(wFldName, curFld);
+                    wFldValue = LPArray.addValueToArray1D(wFldName, value);
+                } else {
+                    wFldName = LPArray.addValueToArray1D(wFldName, curFld);
+                    wFldValue = LPArray.addValueToArray1D(wFldName, value);
+                }
+            }
+        }
+        Object[][] sampleData = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
+                wFldName, wFldValue,
+                new String[]{TblsData.SampleAnalysis.STATUS.getName(), TblsData.SampleAnalysis.TEST_ID.getName(), TblsData.SampleAnalysis.ANALYSIS.getName()});
+        if (Boolean.TRUE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleData[0][0].toString()))) {
+            messages.addMainForError(DataSampleAnalysisErrorTrapping.SAMPLEANALYSIS_NOTFOUND, new Object[]{testId!=null?testId:fieldValue[Arrays.asList(mandatoryFields).indexOf(TblsData.SampleAnalysis.ANALYSIS.getName())], sampleId, schemaDataName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLEANALYSIS_NOTFOUND, new Object[]{testId!=null?testId:fieldValue[Arrays.asList(mandatoryFields).indexOf(TblsData.SampleAnalysis.ANALYSIS.getName())], sampleId, schemaDataName});
+        }
+        String statusCode = DataSampleStructureStatuses.SampleAnalysisStatuses.NOT_STARTED.getStatusCode("");
+        if (Boolean.FALSE.equals(LPNulls.replaceNull(sampleData[0][0]).toString().equalsIgnoreCase(statusCode))) {
+            messages.addMainForError(DataSampleAnalysisErrorTrapping.SAMPLEANALYSIS_NOTFOUND, new Object[]{LPNulls.replaceNull(sampleData[0][2]).toString(), sampleId, schemaDataName});
+            messages.addMainForError(DataSampleAnalysisErrorTrapping.SAMPLE_ANALYSIS_CANNOT_BE_REMOVED, new Object[]{LPNulls.replaceNull(sampleData[0][2]).toString(), sampleData[0][0], sampleId, schemaDataName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLE_ANALYSIS_CANNOT_BE_REMOVED, new Object[]{LPNulls.replaceNull(sampleData[0][2]).toString(), sampleData[0][0], sampleId, schemaDataName});
+        }
+        testId = Integer.valueOf(sampleData[0][1].toString());
+        String tableName = TblsData.TablesData.SAMPLE_ANALYSIS.getTableName();
+        String actionName = "Delete";
+        String sampleLevel = TblsData.TablesData.SAMPLE_ANALYSIS.getTableName();
         mandatoryFields = labIntChecker.getTableMandatoryFields(sampleLevel + tableName, actionName);
         InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldName, fieldValue);
         if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
         }
-        mandatoryFieldsValue = new Object[mandatoryFields.length];  
+        String[] remFlds = new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName(), TblsData.SampleAnalysis.TEST_ID.getName()};
+        Object[] remFldsV = new Object[]{sampleId, testId};
+        RdbmsObject newResultRdbmsDiagnObj = Rdbms.removeRecordInTable(TblsData.TablesData.SAMPLE_ANALYSIS,
+                new SqlWhere(TblsData.TablesData.SAMPLE_ANALYSIS, remFlds, remFldsV), null);
+        if (Boolean.FALSE.equals(newResultRdbmsDiagnObj.getRunSuccess())) {
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, newResultRdbmsDiagnObj.getErrorMessageCode(), newResultRdbmsDiagnObj.getErrorMessageVariables());
+        }
+        SampleAudit smpAudit = new SampleAudit();
+        smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_REMOVED, sampleLevel + TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
+                testId, sampleId, testId, null, remFlds, remFldsV);
+
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
     }
+
     /**
      *
      * @param sampleId
@@ -824,7 +883,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         Object[] isRevisionSampleAnalysisRequired = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, DataSampleAnalysisBusinessRules.REVISION_SAMPLEANALYSIS_REQUIRED.getAreaName(), DataSampleAnalysisBusinessRules.REVISION_SAMPLEANALYSIS_REQUIRED.getTagName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isRevisionSampleAnalysisRequired[0].toString())) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "", null);
-        }        
+        }
         whereFieldName = LPArray.addValueToArray1D(whereFieldName, TblsData.SampleAnalysis.SAMPLE_ID.getName());
         whereFieldValue = LPArray.addValueToArray1D(whereFieldValue, sampleId);
         Object[][] grouper = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),

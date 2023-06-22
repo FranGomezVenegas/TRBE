@@ -275,7 +275,6 @@ public class ClassSample {
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
                 this.messageDynamicData = new Object[]{sampleId};
                 break;
-            case SAMPLEANALYSISREMOVE:
             case SAMPLEANALYSISADD:
                 sampleId = (Integer) argValues[0];
                 String[] fieldNameArr = null;
@@ -289,13 +288,31 @@ public class ClassSample {
                     diagn = fieldValueArr;
                     break;
                 }
-                if (SampleAPIParams.SampleAPIactionsEndpoints.SAMPLEANALYSISADD.getName().equalsIgnoreCase(endPoint.getName())) {
-                    diagn = DataSampleAnalysis.sampleAnalysisAddtoSample(sampleId, fieldNameArr, fieldValueArr);
-                } else {
-                    diagn = DataSampleAnalysis.sampleAnalysisRemovetoSample(sampleId, fieldNameArr, fieldValueArr);
-                }
+                diagn = DataSampleAnalysis.sampleAnalysisAddtoSample(sampleId, fieldNameArr, fieldValueArr);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
                 this.messageDynamicData = new Object[]{fieldValueArr[LPArray.valuePosicInArray(fieldNameArr, TblsCnfg.AnalysisMethod.ANALYSIS.getName())], sampleId};
+                break;
+            case SAMPLEANALYSISREMOVE:
+                sampleId = (Integer) argValues[0];
+                Integer testId = (Integer) argValues[1];
+                fieldNameArr = null;
+                fieldValueArr = null;
+                fieldName = argValues[2].toString();
+                fieldNameArr = fieldName.split("\\|");
+                fieldValue = argValues[3].toString();
+                fieldValueArr = fieldValue.split("\\|");
+                fieldValueArr = LPArray.convertStringWithDataTypeToObjectArray((String[]) fieldValueArr);
+                if (fieldValueArr != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValueArr[0].toString())) {
+                    diagn = fieldValueArr;
+                    break;
+                }
+                diagn = DataSampleAnalysis.sampleAnalysisRemovetoSample(sampleId, testId, fieldNameArr, fieldValueArr);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) {
+                    this.messageDynamicData = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages().getMainMessageVariables();
+                } else {
+                    this.messageDynamicData = new Object[]{sampleId, testId};
+                }
                 break;
             case REENTERRESULT:
             case ENTERRESULT:
@@ -365,7 +382,7 @@ public class ClassSample {
                 this.messageDynamicData = new Object[]{sampleId, testingGroup};
                 break;
             case REVIEWTEST:
-                Integer testId = (Integer) argValues[0];
+                testId = (Integer) argValues[0];
                 diagn = smpAnaRes.sampleAnalysisResultReview(null, testId, null);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
                 this.messageDynamicData = new Object[]{testId};
@@ -638,18 +655,22 @@ public class ClassSample {
             default:
                 break;
         }
-        if (diagn != null && LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString())) {
+        if (diagn
+                != null && LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString())) {
             DataSampleStages smpStage = new DataSampleStages();
             if (Boolean.TRUE.equals(smpStage.isSampleStagesEnable()) && sampleId != null) {
                 smpStage.dataSampleActionAutoMoveToNext(endPoint.getName().toUpperCase(), sampleId);
             }
         }
-        if (diagn != null && LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString())) {
+        if (diagn
+                != null && LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString())) {
             diagn = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{argValues[0], procInstanceName});
         }
 
         this.diagnostic = diagn;
+
         this.relatedObj = rObj;
+
         rObj.killInstance();
     }
 }
