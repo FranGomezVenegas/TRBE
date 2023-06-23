@@ -285,6 +285,9 @@ public class DataInspLotRMCertificate {
     public static String getResult(String language, String analysis, String methodName, String variationName, EnumIntViewFields[] fldsForSampleResults, Object[][] lotSampleResultInfo,
             Object[][] LotResultButNotAnalyzedResultInfo) {
         try {
+            if (lotSampleResultInfo==null){
+                return ("en".equalsIgnoreCase(language)) ? "Not performed" : "No realizado";
+            }
             if (LotResultButNotAnalyzedResultInfo != null) {
                 Object[] analysisList = LPArray.getColumnFromArray2D(LotResultButNotAnalyzedResultInfo, 0);
                 Integer analysisPosic = LPArray.valuePosicInArray(analysisList, analysis);
