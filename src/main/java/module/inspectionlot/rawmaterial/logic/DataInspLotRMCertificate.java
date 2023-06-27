@@ -138,11 +138,13 @@ public class DataInspLotRMCertificate {
                             jSubSectionObj = new JSONObject();
                             jSubSectionObj.put("value_en", getResult("en",
                                     LPNulls.replaceNull(jsonObject.get(TblsInspLotRMConfig.SpecLimits.ANALYSIS.getName())).toString(),
+                                    LPNulls.replaceNull(jsonObject.get(TblsInspLotRMConfig.SpecLimits.PARAMETER.getName())).toString(),
                                     LPNulls.replaceNull(jsonObject.get(TblsInspLotRMConfig.SpecLimits.METHOD_NAME.getName())).toString(),
                                     LPNulls.replaceNull(jsonObject.get(TblsInspLotRMConfig.SpecLimits.VARIATION_NAME.getName())).toString(),
                                     fldsForSampleResults, lotSampleResultInfo, LotNotAnalyzedResultInfo));
                             jSubSectionObj.put("value_es", getResult("es",
                                     LPNulls.replaceNull(jsonObject.get(TblsInspLotRMConfig.SpecLimits.ANALYSIS.getName())).toString(),
+                                    LPNulls.replaceNull(jsonObject.get(TblsInspLotRMConfig.SpecLimits.PARAMETER.getName())).toString(),
                                     LPNulls.replaceNull(jsonObject.get(TblsInspLotRMConfig.SpecLimits.METHOD_NAME.getName())).toString(),
                                     LPNulls.replaceNull(jsonObject.get(TblsInspLotRMConfig.SpecLimits.VARIATION_NAME.getName())).toString(),
                                     fldsForSampleResults, lotSampleResultInfo, LotNotAnalyzedResultInfo));
@@ -282,7 +284,7 @@ public class DataInspLotRMCertificate {
 
     }
 
-    public static String getResult(String language, String analysis, String methodName, String variationName, EnumIntViewFields[] fldsForSampleResults, Object[][] lotSampleResultInfo,
+    public static String getResult(String language, String analysis, String paramName, String methodName, String variationName, EnumIntViewFields[] fldsForSampleResults, Object[][] lotSampleResultInfo,
             Object[][] LotResultButNotAnalyzedResultInfo) {
         try {
             if (lotSampleResultInfo==null){
@@ -307,11 +309,15 @@ public class DataInspLotRMCertificate {
             if (analysisFldPosic == -1) {
                 return ("en".equalsIgnoreCase(language)) ? "Error in COA building, analysis column not found" : "Error generando COA: Columna analysis no encontrada";
             }
+            Integer paramNameFldPosic = EnumIntViewFields.getFldPosicInArray(fldsForSampleResults, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.PARAM_NAME.getName());
+            if (paramNameFldPosic == -1) {
+                return ("en".equalsIgnoreCase(language)) ? "Error in COA building, method name column not found" : "Error generando COA: Columna parameter name no encontrada";
+            }
             Integer methodFldPosic = EnumIntViewFields.getFldPosicInArray(fldsForSampleResults, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.METHOD_NAME.getName());
             if (methodFldPosic == -1) {
                 return ("en".equalsIgnoreCase(language)) ? "Error in COA building, method name column not found" : "Error generando COA: Columna method name no encontrada";
             }
-            Object[][] criteria = {{analysisFldPosic, analysis}, {methodFldPosic, methodName}};
+            Object[][] criteria = {{methodFldPosic, methodName}, {analysisFldPosic, analysis}, {paramNameFldPosic, paramName}};
             int[] allResultsForThisAnalysisArr = LPArray.valuePosicArray2D(lotSampleResultInfo, criteria);
 //        Integer[] allResultsForThisAnalysisArr = LPArray.valueAllPosicInArray2D(lotSampleResultInfo, analysis, analysisFldPosic);
             if (allResultsForThisAnalysisArr.length == 0 || allResultsForThisAnalysisArr[0] == -1) {
