@@ -402,6 +402,38 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                     TblsReqs.ProcReqUserRequirementsActions.PRETTY_EN.getName()
                 }
         ));
+        jViewsAccObj.put("view_actions_en", ClassReqProcedureQueries.dbRowsGroupedToJsonArr(TblsReqs.ViewsReqs.PROC_REQ_USER_REQUIREMENTS_ACTIONS.getViewName(),
+                new String[]{TblsReqs.ProcReqUserRequirementsActions.WINDOW_LABEL_EN.getName(),
+                    TblsReqs.ProcReqUserRequirementsActions.WINDOW_LABEL_EN.getName(),
+                    TblsReqs.ProcReqUserRequirementsActions.PRETTY_EN.getName(),  TblsReqs.ProcReqUserRequirementsActions.PRETTY_ES.getName()
+                },
+                new String[]{
+                    TblsReqs.ProcReqUserRequirementsActions.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcReqUserRequirementsActions.WINDOW_ACTION.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()
+                },
+                new Object[]{procInstanceName
+                },
+                new String[]{
+                    TblsReqs.ProcReqUserRequirementsActions.ORDER_NUMBER.getName(),
+                    TblsReqs.ProcReqUserRequirementsActions.ENTITY.getName(),
+                    TblsReqs.ProcReqUserRequirementsActions.PRETTY_EN.getName()
+                }
+        ));
+        jViewsAccObj.put("view_actions_es", ClassReqProcedureQueries.dbRowsGroupedToJsonArr(TblsReqs.ViewsReqs.PROC_REQ_USER_REQUIREMENTS_ACTIONS.getViewName(),
+                new String[]{TblsReqs.ProcReqUserRequirementsActions.WINDOW_LABEL_ES.getName(),
+                    TblsReqs.ProcReqUserRequirementsActions.WINDOW_LABEL_ES.getName(),
+                    TblsReqs.ProcReqUserRequirementsActions.PRETTY_EN.getName(),  TblsReqs.ProcReqUserRequirementsActions.PRETTY_ES.getName()
+                },
+                new String[]{
+                    TblsReqs.ProcReqUserRequirementsActions.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcReqUserRequirementsActions.WINDOW_ACTION.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()
+                },
+                new Object[]{procInstanceName
+                },
+                new String[]{
+                    TblsReqs.ProcReqUserRequirementsActions.ORDER_NUMBER.getName(),
+                    TblsReqs.ProcReqUserRequirementsActions.ENTITY.getName(),
+                    TblsReqs.ProcReqUserRequirementsActions.PRETTY_EN.getName()
+                }
+        ));
 
         jViewsAccObj.put(
                 "view_sops", ClassReqProcedUserAndActions.viewsBySops(procInstanceName));

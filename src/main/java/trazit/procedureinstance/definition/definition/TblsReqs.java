@@ -1092,6 +1092,8 @@ public class TblsReqs {
         MODULE_NAME(ProcedureInfo.MODULE_NAME.getName(), "procInfo.module_name as module_name", ProcedureInfo.MODULE_NAME, null, null, null),
         PROC_INSTANCE_NAME(ProcedureUserRequirements.PROC_INSTANCE_NAME.getName(), "procInfo.proc_instance_name as proc_instance_name", ProcedureUserRequirements.PROC_INSTANCE_NAME, null, null, null),
         WINDOW_NAME(ProcedureUserRequirements.WINDOW_NAME.getName(), "reqs.window_name as window_name", ProcedureUserRequirements.WINDOW_NAME, null, null, null),
+        WINDOW_LABEL_EN("window_label_en", "reqsEvs.label_en as window_label_en", ProcedureUserRequirementsEvents.LABEL_EN, null, null, null),
+        WINDOW_LABEL_ES("window_label_es", "reqsEvs.label_es as window_label_es", ProcedureUserRequirementsEvents.LABEL_ES, null, null, null),
         WINDOW_ACTION(ProcedureUserRequirements.WINDOW_ACTION.getName(), "reqs.window_action as window_action", ProcedureUserRequirements.WINDOW_ACTION, null, null, null),
         ORDER_NUMBER(ProcedureUserRequirements.ORDER_NUMBER.getName(), "reqs.order_number as order_number", ProcedureUserRequirements.ORDER_NUMBER, null, null, null),
         ENDPOINT_NAME(ModuleActionsAndQueries.ENDPOINT_NAME.getName(), "modAct.endpoint_name as endpoint_name", ModuleActionsAndQueries.ENDPOINT_NAME, null, null, null),
