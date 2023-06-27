@@ -144,7 +144,8 @@ public class SqlWhere {
         return fldValues;
     }
 
-    public void addConstraint(TblsTrazitDocTrazit.BusinessRulesDeclaration businessRulesDeclaration, SqlStatement.WHERECLAUSE_TYPES whereClauseTypes, Object[] object, String string) {
+    public void addConstraint(TblsTrazitDocTrazit.BusinessRulesDeclaration businessRulesDeclaration, 
+            SqlStatement.WHERECLAUSE_TYPES whereClauseTypes, Object[] object, String string) {
         throw new UnsupportedOperationException("Not supported yet."); 
     }    
 }
