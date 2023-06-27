@@ -101,7 +101,6 @@ public interface EnumIntTableFields {
         return Arrays.stream(custFlds)
                      .filter(Objects::nonNull)
                      .toArray(EnumIntTableFields[]::new);        
-        //return custFlds;
     }
     public static Integer getFldPosicInArray(EnumIntTableFields[] tblFlds, String fldName){
         for (int i=0;i<tblFlds.length;i++){
