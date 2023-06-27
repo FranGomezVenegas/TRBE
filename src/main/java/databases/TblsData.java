@@ -562,7 +562,7 @@ public class TblsData {
         MIN_ALLOWED("min_allowed", LPDatabase.real(), null, null, null, null),
         MAX_ALLOWED("max_allowed", LPDatabase.real(), null, null, null, null),
         LIST_ENTRY("list_entry", LPDatabase.string(), null, null, null, null),
-        
+        CALC_LINKED("calc_linked",  LPDatabase.string(), null, null, null, null),
         /* Este bloque de campos está a nivel de SampleAnalysis, es posible que pueda ser interesante tb en sample_analysis_result
         , REVIEWER("reviewer", LPDatabase.String())
         , REVIEWER_ASSIGNED_ON("reviewer_assigned_on", LPDatabase.dateTime())        
