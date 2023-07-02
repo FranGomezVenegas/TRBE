@@ -100,6 +100,7 @@ public class InspLotRMEnums {
         LOT_WITH_NO_BULKS("lotWithNoBulks", "", ""),
         LOT_BULKS_WITH_NO_DECISION("lotBulksWithNoDecision", "", ""),
         LOT_BULK_ALREADY_HAS_DECISION("lotBulkAlreadyHasDecision", "", ""),
+        LOT_ALL_BULKS_ALREADY_HAS_DECISION("lotAllBulksAlreadyHasDecision", "", ""),
         ADD_ADHOC_BULKS_NOT_ALLOWED("addAdhocBulksNotAllowed", "The material <*1*> does not allow adding adhoc bulks to the lot <*2*>", "El material <*1*> no permite añadir bultos ad-hoc para el lote <*2*>"),
         DISABLED("inventoryLotAuditRevisionMode_Disable", "", "")
         ;
