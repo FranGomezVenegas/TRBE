@@ -74,7 +74,7 @@ public class EnvMonAPIStats extends HttpServlet {
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_MICROORGANISMS, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 18),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND, LPAPIArguments.ArgumentType.STRING.toString(), false, 19),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OUTPUT_IS_FILE, LPAPIArguments.ArgumentType.STRING.toString(), false, 20),}, EndPointsToRequirements.endpointWithNoOutputObjects, "QUERY_SAMPLING_HISTORY",
-                 null, null),
+                null, null),
         QUERY_SAMPLER_SAMPLING_HISTORY("QUERY_SAMPLER_SAMPLING_HISTORY", new LPAPIArguments[]{
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLER, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLER_AREA, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
@@ -92,7 +92,7 @@ public class EnvMonAPIStats extends HttpServlet {
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_MICROORGANISMS, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 18),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND, LPAPIArguments.ArgumentType.STRING.toString(), false, 19),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OUTPUT_IS_FILE, LPAPIArguments.ArgumentType.STRING.toString(), false, 20),}, EndPointsToRequirements.endpointWithNoOutputObjects, "QUERY_SAMPLER_SAMPLING_HISTORY",
-                 null, null),
+                null, null),
         QUERY_READING_OUT_OF_RANGE("QUERY_READING_OUT_OF_RANGE", new LPAPIArguments[]{
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLER, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLER_AREA, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
@@ -110,7 +110,7 @@ public class EnvMonAPIStats extends HttpServlet {
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_MICROORGANISMS, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 18),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND, LPAPIArguments.ArgumentType.STRING.toString(), false, 19),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OUTPUT_IS_FILE, LPAPIArguments.ArgumentType.STRING.toString(), false, 20),}, EndPointsToRequirements.endpointWithNoOutputObjects, "QUERY_READING_OUT_OF_RANGE",
-                 null, null),
+                null, null),
         KPI_PRODUCTION_LOT_SAMPLES("KPI_PRODUCTION_LOT_SAMPLES", new LPAPIArguments[]{
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
             new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
@@ -129,7 +129,7 @@ public class EnvMonAPIStats extends HttpServlet {
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_MICROORGANISMS, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 19),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND, LPAPIArguments.ArgumentType.STRING.toString(), false, 20),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OUTPUT_IS_FILE, LPAPIArguments.ArgumentType.STRING.toString(), false, 21),}, EndPointsToRequirements.endpointWithNoOutputObjects, "KPI_PRODUCTION_LOT_SAMPLES",
-                 null, null),
+                null, null),
         QUERY_INVESTIGATION("QUERY_INVESTIGATION", new LPAPIArguments[]{
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_CREATION_DAY_START, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_CREATION_DAY_END, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
@@ -148,7 +148,7 @@ public class EnvMonAPIStats extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND, LPAPIArguments.ArgumentType.STRING.toString(), false, 19),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OUTPUT_IS_FILE, LPAPIArguments.ArgumentType.STRING.toString(), false, 20),
          */}, EndPointsToRequirements.endpointWithNoOutputObjects, "QUERY_INVESTIGATION",
-                 null, null),
+                null, null),
         KPIS("KPIS", new LPAPIArguments[]{
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJ_GROUP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TABLE_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
@@ -164,7 +164,7 @@ public class EnvMonAPIStats extends HttpServlet {
             new LPAPIArguments("showIN", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 16),
             new LPAPIArguments("showOUT", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 17),
             new LPAPIArguments("percNumDecimals", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 18),}, EndPointsToRequirements.endpointWithNoOutputObjects, "KPIS",
-                 null, null),
+                null, null),
         RECOVERY_RATE("RECOVERY_RATE", new LPAPIArguments[]{
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELDS_TO_RETRIEVE_OR_GROUPING, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
@@ -174,7 +174,7 @@ public class EnvMonAPIStats extends HttpServlet {
             new LPAPIArguments("showIN", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 11),
             new LPAPIArguments("showOUT", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 12),
             new LPAPIArguments("percNumDecimals", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 13),}, EndPointsToRequirements.endpointWithNoOutputObjects, "RECOVERY_RATE",
-                 null, null);
+                null, null);
 
         private EnvMonAPIqueriesStatsEndpoints(String name, LPAPIArguments[] argums, JsonArray outputObjectTypes, String successMessageCode, String devComment, String devCommentTag) {
             this.name = name;
@@ -497,15 +497,15 @@ public class EnvMonAPIStats extends HttpServlet {
                     wObj.addConstraint(TblsData.ViewSampleAnalysisResultWithSpecLimits.RAW_VALUE, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{""}, null);
                 }
                 String includeSamplerSamples = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_SAMPLER_SAMPLES);
-                if (includeSamplerSamples != null && includeSamplerSamples.length() > 0 && Boolean.TRUE.equals(Boolean.valueOf(includeSamplerSamples)) && 
-                    (Boolean.FALSE.equals((includeSamples != null && includeSamples.length() > 0 && Boolean.valueOf(includeSamples)))) ) {
-                        wObj.addConstraint(TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_CONFIG_CODE, SqlStatement.WHERECLAUSE_TYPES.NOT_IN, new Object[]{Integer.valueOf(samplerSmpTemplate)}, null);
+                if (includeSamplerSamples != null && includeSamplerSamples.length() > 0 && Boolean.TRUE.equals(Boolean.valueOf(includeSamplerSamples))
+                        && (Boolean.FALSE.equals((includeSamples != null && includeSamples.length() > 0 && Boolean.valueOf(includeSamples))))) {
+                    wObj.addConstraint(TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_CONFIG_CODE, SqlStatement.WHERECLAUSE_TYPES.NOT_IN, new Object[]{Integer.valueOf(samplerSmpTemplate)}, null);
                 }
                 String includeMicroOrganisms = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_MICROORGANISMS);
                 String microOrganismsToFind = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND);
                 if (microOrganismsToFind != null && microOrganismsToFind.length() > 0) {
                     includeMicroOrganisms = Boolean.TRUE.toString();
-                    if (Boolean.FALSE.equals((includeSamples != null && includeSamples.length() > 0 && Boolean.valueOf(includeSamples))) ) {
+                    if (Boolean.FALSE.equals((includeSamples != null && includeSamples.length() > 0 && Boolean.valueOf(includeSamples)))) {
                         wObj.addConstraint(TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_CONFIG_CODE, SqlStatement.WHERECLAUSE_TYPES.NOT_IN, new Object[]{Integer.valueOf(samplerSmpTemplate)}, null);
                     }
                 }
@@ -560,7 +560,7 @@ public class EnvMonAPIStats extends HttpServlet {
                 jObjMainObject.put(RESPONSE_JSON_DATATABLE, sampleJsonArr);
                 JSONArray filterJArr = new JSONArray();
                 for (SqlWhereEntry curFilterFld : wObj.getAllWhereEntries()) {
-                    JSONObject fltJObj = new JSONObject(); 
+                    JSONObject fltJObj = new JSONObject();
                     fltJObj.put(curFilterFld.getVwFldName().getName() + " " + curFilterFld.getSymbol().getSqlClause(),
                             LPArray.convertArrayToString(curFilterFld.getFldValue(), ", ", "", true));
                     fltJObj.put("filter_name", curFilterFld.getVwFldName().getName() + " " + curFilterFld.getSymbol().getSqlClause());
@@ -616,7 +616,7 @@ public class EnvMonAPIStats extends HttpServlet {
                 jObjMainObject.put(RESPONSE_JSON_DATATABLE, investigationJsonArr);
                 JSONArray filterJArr = new JSONArray();
                 for (SqlWhereEntry curFilterFld : wObj.getAllWhereEntries()) {
-                    JSONObject fltJObj = new JSONObject(); 
+                    JSONObject fltJObj = new JSONObject();
                     fltJObj.put(curFilterFld.getVwFldName().getName() + " " + curFilterFld.getSymbol().getSqlClause(),
                             LPArray.convertArrayToString(curFilterFld.getFldValue(), ", ", "", true));
                     fltJObj.put("filter_name", curFilterFld.getVwFldName().getName() + " " + curFilterFld.getSymbol().getSqlClause());
