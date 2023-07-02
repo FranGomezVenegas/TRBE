@@ -415,9 +415,12 @@ public class GlobalAPIsParams extends HttpServlet {
     public static final String REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME = "sampleAnalysisResultWhereFieldsName";
     public static final String REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE = "sampleAnalysisResultWhereFieldsValue";
 
+    public static final String REQUEST_PARAM_FAMILY_NAME = "familyName";
+    
     public static final String REQUEST_PARAM_GROUPED = "dataGrouped";
     public static final String REQUEST_PARAM_FIELDS_TO_RETRIEVE_OR_GROUPING = "fieldsToRetrieveOrGrouping";
 
+    
     
     public static final String LBL_MESSAGE_EN = "message_en";
     public static final String LBL_MESSAGE_ES = "message_es";
