@@ -114,8 +114,9 @@ public class ClassEnvMonSample {
                         smpTmpV = 1;
                     }
                     if (LPNulls.replaceNull(argValues[2]).toString().length() > 0) {
-                        fieldNames = argValues[2].toString().split("\\|");
-                        fieldValues = LPArray.convertStringWithDataTypeToObjectArray(argValues[3].toString().split("\\|"));
+                        fieldNames = argValues[2].toString().split("\\|");                        
+                        fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(argValues[3].toString().split("\\|"),
+                        TblsEnvMonitData.TablesEnvMonitData.SAMPLE, fieldNames);
                         if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                             actionDiagnoses = fieldValues;
                         }
