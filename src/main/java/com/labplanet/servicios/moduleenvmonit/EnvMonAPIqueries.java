@@ -456,10 +456,10 @@ GlobalAPIsParams.
                         Object specConfigVersion = templateProgramInfo.get(TblsEnvMonitConfig.Program.SPEC_CONFIG_VERSION.getName());
                         JSONObject specDefinition = new JSONObject();
                         if (Boolean.FALSE.equals((specCode == null || specCode == "" || specConfigVersion == null || "".equals(specConfigVersion.toString())))) {
-                            JSONObject specInfo = SpecFrontEndUtilities.configSpecInfo(procReqInstance, (String) specCode, (Integer) specConfigVersion,
+                            JSONObject specInfo = SpecFrontEndUtilities.configSpecInfo(procReqInstance, TblsCnfg.TablesConfig.SPEC, (String) specCode, (Integer) specConfigVersion,
                                     null, null);
                             specDefinition.put(TblsCnfg.TablesConfig.SPEC.getTableName(), specInfo);
-                            JSONArray specLimitsInfo = SpecFrontEndUtilities.configSpecLimitsInfo(procReqInstance, (String) specCode, (Integer) specConfigVersion, null,
+                            JSONArray specLimitsInfo = SpecFrontEndUtilities.configSpecLimitsInfo(procReqInstance, TblsCnfg.TablesConfig.SPEC_LIMITS, (String) specCode, (Integer) specConfigVersion, null,
                                     null, new String[]{TblsCnfg.SpecLimits.VARIATION_NAME.getName(), TblsCnfg.SpecLimits.ANALYSIS.getName(),
                                         TblsCnfg.SpecLimits.METHOD_NAME.getName(), TblsCnfg.SpecLimits.LIMIT_ID.getName(),
                                         TblsCnfg.SpecLimits.SPEC_TEXT_EN.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_RED_AREA_EN.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_YELLOW_AREA_EN.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_GREEN_AREA_EN.getName(),

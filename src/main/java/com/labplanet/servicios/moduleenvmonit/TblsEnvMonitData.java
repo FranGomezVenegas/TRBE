@@ -132,79 +132,80 @@ public class TblsEnvMonitData {
     }
     
     public enum Sample implements EnumIntTableFields{
-        SAMPLE_ID(TblsData.Sample.SAMPLE_ID.getName(), LPDatabase.integerNotNull(), null, null, null, null),
-        CONFIG_CODE("sample_config_code", LPDatabase.string(), null, null, null, null),
-        CONFIG_CODE_VERSION("sample_config_code_version", LPDatabase.integer(), null, null, null, null),
-        STATUS("status",LPDatabase.stringNotNull(), null, null, null, null),
-        STATUS_PREVIOUS("status_previous",LPDatabase.string(), null, null, null, null),
-        LOGGED_ON("logged_on", LPDatabase.date(), null, null, null, null),
-        LOGGED_BY("logged_by", LPDatabase.string(), null, null, null, null),
-        RECEIVED_ON("received_on", LPDatabase.date(), null, null, null, null),
-        RECEIVED_BY("received_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
-        VOLUME(LPDatabase.FIELDS_NAMES_VOLUME, LPDatabase.real(), null, null, null, null),
-        VOLUME_UOM(LPDatabase.FIELDS_NAMES_VOLUME_UOM,LPDatabase.string(), null, null, null, null),
-        ALIQUOTED("aliquoted", LPDatabase.booleanFld(false), null, null, null, null),
-        ALIQUOT_STATUS("aliq_status",LPDatabase.string(), null, null, null, null),
-        VOLUME_FOR_ALIQ("volume_for_aliq", LPDatabase.real(), null, null, null, null),
-        VOLUME_FOR_ALIQ_UOM("volume_for_aliq_uom",LPDatabase.string(), null, null, null, null),
-        SPEC_CODE("spec_code",LPDatabase.stringNotNull(), null, null, null, null),
-        SPEC_CODE_VERSION("spec_code_version", LPDatabase.integer(), null, null, null, null),
-        SPEC_VARIATION_NAME("spec_variation_name",LPDatabase.stringNotNull(), null, null, null, null),
-        SPEC_ANALYSIS_VARIATION("spec_analysis_variation", LPDatabase.stringNotNull(), null, null, null, null),
-        SPEC_EVAL("spec_eval",  LPDatabase.string(), null, null, null, null),
-        CUSTODIAN("custodian",  LPDatabase.string(2), null, null, null, null),
-        CUSTODIAN_CANDIDATE("custodian_candidate",  LPDatabase.string(2), null, null, null, null),
-        COC_REQUESTED_ON("coc_requested_on", LPDatabase.date(), null, null, null, null),
-        COC_CONFIRMED_ON("coc_confirmed_on", LPDatabase.date(), null, null, null, null),
-        PROGRAM_NAME(FIELDS_NAMES_PROGRAM_NAME,  LPDatabase.stringNotNull(), null, null, null, null),
-        LOCATION_NAME(FIELDS_NAMES_LOCATION_NAME,  LPDatabase.stringNotNull(), null, null, null, null),
-        PRODUCTION_LOT("production_lot",  LPDatabase.string(), null, null, null, null),
-        SAMPLER_AREA("sampler_area",LPDatabase.string(), null, null, null, null),
-        SAMPLER("sampler",LPDatabase.string(), null, null, null, null),
-        SAMPLE_ID_RELATED("sample_id_related",LPDatabase.integer(), null, null, null, null), 
-        SAMPLING_DATE("sampling_date", dateTime(), null, null, null, null),
-        SAMPLING_COMMENT("sampling_comment", LPDatabase.string(), null, null, null, null),
-        INCUBATION_INCUBATOR("incubation_incubator", LPDatabase.string(), null, null, null, null),
-        INCUBATION_BATCH("incubation_batch", LPDatabase.string(), null, null, null, null),
-        INCUBATION_START(FIELDS_NAMES_INCUBATION_START, dateTime(), null, null, null, null),
-        INCUBATION_START_TEMPERATURE("incubation_start_temperature", LPDatabase.real(), null, null, null, null),
-        INCUBATION_START_TEMP_EVENT_ID("incubation_start_temp_event_id", LPDatabase.integer(), null, null, null, null),
-        INCUBATION_END(FIELDS_NAMES_INCUBATION_END, dateTime(), null, null, null, null),
-        INCUBATION_END_TEMPERATURE("incubation_end_temperature", LPDatabase.real(), null, null, null, null),
-        INCUBATION_END_TEMP_EVENT_ID("incubation_end_temp_event_id", LPDatabase.integer(), null, null, null, null),
-        INCUBATION_PASSED("incubation_passed", LPDatabase.booleanFld(false), null, null, null, null),
-        INCUBATION2_INCUBATOR("incubation2_incubator", LPDatabase.string(), null, null, null, null),
-        INCUBATION2_BATCH("incubation2_batch", LPDatabase.string(), null, null, null, null),
-        INCUBATION2_START(FIELDS_NAMES_INCUBATION2_START, dateTime(), null, null, null, null),
-        INCUBATION2_START_TEMPERATURE("incubation2_start_temperature", LPDatabase.real(), null, null, null, null),
-        INCUBATION2_START_TEMP_EVENT_ID("incubation2_start_temp_event_id", LPDatabase.integer(), null, null, null, null),
-        INCUBATION2_END(FIELDS_NAMES_INCUBATION2_END, dateTime(), null, null, null, null),
-        INCUBATION2_END_TEMPERATURE("incubation2_end_temperature", LPDatabase.real(), null, null, null, null),
-        INCUBATION2_END_TEMP_EVENT_ID("incubation2_end_temp_event_id", LPDatabase.integer(), null, null, null, null),
-        INCUBATION2_PASSED("incubation2_passed", LPDatabase.booleanFld(), null, null, null, null),
-        CURRENT_STAGE("current_stage",LPDatabase.string(), null, null, null, null),
-        PREVIOUS_STAGE("previous_stage",LPDatabase.string(), null, null, null, null),
-        AREA("area",LPDatabase.string(), null, null, null, null),
-        SHIFT("shift",LPDatabase.string(), null, null, null, null),
-        PROG_DAY_ID("program_day_id",LPDatabase.integer(), null, null, null, null),
-        PROG_DAY_DATE("program_day_date", dateTime(), null, null, null, null),
-        READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld(), null, null, null, null),
-        REQS_TRACKING_SAMPLING_END("requires_tracking_sampling_end", LPDatabase.booleanFld(), null, null, null, null),
-        SAMPLING_DATE_END("sampling_date_end", dateTime(), null, null, null, null),
-        REVIEWER("reviewer",LPDatabase.string(), null, null, null, null),
-        REVIEWED("reviewed", LPDatabase.booleanFld(), null, null, null, null), 
-        REVIEWED_BY("reviewed_by", LPDatabase.string(), null, null, null, null), 
-        REVIEWED_ON("reviewed_on", LPDatabase.dateTime(), null, null, null, null),
-        CULTURE_MEDIA("culture_media", LPDatabase.string(), null, null, null, null)
+        SAMPLE_ID(TblsData.Sample.SAMPLE_ID.getName(), LPDatabase.integerNotNull(), null, null, null, null, true),
+        CONFIG_CODE("sample_config_code", LPDatabase.string(), null, null, null, null, true),
+        CONFIG_CODE_VERSION("sample_config_code_version", LPDatabase.integer(), null, null, null, null, true),
+        STATUS("status",LPDatabase.stringNotNull(), null, null, null, null, true),
+        STATUS_PREVIOUS("status_previous",LPDatabase.string(), null, null, null, null, true),
+        LOGGED_ON("logged_on", LPDatabase.date(), null, null, null, null, true),
+        LOGGED_BY("logged_by", LPDatabase.string(), null, null, null, null, true),
+        RECEIVED_ON("received_on", LPDatabase.date(), null, null, null, null, true),
+        RECEIVED_BY("received_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null, true),
+        VOLUME(LPDatabase.FIELDS_NAMES_VOLUME, LPDatabase.real(), null, null, null, null, true),
+        VOLUME_UOM(LPDatabase.FIELDS_NAMES_VOLUME_UOM,LPDatabase.string(), null, null, null, null, true),
+        ALIQUOTED("aliquoted", LPDatabase.booleanFld(false), null, null, null, null, true),
+        ALIQUOT_STATUS("aliq_status",LPDatabase.string(), null, null, null, null, true),
+        VOLUME_FOR_ALIQ("volume_for_aliq", LPDatabase.real(), null, null, null, null, true),
+        VOLUME_FOR_ALIQ_UOM("volume_for_aliq_uom",LPDatabase.string(), null, null, null, null, true),
+        SPEC_CODE("spec_code",LPDatabase.stringNotNull(), null, null, null, null, true),
+        SPEC_CODE_VERSION("spec_code_version", LPDatabase.integer(), null, null, null, null, true),
+        SPEC_VARIATION_NAME("spec_variation_name",LPDatabase.stringNotNull(), null, null, null, null, true),
+        SPEC_ANALYSIS_VARIATION("spec_analysis_variation", LPDatabase.stringNotNull(), null, null, null, null, true),
+        SPEC_EVAL("spec_eval",  LPDatabase.string(), null, null, null, null, true),
+        CUSTODIAN("custodian",  LPDatabase.string(2), null, null, null, null, true),
+        CUSTODIAN_CANDIDATE("custodian_candidate",  LPDatabase.string(2), null, null, null, null, true),
+        COC_REQUESTED_ON("coc_requested_on", LPDatabase.date(), null, null, null, null, true),
+        COC_CONFIRMED_ON("coc_confirmed_on", LPDatabase.date(), null, null, null, null, true),
+        PROGRAM_NAME(FIELDS_NAMES_PROGRAM_NAME,  LPDatabase.stringNotNull(), null, null, null, null, true),
+        LOCATION_NAME(FIELDS_NAMES_LOCATION_NAME,  LPDatabase.stringNotNull(), null, null, null, null, true),
+        PRODUCTION_LOT("production_lot",  LPDatabase.string(), null, null, null, null, false),
+        SAMPLER_AREA("sampler_area",LPDatabase.string(), null, null, null, null, true),
+        SAMPLER("sampler",LPDatabase.string(), null, null, null, null, true),
+        SAMPLE_ID_RELATED("sample_id_related",LPDatabase.integer(), null, null, null, null, true), 
+        SAMPLING_DATE("sampling_date", dateTime(), null, null, null, null, true),
+        SAMPLING_COMMENT("sampling_comment", LPDatabase.string(), null, null, null, null, true),
+        INCUBATION_INCUBATOR("incubation_incubator", LPDatabase.string(), null, null, null, null, true),
+        INCUBATION_BATCH("incubation_batch", LPDatabase.string(), null, null, null, null, true),
+        INCUBATION_START(FIELDS_NAMES_INCUBATION_START, dateTime(), null, null, null, null, true),
+        INCUBATION_START_TEMPERATURE("incubation_start_temperature", LPDatabase.real(), null, null, null, null, true),
+        INCUBATION_START_TEMP_EVENT_ID("incubation_start_temp_event_id", LPDatabase.integer(), null, null, null, null, true),
+        INCUBATION_END(FIELDS_NAMES_INCUBATION_END, dateTime(), null, null, null, null, true),
+        INCUBATION_END_TEMPERATURE("incubation_end_temperature", LPDatabase.real(), null, null, null, null, true),
+        INCUBATION_END_TEMP_EVENT_ID("incubation_end_temp_event_id", LPDatabase.integer(), null, null, null, null, true),
+        INCUBATION_PASSED("incubation_passed", LPDatabase.booleanFld(false), null, null, null, null, true),
+        INCUBATION2_INCUBATOR("incubation2_incubator", LPDatabase.string(), null, null, null, null, true),
+        INCUBATION2_BATCH("incubation2_batch", LPDatabase.string(), null, null, null, null, true),
+        INCUBATION2_START(FIELDS_NAMES_INCUBATION2_START, dateTime(), null, null, null, null, true),
+        INCUBATION2_START_TEMPERATURE("incubation2_start_temperature", LPDatabase.real(), null, null, null, null, true),
+        INCUBATION2_START_TEMP_EVENT_ID("incubation2_start_temp_event_id", LPDatabase.integer(), null, null, null, null, true),
+        INCUBATION2_END(FIELDS_NAMES_INCUBATION2_END, dateTime(), null, null, null, null, true),
+        INCUBATION2_END_TEMPERATURE("incubation2_end_temperature", LPDatabase.real(), null, null, null, null, true),
+        INCUBATION2_END_TEMP_EVENT_ID("incubation2_end_temp_event_id", LPDatabase.integer(), null, null, null, null, true),
+        INCUBATION2_PASSED("incubation2_passed", LPDatabase.booleanFld(), null, null, null, null, true),
+        CURRENT_STAGE("current_stage",LPDatabase.string(), null, null, null, null, true),
+        PREVIOUS_STAGE("previous_stage",LPDatabase.string(), null, null, null, null, true),
+        AREA("area",LPDatabase.string(), null, null, null, null, true),
+        SHIFT("shift",LPDatabase.string(), null, null, null, null, false),
+        PROG_DAY_ID("program_day_id",LPDatabase.integer(), null, null, null, null, true),
+        PROG_DAY_DATE("program_day_date", dateTime(), null, null, null, null, true),
+        READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld(), null, null, null, null, true),
+        REQS_TRACKING_SAMPLING_END("requires_tracking_sampling_end", LPDatabase.booleanFld(), null, null, null, null, true),
+        SAMPLING_DATE_END("sampling_date_end", dateTime(), null, null, null, null, true),
+        REVIEWER("reviewer",LPDatabase.string(), null, null, null, null, true),
+        REVIEWED("reviewed", LPDatabase.booleanFld(), null, null, null, null, true), 
+        REVIEWED_BY("reviewed_by", LPDatabase.string(), null, null, null, null, true), 
+        REVIEWED_ON("reviewed_on", LPDatabase.dateTime(), null, null, null, null, true),
+        CULTURE_MEDIA("culture_media", LPDatabase.string(), null, null, null, null, true)
         ;
         private Sample(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
-                FldBusinessRules[] fldBusRules){
+                FldBusinessRules[] fldBusRules, Boolean isSystFld){
             this.fieldName=dbObjName;
             this.fieldType=dbObjType;
             this.fieldMask=fieldMask;
             this.reference=refer;
             this.fieldComment=comment;
             this.fldBusinessRules=fldBusRules;
+            this.isSystemFld=isSystFld;
         }
         private final String fieldName;
         private final String fieldType;
@@ -212,6 +213,7 @@ public class TblsEnvMonitData {
         private final ReferenceFld reference;
         private final String fieldComment;
         private final FldBusinessRules[] fldBusinessRules;
+        private final Boolean isSystemFld;
 
         @Override        public String getName(){return this.fieldName;}
         @Override        public String getFieldType() {return this.fieldType;}
@@ -219,6 +221,7 @@ public class TblsEnvMonitData {
         @Override        public ReferenceFld getReferenceTable() {return this.reference;}
         @Override        public String getFieldComment(){return this.fieldComment;}
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+        @Override        public Boolean isSystemField(){return this.isSystemFld;}
     }            
     private static final String FIELDS_NAMES_INCUBATION2_END = "incubation2_end";
     private static final String FIELDS_NAMES_INCUBATION2_START = "incubation2_start";
@@ -257,21 +260,22 @@ public class TblsEnvMonitData {
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }         
     public enum ProductionLot implements EnumIntTableFields{
-        LOT_NAME("lot_name",LPDatabase.stringNotNull(), null, null, null, null),
-        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTimeWithDefaultNow(), null, null, null, null),
-        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
-        CLOSED_ON("closed_on", dateTimeWithDefaultNow(), null, null, null, null),
-        CLOSED_BY("closed_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
-        ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(), null, null, null, null),
+        LOT_NAME("lot_name",LPDatabase.stringNotNull(), null, null, null, null, true),
+        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTimeWithDefaultNow(), null, null, null, null, true),
+        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null, true),
+        CLOSED_ON("closed_on", dateTimeWithDefaultNow(), null, null, null, null, true),
+        CLOSED_BY("closed_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null, true),
+        ACTIVE(LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(), null, null, null, null, false),
         ;
         private ProductionLot(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
-                FldBusinessRules[] fldBusRules){
+                FldBusinessRules[] fldBusRules, Boolean isSystFld){
             this.fieldName=dbObjName;
             this.fieldType=dbObjType;
             this.fieldMask=fieldMask;
             this.reference=refer;
             this.fieldComment=comment;
             this.fldBusinessRules=fldBusRules;
+            this.isSystemFld=isSystFld;
         }
         private final String fieldName;
         private final String fieldType;
@@ -279,6 +283,7 @@ public class TblsEnvMonitData {
         private final ReferenceFld reference;
         private final String fieldComment;
         private final FldBusinessRules[] fldBusinessRules;
+        private final Boolean isSystemFld;
 
         @Override        public String getName(){return this.fieldName;}
         @Override        public String getFieldType() {return this.fieldType;}
@@ -286,6 +291,7 @@ public class TblsEnvMonitData {
         @Override        public ReferenceFld getReferenceTable() {return this.reference;}
         @Override        public String getFieldComment(){return this.fieldComment;}
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+        @Override        public Boolean isSystemField(){return this.isSystemFld;}
     }         
 
     /*CREATE OR REPLACE VIEW "em-demo-a-data".sample_microorganism_list_vw AS

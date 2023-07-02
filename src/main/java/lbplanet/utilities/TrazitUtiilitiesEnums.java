@@ -17,6 +17,8 @@ public class TrazitUtiilitiesEnums {
         ERRORTRAPPING_EXCEPTION("LabPLANETPlatform_SpecialFunctionReturnedEXCEPTION", "", ""),
         ARRAYS_DIFFERENT_SIZE("DataSample_FieldArraysDifferentSize", "", ""),
         MISSING_FIELDS_IN_TABLE("MissingFieldsInTable", "", ""),
+        SPECIAL_FIELDS_IN_TABLE("SpecialFieldsInTable", "", ""),
+        MISSING_AND_SPECIAL_FIELDS_IN_TABLE("MissingAndSpecialFieldsInTable", "", ""),        
         OBJECTOFARRAY_WRONGFORMAT("objectOfArray_wrongFormat", "", ""),
         GETCOLUMNFROM2D_COLNOTFOUND("LabPLANETArray_getColumnFromArray2D_ColNotFound", "", ""),
         NOT_IMPLEMENTED_YET("notImplementedYet", "", ""),

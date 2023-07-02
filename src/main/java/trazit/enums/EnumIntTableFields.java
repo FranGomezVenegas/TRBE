@@ -25,6 +25,9 @@ public interface EnumIntTableFields {
     String getFieldComment(); 
     FldBusinessRules[] getFldBusinessRules();
 
+    default Boolean isSystemField(){
+        return true;
+    }
     public static String[] getAllFieldNames(EnumIntTableFields[] tblFlds){
         String[] flds=new String[]{};
         for (EnumIntTableFields curFld: tblFlds){
@@ -92,10 +95,13 @@ public interface EnumIntTableFields {
         EnumIntTableFields[] custFlds=new EnumIntTableFields[flds.length];
         EnumIntTableFields[] tableFields = tblObj.getTableFields();
         int iFld=0;
+        String[] missingFlds=new String[]{};
         for (String curFld: flds){
             Integer valuePosicInArray = getFldPosicInArray(tableFields, curFld);
             if (valuePosicInArray>-1)
                 custFlds[iFld]=tableFields[valuePosicInArray];  
+            else
+                missingFlds=LPArray.addValueToArray1D(missingFlds, curFld);
             iFld++;
         }
         return Arrays.stream(custFlds)

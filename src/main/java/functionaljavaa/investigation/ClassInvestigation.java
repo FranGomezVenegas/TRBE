@@ -93,7 +93,8 @@ public class ClassInvestigation {
                         fieldNames=argValues[0].toString().split(("\\|"));
                     Object[] fieldValues = null;
                     if (argValues[1]!=null && argValues[1].toString().length()>0)
-                        fieldValues=LPArray.convertStringWithDataTypeToObjectArray(argValues[1].toString().split(("\\|")));
+                        fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(argValues[1].toString().split("\\|"),
+                        TblsProcedure.TablesProcedure.INVESTIGATION, fieldNames);
                     if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                         actionDiagnoses = fieldValues;
                         break;

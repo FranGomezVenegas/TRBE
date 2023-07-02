@@ -534,30 +534,31 @@ public enum ProcedureEventsHelpContent implements EnumIntTableFields {
     }        
     
     public enum Investigation implements EnumIntTableFields{
-        ID("id", "bigint NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_id_seq'::regclass)", null, null, null, null),
-        DESCRIPTION("description", LPDatabase.string(), null, null, null, null),
-        CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null),
-        CREATED_BY("created_by", LPDatabase.string(), null, null, null, null),
-        CLOSED("closed", LPDatabase.booleanFld(), null, null, null, null),
-        CLOSED_ON("closed_on", LPDatabase.dateTime(), null, null, null, null),
-        CLOSED_BY("closed_by", LPDatabase.string(), null, null, null, null),
-        EXTERNAL_SYSTEM_ID("external_system_id", LPDatabase.string(), null, null, null, null),
-        EXTERNAL_SYSTEM_NAME("external_system_name", LPDatabase.string(), null, null, null, null),
-        CAPA_REQUIRED("capa_required", LPDatabase.booleanFld(), null, null, null, null),
-        CAPA_DECISION_ON("capa_decision_on", LPDatabase.dateTime(), null, null, null, null),
-        CAPA_DECISION_BY("capa_decision_by", LPDatabase.string(), null, null, null, null),
-        CAPA_OBSERVATION("capa_observation", LPDatabase.string(), null, null, null, null),
-        CAPA_EXTERNAL_SYSTEM_ID("capa_external_system_id", LPDatabase.string(), null, null, null, null),
-        CAPA_EXTERNAL_SYSTEM_NAME("capa_external_system_name", LPDatabase.string(), null, null, null, null),
+        ID("id", "bigint NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_id_seq'::regclass)", null, null, null, null, true),
+        DESCRIPTION("description", LPDatabase.string(), null, null, null, null, false),
+        CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null, true),
+        CREATED_BY("created_by", LPDatabase.string(), null, null, null, null, true),
+        CLOSED("closed", LPDatabase.booleanFld(), null, null, null, null, true),
+        CLOSED_ON("closed_on", LPDatabase.dateTime(), null, null, null, null, true),
+        CLOSED_BY("closed_by", LPDatabase.string(), null, null, null, null, true),
+        EXTERNAL_SYSTEM_ID("external_system_id", LPDatabase.string(), null, null, null, null, true),
+        EXTERNAL_SYSTEM_NAME("external_system_name", LPDatabase.string(), null, null, null, null, true),
+        CAPA_REQUIRED("capa_required", LPDatabase.booleanFld(), null, null, null, null, true),
+        CAPA_DECISION_ON("capa_decision_on", LPDatabase.dateTime(), null, null, null, null, true),
+        CAPA_DECISION_BY("capa_decision_by", LPDatabase.string(), null, null, null, null, true),
+        CAPA_OBSERVATION("capa_observation", LPDatabase.string(), null, null, null, null, true),
+        CAPA_EXTERNAL_SYSTEM_ID("capa_external_system_id", LPDatabase.string(), null, null, null, null, true),
+        CAPA_EXTERNAL_SYSTEM_NAME("capa_external_system_name", LPDatabase.string(), null, null, null, null, true),
         ;
         private Investigation(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
-                FldBusinessRules[] fldBusRules){
+                FldBusinessRules[] fldBusRules, Boolean isSystFld){
             this.fieldName=dbObjName;
             this.fieldType=dbObjType;
             this.fieldMask=fieldMask;
             this.reference=refer;
             this.fieldComment=comment;
             this.fldBusinessRules=fldBusRules;
+            this.isSystemFld=isSystFld;
         }
         private final String fieldName;
         private final String fieldType;
@@ -565,6 +566,7 @@ public enum ProcedureEventsHelpContent implements EnumIntTableFields {
         private final ReferenceFld reference;
         private final String fieldComment;
         private final FldBusinessRules[] fldBusinessRules;
+        private final Boolean isSystemFld;
 
         @Override        public String getName(){return this.fieldName;}
         @Override        public String getFieldType() {return this.fieldType;}
@@ -572,6 +574,7 @@ public enum ProcedureEventsHelpContent implements EnumIntTableFields {
         @Override        public ReferenceFld getReferenceTable() {return this.reference;}
         @Override        public String getFieldComment(){return this.fieldComment;}
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+        @Override        public Boolean isSystemField(){return this.isSystemFld;}
     }    
 
     public enum InvestObjects implements EnumIntTableFields{

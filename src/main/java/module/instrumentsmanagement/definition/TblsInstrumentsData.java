@@ -155,43 +155,42 @@ public class TblsInstrumentsData {
     }
     
     public enum Instruments implements EnumIntTableFields{
-        NAME("name", LPDatabase.stringNotNull(), null, null, null, null),
-        DESCRIPTION("description", LPDatabase.string(), null, null, null, null),
-        CREATED_BY("created_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
-        CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null),
-        FAMILY("family", LPDatabase.string(), null, null, null, null),
-        SUPPLIER("supplier", LPDatabase.string(), null, null, null, null),
-        MANUFACTURER("manufacturer", LPDatabase.string(), null, null, null, null),
-        SERIAL_NUMBER("serial_number", LPDatabase.string(), null, null, null, null),
-        MODEL_NUMBER("model_number", LPDatabase.string(), null, null, null, null),
-        DECOMMISSIONED("decommissioned", LPDatabase.booleanFld(false), null, null, null, null),
-        DECOMMISSIONED_BY("decommissioned_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
-        DECOMMISSIONED_ON("decommissioned_on", LPDatabase.dateTime(), null, null, null, null),
-        UNDECOMMISSIONED_BY("undecommissioned_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
-        UNDECOMMISSIONED_ON("undecommissioned_on", LPDatabase.dateTime(), null, null, null, null),
-        ON_LINE("on_line", LPDatabase.booleanFld(false), null, null, null, null),
-        IS_LOCKED("is_locked", LPDatabase.booleanFld(false), null, null, null, null),
-        LOCKED_REASON("locked_reason", LPDatabase.string(), null, null, null, null),
-        LAST_CALIBRATION("last_calibration",LPDatabase.dateTime(), null, null, null, null),
-        NEXT_CALIBRATION("next_calibration",LPDatabase.dateTime(), null, null, null, null),
-        LAST_PM("last_prev_maint",LPDatabase.dateTime(), null, null, null, null),
-        NEXT_PM("next_prev_maint",LPDatabase.dateTime(), null, null, null, null),
-        LAST_VERIF("last_verification",LPDatabase.dateTime(), null, null, null, null),
-        PO_DATE("po_date",LPDatabase.dateTime(), null, null, null, null),
-        INSTALLATION_DATE("installation_date",LPDatabase.dateTime(), null, null, null, null),
-        RESPONSIBLE("responsible",LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
-        RESPONSIBLE_BACKUP("responsible_backup",LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null)
-        
-        
+        NAME("name", LPDatabase.stringNotNull(), null, null, null, null, true),
+        DESCRIPTION("description", LPDatabase.string(), null, null, null, null, false),
+        CREATED_BY("created_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null, true),
+        CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null, true),
+        FAMILY("family", LPDatabase.string(), null, null, null, null, true),
+        SUPPLIER("supplier", LPDatabase.string(), null, null, null, null, false),
+        MANUFACTURER("manufacturer", LPDatabase.string(), null, null, null, null, false),
+        SERIAL_NUMBER("serial_number", LPDatabase.string(), null, null, null, null, false),
+        MODEL_NUMBER("model_number", LPDatabase.string(), null, null, null, null, false),
+        DECOMMISSIONED("decommissioned", LPDatabase.booleanFld(false), null, null, null, null, true),
+        DECOMMISSIONED_BY("decommissioned_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null, true),
+        DECOMMISSIONED_ON("decommissioned_on", LPDatabase.dateTime(), null, null, null, null, true),
+        UNDECOMMISSIONED_BY("undecommissioned_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null, true),
+        UNDECOMMISSIONED_ON("undecommissioned_on", LPDatabase.dateTime(), null, null, null, null, true),
+        ON_LINE("on_line", LPDatabase.booleanFld(false), null, null, null, null, true),
+        IS_LOCKED("is_locked", LPDatabase.booleanFld(false), null, null, null, null, true),
+        LOCKED_REASON("locked_reason", LPDatabase.string(), null, null, null, null, true),
+        LAST_CALIBRATION("last_calibration",LPDatabase.dateTime(), null, null, null, null, true),
+        NEXT_CALIBRATION("next_calibration",LPDatabase.dateTime(), null, null, null, null, true),
+        LAST_PM("last_prev_maint",LPDatabase.dateTime(), null, null, null, null, true),
+        NEXT_PM("next_prev_maint",LPDatabase.dateTime(), null, null, null, null, true),
+        LAST_VERIF("last_verification",LPDatabase.dateTime(), null, null, null, null, true),
+        PO_DATE("po_date",LPDatabase.dateTime(), null, null, null, null, false),
+        INSTALLATION_DATE("installation_date",LPDatabase.dateTime(), null, null, null, null, false),
+        RESPONSIBLE("responsible",LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null, false),
+        RESPONSIBLE_BACKUP("responsible_backup",LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null, false)
         ;
         private Instruments(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
-                FldBusinessRules[] fldBusRules){
+                FldBusinessRules[] fldBusRules, Boolean isSystFld){
             this.fieldName=dbObjName;
             this.fieldType=dbObjType;
             this.fieldMask=fieldMask;
             this.reference=refer;
             this.fieldComment=comment;
             this.fldBusinessRules=fldBusRules;
+            this.isSystemFld=isSystFld;
         }
         private final String fieldName;
         private final String fieldType;
@@ -199,6 +198,7 @@ public class TblsInstrumentsData {
         private final ReferenceFld reference;
         private final String fieldComment;
         private final FldBusinessRules[] fldBusinessRules;
+        private final Boolean isSystemFld;
 
         @Override        public String getName(){return this.fieldName;}
         @Override        public String getFieldType() {return this.fieldType;}
@@ -206,6 +206,7 @@ public class TblsInstrumentsData {
         @Override        public ReferenceFld getReferenceTable() {return this.reference;}
         @Override        public String getFieldComment(){return this.fieldComment;}
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+        @Override        public Boolean isSystemField(){return this.isSystemFld;}
     }        
     
     public enum InstrumentEvent implements EnumIntTableFields{

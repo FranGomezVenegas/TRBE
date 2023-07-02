@@ -124,7 +124,14 @@ public class ClassInstruments {
                     fieldNames = fieldName.split("\\|");
                 }
                 if (fieldValue != null && fieldValue.length() > 0) {
-                    fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
+                    fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"),
+                        TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS, fieldNames);
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
+                        this.diagnostic=fieldValues;
+                        this.actionDiagnosesObj = (InternalMessage) fieldValues[1];
+                        this.messageDynamicData = this.actionDiagnosesObj.getMessageCodeVariables();
+                        return;                        
+                    }
                 }
                 if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                     actionDiagnoses = (InternalMessage) fieldValues[1];
