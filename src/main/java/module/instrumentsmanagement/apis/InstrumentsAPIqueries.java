@@ -376,7 +376,6 @@ public class InstrumentsAPIqueries extends HttpServlet {
                     return;
                 case GET_INSTRUMENT_REPORT:
                     instrName = argValues[0].toString();
-
                     String startDateStr = argValues[1].toString();
                     String endDateStr = argValues[2].toString();
                     String lastNdaysStr = argValues[3].toString();
@@ -710,7 +709,80 @@ public class InstrumentsAPIqueries extends HttpServlet {
                     Rdbms.closeRdbms();
                     LPFrontEnd.servletReturnSuccess(request, response, jArray);
                     break;
-
+                case INSTRUMENT_EVENTS_CALENDAR:
+                    instrName = argValues[0].toString();
+                    familyName = argValues[1].toString();
+                    startDateStr = argValues[2].toString();
+                    endDateStr = argValues[3].toString();
+                    String includeOnlyScheduledOneStr = argValues[4].toString();
+                    SqlWhere wObj = new SqlWhere();
+                    SqlWhere wObjNext = new SqlWhere();
+                    jArr = new JSONArray();
+                    if (LPNulls.replaceNull(instrName).length() > 0) {
+                        wObj.addConstraint(TblsInstrumentsData.InstrumentEvent.INSTRUMENT, SqlStatement.WHERECLAUSE_TYPES.IN, instrName.split("\\|"), null);
+                        wObjNext.addConstraint(TblsInstrumentsData.Instruments.NAME, SqlStatement.WHERECLAUSE_TYPES.IN, instrName.split("\\|"), null);
+                    }
+                    if (LPNulls.replaceNull(familyName).length() > 0) {
+                        wObjNext.addConstraint(TblsInstrumentsData.Instruments.FAMILY, SqlStatement.WHERECLAUSE_TYPES.IN, familyName.split("\\|"), null);
+                    }
+                    Object[] buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsInstrumentsData.InstrumentEvent.CREATED_ON.getName(), startDateStr, endDateStr);
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))) {
+                        if (buildDateRangeFromStrings.length == 4) {
+                            wObj.addConstraint(TblsInstrumentsData.InstrumentEvent.CREATED_ON, SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{buildDateRangeFromStrings[2], buildDateRangeFromStrings[3]}, null);
+                            SqlWhereEntry[] orClauses = new SqlWhereEntry[]{
+                                new SqlWhereEntry(TblsInstrumentsData.Instruments.NEXT_CALIBRATION,
+                                SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{buildDateRangeFromStrings[2], buildDateRangeFromStrings[3]}, null),
+                                new SqlWhereEntry(TblsInstrumentsData.Instruments.NEXT_PM,
+                                SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{buildDateRangeFromStrings[2], buildDateRangeFromStrings[3]}, null)};
+                            wObjNext.addOrClauseConstraint(orClauses);
+                        } else {
+                            wObj.addConstraint(TblsInstrumentsData.InstrumentEvent.CREATED_ON, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{buildDateRangeFromStrings[2]}, null);
+                            SqlWhereEntry[] orClauses = new SqlWhereEntry[]{
+                                new SqlWhereEntry(TblsInstrumentsData.Instruments.NEXT_CALIBRATION,
+                                SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{buildDateRangeFromStrings[2]}, null),
+                                new SqlWhereEntry(TblsInstrumentsData.Instruments.NEXT_PM,
+                                SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{buildDateRangeFromStrings[2]}, null)};
+                            wObjNext.addOrClauseConstraint(orClauses);
+                        }
+                    }
+                    if (wObj.getAllWhereEntries().isEmpty()) {
+                        wObj.addConstraint(TblsInstrumentsData.InstrumentEvent.CREATED_ON, SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{LPDate.getCurrentDateWithNoTime(), LPDate.addIntervalToGivenDate(LPDate.getCurrentDateWithNoTime(), "YEARS", 1)}, null);
+                        SqlWhereEntry[] orClauses = new SqlWhereEntry[]{
+                            new SqlWhereEntry(TblsInstrumentsData.Instruments.NEXT_CALIBRATION,
+                            SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{LPDate.getCurrentDateWithNoTime(), LPDate.addIntervalToGivenDate(LPDate.getCurrentDateWithNoTime(), "YEARS", 1)}, null),
+                            new SqlWhereEntry(TblsInstrumentsData.Instruments.NEXT_PM,
+                            SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{LPDate.getCurrentDateWithNoTime(), LPDate.addIntervalToGivenDate(LPDate.getCurrentDateWithNoTime(), "YEARS", 1)}, null)};
+                        wObjNext.addOrClauseConstraint(orClauses);
+                    }
+                    if (Boolean.TRUE.equals(Boolean.valueOf(includeOnlyScheduledOneStr))) {
+                        fieldsToRetrieve = getAllFieldNames(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENT_EVENT);
+                        Object[][] instEvents = QueryUtilitiesEnums.getTableData(TablesInstrumentsData.INSTRUMENT_EVENT,
+                                EnumIntTableFields.getAllFieldNamesFromDatabase(TablesInstrumentsData.INSTRUMENT_EVENT),
+                                wObj,
+                                new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName(), TblsInstrumentsData.InstrumentEvent.CREATED_ON.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
+                        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instEvents[0][0].toString()))) {
+                            for (Object[] currInstrEv : instEvents) {
+                                JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrEv);
+                                jObj.put("type", "real");
+                                jArr.add(jObj);
+                            }
+                        }
+                    }
+                    fieldsToRetrieve = getAllFieldNames(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS);
+                    Object[][] instNextEvents = QueryUtilitiesEnums.getTableData(TablesInstrumentsData.INSTRUMENTS,
+                            EnumIntTableFields.getAllFieldNamesFromDatabase(TablesInstrumentsData.INSTRUMENTS),
+                            wObjNext,
+                            new String[]{TblsInstrumentsData.Instruments.NAME.getName()});
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instNextEvents[0][0].toString()))) {
+                        for (Object[] currInstrEv : instNextEvents) {
+                            JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrEv);
+                            jObj.put("type", "next");
+                            jArr.add(jObj);
+                        }
+                    }
+                    Rdbms.closeRdbms();
+                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                    return;
                 default:
             }
         } finally {
@@ -769,6 +841,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
         }
         return jArr;
     }
+
     public static JSONArray instrumentVariablesSetList(String alternativeProcInstanceName) {
         String[] fieldsToRetrieve = getAllFieldNames(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES_SET, alternativeProcInstanceName);
         Object[][] instrumentFamily = QueryUtilitiesEnums.getTableData(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES_SET,
@@ -785,6 +858,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
         }
         return jArr;
     }
+
     public static JSONArray instrumentVariablesList(String alternativeProcInstanceName) {
         String[] fieldsToRetrieve = getAllFieldNames(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES, alternativeProcInstanceName);
         Object[][] instrumentFamily = QueryUtilitiesEnums.getTableData(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES,
@@ -818,7 +892,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
         }
         return jArr;
     }
-    
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
