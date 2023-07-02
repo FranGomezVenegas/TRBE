@@ -85,6 +85,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntViewFields;
+import trazit.procedureinstance.definition.logic.ClassReqProcedUserAndActions;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 import trazit.thirdparties.sap.ExcelExporter;
@@ -111,7 +112,14 @@ public class TestingServer extends HttpServlet {
         response = LPHttp.responsePreparation(response);
         try (PrintWriter out = response.getWriter()) {
             Rdbms.stablishDBConection("labplanet");
-
+            String procInstanceName = "inv-draft";
+            String[] fldsArr = new String[]{TblsReqs.ProcedureRoles.ROLE_NAME.getName()};
+            Object[][] procRoles = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_ROLES.getTableName(),
+                    new String[]{TblsReqs.ProcedureRoles.PROC_INSTANCE_NAME.getName()},
+                    new Object[]{procInstanceName}, fldsArr,
+                    new String[]{TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()});
+            out.println(ClassReqProcedUserAndActions.actionsByRoles(procInstanceName, procRoles));
+if (1==1)return;
             String[] fieldsToRetrieve = EnumIntViewFields.getAllFieldNames(TblsData.ViewUserAndAnalysisMethodCertificationView.values());
             fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, FIELDS_NAMES_PROCEDURE_NAME);
 
@@ -620,7 +628,7 @@ if (1==1) return;*/
                 out.println("Hello");
                 out.println(Rdbms.dbViewExists("em-demo-a", "data", "pr_scheduled_locations")[0].toString());
                 dbTableExists("em-demo-a-data", "sample");
-                String procInstanceName = "em-demo-a";
+                procInstanceName = "em-demo-a";
                 Object[] dbSchemaAndTestingSchemaTablesAndFieldsIsMirror = Rdbms.dbSchemaAndTestingSchemaTablesAndFieldsIsMirror(procInstanceName, GlobalVariables.Schemas.DATA.getName(), GlobalVariables.Schemas.DATA_TESTING.getName());
                 Object[][] mismatches = (Object[][]) dbSchemaAndTestingSchemaTablesAndFieldsIsMirror[0];
                 if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(mismatches[0][0].toString()))) {
@@ -669,7 +677,7 @@ if (1==1) return;*/
             if (1 == 1) {
                 return;
             }
-            String procInstanceName = "em-air-allv2";
+            procInstanceName = "em-air-allv2";
             Rdbms.stablishDBConection("labplanet");
 
 //        String tblCreateScript2=TblsData.ViewSampleTestingGroup.createTableScript("proc-deploy", new String[]{""});
