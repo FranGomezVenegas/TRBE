@@ -55,7 +55,7 @@ public class InstrumentsEnums {
     public enum InstrumentsAPIactionsEndpoints implements EnumIntEndpoints {
         NEW_INSTRUMENT("NEW_INSTRUMENT", GlobalAPIsParams.REQUEST_PARAM_INSTRUMENT_NAME, "", "instrumentNewInstrumentCreated_success",
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INSTRUMENT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                    new LPAPIArguments("familyName", LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FAMILY_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
                     new LPAPIArguments("modelNumber", LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
                     new LPAPIArguments("serialNumber", LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
                     new LPAPIArguments("supplierName", LPAPIArguments.ArgumentType.STRING.toString(), false, 10),
@@ -315,12 +315,12 @@ public class InstrumentsEnums {
 
     public enum InstrumentsAPIqueriesEndpoints implements EnumIntEndpoints {
         ACTIVE_INSTRUMENTS_LIST("ACTIVE_INSTRUMENTS_LIST", "", new LPAPIArguments[]{
-            new LPAPIArguments("familyName", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FAMILY_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
             new LPAPIArguments("excludeIfUserIsNotResponsibleOrBackUp", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 8)}, EndPointsToRequirements.endpointWithNoOutputObjects, null,
                 null, null),
         DECOMISSIONED_INSTRUMENTS_LAST_N_DAYS("DECOMISSIONED_INSTRUMENTS_LAST_N_DAYS", "",
                 new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6),
-                    new LPAPIArguments("familyName", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7)},
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FAMILY_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7)},
                 EndPointsToRequirements.endpointWithNoOutputObjects, null,
                 null, null),
         GET_INSTRUMENT_FAMILY_LIST("GET_INSTRUMENT_FAMILY_LIST", "", new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects, null,
@@ -331,9 +331,9 @@ public class InstrumentsEnums {
                 null, null),
         INSTRUMENT_EVENTS_INPROGRESS("INSTRUMENT_EVENTS_INPROGRESS", "", new LPAPIArguments[]{
             new LPAPIArguments("excludeIfUserIsNotResponsibleOrBackUp", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 6),
-            new LPAPIArguments("familyName", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FAMILY_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
-            new LPAPIArguments("fielValue", LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9)}, EndPointsToRequirements.endpointWithNoOutputObjects, null,
+            new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9)}, EndPointsToRequirements.endpointWithNoOutputObjects, null,
                 null, null),
         INSTRUMENT_EVENT_VARIABLES("INSTRUMENT_EVENT_VARIABLES", "", new LPAPIArguments[]{
             new LPAPIArguments("eventId", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects, null,
@@ -361,8 +361,17 @@ public class InstrumentsEnums {
             new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 9),
             new LPAPIArguments(REQUEST_PARAM_LAST_N_POINTS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 10)}, EndPointsToRequirements.endpointWithNoOutputObjects,
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_RPT_INFO, "Name: INCUBATOR REPORT v1.0").build()).build(),
-                null, null),;
-
+                null, null),
+        INSTRUMENT_EVENTS_CALENDAR("INSTRUMENT_EVENTS_CALENDAR", "", new LPAPIArguments[]{
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INSTRUMENT_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),            
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FAMILY_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DATE_START, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DATE_END, LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
+            new LPAPIArguments("includeOnlyScheduledOne", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 10),            
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 11),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 12)}, EndPointsToRequirements.endpointWithNoOutputObjects, null,
+                null, null),        
+        ;
         private InstrumentsAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, JsonArray reportInfo, String devComment, String devCommentTag) {
             this.name = name;
             this.successMessageCode = successMessageCode;
