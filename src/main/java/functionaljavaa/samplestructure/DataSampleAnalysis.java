@@ -456,8 +456,8 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
                 wFldName, wFldValue,
                 new String[]{TblsData.SampleAnalysis.STATUS.getName(), TblsData.SampleAnalysis.TEST_ID.getName(), TblsData.SampleAnalysis.ANALYSIS.getName()});
         if (Boolean.TRUE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleData[0][0].toString()))) {
-            messages.addMainForError(DataSampleAnalysisErrorTrapping.SAMPLEANALYSIS_NOTFOUND, new Object[]{testId!=null?testId:fieldValue[Arrays.asList(mandatoryFields).indexOf(TblsData.SampleAnalysis.ANALYSIS.getName())], sampleId, schemaDataName});
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLEANALYSIS_NOTFOUND, new Object[]{testId!=null?testId:fieldValue[Arrays.asList(mandatoryFields).indexOf(TblsData.SampleAnalysis.ANALYSIS.getName())], sampleId, schemaDataName});
+            messages.addMainForError(DataSampleAnalysisErrorTrapping.SAMPLEANALYSIS_NOTFOUND, new Object[]{testId != null ? testId : fieldValue[Arrays.asList(mandatoryFields).indexOf(TblsData.SampleAnalysis.ANALYSIS.getName())], sampleId, schemaDataName});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLEANALYSIS_NOTFOUND, new Object[]{testId != null ? testId : fieldValue[Arrays.asList(mandatoryFields).indexOf(TblsData.SampleAnalysis.ANALYSIS.getName())], sampleId, schemaDataName});
         }
         String statusCode = DataSampleStructureStatuses.SampleAnalysisStatuses.NOT_STARTED.getStatusCode("");
         if (Boolean.FALSE.equals(LPNulls.replaceNull(sampleData[0][0]).toString().equalsIgnoreCase(statusCode))) {
@@ -586,15 +586,24 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
                         return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SPECRULE_NOTFOUND, nullValuesArr);
                     }
                     specAnalysisFieldName = LPArray.addValueToArray1D(specAnalysisFieldName,
-                            new String[]{TblsCnfg.SpecLimits.CODE.getName(), TblsCnfg.SpecLimits.CONFIG_VERSION.getName(), TblsCnfg.SpecLimits.VARIATION_NAME.getName()});
+                            new String[]{TblsCnfg.SpecLimits.CODE.getName(), TblsCnfg.SpecLimits.CONFIG_VERSION.getName()});
                     specAnalysisFieldValue = LPArray.addValueToArray1D(specAnalysisFieldValue,
-                            new Object[]{sampleSpecCode, sampleSpecCodeVersion, sampleSpecVariationName});
+                            new Object[]{sampleSpecCode, sampleSpecCodeVersion});
+                    SqlWhere sW = new SqlWhere(TblsCnfg.TablesConfig.SPEC_LIMITS, specAnalysisFieldName, specAnalysisFieldValue);
 
+                    if (Boolean.FALSE.equals("ALL".equalsIgnoreCase(sampleSpecVariationName))) {
+                        sW.addConstraint(TblsCnfg.SpecLimits.VARIATION_NAME, SqlStatement.WHERECLAUSE_TYPES.IN, sampleSpecVariationName.split("\\|"), "|");
+//                        specAnalysisFieldName = LPArray.addValueToArray1D(specAnalysisFieldName, TblsCnfg.SpecLimits.VARIATION_NAME.getName());
+//                        specAnalysisFieldValue = LPArray.addValueToArray1D(specAnalysisFieldValue, sampleSpecVariationName);
+                    }
                     Object[] isReviewByTestingGroupEnable = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName(), DataSampleRevisionTestingGroup.DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP.getTagName());
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isReviewByTestingGroupEnable[0].toString())) {
-                        Object[][] analysisTestingGroup = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(),
-                                specAnalysisFieldName, specAnalysisFieldValue,
-                                new String[]{TblsCnfg.SpecLimits.TESTING_GROUP.getName()});
+                        Object[][] analysisTestingGroup = Rdbms.getRecordFieldsByFilter(procInstanceName, TblsCnfg.TablesConfig.SPEC_LIMITS, sW,
+                                EnumIntTableFields.getTableFieldsFromString(TblsCnfg.TablesConfig.SPEC_LIMITS, new String[]{TblsCnfg.SpecLimits.TESTING_GROUP.getName()}), new String[]{}, Boolean.FALSE);
+
+//                        Object[][] analysisTestingGroup = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(),
+//                                sW,
+//                                new String[]{TblsCnfg.SpecLimits.TESTING_GROUP.getName()});
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisTestingGroup[0][0].toString())) {
                             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SPECLIMIT_NOTFOUND, new Object[]{Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(specAnalysisFieldName, specAnalysisFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR)), schemaDataName});
                         }
@@ -685,7 +694,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         }
         whereResultFieldValue = LPArray.addValueToArray1D(whereResultFieldValue, value);
         String[] getResultFieldsBeforeEach = new String[]{TblsCnfg.AnalysisMethodParams.PARAM_NAME.getName(), TblsCnfg.AnalysisMethodParams.MANDATORY.getName(), TblsCnfg.AnalysisMethodParams.ANALYSIS.getName(),
-            TblsCnfg.AnalysisMethodParams.PARAM_TYPE.getName(), TblsCnfg.AnalysisMethodParams.NUM_REPLICAS.getName(), TblsCnfg.AnalysisMethodParams.UOM.getName(), TblsCnfg.AnalysisMethodParams.UOM_CONVERSION_MODE.getName(), TblsCnfg.AnalysisMethodParams.CALC_LINKED.getName()};
+            TblsCnfg.AnalysisMethodParams.PARAM_TYPE.getName(), TblsCnfg.AnalysisMethodParams.NUM_REPLICAS.getName(), TblsCnfg.AnalysisMethodParams.UOM.getName(), TblsCnfg.AnalysisMethodParams.UOM_CONVERSION_MODE.getName(), TblsCnfg.AnalysisMethodParams.CALC_LINKED.getName(), TblsCnfg.AnalysisMethodParams.LIST_ENTRY.getName()};
         Object[][] resultFieldRecords = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(),
                 whereResultFieldName, whereResultFieldValue, getResultFieldsBeforeEach, new String[]{TblsCnfg.AnalysisMethodParams.ORDER_NUMBER.getName(), TblsCnfg.AnalysisMethodParams.PARAM_NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultFieldRecords[0][0].toString())) {
@@ -871,6 +880,327 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleStructureSuccess.SAMPLE_ANALYSIS_ADDED_SUCCESS, new Object[]{"", testId, schemaDataName});
     }
 
+    public static Object[] sampleAnalysisAddtoSampleNoSpecCheck(Integer sampleId, String[] fieldName, Object[] fieldValue,
+            String sampleSpecCode, Integer sampleSpecCodeVersion, String sampleSpecVariationName, String specAnalysisTestingGroup) {
+        Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        String[] mandatoryFields = null;
+        Object[] mandatoryFieldsValue = null;
+        DataDataIntegrity labIntChecker = new DataDataIntegrity();
+
+        String tableName = TblsData.TablesData.SAMPLE_ANALYSIS.getTableName();
+        String actionName = "Insert";
+        String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
+        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
+        String sampleLevel = TblsData.TablesData.SAMPLE.getTableName();
+        mandatoryFields = labIntChecker.getTableMandatoryFields(sampleLevel + tableName, actionName);
+        InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldName, fieldValue);
+        if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))) {
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
+        }
+        mandatoryFieldsValue = new Object[mandatoryFields.length];
+        StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
+        for (Integer inumLines = 0; inumLines < mandatoryFields.length; inumLines++) {
+            String currField = mandatoryFields[inumLines];
+            boolean contains = Arrays.asList(fieldName).contains(currField.toLowerCase());
+            if (Boolean.FALSE.equals(contains)) {
+                if (mandatoryFieldsMissingBuilder.length() > 0) {
+                    mandatoryFieldsMissingBuilder.append(",");
+                }
+
+                mandatoryFieldsMissingBuilder.append(currField);
+            } else {
+                Integer valuePosic = Arrays.asList(fieldName).indexOf(currField);
+                mandatoryFieldsValue[inumLines] = fieldValue[valuePosic];
+            }
+        }
+        if (mandatoryFieldsMissingBuilder.length() > 0) {
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS,
+                    new String[]{mandatoryFieldsMissingBuilder.toString(), Arrays.toString(fieldName), schemaConfigName});
+        }
+        // set first status. Begin
+        String firstStatus = SampleAnalysisStatuses.getStatusFirstCode();
+        Integer specialFieldIndex = Arrays.asList(fieldName).indexOf(TblsData.Sample.STATUS.getName());
+        if (specialFieldIndex == -1) {
+            fieldName = LPArray.addValueToArray1D(fieldName, TblsData.Sample.STATUS.getName());
+            fieldValue = LPArray.addValueToArray1D(fieldValue, firstStatus);
+        } else {
+            fieldValue[specialFieldIndex] = firstStatus;
+        }
+        // set first status. End
+        // Spec Business Rule. Allow other analyses. Begin
+        Object[][] sampleData = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(), new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId},
+                new String[]{TblsData.Sample.SAMPLE_ID.getName(), TblsData.Sample.STATUS.getName()});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleData[0][0].toString())) {
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_NOT_FOUND, new Object[]{sampleId, schemaDataName});
+        }
+        String[] specialFields = labIntChecker.getStructureSpecialFields(sampleLevel + "Structure");
+        String[] specialFieldsFunction = labIntChecker.getStructureSpecialFieldsFunction(sampleLevel + "Structure");
+        for (Integer inumLines = 0; inumLines < fieldName.length; inumLines++) {
+            String currField = tableName + "." + fieldName[inumLines];
+            boolean contains = Arrays.asList(specialFields).contains(currField);
+            if (contains) {
+                specialFieldIndex = Arrays.asList(specialFields).indexOf(currField);
+                Method method = null;
+                /*                try {
+                    String aMethod = specialFieldsFunction[specialFieldIndex];
+                    Class<?>[] paramTypes = {Rdbms.class, String.class};
+                    method = getClass().getDeclaredMethod(aMethod, paramTypes);
+                } catch (NoSuchMethodException | SecurityException ex) {
+                    errorDetailVariablesLocal = LPArray.addValueToArray1D(errorDetailVariablesLocal, currField);
+                    errorDetailVariablesLocal = LPArray.addValueToArray1D(errorDetailVariablesLocal, aMethod);
+                    errorDetailVariablesLocal = LPArray.addValueToArray1D(errorDetailVariablesLocal, ex.getMessage());
+                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping, errorDetailVariablesLocal);
+                }
+                Object specialFunctionReturn = null;
+                try {
+                    if (method != null) {
+                        specialFunctionReturn = method.invoke(this, procInstanceName);
+                    }
+                } catch (IllegalAccessException | NullPointerException | IllegalArgumentException | InvocationTargetException ex) {
+                    Logger.getLogger(DataSample.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                if ((specialFunctionReturn == null) || (specialFunctionReturn != null && specialFunctionReturn.toString().contains("ERROR"))) {
+                    errorCode = "DataSample_SpecialFunctionReturnedERROR";
+                    errorDetailVariablesLocal = LPArray.addValueToArray1D(errorDetailVariablesLocal, currField);
+                    errorDetailVariablesLocal = LPArray.addValueToArray1D(errorDetailVariablesLocal, aMethod);
+                    errorDetailVariablesLocal = LPArray.addValueToArray1D(errorDetailVariablesLocal, LPNulls.replaceNull(specialFunctionReturn));
+                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping, errorDetailVariablesLocal);
+                }*/
+            }
+        }
+        Object value = null;
+        Object[] whereResultFieldValue = new Object[0];
+        String[] whereResultFieldName = new String[0];
+        String fieldNeed = TblsCnfg.AnalysisMethodParams.ANALYSIS.getName();
+        whereResultFieldName = LPArray.addValueToArray1D(whereResultFieldName, fieldNeed);
+        specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(fieldNeed);
+        if (specialFieldIndex == -1) {
+            specialFieldIndex = Arrays.asList(fieldName).indexOf(fieldNeed);
+            if (specialFieldIndex == -1) {
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS,
+                        new String[]{fieldNeed, Arrays.toString(mandatoryFields), schemaDataName});
+            }
+            value = fieldValue[specialFieldIndex];
+        } else {
+            value = mandatoryFieldsValue[specialFieldIndex];
+        }
+        whereResultFieldValue = LPArray.addValueToArray1D(whereResultFieldValue, value);
+        fieldNeed = TblsCnfg.AnalysisMethodParams.METHOD_NAME.getName();
+        whereResultFieldName = LPArray.addValueToArray1D(whereResultFieldName, fieldNeed);
+        specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(fieldNeed);
+        if (specialFieldIndex == -1) {
+            specialFieldIndex = Arrays.asList(fieldName).indexOf(fieldNeed);
+            if (specialFieldIndex == -1) {
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS,
+                        new String[]{fieldNeed, Arrays.toString(mandatoryFields), schemaDataName});
+            }
+            value = fieldValue[specialFieldIndex];
+        } else {
+            value = mandatoryFieldsValue[specialFieldIndex];
+        }
+        whereResultFieldValue = LPArray.addValueToArray1D(whereResultFieldValue, value);
+        fieldNeed = TblsCnfg.AnalysisMethodParams.METHOD_VERSION.getName();
+        whereResultFieldName = LPArray.addValueToArray1D(whereResultFieldName, fieldNeed);
+        specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(fieldNeed);
+        if (specialFieldIndex == -1) {
+            specialFieldIndex = Arrays.asList(fieldName).indexOf(fieldNeed);
+            if (specialFieldIndex == -1) {
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS,
+                        new String[]{fieldNeed, Arrays.toString(mandatoryFields), schemaDataName});
+            }
+            value = fieldValue[specialFieldIndex];
+        } else {
+            value = mandatoryFieldsValue[specialFieldIndex];
+        }
+        whereResultFieldValue = LPArray.addValueToArray1D(whereResultFieldValue, value);
+        String[] getResultFieldsBeforeEach = new String[]{TblsCnfg.AnalysisMethodParams.PARAM_NAME.getName(), TblsCnfg.AnalysisMethodParams.MANDATORY.getName(), TblsCnfg.AnalysisMethodParams.ANALYSIS.getName(),
+            TblsCnfg.AnalysisMethodParams.PARAM_TYPE.getName(), TblsCnfg.AnalysisMethodParams.NUM_REPLICAS.getName(), TblsCnfg.AnalysisMethodParams.UOM.getName(), TblsCnfg.AnalysisMethodParams.UOM_CONVERSION_MODE.getName(), TblsCnfg.AnalysisMethodParams.CALC_LINKED.getName(), TblsCnfg.AnalysisMethodParams.LIST_ENTRY.getName()};
+        Object[][] resultFieldRecords = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(),
+                whereResultFieldName, whereResultFieldValue, getResultFieldsBeforeEach, new String[]{TblsCnfg.AnalysisMethodParams.ORDER_NUMBER.getName(), TblsCnfg.AnalysisMethodParams.PARAM_NAME.getName()});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultFieldRecords[0][0].toString())) {
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ANALYSISMETHOD_PARAMSNOTFOUND, new Object[]{Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(whereResultFieldName, whereResultFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR)), schemaDataName});
+        }
+        resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, sampleId);
+        getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.SAMPLE_ID.getName());
+        resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, 0);
+        getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.TEST_ID.getName());
+        // This is temporary !!!! ***************************************************************
+        specialFieldIndex = Arrays.asList(getResultFieldsBeforeEach).indexOf(TblsData.SampleAnalysisResult.STATUS.getName());
+        String firstStatusSampleAnalysisResult = SampleAnalysisResultStatuses.getStatusFirstCode();
+        if (specialFieldIndex == -1) {
+            resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, firstStatusSampleAnalysisResult);
+            getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.STATUS.getName());
+        }
+        // This is temporary !!!! ***************************************************************
+        String[] resultMandatoryFields = labIntChecker.getTableMandatoryFields(sampleLevel, actionName);
+        String[] resultDefaulFields = labIntChecker.getTableFieldsDefaulValues(tableName, actionName);
+        Object[] resultDefaulFieldValue = labIntChecker.getTableFieldsDefaulValues(tableName, actionName);
+        Object[] resultMandatoryFieldsValue = new Object[resultMandatoryFields.length];
+        StringBuilder resultMandatoryFieldsMissingBuilder = new StringBuilder(0);
+        for (Integer inumLines = 0; inumLines < resultMandatoryFieldsValue.length; inumLines++) {
+            String currField = resultMandatoryFields[inumLines];
+            boolean contains = Arrays.asList(getResultFieldsBeforeEach).contains(currField.toLowerCase());
+            if (Boolean.FALSE.equals(contains)) {
+                Integer valuePosic = Arrays.asList(resultDefaulFields).indexOf(currField.toLowerCase());
+                if (valuePosic == -1) {
+                    if (resultMandatoryFieldsMissingBuilder.length() > 0) {
+                        resultMandatoryFieldsMissingBuilder.append(",");
+                    }
+
+                    resultMandatoryFieldsMissingBuilder.append(currField);
+                } else {
+                    Object currFieldValue = resultDefaulFieldValue[valuePosic];
+                    resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, currFieldValue);
+                    getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, currField);
+                }
+            }
+        }
+        if (resultMandatoryFieldsMissingBuilder.length() > 0) {
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{resultMandatoryFieldsMissingBuilder, schemaDataName});
+        }
+        fieldName = LPArray.addValueToArray1D(fieldName, new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName(), TblsData.SampleAnalysis.ADDED_ON.getName(), TblsData.SampleAnalysis.ADDED_BY.getName()});
+        fieldValue = LPArray.addValueToArray1D(fieldValue, new Object[]{sampleId, Rdbms.getCurrentDate(), token.getUserName()});
+        Object[] isReviewByTestingGroupEnable = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName(), DataSampleRevisionTestingGroup.DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP.getTagName());
+        /*        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isReviewByTestingGroupEnable[0].toString())
+                && Boolean.FALSE.equals(LPArray.valueInArray(fieldName, TblsData.SampleAnalysis.TESTING_GROUP.getName()))) {
+            fieldName = LPArray.addValueToArray1D(fieldName, TblsData.SampleAnalysis.TESTING_GROUP.getName());
+            fieldValue = LPArray.addValueToArray1D(fieldValue, specAnalysisTestingGroup);
+        }*/
+        RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsData.TablesData.SAMPLE_ANALYSIS, fieldName, fieldValue);
+        Integer testId = Integer.parseInt(insertRecordInTable.getNewRowId().toString());
+        SampleAudit smpAudit = new SampleAudit();
+        smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_ADDED, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
+                testId, sampleId, testId, null, fieldName, fieldValue);
+        Integer valuePosic = Arrays.asList(getResultFieldsBeforeEach).indexOf(TblsData.SampleAnalysisResult.TEST_ID.getName());
+        if (valuePosic == -1) {
+            resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, testId);
+            getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.TEST_ID.getName());
+        } else {
+            resultFieldRecords = LPArray.setColumnValueToArray2D(resultFieldRecords, valuePosic, testId);
+        }
+        valuePosic = Arrays.asList(getResultFieldsBeforeEach).indexOf(TblsData.SampleAnalysisResult.METHOD_NAME.getName());
+        if (valuePosic == -1) {
+            resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.METHOD_NAME.getName())]);
+            getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.METHOD_NAME.getName());
+        }
+        valuePosic = Arrays.asList(getResultFieldsBeforeEach).indexOf(TblsData.SampleAnalysisResult.METHOD_VERSION.getName());
+        if (valuePosic == -1) {
+            resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.METHOD_VERSION.getName())]);
+            getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.METHOD_VERSION.getName());
+        }
+        for (Object[] resultFieldRecord : resultFieldRecords) {
+            Object[] fieldVal = new Object[0];
+            String[] getResultFields = getResultFieldsBeforeEach;
+            for (int col = 0; col < resultFieldRecords[0].length; col++) {
+                fieldVal = LPArray.addValueToArray1D(fieldVal, resultFieldRecord[col]);
+            }
+            valuePosic = Arrays.asList(getResultFields).indexOf(TblsCnfg.AnalysisMethodParams.NUM_REPLICAS.getName());
+            Integer numReplicas = 1;
+            String resultReplicaFieldName = TblsData.SampleAnalysisResult.REPLICA.getName();
+            if (valuePosic == -1) {
+                valuePosic = Arrays.asList(getResultFields).indexOf(TblsData.SampleAnalysisResult.REPLICA.getName());
+                if (valuePosic == -1) {
+                    getResultFields = LPArray.addValueToArray1D(getResultFields, resultReplicaFieldName);
+                    fieldVal = LPArray.addValueToArray1D(fieldVal, numReplicas);
+                    valuePosic = fieldVal.length - 1;
+                }
+            } else {
+                numReplicas = Integer.valueOf(LPNulls.replaceNull(fieldVal[valuePosic].toString()));
+                getResultFields[valuePosic] = resultReplicaFieldName;
+                if ((numReplicas == null) || (numReplicas == 0)) {
+                    numReplicas = 1;
+                    fieldVal[valuePosic] = 1;
+                }
+            }
+//            String[] getResultFieldsWithLimits=getResultFields;
+//            Object[] fieldValWithLimits=fieldVal;
+            if (sampleSpecCode.length() > 0) {
+                Object[][] specLimits = ConfigSpecRule.getSpecLimitLimitIdFromSpecVariables(sampleSpecCode, sampleSpecCodeVersion,
+                        sampleSpecVariationName,
+                        fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.ANALYSIS.getName())].toString(),
+                        fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.METHOD_NAME.getName())].toString(),
+                        Integer.valueOf(fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.METHOD_VERSION.getName())].toString()),
+                        fieldVal[Arrays.asList(getResultFields).indexOf(TblsData.SampleAnalysisResult.PARAM_NAME.getName())].toString(),
+                        new String[]{TblsCnfg.SpecLimits.LIMIT_ID.getName(), TblsCnfg.SpecLimits.MAX_DP.getName(), TblsCnfg.SpecLimits.LIST_ENTRY.getName()});
+                Integer fldPosic = -1;
+                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(specLimits[0][0].toString()))) {
+                    fldPosic = LPArray.valuePosicInArray(getResultFields, TblsData.SampleAnalysisResult.LIMIT_ID.getName());
+                    if (fldPosic == -1) {
+//                        getResultFieldsWithLimits = LPArray.addValueToArray1D(getResultFieldsWithLimits, TblsData.SampleAnalysisResult.LIMIT_ID.getName());
+//                        fieldValWithLimits = LPArray.addValueToArray1D(fieldValWithLimits, specLimits[0][0]);
+                        getResultFields = LPArray.addValueToArray1D(getResultFields, TblsData.SampleAnalysisResult.LIMIT_ID.getName());
+                        fieldVal = LPArray.addValueToArray1D(fieldVal, specLimits[0][0]);
+                    } else {
+//                        fieldValWithLimits[fldPosic]=specLimits[0][0];
+                        fieldVal[fldPosic] = specLimits[0][0];
+                    }
+                    if (specLimits[0][1] != null && specLimits[0][1].toString().length() > 0) {
+                        fldPosic = LPArray.valuePosicInArray(getResultFields, TblsData.SampleAnalysisResult.MAX_DP.getName());
+                        if (fldPosic == -1) {
+//                            getResultFieldsWithLimits = LPArray.addValueToArray1D(getResultFieldsWithLimits, TblsData.SampleAnalysisResult.MAX_DP.getName());
+//                            fieldValWithLimits = LPArray.addValueToArray1D(fieldValWithLimits, specLimits[0][1]);
+                            getResultFields = LPArray.addValueToArray1D(getResultFields, TblsData.SampleAnalysisResult.MAX_DP.getName());
+                            fieldVal = LPArray.addValueToArray1D(fieldVal, specLimits[0][1]);
+                        } else {
+//                            fieldValWithLimits[fldPosic]=specLimits[0][1];
+                            fieldVal[fldPosic] = specLimits[0][1];
+                        }
+                    }
+                    if (specLimits[0][2] != null && specLimits[0][2].toString().length() > 0) {
+                        fldPosic = LPArray.valuePosicInArray(getResultFields, TblsData.SampleAnalysisResult.LIST_ENTRY.getName());
+                        if (fldPosic == -1) {
+//                            getResultFieldsWithLimits = LPArray.addValueToArray1D(getResultFieldsWithLimits, TblsData.SampleAnalysisResult.LIST_ENTRY.getName());
+//                            fieldValWithLimits = LPArray.addValueToArray1D(fieldValWithLimits, specLimits[0][2]);
+                            getResultFields = LPArray.addValueToArray1D(getResultFields, TblsData.SampleAnalysisResult.LIST_ENTRY.getName());
+                            fieldVal = LPArray.addValueToArray1D(fieldVal, specLimits[0][2]);
+                        } else {
+//                            fieldValWithLimits[fldPosic]=specLimits[0][2];
+                            fieldVal[fldPosic] = specLimits[0][2];
+                        }
+                    }
+                }
+            }
+            for (Integer iNumReps = 1; iNumReps <= numReplicas; iNumReps++) {
+                fieldVal[valuePosic] = iNumReps;
+                Integer statusFieldPosic = LPArray.valuePosicInArray(getResultFields, TblsData.SampleAnalysisResult.STATUS.getName());
+                if (statusFieldPosic == -1) {
+//                    getResultFieldsWithLimits = LPArray.addValueToArray1D(getResultFieldsWithLimits, TblsData.SampleAnalysisResult.STATUS.getName());
+//                    fieldValWithLimits = LPArray.addValueToArray1D(fieldValWithLimits, firstStatusSampleAnalysisResult);
+                    getResultFields = LPArray.addValueToArray1D(getResultFields, TblsData.SampleAnalysisResult.STATUS.getName());
+                    fieldVal = LPArray.addValueToArray1D(fieldVal, firstStatusSampleAnalysisResult);
+                } else {
+                    fieldVal[statusFieldPosic] = firstStatusSampleAnalysisResult;
+                }
+                RdbmsObject newResultRdbmsDiagnObj = Rdbms.insertRecordInTable(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT,
+                        getResultFields, fieldVal);
+                if (Boolean.FALSE.equals(newResultRdbmsDiagnObj.getRunSuccess())) {
+                    return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, newResultRdbmsDiagnObj.getErrorMessageCode(), newResultRdbmsDiagnObj.getErrorMessageVariables());
+                }
+                Integer resultId = Integer.parseInt(newResultRdbmsDiagnObj.getNewRowId().toString());
+                smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ADDED, sampleLevel + TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
+                        resultId, sampleId, testId, resultId, getResultFields, fieldVal);
+                Object[] dbTableExists = Rdbms.dbTableExists(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT_SECONDENTRY.getTableName());
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())) {
+                    getResultFields = LPArray.addValueToArray1D(getResultFields, TblsData.SampleAnalysisResultSecondEntry.FIRST_RESULT_ID.getName());
+                    fieldVal = LPArray.addValueToArray1D(fieldVal, resultId);
+                    newResultRdbmsDiagnObj = Rdbms.insertRecordInTable(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT_SECONDENTRY,
+                            getResultFields, fieldVal);
+                    Integer resultIdSecondEntry = Integer.parseInt(newResultRdbmsDiagnObj.getNewRowId().toString());
+                    smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_SECONDENTRY_ADDED, sampleLevel + TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
+                            resultId, sampleId, testId, resultIdSecondEntry, getResultFields, fieldVal);
+                }
+            }
+        }
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isReviewByTestingGroupEnable[0].toString())) {
+            Object[] addSampleRevisionByTestingGroup = DataSampleRevisionTestingGroup.addSampleRevisionByTestingGroup(sampleId, testId, specAnalysisTestingGroup);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(addSampleRevisionByTestingGroup[0].toString())) {
+                return addSampleRevisionByTestingGroup;
+            }
+        }
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleStructureSuccess.SAMPLE_ANALYSIS_ADDED_SUCCESS, new Object[]{"", testId, schemaDataName});
+    }
+
     public static Object[] isAllsampleAnalysisReviewed(Integer sampleId, String[] whereFieldName, Object[] whereFieldValue) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String sampleAnalysisStatusReviewed = SampleAnalysisStatuses.REVIEWED.getStatusCode("");
@@ -895,6 +1225,200 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.PENDING_REVISION, null);
         }
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "", null);
+    }
+
+    public static Object[] addSampleAnalysisWithResults(Integer sampleId, String[] fieldName, Object[] fieldValue, String specCode, Integer specCodeVersion, String paramName, Integer specLimitId, String specAnalysisTestingGroup) {
+        try {
+            Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+            String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+            String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
+            String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
+            DataDataIntegrity labIntChecker = new DataDataIntegrity();
+
+            String tableName = TblsData.TablesData.SAMPLE_ANALYSIS.getTableName();
+            String actionName = "Insert";
+            String sampleLevel = TblsData.TablesData.SAMPLE.getTableName();
+            String[] mandatoryFields = labIntChecker.getTableMandatoryFields(sampleLevel + tableName, actionName);
+
+            Object value = null;
+
+            String[] whereResultFieldName = new String[0];
+            String[] fieldNeedArr = new String[]{TblsCnfg.AnalysisMethodParams.ANALYSIS.getName(), TblsCnfg.AnalysisMethodParams.METHOD_NAME.getName(),
+                TblsCnfg.AnalysisMethodParams.METHOD_VERSION.getName()};
+            Object[] whereResultFieldValue = new Object[0];
+            Object[] mandatoryFieldsValue = new Object[fieldNeedArr.length];
+            for (String fieldNeed : fieldNeedArr) {
+                whereResultFieldName = LPArray.addValueToArray1D(whereResultFieldName, fieldNeed);
+                Integer specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(fieldNeed);
+                if (specialFieldIndex == -1) {
+                    specialFieldIndex = Arrays.asList(fieldName).indexOf(fieldNeed);
+                    if (specialFieldIndex == -1) {
+                        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS,
+                                new String[]{fieldNeed, Arrays.toString(mandatoryFields), schemaDataName});
+                    }
+                    value = fieldValue[specialFieldIndex];
+                    whereResultFieldValue = LPArray.addValueToArray1D(whereResultFieldValue, fieldValue[specialFieldIndex]);
+                } else {
+                    whereResultFieldValue = LPArray.addValueToArray1D(whereResultFieldValue, mandatoryFieldsValue[specialFieldIndex]);
+                }
+            }
+
+            Integer numReplicas = 1;
+
+            String[] getResultFieldsBeforeEach = new String[]{TblsCnfg.AnalysisMethodParams.PARAM_NAME.getName(), TblsCnfg.AnalysisMethodParams.MANDATORY.getName(), TblsCnfg.AnalysisMethodParams.ANALYSIS.getName(),
+                TblsCnfg.AnalysisMethodParams.PARAM_TYPE.getName(), TblsCnfg.AnalysisMethodParams.NUM_REPLICAS.getName(), TblsCnfg.AnalysisMethodParams.UOM.getName(), TblsCnfg.AnalysisMethodParams.UOM_CONVERSION_MODE.getName(), TblsCnfg.AnalysisMethodParams.CALC_LINKED.getName(), TblsCnfg.AnalysisMethodParams.LIST_ENTRY.getName()};
+            Object[][] resultFieldRecords = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(),
+                    whereResultFieldName, whereResultFieldValue, getResultFieldsBeforeEach, new String[]{TblsCnfg.AnalysisMethodParams.ORDER_NUMBER.getName(), TblsCnfg.AnalysisMethodParams.PARAM_NAME.getName()});
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultFieldRecords[0][0].toString())) {
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ANALYSISMETHOD_PARAMSNOTFOUND, new Object[]{Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(whereResultFieldName, whereResultFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR)), schemaDataName});
+            }
+            resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, sampleId);
+            getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.SAMPLE_ID.getName());
+            resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, 0);
+            getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.TEST_ID.getName());
+            // This is temporary !!!! ***************************************************************
+            Integer specialFieldIndex = Arrays.asList(getResultFieldsBeforeEach).indexOf(TblsData.SampleAnalysisResult.STATUS.getName());
+            String firstStatusSampleAnalysisResult = SampleAnalysisResultStatuses.getStatusFirstCode();
+            if (specialFieldIndex == -1) {
+                resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, firstStatusSampleAnalysisResult);
+                getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.STATUS.getName());
+            }
+
+            String[] resultMandatoryFields = labIntChecker.getTableMandatoryFields(sampleLevel, actionName);
+            String[] resultDefaulFields = labIntChecker.getTableFieldsDefaulValues(tableName, actionName);
+            Object[] resultDefaulFieldValue = labIntChecker.getTableFieldsDefaulValues(tableName, actionName);
+            Object[] resultMandatoryFieldsValue = new Object[resultMandatoryFields.length];
+            StringBuilder resultMandatoryFieldsMissingBuilder = new StringBuilder(0);
+            for (Integer inumLines = 0; inumLines < resultMandatoryFieldsValue.length; inumLines++) {
+                String currField = resultMandatoryFields[inumLines];
+                boolean contains = Arrays.asList(getResultFieldsBeforeEach).contains(currField.toLowerCase());
+                if (Boolean.FALSE.equals(contains)) {
+                    Integer valuePosic = Arrays.asList(resultDefaulFields).indexOf(currField.toLowerCase());
+                    if (valuePosic == -1) {
+                        if (resultMandatoryFieldsMissingBuilder.length() > 0) {
+                            resultMandatoryFieldsMissingBuilder.append(",");
+                        }
+
+                        resultMandatoryFieldsMissingBuilder.append(currField);
+                    } else {
+                        Object currFieldValue = resultDefaulFieldValue[valuePosic];
+                        resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, currFieldValue);
+                        getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, currField);
+                    }
+                }
+            }
+
+            if (resultMandatoryFieldsMissingBuilder.length() > 0) {
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{resultMandatoryFieldsMissingBuilder, schemaDataName});
+            }
+            fieldName = LPArray.addValueToArray1D(fieldName, new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName(), TblsData.SampleAnalysis.ADDED_ON.getName(), TblsData.SampleAnalysis.ADDED_BY.getName()});
+            fieldValue = LPArray.addValueToArray1D(fieldValue, new Object[]{sampleId, Rdbms.getCurrentDate(), token.getUserName()});
+            Object[] isReviewByTestingGroupEnable = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName(), DataSampleRevisionTestingGroup.DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP.getTagName());
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isReviewByTestingGroupEnable[0].toString())
+                    && Boolean.FALSE.equals(LPArray.valueInArray(fieldName, TblsData.SampleAnalysis.TESTING_GROUP.getName()))) {
+                fieldName = LPArray.addValueToArray1D(fieldName, TblsData.SampleAnalysis.TESTING_GROUP.getName());
+                fieldValue = LPArray.addValueToArray1D(fieldValue, specAnalysisTestingGroup);
+            }
+            String firstStatus = SampleAnalysisStatuses.getStatusFirstCode();
+            specialFieldIndex = Arrays.asList(fieldName).indexOf(TblsData.Sample.STATUS.getName());
+            if (specialFieldIndex == -1) {
+                fieldName = LPArray.addValueToArray1D(fieldName, TblsData.Sample.STATUS.getName());
+                fieldValue = LPArray.addValueToArray1D(fieldValue, firstStatus);
+            } else {
+                fieldValue[specialFieldIndex] = firstStatus;
+            }
+            RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsData.TablesData.SAMPLE_ANALYSIS, fieldName, fieldValue);
+            Integer testId = Integer.parseInt(insertRecordInTable.getNewRowId().toString());
+            SampleAudit smpAudit = new SampleAudit();
+            smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_ADDED, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
+                    testId, sampleId, testId, null, fieldName, fieldValue);
+            Integer valuePosic = Arrays.asList(getResultFieldsBeforeEach).indexOf(TblsData.SampleAnalysisResult.TEST_ID.getName());
+            if (valuePosic == -1) {
+                resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, testId);
+                getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.TEST_ID.getName());
+            } else {
+                resultFieldRecords = LPArray.setColumnValueToArray2D(resultFieldRecords, valuePosic, testId);
+            }
+            valuePosic = Arrays.asList(getResultFieldsBeforeEach).indexOf(TblsData.SampleAnalysisResult.METHOD_NAME.getName());
+            if (valuePosic == -1) {
+                resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.METHOD_NAME.getName())]);
+                getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.METHOD_NAME.getName());
+            }
+            valuePosic = Arrays.asList(getResultFieldsBeforeEach).indexOf(TblsData.SampleAnalysisResult.METHOD_VERSION.getName());
+            if (valuePosic == -1) {
+                resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.METHOD_VERSION.getName())]);
+                getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.METHOD_VERSION.getName());
+            }
+            for (Object[] resultFieldRecord : resultFieldRecords) {
+                Object[] fieldVal = new Object[0];
+                String[] getResultFields = getResultFieldsBeforeEach;
+                for (int col = 0; col < resultFieldRecords[0].length; col++) {
+                    fieldVal = LPArray.addValueToArray1D(fieldVal, resultFieldRecord[col]);
+                }
+                valuePosic = Arrays.asList(getResultFields).indexOf(TblsCnfg.AnalysisMethodParams.NUM_REPLICAS.getName());
+                numReplicas = 1;
+                String resultReplicaFieldName = TblsData.SampleAnalysisResult.REPLICA.getName();
+                if (valuePosic == -1) {
+                    valuePosic = Arrays.asList(getResultFields).indexOf(TblsData.SampleAnalysisResult.REPLICA.getName());
+                    if (valuePosic == -1) {
+                        getResultFields = LPArray.addValueToArray1D(getResultFields, resultReplicaFieldName);
+                        fieldVal = LPArray.addValueToArray1D(fieldVal, numReplicas);
+                        valuePosic = fieldVal.length - 1;
+                    }
+                } else {
+                    numReplicas = Integer.valueOf(LPNulls.replaceNull(fieldVal[valuePosic].toString()));
+                    getResultFields[valuePosic] = resultReplicaFieldName;
+                    if ((numReplicas == null) || (numReplicas == 0)) {
+                        numReplicas = 1;
+                        fieldVal[valuePosic] = 1;
+                    }
+                }
+                for (Integer iNumReps = 1; iNumReps <= numReplicas; iNumReps++) {
+                    fieldVal[valuePosic] = iNumReps;
+                    Integer statusFieldPosic = LPArray.valuePosicInArray(getResultFields, TblsData.SampleAnalysisResult.STATUS.getName());
+                    if (statusFieldPosic == -1) {
+                        getResultFields = LPArray.addValueToArray1D(getResultFields, TblsData.SampleAnalysisResult.STATUS.getName());
+                        fieldVal = LPArray.addValueToArray1D(fieldVal, firstStatusSampleAnalysisResult);
+                    } else {
+                        fieldVal[statusFieldPosic] = firstStatusSampleAnalysisResult;
+                    }
+                    if (specLimitId != null
+                            && paramName.equalsIgnoreCase(fieldVal[LPArray.valuePosicInArray(getResultFields, TblsData.SampleAnalysisResult.PARAM_NAME.getName())].toString())) {
+                        getResultFields = LPArray.addValueToArray1D(getResultFields, TblsData.SampleAnalysisResult.LIMIT_ID.getName());
+                        fieldVal = LPArray.addValueToArray1D(fieldVal, specLimitId);
+                    }
+                    RdbmsObject newResultRdbmsDiagnObj = Rdbms.insertRecordInTable(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT,
+                            getResultFields, fieldVal);
+                    if (Boolean.FALSE.equals(newResultRdbmsDiagnObj.getRunSuccess())) {
+                        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, newResultRdbmsDiagnObj.getErrorMessageCode(), newResultRdbmsDiagnObj.getErrorMessageVariables());
+                    }
+                    Integer resultId = Integer.parseInt(newResultRdbmsDiagnObj.getNewRowId().toString());
+                    smpAudit = new SampleAudit();
+                    smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ADDED, sampleLevel + TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
+                            resultId, sampleId, testId, resultId, getResultFields, fieldVal);
+                    Object[] dbTableExists = Rdbms.dbTableExists(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT_SECONDENTRY.getTableName());
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())) {
+                        getResultFields = LPArray.addValueToArray1D(getResultFields, TblsData.SampleAnalysisResultSecondEntry.FIRST_RESULT_ID.getName());
+                        fieldVal = LPArray.addValueToArray1D(fieldVal, resultId);
+                        newResultRdbmsDiagnObj = Rdbms.insertRecordInTable(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT_SECONDENTRY,
+                                getResultFields, fieldVal);
+                        Integer resultIdSecondEntry = Integer.parseInt(newResultRdbmsDiagnObj.getNewRowId().toString());
+                        smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_SECONDENTRY_ADDED, sampleLevel + TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
+                                resultId, sampleId, testId, resultIdSecondEntry, getResultFields, fieldVal);
+                    }
+                }
+            }
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isReviewByTestingGroupEnable[0].toString())) {
+                Object[] addSampleRevisionByTestingGroup = DataSampleRevisionTestingGroup.addSampleRevisionByTestingGroup(sampleId, testId, specAnalysisTestingGroup);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(addSampleRevisionByTestingGroup[0].toString())) {
+                    return addSampleRevisionByTestingGroup;
+                }
+            }
+
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleStructureSuccess.SAMPLE_ANALYSIS_ADDED_SUCCESS, new Object[]{"", testId, schemaDataName});
+        } catch (Exception e) {
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, e.getMessage(), new Object[]{e.getMessage()});
+        }
     }
 
 }

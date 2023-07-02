@@ -128,7 +128,10 @@ public class TblsInspLotRMConfig {
         BULK_SAMPLING_DEFAULT_ALGORITHM("bulk_sampling_default_algorithm", LPDatabase.stringNotNull(), null, null, null, null),
         PERFORM_BULK_CONTROL("perform_bulk_control", LPDatabase.booleanFld(), null, null, null, null),
         ADD_ADHOC_BULK_ADDITION("allow_adhoc_bulk_addition", LPDatabase.booleanFld(), null, null, null, null),
-        SAMPLING_ALGORITHM("sampling_algorithm", LPDatabase.stringNotNull(), null, null, null, null), // ...
+        SAMPLING_ALGORITHM("sampling_algorithm", LPDatabase.stringNotNull(), null, null, null, null),
+        DEFAULT_UOM("default_uom", LPDatabase.string(), null, null, null, null),
+        ALTERNATIVE_UOMS("alternative_uoms", LPDatabase.string(), null, null, null, null),
+        
         ;
 
         private Material(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
