@@ -241,9 +241,9 @@ public class DataInspLotRMCertificate {
                     return etiquetasValores;
                 case SAMPLE_REVIEWER:
                     Integer revwdFldPosic = LPArray.valuePosicInArray(fieldsToRetrieveSample, TblsData.Sample.REVIEWED.getName());
-                    if (revwdFldPosic == -1) {
-                        etiquetasValores.put("author_value_en", "Sample Review info not found " + signLevel);
-                        etiquetasValores.put("author_value_es", "Info de Revisión de muestra no encontrada " + signLevel);
+                    if (revwdFldPosic == -1||LPPlatform.LAB_FALSE.equalsIgnoreCase(lotSampleInfo[0][0].toString())) {
+                        etiquetasValores.put("author_value_en", "");
+                        etiquetasValores.put("author_value_es", "");
                         etiquetasValores.put("date_value_en", "");
                         etiquetasValores.put("date_value_es", "");
                         etiquetasValores.put("signed", true);
@@ -320,7 +320,7 @@ public class DataInspLotRMCertificate {
             Object[][] criteria = {{methodFldPosic, methodName}, {analysisFldPosic, analysis}, {paramNameFldPosic, paramName}};
             int[] allResultsForThisAnalysisArr = LPArray.valuePosicArray2D(lotSampleResultInfo, criteria);
 //        Integer[] allResultsForThisAnalysisArr = LPArray.valueAllPosicInArray2D(lotSampleResultInfo, analysis, analysisFldPosic);
-            if (allResultsForThisAnalysisArr.length == 0 || allResultsForThisAnalysisArr[0] == -1) {
+            if (allResultsForThisAnalysisArr.length == 0 || allResultsForThisAnalysisArr[0] == -1919191919) {
                 return ("en".equalsIgnoreCase(language)) ? "Not performed" : "No realizado";
             }
 //        Integer prettyValueFldPosic = EnumIntViewFields.getFldPosicInArray(fldsForSampleResults, TblsInspLotRMData.ViewSampleAnalysisResultWithSpecLimits.PRETTY_VALUE.getName());
