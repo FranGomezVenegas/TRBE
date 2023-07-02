@@ -33,6 +33,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import static lbplanet.utilities.LPDate.stringFormatToLocalDateTime;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
+import trazit.enums.EnumIntTableFields;
+import trazit.enums.EnumIntTables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 
@@ -142,8 +144,48 @@ public class LPArray {
 
     }
 
-    public static Object[] convertStringWithDataTypeToObjectArrayInternalMessage(String[] myStringsArray) {
+    public static Object[] checkNotPresentOrSpecialFields(EnumIntTables tblObj, String[] fldsArr) {
+        EnumIntTableFields[] tableFields = tblObj.getTableFields();
+        String[] missingFlds = new String[]{};
+        String[] systemFlds = new String[]{};
+        for (String curFld : fldsArr) {
+            Integer fldPosicInArray = EnumIntTableFields.getFldPosicInArray(tableFields, curFld);
+            if (fldPosicInArray == -1) {
+                missingFlds = LPArray.addValueToArray1D(missingFlds, curFld);
+            } else {
+                if (tblObj.getTableFields()[fldPosicInArray].isSystemField()) {
+                    systemFlds = LPArray.addValueToArray1D(systemFlds, curFld);
+                }
+            }
+        }
+        if ((missingFlds.length > 0) && (systemFlds.length > 0)) {
+            return new Object[]{LPPlatform.LAB_FALSE,
+                new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.MISSING_AND_SPECIAL_FIELDS_IN_TABLE, new Object[]{"", tblObj.getTableName(), Arrays.toString(missingFlds), Arrays.toString(systemFlds)})};
+        }
+        if (missingFlds.length > 0) {
+            return new Object[]{LPPlatform.LAB_FALSE,
+                new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.MISSING_FIELDS_IN_TABLE, new Object[]{"", tblObj.getTableName(), Arrays.toString(missingFlds)})};
+        }
+        if (systemFlds.length > 0) {
+            return new Object[]{LPPlatform.LAB_FALSE,
+                new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.SPECIAL_FIELDS_IN_TABLE, new Object[]{"", tblObj.getTableName(), Arrays.toString(systemFlds)})};
+        }
 
+        return new Object[]{LPPlatform.LAB_TRUE};
+    }
+
+    public static Object[] convertStringWithDataTypeToObjectArrayInternalMessage(String[] myStringsArray) {
+        return convertStringWithDataTypeToObjectArrayInternalMessage(myStringsArray, null, null);
+    }
+
+    public static Object[] convertStringWithDataTypeToObjectArrayInternalMessage(String[] myStringsArray, EnumIntTables tblObj, String[] fldsArr) {
+
+        if (tblObj != null && fldsArr != null) {
+            Object[] checkNotPresentSystemFields = checkNotPresentOrSpecialFields(tblObj, fldsArr);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(checkNotPresentSystemFields[0].toString())) {
+                return checkNotPresentSystemFields;
+            }
+        }
         Object[] myObjectsArray = new Object[myStringsArray.length];
 
         for (Integer i = 0; i < myStringsArray.length; i++) {
@@ -940,7 +982,7 @@ public class LPArray {
         }
 
         if (matchingRows.isEmpty()) {
-            return new int[]{-1};
+            return new int[]{-1919191919};
         } else {
             return matchingRows.stream().mapToInt(Integer::intValue).toArray();
         }
