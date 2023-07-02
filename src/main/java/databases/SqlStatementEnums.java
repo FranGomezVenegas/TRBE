@@ -414,7 +414,11 @@ public class SqlStatementEnums {
                 if (curEntry.getOrClause().length == 1) {
                     queryWhere.append(" or ");
                 } else {
-                    queryWhere.append(" and (");
+                    if (queryWhere.length() == 0) {
+                        queryWhere.append(" (");
+                    } else {
+                        queryWhere.append(" and (");
+                    }
                 }
                 for (SqlWhereEntry curEntryOr : curEntry.getOrClause()) {
                     Object[] addSingleConstraint = addSingleConstraint(curEntryOr, caseSensitive, "or");
@@ -720,9 +724,9 @@ public class SqlStatementEnums {
             if (fn == null || fn.length() == 0) {
                 break;
             }
-            if ( (iwhereFieldNames > 0) && Boolean.FALSE.equals(fn.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase()))) {
-                    queryWhere.append(" and ");
-                }            
+            if ((iwhereFieldNames > 0) && Boolean.FALSE.equals(fn.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase()))) {
+                queryWhere.append(" and ");
+            }
             if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.NULL.getSqlClause())) {
                 queryWhere.append(fn);
             } else if (fn.toUpperCase().contains(" " + WHERECLAUSE_TYPES.NOT_IN.getSqlClause())) {
@@ -817,9 +821,9 @@ public class SqlStatementEnums {
         if (fn == null || fn.length() == 0) {
             return new Object[]{};
         }
-        if ( (queryWhere.length() > 0) &&
-            Boolean.FALSE.equals(symbol.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase()))) {            
-                queryWhere.append(" ").append(constraintType).append(" ");            
+        if ((queryWhere.length() > 0)
+                && Boolean.FALSE.equals(symbol.toUpperCase().startsWith(WHERECLAUSE_TYPES.OR.getSqlClause().toUpperCase()))) {
+            queryWhere.append(" ").append(constraintType).append(" ");
         }
         switch (curEntry.getSymbol()) {
             case IS_NOT_NULL:
@@ -840,31 +844,37 @@ public class SqlStatementEnums {
                 if (separator == null || separator.length() == 0) {
                     separator = "|";
                 }
-                String textSpecs = fldV[0].toString();
+                Object[] textSpecArray = null;
                 Boolean valuesAreNumbers = false;
-                if (textSpecs.toUpperCase().contains("INTEGER*")) {
-                    textSpecs = textSpecs.replace("INTEGER*", "");
-                    valuesAreNumbers = true;
-                }
-                Object[] textSpecArray = textSpecs.split("\\" + separator);
-                queryWhere.append(fn).append(" ").append(symbol.toLowerCase()).append("(");
-                if (Boolean.FALSE.equals(valuesAreNumbers)) {
-                    if (curEntry.getFldValue()[0] instanceof Object[]) {
-                        textSpecArray = (Object[]) curEntry.getFldValue()[0];
-                    } else if (curEntry.getFldValue()[0] instanceof String[]) {
-                        textSpecArray = (Object[]) curEntry.getFldValue()[0];
-                    } else {
-                        textSpecArray = new Object[]{curEntry.getFldValue()[0]};
+                if (fldV != null && fldV.length > 1) {
+                    textSpecArray = fldV;
+                } else {
+                    String textSpecs = fldV[0].toString();
+                    if (textSpecs.toUpperCase().contains("INTEGER*")) {
+                        textSpecs = textSpecs.replace("INTEGER*", "");
+                        valuesAreNumbers = true;
+                    }
+                    textSpecArray = textSpecs.split("\\" + separator);
+                    if (Boolean.FALSE.equals(valuesAreNumbers)) {
+                        if (curEntry.getFldValue()[0] instanceof Object[]) {
+                            textSpecArray = (Object[]) curEntry.getFldValue()[0];
+                        } else if (curEntry.getFldValue()[0] instanceof String[]) {
+                            textSpecArray = (Object[]) curEntry.getFldValue()[0];
+                        } else {
+                            textSpecArray = new Object[]{curEntry.getFldValue()[0]};
+                        }
                     }
                 }
+                queryWhere.append(fn).append(" ").append(symbol.toLowerCase()).append("(");
                 for (Object f : textSpecArray) {
                     queryWhere.append("?,");
                     if (Boolean.TRUE.equals(valuesAreNumbers)) {
                         whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, Integer.valueOf(f.toString()));
                     } else {
-                        whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFldValuesGetCurrArrValue(textSpecs, f.toString()));
+                        whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, f.toString());
                     }
                 }
+
                 queryWhere.deleteCharAt(queryWhere.length() - 1);
                 queryWhere.append(")");
                 break;
