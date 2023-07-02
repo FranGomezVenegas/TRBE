@@ -19,6 +19,7 @@ import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.parameter.Parameter.isTagValueOneOfEnableOnes;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.util.Arrays;
+import java.util.Iterator;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
@@ -106,9 +107,9 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                     for (Object[] currLot : lotInfo) {
 
                         JSONObject jLotInfoObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieveLot, currLot);
-
+                        String currMaterial = "";
                         if (LPArray.valueInArray(fieldsToRetrieveLot, TblsInspLotRMData.Lot.MATERIAL_NAME.getName())) {
-                            String currMaterial = currLot[LPArray.valuePosicInArray(fieldsToRetrieveLot, TblsInspLotRMData.Lot.MATERIAL_NAME.getName())].toString();
+                            currMaterial = currLot[LPArray.valuePosicInArray(fieldsToRetrieveLot, TblsInspLotRMData.Lot.MATERIAL_NAME.getName())].toString();
                             if (Boolean.TRUE.equals(includesSamplesInfo) && currMaterial != null && currMaterial.length() > 0) {
                                 jLotInfoObj.put(TblsData.TablesData.SAMPLE.getTableName(), dataSampleStructure(lotName, null, null, new String[]{TblsInspLotRMData.Sample.SAMPLE_ID.getName()}, true, true));
                             }
@@ -116,6 +117,8 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                                 jLotInfoObj.put(TblsInspLotRMConfig.TablesInspLotRMConfig.MATERIAL.getTableName(), configMaterialStructure(currMaterial, null, new String[]{TblsInspLotRMConfig.Material.NAME.getName()}, true, true, true));
                             }
                         }
+                        JSONArray materialUomInfo = configMaterialStructure(currMaterial, TblsInspLotRMConfig.Material.DEFAULT_UOM.getName() + "|" + TblsInspLotRMConfig.Material.ALTERNATIVE_UOMS.getName(), new String[]{TblsInspLotRMConfig.Material.NAME.getName()}, false, false, false);
+
                         lotJsonObj.put("lot_info", jLotInfoObj);
                         lotJsonObj.put("lot_name", jLotInfoObj.get(TblsInspLotRMData.Lot.NAME.getName()));
 
@@ -124,6 +127,7 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                         lotInfo = QueryUtilitiesEnums.getTableData(TblsInspLotRMData.TablesInspLotRMData.LOT_BULK,
                                 tableFieldsBulk, new SqlWhere(TblsInspLotRMData.TablesInspLotRMData.LOT_BULK, new String[]{TblsInspLotRMData.LotBulk.LOT_NAME.getName()}, new Object[]{lotName}),
                                 new String[]{TblsInspLotRMData.LotBulk.LOT_NAME.getName()}, null);
+
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(lotInfo[0][0].toString())) {
                             JSONObject jLotSectionInfoObj = new JSONObject();
                             lotJsonObj.put(TblsInspLotRMData.TablesInspLotRMData.LOT_BULK.getTableName(), jLotSectionInfoObj);
@@ -131,11 +135,16 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                             JSONArray lotInfoJsonArr = new JSONArray();
                             for (Object[] curRow : lotInfo) {
                                 JSONObject jLotSectionInfoObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieveBulk, curRow);
+                                for (Iterator it = materialUomInfo.iterator(); it.hasNext();) {
+                                    JSONObject matInfoObj = (JSONObject) it.next();
+                                     
+                                    jLotSectionInfoObj.put(TblsInspLotRMConfig.Material.DEFAULT_UOM.getName(), (String) matInfoObj.get(TblsInspLotRMConfig.Material.DEFAULT_UOM.getName()));
+                                    jLotSectionInfoObj.put(TblsInspLotRMConfig.Material.ALTERNATIVE_UOMS.getName(), (String) matInfoObj.get(TblsInspLotRMConfig.Material.ALTERNATIVE_UOMS.getName()));
+                                }
                                 lotInfoJsonArr.add(jLotSectionInfoObj);
                             }
                             lotJsonObj.put(TblsInspLotRMData.TablesInspLotRMData.LOT_BULK.getTableName(), lotInfoJsonArr);
                         }
-
                         tableFieldsBulk = TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN.getTableFields();
                         fieldsToRetrieveBulk = EnumIntTableFields.getAllFieldNames(tableFieldsBulk);
                         lotInfo = QueryUtilitiesEnums.getTableData(TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN,
@@ -211,18 +220,19 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                         Object specCode = jLotInfoObj.get(TblsInspLotRMData.Lot.SPEC_CODE.getName());
                         Object specConfigVersion = jLotInfoObj.get(TblsInspLotRMData.Lot.SPEC_CODE_VERSION.getName());
                         Object specVariationName = jLotInfoObj.get(TblsInspLotRMData.Lot.SPEC_VARIATION_NAME.getName());
+
                         JSONObject specDefinition = new JSONObject();
                         String[] specFlds = null;
                         JSONArray specLimitsInfo = null;
                         if (Boolean.FALSE.equals(specCode == null || specCode == "" || specConfigVersion == null || "".equals(specConfigVersion.toString()))) {
-                            JSONObject specInfo = SpecFrontEndUtilities.configSpecInfo(procReqInstance, (String) specCode, (Integer) specConfigVersion,
+                            JSONObject specInfo = SpecFrontEndUtilities.configSpecInfo(procReqInstance, TblsCnfg.TablesConfig.SPEC, (String) specCode, (Integer) specConfigVersion,
                                     null, null);
                             specDefinition.put(TblsCnfg.TablesConfig.SPEC.getTableName(), specInfo);
                             specFlds = new String[]{TblsCnfg.SpecLimits.VARIATION_NAME.getName(), TblsCnfg.SpecLimits.ANALYSIS.getName(),
-                                TblsCnfg.SpecLimits.METHOD_NAME.getName(), TblsCnfg.SpecLimits.LIMIT_ID.getName(), TblsInspLotRMConfig.SpecLimits.ADD_IN_COA.getName(),
+                                TblsCnfg.SpecLimits.METHOD_NAME.getName(), TblsCnfg.SpecLimits.PARAMETER.getName(), TblsCnfg.SpecLimits.LIMIT_ID.getName(), TblsInspLotRMConfig.SpecLimits.ADD_IN_COA.getName(),
                                 TblsCnfg.SpecLimits.SPEC_TEXT_EN.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_RED_AREA_EN.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_YELLOW_AREA_EN.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_GREEN_AREA_EN.getName(),
                                 TblsCnfg.SpecLimits.SPEC_TEXT_ES.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_RED_AREA_ES.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_YELLOW_AREA_ES.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_GREEN_AREA_ES.getName()};
-                            specLimitsInfo = SpecFrontEndUtilities.configSpecLimitsInfo(procReqInstance, specCode.toString(), (Integer) specConfigVersion,
+                            specLimitsInfo = SpecFrontEndUtilities.configSpecLimitsInfo(procReqInstance, TblsInspLotRMConfig.TablesInspLotRMConfig.SPEC_LIMITS, specCode.toString(), (Integer) specConfigVersion,
                                     specVariationName.toString(), specFlds, new String[]{TblsInspLotRMConfig.SpecLimits.COA_ORDER.getName(), TblsInspLotRMConfig.SpecLimits.ANALYSIS.getName()});
                             specDefinition.put(TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(), specLimitsInfo);
                             lotJsonObj.put(JSON_TAG_SPEC_DEFINITION, specDefinition);
