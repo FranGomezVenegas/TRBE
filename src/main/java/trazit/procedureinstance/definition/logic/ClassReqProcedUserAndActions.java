@@ -21,7 +21,7 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class ClassReqProcedUserAndActions {
 
-    static JSONArray actionsByRoles(String procInstanceName, Object[][] procRoles) {
+    public static JSONArray actionsByRoles(String procInstanceName, Object[][] procRoles) {
         String[] roleActionsFldsArr = new String[]{TblsReqs.ProcReqUserRequirementsActions.ENTITY.getName(), TblsReqs.ProcReqUserRequirementsActions.PRETTY_EN.getName(), TblsReqs.ProcReqUserRequirementsActions.PRETTY_ES.getName(), TblsReqs.ProcReqUserRequirementsActions.ROLES.getName(),
             TblsReqs.ProcReqUserRequirementsActions.MOD_ORDER_NUMBER.getName(), TblsReqs.ProcReqUserRequirementsActions.WINDOW_ACTION.getName()};
         Object[][] roleActions2d = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.PROC_REQ_USER_REQUIREMENTS_ACTIONS.getViewName(),
@@ -52,12 +52,12 @@ public class ClassReqProcedUserAndActions {
                 curActionRow.put(curActRow[0] + ": " + curActRow[1]);
                 curActionRow.put(curActRow[0] + ": " + curActRow[2]);
                 if (Boolean.FALSE.equals(prevExecuted.matches(curActRow[0] + ": " + curActRow[1]))) {
-                    String[] allActionRoles = LPNulls.replaceNull(curActRow[2]).toString().split("\\|");
+                    String[] allActionRoles = LPNulls.replaceNull(curActRow[3]).toString().split("\\|");
                     for (String curRole : procRoles1D) {
-                        if (LPArray.valueInArray(allActionRoles, curRole)) {
-                            curActionRow.put("X");
-                        } else if (LPArray.valueInArray(allActionRoles, "ALL")) {
+                        if (LPArray.valueInArray(allActionRoles, "ALL")) {
                             curActionRow.put("ALL");
+                        } else if (LPArray.valueInArray(allActionRoles, curRole)) {
+                            curActionRow.put("X");
                         } else {
                             curActionRow.put("");
                         }
@@ -101,7 +101,9 @@ public class ClassReqProcedUserAndActions {
                 curActionRow.put(((LPNulls.replaceNull(curActRow[2]).toString().length()) > 0) ? curActRow[2] : curActRow[0]);
                 String[] allActionRoles = LPNulls.replaceNull(curActRow[3]).toString().split("\\|");
                 for (String curRole : procRoles1D) {
-                    if ((LPArray.valueInArray(allActionRoles, curRole)) || (LPArray.valueInArray(allActionRoles, "ALL"))) {
+                    if (LPArray.valueInArray(allActionRoles, "ALL")){
+                        curActionRow.put("ALL");
+                    }else if ((LPArray.valueInArray(allActionRoles, curRole))) {
                         curActionRow.put("X");
                     } else {
                         curActionRow.put("");
@@ -154,10 +156,10 @@ public class ClassReqProcedUserAndActions {
                 curActionRow.put(((LPNulls.replaceNull(curActRow[2]).toString().length()) > 0) ? curActRow[2] : curActRow[0]);
                 String[] allActionRoles = LPNulls.replaceNull(curActRow[3]).toString().split("\\|");
                 for (String curRole : procSops1D) {
-                    if (LPArray.valueInArray(allActionRoles, curRole)) {
-                        curActionRow.put("X");
-                    } else if (LPArray.valueInArray(allActionRoles, "ALL")) {
+                    if (LPArray.valueInArray(allActionRoles, "ALL")) {
                         curActionRow.put("ALL");
+                    } else if (LPArray.valueInArray(allActionRoles, curRole)) {
+                        curActionRow.put("X");
                     } else {
                         curActionRow.put("");
                     }
