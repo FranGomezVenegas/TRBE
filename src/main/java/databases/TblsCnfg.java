@@ -240,6 +240,7 @@ public class TblsCnfg {
         CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
         CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date(), null, null, null, null),
         CALC_LINKED("calc_linked",  LPDatabase.string(), null, null, null, null),
+        LIST_ENTRY("list_entry",  LPDatabase.string(), null, null, null, null),
         ;
         private AnalysisMethodParams(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
