@@ -111,7 +111,7 @@ public class ClassEnvMonQueries {
             this.relatedObj=rObj;
             rObj.killInstance();
         }finally{
-            Rdbms.closeRdbms(); 
+            //Rdbms.closeRdbms(); 
         }
     }
     /**
