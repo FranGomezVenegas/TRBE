@@ -122,7 +122,7 @@ public final class Investigation {
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         InternalMessage investigationClosed = isInvestigationClosed(investId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationClosed.getDiagnostic())) 
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, investigationClosed.getMessageCodeObj(), investigationClosed.getMessageCodeVariables());
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, investigationClosed.getMessageCodeObj(), investigationClosed.getMessageCodeVariables());
 
         String[] updFieldName=new String[]{TblsProcedure.Investigation.CLOSED.getName(), TblsProcedure.Investigation.CLOSED_ON.getName(), TblsProcedure.Investigation.CLOSED_BY.getName()};
         Object[] updFieldValue=new Object[]{true, LPDate.getCurrentTimeStamp(), token.getPersonName()};        
