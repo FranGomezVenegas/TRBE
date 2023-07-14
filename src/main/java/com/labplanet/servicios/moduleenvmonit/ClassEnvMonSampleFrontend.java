@@ -377,7 +377,7 @@ public class ClassEnvMonSampleFrontend {
                             JSONObject row = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(tblFldsToGet), curRow);
                             jArr.add(row);
                         }
-                        Rdbms.closeRdbms();
+                        //Rdbms.closeRdbms();
                         this.isSuccess = true;
                         this.responseSuccessJArr = jArr;
                     }
@@ -488,7 +488,7 @@ public class ClassEnvMonSampleFrontend {
                             }
                             jArr.add(row);
                         }
-                        Rdbms.closeRdbms();
+//                        Rdbms.closeRdbms();
                         this.isSuccess = true;
                         this.responseSuccessJArr = jArr;
                     }
