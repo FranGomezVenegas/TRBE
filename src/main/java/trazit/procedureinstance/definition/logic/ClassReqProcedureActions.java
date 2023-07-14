@@ -115,32 +115,24 @@ public class ClassReqProcedureActions {
                 procInstanceName = argValues[2].toString();
                 String userName = argValues[3].toString();
                 Object[] procedureUsersList = procedureRolesList(procedureName, procedureVersion);
-                if (Boolean.FALSE.equals(LPArray.valueInArray(procedureUsersList, userName))) {
+                if (Boolean.TRUE.equals(LPArray.valueInArray(procedureUsersList, userName))) {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_ALREADY_EXISTS, new Object[]{userName, procedureName, procedureVersion});
                     this.diagnosticObj = ReqProcedureDefinitionErrorTraping.USER_ALREADY_EXISTS;
                     this.messageDynamicData = new Object[]{userName, procedureName, procedureVersion};
                     break;
                 }
-// IMPORTANT !!! This code below is commented out due to we can add not existing users to be created by the procedure deployment                   
-/*                Object[] personByUserObj = getPersonByUser(userName);
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUserObj[0].toString())){
-                        actionDiagnoses=personByUserObj;
-                        break;
-                    }*/
-
                 RdbmsObject insertDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROC_USERS,
                         new String[]{TblsReqs.ProcedureUsers.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUsers.PROCEDURE_VERSION.getName(),
                             TblsReqs.ProcedureUsers.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUsers.USER_NAME.getName()},
                         new Object[]{procedureName, procedureVersion, procInstanceName, userName});
                 if (Boolean.TRUE.equals(insertDiagn.getRunSuccess())) {
-                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), new Object[]{userName});
+                    this.messageDynamicData = new Object[]{userName, procedureName, procedureVersion};
                 } else {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
                     this.diagnosticObj = insertDiagn.getErrorMessageCode();
                     this.messageDynamicData = insertDiagn.getErrorMessageVariables();
                 }
-// IMPORTANT !!! This code below is commented out due to we can add not existing users to be created by the procedure deployment
-//functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
                 break;
             case ADD_ROLE:
                 procedureName = argValues[0].toString();
@@ -148,7 +140,7 @@ public class ClassReqProcedureActions {
                 procInstanceName = argValues[2].toString();
                 String roleName = argValues[3].toString();
                 Object[] procedureRolesList = procedureRolesList(procedureName, procedureVersion);
-                if (Boolean.FALSE.equals(LPArray.valueInArray(procedureRolesList, roleName))) {
+                if (Boolean.TRUE.equals(LPArray.valueInArray(procedureRolesList, roleName))) {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.ROLE_ALREADY_EXISTS, new Object[]{roleName, procedureName, procedureVersion});
                     this.diagnosticObj = ReqProcedureDefinitionErrorTraping.ROLE_ALREADY_EXISTS;
                     this.messageDynamicData = new Object[]{roleName, procedureName, procedureVersion};
@@ -160,6 +152,7 @@ public class ClassReqProcedureActions {
                         new Object[]{procedureName, procedureVersion, procInstanceName, roleName});
                 if (Boolean.TRUE.equals(insertDiagn.getRunSuccess())) {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
+                    this.messageDynamicData = new Object[]{roleName};
                 } else {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
                     this.diagnosticObj = insertDiagn.getErrorMessageCode();
@@ -173,22 +166,8 @@ public class ClassReqProcedureActions {
                 procInstanceName = argValues[2].toString();
                 userName = argValues[3].toString();
                 roleName = argValues[4].toString();
-                /*personByUserObj = getPersonByUser(userName);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUserObj[0].toString())) {
-            actionDiagnoses = personByUserObj;
-            break;
-            }*/
- /*                
-                procedureUsersList = procedureRolesList(procedureName, procedureVersion);
-                if (Boolean.FALSE.equals(LPArray.valueInArray(procedureUsersList, userName))) {
-                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_NOT_FOUND, new Object[]{userName, procedureName, procedureVersion});
-                    this.diagnosticObj = ReqProcedureDefinitionErrorTraping.USER_NOT_FOUND;
-                    this.messageDynamicData = new Object[]{userName, procedureName, procedureVersion};
-                    break;
-                }
-                 */
                 procedureRolesList = procedureRolesList(procedureName, procedureVersion);
-                if (Boolean.FALSE.equals(LPArray.valueInArray(procedureRolesList, roleName))) {
+                if (Boolean.TRUE.equals(LPArray.valueInArray(procedureRolesList, roleName))) {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.ROLE_NOT_FOUND, new Object[]{roleName, procedureName, procedureVersion});
                     this.diagnosticObj = ReqProcedureDefinitionErrorTraping.ROLE_NOT_FOUND;
                     this.messageDynamicData = new Object[]{roleName, procedureName, procedureVersion};
@@ -200,13 +179,12 @@ public class ClassReqProcedureActions {
                         new Object[]{procedureName, procedureVersion, procInstanceName, userName, roleName});
                 if (Boolean.TRUE.equals(insertDiagn.getRunSuccess())) {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
+                    this.messageDynamicData = new Object[]{roleName, userName};
                 } else {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
                     this.diagnosticObj = insertDiagn.getErrorMessageCode();
                     this.messageDynamicData = insertDiagn.getErrorMessageVariables();
                 }
-                // IMPORTANT !!! This code below is commented out due to we can add not existing users to be created by the procedure deployment
-                //functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
                 break;
 
             case GET_UOM:
