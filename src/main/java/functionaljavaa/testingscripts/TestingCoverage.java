@@ -205,18 +205,18 @@ public final class TestingCoverage {
             if ((calcData == null || calcData.isEmpty() || !calcData.contains(curScriptDataRule))
                     && (curScriptDataRule != null)) {
                 calcData.add(curScriptDataRule);
-            }
-            JSONObject jObj = new JSONObject();
-            jObj.put("area", "data");
-            jObj.put("rule_name", curScriptDataRule);
-            if (this.procBusRules.getDataBusinessRule(curScriptDataRule).length() == 0) {
-                this.busRuleVisitedMissingInProcData++;
-                this.busRuleVisitedMissingInProcTotal++;
-                missingRulesJArr.add(jObj);
-            } else {
-                this.busRuleVisitedTotal++;
-                this.busRuleVisitedDataRules++;
-                visitedRulesJArr.add(jObj);
+                JSONObject jObj = new JSONObject();
+                jObj.put("area", "data");
+                jObj.put("rule_name", curScriptDataRule);
+                if (this.procBusRules.getDataBusinessRule(curScriptDataRule).length() == 0) {
+                    this.busRuleVisitedMissingInProcData++;
+                    this.busRuleVisitedMissingInProcTotal++;
+                    missingRulesJArr.add(jObj);
+                } else {
+                    this.busRuleVisitedTotal++;
+                    this.busRuleVisitedDataRules++;
+                    visitedRulesJArr.add(jObj);
+                }
             }
         }
         for (int i = 0; i < this.scriptsBusRules.getProcedureBusinessRules().size(); i++) {
@@ -225,18 +225,18 @@ public final class TestingCoverage {
                     && Boolean.FALSE.equals(curScriptProcedureRule.contains("AuditReasonPhrase"))) {
                 if (curScriptProcedureRule != null) {
                     calcProcedure.add(curScriptProcedureRule);
-                }
-                JSONObject jObj = new JSONObject();
-                jObj.put("area", "procedure");
-                jObj.put("rule_name", curScriptProcedureRule);
-                if (this.procBusRules.getProcedureBusinessRule(curScriptProcedureRule).length() == 0) {
-                    this.busRuleVisitedMissingInProcProcedure++;
-                    this.busRuleVisitedMissingInProcTotal++;
-                    missingRulesJArr.add(jObj);
-                } else {
-                    this.busRuleVisitedTotal++;
-                    this.busRuleVisitedProcedureRules++;
-                    visitedRulesJArr.add(jObj);
+                    JSONObject jObj = new JSONObject();
+                    jObj.put("area", "procedure");
+                    jObj.put("rule_name", curScriptProcedureRule);
+                    if (this.procBusRules.getProcedureBusinessRule(curScriptProcedureRule).length() == 0) {
+                        this.busRuleVisitedMissingInProcProcedure++;
+                        this.busRuleVisitedMissingInProcTotal++;
+                        missingRulesJArr.add(jObj);
+                    } else {
+                        this.busRuleVisitedTotal++;
+                        this.busRuleVisitedProcedureRules++;
+                        visitedRulesJArr.add(jObj);
+                    }
                 }
             }
         }
