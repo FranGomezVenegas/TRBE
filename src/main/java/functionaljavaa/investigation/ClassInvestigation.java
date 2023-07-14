@@ -108,6 +108,8 @@ public class ClassInvestigation {
                         }
                     }
                     this.diagnosticObj = Investigation.newInvestigation(fieldNames, fieldValues, objectsToAdd);
+                    actionDiagnoses= ApiMessageReturn.trapMessage(this.diagnosticObj.getDiagnostic(), 
+                            this.diagnosticObj.getMessageCodeObj(), this.diagnosticObj.getMessageCodeVariables());
                     String investigationIdStr = "";
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())) {
                         investigationIdStr = this.diagnosticObj.getNewObjectId().toString();
@@ -130,6 +132,8 @@ public class ClassInvestigation {
                         }
                     }
                     this.diagnosticObj = Investigation.addInvestObjects(Integer.valueOf(argValues[0].toString()), objectsToAdd, null);
+                    actionDiagnoses= ApiMessageReturn.trapMessage(this.diagnosticObj.getDiagnostic(), 
+                            this.diagnosticObj.getMessageCodeObj(), this.diagnosticObj.getMessageCodeVariables());
                     investigationIdStr = argValues[0].toString();
                     if (investigationIdStr != null && investigationIdStr.length() > 0) {
                         investigationId = Integer.valueOf(investigationIdStr);
