@@ -197,6 +197,11 @@ public class LPTestingOutFormat {
                         functionRelatedObjects.toJSONString()});
                 }
             }
+            if (1==2){
+                updFldNames = LPArray.addValueToArray1D(updFldNames, new String[]{TblsTesting.ScriptSteps.ARGUMENTS_LAST_EXEC.getName(), TblsTesting.ScriptSteps.EVAL_SYNTAXIS.getName()});
+                updFldValues = LPArray.addValueToArray1D(updFldValues, new Object[]{evaluate[TRAP_MESSAGE_EVALUATION_POSIC], tstAssert.getEvalSyntaxisDiagnostic()});
+            }
+            
             SqlWhere sqlWhere = new SqlWhere();
             sqlWhere.addConstraint(TblsTesting.ScriptSteps.SCRIPT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{scriptId}, "");
             sqlWhere.addConstraint(TblsTesting.ScriptSteps.STEP_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{stepId}, "");

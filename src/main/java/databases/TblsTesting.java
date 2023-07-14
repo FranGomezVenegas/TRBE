@@ -147,6 +147,7 @@ public class TblsTesting {
         ARGUMENT_13("argument_13", LPDatabase.string(), null, null, null, null),
         ARGUMENT_14("argument_14", LPDatabase.string(), null, null, null, null),
         ARGUMENT_15("argument_15", LPDatabase.string(), null, null, null, null),
+        ARGUMENTS_LAST_EXEC("arguments_last_exec", LPDatabase.string(), null, null, null, null),        
         EVAL_SYNTAXIS("eval_syntaxis", LPDatabase.string(), null, null, null, null),
         EVAL_CODE("eval_code", LPDatabase.string(), null, null, null, null),
         FUNCTION_RETURN("function_return", LPDatabase.string(), null, null, null, null),
