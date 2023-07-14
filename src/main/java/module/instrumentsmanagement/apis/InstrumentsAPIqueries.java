@@ -749,12 +749,12 @@ public class InstrumentsAPIqueries extends HttpServlet {
                         wObj.addConstraint(TblsInstrumentsData.InstrumentEvent.CREATED_ON, SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{LPDate.getCurrentDateWithNoTime(), LPDate.addIntervalToGivenDate(LPDate.getCurrentDateWithNoTime(), "YEARS", 1)}, null);
                         SqlWhereEntry[] orClauses = new SqlWhereEntry[]{
                             new SqlWhereEntry(TblsInstrumentsData.Instruments.NEXT_CALIBRATION,
-                            SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{LPDate.getCurrentDateWithNoTime(), LPDate.addIntervalToGivenDate(LPDate.getCurrentDateWithNoTime(), "YEARS", 1)}, null),
+                            SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{LPDate.addIntervalToGivenDate(LPDate.getCurrentDateWithNoTime(), "MONTHS", -6), LPDate.addIntervalToGivenDate(LPDate.getCurrentDateWithNoTime(), "MONTHS", 6)}, null),
                             new SqlWhereEntry(TblsInstrumentsData.Instruments.NEXT_PM,
-                            SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{LPDate.getCurrentDateWithNoTime(), LPDate.addIntervalToGivenDate(LPDate.getCurrentDateWithNoTime(), "YEARS", 1)}, null)};
+                            SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{LPDate.addIntervalToGivenDate(LPDate.getCurrentDateWithNoTime(), "MONTHS", -6), LPDate.addIntervalToGivenDate(LPDate.getCurrentDateWithNoTime(), "MONTHS", 6)}, null)};
                         wObjNext.addOrClauseConstraint(orClauses);
                     }
-                    if (Boolean.TRUE.equals(Boolean.valueOf(includeOnlyScheduledOneStr))) {
+                    if (Boolean.FALSE.equals(Boolean.valueOf(includeOnlyScheduledOneStr))) {
                         fieldsToRetrieve = getAllFieldNames(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENT_EVENT);
                         Object[][] instEvents = QueryUtilitiesEnums.getTableData(TablesInstrumentsData.INSTRUMENT_EVENT,
                                 EnumIntTableFields.getAllFieldNamesFromDatabase(TablesInstrumentsData.INSTRUMENT_EVENT),
