@@ -25,19 +25,24 @@ public class ReqProcDefTestingCoverageSummary {
         JSONObject jMainObj = new JSONObject();
         JSONArray dbRowsToJsonArr2 = new JSONArray();
         JSONArray dbRowsToJsonArr = ClassReqProcedureQueries.dbRowsToJsonArr(LPPlatform.buildSchemaName(procInstanceName, TblsTesting.TablesTesting.SCRIPT.getRepositoryName()), TblsTesting.TablesTesting.SCRIPT.getTableName(), getAllFieldNames(TblsTesting.TablesTesting.SCRIPT.getTableFields()), new String[]{TblsTesting.Script.ACTIVE.getName()}, new Object[]{true}, null, new String[]{}, true);
-        jMainObj.put("scripts", dbRowsToJsonArr);
+        for (int i = 0; i < dbRowsToJsonArr.size(); i++) {
+            JSONObject jsonObject = (JSONObject) dbRowsToJsonArr.get(i);
+            String scriptId = LPNulls.replaceNull(jsonObject.get(TblsTesting.Script.SCRIPT_ID.getName())).toString();
+            if (scriptId.length() > 0) {
+                JSONArray ScriptStepsJsonArr = ClassReqProcedureQueries.dbRowsToJsonArr(LPPlatform.buildSchemaName(procInstanceName, TblsTesting.TablesTesting.SCRIPT.getRepositoryName()),
+                        TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(), getAllFieldNames(TblsTesting.TablesTesting.SCRIPT_STEPS.getTableFields()),
+                        new String[]{TblsTesting.ScriptSteps.SCRIPT_ID.getName()}, new Object[]{Integer.valueOf(scriptId)}, new String[]{TblsTesting.ScriptSteps.STEP_ID.getName()}, new String[]{}, true);
+                jsonObject.put(TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(), ScriptStepsJsonArr);
+                jsonObject.put("total_num_steps", ScriptStepsJsonArr.size());
+            }
+            dbRowsToJsonArr2.add(jsonObject);
+        }
+        jMainObj.put("scripts", dbRowsToJsonArr2);
+        dbRowsToJsonArr2 = new JSONArray();
         dbRowsToJsonArr = ClassReqProcedureQueries.dbRowsToJsonArr(LPPlatform.buildSchemaName(procInstanceName, TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getRepositoryName()), TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableName(), getAllFieldNames(TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableFields()), new String[]{TblsTesting.ScriptsCoverage.ACTIVE.getName()}, new Object[]{true}, null, new String[]{}, true);
         for (int i = 0; i < dbRowsToJsonArr.size(); i++) {
             JSONObject jsonObject = (JSONObject) dbRowsToJsonArr.get(i);
             String coverageDetail = LPNulls.replaceNull(jsonObject.get("endpoints_coverage_detail")).toString();
-
-            String scriptId = LPNulls.replaceNull(jsonObject.get(TblsTesting.Script.SCRIPT_ID.getName())).toString();
-            if (scriptId.length() > 0) {
-                JSONArray ScriptStepsJsonArr = ClassReqProcedureQueries.dbRowsToJsonArr(LPPlatform.buildSchemaName(procInstanceName, TblsTesting.TablesTesting.SCRIPT.getRepositoryName()),
-                    TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(), getAllFieldNames(TblsTesting.TablesTesting.SCRIPT_STEPS.getTableFields()), 
-                    new String[]{TblsTesting.ScriptSteps.SCRIPT_ID.getName()}, new Object[]{Integer.valueOf(scriptId)}, new String[]{TblsTesting.ScriptSteps.STEP_ID.getName()}, new String[]{}, true);
-                jsonObject.put(TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(), ScriptStepsJsonArr);
-            }
 
             jsonObject.put("endpoints_summary_json", covSectionDetailEndpoints(coverageDetail));
             coverageDetail = LPNulls.replaceNull(jsonObject.get("bus_rule_coverage_detail")).toString();
