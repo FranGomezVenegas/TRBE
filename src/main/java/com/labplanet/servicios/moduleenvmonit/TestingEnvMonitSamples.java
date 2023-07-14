@@ -77,6 +77,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
         
         try (PrintWriter out = response.getWriter()) {
             ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+           
             String procInstanceName=instanceForActions.getProcedureInstance();
 /*            String brName="sampleReviewer_canBeAnyTestingGroupReviewer";
             String ruleValue=Parameter.getBusinessRuleProcedureFile(procInstanceName, "procedure", brName);
@@ -101,7 +102,6 @@ public class TestingEnvMonitSamples extends HttpServlet {
                 TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);                
 
                 Object actionName = LPNulls.replaceNull(testingContent[iLines][5]).toString();
-
                 request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, actionName);
                 instanceForActions.setActionNameForTesting(scriptId, iLines, actionName.toString());                
                 if (tstOut.getAuditReasonPosic()!=-1)
