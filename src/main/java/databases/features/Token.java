@@ -410,10 +410,15 @@ public final class Token {
     
     public String getModuleNameFromProcInstance(String instanceName) {
         if ("APP".equalsIgnoreCase(instanceName)){return instanceName;}
-        if (this.procsModuleNames == null || !this.procsModuleNames.contains(instanceName)) {            
+        if (this.procsModuleNames == null || !this.procsModuleNames.contains(instanceName)) {      
+        Object[][] procInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), 
+            new String[]{TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{""}, new String[]{TblsProcedure.ProcedureInfo.MODULE_NAME.getName()});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfo[0][0].toString())){           
             return "notFound";
+        }else{
+            return procInfo[0][0].toString();
+        }        
         }
-
         for (String curFld : this.procsModuleNames.split("\\|")) {
             if (curFld.contains(instanceName)) {
                 String[] split = curFld.split("\\*");
