@@ -409,6 +409,8 @@ public final class Token {
     }
     
     public String getModuleNameFromProcInstance(String instanceName) {
+        if ("undefined".equalsIgnoreCase(instanceName))
+            return "notFound";
         if ("APP".equalsIgnoreCase(instanceName)){return instanceName;}
         if (this.procsModuleNames == null || !this.procsModuleNames.contains(instanceName)) {      
         Object[][] procInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), 
