@@ -49,7 +49,8 @@ public class InstrumentsEnums {
         VERIFICATION, START_VERIFICATION, COMPLETE_VERIFICATION,
         SERVICE, START_SERVICE, COMPLETE_SERVICE,
         NON_ROUTINE_EVENT, DECOMMISSION, UNDECOMMISSION, UPDATE_INSTRUMENT,
-        VALUE_ENTERED, VALUE_REENTERED, REOPEN_EVENT
+        VALUE_ENTERED, VALUE_REENTERED, REOPEN_EVENT,
+        ADDED_ATTACHMENT, REMOVED_ATTACHMENT, REACTIVATED_ATTACHMENT        
     }
 
     public enum InstrumentsAPIactionsEndpoints implements EnumIntEndpoints {
@@ -239,7 +240,28 @@ public class InstrumentsEnums {
                     new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 8),},
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build(),
-                null, null),        
+                null, null),  
+        ADD_ATTACHMENT("ADD_ATTACHMENT", GlobalAPIsParams.REQUEST_PARAM_INSTRUMENT_NAME, "", "attachmentAdded_success",
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INSTRUMENT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments("eventId", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),
+                new LPAPIArguments("file_url", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 8)},
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
+                        .add(GlobalAPIsParams.LBL_TABLE, TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build(),
+                "Provides the ability for adding attachment for a given instrument or even for a given event if the event id (optional) is added as part of the request", null),        
+        REMOVE_ATTACHMENT("REMOVE_ATTACHMENT", GlobalAPIsParams.REQUEST_PARAM_INSTRUMENT_NAME, "", "attachmentRemoved_success",
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INSTRUMENT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments("eventId", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),
+                new LPAPIArguments("attachmentId", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 8)},
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
+                        .add(GlobalAPIsParams.LBL_TABLE, TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build(),
+                "Provides the ability for removing attachment for a given instrument or even for a given event if the event id (optional) is added as part of the request", null),        
+        REACTIVATE_ATTACHMENT("REACTIVATE_ATTACHMENT", GlobalAPIsParams.REQUEST_PARAM_INSTRUMENT_NAME, "", "attachmentReactivated_success",
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INSTRUMENT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments("eventId", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),
+                new LPAPIArguments("attachmentId", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 8)},
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
+                        .add(GlobalAPIsParams.LBL_TABLE, TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build(),
+                "Provides the ability for reactivate one previously removed attachment for a given instrument or even for a given event if the event id (optional) is added as part of the request", null),        
         ;
         private InstrumentsAPIactionsEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
             this.name = name;

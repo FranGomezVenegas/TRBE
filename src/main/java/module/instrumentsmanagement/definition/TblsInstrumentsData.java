@@ -31,6 +31,8 @@ public class TblsInstrumentsData {
             TblsInstrumentsData.InstrumentEvent.ID.getName(),new String[]{TblsInstrumentsData.InstrumentEvent.ID.getName()}, null, ""),
         INSTR_EVENT_VARIABLE_VALUES(null, "instr_event_variable_values", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsInstrumentsData.InstrEventVariableValues.values(), 
             TblsInstrumentsData.InstrumentEvent.ID.getName(), new String[]{TblsInstrumentsData.InstrEventVariableValues.ID.getName()}, null, ""),
+        INSTR_ATTACHMENT(null, "instr_attachment", SCHEMA_NAME, true, InstrAttachments.values(), InstrAttachments.ID.getName(),
+            new String[]{InstrAttachments.ID.getName()}, null, "instr_attachment"),
         ;
         private TablesInstrumentsData(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){
@@ -287,6 +289,32 @@ public class TblsInstrumentsData {
         @Override        public String getFieldComment(){return this.fieldComment;}
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }            
+    public enum InstrAttachments implements EnumIntTableFields{
+        ID("id", LPDatabase.integerNotNull(), null, null, null, null),
+        INSTRUMENT_NAME("instrument_name", LPDatabase.stringNotNull(), null, null, null, null),
+        EVENT_ID("event_id", LPDatabase.integer(), null, null, null, null),        
+        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
+        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.dateTime(), null, null, null, null),
+        FILE_LINK("file_link", LPDatabase.string(), null, null, null, null),
+        DB_FILE("db_file", LPDatabase.embeddedFile(), null, null, null, null),
+        REMOVED("removed", LPDatabase.booleanFld(false), null, null, null, null),
+        ;
+        private InstrAttachments(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName; @Override        public String getName(){return this.fieldName;}
+        private final String fieldType; @Override        public String getFieldType() {return this.fieldType;}
+        private final String fieldMask; @Override        public String getFieldMask() {return this.fieldMask;}
+        private final ReferenceFld reference; @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
+        private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }                
     
     public enum ViewNotDecommInstrumentAndEventData implements EnumIntViewFields{
         ID("id", "ie.id", InstrumentEvent.ID, null, null, null),

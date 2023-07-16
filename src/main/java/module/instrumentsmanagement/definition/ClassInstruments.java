@@ -125,12 +125,12 @@ public class ClassInstruments {
                 }
                 if (fieldValue != null && fieldValue.length() > 0) {
                     fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"),
-                        TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS, fieldNames);
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
-                        this.diagnostic=fieldValues;
+                            TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS, fieldNames);
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                        this.diagnostic = fieldValues;
                         this.actionDiagnosesObj = (InternalMessage) fieldValues[1];
                         this.messageDynamicData = this.actionDiagnosesObj.getMessageCodeVariables();
-                        return;                        
+                        return;
                     }
                 }
                 if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
@@ -585,18 +585,62 @@ public class ClassInstruments {
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(), actionDiagnoses.getNewObjectId());
                 }
                 break;
+            case ADD_ATTACHMENT:
+                instrName = argValues[0].toString();
+                instrEventId = LPNulls.replaceNull(argValues[1]).toString().length() > 0 ? (Integer) argValues[1] : null;
+                String attachUrl = argValues[2].toString();
+                if (instr != null) {
+                    actionDiagnoses = instr.addAttachment(instrEventId, attachUrl);
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);
+                        if (instrEventId != null) {
+                            rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(), instrEventId);
+                        }
+                    }
+                }
+                break;
+            case REMOVE_ATTACHMENT:
+                instrName = argValues[0].toString();
+                instrEventId = LPNulls.replaceNull(argValues[1]).toString().length() > 0 ? (Integer) argValues[1] : null;
+                Integer attachmentId = LPNulls.replaceNull(argValues[2]).toString().length() > 0 ? (Integer) argValues[2] : null;
+                if (instr != null) {
+                    actionDiagnoses = instr.removeAttachment(instrEventId, attachmentId);
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);
+                        if (instrEventId != null) {
+                            rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(), instrEventId);
+                        }
+                    }
+                }
+                break;
+            case REACTIVATE_ATTACHMENT:
+                instrName = argValues[0].toString();
+                instrEventId = LPNulls.replaceNull(argValues[1]).toString().length() > 0 ? (Integer) argValues[1] : null;
+                attachmentId = LPNulls.replaceNull(argValues[2]).toString().length() > 0 ? (Integer) argValues[2] : null;
+                if (instr != null) {
+                    actionDiagnoses = instr.reactivateAttachment(instrEventId, attachmentId);
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);
+                        if (instrEventId != null) {
+                            rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(), instrEventId);
+                        }
+                    }
+                }
+                break;
             default:
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, null, ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, null);
                 return;
         }
-        this.actionDiagnosesObj = actionDiagnoses;
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
-            this.diagnostic = ApiMessageReturn.trapMessage(actionDiagnoses.getDiagnostic(), actionDiagnoses.getMessageCodeObj(), actionDiagnoses.getMessageCodeVariables());
-        } else {
-            this.diagnostic = ApiMessageReturn.trapMessage(actionDiagnoses.getDiagnostic(), endPoint, actionDiagnoses.getMessageCodeVariables());
+        if (actionDiagnoses != null) {
+            this.actionDiagnosesObj = actionDiagnoses;
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
+                this.diagnostic = ApiMessageReturn.trapMessage(actionDiagnoses.getDiagnostic(), actionDiagnoses.getMessageCodeObj(), actionDiagnoses.getMessageCodeVariables());
+            } else {
+                this.diagnostic = ApiMessageReturn.trapMessage(actionDiagnoses.getDiagnostic(), endPoint, actionDiagnoses.getMessageCodeVariables());
+            }
+            this.relatedObj = rObj;
+            rObj.killInstance();
         }
-        this.relatedObj = rObj;
-        rObj.killInstance();
     }
 
     /**
