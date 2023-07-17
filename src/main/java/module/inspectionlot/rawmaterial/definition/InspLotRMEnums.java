@@ -41,7 +41,8 @@ public class InspLotRMEnums {
         LOT_RETAIN_UNLOCKED, LOT_RETAIN_LOCKED, LOT_RETAIN_RECEIVED, LOT_RETAIN_MOVED, LOT_RETAIN_EXTRACTED,
         LOT_USAGE_DECISION_TAKEN, LOT_BULK_DECISION_TAKEN, LOT_ALL_BULKS_DECISION_TAKEN,
         LOT_CERTIFICATE_UPDATED, LOT_CERTIFICATE_INSERTED, INVENTORY_RETAIN_UPDATED, LOT_QUANTITY_REDUCED_BY_BULK_REJECTION,
-        LOT_SET_READY_FOR_REVISION
+        LOT_SET_READY_FOR_REVISION,
+        LOT_NOT_ANALYZED_RESULT_ADDED, LOT_NOT_ANALYZED_RESULT_REMOVED
     }
 
     public enum DataLotProperties {
@@ -102,7 +103,8 @@ public class InspLotRMEnums {
         LOT_BULK_ALREADY_HAS_DECISION("lotBulkAlreadyHasDecision", "", ""),
         LOT_ALL_BULKS_ALREADY_HAS_DECISION("lotAllBulksAlreadyHasDecision", "", ""),
         ADD_ADHOC_BULKS_NOT_ALLOWED("addAdhocBulksNotAllowed", "The material <*1*> does not allow adding adhoc bulks to the lot <*2*>", "El material <*1*> no permite añadir bultos ad-hoc para el lote <*2*>"),
-        DISABLED("inventoryLotAuditRevisionMode_Disable", "", "")
+        DISABLED("inventoryLotAuditRevisionMode_Disable", "", ""),
+        LOTQUANTITY_AND_ACCEPTEDBULKSQUANTITY_NOTMATCHING("inspectionLotQuantityAndAcceptedBulksQuantityNotMatching", "", "")
         ;
         private DataInspLotErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs) {
             this.errorCode = errCode;
@@ -237,6 +239,19 @@ public class InspLotRMEnums {
                     new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_QUANTITY_UOM, LPAPIArguments.ArgumentType.STRING.toString(), true, 9),}, InspectionLotRMAuditEvents.LOT_RETAIN_EXTRACTED, Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName()).build()).build(),
                 null, null),
+        LOT_ADD_NOTANALYZED_PARAM("LOT_ADD_NOTANALYZED_PARAM", "lotNotAnalyzedParamAdded_success",
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_ANALYSIS_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
+                    new LPAPIArguments("value", LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
+                    new LPAPIArguments("reason", LPAPIArguments.ArgumentType.STRING.toString(), true, 9),}, InspectionLotRMAuditEvents.LOT_NOT_ANALYZED_RESULT_ADDED, Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
+                        .add(GlobalAPIsParams.LBL_TABLE, TblsInspLotRMData.TablesInspLotRMData.LOT_NOT_ANALYZED_RESULT.getTableName()).build()).build(),
+                null, null),
+        LOT_REMOVED_NOTANALYZED_PARAM("LOT_REMOVED_NOTANALYZED_PARAM", "lotNotAnalyzedParamRemoved_success",
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_ANALYSIS_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 7)}, InspectionLotRMAuditEvents.LOT_NOT_ANALYZED_RESULT_REMOVED, Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
+                        .add(GlobalAPIsParams.LBL_TABLE, TblsInspLotRMData.TablesInspLotRMData.LOT_NOT_ANALYZED_RESULT.getTableName()).build()).build(),
+                null, null),
+        
         LOT_CREATE_COA("LOT_CREATE_COA", "lotCoaCreated_success",
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments("htmlText", LPAPIArguments.ArgumentType.FILE.toString(), false, 7),

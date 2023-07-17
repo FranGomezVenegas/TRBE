@@ -142,7 +142,7 @@ public class ClassInspLotRMactions {
                 if (fieldValue != null && fieldValue.length() > 0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValueArr[0].toString())) {
                     actionDiagnoses = (InternalMessage) fieldValueArr[1];
                 }
-                actionDiagnoses = DataBulk.lotBulkAdjustQuantity(lotName, bulkId, BigDecimal.valueOf(Double.valueOf(quantityStr)), fieldNameArr, fieldValueArr);
+                actionDiagnoses = DataBulk.lotBulkAdjustQuantity(lotName, bulkId, BigDecimal.valueOf(Double.valueOf(quantityStr)), quantityUomStr, fieldNameArr, fieldValueArr);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
                     actionDiagnoses = new InternalMessage(LPPlatform.LAB_TRUE, InspLotRMEnums.InspLotRMAPIactionsEndpoints.LOT_BULK_ADJUST_QUANTITY, new Object[]{lotName, quantityStr, fieldNameArr, fieldValueArr, ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance()});
                     rObj.addSimpleNode(ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance(), TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), lotName);
@@ -212,7 +212,7 @@ public class ClassInspLotRMactions {
                 if (fieldValue != null && fieldValue.length() > 0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValueArr[0].toString())) {
                     actionDiagnoses = (InternalMessage) fieldValueArr[1];
                 }
-                actionDiagnoses = insplotDecision.lotAllBulksTakeDecision(lotName, decision, fieldNameArr, fieldValueArr);
+                actionDiagnoses = insplotDecision.lotAllBulksTakeDecision(insplot, lotName, decision, fieldNameArr, fieldValueArr);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
                     actionDiagnoses = new InternalMessage(LPPlatform.LAB_TRUE, InspLotRMEnums.InspLotRMAPIactionsEndpoints.LOT_TAKE_USAGE_DECISION, new Object[]{lotName, decision, fieldNameArr, fieldValueArr, ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance()});
                     rObj.addSimpleNode(ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance(), TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), lotName);
@@ -326,6 +326,28 @@ public class ClassInspLotRMactions {
                 }
                 this.actionDiagnosesObj = actionDiagnoses;
                 this.messageDynamicData = new Object[]{lotName, decision};
+                break;
+            case LOT_ADD_NOTANALYZED_PARAM:
+                lotName = argValues[0].toString();
+                String analysis = argValues[1].toString();
+                String value = LPNulls.replaceNull(argValues[2]).toString();
+                String reason = LPNulls.replaceNull(argValues[3]).toString();                
+                actionDiagnoses = DataInspectionLot.addLotNotAnalyzedValue(lotName, analysis, value, reason);
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
+                    actionDiagnoses = new InternalMessage(LPPlatform.LAB_TRUE, InspLotRMEnums.InspLotRMAPIactionsEndpoints.LOT_ADD_NOTANALYZED_PARAM, new Object[]{lotName, LPNulls.replaceNull(analysis), ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance()});
+                    rObj.addSimpleNode(ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance(), TblsInspLotRMData.TablesInspLotRMData.LOT_NOT_ANALYZED_RESULT.getTableName(), analysis);
+                }
+                this.messageDynamicData = new Object[]{lotName, analysis};                        
+                break;
+            case LOT_REMOVED_NOTANALYZED_PARAM:
+                lotName = argValues[0].toString();
+                analysis = argValues[1].toString();
+                actionDiagnoses = DataInspectionLot.removedLotNotAnalyzedValue(lotName, analysis);
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
+                    actionDiagnoses = new InternalMessage(LPPlatform.LAB_TRUE, InspLotRMEnums.InspLotRMAPIactionsEndpoints.LOT_REMOVED_NOTANALYZED_PARAM, new Object[]{lotName, LPNulls.replaceNull(analysis), ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance()});
+                    rObj.addSimpleNode(ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance(), TblsInspLotRMData.TablesInspLotRMData.LOT_NOT_ANALYZED_RESULT.getTableName(), analysis);
+                }
+                this.messageDynamicData = new Object[]{lotName, analysis};                        
                 break;
             case LOT_CREATE_COA:
                 lotName = argValues[0].toString();

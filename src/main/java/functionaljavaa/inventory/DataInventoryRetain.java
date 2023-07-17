@@ -197,4 +197,5 @@ public final class DataInventoryRetain {
             return new Object[]{new InternalMessage(LPPlatform.LAB_TRUE, Rdbms.RdbmsSuccess.RDBMS_TABLE_FOUND, null), 
                 new Object[]{fldNameToGet}, retainRowsInfo[0]};
     }
+    
 }

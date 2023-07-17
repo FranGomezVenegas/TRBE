@@ -605,5 +605,37 @@ public class DataInspectionLot {
         }        
         return new InternalMessage(LPPlatform.LAB_FALSE, "underDevelopment", null, null);
     }
+    public static InternalMessage addLotNotAnalyzedValue(String lotName, String analysis, String val, String reason){
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+
+        String[] insFieldName = new String[]{TblsInspLotRMData.LotNotAnalyzedResult.LOT_NAME.getName(), TblsInspLotRMData.LotNotAnalyzedResult.ANALYSIS.getName(), TblsInspLotRMData.LotNotAnalyzedResult.VALUE.getName(), 
+            TblsInspLotRMData.LotNotAnalyzedResult.CREATED_BY.getName(), TblsInspLotRMData.LotNotAnalyzedResult.CREATED_ON.getName(), TblsInspLotRMData.LotNotAnalyzedResult.REASON.getName()};
+        Object[] insFieldValue = new Object[]{lotName, analysis, val, instanceForActions.getToken().getPersonName(), LPDate.getCurrentTimeStamp(), reason};
+        RdbmsObject updateRecordFieldsByFilter = Rdbms.insertRecord(TblsInspLotRMData.TablesInspLotRMData.LOT_NOT_ANALYZED_RESULT,
+                insFieldName, insFieldValue, null);
+        if (Boolean.FALSE.equals(updateRecordFieldsByFilter.getRunSuccess())) {
+            return new InternalMessage(LPPlatform.LAB_FALSE, updateRecordFieldsByFilter.getErrorMessageCode(), updateRecordFieldsByFilter.getErrorMessageVariables());
+        }
+        LotAudit lotAudit = new LotAudit();
+        lotAudit.lotAuditAdd(InspectionLotRMAuditEvents.LOT_NOT_ANALYZED_RESULT_ADDED,
+                TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), lotName, lotName, insFieldName, insFieldValue);
+        return new InternalMessage(LPPlatform.LAB_TRUE, updateRecordFieldsByFilter.getErrorMessageCode(), updateRecordFieldsByFilter.getErrorMessageVariables());        
+    }
+    public static InternalMessage removedLotNotAnalyzedValue(String lotName, String analysis){
+        SqlWhere sW = new SqlWhere();
+        sW.addConstraint(TblsInspLotRMData.LotNotAnalyzedResult.LOT_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{lotName}, null);
+        sW.addConstraint(TblsInspLotRMData.LotNotAnalyzedResult.ANALYSIS, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{analysis}, null);
+        RdbmsObject updateRecordFieldsByFilter = Rdbms.removeRecordInTable(TblsInspLotRMData.TablesInspLotRMData.LOT_NOT_ANALYZED_RESULT,
+                sW, null);
+        if (Boolean.FALSE.equals(updateRecordFieldsByFilter.getRunSuccess())) {
+            return new InternalMessage(LPPlatform.LAB_FALSE, updateRecordFieldsByFilter.getErrorMessageCode(), updateRecordFieldsByFilter.getErrorMessageVariables());
+        }
+        LotAudit lotAudit = new LotAudit();
+        lotAudit.lotAuditAdd(InspectionLotRMAuditEvents.LOT_NOT_ANALYZED_RESULT_REMOVED,
+                TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), lotName, lotName, 
+                EnumIntTableFields.getAllFieldNames(new EnumIntTableFields[]{TblsInspLotRMData.LotNotAnalyzedResult.LOT_NAME, TblsInspLotRMData.LotNotAnalyzedResult.ANALYSIS}), 
+                new Object[]{lotName, analysis});
+        return new InternalMessage(LPPlatform.LAB_TRUE, updateRecordFieldsByFilter.getErrorMessageCode(), updateRecordFieldsByFilter.getErrorMessageVariables());                
+    }
 
 }

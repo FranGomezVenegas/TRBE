@@ -131,6 +131,7 @@ public class TblsInspLotRMConfig {
         SAMPLING_ALGORITHM("sampling_algorithm", LPDatabase.stringNotNull(), null, null, null, null),
         DEFAULT_UOM("default_uom", LPDatabase.string(), null, null, null, null),
         ALTERNATIVE_UOMS("alternative_uoms", LPDatabase.string(), null, null, null, null),
+        CHECK_LOT_AND_BULKS_QUANT_MATCHES("check_lot_and_bulks_quantity_matches", LPDatabase.string(), null, null, null, null),
         
         ;
 
@@ -693,7 +694,9 @@ public class TblsInspLotRMConfig {
         TITLE_EN("title_en", LPDatabase.string(), null, null, null, null),
         TITLE_ES("title_es", LPDatabase.string(), null, null, null, null),
         TITLE2_EN("title2_en", LPDatabase.string(), null, null, null, null),
-        TITLE2_ES("title2_es", LPDatabase.string(), null, null, null, null),;
+        TITLE2_ES("title2_es", LPDatabase.string(), null, null, null, null),
+        PAPER_SIZE("paper_size", LPDatabase.string(), null, null, "A4 / LETTER", null),
+        ;
 
         private CoaDefinition(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules) {

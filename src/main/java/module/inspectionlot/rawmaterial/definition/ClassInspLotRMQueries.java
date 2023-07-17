@@ -161,6 +161,23 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                             }
                             lotJsonObj.put(TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN.getTableName(), lotInfoJsonArr);
                         }
+                        
+                        tableFieldsBulk = TblsInspLotRMData.TablesInspLotRMData.LOT_NOT_ANALYZED_RESULT.getTableFields();
+                        fieldsToRetrieveBulk = EnumIntTableFields.getAllFieldNames(tableFieldsBulk);
+                        lotInfo = QueryUtilitiesEnums.getTableData(TblsInspLotRMData.TablesInspLotRMData.LOT_NOT_ANALYZED_RESULT,
+                                tableFieldsBulk, new SqlWhere(TblsInspLotRMData.TablesInspLotRMData.LOT_NOT_ANALYZED_RESULT, new String[]{TblsInspLotRMData.LotNotAnalyzedResult.LOT_NAME.getName()}, new Object[]{lotName}),
+                                new String[]{TblsInspLotRMData.LotNotAnalyzedResult.LOT_NAME.getName()}, null);
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(lotInfo[0][0].toString())) {
+                            JSONObject jLotSectionInfoObj = new JSONObject();
+                            lotJsonObj.put(TblsInspLotRMData.TablesInspLotRMData.LOT_NOT_ANALYZED_RESULT.getTableName(), jLotSectionInfoObj);
+                        } else {
+                            JSONArray lotInfoJsonArr = new JSONArray();
+                            for (Object[] curRow : lotInfo) {
+                                JSONObject jLotSectionInfoObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieveBulk, curRow);
+                                lotInfoJsonArr.add(jLotSectionInfoObj);
+                            }
+                            lotJsonObj.put(TblsInspLotRMData.TablesInspLotRMData.LOT_NOT_ANALYZED_RESULT.getTableName(), lotInfoJsonArr);
+                        }
 
                         EnumIntTableFields[] tableFieldsSample = TblsInspLotRMData.TablesInspLotRMData.SAMPLE.getTableFields();
                         String[] fieldsToRetrieveSample = EnumIntTableFields.getAllFieldNames(tableFieldsSample);

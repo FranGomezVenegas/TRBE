@@ -13,11 +13,14 @@ import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.SqlWhere;
 import databases.features.Token;
+import functionaljavaa.inventory.InventoryGlobalVariables;
 import functionaljavaa.samplestructure.DataSampleStructureEnums;
 import module.inspectionlot.rawmaterial.definition.LotAudit;
 import module.inspectionlot.rawmaterial.definition.InspLotRMEnums.DataInspLotErrorTrapping;
 import functionaljavaa.samplestructure.DataSampleStructureStatuses;
 import functionaljavaa.samplestructure.DataSampleStructureStatuses.SampleStatuses;
+import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
@@ -40,10 +43,11 @@ import trazit.session.InternalMessage;
  */
 public class DataInspectionLotDecision {
 
-    public InternalMessage lotAllBulksTakeDecision(String lotName, String decision, String[] fieldName, Object[] fieldValue) {
+    public InternalMessage lotAllBulksTakeDecision(DataInspectionLot insplot, String lotName, String decision, String[] fieldName, Object[] fieldValue) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        String[] dataLotFlds = new String[]{TblsInspLotRMData.Lot.LOT_CONFIG_NAME.getName(), TblsInspLotRMData.Lot.LOT_CONFIG_VERSION.getName(), TblsInspLotRMData.Lot.MATERIAL_NAME.getName(), TblsInspLotRMData.Lot.BULK_DECISION_BY.getName()};
+        String[] dataLotFlds = new String[]{TblsInspLotRMData.Lot.LOT_CONFIG_NAME.getName(), TblsInspLotRMData.Lot.LOT_CONFIG_VERSION.getName(), TblsInspLotRMData.Lot.MATERIAL_NAME.getName(), TblsInspLotRMData.Lot.BULK_DECISION_BY.getName(),
+            TblsInspLotRMData.Lot.QUANTITY.getName(), TblsInspLotRMData.Lot.QUANTITY_UOM.getName()};
         String[] configLotDecisionFlds = EnumIntTableFields.getAllFieldNames(TblsInspLotRMConfig.TablesInspLotRMConfig.LOT_DECISION_RULES.getTableFields());
 
         Object[][] lotInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(),
@@ -52,11 +56,12 @@ public class DataInspectionLotDecision {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(lotInfo[0][0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{lotName, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())}, lotName);
         }
-        if (LPNulls.replaceNull(lotInfo[0][3].toString()).length()>0) {
+        if (LPNulls.replaceNull(lotInfo[0][3].toString()).length() > 0) {
             return new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.LOT_ALL_BULKS_ALREADY_HAS_DECISION, new Object[]{lotName, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())}, lotName);
         }
         String materialName = LPNulls.replaceNull(lotInfo[0][2]).toString();
-        String[] dataLotBulkFlds = new String[]{TblsInspLotRMData.LotBulk.BULK_ID.getName(), TblsInspLotRMData.LotBulk.DECISION.getName()};
+        String[] dataLotBulkFlds = new String[]{TblsInspLotRMData.LotBulk.BULK_ID.getName(), TblsInspLotRMData.LotBulk.DECISION.getName(),
+            TblsInspLotRMData.LotBulk.QUANTITY.getName(), TblsInspLotRMData.LotBulk.QUANTITY_UOM.getName()};
         Object[][] lotBulksInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.LOT_BULK.getTableName(),
                 new String[]{TblsInspLotRMData.LotBulk.LOT_NAME.getName()}, new Object[]{lotName},
                 dataLotBulkFlds);
@@ -65,6 +70,7 @@ public class DataInspectionLotDecision {
         }
         if (Boolean.FALSE.equals(decision.toUpperCase().contains("REJECT"))) {
             Integer bulksNoDecision = 0;
+
             for (Object[] curBulk : lotBulksInfo) {
                 if (LPNulls.replaceNull(curBulk[1]).toString().length() == 0) {
                     bulksNoDecision++;
@@ -72,6 +78,10 @@ public class DataInspectionLotDecision {
             }
             if (bulksNoDecision > 0) {
                 return new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.LOT_BULKS_WITH_NO_DECISION, new Object[]{bulksNoDecision, lotBulksInfo.length, lotName, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())}, null);
+            }
+            InternalMessage lotAndBulksQuantityMatch = lotAndBulksQuantityMatch(lotName, materialName, Double.valueOf(LPNulls.replaceNull(lotInfo[0][4]).toString()), LPNulls.replaceNull(lotInfo[0][5]).toString(), dataLotBulkFlds, lotBulksInfo);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(lotAndBulksQuantityMatch.getDiagnostic())) {
+                return lotAndBulksQuantityMatch;
             }
             String templateName = lotInfo[0][LPArray.valuePosicInArray(dataLotFlds, TblsInspLotRMData.Lot.LOT_CONFIG_NAME.getName())].toString();
             Integer templateVersion = Integer.valueOf(lotInfo[0][LPArray.valuePosicInArray(dataLotFlds, TblsInspLotRMData.Lot.LOT_CONFIG_VERSION.getName())].toString());
@@ -309,5 +319,44 @@ public class DataInspectionLotDecision {
             return new InternalMessage(LPPlatform.LAB_TRUE, endpointObj, new Object[]{lotName, decision, procInstanceName});
         }
         return new InternalMessage(LPPlatform.LAB_TRUE, Rdbms.RdbmsSuccess.RDBMS_TABLE_FOUND, null);
+    }
+
+    public InternalMessage lotAndBulksQuantityMatch(String lotName, String materialName, Double lotQuantity, String lotQuantityUom, String[] dataLotBulkFlds, Object[][] lotBulksInfo) {
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        String procInstanceName = procReqSession.getProcedureInstance();
+        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
+
+        Object[][] materialInfo = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsInspLotRMConfig.TablesInspLotRMConfig.MATERIAL.getTableName(),
+                new String[]{TblsInspLotRMConfig.Material.NAME.getName()}, new Object[]{materialName},
+                new String[]{TblsInspLotRMConfig.Material.NAME.getName(), TblsInspLotRMConfig.Material.CHECK_LOT_AND_BULKS_QUANT_MATCHES.getName()});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(materialInfo[0][0].toString())) {
+            return new InternalMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{lotName, TblsInspLotRMConfig.TablesInspLotRMConfig.MATERIAL.getTableName(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())}, lotName);
+        }
+        if (Boolean.FALSE.equals(Boolean.valueOf(LPNulls.replaceNull(materialInfo[0][1]).toString()))) {
+            return new InternalMessage(LPPlatform.LAB_TRUE, DataInspLotErrorTrapping.DISABLED, null);
+        }
+        Double bulksTotalQuantity = Double.valueOf("0");
+        for (Object[] curBulk : lotBulksInfo) {
+            String decision = LPNulls.replaceNull(curBulk[LPArray.valuePosicInArray(dataLotBulkFlds, TblsInspLotRMData.LotBulk.DECISION.getName())]).toString();
+            if (Boolean.FALSE.equals(decision.toUpperCase().contains("REJECT"))) {
+                Double bulkQ = Double.valueOf(LPNulls.replaceNull(curBulk[LPArray.valuePosicInArray(dataLotBulkFlds, TblsInspLotRMData.LotBulk.QUANTITY.getName())]).toString());
+                String bulkUom = LPNulls.replaceNull(curBulk[LPArray.valuePosicInArray(dataLotBulkFlds, TblsInspLotRMData.LotBulk.QUANTITY_UOM.getName())]).toString();
+                if (lotQuantityUom.equalsIgnoreCase(bulkUom)) {
+                    bulksTotalQuantity = bulksTotalQuantity + bulkQ;
+                } else {
+                    UnitsOfMeasurement uom = new UnitsOfMeasurement(BigDecimal.valueOf(bulkQ), bulkUom);
+                    uom.convertValue(lotQuantityUom);
+                    if (Boolean.FALSE.equals(uom.getConvertedFine())) {
+                        return new InternalMessage(LPPlatform.LAB_FALSE, InventoryGlobalVariables.DataInvRetErrorTrapping.CONVERTER_FALSE, new Object[]{lotName, uom.getConversionErrorDetail()[3].toString(), procReqSession.getProcedureInstance()});
+                    }
+                    bulksTotalQuantity = bulksTotalQuantity + uom.getConvertedQuantity().doubleValue();
+                }
+            }
+        }
+        if (lotQuantity.equals(bulksTotalQuantity)) {
+            return new InternalMessage(LPPlatform.LAB_TRUE, Rdbms.RdbmsSuccess.RDBMS_TABLE_FOUND, null);
+        } else {
+            return new InternalMessage(LPPlatform.LAB_FALSE, DataInspLotErrorTrapping.LOTQUANTITY_AND_ACCEPTEDBULKSQUANTITY_NOTMATCHING, new Object[]{lotName, lotQuantity, bulksTotalQuantity});
+        }
     }
 }
