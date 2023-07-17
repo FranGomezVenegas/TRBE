@@ -204,7 +204,7 @@ if (1==1)return;
             }
 //out.println(connectToOpenLDAP("demo"));
             Rdbms.stablishDBConection("labplanet");
-            out.println(EnumIntViews.getViewScriptCreation(TblsReqs.ViewsReqs.PROC_REQ_USER_REQUIREMENTS_ACTIONS, "", false, false, false));
+            out.println(EnumIntViews.getViewScriptCreation(TblsReqs.ViewsReqs.PROC_REQ_USER_REQUIREMENTS_ACTIONS, "", false, false, false, null));
             out.println("************ ViewsReqs.PROC_REQ_USER_REQUIREMENTS_ACTIONS NO testing. End");
 
             if (1 == 1) {
@@ -224,10 +224,10 @@ if (1==1)return;
                 JSONObject masterDataJsonObject = mdObj.getMasterDataJsonObject("inv-draft");
                 out.println(masterDataJsonObject.toJSONString());
                 out.println("************ ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE testing. Begin");
-                out.println(EnumIntViews.getViewScriptCreation(ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE, "inv-draft", false, false, true));
+                out.println(EnumIntViews.getViewScriptCreation(ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE, "inv-draft", false, false, true, null));
                 out.println("************ ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE testing. End");
                 out.println("************ ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE NO testing. Begin");
-                out.println(EnumIntViews.getViewScriptCreation(ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE, "inv-draft", false, false, false));
+                out.println(EnumIntViews.getViewScriptCreation(ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE, "inv-draft", false, false, false, null));
                 out.println("************ ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE NO testing. End");
 
                 if (1 == 2) {
@@ -299,10 +299,10 @@ if (1==1)return;
             String[] procEventFldNameArray = PROC_NEW_EVENT_FLD_NAME.split("\\|");
             Rdbms.stablishDBConection("labplanet");
             out.println("************ ViewsData.SAMPLE_COC_NAMES_VIEW testing. Begin");
-            out.println(EnumIntViews.getViewScriptCreation(TblsData.ViewsData.SAMPLE_COC_NAMES_VIEW, "sample-coa-rel1", false, false, true));
+            out.println(EnumIntViews.getViewScriptCreation(TblsData.ViewsData.SAMPLE_COC_NAMES_VIEW, "sample-coa-rel1", false, false, true, null));
             out.println("************ ViewsData.SAMPLE_COC_NAMES_VIEW testing. End");
             out.println("************ ViewsData.SAMPLE_COC_NAMES_VIEW NO testing. Begin");
-            out.println(EnumIntViews.getViewScriptCreation(TblsData.ViewsData.SAMPLE_COC_NAMES_VIEW, "sample-coa-rel1", false, false, false));
+            out.println(EnumIntViews.getViewScriptCreation(TblsData.ViewsData.SAMPLE_COC_NAMES_VIEW, "sample-coa-rel1", false, false, false, null));
             out.println("************ ViewsData.SAMPLE_COC_NAMES_VIEW NO testing. End");
             /*out.println("************ ViewsData.SAMPLE_COC testing. Begin");  
 out.println(createTableScript(TablesData.SAMPLE_COC, "sample-coa-rel1_testing", true, true));
@@ -320,38 +320,38 @@ out.println(EnumIntViews.getViewScriptCreation(TblsData.ViewsData.USER_AND_META_
 out.println("************ ViewsData.USER_AND_META_DATA_SOP_VIEW NO testing. End");  
              */
             out.println("************ ViewsData.USER_AND_ANALYSISMETHOD_CERTIF_VIEW testing. Begin");
-            out.println(EnumIntViews.getViewScriptCreation(TblsData.ViewsData.USER_AND_ANALYSISMETHOD_CERTIF_VIEW, "proc-deploy", false, false, true));
+            out.println(EnumIntViews.getViewScriptCreation(TblsData.ViewsData.USER_AND_ANALYSISMETHOD_CERTIF_VIEW, "proc-deploy", false, false, true, null));
             out.println("************ ViewsData.USER_AND_ANALYSISMETHOD_CERTIF_VIEW testing. End");
             out.println("************ ViewsData.USER_AND_ANALYSISMETHOD_CERTIF_VIEW NO testing. Begin");
-            out.println(EnumIntViews.getViewScriptCreation(TblsData.ViewsData.USER_AND_ANALYSISMETHOD_CERTIF_VIEW, "proc-deploy", false, false, false));
+            out.println(EnumIntViews.getViewScriptCreation(TblsData.ViewsData.USER_AND_ANALYSISMETHOD_CERTIF_VIEW, "proc-deploy", false, false, false, null));
             out.println("************ ViewsData.USER_AND_ANALYSISMETHOD_CERTIF_VIEW NO testing. End");
 
             out.println("************ ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW testing. Begin");
-            out.println(EnumIntViews.getViewScriptCreation(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, "em-demo-a", false, false, true));
+            out.println(EnumIntViews.getViewScriptCreation(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, "em-demo-a", false, false, true, null));
             out.println("************ ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW testing. End");
             out.println("************ ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW NO testing. Begin");
-            out.println(EnumIntViews.getViewScriptCreation(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, "em-demo-a", false, false, false));
+            out.println(EnumIntViews.getViewScriptCreation(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, "em-demo-a", false, false, false, null));
             out.println("************ ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW NO testing. End");
 
             out.println("************ ViewsData.SAMPLE_TESTING_GROUP_VIEW testing. Begin");
-            out.println(EnumIntViews.getViewScriptCreation(TblsData.ViewsData.SAMPLE_TESTING_GROUP_VIEW, "proc-deploy", false, false, true));
+            out.println(EnumIntViews.getViewScriptCreation(TblsData.ViewsData.SAMPLE_TESTING_GROUP_VIEW, "proc-deploy", false, false, true, null));
             out.println("************ ViewsData.SAMPLE_TESTING_GROUP_VIEW testing. End");
             out.println("************ ViewsData.SAMPLE_TESTING_GROUP_VIEW NO testing. Begin");
-            out.println(EnumIntViews.getViewScriptCreation(TblsData.ViewsData.SAMPLE_TESTING_GROUP_VIEW, "proc-deploy", false, false, false));
+            out.println(EnumIntViews.getViewScriptCreation(TblsData.ViewsData.SAMPLE_TESTING_GROUP_VIEW, "proc-deploy", false, false, false, null));
             out.println("************ ViewsData.SAMPLE_TESTING_GROUP_VIEW NO testing. End");
 
             out.println("************ ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW testing. Begin");
-            out.println(EnumIntViews.getViewScriptCreation(ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW, "em-demo-a", false, false, true));
+            out.println(EnumIntViews.getViewScriptCreation(ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW, "em-demo-a", false, false, true, null));
             out.println("************ ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW testing. End");
             out.println("************ ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW NO testing. Begin");
-            out.println(EnumIntViews.getViewScriptCreation(ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW, "em-demo-a", false, false, false));
+            out.println(EnumIntViews.getViewScriptCreation(ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW, "em-demo-a", false, false, false, null));
             out.println("************ ViewsEnvMonData.SAMPLE_MICROORGANISM_LIST_VIEW NO testing. End");
 
             out.println("************ ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VWtesting. Begin");
-            out.println(EnumIntViews.getViewScriptCreation(ViewsInstrumentsData.NOT_DECOM_INSTR_EVENT_DATA_VW, "app-proc", false, false, true));
+            out.println(EnumIntViews.getViewScriptCreation(ViewsInstrumentsData.NOT_DECOM_INSTR_EVENT_DATA_VW, "app-proc", false, false, true, null));
             out.println("************ ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VW testing. End");
             out.println("************ ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VW NO testing. Begin");
-            out.println(EnumIntViews.getViewScriptCreation(ViewsInstrumentsData.NOT_DECOM_INSTR_EVENT_DATA_VW, "app-proc", false, false, false));
+            out.println(EnumIntViews.getViewScriptCreation(ViewsInstrumentsData.NOT_DECOM_INSTR_EVENT_DATA_VW, "app-proc", false, false, false, null));
             out.println("************ ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VW NO testing. End");
 
             if (1 == 1) {
@@ -368,7 +368,7 @@ out.println("************ ViewsData.USER_AND_META_DATA_SOP_VIEW NO testing. End"
         for (EnumIntTables curTbl: tblsTesting){
         }*/
             EnumIntTables curTbl = TblsTesting.TablesTesting.SCRIPT;
-            String tblCreateScript3 = DeployTables.createTableScript(curTbl, "sample-coa-rel1", true, true);
+            String tblCreateScript3 = DeployTables.createTableScript(curTbl, "sample-coa-rel1", true, true, null);
             Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript3, new Object[]{});
 
             if (1 == 1) {
@@ -400,7 +400,7 @@ out.println("************ ViewsData.USER_AND_META_DATA_SOP_VIEW NO testing. End"
             }
             Rdbms.stablishDBConection("demoplatform");
             String tblCreateScript = createTableScript(TablesProcedureAudit.PROC_HASH_CODES,
-                    "em-air-spr1", false, true);
+                    "em-air-spr1", false, true, null);
             Rdbms.prepUpQueryWithDiagn(TablesProcedureAudit.PROC_HASH_CODES.getRepositoryName(),
                     TablesProcedureAudit.PROC_HASH_CODES.getTableName(),
                     tblCreateScript, new Object[]{});
@@ -444,12 +444,12 @@ out.println("************ ViewsData.USER_AND_META_DATA_SOP_VIEW NO testing. End"
             try {
                 Rdbms.stablishDBConection("labplanet");
                 String schemaName = "em-demo-a";
-                out.println(" " + TablesData.SAMPLE.getTableName() + " >> " + createTableScript(TablesData.SAMPLE, schemaName, false, true));
+                out.println(" " + TablesData.SAMPLE.getTableName() + " >> " + createTableScript(TablesData.SAMPLE, schemaName, false, true, null));
                 out.println("");
                 schemaName = "proc-deploy";
-                out.println(schemaName + " " + TablesData.SAMPLE.getTableName() + " >> " + createTableScript(TablesData.SAMPLE, schemaName, false, true));
+                out.println(schemaName + " " + TablesData.SAMPLE.getTableName() + " >> " + createTableScript(TablesData.SAMPLE, schemaName, false, true, null));
                 out.println("");
-                out.println(schemaName + " " + TablesData.PRODUCT.getTableName() + " >> " + createTableScript(TablesData.PRODUCT, schemaName, false, true));
+                out.println(schemaName + " " + TablesData.PRODUCT.getTableName() + " >> " + createTableScript(TablesData.PRODUCT, schemaName, false, true, null));
                 out.println("");
                 /*            Rdbms.stablishDBConection("labplanet"); 
             schemaName="proc-deploy";
@@ -560,7 +560,7 @@ out.println("************ ViewsData.USER_AND_META_DATA_SOP_VIEW NO testing. End"
 
                 
     LPFilesTools.toCsvFromArray(true, "D:\\LP\\home\\toCsvFromArray.csv", new String[]{"bien bien", "bien"});            */
-                String tblCreateScript2 = createTableScript(TblsInstrumentsDataAudit.TablesInstrumentsDataAudit.INSTRUMENTS, false, true);
+                String tblCreateScript2 = createTableScript(TblsInstrumentsDataAudit.TablesInstrumentsDataAudit.INSTRUMENTS, false, true, null);
                 Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 
                 if (1 == 1) {
@@ -610,7 +610,7 @@ if (1==1) return;*/
                     }
                 }
                 Rdbms.stablishDBConection("labplanet");
-                tblCreateScript2 = createTableScript(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION, "em-demo-a", false, true);
+                tblCreateScript2 = createTableScript(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION, "em-demo-a", false, true, null);
                 Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 
                 if (1 == 1) {

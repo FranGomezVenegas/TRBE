@@ -65,7 +65,7 @@ public class DbObjects {
         JSONObject schemasObj=new JSONObject();
         TablesApp[] tblsApp = TablesApp.values();
         for (TablesApp curTbl: tblsApp){
-            tblCreateScript = createTableScript(curTbl, null, false, true);
+            tblCreateScript = createTableScript(curTbl, null, false, true, null);
             Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
             
             JSONObject scriptLog=new JSONObject();
@@ -81,7 +81,7 @@ public class DbObjects {
         jsonObj=new JSONObject();
         TablesAppAudit[] tblsAppAudit = TablesAppAudit.values();
         for (TablesAppAudit curTbl: tblsAppAudit){
-            tblCreateScript = createTableScript(curTbl, null, false, true);
+            tblCreateScript = createTableScript(curTbl, null, false, true, null);
             Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
             JSONObject scriptLog=new JSONObject();
             scriptLog.put("script", tblCreateScript);
@@ -96,7 +96,7 @@ public class DbObjects {
         jsonObj=new JSONObject();
         TablesAppConfig[] tblsAppCnfg = TablesAppConfig.values();
         for (TablesAppConfig curTbl: tblsAppCnfg){
-            tblCreateScript = createTableScript(curTbl, null, false, true);
+            tblCreateScript = createTableScript(curTbl, null, false, true, null);
             Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
             JSONObject scriptLog=new JSONObject();
             scriptLog.put("script", tblCreateScript);
@@ -108,7 +108,7 @@ public class DbObjects {
         }
         schemasObj.put("config", jsonObj);
 
-        tblCreateScript = createTableScript(TablesProcedure.PROCEDURE_BUSINESS_RULE, "app", false, true);
+        tblCreateScript = createTableScript(TablesProcedure.PROCEDURE_BUSINESS_RULE, "app", false, true, null);
         tblCreateScript=tblCreateScript.replace("app-procedure", "app-business-rules");
         Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(TablesProcedure.PROCEDURE_BUSINESS_RULE.getRepositoryName(), TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), tblCreateScript, new Object[]{});
 
@@ -141,7 +141,7 @@ public class DbObjects {
         jsonObj=new JSONObject();
         TablesReqs[] tblsReqs = TablesReqs.values();
         for (TablesReqs curTbl: tblsReqs){
-            tblCreateScript = createTableScript(curTbl, null, false, true);
+            tblCreateScript = createTableScript(curTbl, null, false, true, null);
             prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
             scriptLog=new JSONObject();
             scriptLog.put("script", tblCreateScript);
@@ -176,13 +176,13 @@ public class DbObjects {
         EnumIntTables[] moduleBaseTables = ProcDeployEnums.moduleBaseTables();
         jsonObj=new JSONObject();
         for (EnumIntTables curTbl: moduleBaseTables){
-            tblCreateScript = createTableScript(curTbl, procInstanceName, false, true);
+            tblCreateScript = createTableScript(curTbl, procInstanceName, false, true, null);
             
-            tblCreateScript = createTableScript(curTbl, LPPlatform.buildSchemaName(procInstanceName, curTbl.getRepositoryName()), false, true);
+            tblCreateScript = createTableScript(curTbl, LPPlatform.buildSchemaName(procInstanceName, curTbl.getRepositoryName()), false, true, null);
             Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
             String schemaForTesting = Rdbms.suffixForTesting(LPPlatform.buildSchemaName(procInstanceName, curTbl.getRepositoryName()), curTbl.getTableName());
             if (Boolean.FALSE.equals(schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curTbl.getRepositoryName())))){
-                String tblCreateScriptTesting = createTableScript(curTbl, schemaForTesting, false, true);
+                String tblCreateScriptTesting = createTableScript(curTbl, schemaForTesting, false, true, null);
                 prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScriptTesting, new Object[]{});
             }
             //Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});

@@ -42,9 +42,10 @@ public class PlatformNewInstance {
         JSONObject jsonObj=new JSONObject();
         JSONArray createSchemas = createSchemas(schemaNames, LPPlatform.buildSchemaName(fakeProcName, fakeProcName));     
         jsonObj.put("create_schemas", createSchemas);
-        tblCreateScript=createTableScript(TblsProcedure.TablesProcedure.PERSON_PROFILE, fakeProcName, false, true);        
+        tblCreateScript=createTableScript(TblsProcedure.TablesProcedure.PERSON_PROFILE, fakeProcName, false, true, null);        
         Rdbms.prepUpQueryWithDiagn(TblsProcedure.TablesProcedure.PERSON_PROFILE.getRepositoryName(), TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), tblCreateScript, new Object[]{});
-        tblCreateScript=createTableScript(TblsProcedure.TablesProcedure.PROCEDURE_INFO, fakeProcName, false, true);        
+        tblCreateScript=createTableScript(TblsProcedure.TablesProcedure.PROCEDURE_INFO, fakeProcName, false, true, null
+        );        
         Rdbms.prepUpQueryWithDiagn(TblsProcedure.TablesProcedure.PROCEDURE_INFO.getRepositoryName(), TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), tblCreateScript, new Object[]{});
         String actionLog="";
         

@@ -791,10 +791,11 @@ public class TblsReqs {
         TABLE_NAME("table_name", LPDatabase.string(), null, null, null, null),
         IS_VIEW("is_view", LPDatabase.booleanNotNull(false), null, null, null, null),
         FIELD_NAME(GlobalAPIsParams.LBL_FIELD_NAME, LPDatabase.string(), null, null, null, null),
+        FIELDS_TO_EXCLUDE("fields_to_exclude", LPDatabase.string(), null, null, null, null),
         ACTIVE("active", LPDatabase.booleanFld(), null, null, null, null),
         ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, null, null),
         DEFINITION_EN("definition_en", LPDatabase.string(), null, null, null, null),
-        DEFINITION_ES("definition_es", LPDatabase.string(), null, null, null, null)
+        DEFINITION_ES("definition_es", LPDatabase.string(), null, null, null, null)                
         ;
         private ProcedureModuleTables(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules) {

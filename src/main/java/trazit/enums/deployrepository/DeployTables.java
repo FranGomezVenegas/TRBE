@@ -30,18 +30,22 @@ public class DeployTables {
         ADD, STOP, DISCARD
     }
 
-    public static String createTableScript(EnumIntTables tableObj, Boolean run, Boolean refreshTableIfExists) {
-        return createTableScript(tableObj, null, run, refreshTableIfExists);
+    public static String createTableScript(EnumIntTables tableObj, Boolean run, Boolean refreshTableIfExists, String fieldsToExclude) {
+        return createTableScript(tableObj, null, run, refreshTableIfExists, fieldsToExclude);
     }
 
-    public static String createTableScript(EnumIntTables tableObj, String procInstanceName, Boolean run, Boolean refreshTableIfExists) {
-        return createTableScript(tableObj, procInstanceName, run, refreshTableIfExists, false);
+    public static String createTableScript(EnumIntTables tableObj, String procInstanceName, Boolean run, Boolean refreshTableIfExists, String fieldsToExclude) {
+        return createTableScript(tableObj, procInstanceName, run, refreshTableIfExists, false, fieldsToExclude);
     }
 
-    public static String createTableScript(EnumIntTables tableObj, String procInstanceName, Boolean run, Boolean refreshTableIfExists, Boolean isView) {
+    public static String createTableScript(EnumIntTables tableObj, String procInstanceName, Boolean run, Boolean refreshTableIfExists, Boolean isView, String fieldsToExclude) {
         String schemaName = LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), tableObj.getRepositoryName());
         Object[] dbTableExists = Rdbms.dbTableExists(schemaName, tableObj.getTableName());
         StringBuilder seqScript = new StringBuilder(0);
+        String[] fieldsToExcludeArr=new String[]{};
+        if (fieldsToExclude!=null){
+            fieldsToExclude.split("\\|");
+        }
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())) {
             if (Boolean.FALSE.equals(run) && Boolean.FALSE.equals(refreshTableIfExists)) {
                 if (Boolean.TRUE.equals(isView)) {
@@ -59,7 +63,7 @@ public class DeployTables {
                     Object[] tbldFldsArrObj = LPArray.getColumnFromArray2D(fldValues, valuePosicInArray);
                     Boolean fieldToAdd = false;
                     for (EnumIntTableFields curFld : tableObj.getTableFields()) {
-                        if (Boolean.FALSE.equals(LPArray.valueInArray(tbldFldsArrObj, curFld.getName()))) {
+                        if (Boolean.FALSE.equals(LPArray.valueInArray(tbldFldsArrObj, curFld.getName())) && Boolean.FALSE.equals(LPArray.valueInArray(fieldsToExcludeArr, curFld.getName())) ) {
                             if (seqScript.length() > 0) {
                                 seqScript = seqScript.append(", ");
                             }
