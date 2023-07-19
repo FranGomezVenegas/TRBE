@@ -366,9 +366,8 @@ public class InspLotRMEnums {
                 null, null),
         INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION("INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION", "", new LPAPIArguments[]{new LPAPIArguments(InvestigationAPI.ParamsList.INVESTIGATION_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects,
                 null, null),
-        GET_MATERIALS("GET_MATERIALS", "",
-                new LPAPIArguments[]{}, null,
-                null, null),        
+        GET_MATERIALS("GET_MATERIALS", "", new LPAPIArguments[]{}, null, null, null),    
+        GET_SPECS("GET_SPECS", "", new LPAPIArguments[]{}, null, null, null),    
         ;
         
 

@@ -483,6 +483,30 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                     Rdbms.closeRdbms();
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     break;
+                case GET_SPECS:
+                    jArr = new JSONArray();
+                    whereObj = new SqlWhere();
+                    whereObj.addConstraint(TblsInspLotRMConfig.Material.NAME, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, null, null);
+                    flds = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInspLotRMConfig.TablesInspLotRMConfig.MATERIAL);
+                    materialInfo = QueryUtilitiesEnums.getTableData(TblsInspLotRMConfig.TablesInspLotRMConfig.MATERIAL,
+                            flds, whereObj,
+                            new String[]{TblsInspLotRMConfig.Material.NAME.getName()});
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(materialInfo[0][0].toString())) {
+                        LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                        return;
+                    }
+                    for (Object[] curRow : materialInfo) {
+                        JSONObject jObj2 = new JSONObject();
+                        jObj2 = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(flds), curRow);
+                        
+                        jObj2.get(TblsInspLotRMConfig.Material.NAME.getName());
+                        
+                        jArr.add(jObj2);
+                    }
+
+                    Rdbms.closeRdbms();
+                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                    break;
                 default:
                     procReqInstance.killIt();
                     LPFrontEnd.servletReturnResponseError(request, response,
