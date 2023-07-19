@@ -231,5 +231,16 @@ public class LPDate {
         return durMillis;
                 
     }
-    
+    public static Date resetTimeToZero(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+
+        // Set hours, minutes, and seconds to zero
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        return calendar.getTime();
+    }    
 }
