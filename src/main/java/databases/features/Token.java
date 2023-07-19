@@ -409,6 +409,8 @@ public final class Token {
     }
     
     public String getModuleNameFromProcInstance(String instanceName) {
+        if (instanceName==null)
+            return "notFound";
         if ("undefined".equalsIgnoreCase(instanceName))
             return "notFound";
         if ("APP".equalsIgnoreCase(instanceName)){return instanceName;}
