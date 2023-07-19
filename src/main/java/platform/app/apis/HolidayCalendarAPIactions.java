@@ -108,8 +108,8 @@ public class HolidayCalendarAPIactions extends HttpServlet {
                     String fieldValue=argValues[2].toString();
                     String[] fieldNames=null;
                     Object[] fieldValues=null;
-                    if (fieldName!=null) fieldNames = fieldName.split("\\|");
-                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
+                    if (fieldName!=null&&fieldName.length()>0) fieldNames = fieldName.split("\\|");
+                    if (fieldValue!=null&&fieldValue.length()>0) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
                     if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
                         actionDiagnoses=new InternalMessage(LPPlatform.LAB_FALSE, fieldValues[fieldValues.length-1].toString(), null, null);                                
                         break;
@@ -126,6 +126,12 @@ public class HolidayCalendarAPIactions extends HttpServlet {
                     break;
                 case DELETE_DATE_FROM_GIVEN_CALENDAR:    
                     actionDiagnoses = HolidaysCalendar.deleteCalendarDate(argValues[0].toString(), (Integer) argValues[1]);
+                    break;
+                case DEACTIVATE_CALENDAR:
+                    actionDiagnoses = HolidaysCalendar.calendarChangeActiveFlag(argValues[0].toString(), false, endPoint);
+                    break;
+                case REACTIVATE_CALENDAR:
+                    actionDiagnoses = HolidaysCalendar.calendarChangeActiveFlag(argValues[0].toString(), true, endPoint);
                     break;
             }    
             String diagnostic=(actionDiagnoses!=null?actionDiagnoses.getDiagnostic():"no diagn");
