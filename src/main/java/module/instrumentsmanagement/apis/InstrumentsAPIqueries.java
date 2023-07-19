@@ -31,6 +31,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -716,43 +719,35 @@ public class InstrumentsAPIqueries extends HttpServlet {
                     endDateStr = argValues[3].toString();
                     String includeOnlyScheduledOneStr = argValues[4].toString();
                     SqlWhere wObj = new SqlWhere();
-                    SqlWhere wObjNext = new SqlWhere();
+                    SqlWhere wObjNextCalib = new SqlWhere();
+                    SqlWhere wObjNextMaintPrev = new SqlWhere();
                     jArr = new JSONArray();
                     if (LPNulls.replaceNull(instrName).length() > 0) {
                         wObj.addConstraint(TblsInstrumentsData.InstrumentEvent.INSTRUMENT, SqlStatement.WHERECLAUSE_TYPES.IN, instrName.split("\\|"), null);
-                        wObjNext.addConstraint(TblsInstrumentsData.Instruments.NAME, SqlStatement.WHERECLAUSE_TYPES.IN, instrName.split("\\|"), null);
+                        wObjNextCalib.addConstraint(TblsInstrumentsData.Instruments.NAME, SqlStatement.WHERECLAUSE_TYPES.IN, instrName.split("\\|"), null);
+                        wObjNextMaintPrev.addConstraint(TblsInstrumentsData.Instruments.NAME, SqlStatement.WHERECLAUSE_TYPES.IN, instrName.split("\\|"), null);
                     }
                     if (LPNulls.replaceNull(familyName).length() > 0) {
-                        wObjNext.addConstraint(TblsInstrumentsData.Instruments.FAMILY, SqlStatement.WHERECLAUSE_TYPES.IN, familyName.split("\\|"), null);
+                        wObjNextCalib.addConstraint(TblsInstrumentsData.Instruments.FAMILY, SqlStatement.WHERECLAUSE_TYPES.IN, familyName.split("\\|"), null);
+                        wObjNextMaintPrev.addConstraint(TblsInstrumentsData.Instruments.FAMILY, SqlStatement.WHERECLAUSE_TYPES.IN, familyName.split("\\|"), null);
                     }
                     Object[] buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsInstrumentsData.InstrumentEvent.CREATED_ON.getName(), startDateStr, endDateStr);
-                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))) {
+                    if (Boolean.TRUE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))) {
                         if (buildDateRangeFromStrings.length == 4) {
                             wObj.addConstraint(TblsInstrumentsData.InstrumentEvent.CREATED_ON, SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{buildDateRangeFromStrings[2], buildDateRangeFromStrings[3]}, null);
-                            SqlWhereEntry[] orClauses = new SqlWhereEntry[]{
-                                new SqlWhereEntry(TblsInstrumentsData.Instruments.NEXT_CALIBRATION,
-                                SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{buildDateRangeFromStrings[2], buildDateRangeFromStrings[3]}, null),
-                                new SqlWhereEntry(TblsInstrumentsData.Instruments.NEXT_PM,
-                                SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{buildDateRangeFromStrings[2], buildDateRangeFromStrings[3]}, null)};
-                            wObjNext.addOrClauseConstraint(orClauses);
-                        } else {
-                            wObj.addConstraint(TblsInstrumentsData.InstrumentEvent.CREATED_ON, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{buildDateRangeFromStrings[2]}, null);
-                            SqlWhereEntry[] orClauses = new SqlWhereEntry[]{
-                                new SqlWhereEntry(TblsInstrumentsData.Instruments.NEXT_CALIBRATION,
-                                SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{buildDateRangeFromStrings[2]}, null),
-                                new SqlWhereEntry(TblsInstrumentsData.Instruments.NEXT_PM,
-                                SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{buildDateRangeFromStrings[2]}, null)};
-                            wObjNext.addOrClauseConstraint(orClauses);
+                            wObjNextCalib.addConstraint(TblsInstrumentsData.Instruments.NEXT_CALIBRATION, SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{buildDateRangeFromStrings[2], buildDateRangeFromStrings[3]}, null);
+                            wObjNextMaintPrev.addConstraint(TblsInstrumentsData.Instruments.NEXT_PM, SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{buildDateRangeFromStrings[2], buildDateRangeFromStrings[3]}, null);
                         }
+                    } else {
+                        wObj.addConstraint(TblsInstrumentsData.InstrumentEvent.CREATED_ON, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{buildDateRangeFromStrings[2]}, null);
+                        wObjNextCalib.addConstraint(TblsInstrumentsData.Instruments.NEXT_CALIBRATION, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{buildDateRangeFromStrings[2]}, null);
+                        wObjNextMaintPrev.addConstraint(TblsInstrumentsData.Instruments.NEXT_PM, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{buildDateRangeFromStrings[2]}, null);
                     }
-                    if (wObj.getAllWhereEntries().isEmpty()) {
+
+                    if (wObjNextCalib.getAllWhereEntries().isEmpty()) {
                         wObj.addConstraint(TblsInstrumentsData.InstrumentEvent.CREATED_ON, SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{LPDate.getCurrentDateWithNoTime(), LPDate.addIntervalToGivenDate(LPDate.getCurrentDateWithNoTime(), "YEARS", 1)}, null);
-                        SqlWhereEntry[] orClauses = new SqlWhereEntry[]{
-                            new SqlWhereEntry(TblsInstrumentsData.Instruments.NEXT_CALIBRATION,
-                            SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{LPDate.addIntervalToGivenDate(LPDate.getCurrentDateWithNoTime(), "MONTHS", -6), LPDate.addIntervalToGivenDate(LPDate.getCurrentDateWithNoTime(), "MONTHS", 6)}, null),
-                            new SqlWhereEntry(TblsInstrumentsData.Instruments.NEXT_PM,
-                            SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{LPDate.addIntervalToGivenDate(LPDate.getCurrentDateWithNoTime(), "MONTHS", -6), LPDate.addIntervalToGivenDate(LPDate.getCurrentDateWithNoTime(), "MONTHS", 6)}, null)};
-                        wObjNext.addOrClauseConstraint(orClauses);
+                        wObjNextCalib.addConstraint(TblsInstrumentsData.Instruments.NEXT_CALIBRATION, SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{LPDate.addIntervalToGivenDate(LPDate.getCurrentDateWithNoTime(), "MONTHS", -6), LPDate.addIntervalToGivenDate(LPDate.getCurrentDateWithNoTime(), "MONTHS", 6)}, null);
+                        wObjNextMaintPrev.addConstraint(TblsInstrumentsData.Instruments.NEXT_PM, SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{LPDate.addIntervalToGivenDate(LPDate.getCurrentDateWithNoTime(), "MONTHS", -6), LPDate.addIntervalToGivenDate(LPDate.getCurrentDateWithNoTime(), "MONTHS", 6)}, null);
                     }
                     if (Boolean.FALSE.equals(Boolean.valueOf(includeOnlyScheduledOneStr))) {
                         fieldsToRetrieve = getAllFieldNames(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENT_EVENT);
@@ -768,18 +763,73 @@ public class InstrumentsAPIqueries extends HttpServlet {
                             }
                         }
                     }
+                    wObj.addConstraint(TblsInstrumentsData.InstrumentEvent.CREATED_ON, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, null);
+                    wObjNextCalib.addConstraint(TblsInstrumentsData.Instruments.NEXT_CALIBRATION, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, null);
+                    wObjNextMaintPrev.addConstraint(TblsInstrumentsData.Instruments.NEXT_PM, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, null);
+try{
+                    Map<String, Integer> dateCountMap = new HashMap<>();
                     fieldsToRetrieve = getAllFieldNames(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS);
                     Object[][] instNextEvents = QueryUtilitiesEnums.getTableData(TablesInstrumentsData.INSTRUMENTS,
                             EnumIntTableFields.getAllFieldNamesFromDatabase(TablesInstrumentsData.INSTRUMENTS),
-                            wObjNext,
+                            wObjNextCalib,
                             new String[]{TblsInstrumentsData.Instruments.NAME.getName()});
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instNextEvents[0][0].toString()))) {
                         for (Object[] currInstrEv : instNextEvents) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrEv);
-                            jObj.put("type", "next");
+                            jObj.put("type", "next_calib");
+                            Integer fldPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsInstrumentsData.Instruments.NEXT_CALIBRATION.getName());
+                            Date curDate = LPDate.resetTimeToZero(LPDate.stringFormatToDate(currInstrEv[fldPosic].toString()));
+                            int count = dateCountMap.getOrDefault(curDate.toString(), 0);
+                            dateCountMap.put(curDate.toString(), count + 1);
+                            jObj.put("calendar_date", curDate.toString());
+                            jArr.add(jObj);
+
+                        }
+                    }
+                    fieldsToRetrieve = getAllFieldNames(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS);
+                    instNextEvents = QueryUtilitiesEnums.getTableData(TablesInstrumentsData.INSTRUMENTS,
+                            EnumIntTableFields.getAllFieldNamesFromDatabase(TablesInstrumentsData.INSTRUMENTS),
+                            wObjNextMaintPrev,
+                            new String[]{TblsInstrumentsData.Instruments.NAME.getName()});
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instNextEvents[0][0].toString()))) {
+                        for (Object[] currInstrEv : instNextEvents) {
+                            JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrEv);
+                            jObj.put("type", "next_pm");
+                            Integer fldPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsInstrumentsData.Instruments.NEXT_PM.getName());
+                            Date curDate = LPDate.resetTimeToZero(LPDate.stringFormatToDate(currInstrEv[fldPosic].toString()));
+                            int count = dateCountMap.getOrDefault(curDate.toString(), 0);
+                            dateCountMap.put(curDate.toString(), count + 1);
+                            jObj.put("calendar_date", curDate.toString());
                             jArr.add(jObj);
                         }
                     }
+                    JSONArray outputArray = new JSONArray();
+                    for (String calendarDate : dateCountMap.keySet()) {
+                        int count = dateCountMap.get(calendarDate);
+
+                        // Create a JSON object with calendar_date and counter
+                        JSONObject entry = new JSONObject();
+                        entry.put("calendar_date", calendarDate.toString());
+                        entry.put("counter", count);
+
+                        // Add the JSON object to the output JSONArray
+                        outputArray.add(entry);
+                    }
+                    Rdbms.closeRdbms();
+                    JSONObject jMain = new JSONObject();
+                    jMain.put("raw_data", jArr);
+                    jMain.put("dates_grouped", outputArray);
+                    LPFrontEnd.servletReturnSuccess(request, response, jMain);
+                    return;
+}catch(Exception e){
+                JSONObject jMain = new JSONObject();
+                    LPFrontEnd.servletReturnSuccess(request, response, jMain);
+                    return;    
+}
+                case GET_INSTR_ATTACHMENTS:
+                    instrName = argValues[0].toString();
+                    instrEventId = LPNulls.replaceNull(argValues[1]).toString().length() > 0 ? (Integer) argValues[1] : null;
+                    jArr = instrumentAttachment(instrName, instrEventId, null);
                     Rdbms.closeRdbms();
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     return;
@@ -883,6 +933,27 @@ public class InstrumentsAPIqueries extends HttpServlet {
                 new String[]{TblsInstrumentsData.Instruments.NAME.getName() + "<>"},
                 new Object[]{">>>"},
                 new String[]{TblsInstrumentsData.Instruments.NAME.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()}, alternativeProcInstanceName);
+        JSONArray jArr = new JSONArray();
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentFamily[0][0].toString()))) {
+            for (Object[] currInstr : instrumentFamily) {
+                JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
+                jArr.add(jObj);
+            }
+        }
+        return jArr;
+    }
+
+    public static JSONArray instrumentAttachment(String instrName, Integer eventId, String alternativeProcInstanceName) {
+        String[] fieldsToRetrieve = getAllFieldNames(TblsInstrumentsData.TablesInstrumentsData.INSTR_ATTACHMENT, alternativeProcInstanceName);
+        String[] wFldN = new String[]{TblsInstrumentsData.InstrAttachments.INSTRUMENT_NAME.getName(), TblsInstrumentsData.InstrAttachments.REMOVED.getName()};
+        Object[] wFldV = new Object[]{instrName, false};
+        if (eventId != null && eventId.toString().length() > 0) {
+            wFldN = LPArray.addValueToArray1D(wFldN, TblsInstrumentsData.InstrAttachments.EVENT_ID.getName());
+            wFldV = LPArray.addValueToArray1D(wFldV, eventId);
+        }
+        Object[][] instrumentFamily = QueryUtilitiesEnums.getTableData(TablesInstrumentsData.INSTR_ATTACHMENT,
+                EnumIntTableFields.getAllFieldNamesFromDatabase(TablesInstrumentsData.INSTR_ATTACHMENT, alternativeProcInstanceName),
+                wFldN, wFldV, new String[]{TblsInstrumentsData.InstrAttachments.INSTRUMENT_NAME.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()}, alternativeProcInstanceName);
         JSONArray jArr = new JSONArray();
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentFamily[0][0].toString()))) {
             for (Object[] currInstr : instrumentFamily) {

@@ -244,7 +244,8 @@ public class InstrumentsEnums {
         ADD_ATTACHMENT("ADD_ATTACHMENT", GlobalAPIsParams.REQUEST_PARAM_INSTRUMENT_NAME, "", "attachmentAdded_success",
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INSTRUMENT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments("eventId", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),
-                new LPAPIArguments("file_url", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 8)},
+                new LPAPIArguments("fileUrl", LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
+                new LPAPIArguments("briefSummary", LPAPIArguments.ArgumentType.STRING.toString(), false, 9)},
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build(),
                 "Provides the ability for adding attachment for a given instrument or even for a given event if the event id (optional) is added as part of the request", null),        
@@ -393,6 +394,10 @@ public class InstrumentsEnums {
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 11),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 12)}, EndPointsToRequirements.endpointWithNoOutputObjects, null,
                 null, null),        
+        GET_INSTR_ATTACHMENTS("GET_INSTR_ATTACHMENTS", "", new LPAPIArguments[]{
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INSTRUMENT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments("eventId", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7)}, EndPointsToRequirements.endpointWithNoOutputObjects, null,
+                "Provides the ability to get all attachments for a given instrument or even for a given event if the event id (optional) is added as part of the request", null),                
         ;
         private InstrumentsAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, JsonArray reportInfo, String devComment, String devCommentTag) {
             this.name = name;

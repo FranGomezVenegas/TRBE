@@ -297,6 +297,7 @@ public class TblsInstrumentsData {
         CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.dateTime(), null, null, null, null),
         FILE_LINK("file_link", LPDatabase.string(), null, null, null, null),
         DB_FILE("db_file", LPDatabase.embeddedFile(), null, null, null, null),
+        BRIEF_SUMMARY("brief_summary", LPDatabase.string(), null, null, null, null),
         REMOVED("removed", LPDatabase.booleanFld(false), null, null, null, null),
         ;
         private InstrAttachments(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,

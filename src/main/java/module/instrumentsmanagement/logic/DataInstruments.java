@@ -909,7 +909,7 @@ public class DataInstruments {
         return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrumentsAPIactionsEndpoints.REOPEN_EVENT, new Object[]{getName()}, getName());
     }
 
-    public InternalMessage addAttachment(Integer instrEventId, String attachUrl) {
+    public InternalMessage addAttachment(Integer instrEventId, String attachUrl, String briefSummary) {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         if (Boolean.TRUE.equals(this.isDecommissioned)) {
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.getName()}, null);
@@ -937,6 +937,10 @@ public class DataInstruments {
         if (instrEventId != null) {
             fldNames=LPArray.addValueToArray1D(fldNames, TblsInstrumentsData.InstrAttachments.EVENT_ID.getName());
             fldValues=LPArray.addValueToArray1D(fldValues, instrEventId);
+        }
+        if (briefSummary != null) {
+            fldNames=LPArray.addValueToArray1D(fldNames, TblsInstrumentsData.InstrAttachments.BRIEF_SUMMARY.getName());
+            fldValues=LPArray.addValueToArray1D(fldValues, briefSummary);
         }
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInstrumentsData.TablesInstrumentsData.INSTR_ATTACHMENT, 
                 fldNames, fldValues);

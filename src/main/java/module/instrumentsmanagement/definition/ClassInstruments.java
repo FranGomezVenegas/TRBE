@@ -589,8 +589,9 @@ public class ClassInstruments {
                 instrName = argValues[0].toString();
                 instrEventId = LPNulls.replaceNull(argValues[1]).toString().length() > 0 ? (Integer) argValues[1] : null;
                 String attachUrl = argValues[2].toString();
+                String briefSummary = argValues[3].toString();
                 if (instr != null) {
-                    actionDiagnoses = instr.addAttachment(instrEventId, attachUrl);
+                    actionDiagnoses = instr.addAttachment(instrEventId, attachUrl, briefSummary);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);
                         if (instrEventId != null) {
