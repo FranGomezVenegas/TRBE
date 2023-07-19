@@ -89,6 +89,7 @@ import trazit.procedureinstance.definition.logic.ClassReqProcedUserAndActions;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 import trazit.thirdparties.sap.ExcelExporter;
+import trazit.thirdparties.sap.Mosquitto;
 import trazit.thirdparties.sap.PDFDataExtractor;
 
 /**
@@ -111,6 +112,8 @@ public class TestingServer extends HttpServlet {
         request = LPHttp.requestPreparation(request);
         response = LPHttp.responsePreparation(response);
         try (PrintWriter out = response.getWriter()) {
+          out.println(Mosquitto.sendMosquitto());
+if (1==1)return;            
             Rdbms.stablishDBConection("labplanet");
             String procInstanceName = "inv-draft";
             String[] fldsArr = new String[]{TblsReqs.ProcedureRoles.ROLE_NAME.getName()};
