@@ -105,7 +105,7 @@ public interface EnumIntViews {
         StringBuilder fldsStr = new StringBuilder(0);
         String[] fieldsToExcludeArr=new String[]{};
         if (fieldsToExclude!=null){
-            fieldsToExclude.split("\\|");
+            fieldsToExcludeArr=fieldsToExclude.split("\\|");
         }        
         for (EnumIntViewFields curFld : vwDef.getViewFields()) {
             if (Boolean.FALSE.equals(LPArray.valueInArray(fieldsToExcludeArr, curFld.getName()))) {

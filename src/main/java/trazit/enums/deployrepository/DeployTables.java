@@ -42,9 +42,9 @@ public class DeployTables {
         String schemaName = LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), tableObj.getRepositoryName());
         Object[] dbTableExists = Rdbms.dbTableExists(schemaName, tableObj.getTableName());
         StringBuilder seqScript = new StringBuilder(0);
-        String[] fieldsToExcludeArr=new String[]{};
-        if (fieldsToExclude!=null){
-            fieldsToExclude.split("\\|");
+        String[] fieldsToExcludeArr = new String[]{};
+        if (fieldsToExclude != null) {
+            fieldsToExcludeArr = fieldsToExclude.split("\\|");
         }
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())) {
             if (Boolean.FALSE.equals(run) && Boolean.FALSE.equals(refreshTableIfExists)) {
@@ -63,7 +63,7 @@ public class DeployTables {
                     Object[] tbldFldsArrObj = LPArray.getColumnFromArray2D(fldValues, valuePosicInArray);
                     Boolean fieldToAdd = false;
                     for (EnumIntTableFields curFld : tableObj.getTableFields()) {
-                        if (Boolean.FALSE.equals(LPArray.valueInArray(tbldFldsArrObj, curFld.getName())) && Boolean.FALSE.equals(LPArray.valueInArray(fieldsToExcludeArr, curFld.getName())) ) {
+                        if (Boolean.FALSE.equals(LPArray.valueInArray(tbldFldsArrObj, curFld.getName())) && Boolean.FALSE.equals(LPArray.valueInArray(fieldsToExcludeArr, curFld.getName()))) {
                             if (seqScript.length() > 0) {
                                 seqScript = seqScript.append(", ");
                             }
@@ -90,7 +90,7 @@ public class DeployTables {
                 seqScript = new StringBuilder(0);
                 seqScript = seqScript.append(sequenceScript(tableObj, procInstanceName));
             }
-            seqScript = seqScript.append(createTableBeginScript(tableObj, procInstanceName));
+            seqScript = seqScript.append(createTableBeginScript(tableObj, procInstanceName, fieldsToExcludeArr));
             seqScript = seqScript.append(primaryKeyScript(tableObj));
             seqScript = seqScript.append(foreignKeyScript(tableObj, procInstanceName));
             seqScript = seqScript.append(CREATE_TABLE_END_SCRIPT);
@@ -156,7 +156,7 @@ public class DeployTables {
         if (tableObj.getPrimaryKey() != null) {
             seqScript = ", CONSTRAINT #TBL_pkey PRIMARY KEY ";
             seqScript = seqScript.replace("#TBL", tableObj.getTableName());
-            StringBuilder fldsInv =new StringBuilder(0);
+            StringBuilder fldsInv = new StringBuilder(0);
             for (String curFld : tableObj.getPrimaryKey()) {
                 if (fldsInv.length() > 0) {
                     fldsInv.append(", ");
@@ -214,7 +214,7 @@ public class DeployTables {
         return script.toString();
     }
 
-    private static String createTableBeginScript(EnumIntTables tableObj, String procInstanceName) {
+    private static String createTableBeginScript(EnumIntTables tableObj, String procInstanceName, String[] fieldsToExcludeArr) {
         BusinessRules bi = null;
         Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ZZZ_DB_ERROR.getTableName());
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))) {
@@ -226,19 +226,21 @@ public class DeployTables {
         schemaName = LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), schemaName);
         StringBuilder fieldsScript = new StringBuilder(0);
         for (EnumIntTableFields curFld : tableObj.getTableFields()) {
-            StringBuilder currFieldDefBuilder = new StringBuilder(curFld.getFieldType());
-            String addFldToScript = addFldToScript(curFld, bi);
-            if (addFldToScript.equalsIgnoreCase(CreateFldTypes.ADD.name())) {
-                if (fieldsScript.length() > 0) {
-                    fieldsScript.append(", ");
-                }
-                if (tableObj.getSeqName() != null && tableObj.getSeqName().equalsIgnoreCase(curFld.getName())) {
-                    String fldSeq = "";
-                    fldSeq = curFld.getName() + " bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_#FLD_seq'::regclass)";
-                    fldSeq = fldSeq.replace("#SCHEMA", schemaName).replace("#TBL", tableObj.getTableName()).replace("#FLD", curFld.getName());
-                    fieldsScript.append(fldSeq);
-                } else {
-                    fieldsScript.append(curFld.getName()).append(" ").append(currFieldDefBuilder);
+            if (Boolean.FALSE.equals(LPArray.valueInArray(fieldsToExcludeArr, curFld.getName()))) {
+                StringBuilder currFieldDefBuilder = new StringBuilder(curFld.getFieldType());
+                String addFldToScript = addFldToScript(curFld, bi);
+                if (addFldToScript.equalsIgnoreCase(CreateFldTypes.ADD.name())) {
+                    if (fieldsScript.length() > 0) {
+                        fieldsScript.append(", ");
+                    }
+                    if (tableObj.getSeqName() != null && tableObj.getSeqName().equalsIgnoreCase(curFld.getName())) {
+                        String fldSeq = "";
+                        fldSeq = curFld.getName() + " bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_#FLD_seq'::regclass)";
+                        fldSeq = fldSeq.replace("#SCHEMA", schemaName).replace("#TBL", tableObj.getTableName()).replace("#FLD", curFld.getName());
+                        fieldsScript.append(fldSeq);
+                    } else {
+                        fieldsScript.append(curFld.getName()).append(" ").append(currFieldDefBuilder);
+                    }
                 }
             }
         }
