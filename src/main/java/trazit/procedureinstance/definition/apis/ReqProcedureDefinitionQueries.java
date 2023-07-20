@@ -372,8 +372,8 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         wObj.addOrClauseConstraint(orClauses);
         JSONArray dbRowsToJsonArr = ClassReqProcedureQueries.dbRowsToJsonArr(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_BUS_RULES,
                 EnumIntTableFields.getTableFieldsFromString(TblsReqs.TablesReqs.PROC_BUS_RULES, new String[]{TblsReqs.ProcedureBusinessRules.CATEGORY.getName(),
-                    TblsReqs.ProcedureBusinessRules.RULE_NAME.getName(), TblsReqs.ProcedureBusinessRules.RULE_VALUE.getName(),
-                    TblsReqs.ProcedureBusinessRules.EXPLANATION.getName(), TblsReqs.ProcedureBusinessRules.VALUES_ALLOWED.getName()}),
+            TblsReqs.ProcedureBusinessRules.RULE_NAME.getName(), TblsReqs.ProcedureBusinessRules.RULE_VALUE.getName(),
+            TblsReqs.ProcedureBusinessRules.EXPLANATION.getName(), TblsReqs.ProcedureBusinessRules.VALUES_ALLOWED.getName()}),
                 wObj,
                 new String[]{
                     TblsReqs.ProcedureBusinessRules.CATEGORY.getName(),
@@ -389,7 +389,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         jViewsAccObj.put("view_actions", ClassReqProcedureQueries.dbRowsGroupedToJsonArr(TblsReqs.ViewsReqs.PROC_REQ_USER_REQUIREMENTS_ACTIONS.getViewName(),
                 new String[]{TblsReqs.ProcReqUserRequirementsActions.WINDOW_NAME.getName(),
                     TblsReqs.ProcReqUserRequirementsActions.WINDOW_NAME.getName(),
-                    TblsReqs.ProcReqUserRequirementsActions.PRETTY_EN.getName(),  TblsReqs.ProcReqUserRequirementsActions.PRETTY_ES.getName()
+                    TblsReqs.ProcReqUserRequirementsActions.PRETTY_EN.getName(), TblsReqs.ProcReqUserRequirementsActions.PRETTY_ES.getName()
                 },
                 new String[]{
                     TblsReqs.ProcReqUserRequirementsActions.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcReqUserRequirementsActions.WINDOW_ACTION.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()
@@ -405,7 +405,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         jViewsAccObj.put("view_actions_en", ClassReqProcedureQueries.dbRowsGroupedToJsonArr(TblsReqs.ViewsReqs.PROC_REQ_USER_REQUIREMENTS_ACTIONS.getViewName(),
                 new String[]{TblsReqs.ProcReqUserRequirementsActions.WINDOW_LABEL_EN.getName(),
                     TblsReqs.ProcReqUserRequirementsActions.WINDOW_LABEL_EN.getName(),
-                    TblsReqs.ProcReqUserRequirementsActions.PRETTY_EN.getName(),  TblsReqs.ProcReqUserRequirementsActions.PRETTY_ES.getName()
+                    TblsReqs.ProcReqUserRequirementsActions.PRETTY_EN.getName(), TblsReqs.ProcReqUserRequirementsActions.PRETTY_ES.getName()
                 },
                 new String[]{
                     TblsReqs.ProcReqUserRequirementsActions.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcReqUserRequirementsActions.WINDOW_ACTION.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()
@@ -421,7 +421,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         jViewsAccObj.put("view_actions_es", ClassReqProcedureQueries.dbRowsGroupedToJsonArr(TblsReqs.ViewsReqs.PROC_REQ_USER_REQUIREMENTS_ACTIONS.getViewName(),
                 new String[]{TblsReqs.ProcReqUserRequirementsActions.WINDOW_LABEL_ES.getName(),
                     TblsReqs.ProcReqUserRequirementsActions.WINDOW_LABEL_ES.getName(),
-                    TblsReqs.ProcReqUserRequirementsActions.PRETTY_EN.getName(),  TblsReqs.ProcReqUserRequirementsActions.PRETTY_ES.getName()
+                    TblsReqs.ProcReqUserRequirementsActions.PRETTY_EN.getName(), TblsReqs.ProcReqUserRequirementsActions.PRETTY_ES.getName()
                 },
                 new String[]{
                     TblsReqs.ProcReqUserRequirementsActions.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcReqUserRequirementsActions.WINDOW_ACTION.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()
@@ -488,7 +488,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                 new String[]{TblsReqs.ProcedureManuals.ORDER_NUMBER.getName()}, new String[]{}, true);
     }
 
-    private JSONObject getScriptWithSteps(Integer scriptId, String procInstanceName, String[] fieldsToRetrieveScripts, Object[] curTest) {
+    public static JSONObject getScriptWithSteps(Integer scriptId, String procInstanceName, String[] fieldsToRetrieveScripts, Object[] curTest) {
         String[] actionsList = new String[]{};
 
         String repositoryName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName());
@@ -499,7 +499,11 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                     fieldsToRetrieveScripts, new String[]{TblsTesting.Script.SCRIPT_ID.getName()});
             curTest = scriptsTblInfo[0];
         }
-        JSONObject curTestObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieveScripts, curTest);
+        JSONObject curTestObj = new JSONObject();
+        if (Boolean.TRUE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(curTest[0].toString()))) {
+            return curTestObj;
+        }
+        curTestObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieveScripts, curTest);
         String[] fieldsToRetrieveScriptSteps = EnumIntTableFields.getAllFieldNames(TblsTesting.TablesTesting.SCRIPT_STEPS);
         Integer scriptIdPosic = LPArray.valuePosicInArray(fieldsToRetrieveScripts, TblsTesting.Script.SCRIPT_ID.getName());
         if (scriptIdPosic > -1) {
