@@ -436,15 +436,15 @@ public class Parameter {
     public static Boolean isTagValueOneOfEnableOnes(String tagValue){
         if (tagValue.length()==0)return false;
         String enableValuesStr=getBusinessRuleAppFile("businessRulesEnableValues", false);         
-        String[] enableValues=enableValuesStr.split("\\|");
-        return LPArray.valueInArray(enableValues, tagValue);
+        String[] enableValues=enableValuesStr.toUpperCase().split("\\|");
+        return LPArray.valueInArray(enableValues, tagValue.toUpperCase());
     }
 
     public static Boolean isTagValueOneOfDisableOnes(String tagValue){
         if (tagValue.length()==0)return true;
         String enableValuesStr=getBusinessRuleAppFile("businessRulesDisableValues", false);        
-        String[] enableValues=enableValuesStr.split("\\|");
-        return LPArray.valueInArray(enableValues, tagValue);
+        String[] enableValues=enableValuesStr.toUpperCase().split("\\|");
+        return LPArray.valueInArray(enableValues, tagValue.toUpperCase());
     }
     
 }
