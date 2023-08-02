@@ -6,6 +6,7 @@ import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.SqlWhere;
 import databases.features.Token;
+import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement;
 import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement.UomErrorTrapping;
 import java.math.BigDecimal;
@@ -263,6 +264,7 @@ public class DataInventory {
     }
 
     public static InternalMessage createNewInventoryLot(String name, String reference, String category, BigDecimal lotVolume, String lotVolumeUom, String[] fldNames, Object[] fldValues, Integer numEntries, String externalProcedure) {
+        RelatedObjects rObj = RelatedObjects.getInstanceForActions();
         InternalMessage volumeIsPositive = volumeIsPositive(lotVolume);
         if (LPPlatform.LAB_FALSE.equals(volumeIsPositive.getDiagnostic())) return volumeIsPositive;
         volumeIsPositive = volumeIsPositive(BigDecimal.valueOf(numEntries));
@@ -351,6 +353,8 @@ public class DataInventory {
             if (reqQualification == null || Boolean.TRUE.equals(Boolean.valueOf(reqQualification))) {
                 DataInventoryQualif.createInventoryLotQualif(newName, category, reference, Boolean.valueOf(reqQualification));
             }
+            messages.addMinorForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.NEW_INVENTORY_LOT, new Object[]{newName, category, reference});
+            rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), newName);
         }
         messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.NEW_INVENTORY_LOT, new Object[]{name, category, reference});
 
@@ -386,6 +390,7 @@ public class DataInventory {
         if (Boolean.TRUE.equals(this.getRequiresQualification()) && Boolean.FALSE.equals(this.getIsQualified())){
             return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.LOT_NOTQUALIFIED_YET, new Object[]{this.getLotName()}, null);
         }
+        
         return updateLotTransaction(InvLotStatuses.AVAILABLE_FOR_USE.toString(), InvTrackingEnums.InventoryTrackAPIactionsEndpoints.TURN_LOT_AVAILABLE,
                 InvTrackingEnums.AppInventoryTrackingAuditEvents.TURN_AVAILABLE, null, null, InventoryTrackingErrorTrapping.ALREADY_AVAILABLE);
     }
@@ -499,7 +504,7 @@ public class DataInventory {
     }
 
     private static InternalMessage volumeIsPositive(BigDecimal nwVolume) {
-        if (BigDecimal.ZERO.compareTo(nwVolume) < 0) {
+        if (nwVolume!=null&&BigDecimal.ZERO.compareTo(nwVolume) < 0) {
             return new InternalMessage(LPPlatform.LAB_TRUE, InventoryTrackingErrorTrapping.REFERENCE_LOT_OR_USE_OPEN_REFERENCE_LOT_SHOULDBESPECIFIED, new Object[]{null}, null);
         } else {
             return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.VOLUME_NOT_ZERO_OR_NEGATIVE, new Object[]{nwVolume}, null);
