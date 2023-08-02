@@ -79,7 +79,11 @@ public class TestingAssert {
                     codeIcon=LPTestingOutFormat.TST_ERRORCODEUNDEFINED;
                     this.evalCodeDiagnostic=EvalCodes.UNDEFINED.toString();
                 }else{
-                    if (this.getEvalCode().equalsIgnoreCase(diagnoses[4].toString())){
+                    if (diagnoses.length<4){
+                        tstAssertSummary.increasetotalLabPlanetErrorCodeUndefined();
+                        codeIcon=LPTestingOutFormat.TST_ERRORCODEUNDEFINED;
+                    }
+                    else if (this.getEvalCode().equalsIgnoreCase(diagnoses[4].toString())){
                         tstAssertSummary.increasetotalLabPlanetErrorCodeMatch(); 
                         codeIcon=LPTestingOutFormat.TST_ERRORCODEMATCH;
                         this.evalCodeDiagnostic=EvalCodes.MATCH.toString();
