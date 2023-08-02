@@ -29,6 +29,8 @@ public interface EnumIntViews {
     EnumIntTablesJoin[] getTablesRequiredInView();
 
     String getExtraFilters();
+    
+    Boolean getUsesFixScriptView();
 
     public static String getViewScriptCreation(EnumIntViews vwDef, String procInstanceName, Boolean run, Boolean refreshTableIfExists, Boolean isForTesting, String fieldsToExclude) {
         if (vwDef.getTablesRequiredInView() == null) {
@@ -36,68 +38,71 @@ public interface EnumIntViews {
         }
         StringBuilder vwScript = new StringBuilder(0);
         Integer iterations = 0;
-
-        String[] tblAliases = new String[]{};
-        for (EnumIntTablesJoin curTblJoin : vwDef.getTablesRequiredInView()) {
-            String mainTableSchemaName = "";
-            if (Boolean.FALSE.equals(curTblJoin.getMainTable().getIsProcedureInstance())) {
-                mainTableSchemaName = curTblJoin.getMainTable().getRepositoryName();
-            } else {
-                mainTableSchemaName = LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), curTblJoin.getMainTable().getRepositoryName(), isForTesting, curTblJoin.getMainTable().getTableName());
-            }
-            if (iterations == 0) {
-                vwScript.append(" ").append(mainTableSchemaName).append(".").append(curTblJoin.getMainTable().getTableName())
-                        .append(" ").append(curTblJoin.getMainTableAlias());
-                tblAliases = LPArray.addValueToArray1D(tblAliases, curTblJoin.getMainTableAlias());
-            }
-            Object[] dbMainTableExists = Rdbms.dbTableExists(mainTableSchemaName.replace("\"", ""), curTblJoin.getMainTable().getTableName());
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbMainTableExists[0].toString()) && Boolean.TRUE.equals(curTblJoin.childMandatoy)) {
-                return "View " + mainTableSchemaName + "." + curTblJoin.mainTbl.getTableName() + " was not found but declared as mandatory for this view, cannot continue";
-            }
-            String childTableSchemaName = "";
-            if (Boolean.FALSE.equals(curTblJoin.getChildTable().getIsProcedureInstance())) {
-                childTableSchemaName = curTblJoin.getChildTable().getRepositoryName();
-            } else {
-                childTableSchemaName = LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), curTblJoin.getChildTable().getRepositoryName(), isForTesting, curTblJoin.getChildTable().getTableName());
-            }
-            Object[] dbChildTableExists = Rdbms.dbTableExists(childTableSchemaName.replace("\"", ""), curTblJoin.getChildTable().getTableName());
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbChildTableExists[0].toString()) && Boolean.TRUE.equals(curTblJoin.childMandatoy)) {
-                return "View " + childTableSchemaName + "." + curTblJoin.childTbl.getTableName() + " was not found but declared as mandatory for this view, cannot continue";
-            }
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbMainTableExists[0].toString())
-                    && LPPlatform.LAB_TRUE.equalsIgnoreCase(dbChildTableExists[0].toString())) {
-                vwScript.append(curTblJoin.getJoinType().getSqlClause()).append(" ")
-                        .append(childTableSchemaName).append(".").append(curTblJoin.getChildTable().getTableName() + " " + curTblJoin.getChildTableAlias()).append(" on ");
-                tblAliases = LPArray.addValueToArray1D(tblAliases, curTblJoin.getChildTableAlias());
-                Integer numJoins = 0;
-                if (curTblJoin.getJoins() != null) {
-                    for (EnumIntTableFields[] curJoin : curTblJoin.getJoins()) {
-                        if (numJoins > 0) {
-                            vwScript.append(" and ");
+        if (vwDef.getUsesFixScriptView()){
+            vwScript.append(vwDef.getViewCreatecript());
+        }else{
+            String[] tblAliases = new String[]{};
+            for (EnumIntTablesJoin curTblJoin : vwDef.getTablesRequiredInView()) {
+                String mainTableSchemaName = "";
+                if (Boolean.FALSE.equals(curTblJoin.getMainTable().getIsProcedureInstance())) {
+                    mainTableSchemaName = curTblJoin.getMainTable().getRepositoryName();
+                } else {
+                    mainTableSchemaName = LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), curTblJoin.getMainTable().getRepositoryName(), isForTesting, curTblJoin.getMainTable().getTableName());
+                }
+                if (iterations == 0) {
+                    vwScript.append(" ").append(mainTableSchemaName).append(".").append(curTblJoin.getMainTable().getTableName())
+                            .append(" ").append(curTblJoin.getMainTableAlias());
+                    tblAliases = LPArray.addValueToArray1D(tblAliases, curTblJoin.getMainTableAlias());
+                }
+                Object[] dbMainTableExists = Rdbms.dbTableExists(mainTableSchemaName.replace("\"", ""), curTblJoin.getMainTable().getTableName());
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbMainTableExists[0].toString()) && Boolean.TRUE.equals(curTblJoin.childMandatoy)) {
+                    return "View " + mainTableSchemaName + "." + curTblJoin.mainTbl.getTableName() + " was not found but declared as mandatory for this view, cannot continue";
+                }
+                String childTableSchemaName = "";
+                if (Boolean.FALSE.equals(curTblJoin.getChildTable().getIsProcedureInstance())) {
+                    childTableSchemaName = curTblJoin.getChildTable().getRepositoryName();
+                } else {
+                    childTableSchemaName = LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), curTblJoin.getChildTable().getRepositoryName(), isForTesting, curTblJoin.getChildTable().getTableName());
+                }
+                Object[] dbChildTableExists = Rdbms.dbTableExists(childTableSchemaName.replace("\"", ""), curTblJoin.getChildTable().getTableName());
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbChildTableExists[0].toString()) && Boolean.TRUE.equals(curTblJoin.childMandatoy)) {
+                    return "View " + childTableSchemaName + "." + curTblJoin.childTbl.getTableName() + " was not found but declared as mandatory for this view, cannot continue";
+                }
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbMainTableExists[0].toString())
+                        && LPPlatform.LAB_TRUE.equalsIgnoreCase(dbChildTableExists[0].toString())) {
+                    vwScript.append(curTblJoin.getJoinType().getSqlClause()).append(" ")
+                            .append(childTableSchemaName).append(".").append(curTblJoin.getChildTable().getTableName() + " " + curTblJoin.getChildTableAlias()).append(" on ");
+                    tblAliases = LPArray.addValueToArray1D(tblAliases, curTblJoin.getChildTableAlias());
+                    Integer numJoins = 0;
+                    if (curTblJoin.getJoins() != null) {
+                        for (EnumIntTableFields[] curJoin : curTblJoin.getJoins()) {
+                            if (numJoins > 0) {
+                                vwScript.append(" and ");
+                            }
+                            if (curJoin[0] != null && curJoin[1] != null) {
+                                vwScript.append(" ").append(curTblJoin.getMainTableAlias()).append(".").append(curJoin[0].getName())
+                                        .append(" = ").append(curTblJoin.getChildTableAlias()).append(".").append(curJoin[1].getName());
+                            }
+                            numJoins++;
+                            tblAliases = LPArray.addValueToArray1D(tblAliases, curTblJoin.getChildTableAlias());
                         }
-                        if (curJoin[0] != null && curJoin[1] != null) {
-                            vwScript.append(" ").append(curTblJoin.getMainTableAlias()).append(".").append(curJoin[0].getName())
-                                    .append(" = ").append(curTblJoin.getChildTableAlias()).append(".").append(curJoin[1].getName());
-                        }
-                        numJoins++;
-                        tblAliases = LPArray.addValueToArray1D(tblAliases, curTblJoin.getChildTableAlias());
+                    }
+                    if (curTblJoin.getExtraJoins() != null) {
+                        vwScript.append(" ").append(curTblJoin.getExtraJoins());
                     }
                 }
-                if (curTblJoin.getExtraJoins() != null) {
-                    vwScript.append(" ").append(curTblJoin.getExtraJoins());
-                }
+                iterations++;
             }
-            iterations++;
+            if (vwDef.getExtraFilters() != null) {
+                vwScript.append(" ").append(vwDef.getExtraFilters());
+            }
+            vwScript = new StringBuilder(" SELECT ").append(getViewFldsList(vwDef, procInstanceName, tblAliases, fieldsToExclude).toString()).append(" from ").append(vwScript);
         }
-        if (vwDef.getExtraFilters() != null) {
-            vwScript.append(" ").append(vwDef.getExtraFilters());
-        }
-
-        vwScript = new StringBuilder(" SELECT ").append(getViewFldsList(vwDef, procInstanceName, tblAliases, fieldsToExclude).toString()).append(" from ").append(vwScript);
         vwScript = new StringBuilder(vwScript.toString().replace("#SCHEMA_CONFIG", LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), "config", isForTesting, "")));
         vwScript = new StringBuilder(vwScript.toString().replace("#SCHEMA_DATA", LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), "data", isForTesting, "")));
 
         vwScript = new StringBuilder("create view ").append(LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), vwDef.getRepositoryName(), isForTesting, vwDef.getViewName())).append(".").append(vwDef.getViewName()).append(" AS ").append(vwScript);
+        
         return vwScript.toString();
     }
 
