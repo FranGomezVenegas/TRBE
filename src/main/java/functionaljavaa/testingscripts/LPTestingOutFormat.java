@@ -193,13 +193,13 @@ public class LPTestingOutFormat {
                 if (numEvaluationArguments > 1) {
                     updFldNames = LPArray.addValueToArray1D(updFldNames, new String[]{TblsTesting.ScriptSteps.FUNCTION_CODE.getName(), TblsTesting.ScriptSteps.EVAL_CODE.getName(),
                         TblsTesting.ScriptSteps.DYNAMIC_DATA.getName()});
-                    updFldValues = LPArray.addValueToArray1D(updFldValues, new Object[]{evaluate[TRAP_MESSAGE_CODE_POSIC], tstAssert.getEvalCodeDiagnostic(),
+                    updFldValues = LPArray.addValueToArray1D(updFldValues, new Object[]{evaluate.length<TRAP_MESSAGE_CODE_POSIC?"":evaluate[TRAP_MESSAGE_CODE_POSIC], tstAssert.getEvalCodeDiagnostic(),
                         functionRelatedObjects.toJSONString()});
                 }
             }
             if (1==2){
                 updFldNames = LPArray.addValueToArray1D(updFldNames, new String[]{TblsTesting.ScriptSteps.ARGUMENTS_LAST_EXEC.getName(), TblsTesting.ScriptSteps.EVAL_SYNTAXIS.getName()});
-                updFldValues = LPArray.addValueToArray1D(updFldValues, new Object[]{evaluate[TRAP_MESSAGE_EVALUATION_POSIC], tstAssert.getEvalSyntaxisDiagnostic()});
+                updFldValues = LPArray.addValueToArray1D(updFldValues, new Object[]{evaluate.length<TRAP_MESSAGE_EVALUATION_POSIC?"":evaluate[TRAP_MESSAGE_EVALUATION_POSIC], tstAssert.getEvalSyntaxisDiagnostic()});
             }
             
             SqlWhere sqlWhere = new SqlWhere();
