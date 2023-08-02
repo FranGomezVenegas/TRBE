@@ -17,9 +17,13 @@ import databases.SqlWhereEntry;
 import databases.TblsTesting;
 import databases.features.Token;
 import static functionaljavaa.requirement.ProcedureDefinitionQueries.*;
+import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.user.UserProfile;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -28,6 +32,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
@@ -85,7 +90,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))) {
             return;
         }
-        try (PrintWriter out = response.getWriter()) {
+        try ( PrintWriter out = response.getWriter()) {
             String procInstanceName = procReqSession.getProcedureInstance();
             switch (endPoint) {
                 case ALL_PROCEDURES_AND_INSTANCE_LIST:
@@ -329,15 +334,17 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         summaryArr.add(summaryObj);
         summaryObj = new JSONObject();
         summaryObj.put("section", "Testing Scripts");
-        summaryObj.put("progress", 40);
+        JSONObject testingSummary = procInstanceSummaryTesting(procInstanceName);
+        summaryObj.put("progress", testingSummary.get("execution_progress"));
         summaryObj.put("signed", false);
-        summaryObj.put("tooltip", "");
+        summaryObj.put("tooltip", testingSummary.get("summary_phrase"));
         summaryArr.add(summaryObj);
         summaryObj = new JSONObject();
         summaryObj.put("section", "Testing Coverage");
-        summaryObj.put("progress", 80);
+        JSONObject testingCoverageSummary = procInstanceSummaryTestingCoverage(procInstanceName);
+        summaryObj.put("progress", testingCoverageSummary.get("execution_progress"));
         summaryObj.put("signed", false);
-        summaryObj.put("tooltip", "");
+        summaryObj.put("tooltip", testingCoverageSummary.get("summary_phrase"));
         summaryArr.add(summaryObj);
         summaryObj = new JSONObject();
         summaryObj.put("section", "Deployed");
@@ -520,6 +527,44 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                     if (actionPosic > -1) {
                         actionsList = LPArray.addValueToArray1D(actionsList, LPNulls.replaceNull(curStep[actionPosic]).toString());
                     }
+                    Integer posicId=LPArray.valuePosicInArray(fieldsToRetrieveScriptSteps, TblsTesting.ScriptSteps.EVAL_SYNTAXIS.getName());
+                    String tagName=TblsTesting.ScriptSteps.EVAL_SYNTAXIS.getName()+"_icon";
+                    String tagClass=TblsTesting.ScriptSteps.EVAL_SYNTAXIS.getName()+"_class";
+                    if (posicId>-1){
+                        switch(curStep[posicId].toString().toUpperCase()){
+                            case "MATCH":
+                                curStepObj.put(tagName, "check_circle");
+                                curStepObj.put(tagClass, "green");
+                                break;
+                            case "UNMATCH":
+                                curStepObj.put(tagName, "cancel");
+                                curStepObj.put(tagClass, "red");
+                                break;   
+                            default:
+                                curStepObj.put(tagName, "help");
+                                curStepObj.put(tagClass, "yellow");
+                                break;                                   
+                        }                        
+                    }
+                    posicId=LPArray.valuePosicInArray(fieldsToRetrieveScriptSteps, TblsTesting.ScriptSteps.EVAL_CODE.getName());
+                    tagName=TblsTesting.ScriptSteps.EVAL_CODE.getName()+"_icon";
+                    tagClass=TblsTesting.ScriptSteps.EVAL_CODE.getName()+"_class";
+                    if (posicId>-1){
+                        switch(curStep[posicId].toString().toUpperCase()){
+                            case "MATCH":
+                                curStepObj.put(tagName, "check_circle");
+                                curStepObj.put(tagClass, "green");
+                                break;
+                            case "UNMATCH":
+                                curStepObj.put(tagName, "cancel");
+                                curStepObj.put(tagClass, "red");
+                                break;   
+                            default:
+                                curStepObj.put(tagName, "help");
+                                curStepObj.put(tagClass, "yellow");
+                                break;                                   
+                        }                        
+                    }
                     scriptStepsList.add(curStepObj);
                 }
                 curTestObj.put("steps", scriptStepsList);
@@ -527,4 +572,107 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         }
         return curTestObj;
     }
+
+    private static JSONObject procInstanceSummaryTesting(String procInstanceName) {
+        String repositoryName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName());
+        String[] fieldsToRetrieveScript = new String[]{TblsTesting.Script.RUN_SUMMARY.getName(), TblsTesting.Script.DATE_EXECUTION.getName()};
+        //.getTableFieldsFromString(TblsTesting.TablesTesting.SCRIPT, new Strin);
+        Object[][] scriptStepsTblInfo = Rdbms.getRecordFieldsByFilter(repositoryName, TblsTesting.TablesTesting.SCRIPT.getTableName(),
+                new String[]{TblsTesting.Script.ACTIVE.getName()}, new Object[]{true},
+                fieldsToRetrieveScript, new String[]{TblsTesting.Script.SCRIPT_ID.getName()});
+        int numNotSuccess = 0;
+        Date lastPerformed = null;
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptStepsTblInfo[0][0].toString())) {
+            JSONObject jMain = new JSONObject();
+            jMain.put("summary_phrase", "No testing scripts defined yet");
+            jMain.put("execution_progress", 0);
+            return jMain;
+        }
+        for (Object[] curTest : scriptStepsTblInfo) {
+            if (Boolean.FALSE.equals(LPNulls.replaceNull(curTest[0]).toString().toUpperCase().contains("SUCCESS"))) {
+                numNotSuccess++;
+            }
+            if (LPNulls.replaceNull(curTest[1]).toString().length() > 0) {
+                if (lastPerformed == null) {
+                    lastPerformed = LPDate.stringFormatToDate(LPNulls.replaceNull(curTest[1]).toString());
+                } else {
+                    if (LPDate.stringFormatToDate(LPNulls.replaceNull(curTest[1]).toString()).after(lastPerformed)) {
+                        lastPerformed = LPDate.stringFormatToDate(LPNulls.replaceNull(curTest[1]).toString());
+                    }
+                }
+            }
+        }
+        JSONObject jMain = new JSONObject();
+        jMain.put("total", scriptStepsTblInfo.length);
+        jMain.put("total_with_error", numNotSuccess);
+        jMain.put("last_performed", lastPerformed);
+        String lastPerformedStr = lastPerformed == null ? "Not performed" : lastPerformed.toString();
+        String sumPhrase = " (Last performed:" + lastPerformedStr + ")";
+        if (numNotSuccess == 0) {
+            sumPhrase = "All tests run success" + sumPhrase;
+        } else {
+            sumPhrase = "Failed " + numNotSuccess + " of " + scriptStepsTblInfo.length + sumPhrase;
+        }
+        jMain.put("summary_phrase", sumPhrase);
+        BigDecimal perctg = new BigDecimal(scriptStepsTblInfo.length).subtract(new BigDecimal(numNotSuccess));
+        perctg = perctg.divide(new BigDecimal(scriptStepsTblInfo.length), 4, RoundingMode.HALF_UP)
+                .multiply(BigDecimal.valueOf(100));
+          //      .divide(new BigDecimal());
+        //perctg = perctg.multiply(new BigDecimal(100));
+        perctg = perctg.setScale(2, RoundingMode.UP);
+        jMain.put("execution_progress", perctg);
+        return jMain;
+    }
+
+    private static JSONObject procInstanceSummaryTestingCoverage(String procInstanceName) {
+        String repositoryName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName());
+        String[] fieldsToRetrieveScript = new String[]{TblsTesting.ScriptsCoverage.DATE_EXECUTION.getName(), TblsTesting.ScriptsCoverage.BUS_RULES_COVERAGE.getName(),
+            TblsTesting.ScriptsCoverage.ENDPOINTS_COVERAGE.getName()};
+        Object[][] scriptStepsTblInfo = Rdbms.getRecordFieldsByFilter(repositoryName, TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableName(),
+                new String[]{TblsTesting.ScriptsCoverage.ACTIVE.getName()}, new Object[]{true},
+                fieldsToRetrieveScript, new String[]{TblsTesting.ScriptsCoverage.DATE_EXECUTION.getName() + " desc"});
+        Double totalPerc = null;
+        Double endpointsCov = null;
+        Double notifCov = null;
+        Date lastPerformed = null;
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptStepsTblInfo[0][0].toString())) {
+            JSONObject jMain = new JSONObject();
+            jMain.put("summary_phrase", "No Coverage Analysis defined yet");
+            jMain.put("execution_progress", 0);
+            return jMain;
+        }
+        Object[] curTest = scriptStepsTblInfo[0];
+        if (LPNulls.replaceNull(curTest[0]).toString().length() > 0) {
+            if (lastPerformed == null) {
+                lastPerformed = LPDate.stringFormatToDate(LPNulls.replaceNull(curTest[0]).toString());
+            } else {
+                if (LPDate.stringFormatToDate(LPNulls.replaceNull(curTest[0]).toString()).after(lastPerformed)) {
+                    lastPerformed = LPDate.stringFormatToDate(LPNulls.replaceNull(curTest[0]).toString());
+                }
+            }
+        }
+        notifCov = LPNulls.replaceNull(curTest[1]).toString().length() == 0 ? Double.valueOf("0") : Double.valueOf(curTest[1].toString());
+        endpointsCov = LPNulls.replaceNull(curTest[2]).toString().length() == 0 ? Double.valueOf("0") : Double.valueOf(curTest[2].toString());
+        String lastPerformedStr = lastPerformed == null ? "Not performed" : lastPerformed.toString();
+        totalPerc = ((notifCov + endpointsCov) / 2) * 100;
+        JSONObject jMain = new JSONObject();
+        jMain.put("last_performed", lastPerformed);
+        String sumPhrase = " (Last performed:" + lastPerformedStr + ")";
+        BigDecimal endpointsCovBigDec=new BigDecimal(endpointsCov);
+        BigDecimal notifCovBigDec=new BigDecimal(notifCov);
+        BigDecimal perctg = notifCovBigDec.add(endpointsCovBigDec);
+        perctg = perctg.divide(new BigDecimal(2));
+        perctg = perctg.setScale(2, RoundingMode.UP);
+        endpointsCovBigDec = endpointsCovBigDec.setScale(2, RoundingMode.UP);
+        notifCovBigDec = notifCovBigDec.setScale(2, RoundingMode.UP);
+        jMain.put("execution_progress", perctg);
+        if (perctg.equals(new BigDecimal(100))) {
+            sumPhrase = "All covered" + sumPhrase;
+        } else {
+            sumPhrase = "Actions Coverage:" + endpointsCovBigDec + ". Notifications Coverage " + notifCovBigDec + sumPhrase;
+        }
+        jMain.put("summary_phrase", sumPhrase);
+        return jMain;
+    }
+
 }
