@@ -102,7 +102,7 @@ public class UserAndRolesViews {
             userName = userName.toLowerCase();
         }
         Object[][] personByUser = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(),
-                new String[]{TblsApp.Users.USER_NAME.getName()}, new String[]{userName}, new String[]{Users.PERSON_NAME.getName()}, new String[]{Users.PERSON_NAME.getName()});
+                new String[]{TblsApp.Users.USER_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.LIKE.getSqlClause()}, new String[]{userName}, new String[]{Users.PERSON_NAME.getName()}, new String[]{Users.PERSON_NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUser[0][0].toString())) {
             ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UserAndRolesErrorTrapping.USER_NOT_EXISTS.getErrorCode(), new Object[]{userName});
         }
