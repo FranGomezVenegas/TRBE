@@ -732,7 +732,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                         wObjNextMaintPrev.addConstraint(TblsInstrumentsData.Instruments.FAMILY, SqlStatement.WHERECLAUSE_TYPES.IN, familyName.split("\\|"), null);
                     }
                     Object[] buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsInstrumentsData.InstrumentEvent.CREATED_ON.getName(), startDateStr, endDateStr);
-                    if (Boolean.TRUE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))) {
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))) {
                         if (buildDateRangeFromStrings.length == 4) {
                             wObj.addConstraint(TblsInstrumentsData.InstrumentEvent.CREATED_ON, SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{buildDateRangeFromStrings[2], buildDateRangeFromStrings[3]}, null);
                             wObjNextCalib.addConstraint(TblsInstrumentsData.Instruments.NEXT_CALIBRATION, SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{buildDateRangeFromStrings[2], buildDateRangeFromStrings[3]}, null);
