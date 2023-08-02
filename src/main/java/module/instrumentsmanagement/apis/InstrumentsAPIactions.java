@@ -5,6 +5,8 @@
  */
 package module.instrumentsmanagement.apis;
 
+import com.labplanet.servicios.app.InvestigationAPI;
+import functionaljavaa.investigation.ClassInvestigation;
 import module.instrumentsmanagement.definition.ClassInstruments;
 import static trazit.session.ProcedureRequestSession.MANDATPRMS_MAIN_SERVLET_PROCEDURE;
 import module.instrumentsmanagement.definition.InstrumentsEnums.InstrumentsAPIactionsEndpoints;
@@ -22,11 +24,14 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.ApiErrorTraping;
+import lbplanet.utilities.TrazitUtiilitiesEnums;
 import module.instrumentsmanagement.definition.TblsInstrumentsData;
+import static module.inventorytrack.apis.InvTrackingAPIactions.publishResult;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
 import org.json.simple.JSONObject;
+import trazit.enums.EnumIntEndpoints;
 import trazit.session.InternalMessage;
 /**
  *
@@ -46,13 +51,26 @@ public class InstrumentsAPIactions extends HttpServlet {
         }
         String actionName=procReqInstance.getActionName();
         String language=procReqInstance.getLanguage();
-        InstrumentsAPIactionsEndpoints endPoint = null;
+        EnumIntEndpoints endPoint = null;
         try{
             endPoint = InstrumentsAPIactionsEndpoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
-            procReqInstance.killIt();
-            LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
-            return;                   
+            try {
+                endPoint = InvestigationAPI.InvestigationAPIactionsEndpoints.valueOf(actionName.toUpperCase());
+                Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())) {
+                    procReqInstance.killIt();
+                    LPFrontEnd.servletReturnResponseError(request, response,
+                            TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.UNHANDLED_EXCEPTION.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, "en", LPPlatform.ApiErrorTraping.class.getSimpleName());
+                    return;
+                }                    
+                ClassInvestigation clss = new ClassInvestigation(request, InvestigationAPI.InvestigationAPIactionsEndpoints.valueOf(actionName.toUpperCase()));
+                publishResult(request, response, procReqInstance, endPoint, clss.getDiagnostic(), clss.getDiagnosticObj(), clss.getMessageDynamicData(), clss.getRelatedObj());
+            } catch (Exception e2) {
+                procReqInstance.killIt();
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
+                return;
+            }
         }
         String[] argList=new String[]{};
         LPAPIArguments[] arguments = endPoint.getArguments();
@@ -63,7 +81,7 @@ public class InstrumentsAPIactions extends HttpServlet {
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  
         String instrName=argValues[0].toString();
         try (PrintWriter out = response.getWriter()) {
-            ClassInstruments clss = new ClassInstruments(request, endPoint);
+            ClassInstruments clss = new ClassInstruments(request, InstrumentsAPIactionsEndpoints.valueOf(actionName.toUpperCase()));
             Object[] diagnostic=clss.getDiagnostic();
             if (diagnostic!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){ 
                 InternalMessage diagnosticObj=clss.getDiagnosticObj();
@@ -76,10 +94,6 @@ public class InstrumentsAPIactions extends HttpServlet {
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
             }           
         }catch(Exception e){  
-            procReqInstance.killIt();
-            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, ApiErrorTraping.EXCEPTION_RAISED, new Object[]{e.getMessage()});   
-            String[] errObject = new String[]{e.getMessage()};
-            LPFrontEnd.responseError(errObject);
         } finally {
             // release database resources
             try {           
