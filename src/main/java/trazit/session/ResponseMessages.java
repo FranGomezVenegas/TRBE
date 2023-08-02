@@ -49,7 +49,7 @@ public class ResponseMessages {
     private Boolean isSuccess;
     
     private ResponseMessages(){
-        this.messages=new Object[][]{{}};
+        this.messages=null;
         this.mainMessage=new Object[][]{{}};
         this.isSuccess=false;
     }
@@ -86,7 +86,16 @@ public class ResponseMessages {
             testingMessageCodeVisitedObj.addObject(procName, "", endpoint.getSuccessMessageCode(), endpoint.getSuccessMessageCode(), endpoint.getClass().getSimpleName());        
         this.setIsSuccess(true);
         mainStructureObject.mainMessage=LPArray.array1dTo2d(new Object[]{endpoint.getClass().getSimpleName(), endpoint.getSuccessMessageCode(), msgCodeVariables}, 3);
-    }    
+    }   
+    public void addMinorForSuccess(EnumIntEndpoints endpoint, Object[] msgCodeVariables){
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        TestingMessageCodeVisited testingMessageCodeVisitedObj = procReqSession.getTestingMessageCodeVisitedObj();
+        String procName=procReqSession.getProcedureInstance();
+        if (testingMessageCodeVisitedObj!=null)
+            testingMessageCodeVisitedObj.addObject(procName, "", endpoint.getSuccessMessageCode(), endpoint.getSuccessMessageCode(), endpoint.getClass().getSimpleName());        
+        this.setIsSuccess(true);
+        mainStructureObject.messages=LPArray.joinTwo2DArrays(mainStructureObject.messages, LPArray.array1dTo2d(new Object[]{endpoint.getClass().getSimpleName(), endpoint.getSuccessMessageCode(), msgCodeVariables}, 3));
+    }       
     public void addMainForError(String messageCode, Object[] msgCodeVariables, String className){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         TestingMessageCodeVisited testingMessageCodeVisitedObj = procReqSession.getTestingMessageCodeVisitedObj();
