@@ -96,10 +96,10 @@ public class TblsEnvMonitData {
                 new EnumIntTableFields[][]{{TblsData.SampleAnalysisResult.SAMPLE_ID, TblsData.Sample.SAMPLE_ID}}, "", JOIN_TYPES.INNER),
             new EnumIntTablesJoin(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, "sar", TablesEnvMonitData.SAMPLE_MICROORGANISM, "sorg", true,
                 new EnumIntTableFields[][]{{TblsData.SampleAnalysisResult.SAMPLE_ID, TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID}}, "", JOIN_TYPES.INNER),
-        }, "where sar.param_name='Recuento' group by s.sample_id, s.status, s.sampling_date, s.current_stage, s.sample_config_code, s.program_name, s.location_name, s.incubation_start, s.incubation_end, s.incubation2_start, s.incubation2_end, sar.raw_value, sar.result_id, sar.test_id"),
+        }, "where sar.param_name='Recuento' group by s.sample_id, s.status, s.sampling_date, s.current_stage, s.sample_config_code, s.program_name, s.location_name, s.incubation_start, s.incubation_end, s.incubation2_start, s.incubation2_end, sar.raw_value, sar.result_id, sar.test_id", false),
         ;
         private ViewsEnvMonData(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds, 
-                String comment, EnumIntTablesJoin[] tablesInView, String extraFilters){
+                String comment, EnumIntTablesJoin[] tablesInView, String extraFilters, Boolean useFixViewScript){
             this.getTblBusinessRules=fldBusRules;
             this.viewName=dbVwName;
             this.viewFields=vwFlds;
@@ -109,6 +109,7 @@ public class TblsEnvMonitData {
             this.viewScript=viewScript;
             this.tablesInTheView=tablesInView;
             this.extraFilters=extraFilters;
+            this.useFixViewScript=useFixViewScript;
         }
         @Override        public String getRepositoryName() {return this.repositoryName;}
         @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
@@ -118,7 +119,7 @@ public class TblsEnvMonitData {
         @Override        public String getViewComment() {return this.viewComment;}
         @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
         @Override        public String getExtraFilters() {return this.extraFilters;}
-        
+        @Override        public Boolean getUsesFixScriptView() {return this.useFixViewScript;}
         private final EnumIntTablesJoin[] tablesInTheView;
         @Override  public EnumIntTablesJoin[] getTablesRequiredInView() {return this.tablesInTheView;}
         private final FldBusinessRules[] getTblBusinessRules;      
@@ -129,6 +130,8 @@ public class TblsEnvMonitData {
         private final String viewComment;
         private final String viewScript;
         private final String extraFilters;
+        private final Boolean useFixViewScript;
+
     }
     
     public enum Sample implements EnumIntTableFields{
