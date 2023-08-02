@@ -43,7 +43,7 @@ public class TblsApp {
         VIDEO_TUTORIAL_JSON(null, "video_tutorial_json", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, VideoTutorialJson.values(), null,
             new String[]{VideoTutorialJson.AREA.getName()}, null, "Video Tutorial JSON entries table"),
         APP_BUSINESS_RULES(null, "procedure_business_rules", GlobalVariables.Schemas.APP_PROCEDURE.getName(), IS_PRODEDURE_INSTANCE, TblsProcedure.ProcedureBusinessRules.values(), null,
-            new String[]{VideoTutorialJson.AREA.getName()}, null, "App business rules entries table"),
+            new String[]{TblsProcedure.ProcedureBusinessRules.AREA.getName(), TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()}, null, "App business rules entries table"),
         LDAP_SETTINGS(null, "ldap_setting", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, LdapSetting.values(), null,
             new String[]{LdapSetting.NAME.getName()}, null, "LDAP Settings declaration"),
         ;
