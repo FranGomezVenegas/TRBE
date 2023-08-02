@@ -137,7 +137,7 @@ public class LPHttp {
                         paramsNotPresent.append(curParam.getName()).append(", ");
                     }
                 }
-                if (curParam.getSpecialCheck() != null && curParamValue.length() > 0) {
+                if (curParam.getSpecialCheck() != null && curParamValue!=null && curParamValue.length() > 0) {
                     String checkerController = LPAPIArgumentsSpecialChecks.checkerController(curParam, curParamValue);
                     if (checkerController != null) {
                         diagnoses = LPArray.addValueToArray1D(diagnoses, LPPlatform.LAB_FALSE);
