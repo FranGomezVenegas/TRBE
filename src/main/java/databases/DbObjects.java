@@ -109,7 +109,7 @@ public class DbObjects {
         schemasObj.put("config", jsonObj);
 
         tblCreateScript = createTableScript(TablesProcedure.PROCEDURE_BUSINESS_RULE, "app", false, true, null);
-        tblCreateScript=tblCreateScript.replace("app-procedure", "app-business-rules");
+        tblCreateScript=tblCreateScript.replace(GlobalVariables.Schemas.APP_PROCEDURE.getName(), "app-business-rules");
         Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(TablesProcedure.PROCEDURE_BUSINESS_RULE.getRepositoryName(), TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), tblCreateScript, new Object[]{});
 
         JSONObject scriptLog=new JSONObject();
@@ -129,6 +129,7 @@ public class DbObjects {
             {"frontend_locksession", "secondsNextTimeChecker", "60", false},
             {"procedure", "windowOpenableWhenNotSopCertifiedUserSopCertification", "NO", false}};
         for (Object[] curRule: values){
+            
             RdbmsObject insertRecord = Rdbms.insertRecord(TablesApp.APP_BUSINESS_RULES, fields, curRule, TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
             
             if (Boolean.TRUE.equals(insertRecord.getRunSuccess()))
