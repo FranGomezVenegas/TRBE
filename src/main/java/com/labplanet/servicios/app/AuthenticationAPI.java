@@ -168,6 +168,7 @@ public class AuthenticationAPI extends HttpServlet {
                     response.getWriter().write(jArray.toJSONString());
                     return;
                 case FINALTOKEN:
+                    try{
                     if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))) {
                         return;
                     }
@@ -243,7 +244,10 @@ public class AuthenticationAPI extends HttpServlet {
                     Rdbms.closeRdbms();
                     LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
                     return;
-
+                    }catch(Exception e){
+                        LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, new Object[]{e.getMessage()});
+                        return;                        
+                    }
                 case TOKEN_VALIDATE_ESIGN_PHRASE:
                     myToken = argValues[0].toString();
                     String esignPhraseToCheck = argValues[1].toString();

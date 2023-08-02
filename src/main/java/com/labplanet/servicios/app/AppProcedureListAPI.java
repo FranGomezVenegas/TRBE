@@ -135,54 +135,63 @@ public class AppProcedureListAPI extends HttpServlet {
 
             JSONArray procedures = new JSONArray();
             for (Object curProc : allUserProcedurePrefix) {
-                if (Boolean.FALSE.equals(GlobalVariables.PROC_MANAGEMENT_SPECIAL_ROLE.equalsIgnoreCase(curProc.toString()))) {
-                    JSONObject procedure = new JSONObject();
-                    String schemaNameProcedure = LPPlatform.buildSchemaName(curProc.toString(), GlobalVariables.Schemas.PROCEDURE.getName());
-
-                    if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))) {
-                        return new JSONObject();
-                    }
-
-                    Object[][] procInfo = Rdbms.getRecordFieldsByFilter(schemaNameProcedure, TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(),
-                            new String[]{TblsProcedure.ProcedureInfo.NAME.getName() + WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null,
-                             PROC_FLD_NAME.split("\\|"));
-                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfo[0][0].toString()))) {
-                        procedure = LPJson.convertArrayRowToJSONObject(procFldNameArray, procInfo[0]);
-
-                        Object[][] rulesInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(curProc.toString(), GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(),
-                                new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.AREA.getName()},
-                                new Object[]{UserSop.UserSopBusinessRules.USERSOP_MODE.getTagName(), UserSop.UserSopBusinessRules.WINDOWOPENABLE_WHENNOTSOPCERTIFIED.getAreaName()},
-                                new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});
-                        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(rulesInfo[0][0].toString()))) {
-                            for (Object[] curRule : rulesInfo) {
-                                procedure.put(curRule[0].toString(), curRule[1].toString());
-                            }
-                        }
-                        procedure.put(LABEL_PROC_SCHEMA, curProc);
+                try {
+                    if (Boolean.FALSE.equals(GlobalVariables.PROC_MANAGEMENT_SPECIAL_ROLE.equalsIgnoreCase(curProc.toString()))) {
+                        JSONObject procedure = new JSONObject();
+                        String schemaNameProcedure = LPPlatform.buildSchemaName(curProc.toString(), GlobalVariables.Schemas.PROCEDURE.getName());
 
                         if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))) {
                             return new JSONObject();
                         }
 
-                        procedure.put("new_" + LABEL_ARRAY_PROC_EVENTS, newProcedureDefinition(token, curProc,
-                                Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING)))));
-                        procedure.put(LABEL_ARRAY_PROC_EVENTS_ICONS_UP, procedureIconsUp(token, curProc,
-                                Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING)))));
-                        procedure.put(LABEL_ARRAY_PROC_EVENTS_ICONS_DOWN, procedureIconsDown(token, curProc,
-                                Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING)))));
+                        Object[][] procInfo = Rdbms.getRecordFieldsByFilter(schemaNameProcedure, TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(),
+                                new String[]{TblsProcedure.ProcedureInfo.NAME.getName() + WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null,
+                                PROC_FLD_NAME.split("\\|"));
+                        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfo[0][0].toString()))) {
+                            procedure = LPJson.convertArrayRowToJSONObject(procFldNameArray, procInfo[0]);
+
+                            Object[][] rulesInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(curProc.toString(), GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(),
+                                    new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.AREA.getName()},
+                                    new Object[]{UserSop.UserSopBusinessRules.USERSOP_MODE.getTagName(), UserSop.UserSopBusinessRules.WINDOWOPENABLE_WHENNOTSOPCERTIFIED.getAreaName()},
+                                    new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});
+                            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(rulesInfo[0][0].toString()))) {
+                                for (Object[] curRule : rulesInfo) {
+                                    procedure.put(curRule[0].toString(), curRule[1].toString());
+                                }
+                            }
+                            procedure.put(LABEL_PROC_SCHEMA, curProc);
+
+                            if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))) {
+                                return new JSONObject();
+                            }
+
+                            procedure.put("new_" + LABEL_ARRAY_PROC_EVENTS, newProcedureDefinition(token, curProc,
+                                    Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING)))));
+                            procedure.put(LABEL_ARRAY_PROC_EVENTS_ICONS_UP, procedureIconsUp(token, curProc,
+                                    Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING)))));
+                            procedure.put(LABEL_ARRAY_PROC_EVENTS_ICONS_DOWN, procedureIconsDown(token, curProc,
+                                    Boolean.valueOf(LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_IS_TESTING)))));
+                        }
+                        procedure.put("actions_with_esign", procActionsWithESign(curProc.toString()));
+                        procedure.put("actions_with_confirm_user", procActionsWithConfirmUser(curProc.toString()));
+                        procedure.put("actions_with_justification_phrase", procActionsWithJustifReason(curProc.toString()));
+                        procedure.put("actions_with_action_confirm", procActionsWithActionConfirm(curProc.toString()));
+                        procedure.put("audit_sign_mode", auditSignMode(curProc.toString()));
+                        String includeProcModelInfo = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_PROC_MODEL_INFO);
+                        if (includeProcModelInfo != null && Boolean.valueOf(includeProcModelInfo)) {
+                            procedure.put("procModel", procModel(curProc.toString(), sizeValue));
+                        }
+                        procedure.put("master_data", getMasterData(token, curProc.toString()));
+                        procedures.add(procedure);
                     }
-                    procedure.put("actions_with_esign", procActionsWithESign(curProc.toString()));
-                    procedure.put("actions_with_confirm_user", procActionsWithConfirmUser(curProc.toString()));
-                    procedure.put("actions_with_justification_phrase", procActionsWithJustifReason(curProc.toString()));
-                    procedure.put("actions_with_action_confirm", procActionsWithActionConfirm(curProc.toString()));
-                    procedure.put("audit_sign_mode", auditSignMode(curProc.toString()));
-                    String includeProcModelInfo = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_PROC_MODEL_INFO);
-                    if (includeProcModelInfo != null && Boolean.valueOf(includeProcModelInfo)) {
-                        procedure.put("procModel", procModel(curProc.toString(), sizeValue));
-                    }
-                    procedure.put("master_data", getMasterData(token, curProc.toString()));
-                    procedures.add(procedure);
+                } catch (Exception e) {
+            JSONObject proceduresList = new JSONObject();
+            proceduresList.put(LABEL_ARRAY_PROCEDURES, "Error in procedure "+curProc.toString()+". Error: "+e.getMessage());
+            return proceduresList;
+                    
+
                 }
+
             }
             JSONObject proceduresList = new JSONObject();
             proceduresList.put(LABEL_ARRAY_PROCEDURES, procedures);
