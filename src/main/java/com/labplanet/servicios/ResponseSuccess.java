@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Response;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
+import lbplanet.utilities.LPNulls;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.DbLogSummary;
 import trazit.session.ProcedureRequestSession;
@@ -51,7 +52,7 @@ public class ResponseSuccess extends HttpServlet {
                 request=null;
                 response.setStatus(HttpServletResponse.SC_NON_AUTHORITATIVE_INFORMATION);     
             }else
-                responseMsg=(String) request.getAttribute(GlobalVariables.ServletsResponse.SUCCESS.getAttributeName());
+                responseMsg= LPNulls.replaceNull(request.getAttribute(GlobalVariables.ServletsResponse.SUCCESS.getAttributeName())).toString();
             response.getWriter().write(responseMsg);
             Response.ok().build();    
         } catch (IOException ex) {

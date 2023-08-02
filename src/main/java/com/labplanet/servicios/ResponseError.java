@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lbplanet.utilities.LPNulls;
 import trazit.globalvariables.GlobalVariables;
 
 
@@ -29,10 +30,14 @@ public class ResponseError extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response){
         request=LPHttp.requestPreparation(request);
-        response=LPHttp.responsePreparation(response);                
+        if (response!=null){
+            response=LPHttp.responsePreparation(response);                
+        }
         try (PrintWriter out = response.getWriter()) {
-            String errorDetail=(String) request.getAttribute(GlobalVariables.ServletsResponse.ERROR.getAttributeName());
-            response.getWriter().write(errorDetail);
+            String errorDetail=LPNulls.replaceNull(request.getAttribute(GlobalVariables.ServletsResponse.ERROR.getAttributeName())).toString();
+            if (response!=null){
+                response.getWriter().write(errorDetail);
+            }
             request=null;
             response.setStatus(HttpServletResponse.SC_NON_AUTHORITATIVE_INFORMATION);     
         } catch (IOException ex) {
