@@ -61,7 +61,7 @@ public class InvTrackingAPIactions extends HttpServlet {
                             TrazitUtilitiesErrorTrapping.UNHANDLED_EXCEPTION.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, "en", LPPlatform.ApiErrorTraping.class.getSimpleName());
                     return;
                 }
-                ClassInvTracking clss = new ClassInvTracking(request, InventoryTrackAPIactionsEndpoints.valueOf(actionName.toUpperCase()));
+                ClassInvTracking clss = new ClassInvTracking(request, response, InventoryTrackAPIactionsEndpoints.valueOf(actionName.toUpperCase()));
                 publishResult(request, response, procReqInstance, endPoint, clss.getDiagnostic(), clss.getDiagnosticObj(), clss.getMessageDynamicData(), clss.getRelatedObj());
             } catch (Exception e) {
                 try {
@@ -196,7 +196,7 @@ public class InvTrackingAPIactions extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private static void publishResult(HttpServletRequest request, HttpServletResponse response, ProcedureRequestSession procReqInstance, EnumIntEndpoints endPoint, Object[] diagnostic, InternalMessage diagnosticObj, Object[] messageDynamicData, RelatedObjects relatedObj) {
+    public static void publishResult(HttpServletRequest request, HttpServletResponse response, ProcedureRequestSession procReqInstance, EnumIntEndpoints endPoint, Object[] diagnostic, InternalMessage diagnosticObj, Object[] messageDynamicData, RelatedObjects relatedObj) {
         Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
         String lotName = argValues[0].toString();
 
