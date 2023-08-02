@@ -84,6 +84,8 @@ public class LPJson {
         for (int iField = 0; iField < header.length; iField++) {
             if (row[iField] == null) {
                 jObj.put(header[iField], "");
+            }else if (row[iField].toString().toUpperCase().contains("NULL>>>")){
+                jObj.put(setAlias(header[iField]), null);
             } else {
                 if (fieldsToExclude == null || !LPArray.valueInArray(fieldsToExclude, header[iField])) {
                     String clase = row[iField].getClass().toString();
