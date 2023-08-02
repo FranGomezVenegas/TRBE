@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPArray;
 import org.json.simple.JSONArray;
 
@@ -23,7 +24,7 @@ public class ClassInvTrackingController {
     private JSONArray functionRelatedObjects=new JSONArray();
     private Boolean functionFound=false;
     
-    public ClassInvTrackingController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {        
+    public ClassInvTrackingController(HttpServletRequest request, HttpServletResponse response, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {        
         Object[] argsForLogFiles=new Object[0];
         InvTrackingEnums.InventoryTrackAPIactionsEndpoints endPoint = null;
         try{
@@ -36,7 +37,7 @@ public class ClassInvTrackingController {
             }
             this.functionFound=true;
             this.rowArgsRows=this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));
-            ClassInvTracking clss=new ClassInvTracking(request, endPoint);
+            ClassInvTracking clss=new ClassInvTracking(request, response, endPoint);
             this.functionDiagn=clss.getDiagnostic();
             this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject();              
         } catch (Exception ex) {

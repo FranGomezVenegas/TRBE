@@ -10,6 +10,7 @@ import functionaljavaa.requirement.masterdata.ClassMasterData;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.math.BigDecimal;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
@@ -45,20 +46,40 @@ public class ClassInvTracking {
     private Boolean functionFound = false;
     private Boolean isSuccess;
 
-    public ClassInvTracking(HttpServletRequest request, InventoryTrackAPIactionsEndpoints endPoint) {
+    public ClassInvTracking(HttpServletRequest request, HttpServletResponse response, InventoryTrackAPIactionsEndpoints endPoint) {
         this.functionFound = true;
 
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         RelatedObjects rObj = RelatedObjects.getInstanceForActions();
         InternalMessage actionDiagnoses = null;
-        Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
+/*        Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())) {
-            LPFrontEnd.servletReturnResponseError(request, null,
-                    LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, "en", LPPlatform.ApiErrorTraping.class.getSimpleName());
+            this.diagnostic=areMandatoryParamsInResponse;
+            this.actionDiagnosesObj = new InternalMessage(areMandatoryParamsInResponse[0].toString(),
+                LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()});
+            //LPFrontEnd.servletReturnResponseError(request, response,
+            //        LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, "en", LPPlatform.ApiErrorTraping.class.getSimpleName());
             return;
         }
+*/
         Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
-
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
+            this.diagnostic = (Object[]) argValues[1];
+            this.messageDynamicData = new Object[]{argValues[2].toString()};
+            return;
+        }
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
+            this.diagnostic = ApiMessageReturn.trapMessage(argValues[0].toString(), argValues[1].toString(), new Object[]{argValues[2].toString()});
+            this.relatedObj = rObj;
+            rObj.killInstance();
+            return;
+        }
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
+            this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE,
+                    argValues[1].toString(), new Object[]{argValues[2].toString()});
+            this.messageDynamicData = new Object[]{argValues[2].toString()};
+            return;
+        }
         DataInventory invLot = null;
         String lotName = argValues[0].toString();
         String category = argValues[1].toString();
@@ -82,7 +103,7 @@ public class ClassInvTracking {
                 String retestDate = argValues[5].toString();
                 BigDecimal volume = null;
                 if (argValues[6] != null && argValues[6].toString().length() > 0) {
-                    volume = BigDecimal.valueOf(Double.valueOf(argValues[6].toString()));
+                    volume = BigDecimal.valueOf(LPNulls.replaceNull(argValues[6]).toString().length()==0?Double.valueOf("0"):Double.valueOf(argValues[6].toString()));
                 }
                 String volumeUom = argValues[7].toString();
                 String vendor = argValues[8].toString();
