@@ -158,7 +158,7 @@ public class DataInsLotsCorrectiveAction {
      * @param instrumentFieldValues
      * @return
      */
-    public static InternalMessage createNew(String lotName, Integer bulkId, EnumIntEndpoints endpoint, String[] instrumentFieldNames, Object[] instrumentFieldValues) {
+    public static InternalMessage createNew(String lotName, Integer bulkId, EnumIntEndpoints endpoint, String[] instrumentFieldNames, Object[] instrumentFieldValues, String objectType) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String[] keyFldsN = new String[]{TblsInspLotRMProcedure.LotsCorrectiveAction.LOT_NAME.getName()};
@@ -232,13 +232,16 @@ public class DataInsLotsCorrectiveAction {
         } else {
             myFldValue[posicInArray] = LPDate.getCurrentTimeStamp();
         }
+        myFldName = LPArray.addValueToArray1D(myFldName, TblsInspLotRMProcedure.LotsCorrectiveAction.OBJECT_TYPE.getName());
+        myFldValue = LPArray.addValueToArray1D(myFldValue, objectType);
+        
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInspLotRMProcedure.TablesInspLotRMProcedure.LOT_CORRECTIVE_ACTION, myFldName, myFldValue);
         return new InternalMessage(LPPlatform.LAB_TRUE,
                 endpoint, new Object[]{bulkId}, insertRecordInTable.getNewRowId());
 
     }
 
-    public static InternalMessage createNew(Integer bulkId, EnumIntEndpoints endpoint, String[] instrumentFieldNames, Object[] instrumentFieldValues) {
+    public static InternalMessage createNew(Integer bulkId, EnumIntEndpoints endpoint, String[] instrumentFieldNames, Object[] instrumentFieldValues, String objectType) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
@@ -308,6 +311,9 @@ public class DataInsLotsCorrectiveAction {
         } else {
             myFldValue[posicInArray] = LPDate.getCurrentTimeStamp();
         }
+        myFldName = LPArray.addValueToArray1D(myFldName, TblsInspLotRMProcedure.LotsCorrectiveAction.OBJECT_TYPE.getName());
+        myFldValue = LPArray.addValueToArray1D(myFldValue, objectType);
+
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInspLotRMProcedure.TablesInspLotRMProcedure.LOT_CORRECTIVE_ACTION, myFldName, myFldValue);
         return new InternalMessage(LPPlatform.LAB_TRUE,
                 endpoint, new Object[]{bulkId}, insertRecordInTable.getNewRowId());
