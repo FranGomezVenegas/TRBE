@@ -80,50 +80,50 @@ public class TblsInstrumentsData {
             new EnumIntTablesJoin(TablesInstrumentsData.INSTRUMENTS, "i", TablesInstrumentsData.INSTRUMENT_EVENT, "ie", true,
                 new EnumIntTableFields[][]{{TblsInstrumentsData.Instruments.NAME, TblsInstrumentsData.InstrumentEvent.INSTRUMENT}
                 }, " and i.decommissioned=false and ie.completed_on is null", JOIN_TYPES.INNER),
-        }, ""),
+        }, "", false),
         CALIB_PM_EXPIRED_OR_EXPIRING(""
-                + "select 'CALIBRATION' as type, DATE(now()) as now, i.name as name, i.family as family, i.next_calibration as next_date, fam.calib_system_create_new_event_when_expires as system_create_new_event_when_expires, fam.calib_sched_create_offset_days as sched_create_offset_days\n" +
-"  ,(select count(*) from \"app-proc-data\".instrument_event ev where event_type='CALIBRATION' and completed_on is null ) as events_in_progress\n" +
-"  from \"app-proc-config\".instruments_family fam, \"app-proc-data\".instruments i\n" +
-" where i.family=fam.name \n" +
-"   and fam.calib_system_create_new_event_when_expires\n" +
-"   and (fam.calib_sched_create_offset_days is null and \n" +
-" (i.next_calibration is null or (i.next_calibration is not null and date(i.next_calibration) < date(now())) ) ) \n" +
-"union\n" +
-"select 'CALIBRATION_OFFSET' as type, DATE(now()) as now, i.name as name, i.family as family, i.next_calibration as next_date, fam.calib_system_create_new_event_when_expires as system_create_new_event_when_expires, fam.calib_sched_create_offset_days as sched_create_offset_days\n" +
-"  ,(select count(*) from \"app-proc-data\".instrument_event ev where event_type='CALIBRATION' and completed_on is null ) as events_in_progress \n" +
-"  from \"app-proc-config\".instruments_family fam, \"app-proc-data\".instruments i\n" +
-" where i.family=fam.name \n" +
-"   and fam.calib_system_create_new_event_when_expires\n" +
-"   and (fam.calib_sched_create_offset_days is not null and \n" +
-" (i.next_calibration is null or \n" +
-" (i.next_calibration is not null and (date(i.next_calibration)-fam.calib_sched_create_offset_days) < date(now()) ))) \n" +
-"union\n" +
-"select 'PM' as type, DATE(now()) as now, i.name as name, i.family as family, i.next_prev_maint as next_date, fam.pm_system_create_new_event_when_expires as system_create_new_event_when_expires, fam.pm_sched_create_offset_days as sched_create_offset_days\n" +
-"  ,(select count(*) from \"app-proc-data\".instrument_event ev where event_type='PREVENTIVE_MAINTENANCE' and completed_on is null ) as events_in_progress\n" +
-"  from \"app-proc-config\".instruments_family fam, \"app-proc-data\".instruments i\n" +
-" where i.family=fam.name \n" +
-"   and fam.pm_system_create_new_event_when_expires\n" +
-"   and (fam.pm_sched_create_offset_days is null and \n" +
-" (i.next_prev_maint is null or (i.next_prev_maint is not null and date(i.next_prev_maint) < date(now())) ) )\n" +
-"union\n" +
-"select 'PM_OFFSET' as type, DATE(now()) as now, i.name as name, i.family as family, i.next_prev_maint as next_date, fam.pm_system_create_new_event_when_expires as system_create_new_event_when_expires, fam.pm_sched_create_offset_days as sched_create_offset_days\n" +
-"  ,(select count(*) from \"app-proc-data\".instrument_event ev where event_type='PREVENTIVE_MAINTENANCE' and completed_on is null ) as events_in_progress\n" +
-"  from \"app-proc-config\".instruments_family fam, \"app-proc-data\".instruments i\n" +
-" where i.family=fam.name \n" +
-"   and fam.pm_system_create_new_event_when_expires\n" +
-"   and (fam.pm_sched_create_offset_days is not null and \n" +
-" (i.next_prev_maint is null or \n" +
+                + "select 'CALIBRATION' as type, DATE(now()) as now, i.name as name, i.family as family, i.next_calibration as next_date, fam.calib_system_create_new_event_when_expires as system_create_new_event_when_expires, fam.calib_sched_create_offset_days as sched_create_offset_days " +
+"  ,(select count(*) from #SCHEMA_DATA.instrument_event ev where event_type='CALIBRATION' and completed_on is null ) as events_in_progress " +
+"  from #SCHEMA_CONFIG.instruments_family fam, #SCHEMA_DATA.instruments i " +
+" where i.family=fam.name  " +
+"   and fam.calib_system_create_new_event_when_expires " +
+"   and (fam.calib_sched_create_offset_days is null and  " +
+" (i.next_calibration is null or (i.next_calibration is not null and date(i.next_calibration) < date(now())) ) )  " +
+"union " +
+"select 'CALIBRATION_OFFSET' as type, DATE(now()) as now, i.name as name, i.family as family, i.next_calibration as next_date, fam.calib_system_create_new_event_when_expires as system_create_new_event_when_expires, fam.calib_sched_create_offset_days as sched_create_offset_days " +
+"  ,(select count(*) from #SCHEMA_DATA.instrument_event ev where event_type='CALIBRATION' and completed_on is null ) as events_in_progress  " +
+"  from #SCHEMA_CONFIG.instruments_family fam, #SCHEMA_DATA.instruments i " +
+" where i.family=fam.name  " +
+"   and fam.calib_system_create_new_event_when_expires " +
+"   and (fam.calib_sched_create_offset_days is not null and  " +
+" (i.next_calibration is null or  " +
+" (i.next_calibration is not null and (date(i.next_calibration)-fam.calib_sched_create_offset_days) < date(now()) )))  " +
+"union " +
+"select 'PM' as type, DATE(now()) as now, i.name as name, i.family as family, i.next_prev_maint as next_date, fam.pm_system_create_new_event_when_expires as system_create_new_event_when_expires, fam.pm_sched_create_offset_days as sched_create_offset_days " +
+"  ,(select count(*) from #SCHEMA_DATA.instrument_event ev where event_type='PREVENTIVE_MAINTENANCE' and completed_on is null ) as events_in_progress " +
+"  from #SCHEMA_CONFIG.instruments_family fam, #SCHEMA_DATA.instruments i " +
+" where i.family=fam.name  " +
+"   and fam.pm_system_create_new_event_when_expires " +
+"   and (fam.pm_sched_create_offset_days is null and  " +
+" (i.next_prev_maint is null or (i.next_prev_maint is not null and date(i.next_prev_maint) < date(now())) ) ) " +
+"union " +
+"select 'PM_OFFSET' as type, DATE(now()) as now, i.name as name, i.family as family, i.next_prev_maint as next_date, fam.pm_system_create_new_event_when_expires as system_create_new_event_when_expires, fam.pm_sched_create_offset_days as sched_create_offset_days " +
+"  ,(select count(*) from #SCHEMA_DATA.instrument_event ev where event_type='PREVENTIVE_MAINTENANCE' and completed_on is null ) as events_in_progress " +
+"  from #SCHEMA_CONFIG.instruments_family fam, #SCHEMA_DATA.instruments i " +
+" where i.family=fam.name  " +
+"   and fam.pm_system_create_new_event_when_expires " +
+"   and (fam.pm_sched_create_offset_days is not null and  " +
+" (i.next_prev_maint is null or  " +
 " (i.next_prev_maint is not null and (date(i.next_prev_maint)-fam.pm_sched_create_offset_days) < date(now()) ))) ",
             null, "calib_pm_expired_or_expiring", SCHEMA_NAME, true, TblsInstrumentsData.CalibPmExpiredOrExpiring.values(), "pr_scheduled_locations", 
         new EnumIntTablesJoin[]{
             new EnumIntTablesJoin(TablesInstrumentsData.INSTRUMENTS, "i", TablesInstrumentsData.INSTRUMENT_EVENT, "ie", true,
                 new EnumIntTableFields[][]{{TblsInstrumentsData.Instruments.NAME, TblsInstrumentsData.InstrumentEvent.INSTRUMENT}
                 }, " and i.decommissioned=false and ie.completed_on is null", JOIN_TYPES.INNER),
-        }, ""),
+        }, "", true),
         ;
         private ViewsInstrumentsData(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds, 
-                String comment, EnumIntTablesJoin[] tablesInView, String extraFilters){
+                String comment, EnumIntTablesJoin[] tablesInView, String extraFilters, Boolean useFixViewScript){
             this.getTblBusinessRules=fldBusRules;
             this.viewName=dbVwName;
             this.viewFields=vwFlds;
@@ -133,6 +133,7 @@ public class TblsInstrumentsData {
             this.viewScript=viewScript;
             this.tablesInTheView=tablesInView;
             this.extraFilters=extraFilters;
+            this.useFixViewScript=useFixViewScript;
         }
         @Override        public String getRepositoryName() {return this.repositoryName;}
         @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
@@ -141,7 +142,8 @@ public class TblsInstrumentsData {
         @Override        public EnumIntViewFields[] getViewFields() {return this.viewFields;}
         @Override        public String getViewComment() {return this.viewComment;}
         @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
-        
+        @Override        public Boolean getUsesFixScriptView() {return this.useFixViewScript;}
+        private final Boolean useFixViewScript;
         private final EnumIntTablesJoin[] tablesInTheView;
         @Override  public EnumIntTablesJoin[] getTablesRequiredInView() {return this.tablesInTheView;}
         private final FldBusinessRules[] getTblBusinessRules;      
@@ -339,8 +341,8 @@ public class TblsInstrumentsData {
         LAST_PREV_MAINT("last_prev_maint", "i.last_prev_maint", Instruments.LAST_PM, null, null, null),
         NEXT_PREV_MAINT("next_prev_maint", "i.next_prev_maint", Instruments.NEXT_PM, null, null, null),
         LAST_VERIFICATION("last_verification", "i.last_verification", Instruments.LAST_VERIF, null, null, null),
-        TOTAL_PARAMS("total_params", "(select count(*) from \"#PROC_INSTANCE_NAME-#SCHEMA_DATA\".instr_event_variable_values eparam where  eparam.event_id=ie.id) as total_params", null, null, null, null),
-        PENDING_PARAMS("pending_params", "(select count(*) from \"#PROC_INSTANCE_NAME-#SCHEMA_DATA\".instr_event_variable_values eparam where  eparam.event_id=ie.id and eparam.value is null) as pending_params", null, null, null, null),
+        TOTAL_PARAMS("total_params", "(select count(*) from #PROC_INSTANCE_NAME-#SCHEMA_DATA.instr_event_variable_values eparam where  eparam.event_id=ie.id) as total_params", null, null, null, null),
+        PENDING_PARAMS("pending_params", "(select count(*) from #PROC_INSTANCE_NAME-#SCHEMA_DATA.instr_event_variable_values eparam where  eparam.event_id=ie.id and eparam.value is null) as pending_params", null, null, null, null),
         
         ;
         private ViewNotDecommInstrumentAndEventData(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
@@ -366,7 +368,7 @@ public class TblsInstrumentsData {
     }        
     
     public enum CalibPmExpiredOrExpiring implements EnumIntViewFields{
-        TYPE("type", "type as type", null, null, null, null),
+        TYPE("event_type", "event_type as type", null, null, null, null),
         NOW("now", "now as now", null, null, null, null),
         NAME("name", "name as name", null, null, null, null),                
         FAMILY("family", "family as family", null, null, null, null),                
