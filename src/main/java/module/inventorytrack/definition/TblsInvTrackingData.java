@@ -81,7 +81,7 @@ public class TblsInvTrackingData {
                 "(expiry_date_in_use is null and expiry_date < now()) " +
                   "or (expiry_date_in_use is not null and expiry_date_in_use < now()) " +
                   "or (expiry_date_in_use<expiry_date and expiry_date_in_use < now()) " +
-                ")"),
+                ")", false),
         REFERENCES_STOCK_UNDER_MIN("",
             null, "references_stock_under_min", SCHEMA_NAME, true, TblsInvTrackingData.ViewReferencesStockUnderMin.values(), "Lots which expiry_date or expiry_date_in_use is over", 
         new EnumIntTablesJoin[]{
@@ -93,7 +93,7 @@ public class TblsInvTrackingData {
                 "(expiry_date_in_use is null and expiry_date < now()) " +
                   "or (expiry_date_in_use is not null and expiry_date_in_use < now()) " +
                   "or (expiry_date_in_use<expiry_date and expiry_date_in_use < now()) " +
-                ")"),
+                ")", false),
         REFERENCES_AVAILABLE_FOR_USE_UNDER_MIN("",
             null, "references_available_for_use_under_min", SCHEMA_NAME, true, TblsInvTrackingData.ViewReferencesAvailableForUseUnderMin.values(), "Lots which expiry_date or expiry_date_in_use is over", 
         new EnumIntTablesJoin[]{
@@ -105,16 +105,16 @@ public class TblsInvTrackingData {
                 "(expiry_date_in_use is null and expiry_date < now()) " +
                   "or (expiry_date_in_use is not null and expiry_date_in_use < now()) " +
                   "or (expiry_date_in_use<expiry_date and expiry_date_in_use < now()) " +
-                ")"),
+                ")", false),
         AVAILABLE_LOTS_PER_REFERENCE("",
             null, "available_lots_per_reference", SCHEMA_NAME, true, TblsInvTrackingData.ViewAvailableLotsPerReference.values(), "Lots which expiry_date or expiry_date_in_use is over", 
         new EnumIntTablesJoin[]{
             new EnumIntTablesJoin(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_CATEGORY, "cat", TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE, "ref", true,
                 new EnumIntTableFields[][]{{TblsInvTrackingConfig.Category.NAME, TblsInvTrackingConfig.Reference.CATEGORY}}, "", JOIN_TYPES.INNER),
-        }, ""),
+        }, "", false),
         ;
         private ViewsInvTrackingData(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds, 
-                String comment, EnumIntTablesJoin[] tablesInView, String extraFilters){
+                String comment, EnumIntTablesJoin[] tablesInView, String extraFilters, Boolean useFixViewScript){
             this.getTblBusinessRules=fldBusRules;
             this.viewName=dbVwName;
             this.viewFields=vwFlds;
@@ -124,7 +124,9 @@ public class TblsInvTrackingData {
             this.viewScript=viewScript;
             this.tablesInTheView=tablesInView;
             this.extraFilters=extraFilters;
+            this.useFixViewScript=useFixViewScript;
         }
+        @Override        public Boolean getUsesFixScriptView() {return this.useFixViewScript;}
         @Override        public String getRepositoryName() {return this.repositoryName;}
         @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
         @Override        public String getViewCreatecript() {return this.viewScript;}
@@ -134,6 +136,7 @@ public class TblsInvTrackingData {
         @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
         @Override        public String getExtraFilters() {return this.extraFilters;}
         
+        private final Boolean useFixViewScript;
         private final EnumIntTablesJoin[] tablesInTheView;
         @Override  public EnumIntTablesJoin[] getTablesRequiredInView() {return this.tablesInTheView;}
         private final FldBusinessRules[] getTblBusinessRules;      

@@ -62,7 +62,7 @@ public class TblsInvTrackingConfig {
 
         ;
         private ViewsInvTrackingConfig(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds, 
-                String comment, EnumIntTablesJoin[] tablesInView, String extraFilters){
+                String comment, EnumIntTablesJoin[] tablesInView, String extraFilters, Boolean useFixViewScript){
             this.getTblBusinessRules=fldBusRules;
             this.viewName=dbVwName;
             this.viewFields=vwFlds;
@@ -72,7 +72,9 @@ public class TblsInvTrackingConfig {
             this.viewScript=viewScript;
             this.tablesInTheView=tablesInView;
             this.extraFilters=extraFilters;
+            this.useFixViewScript=useFixViewScript;
         }
+        @Override        public Boolean getUsesFixScriptView() {return this.useFixViewScript;}
         @Override        public String getRepositoryName() {return this.repositoryName;}
         @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
         @Override        public String getViewCreatecript() {return this.viewScript;}
@@ -82,7 +84,7 @@ public class TblsInvTrackingConfig {
         @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
         @Override        public String getExtraFilters() {return this.extraFilters;}
 
-        
+        private final Boolean useFixViewScript;
         private final EnumIntTablesJoin[] tablesInTheView;
         @Override  public EnumIntTablesJoin[] getTablesRequiredInView() {return this.tablesInTheView;}        
         private final FldBusinessRules[] getTblBusinessRules;      
