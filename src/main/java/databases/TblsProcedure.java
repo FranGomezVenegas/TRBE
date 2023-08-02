@@ -95,10 +95,10 @@ public class TblsProcedure {
             new EnumIntTablesJoin(TablesProcedure.PERSON_PROFILE, "persprof", TablesApp.USERS, "usr", true,
                 new EnumIntTableFields[][]{{TblsProcedure.PersonProfile.PERSON_NAME, TblsApp.Users.PERSON_NAME}}
                 ,"", JOIN_TYPES.INNER)}
-                , null),        
+                , null, false),        
         ;
         private ViewsProcedure(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds, 
-                String comment, EnumIntTablesJoin[] tablesInView, String extraFilters){
+                String comment, EnumIntTablesJoin[] tablesInView, String extraFilters, Boolean useFixViewScript){
             this.getTblBusinessRules=fldBusRules;
             this.viewName=dbVwName;
             this.viewFields=vwFlds;
@@ -108,6 +108,7 @@ public class TblsProcedure {
             this.viewScript=viewScript;
             this.tablesInTheView=tablesInView;
             this.extraFilters=extraFilters;
+            this.useFixViewScript=useFixViewScript;
         }
         @Override        public String getRepositoryName() {return this.repositoryName;}
         @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
@@ -116,7 +117,8 @@ public class TblsProcedure {
         @Override        public EnumIntViewFields[] getViewFields() {return this.viewFields;}
         @Override        public String getViewComment() {return this.viewComment;}
         @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
-        public String getExtraFilters() {return this.extraFilters;}
+        @Override        public String getExtraFilters() {return this.extraFilters;}
+        @Override        public Boolean getUsesFixScriptView() {return this.useFixViewScript;}
         
         private final FldBusinessRules[] getTblBusinessRules;      
         private final String viewName;             
@@ -127,6 +129,7 @@ public class TblsProcedure {
         private final String viewScript;
         private final EnumIntTablesJoin[] tablesInTheView;
         private final String extraFilters;
+        private final Boolean useFixViewScript;
         @Override  public EnumIntTablesJoin[] getTablesRequiredInView() {return this.tablesInTheView;}
     }
     

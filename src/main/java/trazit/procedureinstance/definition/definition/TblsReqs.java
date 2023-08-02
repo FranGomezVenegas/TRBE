@@ -27,14 +27,13 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class TblsReqs {
 
-    public static final String FIELDS_NAMES_SCHEMA_PREFIX = "schema_prefix";
     public static final String FIELDS_NAMES_DESCRIPTION = "description";
     public static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.REQUIREMENTS.getName();
     private static final Boolean IS_PRODEDURE_INSTANCE = false;
 
     public enum TablesReqs implements EnumIntTables {
         MODULE_ACTIONS_N_QUERIES(null, "module_actions_and_queries", SCHEMA_NAME, false, ModuleActionsAndQueries.values(), ModuleActionsAndQueries.MODULE_NAME.getName() + "_" + ModuleActionsAndQueries.MODULE_VERSION.getName(),
-                new String[]{ModuleActionsAndQueries.MODULE_NAME.getName(), ModuleActionsAndQueries.MODULE_VERSION.getName()}, null, "Relation of actions and queries belonging to each module version in use"),
+                new String[]{ModuleActionsAndQueries.MODULE_NAME.getName(), ModuleActionsAndQueries.MODULE_VERSION.getName(), ModuleActionsAndQueries.API_NAME.getName(), ModuleActionsAndQueries.ENDPOINT_NAME.getName()}, null, "Relation of actions and queries belonging to each module version in use"),
         PROCEDURE_INFO(null, "procedure_info", SCHEMA_NAME, false, ProcedureInfo.values(), ProcedureInfo.PROCEDURE_NAME.getName() + "_" + ProcedureInfo.PROCEDURE_VERSION.getName() + "_" + ProcedureInfo.PROC_INSTANCE_NAME.getName(),
                 new String[]{ProcedureInfo.PROCEDURE_NAME.getName(), ProcedureInfo.PROCEDURE_VERSION.getName(), ProcedureInfo.PROC_INSTANCE_NAME.getName()}, null, "This table provides the general info about the process instances"),
         PROCEDURE_ROLES(null, "procedure_roles", SCHEMA_NAME, false, ProcedureRoles.values(), null,
@@ -111,7 +110,7 @@ public class TblsReqs {
                     new ForeignkeyFld(ProcedureFEModel.PROC_INSTANCE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROC_INSTANCE_NAME.getName())},
                 "Frontend model definition for a given process instance"),
         PROC_MANUALS(null, "procedure_manuals", SCHEMA_NAME, false, ProcedureManuals.values(), null,
-                new String[]{ProcedureManuals.PROCEDURE_NAME.getName(), ProcedureManuals.PROCEDURE_VERSION.getName(), ProcedureManuals.PROC_INSTANCE_NAME.getName()},
+                new String[]{ProcedureManuals.PROCEDURE_NAME.getName(), ProcedureManuals.PROCEDURE_VERSION.getName(), ProcedureManuals.PROC_INSTANCE_NAME.getName(), ProcedureManuals.MANUAL_NAME.getName(), ProcedureManuals.MANUAL_VERSION.getName()},
                 new Object[]{new ForeignkeyFld(ProcedureManuals.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureManuals.PROCEDURE_NAME.getName()),
                     new ForeignkeyFld(ProcedureManuals.PROCEDURE_VERSION.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureManuals.PROCEDURE_VERSION.getName()),
                     new ForeignkeyFld(ProcedureManuals.PROC_INSTANCE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureManuals.PROC_INSTANCE_NAME.getName())
@@ -199,11 +198,11 @@ public class TblsReqs {
                     new EnumIntTablesJoin(TblsReqs.TablesReqs.PROCEDURE_USER_REQS, "reqs", TblsReqs.TablesReqs.MODULE_ACTIONS_N_QUERIES, "modAct", false,
                             new EnumIntTableFields[][]{{TblsReqs.ProcedureUserRequirements.WINDOW_ACTION, TblsReqs.ModuleActionsAndQueries.ENDPOINT_NAME}}, "", SqlStatementEnums.JOIN_TYPES.INNER), //            new EnumIntTablesJoin(TblsReqs.TablesReqs.PROCEDURE_INFO, "procInfo", TblsReqs.TablesReqs.MODULE_ACTIONS_N_QUERIES, "modAct", false,
                 //                new EnumIntTableFields[][]{{TblsReqs.ProcedureInfo.MODULE_NAME, TblsReqs.ModuleActionsAndQueries.MODULE_NAME}}, "", SqlStatementEnums.JOIN_TYPES.INNER),
-                }, " and procInfo.module_name = modAct.module_name"
+                }, " and procInfo.module_name = modAct.module_name", false
         ),;
 
         private ViewsReqs(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds,
-                String comment, EnumIntTablesJoin[] tablesInView, String extraFilters) {
+                String comment, EnumIntTablesJoin[] tablesInView, String extraFilters, Boolean useFixViewScript) {
             this.getTblBusinessRules = fldBusRules;
             this.viewName = dbVwName;
             this.viewFields = vwFlds;
@@ -213,48 +212,18 @@ public class TblsReqs {
             this.viewScript = viewScript;
             this.tablesInTheView = tablesInView;
             this.extraFilters = extraFilters;
+            this.useFixViewScript=useFixViewScript;
         }
-
-        @Override
-        public String getRepositoryName() {
-            return this.repositoryName;
-        }
-
-        @Override
-        public Boolean getIsProcedureInstance() {
-            return this.isProcedure;
-        }
-
-        @Override
-        public String getViewCreatecript() {
-            return this.viewScript;
-        }
-
-        @Override
-        public String getViewName() {
-            return this.viewName;
-        }
-
-        @Override
-        public EnumIntViewFields[] getViewFields() {
-            return this.viewFields;
-        }
-
-        @Override
-        public String getViewComment() {
-            return this.viewComment;
-        }
-
-        @Override
-        public FldBusinessRules[] getTblBusinessRules() {
-            return this.getTblBusinessRules;
-        }
-
-        @Override
-        public String getExtraFilters() {
-            return this.extraFilters;
-        }
-
+    @Override        public String getRepositoryName() {return this.repositoryName;}
+        @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
+        @Override        public String getViewCreatecript() {return this.viewScript;}
+        @Override        public String getViewName() {return this.viewName;}
+        @Override        public EnumIntViewFields[] getViewFields() {return this.viewFields;}
+        @Override        public String getViewComment() {return this.viewComment;}
+        @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
+        @Override        public String getExtraFilters() {return this.extraFilters;}
+        @Override        public Boolean getUsesFixScriptView() {return this.useFixViewScript;}
+    
         private final FldBusinessRules[] getTblBusinessRules;
         private final String viewName;
         private final String repositoryName;
@@ -264,9 +233,8 @@ public class TblsReqs {
         private final String viewScript;
         private final EnumIntTablesJoin[] tablesInTheView;
         private final String extraFilters;
-
-        @Override
-        public EnumIntTablesJoin[] getTablesRequiredInView() {
+        private final Boolean useFixViewScript;
+        @Override    public EnumIntTablesJoin[] getTablesRequiredInView() {
             return this.tablesInTheView;
         }
     }
@@ -513,7 +481,6 @@ public class TblsReqs {
         PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
         PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
-        SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
         ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, null, null),
         CODE("code", LPDatabase.string(), null, null, null, null),
         PARENT_CODE("parent_code", LPDatabase.string(), null, null, null, null),
@@ -530,8 +497,8 @@ public class TblsReqs {
         ACTIVE("active", LPDatabase.booleanFld(), null, null, null, null),
         IN_SCOPE("in_scope", LPDatabase.booleanFld(), null, null, null, null),
         IN_SYSTEM("in_system", LPDatabase.booleanFld(), null, null, null, null),
-        CONFIRM_DIALOG("confirmation_dialog", LPDatabase.booleanFld(), null, null, null, null),
-        CONFIRM_DIALOG_DETAIL("confirmation_dialog_detail", LPDatabase.booleanFld(), null, null, null, null),
+        CONFIRM_DIALOG("confirmation_dialog", LPDatabase.string(), null, null, null, null),
+        CONFIRM_DIALOG_DETAIL("confirmation_dialog_detail", LPDatabase.string(), null, null, null, null),
         SOLUTION_TYPE("solution_type", LPDatabase.string(), null, null, null, null),
         ROLES("roles", LPDatabase.string(), null, null, null, null),
         SOP_NAME("sop_name", LPDatabase.string(), null, null, null, null),
