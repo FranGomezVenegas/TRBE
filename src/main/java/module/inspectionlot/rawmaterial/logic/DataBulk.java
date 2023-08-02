@@ -217,7 +217,7 @@ public class DataBulk {
         }
         return DataInsLotsCorrectiveAction.createNew(bulkId, endpoint,
                 new String[]{TblsInspLotRMProcedure.LotsCorrectiveAction.LOT_NAME.getName()},
-                new Object[]{lotName});
+                new Object[]{lotName}, TblsInspLotRMProcedure.TablesInspLotRMProcedure.LOT_CORRECTIVE_ACTION.getTableName());
     }
 
     public static InternalMessage lotBulkDecisionRecordCreateOrUpdate(String lotName, Integer bulkId, String decision) {
