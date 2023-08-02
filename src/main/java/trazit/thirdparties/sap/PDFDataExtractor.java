@@ -1,6 +1,5 @@
 package trazit.thirdparties.sap;
 
-import com.sun.tools.javac.util.Assert;
 import java.io.File;
 import java.io.IOException;
 import java.util.regex.Matcher;

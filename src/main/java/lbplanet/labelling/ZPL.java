@@ -30,6 +30,7 @@ import javax.print.DocPrintJob;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
+import org.apache.http.HttpRequest;
 
 /**
  *
