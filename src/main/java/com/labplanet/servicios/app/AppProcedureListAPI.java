@@ -185,10 +185,9 @@ public class AppProcedureListAPI extends HttpServlet {
                         procedures.add(procedure);
                     }
                 } catch (Exception e) {
-            JSONObject proceduresList = new JSONObject();
-            proceduresList.put(LABEL_ARRAY_PROCEDURES, "Error in procedure "+curProc.toString()+". Error: "+e.getMessage());
-            return proceduresList;
-                    
+                    JSONObject proceduresList = new JSONObject();
+                    proceduresList.put(LABEL_ARRAY_PROCEDURES, "Error in procedure " + curProc.toString() + ". Error: " + e.getMessage());
+                    return proceduresList;
 
                 }
 
@@ -242,44 +241,49 @@ public class AppProcedureListAPI extends HttpServlet {
 
     public static JSONObject getMasterData(Token token, String procInstanceName) {
         JSONObject jObj = new JSONObject();
-        String moduleNameFromProcInstance = token.getModuleNameFromProcInstance(procInstanceName);
-        if ("notFound".equalsIgnoreCase(moduleNameFromProcInstance)) {
-            return jObj;
-        }
-        if (GlobalVariables.TrazitModules.ENVIRONMENTAL_MONITORING.name().equalsIgnoreCase(moduleNameFromProcInstance)) {
-            BusinessRules bi = new BusinessRules(procInstanceName, null);
-            jObj = ConfigMasterData.getMasterData(procInstanceName, bi);
-        } else if (procInstanceName.toLowerCase().contains("em-demo-a")) {
-            BusinessRules bi = new BusinessRules(procInstanceName, null);
-            jObj = ConfigMasterData.getMasterData(procInstanceName, bi);
-        } else if (GlobalVariables.TrazitModules.INSTRUMENTS.name().equalsIgnoreCase(moduleNameFromProcInstance)) {
-            InstrumentsFrontendMasterData mdObj = new InstrumentsFrontendMasterData();
-            jObj = mdObj.getMasterDataJsonObject(procInstanceName);
-        } else if (GlobalVariables.TrazitModules.INVENTORY_TRACKING.name().equalsIgnoreCase(moduleNameFromProcInstance)) {
-            InvTrackingFrontendMasterData mdObj = new InvTrackingFrontendMasterData();
-            jObj = mdObj.getMasterDataJsonObject(procInstanceName);
-        } else if (GlobalVariables.TrazitModules.INSPECTION_LOTS_RAW_MAT.name().equalsIgnoreCase(moduleNameFromProcInstance)) {
-            InspLotRawMaterialMasterData mdObj = new InspLotRawMaterialMasterData();
-            jObj = mdObj.getMasterDataJsonObject(procInstanceName);
-        } else {
-            jObj.put(procInstanceName, "no master data logic defined");
-            return jObj;
-        }
-        JSONArray usArr = new JSONArray();
-        for (Object[] curRow : getProcedureUsersAndRolesList(procInstanceName, null)) {
-            JSONObject convertArrayRowToJSONObject = LPJson.convertArrayRowToJSONObject(new String[]{"user_name", TblsProcedure.PersonProfile.ROLE_NAME.getName()}, curRow);
-            usArr.add(convertArrayRowToJSONObject);
-        }
-        jObj.put("users_and_roles", usArr);
+        try {
+            String moduleNameFromProcInstance = token.getModuleNameFromProcInstance(procInstanceName);
+            if ("notFound".equalsIgnoreCase(moduleNameFromProcInstance)) {
+                return jObj;
+            }
+            if (GlobalVariables.TrazitModules.ENVIRONMENTAL_MONITORING.name().equalsIgnoreCase(moduleNameFromProcInstance)) {
+                BusinessRules bi = new BusinessRules(procInstanceName, null);
+                jObj = ConfigMasterData.getMasterData(procInstanceName, bi);
+            } else if (procInstanceName.toLowerCase().contains("em-demo-a")) {
+                BusinessRules bi = new BusinessRules(procInstanceName, null);
+                jObj = ConfigMasterData.getMasterData(procInstanceName, bi);
+            } else if (GlobalVariables.TrazitModules.INSTRUMENTS.name().equalsIgnoreCase(moduleNameFromProcInstance)) {
+                InstrumentsFrontendMasterData mdObj = new InstrumentsFrontendMasterData();
+                jObj = mdObj.getMasterDataJsonObject(procInstanceName);
+            } else if (GlobalVariables.TrazitModules.INVENTORY_TRACKING.name().equalsIgnoreCase(moduleNameFromProcInstance)) {
+                InvTrackingFrontendMasterData mdObj = new InvTrackingFrontendMasterData();
+                jObj = mdObj.getMasterDataJsonObject(procInstanceName);
+            } else if (GlobalVariables.TrazitModules.INSPECTION_LOTS_RAW_MAT.name().equalsIgnoreCase(moduleNameFromProcInstance)) {
+                InspLotRawMaterialMasterData mdObj = new InspLotRawMaterialMasterData();
+                jObj = mdObj.getMasterDataJsonObject(procInstanceName);
+            } else {
+                jObj.put(procInstanceName, "no master data logic defined");
+                return jObj;
+            }
+            JSONArray usArr = new JSONArray();
+            for (Object[] curRow : getProcedureUsersAndRolesList(procInstanceName, null)) {
+                JSONObject convertArrayRowToJSONObject = LPJson.convertArrayRowToJSONObject(new String[]{"user_name", TblsProcedure.PersonProfile.ROLE_NAME.getName()}, curRow);
+                usArr.add(convertArrayRowToJSONObject);
+            }
+            jObj.put("users_and_roles", usArr);
 
-        usArr = new JSONArray();
-        for (Object curRow : getProcedureUsers(procInstanceName, null)) {
-            JSONObject newRow = new JSONObject();
-            newRow.put("user", curRow);
-            usArr.add(newRow);
+            usArr = new JSONArray();
+            for (Object curRow : getProcedureUsers(procInstanceName, null)) {
+                JSONObject newRow = new JSONObject();
+                newRow.put("user", curRow);
+                usArr.add(newRow);
+            }
+            jObj.put("users", usArr);
+            return jObj;
+        } catch (Exception e) {
+            jObj.put("error", e.getMessage());
+            return jObj;
         }
-        jObj.put("users", usArr);
-        return jObj;
     }
 
     public static JSONArray procActionsWithESign(String procInstanceName) {
@@ -409,7 +413,7 @@ public class AppProcedureListAPI extends HttpServlet {
                 procedure.put(LABEL_SOP_CERTIFICATION, LBL_VAL_SOP_CERTIF_DISABLE);
             } else {
                 notCompletedUserSOP = userSop.getNotCompletedUserSOP(internalUserID, curProc, new String[]{LABEL_SOP_NAME}, isForTesting);
-                if (notCompletedUserSOP == null) {
+                if (notCompletedUserSOP == null || notCompletedUserSOP.length==0) {
                     procEventJson.put(LABEL_SOPS_PASSED, true);
                     JSONObject procEventSopDetail = new JSONObject();
                     procEventSopDetail.put(LABEL_SOP_TOTAL, null);
@@ -467,6 +471,7 @@ public class AppProcedureListAPI extends HttpServlet {
             return procEventSopDetail;
         } catch (Exception e) {
             JSONObject proceduresList = new JSONObject();
+            procEventJson.put(LABEL_SOPS_PASSED, true);
             proceduresList.put(LABEL_ARRAY_PROCEDURES, e.getMessage());
             return proceduresList;
         }
