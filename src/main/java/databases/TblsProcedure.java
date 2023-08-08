@@ -87,7 +87,8 @@ public class TblsProcedure {
     }
     
     public enum ViewsProcedure implements EnumIntViews{
-        PROC_USER_AND_ROLES(" SELECT #FLDS from #SCHEMA_CONFIG.sample s " +
+        //https://github.com/FranGomezVenegas/BE-Issues/issues/922-not in use...
+        zPROC_USER_AND_ROLES(" SELECT #FLDS from #SCHEMA_CONFIG.sample s " +
                 "   INNER JOIN #SCHEMA_CONFIG.sample_revision_testing_group stg on stg.sample_id = s.sample_id; "+
                 "ALTER VIEW  #SCHEMA_CONFIG.#TBL  OWNER TO #OWNER;",
             null, "sample_testing_group_view", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ViewProcUserAndRolesNewDef.values(), "ProcUserAndRoles", 
