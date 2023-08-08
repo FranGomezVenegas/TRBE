@@ -90,8 +90,11 @@ public final class QueryUtilities {
         }
         return programkpIsObj;
     }
-
     public static JSONArray getNdaysArray(EnumIntTables tblObj, String numDays, EnumIntTableFields fldForNDaysfilter, String[] extraWhereFlds, Object[] extraWhereVls, String[] sortFlds) {
+        return getNdaysArray(tblObj, numDays, fldForNDaysfilter, extraWhereFlds, extraWhereVls, sortFlds, null);
+    }
+    
+    public static JSONArray getNdaysArray(EnumIntTables tblObj, String numDays, EnumIntTableFields fldForNDaysfilter, String[] extraWhereFlds, Object[] extraWhereVls, String[] sortFlds, String alternativeSchema) {
         if (numDays == null) {
             return new JSONArray();
         }
@@ -102,14 +105,14 @@ public final class QueryUtilities {
             whereFlds = LPArray.addValueToArray1D(whereFlds, extraWhereFlds);
             whereVls = LPArray.addValueToArray1D(whereVls, extraWhereVls);
         }
-        String[] fieldsToRetrieve = EnumIntTableFields.getAllFieldNames(tblObj.getTableFields());
+        EnumIntTableFields[] allFieldNamesFromDatabase = EnumIntTableFields.getAllFieldNamesFromDatabase(tblObj, alternativeSchema);
         Object[][] prodLotsDeactivatedLastDays = QueryUtilitiesEnums.getTableData(tblObj,
-                EnumIntTableFields.getTableFieldsFromString(tblObj, "ALL"),
+                allFieldNamesFromDatabase,
                 whereFlds, whereVls, sortFlds);
         JSONArray jArr = new JSONArray();
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(prodLotsDeactivatedLastDays[0][0].toString()))) {
             for (Object[] currIncident : prodLotsDeactivatedLastDays) {
-                JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
+                JSONObject jObj = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(allFieldNamesFromDatabase), currIncident);
                 jArr.add(jObj);
             }
         }
