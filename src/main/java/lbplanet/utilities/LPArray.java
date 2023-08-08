@@ -495,11 +495,30 @@ public class LPArray {
      * @return boolean
      */
     public static boolean valueInArray(Object[] array, Object value) {
+        return valueInArray(array, value, false);
+    }
+
+    public static boolean valueInArray(Object[] array, Object value, Boolean inCaseSensitive) {
         if (array == null) {
             return false;
         }
+        if (value == null) {
+            return false;
+        }
+        if (inCaseSensitive == null) {
+            inCaseSensitive=false;
+        }        
+        Integer specialFieldIndex = -1;
         boolean diagnoses = false;
-        Integer specialFieldIndex = Arrays.asList(array).indexOf(value);
+        if (inCaseSensitive) {
+            for (int i = 0; i < array.length; i++) {
+                array[i] = array[i].toString().toUpperCase();
+            }
+            value = value.toString().toUpperCase();
+            specialFieldIndex = Arrays.asList(array).indexOf(value);
+        } else {
+            specialFieldIndex = Arrays.asList(array).indexOf(value);
+        }
         if (specialFieldIndex != -1) {
             return true;
         }
