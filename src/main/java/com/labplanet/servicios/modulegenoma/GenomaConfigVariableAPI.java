@@ -24,7 +24,6 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import trazit.enums.EnumIntEndpoints;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables.ApiUrls;
 /**
@@ -35,7 +34,7 @@ public class GenomaConfigVariableAPI extends HttpServlet {
 
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
             
-    public enum GenomaVariableAPIactionsEndpoints implements EnumIntEndpoints{
+    public enum GenomaVariableAPIactionsEndpoints {
           VARIABLE_SET_ADD_VARIABLE("VARIABLE_SET_ADD_VARIABLE", "variableSetName|variableName", new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects
                   , null, null),
           VARIABLE_SET_REMOVE_VARIABLE("VARIABLE_SET_REMOVE_VARIABLE", "variableSetName|variableName", new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects
@@ -49,17 +48,17 @@ public class GenomaConfigVariableAPI extends HttpServlet {
             this.devComment = LPNulls.replaceNull(devComment);
             this.devCommentTag = LPNulls.replaceNull(devCommentTag);
         } 
-        @Override        public String getName(){return this.name;}
-        @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
-        @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
-        @Override        public LPAPIArguments[] getArguments() {return arguments;}
-        @Override        public String getApiUrl(){return ApiUrls.GENOMA_VARIABLE_ACTIONS.getUrl();}
+                public String getName(){return this.name;}
+                public String getSuccessMessageCode(){return this.successMessageCode;}           
+                public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+                public LPAPIArguments[] getArguments() {return arguments;}
+                public String getApiUrl(){return ApiUrls.GENOMA_VARIABLE_ACTIONS.getUrl();}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
         private final JsonArray outputObjectTypes;
-        @Override public String getDeveloperComment() { return this.devComment;}
-        @Override        public String getDeveloperCommentTag() {            return this.devCommentTag;        }
+         public String getDeveloperComment() { return this.devComment;}
+                public String getDeveloperCommentTag() {            return this.devCommentTag;        }
         private final String devComment;
         private final String devCommentTag;
     }
