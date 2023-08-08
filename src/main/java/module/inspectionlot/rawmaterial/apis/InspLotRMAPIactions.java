@@ -21,7 +21,6 @@ import java.util.logging.Logger;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
-import lbplanet.utilities.TrazitUtiilitiesEnums;
 import module.inspectionlot.rawmaterial.definition.InspLotRMEnums.InspLotRMAPIactionsEndpoints;
 import org.json.simple.JSONObject;
 import trazit.session.InternalMessage;
@@ -69,7 +68,16 @@ public class InspLotRMAPIactions extends HttpServlet {
                             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{procReqInstance.getActionName(), this.getServletName()}, procReqInstance.getLanguage(), LPPlatform.ApiErrorTraping.class.getSimpleName());
                             return;
                         }
-                        ClassInvestigation clss = new ClassInvestigation(request, InvestigationAPI.InvestigationAPIactionsEndpoints.valueOf(procReqInstance.getActionName().toUpperCase()));
+                        ClassInvestigation clssInv = new ClassInvestigation(request, InvestigationAPI.InvestigationAPIactionsEndpoints.valueOf(procReqInstance.getActionName().toUpperCase()));
+                        if (Boolean.TRUE.equals(clssInv.getEndpointExists())) {
+                            Object[] diagnostic = clssInv.getDiagnostic();
+                            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
+                                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clssInv.getMessageDynamicData());
+                            } else {
+                                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPointSmp, clssInv.getMessageDynamicData(), clssInv.getRelatedObj().getRelatedObject());
+                                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
+                            }
+                        }
                     } catch (Exception er2) {
                         procReqInstance.killIt();
                         LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{procReqInstance.getActionName(), this.getServletName()}, procReqInstance.getLanguage(), LPPlatform.ApiErrorTraping.class.getSimpleName());
