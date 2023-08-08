@@ -156,6 +156,7 @@ public class Parameter {
         return returnBusinessRuleValue(valueToReturn, procInstanceName, area, parameterName, callerInfo, isOptional, false);
     }
     private static String returnBusinessRuleValue(String valueToReturn, String procInstanceName, String area, String parameterName, Object[] callerInfo, Boolean isOptional, Boolean disabledByPreReq){        
+        if (isOptional==null)isOptional=false;
         if ((valueToReturn==null || valueToReturn.length()==0) && (!isOptional))
             LPPlatform.saveParameterPropertyInDbErrorLog("", procInstanceName+"-"+area, 
                 callerInfo, parameterName, isOptional);
