@@ -385,7 +385,7 @@ public class SampleAPIfrontend extends HttpServlet {
                         sortFieldsNameArr = sortFieldsName.split("\\|");                                    
                     }else{   sortFieldsNameArr=null;}  
 
-                    String myData = Rdbms.getRecordFieldsByFilterJSON(schemaConfigName, TblsCnfg.ViewsConfig.ANALYSIS_METHODS.getTableName(),
+                    String myData = Rdbms.getRecordFieldsByFilterJSON(schemaConfigName, TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName(),
                             new String[]{"code is not null"},new Object[]{true}, fieldToRetrieveArr, sortFieldsNameArr);
                     Rdbms.closeRdbms();
                     if (myData.contains(LPPlatform.LAB_FALSE)){  
