@@ -111,10 +111,19 @@ public class TblsInspLotRMData {
                 new EnumIntTableFields[][]{{TblsData.SampleAnalysisResult.RESULT_ID, TblsProcedure.ProgramCorrectiveAction.RESULT_ID}}, "", SqlStatementEnums.JOIN_TYPES.LEFT),
             new EnumIntTablesJoin(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, "sar", TblsProcedure.TablesProcedure.INVEST_OBJECTS, "invObjs", false,
                 new EnumIntTableFields[][]{{TblsData.SampleAnalysisResult.SAMPLE_ID, TblsProcedure.InvestObjects.OBJECT_ID}}, "and io.object_type='sample_analysis_result'", SqlStatementEnums.JOIN_TYPES.LEFT)
-        }, " "),        
+        }, " ", false),
+        SAMPLE_TESTING_GROUP_VIEW(" SELECT #FLDS from #SCHEMA_CONFIG.sample s " +
+                "   INNER JOIN #SCHEMA_CONFIG.sample_revision_testing_group stg on stg.sample_id = s.sample_id; "+
+                "ALTER VIEW  #SCHEMA_CONFIG.#TBL  OWNER TO #OWNER;",
+            null, "sample_testing_group_view", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ViewSampleTestingGroup.values(), "ViewUserAndMetaDataSopView", 
+        new EnumIntTablesJoin[]{
+            new EnumIntTablesJoin(TblsData.TablesData.SAMPLE, "s", TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP, "stg", true,
+                new EnumIntTableFields[][]{{TblsData.Sample.SAMPLE_ID, TblsData.SampleRevisionTestingGroup.SAMPLE_ID}}
+            ,"", SqlStatementEnums.JOIN_TYPES.INNER)}
+            , "", false),                
         ;
         private ViewsInspLotRMData(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds, 
-                String comment, EnumIntTablesJoin[] tablesInView, String extraFilters){
+                String comment, EnumIntTablesJoin[] tablesInView, String extraFilters, Boolean useFixViewScript){
             this.getTblBusinessRules=fldBusRules;
             this.viewName=dbVwName;
             this.viewFields=vwFlds;
@@ -124,6 +133,7 @@ public class TblsInspLotRMData {
             this.viewScript=viewScript;
             this.tablesInTheView=tablesInView;
             this.extraFilters=extraFilters;
+            this.useFixViewScript=useFixViewScript;
         }
         @Override        public String getRepositoryName() {return this.repositoryName;}
         @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
@@ -132,7 +142,7 @@ public class TblsInspLotRMData {
         @Override        public EnumIntViewFields[] getViewFields() {return this.viewFields;}
         @Override        public String getViewComment() {return this.viewComment;}
         @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
-        
+        @Override        public Boolean getUsesFixScriptView() {return this.useFixViewScript;}
         @Override
         public String getExtraFilters() {return this.extraFilters;}
         private final EnumIntTablesJoin[] tablesInTheView;
@@ -145,6 +155,7 @@ public class TblsInspLotRMData {
         private final String viewComment;
         private final String viewScript;
         private final String extraFilters;
+        private final Boolean useFixViewScript;
     }
 
 public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
@@ -707,6 +718,41 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         @Override        public String getFieldComment(){return this.fieldComment;}
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }            
+    public enum ViewSampleTestingGroup implements EnumIntViewFields{
+        SAMPLE_ID(Sample.SAMPLE_ID.getName(), "s.sample_id", Sample.SAMPLE_ID, null, null, null),
+        SAMPLE_CONFIG_CODE("sample_config_code", "s."+TblsData.Sample.CONFIG_CODE.getName(), Sample.CONFIG_CODE, null, null, null),
+        SAMPLE_STATUS("sample_status", "s.status as sample_status", Sample.STATUS, null, null, null),
+        CURRENT_STAGE("current_stage", "s.current_stage", Sample.CURRENT_STAGE, null, null, null),
+        LOT_NAME("lot_name", "s.lot_name", Sample.LOT_NAME, null, null, null),
+        TESTING_GROUP("testing_group", "stg.testing_group", TblsData.SampleRevisionTestingGroup.TESTING_GROUP, null, null, null),
+        READY_FOR_REVISION("ready_for_revision", "stg.ready_for_revision", TblsData.SampleRevisionTestingGroup.READY_FOR_REVISION, null, null, null),
+        REVIEWED("reviewed", "stg.reviewed", TblsData.SampleRevisionTestingGroup.REVIEWED, null, null, null),
+        REVISION_ON("revision_on", "stg.revision_on", TblsData.SampleRevisionTestingGroup.REVISION_ON, null, null, null),
+        REVISION_BY("revision_by", "stg.revision_by", TblsData.SampleRevisionTestingGroup.REVISION_BY, null, null, null)
+        ;
+        private ViewSampleTestingGroup(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
+            this.fldName=name;
+            this.fldAliasInView=vwAliasName;
+            this.fldMask=fldMask;
+            this.fldComment=comment;
+            this.fldBusinessRules=busRules;
+            this.fldObj=fldObj;
+        }
+        private final String fldName;
+        private final String fldAliasInView;
+        private final EnumIntTableFields fldObj;
+        private final String fldMask;
+        private final String fldComment;
+        private final FldBusinessRules[] fldBusinessRules; 
+        
+        
+        @Override public String getName() {return fldName;}
+        @Override public String getViewAliasName() {return this.fldAliasInView;}
+        @Override public String getFieldMask() {return this.fldMask;}
+        @Override public String getFieldComment() {return this.fldComment;}
+        @Override public FldBusinessRules[] getFldBusinessRules() {return this.fldBusinessRules;}
+        @Override public EnumIntTableFields getTableField() {return this.fldObj;}
+    } 
     
     
 
