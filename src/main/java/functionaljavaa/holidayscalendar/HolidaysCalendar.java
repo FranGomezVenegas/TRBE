@@ -104,6 +104,7 @@ public class HolidaysCalendar {
     }
 
     public static InternalMessage calendarChangeActiveFlag(String code, Boolean fldValue, CalendarAPIactionsEndpoints endP) {
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null, null);
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         Object[][] calendarInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.HOLIDAYS_CALENDAR.getTableName(),
                 new String[]{TblsApp.HolidaysCalendar.CODE.getName()},
@@ -112,17 +113,24 @@ public class HolidaysCalendar {
             messages.addMainForError(CalendarErrorTrapping.CALENDAR_NOT_EXISTS, new Object[]{code});
             return new InternalMessage(LPPlatform.LAB_FALSE, CalendarErrorTrapping.CALENDAR_NOT_EXISTS, new Object[]{code}, code);
         }
-        if (Boolean.valueOf(LPNulls.replaceNull(calendarInfo[0][1]).toString()).equals(fldValue)){
-            if (Boolean.TRUE.equals(fldValue)){
-            return new InternalMessage(LPPlatform.LAB_FALSE, CalendarErrorTrapping.CALENDAR_ALREADY_ACTIVE, new Object[]{code}, code);            
-            }else{
-                return new InternalMessage(LPPlatform.LAB_FALSE, CalendarErrorTrapping.CALENDAR_ALREADY_INACTIVE, new Object[]{code}, code);            
+        if (Boolean.valueOf(LPNulls.replaceNull(calendarInfo[0][1]).toString()).equals(fldValue)) {
+            if (Boolean.TRUE.equals(fldValue)) {
+                return new InternalMessage(LPPlatform.LAB_FALSE, CalendarErrorTrapping.CALENDAR_ALREADY_ACTIVE, new Object[]{code}, code);
+            } else {
+                return new InternalMessage(LPPlatform.LAB_FALSE, CalendarErrorTrapping.CALENDAR_ALREADY_INACTIVE, new Object[]{code}, code);
             }
         }
         SqlWhere sW = new SqlWhere();
         sW.addConstraint(TblsApp.HolidaysCalendar.CODE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{code}, null);
-        EnumIntTableFields[] fldNamesObj = new EnumIntTableFields[]{TblsApp.HolidaysCalendar.ACTIVE};
-        Object[] fldValues = new Object[]{fldValue};
+        EnumIntTableFields[] fldNamesObj = null;
+        Object[] fldValues = null;
+        if (Boolean.FALSE.equals(fldValue)) {
+            fldNamesObj = new EnumIntTableFields[]{TblsApp.HolidaysCalendar.ACTIVE, TblsApp.HolidaysCalendar.DEACTIVATED_BY, TblsApp.HolidaysCalendar.DEACTIVATED_ON};
+            fldValues = new Object[]{fldValue, instanceForActions.getToken().getPersonName(), LPDate.getCurrentTimeStamp()};
+        } else {
+            fldNamesObj = new EnumIntTableFields[]{TblsApp.HolidaysCalendar.ACTIVE};
+            fldValues = new Object[]{fldValue};
+        }
         RdbmsObject updDiagn = Rdbms.updateTableRecordFieldsByFilter(TblsApp.TablesApp.HOLIDAYS_CALENDAR, fldNamesObj, fldValues,
                 sW, null);
         if (Boolean.FALSE.equals(updDiagn.getRunSuccess())) {
