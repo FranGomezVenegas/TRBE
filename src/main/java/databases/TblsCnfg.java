@@ -97,7 +97,9 @@ public class TblsCnfg {
         private final String tableComment;
     }
     public enum ViewsConfig implements EnumIntTables{
-        ANALYSIS_METHODS(null, "analysis_methods_view", SCHEMA_NAME, true, ViewAnalysisMethodsView.values(), null,
+        //https://github.com/FranGomezVenegas/BE-Issues/issues/921-zANALYSIS_METHODS is not implemented but probably can be implemented
+        //  to get analysis by user method qualif etc ...        
+        zANALYSIS_METHODS(null, "analysis_methods_view", SCHEMA_NAME, true, zViewAnalysisMethodsView.values(), null,
             null, null, "ViewAnalysisMethodsView"),        
 /*        
         TBL("analysis_methods_view", " CREATE OR REPLACE VIEW #SCHEMA.#TBL AS " +
@@ -513,12 +515,12 @@ public class TblsCnfg {
     /**
      *
      */
-    public enum ViewAnalysisMethodsView implements EnumIntTableFields{
+    public enum zViewAnalysisMethodsView implements EnumIntTableFields{
         CODE("code", LPDatabase.stringNotNull(), null, null, null, null),
         METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, "", null, null, null, null),
         METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, "", null, null, null, null),
         ;
-        private ViewAnalysisMethodsView(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+        private zViewAnalysisMethodsView(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
             this.fieldName=dbObjName;
             this.fieldType=dbObjType;
