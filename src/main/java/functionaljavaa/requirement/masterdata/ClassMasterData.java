@@ -106,7 +106,7 @@ public class ClassMasterData {
                             "object_type property not found in this json model which is required for 'simple_table' parsing_type", null, null);
                 }
                 String tableName = jsonObject.get(RelatedObjectsElementNames.OBJECT_TYPE.toString().toLowerCase()).getAsString();
-                ModuleTableOrViewGet tblDiagn = new ModuleTableOrViewGet(Boolean.FALSE, moduleName, GlobalVariables.Schemas.CONFIG.getName(), tableName);
+                ModuleTableOrViewGet tblDiagn = new ModuleTableOrViewGet(Boolean.FALSE, moduleName, GlobalVariables.Schemas.CONFIG.getName(), tableName, instanceName);
                 if (Boolean.FALSE.equals(tblDiagn.getFound())) {
                     this.diagnostic = new InternalMessage(LPPlatform.LAB_FALSE, tblDiagn.getErrorMsg(), null, null);
                 } else {
