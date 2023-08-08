@@ -19,7 +19,7 @@ import static functionaljavaa.audit.AuditUtilities.getUserSessionProceduresList;
 import static functionaljavaa.audit.AuditUtilities.userSessionExistAtProcLevel;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -43,10 +43,10 @@ import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
-import trazit.enums.EnumIntTables;
 import trazit.globalvariables.GlobalVariables;
 import trazit.globalvariables.GlobalVariables.ApiUrls;
 import trazit.queries.QueryUtilitiesEnums;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -65,11 +65,11 @@ public class UserSessionAPIqueries extends HttpServlet {
         },
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TblsApp.TablesApp.APP_SESSION.getTableName()).build()).build(),
-                 null, null),
+                null, null),
         USER_SESSION_INCLUDING_AUDIT_HISTORY("USER_SESSION_INCLUDING_AUDIT_HISTORY", "", new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_SESSION_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),},
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TblsApp.TablesApp.APP_SESSION.getTableName()).build()).build(),
-                 null, null),;
+                null, null),;
 
         private UserSessionAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
             this.name = name;
@@ -145,11 +145,12 @@ public class UserSessionAPIqueries extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request = LPHttp.requestPreparation(request);
         response = LPHttp.responsePreparation(response);
-
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false);
+        try {
         String language = LPFrontEnd.setLanguage(request);
 
         Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())) {            
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())) {
             LPFrontEnd.servletReturnResponseError(request, response,
                     LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
             return;
@@ -170,7 +171,7 @@ public class UserSessionAPIqueries extends HttpServlet {
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
             return;
         }
-        try (PrintWriter out = response.getWriter()) {
+        //try (PrintWriter out = response.getWriter()) {
             Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
             if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))) {
                 return;
@@ -243,6 +244,7 @@ public class UserSessionAPIqueries extends HttpServlet {
                             }
                             JSONObject userSessionObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currUsrSession);
                             String[] userSessionProceduresList = getUserSessionProceduresList(fieldsToRetrieve, currUsrSession);
+                            userSessionObj.put(TblsApp.AppSession.PROCEDURES.getName(), Arrays.toString(userSessionProceduresList));
                             for (String curProc : userSessionProceduresList) {
                                 JSONObject procAuditJson = new JSONObject();
                                 procAuditJson.put("procedure", curProc);
@@ -250,24 +252,29 @@ public class UserSessionAPIqueries extends HttpServlet {
                                     procAuditJson.put("proc_audit_records", "No actions performed during this session on this procedure");
                                 } else {
                                     try {
-                                        for (EnumIntTables curTable : TblsDataAudit.TablesDataAudit.values()) {
-                                            String[] procAuditTablesFieldsToRetrieve = getAllFieldNames(curTable.getTableFields());
-                                            Object[][] dataAuditCurTableInfo = QueryUtilitiesEnums.getTableData(curTable,
-                                                    EnumIntTableFields.getTableFieldsFromString(curTable, "ALL"),
-                                                    new String[]{TblsDataAudit.Sample.APP_SESSION_ID.getName()}, new Object[]{sessionId},
-                                                    new String[]{TblsDataAudit.Sample.AUDIT_ID.getName()}, curProc);
-                                            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(dataAuditCurTableInfo[0][0].toString()))) {
-                                                JSONArray procAuditCurTableArr = new JSONArray();
-                                                JSONArray auditCurTableArr = new JSONArray();
-                                                JSONObject procAuditCurTableJson = new JSONObject();
-                                                for (Object[] curTblAuditRec : dataAuditCurTableInfo) {
-                                                    JSONObject procAuditTablesJson = LPJson.convertArrayRowToJSONObject(procAuditTablesFieldsToRetrieve, curTblAuditRec);
-                                                    auditCurTableArr.add(procAuditTablesJson);
+                                        Object[] dbSchemaAndTableList = Rdbms.dbSchemaAndTableList(curProc + "%" + "audit");
+                                        for (Object curTableRow : dbSchemaAndTableList) {
+                                            String[] curTableRowArr = curTableRow.toString().split("\\.");
+                                            String curSchema = curTableRowArr[0];
+                                            String curTable = curTableRowArr[1];
+                                            String[] procAuditTablesFieldsToRetrieve = EnumIntTableFields.getAllFieldNamesFromDatabase(curTable, curSchema);
+                                            if (LPArray.valueInArray(procAuditTablesFieldsToRetrieve, TblsDataAudit.Sample.APP_SESSION_ID.getName())) {
+                                                Object[][] dataAuditCurTableInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(curSchema, ""),
+                                                        curTable, new String[]{TblsDataAudit.Sample.APP_SESSION_ID.getName()}, new Object[]{sessionId},
+                                                        procAuditTablesFieldsToRetrieve, new String[]{TblsDataAudit.Sample.AUDIT_ID.getName()});
+                                                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(dataAuditCurTableInfo[0][0].toString()))) {
+                                                    JSONArray procAuditCurTableArr = new JSONArray();
+                                                    JSONArray auditCurTableArr = new JSONArray();
+                                                    JSONObject procAuditCurTableJson = new JSONObject();
+                                                    for (Object[] curTblAuditRec : dataAuditCurTableInfo) {
+                                                        JSONObject procAuditTablesJson = LPJson.convertArrayRowToJSONObject(procAuditTablesFieldsToRetrieve, curTblAuditRec);
+                                                        auditCurTableArr.add(procAuditTablesJson);
+                                                    }
+                                                    procAuditCurTableJson.put("audit_records", auditCurTableArr);
+                                                    procAuditCurTableJson.put(GlobalAPIsParams.LBL_TABLE, curTable);
+                                                    procAuditCurTableArr.add(procAuditCurTableJson);
+                                                    procAuditJson.put("proc_audit_records", procAuditCurTableArr);
                                                 }
-                                                procAuditCurTableJson.put("audit_records", auditCurTableArr);
-                                                procAuditCurTableJson.put(GlobalAPIsParams.LBL_TABLE, curTable);
-                                                procAuditCurTableArr.add(procAuditCurTableJson);
-                                                procAuditJson.put("proc_audit_records", procAuditCurTableArr);
                                             }
                                         }
                                     } catch (Exception e) {
