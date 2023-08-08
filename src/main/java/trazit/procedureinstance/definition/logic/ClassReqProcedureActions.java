@@ -10,6 +10,7 @@ import trazit.procedureinstance.definition.definition.TblsReqs;
 import trazit.procedureinstance.definition.definition.TblsReqs.TablesReqs;
 import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.requirement.ProcedureDefinitionToInstanceUtility.procedureRolesList;
+import static functionaljavaa.requirement.ProcedureDefinitionToInstanceUtility.procedureUsersList;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import static functionaljavaa.unitsofmeasurement.UnitsOfMeasurement.getUomFromConfig;
 import java.io.IOException;
@@ -114,8 +115,8 @@ public class ClassReqProcedureActions {
                 procedureVersion = (Integer) argValues[1];
                 procInstanceName = argValues[2].toString();
                 String userName = argValues[3].toString();
-                Object[] procedureUsersList = procedureRolesList(procedureName, procedureVersion);
-                if (Boolean.TRUE.equals(LPArray.valueInArray(procedureUsersList, userName))) {
+                Object[] procedureUsersList = procedureUsersList(procedureName, procedureVersion);
+                if (Boolean.TRUE.equals(LPArray.valueInArray(procedureUsersList, userName, true))) {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_ALREADY_EXISTS, new Object[]{userName, procedureName, procedureVersion});
                     this.diagnosticObj = ReqProcedureDefinitionErrorTraping.USER_ALREADY_EXISTS;
                     this.messageDynamicData = new Object[]{userName, procedureName, procedureVersion};
@@ -140,7 +141,7 @@ public class ClassReqProcedureActions {
                 procInstanceName = argValues[2].toString();
                 String roleName = argValues[3].toString();
                 Object[] procedureRolesList = procedureRolesList(procedureName, procedureVersion);
-                if (Boolean.TRUE.equals(LPArray.valueInArray(procedureRolesList, roleName))) {
+                if (Boolean.TRUE.equals(LPArray.valueInArray(procedureRolesList, roleName, true))) {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.ROLE_ALREADY_EXISTS, new Object[]{roleName, procedureName, procedureVersion});
                     this.diagnosticObj = ReqProcedureDefinitionErrorTraping.ROLE_ALREADY_EXISTS;
                     this.messageDynamicData = new Object[]{roleName, procedureName, procedureVersion};
@@ -166,8 +167,15 @@ public class ClassReqProcedureActions {
                 procInstanceName = argValues[2].toString();
                 userName = argValues[3].toString();
                 roleName = argValues[4].toString();
+                procedureUsersList = procedureUsersList(procedureName, procedureVersion);
+                if (Boolean.TRUE.equals(LPArray.valueInArray(procedureUsersList, userName, true))) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_NOT_FOUND, new Object[]{roleName, procedureName, procedureVersion});
+                    this.diagnosticObj = ReqProcedureDefinitionErrorTraping.USER_NOT_FOUND;
+                    this.messageDynamicData = new Object[]{userName, procedureName, procedureVersion};
+                    break;
+                }
                 procedureRolesList = procedureRolesList(procedureName, procedureVersion);
-                if (Boolean.TRUE.equals(LPArray.valueInArray(procedureRolesList, roleName))) {
+                if (Boolean.TRUE.equals(LPArray.valueInArray(procedureRolesList, roleName, true))) {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.ROLE_NOT_FOUND, new Object[]{roleName, procedureName, procedureVersion});
                     this.diagnosticObj = ReqProcedureDefinitionErrorTraping.ROLE_NOT_FOUND;
                     this.messageDynamicData = new Object[]{roleName, procedureName, procedureVersion};

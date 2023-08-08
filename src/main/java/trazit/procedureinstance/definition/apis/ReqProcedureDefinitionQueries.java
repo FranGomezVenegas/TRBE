@@ -17,7 +17,6 @@ import databases.SqlWhereEntry;
 import databases.TblsTesting;
 import databases.features.Token;
 import static functionaljavaa.requirement.ProcedureDefinitionQueries.*;
-import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.user.UserProfile;
 import java.io.IOException;
 import java.io.PrintWriter;

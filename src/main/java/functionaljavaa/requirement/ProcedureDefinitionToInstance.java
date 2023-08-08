@@ -42,6 +42,7 @@ import java.util.Arrays;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform.LpPlatformBusinessRules;
 import module.instrumentsmanagement.definition.TblsInstrumentsConfig.TablesInstrumentsConfig;
+import module.instrumentsmanagement.definition.TblsInstrumentsConfigAudit.TablesInstrumentsConfigAudit;
 import module.instrumentsmanagement.definition.TblsInstrumentsData.TablesInstrumentsData;
 import module.instrumentsmanagement.definition.TblsInstrumentsData.ViewsInstrumentsData;
 import module.instrumentsmanagement.definition.TblsInstrumentsDataAudit.TablesInstrumentsDataAudit;
@@ -81,12 +82,12 @@ public class ProcedureDefinitionToInstance {
         private final String tagValue;
     }
     public static final String SCHEMA_AUTHORIZATION_ROLE = "labplanet";
-    public static final String FLDSTORETR_REQS_PROCINFOSRC = TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName() + "|" + TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName() + "|" + TblsReqs.ProcedureInfo.LABEL_EN.getName() + "|" + TblsReqs.ProcedureInfo.LABEL_ES.getName() + "|" + TblsReqs.ProcedureInfo.PROCEDURE_HASH_CODE.getName();
-    public static final String FLDSTORETR_PROCEDURE_INFO_SOURCE = TblsProcedure.ProcedureInfo.NAME.getName() + "|" + TblsProcedure.ProcedureInfo.VERSION.getName() + "|" + TblsProcedure.ProcedureInfo.LABEL_EN.getName() + "|" + TblsProcedure.ProcedureInfo.LABEL_ES.getName() + "|" + TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE.getName();
+    public static final String FLDSTORETR_REQS_PROCINFOSRC = TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName() + "|" + TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName() + "|" + TblsReqs.ProcedureInfo.LABEL_EN.getName() + "|" + TblsReqs.ProcedureInfo.LABEL_ES.getName() + "|" + TblsReqs.ProcedureInfo.PROCEDURE_HASH_CODE.getName() + "|" + TblsReqs.ProcedureInfo.MODULE_NAME.getName();
+    public static final String FLDSTORETR_PROCEDURE_INFO_SOURCE = TblsProcedure.ProcedureInfo.NAME.getName() + "|" + TblsProcedure.ProcedureInfo.VERSION.getName() + "|" + TblsProcedure.ProcedureInfo.LABEL_EN.getName() + "|" + TblsProcedure.ProcedureInfo.LABEL_ES.getName() + "|" + TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE.getName() + "|" + TblsProcedure.ProcedureInfo.MODULE_NAME.getName();
     public static final String FLDSTORETR_PROCEDURE_USR_ROLE_SRC = "user_name|role_name";
     public static final String FLDSTORETR_PROCEDURE_USR_ROLE_SRT = "user_name";
     public static final String FIELDS_TO_INSERT_APP_USER_PROCESS = TblsApp.UserProcess.USER_NAME.getName() + "|" + TblsApp.UserProcess.PROC_NAME.getName() + "|" + TblsApp.UserProcess.ACTIVE.getName();
-    public static final String FLDSTO_INSERT_PROC_USR_ROLE_DEST = "person_name|role_name|active";
+    public static final String FLDSTO_INSERT_PROC_USR_ROLE_DEST = "person_name" + " " + SqlStatement.WHERECLAUSE_TYPES.LIKE.getSqlClause() + "|role_name" + " " + SqlStatement.WHERECLAUSE_TYPES.LIKE.getSqlClause() + "|active";
     public static final String FLDSTO_RETRIEVE_PROC_SOPMTDATA_SRC = "sop_id|sop_name|sop_version|sop_revision|current_status|expires|has_child|file_link|brief_summary";
     public static final String FLDSTO_RETRIEVE_PROC_SOPMTDATA_SRT = "sop_id";
     public static final String FLDSTO_INSERT_PROC_SOPMTDATA_DEST = "person_name|role_name|active";
@@ -102,32 +103,33 @@ public class ProcedureDefinitionToInstance {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfoRecordsSource[0][0].toString())) {
             jsonErrorObj.put("Record in requirements", "Not exists");
             jsonErrorObj.put(JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procInfoRecordsSource[0]));
+            return jsonErrorObj;
         } else {
             jsonErrorObj.put("Record in requirements", "Found");
-            for (Object[] curRow : procInfoRecordsSource) {
-                Object[][] procInfoRecordsDestination = Rdbms.getRecordFieldsByFilter(schemaNameDestinationProc, TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(),
-                        new String[]{TblsProcedure.ProcedureInfo.NAME.getName(), TblsProcedure.ProcedureInfo.VERSION.getName()}, new Object[]{procedure, procVersion},
-                        FLDSTORETR_PROCEDURE_INFO_SOURCE.split("\\|"));
-                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfoRecordsDestination[0][0].toString()))) {
-                    jsonErrorObj.put("Record in the new instance", "Already exists");
+        }
+        for (Object[] curRow : procInfoRecordsSource) {
+            Object[][] procInfoRecordsDestination = Rdbms.getRecordFieldsByFilter(schemaNameDestinationProc, TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(),
+                    new String[]{TblsProcedure.ProcedureInfo.NAME.getName(), TblsProcedure.ProcedureInfo.VERSION.getName()}, new Object[]{procedure, procVersion},
+                    FLDSTORETR_PROCEDURE_INFO_SOURCE.split("\\|"));
+            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfoRecordsDestination[0][0].toString()))) {
+                jsonErrorObj.put("Record in the new instance", "Already exists");
+            } else {
+                jsonErrorObj.put("Record in new instance", "Not exists");
+                String[] fldName = FLDSTORETR_PROCEDURE_INFO_SOURCE.split("\\|");
+                Object[] fldValue = curRow;
+                if (Boolean.FALSE.equals(LPArray.valueInArray(fldName, TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName()))) {
+                    fldName = LPArray.addValueToArray1D(fldName, TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName());
+                    fldValue = LPArray.addValueToArray1D(fldValue, procInstanceName);
+                }
+                RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_INFO, fldName, fldValue); //, schemaNameDestinationProc
+                jsonObj = new JSONObject();
+                if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
+                    jsonObj.put("Record inserted in the new instance?", true);
+                    return jsonObj;
                 } else {
-                    jsonErrorObj.put("Record in new instance", "Not exists");
-                    String[] fldName = FLDSTORETR_PROCEDURE_INFO_SOURCE.split("\\|");
-                    Object[] fldValue = curRow;
-                    if (Boolean.FALSE.equals(LPArray.valueInArray(fldName, TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName()))) {
-                        fldName = LPArray.addValueToArray1D(fldName, TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName());
-                        fldValue = LPArray.addValueToArray1D(fldValue, procInstanceName);
-                    }
-                    RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_INFO, fldName, fldValue); //, schemaNameDestinationProc
-                    jsonObj = new JSONObject();
-                    if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
-                        jsonObj.put("Record inserted in the new instance?", true);
-                        return jsonObj;
-                    } else {
-                        jsonObj.put("Record inserted in the new instance?", false);
-                        jsonObj.put("error_detail", jsonErrorObj);
-                        return jsonObj;
-                    }
+                    jsonObj.put("Record inserted in the new instance?", false);
+                    jsonObj.put("error_detail", jsonErrorObj);
+                    return jsonObj;
                 }
             }
         }
@@ -455,11 +457,11 @@ public class ProcedureDefinitionToInstance {
                 RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsAppConfig.TablesAppConfig.PERSON,
                         new String[]{TblsAppConfig.Person.PERSON_ID.getName(), TblsAppConfig.Person.FIRST_NAME.getName(),
                             TblsAppConfig.Person.LAST_NAME.getName(), TblsAppConfig.Person.PHOTO.getName()},
-                        new Object[]{personId, "I'm a user demo", "for demos ", "https://hasta-pronto.ru/wp-content/uploads/2014/09/chibcha.jpg"});
+                        new Object[]{personId, "I'm " + curUserName, "for " + curRoleName, "https://hasta-pronto.ru/wp-content/uploads/2014/09/chibcha.jpg"});
                 insertRecordInTable = Rdbms.insertRecordInTable(TblsApp.TablesApp.USERS,
-                        new String[]{TblsApp.Users.USER_NAME.getName(), TblsApp.Users.EMAIL.getName(), TblsApp.Users.ESIGN.getName(),
+                        new String[]{TblsApp.Users.USER_NAME.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.LIKE.getSqlClause(), TblsApp.Users.EMAIL.getName(), TblsApp.Users.ESIGN.getName(),
                             TblsApp.Users.PASSWORD.getName(), TblsApp.Users.PERSON_NAME.getName()},
-                        new Object[]{curUserName, defaultMail, fakeEsingnEncrypted, pasEncrypted, personId});
+                        new Object[]{curUserName.toString().toLowerCase(), defaultMail, fakeEsingnEncrypted, pasEncrypted, personId});
                 existsAppUser = LPArray.array1dTo2d(insertRecordInTable.getApiMessage(), 1);
                 diagnosesForLog = diagnosesForLog + " trying to create, log for creation=" + insertRecordInTable.getApiMessage()[0].toString();
 //                insertRecordInTable=Rdbms.insertRecordInTable(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USER_PROCESS.getTableName(), 
@@ -482,7 +484,7 @@ public class ProcedureDefinitionToInstance {
             Object curPersonName = existsAppUser[0][0];
             if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(existsAppUser[0][0].toString()))) {
                 RdbmsObject insertRecord = Rdbms.insertRecord(TblsProcedure.TablesProcedure.PERSON_PROFILE,
-                        FLDSTO_INSERT_PROC_USR_ROLE_DEST.split("\\|"), new Object[]{curPersonName.toString(), curRoleName.toString(), true}, schemaNameDestinationProcedure);
+                        FLDSTO_INSERT_PROC_USR_ROLE_DEST.split("\\|"), new Object[]{curPersonName.toString().toLowerCase(), curRoleName.toString().toLowerCase(), true}, schemaNameDestinationProcedure);
                 jsonObj.put("User Role inserted in the instance?", insertRecord.getApiMessage()[0].toString());
             }
             jsArr.add(jsUserRoleObj);
@@ -508,7 +510,7 @@ public class ProcedureDefinitionToInstance {
                 FLDSTO_RETRIEVE_PROC_SOPMTDATA_SRC.split("\\|"), FLDSTO_RETRIEVE_PROC_SOPMTDATA_SRT.split("\\|"));
 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procSopMetaDataRecordsSource[0][0].toString())) {
-            jsonObj.put(JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procSopMetaDataRecordsSource));
+            jsonObj.put(JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procSopMetaDataRecordsSource[0]));
             return jsonObj;
         }
         jsonObj.put(JsonTags.NUM_RECORDS_IN_DEFINITION.getTagValue(), procSopMetaDataRecordsSource.length);
@@ -767,7 +769,7 @@ public class ProcedureDefinitionToInstance {
                                     case "config-audit":
                                     try {
                                         tblCreateScript = "TablesAppProcConfigAudit collection not exists";
-                                        //tblCreateScript = createTableScript(TablesInstrumentsConfigAudit.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true);
+                                        tblCreateScript = createTableScript(TablesInstrumentsConfigAudit.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true, fieldsToExclude);
                                     } catch (Exception e) {
                                         tblCreateScript = createTableScript(TablesCfgAudit.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true, fieldsToExclude);
                                     }
@@ -808,12 +810,12 @@ public class ProcedureDefinitionToInstance {
                                         if (curIsView == null || !Boolean.valueOf(curIsView)) {
                                             try {
                                                 tblCreateScript = createTableScript(TablesInstrumentsProcedure.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true, fieldsToExclude);
-                                                if (schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName))) {
+                                                if (Boolean.FALSE.equals(schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName)))) {
                                                     tblCreateScriptTesting = createTableScript(TablesInstrumentsProcedure.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true, fieldsToExclude);
-                                                }                                                    
+                                                }
                                             } catch (Exception e) {
                                                 tblCreateScript = createTableScript(TablesProcedure.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true, fieldsToExclude);
-                                                if (schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName))) {
+                                                if (Boolean.FALSE.equals(schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName)))) {
                                                     tblCreateScriptTesting = createTableScript(TablesProcedure.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true, fieldsToExclude);
                                                 }
                                             }
@@ -1003,7 +1005,7 @@ public class ProcedureDefinitionToInstance {
                             tableCreationScriptTable = TblsEnvMonitDataAudit.getTableCreationScriptFromDataAuditTableEnvMonit(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
                         if (GlobalVariables.Schemas.PROCEDURE.getName().equalsIgnoreCase(curSchemaName.toString()))
                             tableCreationScriptTable = TblsEnvMonitProcedure.getTableCreationScriptFromDataProcedureTableEnvMonit(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
-                             */ break;                        
+                             */ break;
                         case "INSPECTION_LOT_RAW_MATERIAL":
                             /*                    if (GlobalVariables.Schemas.CONFIG.getName().equalsIgnoreCase(curSchemaName.toString())){
                             Object[] tableExists=dbTableExists(procInstanceName+"-"+GlobalVariables.Schemas.CONFIG.getName(), curTableName.toString());
@@ -1027,7 +1029,7 @@ public class ProcedureDefinitionToInstance {
                         case "INSPECTION_LOTS_RAW_MAT":
                         case "INVENTORY_TRACKING":
                         case "INVENTORY_TRACK":
-                            ModuleTableOrViewGet tblDiagn = new ModuleTableOrViewGet(Boolean.valueOf(curIsView), moduleName, curSchemaName, curTableName.toUpperCase());
+                            ModuleTableOrViewGet tblDiagn = new ModuleTableOrViewGet(Boolean.valueOf(curIsView), moduleName, curSchemaName, curTableName.toUpperCase(), procInstanceName);
                             if (curIsView == null || !Boolean.valueOf(curIsView)) {
                                 //EnumIntTables moduleTableObj = getModuleTableObj(moduleName, curSchemaName, curTableName.toUpperCase());
                                 if (Boolean.FALSE.equals(tblDiagn.getFound())) {
@@ -1113,7 +1115,7 @@ public class ProcedureDefinitionToInstance {
                 new String[]{TblsProcedure.ProcedureEvents.SOP.getName() + WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{""},
                 FLDSTO_RETRIEVE_PROC_EVENT_DEST.split("\\|"), new String[]{"sop"});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procEventSopsRecordsSource[0][0].toString())) {
-            jsonObj.put(JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procEventSopsRecordsSource));
+            jsonObj.put(JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procEventSopsRecordsSource[0]));
             return jsonObj;
         }
         jsonObj.put(JsonTags.NUM_RECORDS_IN_DEFINITION.getTagValue(), procEventSopsRecordsSource.length);
@@ -1314,9 +1316,9 @@ public class ProcedureDefinitionToInstance {
                         ClassMasterData clssMD = new ClassMasterData(instanceName, curRow[0].toString(), curRow[1].toString(), moduleName);
                         JSONObject jsonRowObj = new JSONObject();
                         jsonRowObj.put(curRow[0], clssMD.getjMainLogArr());
-                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(clssMD.getDiagnostic().getDiagnostic())){
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(clssMD.getDiagnostic().getDiagnostic())) {
                             jsonRowObj.put("error_detail", clssMD.getDiagnostic().getMessageCodeObj().getErrorCode());
-                        }                            
+                        }
                         jsonRowArr.add(jsonRowObj);
                     } catch (Exception e) {
                         JSONObject jsonRowObj = new JSONObject();

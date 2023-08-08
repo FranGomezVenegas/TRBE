@@ -39,6 +39,7 @@ public class DeployTables {
     }
 
     public static String createTableScript(EnumIntTables tableObj, String procInstanceName, Boolean run, Boolean refreshTableIfExists, Boolean isView, String fieldsToExclude) {
+        try{
         String schemaName = LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), tableObj.getRepositoryName());
         Object[] dbTableExists = Rdbms.dbTableExists(schemaName, tableObj.getTableName());
         StringBuilder seqScript = new StringBuilder(0);
@@ -103,6 +104,12 @@ public class DeployTables {
             }
         }
         return seqScript.toString();
+        }catch(Exception e){
+            StringBuilder seqScript=new StringBuilder(0);
+            return seqScript.append("ERROR:").append(e.getMessage()).append("isView:").append(isView)
+                .append("procInstanceName:").append(procInstanceName).append("Repository:").append(tableObj.getRepositoryName())
+                .append("Table:").append(tableObj.getTableName()).toString();
+        }
     }
 
     private static String sequenceScript(EnumIntTables tableObj, String procInstanceName) {
@@ -292,4 +299,5 @@ public class DeployTables {
         return CreateFldTypes.ADD.name();
     }
 
+    
 }
