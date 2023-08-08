@@ -32,7 +32,7 @@ public class TblsData {
             new String[]{Training.ID.getName()}, null, "Training table"),
         USER_SOP(null, "user_sop", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, UserSop.values(), UserSop.USER_SOP_ID.getName(),
             new String[]{UserSop.USER_SOP_ID.getName()}, null, "User SOPS table"),
-        USER_ANALYSIS_METHOD(null, "user_analysis_method", SCHEMA_NAME, true, UserAnalysisMethod.values(), UserAnalysisMethod.USER_ANALYSIS_METHOD_ID.getName(),
+        zUSER_ANALYSIS_METHOD(null, "user_analysis_method", SCHEMA_NAME, true, UserAnalysisMethod.values(), UserAnalysisMethod.USER_ANALYSIS_METHOD_ID.getName(),
             new String[]{UserAnalysisMethod.USER_ANALYSIS_METHOD_ID.getName()}, null, "Training table"),
         SAVED_QUERIES(null, "saved_queries", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, SavedQueries.values(), SavedQueries.ID.getName(),
             new String[]{SavedQueries.ID.getName()}, null, "Training table"),
@@ -121,7 +121,7 @@ public class TblsData {
                 new EnumIntTableFields[][]{{TblsData.SampleAnalysisResult.RESULT_ID, TblsProcedure.ProgramCorrectiveAction.RESULT_ID}}, "", JOIN_TYPES.LEFT),
             new EnumIntTablesJoin(TablesData.SAMPLE_ANALYSIS_RESULT, "sar", TblsProcedure.TablesProcedure.INVEST_OBJECTS, "io", false,
                 new EnumIntTableFields[][]{{TblsData.SampleAnalysisResult.RESULT_ID, TblsProcedure.InvestObjects.OBJECT_ID}}, "", JOIN_TYPES.LEFT)
-        }, " and io.object_type='sample_analysis_result'"
+        }, " and io.object_type='sample_analysis_result'", false
         ),        
         SAMPLE_COC_NAMES_VIEW(" SELECT smp_coc.sample_id, smp_coc.custodian, smp_coc.custodian_candidate, smp_coc.coc_started_on, smp_coc.coc_confirmed_on, smp_coc.coc_custodian_notes, "
                 + "          smp_coc.coc_new_custodian_notes, smp_coc.sample_picture, smp_coc.id, smp_coc.status, usr_custodian.user_name AS custodian_name," +
@@ -141,7 +141,7 @@ public class TblsData {
             new EnumIntTablesJoin(TablesData.SAMPLE_COC, "smp_coc", TblsApp.TablesApp.USERS, "usr_candidate", true,
                 new EnumIntTableFields[][]{{null, null}}, " smp_coc.custodian::text = usr_candidate.person_name::text ",
                 JOIN_TYPES.INNER)
-        }, null),        
+        }, null, false),        
         USER_AND_META_DATA_SOP_VIEW(" SELECT '#SCHEMA_CONFIG'::text AS procedure, usr.user_sop_id, usr.user_id, usr.sop_id, usr.sop_list_id, usr.assigned_on, usr.assigned_by, usr.status, usr.mandatory_level," +
                 "            usr.read_started, usr.read_completed, usr.understood, usr.expiration_date, usr.sop_name, usr.user_name, usr.light, metadata.brief_summary, metadata.file_link, metadata.author " +
                 "   FROM #SCHEMA.user_sop usr," +
@@ -153,7 +153,7 @@ public class TblsData {
                 new EnumIntTablesJoin[]{
                 new EnumIntTablesJoin(TablesData.USER_SOP, "usr", TablesConfig.SOP_META_DATA, "metadata", true,
                 null,"", JOIN_TYPES.INNER)}
-                , "usr.sop_name::text = metadata.sop_name::text"),        
+                , "usr.sop_name::text = metadata.sop_name::text", false),        
         USER_AND_ANALYSISMETHOD_CERTIF_VIEW(" SELECT '#SCHEMA_CONFIG'::text AS procedure, usr.id, usr.user_id, metadata.code, usr.method_name, usr.method_version, "+
                 "   usr.assigned_on, usr.assigned_by, usr.status, usr.certification_date, usr.certif_expiry_date," +
                 "   usr.certif_started, usr.certif_completed, usr.sop_name, usr.user_name, usr.light, , usr.training_id,"+
@@ -169,7 +169,7 @@ public class TblsData {
                 new EnumIntTablesJoin(TablesData.CERTIF_USER_ANALYSIS_METHOD, "usr", TablesConfig.METHODS, "metadata", true,
                 null,"", JOIN_TYPES.INNER)}
                 , " usr.method_name::text = metadata.code::text "+
-                "    and usr.method_version::integer =metadata.config_version::integer")                
+                "    and usr.method_version::integer =metadata.config_version::integer", false)                
                 ,
         SAMPLE_TESTING_GROUP_VIEW(" SELECT #FLDS from #SCHEMA_CONFIG.sample s " +
                 "   INNER JOIN #SCHEMA_CONFIG.sample_revision_testing_group stg on stg.sample_id = s.sample_id; "+
@@ -179,10 +179,10 @@ public class TblsData {
             new EnumIntTablesJoin(TablesData.SAMPLE, "s", TablesData.SAMPLE_REVISION_TESTING_GROUP, "stg", true,
                 new EnumIntTableFields[][]{{TblsData.Sample.SAMPLE_ID, TblsData.SampleRevisionTestingGroup.SAMPLE_ID}}
             ,"", JOIN_TYPES.INNER)}
-            , ""),        
+            , "", false),        
         ;
         private ViewsData(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds, 
-                String comment, EnumIntTablesJoin[] tablesInView, String extraFilters){
+                String comment, EnumIntTablesJoin[] tablesInView, String extraFilters, Boolean useFixViewScript){
             this.getTblBusinessRules=fldBusRules;
             this.viewName=dbVwName;
             this.viewFields=vwFlds;
@@ -192,6 +192,7 @@ public class TblsData {
             this.viewScript=viewScript;
             this.tablesInTheView=tablesInView;
             this.extraFilters=extraFilters;
+            this.useFixViewScript=useFixViewScript;
         }
         @Override        public String getRepositoryName() {return this.repositoryName;}
         @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
@@ -201,7 +202,7 @@ public class TblsData {
         @Override        public String getViewComment() {return this.viewComment;}
         @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
         @Override        public String getExtraFilters() {return this.extraFilters;}
-        
+        @Override        public Boolean getUsesFixScriptView() {return this.useFixViewScript;}
         private final FldBusinessRules[] getTblBusinessRules;      
         private final String viewName;             
         private final String repositoryName;
@@ -211,6 +212,7 @@ public class TblsData {
         private final String viewScript;
         private final EnumIntTablesJoin[] tablesInTheView;
         private final String extraFilters;
+        private final Boolean useFixViewScript;
         @Override  public EnumIntTablesJoin[] getTablesRequiredInView() {return this.tablesInTheView;}
     }
 
