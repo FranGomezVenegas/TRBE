@@ -635,7 +635,7 @@ public class TblsInspLotRMConfig {
         MAX_DP("max_dp", LPDatabase.integer(), null, null, null, null),
         LIST_ENTRY("list_entry", LPDatabase.string(), null, null, null, null),
         ADD_IN_COA("add_in_coa", LPDatabase.booleanFld(true), null, null, null, null),
-        COA_ORDER("coa_order", LPDatabase.booleanFld(true), null, null, null, null);
+        COA_ORDER("coa_order", LPDatabase.real(), null, null, null, null);
 
         private SpecLimits(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules) {
