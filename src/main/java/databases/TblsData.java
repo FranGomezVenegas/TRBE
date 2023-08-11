@@ -1,6 +1,6 @@
 package databases;
 
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
+import module.monitoring.definition.TblsEnvMonitData;
 import databases.SqlStatementEnums.JOIN_TYPES;
 import databases.TblsCnfg.Methods;
 import databases.TblsCnfg.SpecLimits;
@@ -1112,11 +1112,11 @@ public class TblsData {
         SAR2_LIST_ENTRY("sar2_"+"list_entry", "sar2.list_entry AS sar2_list_entry", SampleAnalysisResult.LIST_ENTRY, null, null, null),
         
         ;
-        private ViewSampleAnalysisResultWithSpecLimits(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
+        private ViewSampleAnalysisResultWithSpecLimits(String name, String vwFldAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
 //            try{
 //            this.fldName="";
             this.fldName=name;
-            this.fldAliasInView=vwAliasName;
+            this.fldAliasInView=vwFldAliasName;
             this.fldMask=fldMask;
             this.fldComment=comment;
             this.fldBusinessRules=busRules;

@@ -17,7 +17,7 @@ import databases.TblsProcedure.TablesProcedure;
 import trazit.procedureinstance.definition.definition.TblsReqs.TablesReqs;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
 import functionaljavaa.parameter.Parameter;
-import static functionaljavaa.requirement.ProcedureDefinitionToInstance.SCHEMA_AUTHORIZATION_ROLE;
+import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.SCHEMA_AUTHORIZATION_ROLE;
 import java.util.Arrays;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;

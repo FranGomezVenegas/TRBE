@@ -1,6 +1,6 @@
 package functionaljavaa.samplestructure;
 
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
+import module.monitoring.definition.TblsEnvMonitData;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPParadigm;

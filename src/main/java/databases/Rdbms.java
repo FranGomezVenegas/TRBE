@@ -14,7 +14,7 @@ import javax.sql.rowset.*;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import functionaljavaa.parameter.Parameter;
-import functionaljavaa.requirement.ProcedureDefinitionToInstance;
+import trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance;
 import trazit.session.ResponseMessages;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.sql.Array;

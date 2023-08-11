@@ -23,7 +23,7 @@ import module.instrumentsmanagement.definition.TblsInstrumentsDataAudit.TablesIn
 import databases.TblsDataAudit;
 import databases.TblsProcedure;
 import databases.features.Token;
-import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
+import module.monitoring.logic.DataProgramCorrectiveAction;
 import module.instrumentsmanagement.definition.InstrumentsEnums.InstrumentsAPIqueriesEndpoints;
 import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.parameter.Parameter.isTagValueOneOfEnableOnes;

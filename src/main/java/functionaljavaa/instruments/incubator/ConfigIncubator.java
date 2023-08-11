@@ -6,7 +6,7 @@
 package functionaljavaa.instruments.incubator;
 
 import com.labplanet.servicios.moduleenvmonit.EnvMonIncubatorAPIactions.EnvMonIncubatorAPIactionsEndpoints;
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
+import module.monitoring.definition.TblsEnvMonitConfig;
 import databases.Rdbms;
 import databases.RdbmsObject;
 import databases.SqlStatement;

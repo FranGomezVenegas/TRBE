@@ -246,7 +246,7 @@ public class InspLotRMEnums {
                     new LPAPIArguments("reason", LPAPIArguments.ArgumentType.STRING.toString(), true, 9),}, InspectionLotRMAuditEvents.LOT_NOT_ANALYZED_RESULT_ADDED, Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TblsInspLotRMData.TablesInspLotRMData.LOT_NOT_ANALYZED_RESULT.getTableName()).build()).build(),
                 null, null),
-        LOT_REMOVED_NOTANALYZED_PARAM("LOT_REMOVED_NOTANALYZED_PARAM", "lotNotAnalyzedParamRemoved_success",
+        LOT_REMOVE_NOTANALYZED_PARAM("LOT_REMOVE_NOTANALYZED_PARAM", "lotNotAnalyzedParamRemoved_success",
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_ANALYSIS_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 7)}, InspectionLotRMAuditEvents.LOT_NOT_ANALYZED_RESULT_REMOVED, Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TblsInspLotRMData.TablesInspLotRMData.LOT_NOT_ANALYZED_RESULT.getTableName()).build()).build(),

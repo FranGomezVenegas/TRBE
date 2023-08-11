@@ -6,7 +6,7 @@
 package com.labplanet.servicios.modulesample;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
+import module.monitoring.definition.TblsEnvMonitData;
 import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIqueriesEndpoints;
 import static com.labplanet.servicios.modulesample.SampleAPIfrontend.sampleAnalysisResultView;
 import static com.labplanet.servicios.modulesample.SampleAPIfrontend.sampleAnalysisView;
@@ -20,8 +20,8 @@ import databases.TblsProcedure;
 import databases.features.Token;
 import functionaljavaa.analysis.ConfigAnalysisStructure;
 import functionaljavaa.materialspec.ConfigSpecRule;
-import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
-import static functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction.isProgramCorrectiveActionEnable;
+import module.monitoring.logic.DataProgramCorrectiveAction;
+import static module.monitoring.logic.DataProgramCorrectiveAction.isProgramCorrectiveActionEnable;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.samplestructure.DataSampleStructureStatuses.SampleStatuses;

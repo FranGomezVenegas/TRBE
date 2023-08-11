@@ -5,6 +5,8 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
+import module.monitoring.definition.TblsEnvMonitData;
+import module.monitoring.definition.TblsEnvMonitConfig;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NUM_DAYS;
 import databases.Rdbms;

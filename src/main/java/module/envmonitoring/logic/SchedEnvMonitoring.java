@@ -5,12 +5,12 @@
  */
 package module.envmonitoring.logic;
 
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig.TablesEnvMonitConfig;
+import module.monitoring.definition.TblsEnvMonitConfig;
+import module.monitoring.definition.TblsEnvMonitConfig.TablesEnvMonitConfig;
 import databases.SqlStatement;
 import databases.SqlWhere;
 import databases.features.Token;
-import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSample;
+import module.monitoring.logic.DataProgramSample;
 import lbplanet.utilities.LPDate;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;

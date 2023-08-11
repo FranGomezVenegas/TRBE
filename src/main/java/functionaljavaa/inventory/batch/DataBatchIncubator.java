@@ -5,9 +5,9 @@
  */
 package functionaljavaa.inventory.batch;
 
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitProcedure;
+import module.monitoring.definition.TblsEnvMonitConfig;
+import module.monitoring.definition.TblsEnvMonitData;
+import module.monitoring.definition.TblsEnvMonitProcedure;
 import databases.Rdbms;
 import databases.RdbmsObject;
 import databases.SqlStatement;
@@ -15,7 +15,7 @@ import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.SqlWhere;
 import functionaljavaa.audit.IncubBatchAudit;
 import functionaljavaa.instruments.incubator.ConfigIncubator.ConfigIncubatorBusinessRules;
-import functionaljavaa.moduleenvironmentalmonitoring.ProcedureDeviationIncubator;
+import module.monitoring.logic.ProcedureDeviationIncubator;
 import functionaljavaa.parameter.Parameter;
 import java.util.ArrayList;
 import trazit.session.ResponseMessages;

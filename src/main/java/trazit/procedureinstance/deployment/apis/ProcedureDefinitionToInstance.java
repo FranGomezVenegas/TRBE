@@ -107,7 +107,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 runSection=Boolean.valueOf(argValues[6].toString()) || PROCDEPL_PROCEDURE_INFO;
                 sectionsSettingJobj.put("2) PROCDEPL_PROCEDURE_INFO", runSection);
                 if (Boolean.TRUE.equals(runSection)){
-                    JSONObject createDBProcedureInfo = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBProcedureInfo(procName, procVersion, procInstanceName);
+                    JSONObject createDBProcedureInfo = trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createDBProcedureInfo(procName, procVersion, procInstanceName);
                     sectionsDetailObj.put("PROCDEPL_PROCEDURE_INFO", createDBProcedureInfo);
                 }   
             }
@@ -123,7 +123,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 runSection=Boolean.valueOf(argValues[7].toString()) || PROCDEPL_PROCEDURE_USER_ROLES;
                 sectionsSettingJobj.put("3) PROCDEPL_PROCEDURE_USER_ROLES", runSection);
                 if (Boolean.TRUE.equals(runSection)){
-                    JSONObject createDBProcedureUserRoles = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBPersonProfiles(procName, procVersion, procInstanceName);
+                    JSONObject createDBProcedureUserRoles = trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createDBPersonProfiles(procName, procVersion, procInstanceName);
                     sectionsDetailObj.put("PROCDEPL_PROCEDURE_USER_ROLES", createDBProcedureUserRoles);
                 } 
             }
@@ -139,7 +139,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 runSection=Boolean.valueOf(argValues[8].toString()) || PROCDEPL_PROCEDURE_SOP_META_DATA;
                 sectionsSettingJobj.put("4) PROCDEPL_PROCEDURE_SOP_META_DATA", runSection);
                 if (Boolean.TRUE.equals(runSection)){
-                    JSONObject createDBSopMetaDataAndUserSop = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBSopMetaDataAndUserSop(procName, procVersion, procInstanceName);
+                    JSONObject createDBSopMetaDataAndUserSop = trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createDBSopMetaDataAndUserSop(procName, procVersion, procInstanceName);
                     sectionsDetailObj.put("PROCDEPL_PROCEDURE_SOP_META_DATA", createDBSopMetaDataAndUserSop);
                 } 
             }
@@ -155,7 +155,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 runSection=Boolean.valueOf(argValues[9].toString()) || PROCDEPL_ASIGN_PROC_SOPS_TO_USERS;
                 sectionsSettingJobj.put("5) PROCDEPL_ASIGN_PROC_SOPS_TO_USERS", runSection);
                 if (Boolean.TRUE.equals(runSection)){
-                    JSONObject createDBProcedureUserRoles = functionaljavaa.requirement.ProcedureDefinitionToInstance.addProcedureSOPtoUsers(procName, procVersion, procInstanceName);
+                    JSONObject createDBProcedureUserRoles = trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.addProcedureSOPtoUsers(procName, procVersion, procInstanceName);
                     sectionsDetailObj.put("PROCDEPL_ASIGN_PROC_SOPS_TO_USERS", createDBProcedureUserRoles);
                 } 
             }
@@ -172,9 +172,9 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 sectionsSettingJobj.put("6) PROCDEPL_PROCEDURE_EVENTS", runSection);
                 if (Boolean.TRUE.equals(runSection)){
                     JSONArray jArr=new JSONArray();
-                    JSONObject createDBProcedureEvents = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBProcedureEvents(procName, procVersion, procInstanceName);
+                    JSONObject createDBProcedureEvents = trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createDBProcedureEvents(procName, procVersion, procInstanceName);
                     jArr.add(createDBProcedureEvents);
-                    JSONObject createdDBProcedureActions = functionaljavaa.requirement.ProcedureDefinitionToInstance.createdDBProcedureActions(procName,  procVersion, procInstanceName);
+                    JSONObject createdDBProcedureActions = trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createdDBProcedureActions(procName,  procVersion, procInstanceName);
                     jArr.add(createdDBProcedureActions);
                     sectionsDetailObj.put("PROCDEPL_PROCEDURE_EVENTS", jArr);
                 }
@@ -191,7 +191,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 runSection=Boolean.valueOf(argValues[11].toString()) || PROCDEPL_BUSINESS_RULES_PROPTS_FILS;
                 sectionsSettingJobj.put("7) PROCDEPL_BUSINESS_RULES_PROPTS_FILS", runSection);
                 if (Boolean.TRUE.equals(runSection)){
-                    JSONArray createPropBusinessRules = functionaljavaa.requirement.ProcedureDefinitionToInstance.createBusinessRules(procName, procVersion, procInstanceName);
+                    JSONArray createPropBusinessRules = trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createBusinessRules(procName, procVersion, procInstanceName);
                     sectionsDetailObj.put("PROCDEPL_BUSINESS_RULES_PROPTS_FILS", createPropBusinessRules);
                 }
             }
@@ -207,7 +207,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 runSection=Boolean.valueOf(argValues[12].toString()) || PROCDEPL_MODULE_TABLES_AND_FIELDS;
                 sectionsSettingJobj.put("8) PROCDEPL_MODULE_TABLES_AND_FIELDS", runSection);
                 if (Boolean.TRUE.equals(runSection)){
-                    JSONObject createDBModuleTablesAndFields = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBModuleTablesAndFields(procName, procVersion, procInstanceName, moduleName);
+                    JSONObject createDBModuleTablesAndFields = trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createDBModuleTablesAndFields(procName, procVersion, procInstanceName, moduleName);
                     sectionsDetailObj.put("PROCDEPL_MODULE_TABLES_AND_FIELDS", createDBModuleTablesAndFields);
                 }
             }
@@ -223,7 +223,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 runSection=Boolean.valueOf(argValues[13].toString()) || PROCDEPL_MASTER_DATA;
                 sectionsSettingJobj.put("9) PROCDEPL_MASTER_DATA", runSection);
                 if (Boolean.TRUE.equals(runSection)){
-                    JSONObject createDBModuleTablesAndFields = functionaljavaa.requirement.ProcedureDefinitionToInstance.deployMasterData(procName, procVersion, procInstanceName, moduleName);
+                    JSONObject createDBModuleTablesAndFields = trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.deployMasterData(procName, procVersion, procInstanceName, moduleName);
                     sectionsDetailObj.put("PROCDEPL_MASTER_DATA", createDBModuleTablesAndFields);
                 }
             }

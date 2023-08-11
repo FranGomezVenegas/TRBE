@@ -5,6 +5,8 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
+import module.monitoring.definition.ClassEnvMonProdLot;
+import module.monitoring.definition.TblsEnvMonitData;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;

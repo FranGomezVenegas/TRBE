@@ -339,12 +339,12 @@ public class ClassInspLotRMactions {
                 }
                 this.messageDynamicData = new Object[]{lotName, analysis};                        
                 break;
-            case LOT_REMOVED_NOTANALYZED_PARAM:
+            case LOT_REMOVE_NOTANALYZED_PARAM:
                 lotName = argValues[0].toString();
                 analysis = argValues[1].toString();
                 actionDiagnoses = DataInspectionLot.removedLotNotAnalyzedValue(lotName, analysis);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
-                    actionDiagnoses = new InternalMessage(LPPlatform.LAB_TRUE, InspLotRMEnums.InspLotRMAPIactionsEndpoints.LOT_REMOVED_NOTANALYZED_PARAM, new Object[]{lotName, LPNulls.replaceNull(analysis), ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance()});
+                    actionDiagnoses = new InternalMessage(LPPlatform.LAB_TRUE, InspLotRMEnums.InspLotRMAPIactionsEndpoints.LOT_REMOVE_NOTANALYZED_PARAM, new Object[]{lotName, LPNulls.replaceNull(analysis), ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance()});
                     rObj.addSimpleNode(ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance(), TblsInspLotRMData.TablesInspLotRMData.LOT_NOT_ANALYZED_RESULT.getTableName(), analysis);
                 }
                 this.messageDynamicData = new Object[]{lotName, analysis};                        

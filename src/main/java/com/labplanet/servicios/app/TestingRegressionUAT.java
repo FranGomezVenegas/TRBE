@@ -5,7 +5,7 @@
  */
 package com.labplanet.servicios.app;
 
-import com.labplanet.servicios.moduleenvmonit.ClassEnvMonSampleFrontend.EnvMonSampleAPIqueriesEndpoints;
+import module.monitoring.definition.ClassEnvMonSampleFrontend.EnvMonSampleAPIqueriesEndpoints;
 import com.labplanet.servicios.moduleenvmonit.EnvMonAPI;
 import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIqueriesEndpoints;
 import databases.Rdbms;

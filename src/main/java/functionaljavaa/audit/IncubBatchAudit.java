@@ -5,7 +5,7 @@
  */
 package functionaljavaa.audit;
 
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitDataAudit;
+import module.monitoring.definition.TblsEnvMonitDataAudit;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 /**

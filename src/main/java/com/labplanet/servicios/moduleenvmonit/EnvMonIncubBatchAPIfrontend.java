@@ -5,6 +5,8 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
+import module.monitoring.definition.TblsEnvMonitConfig;
+import module.monitoring.definition.TblsEnvMonitData;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import databases.TblsData;

@@ -6,8 +6,8 @@
 package functionaljavaa.samplestructure;
 
 import com.labplanet.servicios.moduleenvmonit.EnvMonSampleAPI.EnvMonSampleAPIactionsEndpoints;
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitProcedure;
+import module.monitoring.definition.TblsEnvMonitConfig;
+import module.monitoring.definition.TblsEnvMonitProcedure;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.SqlWhere;

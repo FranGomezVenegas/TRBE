@@ -5,13 +5,15 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
+import module.monitoring.definition.TblsEnvMonitData;
+import module.monitoring.definition.TblsEnvMonitConfig;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NUM_DAYS;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig.ViewsEnvMonConfig;
+import module.monitoring.definition.TblsEnvMonitConfig.ViewsEnvMonConfig;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
 import databases.SqlStatement;
@@ -31,8 +33,8 @@ import databases.SqlStatementEnums;
 import databases.TblsCnfg;
 import databases.TblsProcedure;
 import functionaljavaa.materialspec.SpecFrontEndUtilities;
-import functionaljavaa.moduleenvironmentalmonitoring.ConfigMasterData;
-import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction.ProgramCorrectiveActionStatuses;
+import module.monitoring.logic.ConfigMasterData;
+import module.monitoring.logic.DataProgramCorrectiveAction.ProgramCorrectiveActionStatuses;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.util.HashMap;

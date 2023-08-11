@@ -20,7 +20,7 @@ import databases.TblsProcedure;
 import trazit.procedureinstance.definition.definition.TblsReqs;
 import databases.features.Token;
 import functionaljavaa.businessrules.BusinessRules;
-import functionaljavaa.moduleenvironmentalmonitoring.ConfigMasterData;
+import module.monitoring.logic.ConfigMasterData;
 import functionaljavaa.user.UserProfile;
 import java.io.IOException;
 import javax.servlet.ServletException;

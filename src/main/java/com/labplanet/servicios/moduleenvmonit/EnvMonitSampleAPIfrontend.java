@@ -1,9 +1,10 @@
 package com.labplanet.servicios.moduleenvmonit;
 
+import module.monitoring.definition.ClassEnvMonSampleFrontend;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import com.labplanet.servicios.moduleenvmonit.ClassEnvMonSampleFrontend.EnvMonSampleAPIqueriesEndpoints;
+import module.monitoring.definition.ClassEnvMonSampleFrontend.EnvMonSampleAPIqueriesEndpoints;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
 import java.io.PrintWriter;
 import javax.servlet.http.HttpServlet;

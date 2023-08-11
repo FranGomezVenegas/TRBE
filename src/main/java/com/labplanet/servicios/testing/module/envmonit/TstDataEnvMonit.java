@@ -13,7 +13,7 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import databases.features.Token;
 import functionaljavaa.businessrules.BusinessRules;
-import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSampleAnalysis;
+import module.monitoring.logic.DataProgramSampleAnalysis;
 import functionaljavaa.samplestructure.DataSample;
 import java.io.IOException;
 import java.io.PrintWriter;

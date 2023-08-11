@@ -6,7 +6,7 @@
 package com.labplanet.servicios.app;
 
 import static com.labplanet.servicios.app.AppProcedureListAPI.PROC_NEW_EVENT_FLD_NAME;
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData.ViewsEnvMonData;
+import module.monitoring.definition.TblsEnvMonitData.ViewsEnvMonData;
 import databases.features.DbEncryption;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;

@@ -7,7 +7,7 @@ import static com.labplanet.servicios.app.AppProcedureListAPI.SIZE_WHEN_CONSIDER
 import static com.labplanet.servicios.app.AppProcedureListAPI.procModelArray;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.app.TestingRegressionUAT;
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
+import module.monitoring.definition.TblsEnvMonitConfig;
 import trazit.procedureinstance.definition.logic.ReqProcDefTestingCoverageSummary;
 import trazit.procedureinstance.definition.definition.ReqProcedureEnums.ReqProcedureDefinitionAPIQueriesEndpoints;
 import databases.Rdbms;
@@ -89,7 +89,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))) {
             return;
         }
-        try ( PrintWriter out = response.getWriter()) {
+        try (PrintWriter out = response.getWriter()) {
             String procInstanceName = procReqSession.getProcedureInstance();
             switch (endPoint) {
                 case ALL_PROCEDURES_AND_INSTANCE_LIST:
@@ -105,14 +105,21 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                     }
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     return;
+                case ONE_PROCEDURE_DEFINITION:
                 case ALL_PROCEDURES_DEFINITION:
+                    String curProcInstanceName = request.getParameter("procInstanceName");
+                    curProcInstanceName = LPNulls.replaceNull(curProcInstanceName);
                     JSONObject jMainObj = new JSONObject();
                     String mainObjectName = "all_platform_procedures_list";
                     fieldsToRetrieveScripts = getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableFields());
+                    String[] wFldName = new String[]{TblsReqs.ProcedureInfo.ACTIVE.getName()};
+                    Object[] wFldVal = new Object[]{true};
+                    if ("ONE_PROCEDURE_DEFINITION".equalsIgnoreCase(endPoint.getName())&&curProcInstanceName.length() > 0&& Boolean.FALSE.equals("undefined".equalsIgnoreCase(curProcInstanceName))) {
+                        wFldName = LPArray.addValueToArray1D(wFldName, TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName());
+                        wFldVal = LPArray.addValueToArray1D(wFldVal, curProcInstanceName);
+                    }
                     Object[][] procAndInstanceArr = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName(),
-                            new String[]{TblsReqs.ProcedureInfo.ACTIVE.getName()},
-                            new Object[]{true},
-                            fieldsToRetrieveScripts, fieldsToRetrieveScripts);
+                            wFldName, wFldVal, fieldsToRetrieveScripts, fieldsToRetrieveScripts);
                     JSONArray proceduresList = new JSONArray();
                     for (Object[] curProc : procAndInstanceArr) {
                         JSONObject curProcObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieveScripts, curProc);
@@ -156,13 +163,13 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                     LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
                     return;
                 case ALL_PROCEDURE_DEFINITION:
-                case ONE_PROCEDURE_DEFINITION:
+/*                case ONE_PROCEDURE_DEFINITION:
                     Rdbms.closeRdbms();
                     JSONObject mainRespDef = new JSONObject();
                     JSONObject procDef = procInstanceDefinitionInRequirements(procInstanceName);
                     mainRespDef.put("definition", procDef);
                     LPFrontEnd.servletReturnSuccess(request, response, mainRespDef);
-                    return;
+                    return;*/
                 case ENABLE_ACTIONS_AND_ROLES:
                     LPFrontEnd.servletReturnSuccess(request, response,
                             getProcBusinessRulesQueriesInfo(procInstanceName, ProcBusinessRulesQueries.PROCEDURE_ACTIONS_AND_ROLES.toString()));
@@ -526,11 +533,11 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                     if (actionPosic > -1) {
                         actionsList = LPArray.addValueToArray1D(actionsList, LPNulls.replaceNull(curStep[actionPosic]).toString());
                     }
-                    Integer posicId=LPArray.valuePosicInArray(fieldsToRetrieveScriptSteps, TblsTesting.ScriptSteps.EVAL_SYNTAXIS.getName());
-                    String tagName=TblsTesting.ScriptSteps.EVAL_SYNTAXIS.getName()+"_icon";
-                    String tagClass=TblsTesting.ScriptSteps.EVAL_SYNTAXIS.getName()+"_class";
-                    if (posicId>-1){
-                        switch(curStep[posicId].toString().toUpperCase()){
+                    Integer posicId = LPArray.valuePosicInArray(fieldsToRetrieveScriptSteps, TblsTesting.ScriptSteps.EVAL_SYNTAXIS.getName());
+                    String tagName = TblsTesting.ScriptSteps.EVAL_SYNTAXIS.getName() + "_icon";
+                    String tagClass = TblsTesting.ScriptSteps.EVAL_SYNTAXIS.getName() + "_class";
+                    if (posicId > -1) {
+                        switch (curStep[posicId].toString().toUpperCase()) {
                             case "MATCH":
                                 curStepObj.put(tagName, "check_circle");
                                 curStepObj.put(tagClass, "green");
@@ -538,18 +545,18 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                             case "UNMATCH":
                                 curStepObj.put(tagName, "cancel");
                                 curStepObj.put(tagClass, "red");
-                                break;   
+                                break;
                             default:
                                 curStepObj.put(tagName, "help");
                                 curStepObj.put(tagClass, "yellow");
-                                break;                                   
-                        }                        
+                                break;
+                        }
                     }
-                    posicId=LPArray.valuePosicInArray(fieldsToRetrieveScriptSteps, TblsTesting.ScriptSteps.EVAL_CODE.getName());
-                    tagName=TblsTesting.ScriptSteps.EVAL_CODE.getName()+"_icon";
-                    tagClass=TblsTesting.ScriptSteps.EVAL_CODE.getName()+"_class";
-                    if (posicId>-1){
-                        switch(curStep[posicId].toString().toUpperCase()){
+                    posicId = LPArray.valuePosicInArray(fieldsToRetrieveScriptSteps, TblsTesting.ScriptSteps.EVAL_CODE.getName());
+                    tagName = TblsTesting.ScriptSteps.EVAL_CODE.getName() + "_icon";
+                    tagClass = TblsTesting.ScriptSteps.EVAL_CODE.getName() + "_class";
+                    if (posicId > -1) {
+                        switch (curStep[posicId].toString().toUpperCase()) {
                             case "MATCH":
                                 curStepObj.put(tagName, "check_circle");
                                 curStepObj.put(tagClass, "green");
@@ -557,12 +564,12 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                             case "UNMATCH":
                                 curStepObj.put(tagName, "cancel");
                                 curStepObj.put(tagClass, "red");
-                                break;   
+                                break;
                             default:
                                 curStepObj.put(tagName, "help");
                                 curStepObj.put(tagClass, "yellow");
-                                break;                                   
-                        }                        
+                                break;
+                        }
                     }
                     scriptStepsList.add(curStepObj);
                 }
@@ -616,7 +623,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         BigDecimal perctg = new BigDecimal(scriptStepsTblInfo.length).subtract(new BigDecimal(numNotSuccess));
         perctg = perctg.divide(new BigDecimal(scriptStepsTblInfo.length), 4, RoundingMode.HALF_UP)
                 .multiply(BigDecimal.valueOf(100));
-          //      .divide(new BigDecimal());
+        //      .divide(new BigDecimal());
         //perctg = perctg.multiply(new BigDecimal(100));
         perctg = perctg.setScale(2, RoundingMode.UP);
         jMain.put("execution_progress", perctg);
@@ -657,8 +664,8 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         JSONObject jMain = new JSONObject();
         jMain.put("last_performed", lastPerformed);
         String sumPhrase = " (Last performed:" + lastPerformedStr + ")";
-        BigDecimal endpointsCovBigDec=new BigDecimal(endpointsCov);
-        BigDecimal notifCovBigDec=new BigDecimal(notifCov);
+        BigDecimal endpointsCovBigDec = new BigDecimal(endpointsCov);
+        BigDecimal notifCovBigDec = new BigDecimal(notifCov);
         BigDecimal perctg = notifCovBigDec.add(endpointsCovBigDec);
         perctg = perctg.divide(new BigDecimal(2));
         perctg = perctg.setScale(2, RoundingMode.UP);

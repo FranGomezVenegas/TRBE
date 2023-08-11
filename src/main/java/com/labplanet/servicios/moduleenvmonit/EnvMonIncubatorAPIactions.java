@@ -5,6 +5,9 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
+import module.monitoring.definition.ClassEnvMonIncubator;
+import module.monitoring.definition.TblsEnvMonitData;
+import module.monitoring.definition.TblsEnvMonitConfig;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;

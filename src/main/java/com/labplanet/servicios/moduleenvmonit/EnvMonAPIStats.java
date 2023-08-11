@@ -1,5 +1,6 @@
 package com.labplanet.servicios.moduleenvmonit;
 
+import module.monitoring.definition.TblsEnvMonitData;
 import static com.labplanet.servicios.app.AuthenticationAPIParams.RESPONSE_JSON_DATATABLE;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;

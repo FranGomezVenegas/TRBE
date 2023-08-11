@@ -16,7 +16,7 @@ import databases.SqlWhereEntry;
 import databases.TblsData;
 import databases.TblsProcedure;
 import databases.features.Token;
-import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
+import module.monitoring.logic.DataProgramCorrectiveAction;
 import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.parameter.Parameter.isTagValueOneOfEnableOnes;
 import java.io.IOException;

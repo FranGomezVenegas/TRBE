@@ -14,7 +14,7 @@ import databases.TblsProcedure;
 import databases.features.Token;
 import functionaljavaa.audit.ProcedureInvestigationAudit;
 import functionaljavaa.audit.SampleAudit;
-import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
+import module.monitoring.logic.DataProgramCorrectiveAction;
 import trazit.session.ResponseMessages;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;

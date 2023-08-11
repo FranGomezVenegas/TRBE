@@ -8,6 +8,7 @@ package trazit.enums;
 import databases.Rdbms;
 import java.util.Map;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
 
@@ -59,6 +60,26 @@ public interface EnumIntViewFields {
             if (vwFlds[i].getName().equalsIgnoreCase(fldName)) return i;
         }
         return -1;
+    }
+    
+    public static String[] getAllFieldNamesFromDatabase(String tblName, String alternativeProcInstanceName) {
+        Map<String[], Object[][]> dbTableGetFieldDefinition = getTblDef(null, tblName, alternativeProcInstanceName);
+        String[] fldDefinitionColName = dbTableGetFieldDefinition.keySet().iterator().next();
+        Object[][] tableFldsInfo = dbTableGetFieldDefinition.get(fldDefinitionColName);
+        String[] tableFldsInfoColumns = LPArray.convertObjectArrayToStringArray(LPArray.getColumnFromArray2D(tableFldsInfo, LPArray.valuePosicInArray(fldDefinitionColName, "column_name")));
+
+        return LPArray.getUniquesArray(tableFldsInfoColumns);
+    }
+
+    public static Map<String[], Object[][]> getTblDef(String tblRepo, String tblName, String alternativeProcInstanceName) {
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        String procInstanceName = "";
+        if (alternativeProcInstanceName == null) {
+            procInstanceName = instanceForActions.getProcedureInstance();
+        } else {
+            procInstanceName = alternativeProcInstanceName;
+        }
+        return Rdbms.dbTableGetFieldDefinition(LPPlatform.buildSchemaName(procInstanceName, LPNulls.replaceNull(tblRepo)), tblName);
     }
     
     public static EnumIntViewFields[] getAllFieldNamesFromDatabase(EnumIntViews tblObj, String alternativeProcInstanceName){

@@ -5,6 +5,9 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
+import module.monitoring.definition.ClassEnvMon;
+import module.monitoring.definition.TblsEnvMonitData;
+import module.monitoring.definition.TblsEnvMonitConfig;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
