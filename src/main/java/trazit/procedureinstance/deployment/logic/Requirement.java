@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package functionaljavaa.requirement;
+package trazit.procedureinstance.deployment.logic;
 
 import databases.Rdbms;
 import databases.TblsProcedure;

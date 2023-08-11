@@ -9,8 +9,8 @@ import functionaljavaa.materialspec.DataSpec;
 import trazit.procedureinstance.definition.definition.TblsReqs;
 import trazit.procedureinstance.definition.definition.TblsReqs.TablesReqs;
 import functionaljavaa.parameter.Parameter;
-import static functionaljavaa.requirement.ProcedureDefinitionToInstanceUtility.procedureRolesList;
-import static functionaljavaa.requirement.ProcedureDefinitionToInstanceUtility.procedureUsersList;
+import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceUtility.procedureRolesList;
+import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceUtility.procedureUsersList;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import static functionaljavaa.unitsofmeasurement.UnitsOfMeasurement.getUomFromConfig;
 import java.io.IOException;
@@ -159,7 +159,7 @@ public class ClassReqProcedureActions {
                     this.diagnosticObj = insertDiagn.getErrorMessageCode();
                     this.messageDynamicData = insertDiagn.getErrorMessageVariables();
                 }
-                functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
+                trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
                 break;
             case ADD_ROLE_TO_USER:
                 procedureName = argValues[0].toString();
