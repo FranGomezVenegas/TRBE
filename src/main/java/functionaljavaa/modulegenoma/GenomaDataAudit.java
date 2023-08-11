@@ -15,7 +15,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPSession;
 import java.util.Arrays;
-import functionaljavaa.requirement.Requirement;
+import trazit.procedureinstance.deployment.logic.Requirement;
 import lbplanet.utilities.LPDate;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntEndpoints;

@@ -17,7 +17,7 @@ import static functionaljavaa.parameter.Parameter.isTagValueOneOfEnableOnes;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import java.util.Arrays;
-import functionaljavaa.requirement.Requirement;
+import trazit.procedureinstance.deployment.logic.Requirement;
 import functionaljavaa.samplestructure.DataSampleStages;
 import java.util.ArrayList;
 import lbplanet.utilities.LPDate;
