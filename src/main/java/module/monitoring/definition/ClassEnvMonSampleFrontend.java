@@ -382,7 +382,6 @@ public class ClassEnvMonSampleFrontend {
                             JSONObject row = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(tblFldsToGetObj), curRow);
                             jArr.add(row);
                         }
-                        //Rdbms.closeRdbms();
                         this.isSuccess = true;
                         this.responseSuccessJArr = jArr;
                     }
@@ -391,7 +390,7 @@ public class ClassEnvMonSampleFrontend {
                 case GET_SAMPLE_ANALYSIS_RESULT_LIST_SECONDENTRY:
                     sampleId = Integer.valueOf(LPNulls.replaceNull(argValues[0]).toString());
                     String[] resultFieldToRetrieveArr = EnumIntViewFields.getAllFieldNames(EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, "ALL"));
-                    String[] fldsToGet = EnumIntViewFields.getAllFieldNamesFromDatabase(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName(), null);
+                    String[] fldsToGet = EnumIntViewFields.getAllFieldNamesFromDatabase(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getRepositoryName(), TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName(), null);
                     EnumIntViewFields[] fldsToGetObj=EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, fldsToGet);
                     
                     resultFieldToRetrieveArr = LPArray.getUniquesArray(LPArray.addValueToArray1D(resultFieldToRetrieveArr, SampleAPIParams.MANDATORY_FIELDS_FRONTEND_TO_RETRIEVE_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|")));

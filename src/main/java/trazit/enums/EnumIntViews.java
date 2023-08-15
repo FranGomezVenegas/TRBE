@@ -29,7 +29,7 @@ public interface EnumIntViews {
     EnumIntTablesJoin[] getTablesRequiredInView();
 
     String getExtraFilters();
-    
+
     Boolean getUsesFixScriptView();
 
     public static String getViewScriptCreation(EnumIntViews vwDef, String procInstanceName, Boolean run, Boolean refreshTableIfExists, Boolean isForTesting, String fieldsToExclude) {
@@ -38,9 +38,9 @@ public interface EnumIntViews {
         }
         StringBuilder vwScript = new StringBuilder(0);
         Integer iterations = 0;
-        if (vwDef.getUsesFixScriptView()){
+        if (vwDef.getUsesFixScriptView()) {
             vwScript.append(vwDef.getViewCreatecript());
-        }else{
+        } else {
             String[] tblAliases = new String[]{};
             for (EnumIntTablesJoin curTblJoin : vwDef.getTablesRequiredInView()) {
                 String mainTableSchemaName = "";
@@ -102,36 +102,44 @@ public interface EnumIntViews {
         vwScript = new StringBuilder(vwScript.toString().replace("#SCHEMA_DATA", LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), "data", isForTesting, "")));
 
         vwScript = new StringBuilder("create view ").append(LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), vwDef.getRepositoryName(), isForTesting, vwDef.getViewName())).append(".").append(vwDef.getViewName()).append(" AS ").append(vwScript);
-        
+
         return vwScript.toString();
     }
 
     static StringBuilder getViewFldsList(EnumIntViews vwDef, String procInstanceName, String[] tblAliases, String fieldsToExclude) {
         StringBuilder fldsStr = new StringBuilder(0);
-        String[] fieldsToExcludeArr=new String[]{};
-        if (fieldsToExclude!=null){
-            fieldsToExcludeArr=fieldsToExclude.split("\\|");
-        }        
+        String[] fieldsToExcludeArr = new String[]{};
+        if (fieldsToExclude != null) {
+            fieldsToExcludeArr = fieldsToExclude.split("\\|");
+        }
         for (EnumIntViewFields curFld : vwDef.getViewFields()) {
             if (Boolean.FALSE.equals(LPArray.valueInArray(fieldsToExcludeArr, curFld.getName()))) {
-                if (fldsStr.length() > 0) {
-                    fldsStr = fldsStr.append(", ");
-                }
-                String[] split = curFld.getViewAliasName().split("\\.");
-                //if ((split.length==1)&&curFld.getViewAliasName().toLowerCase().contains(" as "))
-                if (curFld.getViewAliasName().toLowerCase().contains(" as ")) {
-                    String vwFldMask = curFld.getViewAliasName();
-                    vwFldMask = vwFldMask.replace("#PROC_INSTANCE_NAME", "\"" + procInstanceName);
-                    vwFldMask = vwFldMask.replace("#SCHEMA_DATA", GlobalVariables.Schemas.DATA.getName() + "\"");
-                    fldsStr = fldsStr.append(vwFldMask).append(" ");
-                } else if (LPArray.valueInArray(tblAliases, split[0])) {
-                    String vwFldMask = curFld.getViewAliasName();
+                String[] split = curFld.getFldViewAliasName().split("\\.");
+                //if ((split.length==1)&&curFld.getFldViewAliasName().toLowerCase().contains(" as "))
+                if (curFld.getFldViewAliasName().toLowerCase().contains(" as ")) {
+                    if (LPArray.valueInArray(tblAliases, curFld.getTblAliasInView())) {
+                        if (fldsStr.length() > 0) {
+                            fldsStr = fldsStr.append(", ");
+                        }
+                        String vwFldMask = curFld.getFldViewAliasName();
+                        vwFldMask = vwFldMask.replace("#PROC_INSTANCE_NAME", "\"" + procInstanceName);
+                        vwFldMask = vwFldMask.replace("#SCHEMA_DATA", GlobalVariables.Schemas.DATA.getName() + "\"");
+                        fldsStr = fldsStr.append(vwFldMask).append(" ");
+                    }
+                } else if (LPArray.valueInArray(tblAliases, curFld.getTblAliasInView())) {
+                    if (fldsStr.length() > 0) {
+                        fldsStr = fldsStr.append(", ");
+                    }
+                    String vwFldMask = curFld.getFldViewAliasName();
                     vwFldMask = vwFldMask.replace("#PROC_INSTANCE_NAME", procInstanceName);
                     vwFldMask = vwFldMask.replace("#SCHEMA_DATA", GlobalVariables.Schemas.DATA.getName());
 
                     fldsStr = fldsStr.append(vwFldMask).append(" ");
                 } else {
-                    fldsStr = fldsStr.append(curFld.getViewAliasName()).append(" *** the alias should include the word as  or the alias assigned to this table in the join ");
+                    if (fldsStr.length() > 0) {
+                        fldsStr = fldsStr.append(", ");
+                    }
+                    fldsStr = fldsStr.append(curFld.getFldViewAliasName()).append(" *** the alias should include the word as  or the alias assigned to this table in the join ");
                 }
             }
         }

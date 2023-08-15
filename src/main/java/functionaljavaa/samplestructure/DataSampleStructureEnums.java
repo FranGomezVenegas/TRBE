@@ -403,6 +403,7 @@ public class DataSampleStructureEnums {
 
     public enum DataSampleAnalysisResultErrorTrapping implements EnumIntMessages {
         NOT_FOUND("DataSampleAnalysisResult_SampleAnalysisResultNotFound", "", ""),
+        NOT_ALREADY_CANCELLED("DataSampleAnalysisResult_notAlreadyCanceled", "", ""),
         RESULT_CANNOT_BE_CANCELLED("DataSampleAnalysisResult_resultCannotBeCanceled", "", ""),
         ANALYSIS_HAS_SOME_PARAMETERS("DataSampleAnalysisResult_analysisWithManyParameters", "", ""),
         RESULT_LOCKED("DataSampleAnalysisResult_SampleAnalysisResultLocked", "", ""),
