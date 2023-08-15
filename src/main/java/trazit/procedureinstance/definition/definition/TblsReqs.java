@@ -1057,20 +1057,20 @@ public class TblsReqs {
                 new EnumIntTableFields[][]{{TblsReqs.ModuleActionsAndQueries.ENDPOINT_NAME, TblsReqs.ProcedureUserRequirements.WINDOW_ACTION}}, "", SqlStatementEnums.JOIN_TYPES.INNER),
      */
     public enum ProcReqUserRequirementsActions implements EnumIntViewFields {
-        MODULE_NAME(ProcedureInfo.MODULE_NAME.getName(), "procInfo.module_name as module_name", ProcedureInfo.MODULE_NAME, null, null, null),
-        PROC_INSTANCE_NAME(ProcedureUserRequirements.PROC_INSTANCE_NAME.getName(), "procInfo.proc_instance_name as proc_instance_name", ProcedureUserRequirements.PROC_INSTANCE_NAME, null, null, null),
-        WINDOW_NAME(ProcedureUserRequirements.WINDOW_NAME.getName(), "reqs.window_name as window_name", ProcedureUserRequirements.WINDOW_NAME, null, null, null),
-        WINDOW_LABEL_EN("window_label_en", "reqsEvs.label_en as window_label_en", ProcedureUserRequirementsEvents.LABEL_EN, null, null, null),
-        WINDOW_LABEL_ES("window_label_es", "reqsEvs.label_es as window_label_es", ProcedureUserRequirementsEvents.LABEL_ES, null, null, null),
-        WINDOW_ACTION(ProcedureUserRequirements.WINDOW_ACTION.getName(), "reqs.window_action as window_action", ProcedureUserRequirements.WINDOW_ACTION, null, null, null),
-        ORDER_NUMBER(ProcedureUserRequirements.ORDER_NUMBER.getName(), "reqs.order_number as order_number", ProcedureUserRequirements.ORDER_NUMBER, null, null, null),
-        ENDPOINT_NAME(ModuleActionsAndQueries.ENDPOINT_NAME.getName(), "modAct.endpoint_name as endpoint_name", ModuleActionsAndQueries.ENDPOINT_NAME, null, null, null),
-        PRETTY_EN(ModuleActionsAndQueries.PRETTY_EN.getName(), "modAct.pretty_name_en as pretty_name_en", ModuleActionsAndQueries.PRETTY_EN, null, null, null),
-        PRETTY_ES(ModuleActionsAndQueries.PRETTY_ES.getName(), "modAct.pretty_name_es as pretty_name_es", ModuleActionsAndQueries.PRETTY_ES, null, null, null),
-        MOD_ORDER_NUMBER("mod_order_number", "modAct.order_number as mod_order_number", ModuleActionsAndQueries.ORDER_NUMBER, null, null, null), 
-        ENTITY(ModuleActionsAndQueries.ENTITY.getName(), "modAct.entity as entity", ModuleActionsAndQueries.ENTITY, null, null, null), 
-        ROLES(ProcedureUserRequirements.ROLES.getName(), "reqs.roles as roles", ProcedureUserRequirements.ROLES, null, null, null),
-        WINDOW_ELEMENT_TYPE(ProcedureUserRequirements.WINDOW_ELEMENT_TYPE.getName(), "reqs.window_element_type as window_element_type", ProcedureUserRequirements.WINDOW_ELEMENT_TYPE, null, null, null)
+        MODULE_NAME("procInfo", ProcedureInfo.MODULE_NAME.getName(), "procInfo.module_name as module_name", ProcedureInfo.MODULE_NAME, null, null, null),
+        PROC_INSTANCE_NAME("procInfo", ProcedureUserRequirements.PROC_INSTANCE_NAME.getName(), "procInfo.proc_instance_name as proc_instance_name", ProcedureUserRequirements.PROC_INSTANCE_NAME, null, null, null),
+        WINDOW_NAME("reqs", ProcedureUserRequirements.WINDOW_NAME.getName(), "reqs.window_name as window_name", ProcedureUserRequirements.WINDOW_NAME, null, null, null),
+        WINDOW_LABEL_EN("reqsEvs", "window_label_en", "reqsEvs.label_en as window_label_en", ProcedureUserRequirementsEvents.LABEL_EN, null, null, null),
+        WINDOW_LABEL_ES("reqsEvs", "window_label_es", "reqsEvs.label_es as window_label_es", ProcedureUserRequirementsEvents.LABEL_ES, null, null, null),
+        WINDOW_ACTION("reqs", ProcedureUserRequirements.WINDOW_ACTION.getName(), "reqs.window_action as window_action", ProcedureUserRequirements.WINDOW_ACTION, null, null, null),
+        ORDER_NUMBER("reqs", ProcedureUserRequirements.ORDER_NUMBER.getName(), "reqs.order_number as order_number", ProcedureUserRequirements.ORDER_NUMBER, null, null, null),
+        ENDPOINT_NAME("modAct", ModuleActionsAndQueries.ENDPOINT_NAME.getName(), "modAct.endpoint_name as endpoint_name", ModuleActionsAndQueries.ENDPOINT_NAME, null, null, null),
+        PRETTY_EN("modAct", ModuleActionsAndQueries.PRETTY_EN.getName(), "modAct.pretty_name_en as pretty_name_en", ModuleActionsAndQueries.PRETTY_EN, null, null, null),
+        PRETTY_ES("modAct", ModuleActionsAndQueries.PRETTY_ES.getName(), "modAct.pretty_name_es as pretty_name_es", ModuleActionsAndQueries.PRETTY_ES, null, null, null),
+        MOD_ORDER_NUMBER("modAct", "mod_order_number", "modAct.order_number as mod_order_number", ModuleActionsAndQueries.ORDER_NUMBER, null, null, null), 
+        ENTITY("modAct", ModuleActionsAndQueries.ENTITY.getName(), "modAct.entity as entity", ModuleActionsAndQueries.ENTITY, null, null, null), 
+        ROLES("reqs", ProcedureUserRequirements.ROLES.getName(), "reqs.roles as roles", ProcedureUserRequirements.ROLES, null, null, null),
+        WINDOW_ELEMENT_TYPE("reqs", ProcedureUserRequirements.WINDOW_ELEMENT_TYPE.getName(), "reqs.window_element_type as window_element_type", ProcedureUserRequirements.WINDOW_ELEMENT_TYPE, null, null, null)
        
         /*        RAW_VALUE_NUM("raw_value_num", "CASE " +
 "            WHEN isnumeric(sar.raw_value::text) THEN to_number(sar.raw_value::text, '9999'::text) " +
@@ -1080,7 +1080,7 @@ public class TblsReqs {
         SAMPLE_ANALYSIS_STATUS("sample_analysis_status", "sa.status  AS sample_analysis_status", SampleAnalysis.STATUS, null, null, null),
          */;
 
-        private ProcReqUserRequirementsActions(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules) {
+        private ProcReqUserRequirementsActions(String tblAliasInView, String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules) {
 //            try{
 //            this.fldName="";
             this.fldName = name;
@@ -1089,6 +1089,7 @@ public class TblsReqs {
             this.fldComment = comment;
             this.fldBusinessRules = busRules;
             this.fldObj = fldObj;
+            this.tblAliasInView=tblAliasInView;
             /*            }catch(Exception e){
                 String s= e.getMessage();
                 //String s2=name;
@@ -1096,19 +1097,20 @@ public class TblsReqs {
             }*/
         }
         private final String fldName;
+        private final String tblAliasInView;
         private final String fldAliasInView;
         private final EnumIntTableFields fldObj;
         private final String fldMask;
         private final String fldComment;
         private final FldBusinessRules[] fldBusinessRules;
-
+@Override public String getTblAliasInView() {return this.tblAliasInView;}
         @Override
         public String getName() {
             return fldName;
         }
 
         @Override
-        public String getViewAliasName() {
+        public String getFldViewAliasName() {
             return this.fldAliasInView;
         }
 
