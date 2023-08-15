@@ -5,6 +5,7 @@
  */
 package functionaljavaa.investigation;
 
+import com.labplanet.servicios.app.InvestigationAPI.InvestigationAPIactionsEndpoints;
 import databases.Rdbms;
 import databases.RdbmsObject;
 import databases.SqlStatement;
@@ -205,6 +206,7 @@ public final class Investigation {
                 return objectAlreadyInInvestigation;
             }
         }
+        String incIdStr = null;
         for (String curObj : objectsToAdd.split("\\|")) {
             String[] curObjDetail = curObj.split("\\*");
             String[] updFieldName = new String[]{TblsProcedure.InvestObjects.OBJECT_TYPE.getName()};
@@ -225,7 +227,7 @@ public final class Investigation {
             diagnostic = insertRecordInTable.getApiMessage();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
                 return new InternalMessage(insertRecordInTable.getApiMessage()[0].toString(), insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), insertRecordInTable.getNewRowId());
-            }
+            }            
             if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
 
                 String moduleNameFromProcInstance = token.getModuleNameFromProcInstance(procReqSession.getProcedureInstance());
@@ -250,13 +252,13 @@ public final class Investigation {
                     return new InternalMessage(LPPlatform.LAB_FALSE, diagnostic[diagnostic.length - 1].toString(), null, null);
                 }
 
-                String incIdStr = diagnostic[diagnostic.length - 1].toString();
+                incIdStr = diagnostic[diagnostic.length - 1].toString();
                 ProcedureInvestigationAudit.investigationAuditAdd(DataInvestigationAuditEvents.OBJECT_ADDED_TO_INVESTIGATION.toString(), TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(), investId, incIdStr,
                         LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), parentAuditId, null);
-                addAuditRecordForObject(curObj, investId, SampleAudit.DataSampleAuditEvents.ADDED_TO_INVESTIGATION);
+                addAuditRecordForObject(curObj, investId, SampleAudit.DataSampleAuditEvents.ADDED_TO_INVESTIGATION);                
             }
         }
-        return new InternalMessage(diagnostic[0].toString(), diagnostic[diagnostic.length - 1].toString(), null, null);
+        return new InternalMessage(diagnostic[0].toString(), InvestigationAPIactionsEndpoints.ADD_INVEST_OBJECTS, new Object[]{investId}, investId);
     }
 
     public static InternalMessage newInvestigationChecks(String[] fldNames, Object[] fldValues, String objectsToAdd) {
