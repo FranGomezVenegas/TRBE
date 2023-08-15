@@ -249,9 +249,6 @@ public class AppProcedureListAPI extends HttpServlet {
             if (GlobalVariables.TrazitModules.ENVIRONMENTAL_MONITORING.name().equalsIgnoreCase(moduleNameFromProcInstance)) {
                 BusinessRules bi = new BusinessRules(procInstanceName, null);
                 jObj = ConfigMasterData.getMasterData(procInstanceName, bi);
-            } else if (procInstanceName.toLowerCase().contains("em-demo-a")) {
-                BusinessRules bi = new BusinessRules(procInstanceName, null);
-                jObj = ConfigMasterData.getMasterData(procInstanceName, bi);
             } else if (GlobalVariables.TrazitModules.INSTRUMENTS.name().equalsIgnoreCase(moduleNameFromProcInstance)) {
                 InstrumentsFrontendMasterData mdObj = new InstrumentsFrontendMasterData();
                 jObj = mdObj.getMasterDataJsonObject(procInstanceName);
