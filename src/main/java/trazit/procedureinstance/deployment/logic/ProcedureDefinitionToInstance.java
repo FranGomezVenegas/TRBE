@@ -24,6 +24,7 @@ import databases.TblsApp;
 import databases.TblsAppConfig;
 import databases.TblsCnfg;
 import databases.TblsCnfg.TablesConfig;
+import databases.TblsCnfg.ViewsConfig;
 import databases.TblsCnfgAudit.TablesCfgAudit;
 import databases.TblsData.TablesData;
 import databases.TblsData.ViewsData;
@@ -47,6 +48,7 @@ import module.instrumentsmanagement.definition.TblsInstrumentsData.TablesInstrum
 import module.instrumentsmanagement.definition.TblsInstrumentsData.ViewsInstrumentsData;
 import module.instrumentsmanagement.definition.TblsInstrumentsDataAudit.TablesInstrumentsDataAudit;
 import module.instrumentsmanagement.definition.TblsInstrumentsProcedure.TablesInstrumentsProcedure;
+import module.monitoring.definition.TblsEnvMonitConfig;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
@@ -595,12 +597,21 @@ public class ProcedureDefinitionToInstance {
                             try {
                                 switch (curSchemaName.toLowerCase()) {
                                     case "config":
-                                    try {
-                                        tblCreateScript = createTableScript(TablesEnvMonitConfig.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true, fieldsToExclude);
-                                    } catch (Exception e) {
-                                        tblCreateScript = createTableScript(TablesConfig.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true, fieldsToExclude);
-                                    }
-                                    break;
+                                        if (curIsView == null || Boolean.FALSE.equals(Boolean.valueOf(curIsView))) {
+                                            try {
+                                                tblCreateScript = createTableScript(TablesEnvMonitConfig.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true, fieldsToExclude);
+                                            } catch (Exception e) {
+                                                tblCreateScript = createTableScript(TablesConfig.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true, fieldsToExclude);
+                                            }
+                                        } else {
+                                            try {
+                                                tblCreateScript = EnumIntViews.getViewScriptCreation(TblsEnvMonitConfig.ViewsEnvMonConfig.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, false, fieldsToExclude);
+                                            } catch (Exception e) {
+                                                tblCreateScript = EnumIntViews.getViewScriptCreation(TblsCnfg.ViewsConfig.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, false, fieldsToExclude);
+                                            }
+
+                                        }
+                                        break;
                                     case "config-audit":
                                     try {
                                         tblCreateScript = createTableScript(TablesEnvMonitConfigAudit.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true, fieldsToExclude);
