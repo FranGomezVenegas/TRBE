@@ -297,23 +297,6 @@ public class TblsEnvMonitData {
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
         @Override        public Boolean isSystemField(){return this.isSystemFld;}
     }         
-
-    /*CREATE OR REPLACE VIEW "em-demo-a-data".sample_microorganism_list_vw AS
-select s.sample_id, s.current_stage, s.program_name, s.location_name, s.incubation_start, s.incubation_end, s.incubation2_start, s.incubation2_end, sar.raw_value,
-array_to_string(array_agg(distinct sorg.microorganism_name), ', ') as microorganism_list
--- array_to_string(ARRAY(sorg.microorganism_name), ', ') as microorganism_list
-from "em-demo-a-data".sample_analysis_result as sar 
- inner join "em-demo-a-data".sample as s on sar.sample_id=s.sample_id
- left outer join "em-demo-a-data".sample_microorganism as sorg on sorg.sample_id=sar.sample_id
-where sar.param_name='Recuento'       
-group by s.sample_id, s.current_stage, s.program_name, s.location_name, s.incubation_start, s.incubation_end, s.incubation2_start, s.incubation2_end, sar.raw_value    
-*/
-
-    /**
-     *
-     */
-
-
     public enum InstrIncubatorNoteBook implements EnumIntTableFields{
         ID("id", LPDatabase.integerNotNull(), null, null, null, null),
         NAME("name",  LPDatabase.stringNotNull(100), null, null, null, null),
@@ -393,45 +376,48 @@ group by s.sample_id, s.current_stage, s.program_name, s.location_name, s.incuba
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }
     public enum ViewSampleMicroorganismList implements EnumIntViewFields{
-        SAMPLE_ID(Sample.SAMPLE_ID.getName(), "s.sample_id", Sample.SAMPLE_ID, null, null, null),
-        SAMPLE_TEMPLATE("sample_config_code", "s.sample_config_code", Sample.CONFIG_CODE, null, null, null),
-        STATUS("status", "s.status", Sample.STATUS, null, null, null),
-        CURRENT_STAGE("current_stage", "s.current_stage", Sample.CURRENT_STAGE, null, null, null),
-        SAMPLING_DATE("sampling_date", "s.sampling_date", Sample.SAMPLING_DATE, null, null, null),
-        PROGRAM_NAME(FIELDS_NAMES_PROGRAM_NAME, "s.program_name", Sample.PROGRAM_NAME, null, null, null),
-        LOCATION_NAME(FIELDS_NAMES_LOCATION_NAME, "s.location_name", Sample.LOCATION_NAME, null, null, null),
-        INCUBATION_START(FIELDS_NAMES_INCUBATION_START, "s.incubation_start", Sample.INCUBATION_START, null, null, null),
-        INCUBATION_END(FIELDS_NAMES_INCUBATION_END, "s.incubation_end", Sample.INCUBATION_END, null, null, null),
-        INCUBATION2_START(FIELDS_NAMES_INCUBATION2_START, "s.incubation2_start", Sample.INCUBATION2_START, null, null, null),
-        INCUBATION2_END(FIELDS_NAMES_INCUBATION2_END, "s.incubation2_end", Sample.INCUBATION2_END, null, null, null),
-        RESULT_ID(FIELDS_NAMES_INCUBATION2_START, "sar.result_id", SampleAnalysisResult.RESULT_ID, null, null, null),
-        TEST_ID(FIELDS_NAMES_INCUBATION2_END, "sar.test_id", SampleAnalysisResult.TEST_ID, null, null, null),
-        RAW_VALUE("raw_value","sar.raw_value", SampleAnalysisResult.RAW_VALUE, null, null, null),
-        MICROORGANISM_COUNT("microorganism_count", "count(distinct sorg.id) as microorganism_count", SampleAnalysisResult.RESULT_ID,  null, null, null),
-        MICROORGANISM_LIST("microorganism_list", "array_to_string(array_agg(distinct sorg.microorganism_name), ', ') AS microorganism_list ", SampleAnalysisResult.RAW_VALUE, null, null, null),
-        IDENTIFICATION_PROGRESS_PERCENTAGE("identification_progress_percentage","case when sar.raw_value='0' then '0' else\n" +
+        SAMPLE_ID("s", Sample.SAMPLE_ID.getName(), "s.sample_id", Sample.SAMPLE_ID, null, null, null),
+        SAMPLE_TEMPLATE("s", "sample_config_code", "s.sample_config_code", Sample.CONFIG_CODE, null, null, null),
+        STATUS("s", "status", "s.status", Sample.STATUS, null, null, null),
+        CURRENT_STAGE("s", "current_stage", "s.current_stage", Sample.CURRENT_STAGE, null, null, null),
+        SAMPLING_DATE("s", "sampling_date", "s.sampling_date", Sample.SAMPLING_DATE, null, null, null),
+        PROGRAM_NAME("s", FIELDS_NAMES_PROGRAM_NAME, "s.program_name", Sample.PROGRAM_NAME, null, null, null),
+        LOCATION_NAME("s", FIELDS_NAMES_LOCATION_NAME, "s.location_name", Sample.LOCATION_NAME, null, null, null),
+        INCUBATION_START("s", FIELDS_NAMES_INCUBATION_START, "s.incubation_start", Sample.INCUBATION_START, null, null, null),
+        INCUBATION_END("s", FIELDS_NAMES_INCUBATION_END, "s.incubation_end", Sample.INCUBATION_END, null, null, null),
+        INCUBATION2_START("s", FIELDS_NAMES_INCUBATION2_START, "s.incubation2_start", Sample.INCUBATION2_START, null, null, null),
+        INCUBATION2_END("s", FIELDS_NAMES_INCUBATION2_END, "s.incubation2_end", Sample.INCUBATION2_END, null, null, null),
+        RESULT_ID("sar", FIELDS_NAMES_INCUBATION2_START, "sar.result_id", SampleAnalysisResult.RESULT_ID, null, null, null),
+        TEST_ID("sar", FIELDS_NAMES_INCUBATION2_END, "sar.test_id", SampleAnalysisResult.TEST_ID, null, null, null),
+        RAW_VALUE("sar", "raw_value","sar.raw_value", SampleAnalysisResult.RAW_VALUE, null, null, null),
+        MICROORGANISM_COUNT("sorg", "microorganism_count", "count(distinct sorg.id) as microorganism_count", SampleAnalysisResult.RESULT_ID,  null, null, null),
+        MICROORGANISM_LIST("sorg", "microorganism_list", "array_to_string(array_agg(distinct sorg.microorganism_name), ', ') AS microorganism_list ", SampleAnalysisResult.RAW_VALUE, null, null, null),
+        IDENTIFICATION_PROGRESS_PERCENTAGE("sar", "identification_progress_percentage","case when sar.raw_value='0' then '0' else\n" +
 " to_char((count(DISTINCT sorg.id) /sar.raw_value::real)*100, 'FM999.99') end as identification_progress_percentage", SampleAnalysisResult.RAW_VALUE, null, null, null),
        ;
-        private ViewSampleMicroorganismList(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
+        private ViewSampleMicroorganismList(String tblAliasInView, String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
             this.fldName=name;
             this.fldAliasInView=vwAliasName;
             this.fldMask=fldMask;
             this.fldComment=comment;
             this.fldBusinessRules=busRules;
             this.fldObj=fldObj;
+            this.tblAliasInView=tblAliasInView;
         }
         private final String fldName;
         private final String fldAliasInView;
         private final EnumIntTableFields fldObj;
         private final String fldMask;
         private final String fldComment;
-        private final FldBusinessRules[] fldBusinessRules;        
+        private final FldBusinessRules[] fldBusinessRules;   
+        private final String tblAliasInView;
         @Override public String getName() {return fldName;}
-        @Override public String getViewAliasName() {return this.fldAliasInView;}
+        @Override public String getFldViewAliasName() {return this.fldAliasInView;}
         @Override public String getFieldMask() {return this.fldMask;}
         @Override public String getFieldComment() {return this.fldComment;}
         @Override public FldBusinessRules[] getFldBusinessRules() {return this.fldBusinessRules;}
         @Override public EnumIntTableFields getTableField() {return this.fldObj;}
+        @Override public String getTblAliasInView() {return this.tblAliasInView;}
    }           
 
 }

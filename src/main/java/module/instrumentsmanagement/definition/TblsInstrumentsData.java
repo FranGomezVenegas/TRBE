@@ -320,84 +320,90 @@ public class TblsInstrumentsData {
     }                
     
     public enum ViewNotDecommInstrumentAndEventData implements EnumIntViewFields{
-        ID("id", "ie.id", InstrumentEvent.ID, null, null, null),
-        INSTRUMENT("instrument", "ie.instrument", InstrumentEvent.INSTRUMENT, null, null, null),
-        INSTRUMENT_FAMILY("instrument_family", "i.family as instrument_family", Instruments.FAMILY, null, null, null),                
-        RESPONSIBLE("instrument_responsible", "i.responsible as instrument_responsible", Instruments.RESPONSIBLE, null, null, null),                
-        RESPONSIBLE_BACKUP("instrument_responsible_backup", "i.responsible_backup as instrument_responsible_backup", Instruments.RESPONSIBLE_BACKUP, null, null, null),                
-        EVENT_TYPE("event_type", "ie.event_type", InstrumentEvent.EVENT_TYPE, null, null, null),
-        CREATED_ON("created_on", "ie.created_on", InstrumentEvent.CREATED_ON, null, null, null),
-        CREATED_BY("created_by", "ie.created_by", InstrumentEvent.CREATED_BY, null, null, null),
-        COMPLETED_ON("completed_on", "ie.completed_on", InstrumentEvent.COMPLETED_ON, null, null, null),
-        COMPLETED_BY("completed_by", "ie.completed_by", InstrumentEvent.COMPLETED_BY, null, null, null),
-        COMPLETED_DECISION("completed_decision", "ie.completed_decision", InstrumentEvent.COMPLETED_DECISION, null, null, null),
-        ATTACHMENT("attachment", "ie.attachment", InstrumentEvent.ATTACHMENT, null, null, null),
-        INST_ONLINE("on_line", "i.on_line", Instruments.ON_LINE, null, null, null),
-        INST_DECOM("decommissioned", "i.decommissioned", Instruments.DECOMMISSIONED, null, null, null),
-        INST_ISLOCKED("is_locked", "i.is_locked", Instruments.IS_LOCKED, null, null, null),
-        INST_LOCKED_REASON("locked_reason", "i.locked_reason", Instruments.LOCKED_REASON, null, null, null),
-        LAST_CALIBRATION("last_calibration", "i.last_calibration", Instruments.LAST_CALIBRATION, null, null, null),
-        NEXT_CALIBRATION("next_calibration", "i.next_calibration", Instruments.NEXT_CALIBRATION, null, null, null),
-        LAST_PREV_MAINT("last_prev_maint", "i.last_prev_maint", Instruments.LAST_PM, null, null, null),
-        NEXT_PREV_MAINT("next_prev_maint", "i.next_prev_maint", Instruments.NEXT_PM, null, null, null),
-        LAST_VERIFICATION("last_verification", "i.last_verification", Instruments.LAST_VERIF, null, null, null),
-        TOTAL_PARAMS("total_params", "(select count(*) from #PROC_INSTANCE_NAME-#SCHEMA_DATA.instr_event_variable_values eparam where  eparam.event_id=ie.id) as total_params", null, null, null, null),
-        PENDING_PARAMS("pending_params", "(select count(*) from #PROC_INSTANCE_NAME-#SCHEMA_DATA.instr_event_variable_values eparam where  eparam.event_id=ie.id and eparam.value is null) as pending_params", null, null, null, null),
+        ID("ie", "id", "ie.id", InstrumentEvent.ID, null, null, null),
+        INSTRUMENT("ie", "instrument", "ie.instrument", InstrumentEvent.INSTRUMENT, null, null, null),
+        INSTRUMENT_FAMILY("i", "instrument_family", "i.family as instrument_family", Instruments.FAMILY, null, null, null),                
+        RESPONSIBLE("i", "instrument_responsible", "i.responsible as instrument_responsible", Instruments.RESPONSIBLE, null, null, null),                
+        RESPONSIBLE_BACKUP("i", "instrument_responsible_backup", "i.responsible_backup as instrument_responsible_backup", Instruments.RESPONSIBLE_BACKUP, null, null, null),                
+        EVENT_TYPE("ie", "event_type", "ie.event_type", InstrumentEvent.EVENT_TYPE, null, null, null),
+        CREATED_ON("ie", "created_on", "ie.created_on", InstrumentEvent.CREATED_ON, null, null, null),
+        CREATED_BY("ie", "created_by", "ie.created_by", InstrumentEvent.CREATED_BY, null, null, null),
+        COMPLETED_ON("ie", "completed_on", "ie.completed_on", InstrumentEvent.COMPLETED_ON, null, null, null),
+        COMPLETED_BY("ie", "completed_by", "ie.completed_by", InstrumentEvent.COMPLETED_BY, null, null, null),
+        COMPLETED_DECISION("ie", "completed_decision", "ie.completed_decision", InstrumentEvent.COMPLETED_DECISION, null, null, null),
+        ATTACHMENT("ie", "attachment", "ie.attachment", InstrumentEvent.ATTACHMENT, null, null, null),
+        INST_ONLINE("i", "on_line", "i.on_line", Instruments.ON_LINE, null, null, null),
+        INST_DECOM("i", "decommissioned", "i.decommissioned", Instruments.DECOMMISSIONED, null, null, null),
+        INST_ISLOCKED("i", "is_locked", "i.is_locked", Instruments.IS_LOCKED, null, null, null),
+        INST_LOCKED_REASON("i", "locked_reason", "i.locked_reason", Instruments.LOCKED_REASON, null, null, null),
+        LAST_CALIBRATION("i", "last_calibration", "i.last_calibration", Instruments.LAST_CALIBRATION, null, null, null),
+        NEXT_CALIBRATION("i", "next_calibration", "i.next_calibration", Instruments.NEXT_CALIBRATION, null, null, null),
+        LAST_PREV_MAINT("i", "last_prev_maint", "i.last_prev_maint", Instruments.LAST_PM, null, null, null),
+        NEXT_PREV_MAINT("i", "next_prev_maint", "i.next_prev_maint", Instruments.NEXT_PM, null, null, null),
+        LAST_VERIFICATION("i", "last_verification", "i.last_verification", Instruments.LAST_VERIF, null, null, null),
+        TOTAL_PARAMS("ie", "total_params", "(select count(*) from #PROC_INSTANCE_NAME-#SCHEMA_DATA.instr_event_variable_values eparam where  eparam.event_id=ie.id) as total_params", null, null, null, null),
+        PENDING_PARAMS("ie", "pending_params", "(select count(*) from #PROC_INSTANCE_NAME-#SCHEMA_DATA.instr_event_variable_values eparam where  eparam.event_id=ie.id and eparam.value is null) as pending_params", null, null, null, null),
         
         ;
-        private ViewNotDecommInstrumentAndEventData(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
+        private ViewNotDecommInstrumentAndEventData(String tblAliasInView, String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
             this.fldName=name;
             this.fldAliasInView=vwAliasName;
             this.fldMask=fldMask;
             this.fldComment=comment;
             this.fldBusinessRules=busRules;
             this.fldObj=fldObj;
+            this.tblAliasInView=tblAliasInView;
         }
         private final String fldName;
         private final String fldAliasInView;
         private final EnumIntTableFields fldObj;
         private final String fldMask;
         private final String fldComment;
-        private final FldBusinessRules[] fldBusinessRules;        
+        private final FldBusinessRules[] fldBusinessRules;  
+        private final String tblAliasInView;
         @Override public String getName() {return fldName;}
-        @Override public String getViewAliasName() {return this.fldAliasInView;}
+        @Override public String getFldViewAliasName() {return this.fldAliasInView;}
         @Override public String getFieldMask() {return this.fldMask;}
         @Override public String getFieldComment() {return this.fldComment;}
         @Override public FldBusinessRules[] getFldBusinessRules() {return this.fldBusinessRules;}
         @Override public EnumIntTableFields getTableField() {return this.fldObj;}
+        @Override public String getTblAliasInView() {return this.tblAliasInView;}
     }        
     
     public enum CalibPmExpiredOrExpiring implements EnumIntViewFields{
-        TYPE("event_type", "event_type as type", null, null, null, null),
-        NOW("now", "now as now", null, null, null, null),
-        NAME("name", "name as name", null, null, null, null),                
-        FAMILY("family", "family as family", null, null, null, null),                
-        NEXT_DATE("next_date", "next_date as next_date", null, null, null, null),                
-        SYSTEM_CREATE_NEW_EVENT_WHEN_EXPIRES("system_create_new_event_when_expires", "system_create_new_event_when_expires as system_create_new_event_when_expires", InstrumentEvent.EVENT_TYPE, null, null, null),
-        EVENTS_IN_PROGRESS("events_in_progress", "events_in_progress  as events_in_progress", null, null, null, null),
-        SCHED_CREATE_OFFSET_DAYS("sched_create_offset_days", "sched_create_offset_days  as sched_create_offset_days", null, null, null, null)
+        TYPE("ev", "event_type", "event_type as type", null, null, null, null),
+        NOW("i", "now", "now as now", null, null, null, null),
+        NAME("i", "name", "name as name", null, null, null, null),                
+        FAMILY("fam", "family", "family as family", null, null, null, null),                
+        NEXT_DATE("ev", "next_date", "next_date as next_date", null, null, null, null),                
+        SYSTEM_CREATE_NEW_EVENT_WHEN_EXPIRES("ev", "system_create_new_event_when_expires", "system_create_new_event_when_expires as system_create_new_event_when_expires", InstrumentEvent.EVENT_TYPE, null, null, null),
+        EVENTS_IN_PROGRESS("ev", "events_in_progress", "events_in_progress  as events_in_progress", null, null, null, null),
+        SCHED_CREATE_OFFSET_DAYS("ev", "sched_create_offset_days", "sched_create_offset_days  as sched_create_offset_days", null, null, null, null)
         
         ;
-        private CalibPmExpiredOrExpiring(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
+        private CalibPmExpiredOrExpiring(String tblAliasInView, String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
             this.fldName=name;
             this.fldAliasInView=vwAliasName;
             this.fldMask=fldMask;
             this.fldComment=comment;
             this.fldBusinessRules=busRules;
             this.fldObj=fldObj;
+            this.tblAliasInView=tblAliasInView;
         }
         private final String fldName;
         private final String fldAliasInView;
         private final EnumIntTableFields fldObj;
         private final String fldMask;
         private final String fldComment;
-        private final FldBusinessRules[] fldBusinessRules;        
+        private final FldBusinessRules[] fldBusinessRules;  
+        private final String tblAliasInView;
         @Override public String getName() {return fldName;}
-        @Override public String getViewAliasName() {return this.fldAliasInView;}
+        @Override public String getFldViewAliasName() {return this.fldAliasInView;}
         @Override public String getFieldMask() {return this.fldMask;}
         @Override public String getFieldComment() {return this.fldComment;}
         @Override public FldBusinessRules[] getFldBusinessRules() {return this.fldBusinessRules;}
         @Override public EnumIntTableFields getTableField() {return this.fldObj;}
+        @Override public String getTblAliasInView() {return this.tblAliasInView;}
     }        
         
 }

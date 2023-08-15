@@ -35,7 +35,12 @@ public class AdhocViewFields implements EnumIntViewFields{
     public ReferenceFld getReferenceTable() {return this.reference;}
     @Override        public String getFieldComment(){return this.fieldComment;}
     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
-    @Override    public String getViewAliasName() {return this.aliasName;}
+    @Override    public String getFldViewAliasName() {return this.aliasName;}
     @Override    public EnumIntTableFields getTableField() {return this.tblFlds;}
+
+    @Override
+    public String getTblAliasInView() {
+        return "Not implemented yet.";
+    }
     
 }

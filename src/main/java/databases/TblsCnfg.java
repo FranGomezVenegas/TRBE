@@ -8,6 +8,9 @@ import trazit.enums.ForeignkeyFld;
 import trazit.enums.ReferenceFld;
 import trazit.globalvariables.GlobalVariables;
 import static functionaljavaa.intervals.IntervalsUtilities.DB_FLDNAME_EXPIRY_INTRVL_INFO;
+import trazit.enums.EnumIntTablesJoin;
+import trazit.enums.EnumIntViewFields;
+import trazit.enums.EnumIntViews;
 /**
  *
  * @author Administrator
@@ -96,7 +99,7 @@ public class TblsCnfg {
         private final Object[] foreignkey;
         private final String tableComment;
     }
-    public enum ViewsConfig implements EnumIntTables{
+    public enum ViewsConfig implements EnumIntViews{
         //https://github.com/FranGomezVenegas/BE-Issues/issues/921-zANALYSIS_METHODS is not implemented but probably can be implemented
         //  to get analysis by user method qualif etc ...        
         zANALYSIS_METHODS(null, "analysis_methods_view", SCHEMA_NAME, true, zViewAnalysisMethodsView.values(), null,
@@ -125,13 +128,7 @@ public class TblsCnfg {
             this.foreignkey=foreignK;
             this.tableComment=comment;
         }
-        @Override        public String getTableName() {return this.tableName;}
-        @Override        public String getTableComment() {return this.tableComment;}
-        @Override        public EnumIntTableFields[] getTableFields() {return this.tableFields;}
         @Override        public String getRepositoryName() {return this.repositoryName;}
-        @Override        public String getSeqName() {return this.sequence;}
-        @Override        public String[] getPrimaryKey() {return this.primarykey;}
-        @Override        public Object[] getForeignKey() {return this.foreignkey;}
         @Override        public Boolean getIsProcedureInstance() {return this.isProcedure;}
         @Override        public FldBusinessRules[] getTblBusinessRules() {return this.getTblBusinessRules;}
         private final FldBusinessRules[] getTblBusinessRules;      
@@ -143,6 +140,41 @@ public class TblsCnfg {
         private final String[] primarykey;
         private final Object[] foreignkey;
         private final String tableComment;
+
+        @Override
+        public String getViewCreatecript() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public String getViewName() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public EnumIntViewFields[] getViewFields() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public String getViewComment() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public EnumIntTablesJoin[] getTablesRequiredInView() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public String getExtraFilters() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
+
+        @Override
+        public Boolean getUsesFixScriptView() {
+            throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        }
     }
 
     

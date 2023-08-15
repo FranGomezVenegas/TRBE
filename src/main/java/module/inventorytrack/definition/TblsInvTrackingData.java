@@ -260,14 +260,14 @@ public class TblsInvTrackingData {
             this.fieldMask=fieldMask;
             this.reference=refer;
             this.fieldComment=comment;
-            this.fldBusinessRules=fldBusRules;
+            this.fldBusinessRules=fldBusRules;            
         }
         private final String fieldName;
         private final String fieldType;
         private final String fieldMask;
         private final ReferenceFld reference;
         private final String fieldComment;
-        private final FldBusinessRules[] fldBusinessRules;
+        private final FldBusinessRules[] fldBusinessRules;        
 
         @Override        public String getName(){return this.fieldName;}
         @Override        public String getFieldType() {return this.fieldType;}
@@ -278,38 +278,38 @@ public class TblsInvTrackingData {
     }            
 
     public enum ViewExpiredLots implements EnumIntViewFields{
-        LOT_NAME(Lot.LOT_NAME.getName(), "l."+"lot_name", Lot.LOT_NAME, null, null, null),
-        REFERENCE(Lot.REFERENCE.getName(), "l."+Lot.REFERENCE.getName(), Lot.REFERENCE, null, null, null),
-        CATEGORY(Lot.CATEGORY.getName(), "l."+Lot.CATEGORY.getName(), Lot.CATEGORY, null, null, null),
-        STATUS(Lot.STATUS.getName(), "l."+Lot.STATUS.getName(), Lot.STATUS, null, null, null),
-        STATUS_PREVIOUS(Lot.STATUS_PREVIOUS.getName(), "l."+Lot.STATUS_PREVIOUS.getName(), Lot.STATUS_PREVIOUS, null, null, null),
-        LOGGED_ON(Lot.LOGGED_ON.getName(), "l."+Lot.LOGGED_ON.getName(), Lot.LOGGED_ON, null, null, null),
-        LOGGED_BY(Lot.LOGGED_BY.getName(), "l."+Lot.LOGGED_BY.getName(), Lot.LOGGED_BY, null, null, null),
-        EXPIRY_DATE(Lot.EXPIRY_DATE.getName(), "l."+Lot.EXPIRY_DATE.getName(), Lot.EXPIRY_DATE, null, null, null),
-        EXPIRY_DATE_IN_USE(Lot.EXPIRY_DATE_IN_USE.getName(), "l."+Lot.EXPIRY_DATE_IN_USE.getName(), Lot.EXPIRY_DATE_IN_USE, null, null, null),
-        RETEST_DATE(Lot.RETEST_DATE.getName(), "l."+Lot.RETEST_DATE.getName(), Lot.RETEST_DATE, null, null, null),
-        VENDOR(Lot.VENDOR.getName(), "l."+Lot.VENDOR.getName(), Lot.VENDOR, null, null, null),
-        VENDOR_LOT(Lot.VENDOR_LOT.getName(), "l."+Lot.VENDOR_LOT.getName(), Lot.VENDOR_LOT, null, null, null),
-        VENDOR_REFERENCE(Lot.VENDOR_REFERENCE.getName(), "l."+Lot.VENDOR_REFERENCE.getName(), Lot.VENDOR_REFERENCE, null, null, null),
-        VENDOR_COA_VERIFIED(Lot.VENDOR_COA_VERIFIED.getName(), "l."+Lot.VENDOR_COA_VERIFIED.getName(), Lot.VENDOR_COA_VERIFIED, null, null, null),
-        CONSERV_CONDITION(Lot.CONSERV_CONDITION.getName(), "l."+Lot.CONSERV_CONDITION.getName(), Lot.CONSERV_CONDITION, null, null, null),
-        PURITY(Lot.PURITY.getName(), "l."+Lot.PURITY.getName(), Lot.PURITY, null, null, null),
-        VOLUME(Lot.QUANTITY.getName(), "l."+Lot.QUANTITY.getName(), Lot.QUANTITY, null, null, null),
-        VOLUME_UOM(Lot.QUANTITY_UOM.getName(), "l."+Lot.QUANTITY_UOM.getName(), Lot.QUANTITY_UOM, null, null, null),
-        IS_LOCKED(Lot.IS_LOCKED.getName(), "l."+Lot.IS_LOCKED.getName(), Lot.IS_LOCKED, null, null, null),
-        LOCKED_REASON(Lot.LOCKED_REASON.getName(), "l."+Lot.LOCKED_REASON.getName(), Lot.LOCKED_REASON, null, null, null),
-        RETIRED(Lot.RETIRED.getName(), "l."+Lot.RETIRED.getName(), Lot.RETIRED, null, null, null),
-        RETIRED_ON(Lot.RETIRED_ON.getName(), "l."+Lot.RETIRED_ON.getName(), Lot.RETIRED_ON, null, null, null),
-        RETIRED_BY(Lot.RETIRED_BY.getName(), "l."+Lot.RETIRED_BY.getName(), Lot.RETIRED_BY, null, null, null),        
+        LOT_NAME("l", Lot.LOT_NAME.getName(), "l."+"lot_name", Lot.LOT_NAME, null, null, null),
+        REFERENCE("l", Lot.REFERENCE.getName(), "l."+Lot.REFERENCE.getName(), Lot.REFERENCE, null, null, null),
+        CATEGORY("l", Lot.CATEGORY.getName(), "l."+Lot.CATEGORY.getName(), Lot.CATEGORY, null, null, null),
+        STATUS("l", Lot.STATUS.getName(), "l."+Lot.STATUS.getName(), Lot.STATUS, null, null, null),
+        STATUS_PREVIOUS("l", Lot.STATUS_PREVIOUS.getName(), "l."+Lot.STATUS_PREVIOUS.getName(), Lot.STATUS_PREVIOUS, null, null, null),
+        LOGGED_ON("l", Lot.LOGGED_ON.getName(), "l."+Lot.LOGGED_ON.getName(), Lot.LOGGED_ON, null, null, null),
+        LOGGED_BY("l", Lot.LOGGED_BY.getName(), "l."+Lot.LOGGED_BY.getName(), Lot.LOGGED_BY, null, null, null),
+        EXPIRY_DATE("l", Lot.EXPIRY_DATE.getName(), "l."+Lot.EXPIRY_DATE.getName(), Lot.EXPIRY_DATE, null, null, null),
+        EXPIRY_DATE_IN_USE("l", Lot.EXPIRY_DATE_IN_USE.getName(), "l."+Lot.EXPIRY_DATE_IN_USE.getName(), Lot.EXPIRY_DATE_IN_USE, null, null, null),
+        RETEST_DATE("l", Lot.RETEST_DATE.getName(), "l."+Lot.RETEST_DATE.getName(), Lot.RETEST_DATE, null, null, null),
+        VENDOR("l", Lot.VENDOR.getName(), "l."+Lot.VENDOR.getName(), Lot.VENDOR, null, null, null),
+        VENDOR_LOT("l", Lot.VENDOR_LOT.getName(), "l."+Lot.VENDOR_LOT.getName(), Lot.VENDOR_LOT, null, null, null),
+        VENDOR_REFERENCE("l", Lot.VENDOR_REFERENCE.getName(), "l."+Lot.VENDOR_REFERENCE.getName(), Lot.VENDOR_REFERENCE, null, null, null),
+        VENDOR_COA_VERIFIED("l", Lot.VENDOR_COA_VERIFIED.getName(), "l."+Lot.VENDOR_COA_VERIFIED.getName(), Lot.VENDOR_COA_VERIFIED, null, null, null),
+        CONSERV_CONDITION("l", Lot.CONSERV_CONDITION.getName(), "l."+Lot.CONSERV_CONDITION.getName(), Lot.CONSERV_CONDITION, null, null, null),
+        PURITY("l", Lot.PURITY.getName(), "l."+Lot.PURITY.getName(), Lot.PURITY, null, null, null),
+        VOLUME("l", Lot.QUANTITY.getName(), "l."+Lot.QUANTITY.getName(), Lot.QUANTITY, null, null, null),
+        VOLUME_UOM("l", Lot.QUANTITY_UOM.getName(), "l."+Lot.QUANTITY_UOM.getName(), Lot.QUANTITY_UOM, null, null, null),
+        IS_LOCKED("l", Lot.IS_LOCKED.getName(), "l."+Lot.IS_LOCKED.getName(), Lot.IS_LOCKED, null, null, null),
+        LOCKED_REASON("l", Lot.LOCKED_REASON.getName(), "l."+Lot.LOCKED_REASON.getName(), Lot.LOCKED_REASON, null, null, null),
+        RETIRED("l", Lot.RETIRED.getName(), "l."+Lot.RETIRED.getName(), Lot.RETIRED, null, null, null),
+        RETIRED_ON("l", Lot.RETIRED_ON.getName(), "l."+Lot.RETIRED_ON.getName(), Lot.RETIRED_ON, null, null, null),
+        RETIRED_BY("l", Lot.RETIRED_BY.getName(), "l."+Lot.RETIRED_BY.getName(), Lot.RETIRED_BY, null, null, null),        
         
-        EXPIRY_REASON("expiry_reason", "CASE " +
+        EXPIRY_REASON("l", "expiry_reason", "CASE " +
             " WHEN expiry_date_in_use is not null and expiry_date is not null then 'expiry_date_in_use passed ( Expiry date in use: '||expiry_date_in_use::text||' , expiry date: '||expiry_date::text||' )' \n" +
             " when expiry_date_in_use is null and expiry_date is not null then 'expiry_date passed ( Expiry date: '||expiry_date::text||' )' \n" +
             " when expiry_date_in_use is not null and expiry_date is null then 'expiry_date_in_use passed ( Expiry date in use: '||expiry_date_in_use::text||' )' \n" +
             " else 'not recognized this case, please report it to Trazit' " +
             "end as expiry_reason", Lot.LOCKED_REASON, null, null, null),
         ;
-        private ViewExpiredLots(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
+        private ViewExpiredLots(String tblAliasInView, String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
 //            try{
 //            this.fldName="";
             this.fldName=name;
@@ -318,6 +318,7 @@ public class TblsInvTrackingData {
             this.fldComment=comment;
             this.fldBusinessRules=busRules;
             this.fldObj=fldObj;
+            this.tblAliasInView=tblAliasInView;
 /*            }catch(Exception e){
                 String s= e.getMessage();
                 //String s2=name;
@@ -329,106 +330,117 @@ public class TblsInvTrackingData {
         private final EnumIntTableFields fldObj;
         private final String fldMask;
         private final String fldComment;
-        private final FldBusinessRules[] fldBusinessRules;        
+        private final FldBusinessRules[] fldBusinessRules;   
+        private final String tblAliasInView;
         @Override public String getName() {return fldName;}
-        @Override public String getViewAliasName() {return this.fldAliasInView;}
+        @Override public String getFldViewAliasName() {return this.fldAliasInView;}
         @Override public String getFieldMask() {return this.fldMask;}
         @Override public String getFieldComment() {return this.fldComment;}
         @Override public FldBusinessRules[] getFldBusinessRules() {return this.fldBusinessRules;}
         @Override public EnumIntTableFields getTableField() {return this.fldObj;}
+        @Override public String getTblAliasInView() {return this.tblAliasInView;}
     }        
 
     public enum ViewReferencesStockUnderMin implements EnumIntViewFields{
-        NAME("name", "l."+"name", TblsInvTrackingConfig.Reference.NAME, null, null, null),
-        MIN_STOCK_TYPE(TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE.getName(), "l."+TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE.getName(), TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE, null, null, null),
-        CATEGORY(TblsInvTrackingConfig.Reference.CATEGORY.getName(), "l."+TblsInvTrackingConfig.Reference.CATEGORY.getName(), TblsInvTrackingConfig.Reference.CATEGORY, null, null, null),
-        MIN_STOCK(TblsInvTrackingConfig.Reference.MIN_STOCK.getName(), "l."+TblsInvTrackingConfig.Reference.MIN_STOCK.getName(), TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE, null, null, null),
-        CURRENT_STOCK("current_stock", "case when ref.min_stock_type='ITEMS' then count(l.*) " +
+        NAME("l", "name", "l."+"name", TblsInvTrackingConfig.Reference.NAME, null, null, null),
+        MIN_STOCK_TYPE("l", TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE.getName(), "l."+TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE.getName(), TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE, null, null, null),
+        CATEGORY("l", TblsInvTrackingConfig.Reference.CATEGORY.getName(), "l."+TblsInvTrackingConfig.Reference.CATEGORY.getName(), TblsInvTrackingConfig.Reference.CATEGORY, null, null, null),
+        MIN_STOCK("l", TblsInvTrackingConfig.Reference.MIN_STOCK.getName(), "l."+TblsInvTrackingConfig.Reference.MIN_STOCK.getName(), TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE, null, null, null),
+        CURRENT_STOCK("ref", "current_stock", "case when ref.min_stock_type='ITEMS' then count(l.*) " +
             "when ref.min_stock_type='VOLUME' then sum(l.volume) " +
             "else null end " +
             "as current_stock ", Lot.LOCKED_REASON, null, null, null)
         ;
-        private ViewReferencesStockUnderMin(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
+        private ViewReferencesStockUnderMin(String tblAliasInView, String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
             this.fldName=name;
             this.fldAliasInView=vwAliasName;
             this.fldMask=fldMask;
             this.fldComment=comment;
             this.fldBusinessRules=busRules;
             this.fldObj=fldObj;
+            this.tblAliasInView=tblAliasInView;
         }
         private final String fldName;
         private final String fldAliasInView;
         private final EnumIntTableFields fldObj;
         private final String fldMask;
         private final String fldComment;
-        private final FldBusinessRules[] fldBusinessRules;        
+        private final FldBusinessRules[] fldBusinessRules;
+private final String tblAliasInView;        
         @Override public String getName() {return fldName;}
-        @Override public String getViewAliasName() {return this.fldAliasInView;}
+        @Override public String getFldViewAliasName() {return this.fldAliasInView;}
         @Override public String getFieldMask() {return this.fldMask;}
         @Override public String getFieldComment() {return this.fldComment;}
         @Override public FldBusinessRules[] getFldBusinessRules() {return this.fldBusinessRules;}
         @Override public EnumIntTableFields getTableField() {return this.fldObj;}
+        @Override public String getTblAliasInView() {return this.tblAliasInView;}
     }        
 
     public enum ViewReferencesAvailableForUseUnderMin implements EnumIntViewFields{
-        CATEGORY(TblsInvTrackingConfig.Reference.CATEGORY.getName(), "l."+TblsInvTrackingConfig.Reference.CATEGORY.getName(), TblsInvTrackingConfig.Reference.CATEGORY, null, null, null),
-        NAME(TblsInvTrackingConfig.Reference.NAME.getName(), "l."+TblsInvTrackingConfig.Reference.NAME.getName(), TblsInvTrackingConfig.Reference.NAME, null, null, null),
-        MIN_STOCK_AVAILABLE_FOR_USE(TblsInvTrackingConfig.Reference.MIN_AVAILABLES_FOR_USE.getName(), "l."+TblsInvTrackingConfig.Reference.MIN_AVAILABLES_FOR_USE.getName(), TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE, null, null, null),
-        MIN_AVAILABLES_FOR_USE_TYPE(TblsInvTrackingConfig.Reference.MIN_AVAILABLES_FOR_USE_TYPE.getName(), "l.min_availables_for_use_type", TblsInvTrackingConfig.Reference.MIN_AVAILABLES_FOR_USE_TYPE, null, null, null),
-        ALLOW_OPENING_SOME_AT_A_TIME(TblsInvTrackingConfig.Reference.ALLOW_OPENING_SOME_AT_A_TIME.getName(), "l."+TblsInvTrackingConfig.Reference.ALLOW_OPENING_SOME_AT_A_TIME.getName(), TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE, null, null, null),
-        CURRENT_STOCK_AVAILABLE_FOR_USE("current_stock_available_for_use", "case when ref.min_availables_for_use_type='ITEMS' then count(l.*) " +
+        CATEGORY("l", TblsInvTrackingConfig.Reference.CATEGORY.getName(), "l."+TblsInvTrackingConfig.Reference.CATEGORY.getName(), TblsInvTrackingConfig.Reference.CATEGORY, null, null, null),
+        NAME("l", TblsInvTrackingConfig.Reference.NAME.getName(), "l."+TblsInvTrackingConfig.Reference.NAME.getName(), TblsInvTrackingConfig.Reference.NAME, null, null, null),
+        MIN_STOCK_AVAILABLE_FOR_USE("l", TblsInvTrackingConfig.Reference.MIN_AVAILABLES_FOR_USE.getName(), "l."+TblsInvTrackingConfig.Reference.MIN_AVAILABLES_FOR_USE.getName(), TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE, null, null, null),
+        MIN_AVAILABLES_FOR_USE_TYPE("l", TblsInvTrackingConfig.Reference.MIN_AVAILABLES_FOR_USE_TYPE.getName(), "l.min_availables_for_use_type", TblsInvTrackingConfig.Reference.MIN_AVAILABLES_FOR_USE_TYPE, null, null, null),
+        ALLOW_OPENING_SOME_AT_A_TIME("l", TblsInvTrackingConfig.Reference.ALLOW_OPENING_SOME_AT_A_TIME.getName(), "l."+TblsInvTrackingConfig.Reference.ALLOW_OPENING_SOME_AT_A_TIME.getName(), TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE, null, null, null),
+        CURRENT_STOCK_AVAILABLE_FOR_USE("ref", "current_stock_available_for_use", "case when ref.min_availables_for_use_type='ITEMS' then count(l.*) " +
             "when ref.min_availables_for_use_type='VOLUME' then sum(l.volume) " +
             "else null end " +
             "as current_stock_available_for_use ", Lot.LOCKED_REASON, null, null, null),
         ;
-        private ViewReferencesAvailableForUseUnderMin(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
+        private ViewReferencesAvailableForUseUnderMin(String tblAliasInView, String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
             this.fldName=name;
             this.fldAliasInView=vwAliasName;
             this.fldMask=fldMask;
             this.fldComment=comment;
             this.fldBusinessRules=busRules;
             this.fldObj=fldObj;
+            this.tblAliasInView = tblAliasInView;
         }
         private final String fldName;
         private final String fldAliasInView;
         private final EnumIntTableFields fldObj;
         private final String fldMask;
         private final String fldComment;
-        private final FldBusinessRules[] fldBusinessRules;        
+        private final FldBusinessRules[] fldBusinessRules;
+private final String tblAliasInView;        
         @Override public String getName() {return fldName;}
-        @Override public String getViewAliasName() {return this.fldAliasInView;}
+        @Override public String getFldViewAliasName() {return this.fldAliasInView;}
         @Override public String getFieldMask() {return this.fldMask;}
         @Override public String getFieldComment() {return this.fldComment;}
         @Override public FldBusinessRules[] getFldBusinessRules() {return this.fldBusinessRules;}
         @Override public EnumIntTableFields getTableField() {return this.fldObj;}
+        @Override public String getTblAliasInView() {return this.tblAliasInView;}
     }        
     
     
     public enum ViewAvailableLotsPerReference implements EnumIntViewFields{
-        NAME(TblsInvTrackingConfig.Reference.NAME.getName(), "ref."+TblsInvTrackingConfig.Reference.NAME.getName(), TblsInvTrackingConfig.Reference.NAME, null, null, null),
-        CATEGORY(TblsInvTrackingConfig.Reference.CATEGORY.getName(), "ref."+TblsInvTrackingConfig.Reference.CATEGORY.getName(), TblsInvTrackingConfig.Reference.CATEGORY, null, null, null),
-        COUNT("count", "(select count(*) from #PROC_INSTANCE_NAME-#SCHEMA_DATA.lot l where l.category=ref.category and l.reference=ref.name and l.status='AVAILABLE_FOR_USE') as count ", Lot.LOCKED_REASON, null, null, null),
+        NAME("ref", TblsInvTrackingConfig.Reference.NAME.getName(), "ref."+TblsInvTrackingConfig.Reference.NAME.getName(), TblsInvTrackingConfig.Reference.NAME, null, null, null),
+        CATEGORY("ref", TblsInvTrackingConfig.Reference.CATEGORY.getName(), "ref."+TblsInvTrackingConfig.Reference.CATEGORY.getName(), TblsInvTrackingConfig.Reference.CATEGORY, null, null, null),
+        COUNT("l", "count", "(select count(*) from #PROC_INSTANCE_NAME-#SCHEMA_DATA.lot l where l.category=ref.category and l.reference=ref.name and l.status='AVAILABLE_FOR_USE') as count ", Lot.LOCKED_REASON, null, null, null),
         ;
-        private ViewAvailableLotsPerReference(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
+        private ViewAvailableLotsPerReference(String tblAliasInView, String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
             this.fldName=name;
             this.fldAliasInView=vwAliasName;
             this.fldMask=fldMask;
             this.fldComment=comment;
             this.fldBusinessRules=busRules;
             this.fldObj=fldObj;
+            this.tblAliasInView=tblAliasInView;
         }
         private final String fldName;
         private final String fldAliasInView;
         private final EnumIntTableFields fldObj;
         private final String fldMask;
         private final String fldComment;
-        private final FldBusinessRules[] fldBusinessRules;        
+        private final FldBusinessRules[] fldBusinessRules;      
+        private final String tblAliasInView;
         @Override public String getName() {return fldName;}
-        @Override public String getViewAliasName() {return this.fldAliasInView;}
+        @Override public String getFldViewAliasName() {return this.fldAliasInView;}
         @Override public String getFieldMask() {return this.fldMask;}
         @Override public String getFieldComment() {return this.fldComment;}
         @Override public FldBusinessRules[] getFldBusinessRules() {return this.fldBusinessRules;}
         @Override public EnumIntTableFields getTableField() {return this.fldObj;}
+        @Override public String getTblAliasInView() {return this.tblAliasInView;}
     }        
     
 }
