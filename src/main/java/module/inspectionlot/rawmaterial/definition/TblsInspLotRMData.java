@@ -159,87 +159,88 @@ public class TblsInspLotRMData {
     }
 
 public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
-        LOT_NAME(Sample.LOT_NAME.getName(), "s.lot_name", Sample.LOT_NAME, null, null, null),
-        BULK_ID(Sample.BULK_ID.getName(), "s.bulk_id", Sample.BULK_ID, null, null, null),
-        BULK_NAME(Sample.BULK_NAME.getName(), "s.bulk_name", Sample.BULK_NAME, null, null, null),
-        RESULT_ID(TblsData.SampleAnalysisResult.RESULT_ID.getName(), "sar.result_id", TblsData.SampleAnalysisResult.RESULT_ID, null, null, null),
-        TEST_ID(TblsData.SampleAnalysis.TEST_ID.getName(), "sar.test_id", TblsData.SampleAnalysisResult.TEST_ID, null, null, null),
-        SAMPLE_ID(TblsData.Sample.SAMPLE_ID.getName(), "sar.sample_id", TblsData.SampleAnalysisResult.SAMPLE_ID, null, null, null),
-        STATUS(FIELDS_NAMES_STATUS, "sar.status", TblsData.SampleAnalysisResult.STATUS, null, null, null),
-        STATUS_PREVIOUS(FIELDS_NAMES_STATUS_PREVIOUS, "sar.status_previous", TblsData.SampleAnalysisResult.STATUS_PREVIOUS, null, null, null),
-        ANALYSIS(FIELDS_NAMES_ANALYSIS, "sar.analysis", TblsData.SampleAnalysisResult.ANALYSIS, null, null, null),
-        METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, "sar.method_name", TblsData.SampleAnalysisResult.METHOD_NAME, null, null, null),
-        METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, "sar.method_version", TblsData.SampleAnalysisResult.METHOD_VERSION, null, null, null),
-        REPLICA(FIELDS_NAMES_REPLICA, "sar.replica", TblsData.SampleAnalysisResult.REPLICA, null, null, null),
-        PARAM_NAME("param_name", "sar.param_name", TblsData.SampleAnalysisResult.PARAM_NAME, null, null, null),
-        PARAM_TYPE("param_type", "sar.param_type", TblsData.SampleAnalysisResult.PARAM_TYPE, null, null, null),
-        MANDATORY("mandatory", "sar.mandatory", TblsData.SampleAnalysisResult.MANDATORY, null, null, null),
-        REQUIRES_LIMIT("requires_limit", "sar.requires_limit", TblsData.SampleAnalysisResult.REQUIRES_LIMIT, null, null, null),
-        RAW_VALUE("raw_value", "sar.raw_value", TblsData.SampleAnalysisResult.RAW_VALUE, null, null, null),
-        RAW_VALUE_NUM("raw_value_num", "case when isnumeric(sar.raw_value) then to_number(sar.raw_value::text, '9999'::text) else null end", TblsData.SampleAnalysisResult.REPLICA, null, null, null),
-        PRETTY_VALUE("pretty_value", "sar.pretty_value", TblsData.SampleAnalysisResult.PRETTY_VALUE, null, null, null),
-        ENTERED_ON("entered_on", "sar.entered_on", TblsData.SampleAnalysisResult.ENTERED_ON, null, null, null),
-        ENTERED_BY("entered_by", "sar.entered_by", TblsData.SampleAnalysisResult.ENTERED_BY, null, null, null),
-        REENTERED("reentered", "sar.reentered", TblsData.SampleAnalysisResult.REENTERED, null, null, null),
-        SPEC_EVAL(FIELDS_NAMES_SPEC_EVAL, "sar.spec_eval", TblsData.SampleAnalysisResult.SPEC_EVAL, null, null, null),
-        SPEC_EVAL_DETAIL("spec_eval_detail", "sar.spec_eval_detail", TblsData.SampleAnalysisResult.SPEC_EVAL_DETAIL, null, null, null),
-        UOM("uom", "sar.uom", TblsData.SampleAnalysisResult.UOM, null, null, null),
-        UOM_CONVERSION_MODE("uom_conversion_mode", "sar.uom_conversion_mode", TblsData.SampleAnalysisResult.UOM_CONVERSION_MODE, null, null, null),
-        ALIQUOT_ID(FIELDS_NAMES_ALIQUOT_ID, "sar.aliquot_id", TblsData.SampleAnalysisResult.ALIQUOT_ID, null, null, null),
-        SUBALIQUOT_ID(FIELDS_NAMES_SUBALIQUOT_ID, "sar.subaliquot_id", TblsData.SampleAnalysisResult.SUBALIQUOT_ID, null, null, null),
-        MAX_DP("max_dp", "sar.max_dp", TblsData.SampleAnalysisResult.MAX_DP, null, null, null),
-        MIN_ALLOWED("min_allowed", "sar.min_allowed", TblsData.SampleAnalysisResult.MIN_ALLOWED, null, null, null),
-        MAX_ALLOWED("max_allowed", "sar.max_allowed", TblsData.SampleAnalysisResult.MAX_ALLOWED, null, null, null),
-        LIST_ENTRY("list_entry", "sar.list_entry", TblsData.SampleAnalysisResult.LIST_ENTRY, null, null, null),
-        SAMPLE_CONFIG_CODE("sample_config_code", "s."+TblsData.Sample.CONFIG_CODE.getName(), TblsData.Sample.CONFIG_CODE, null, null, null),
-        SAMPLE_STATUS("sample_status", "s.status", TblsData.Sample.STATUS, null, null, null),
-        CURRENT_STAGE("current_stage", "s.current_stage", TblsData.Sample.CURRENT_STAGE, null, null, null),
-        SAMPLE_ANALYSIS_STATUS("sample_analysis_status", "sa.status", TblsData.SampleAnalysis.STATUS, null, null, null),
-        SAMPLE_ANALYSIS_READY_FOR_REVISION("sample_analysis_"+TblsData.SampleAnalysis.READY_FOR_REVISION.getName(), "sa."+TblsData.Sample.READY_FOR_REVISION.getName(), TblsData.SampleAnalysis.READY_FOR_REVISION, null, null, null),
-        TESTING_GROUP("testing_group", "sa.testing_group", TblsData.SampleAnalysis.TESTING_GROUP, null, null, null),
-        SAMPLE_ANALYSIS_REVIEWER("sample_analysis_reviewer", "sa.reviewer", TblsData.SampleAnalysis.REVIEWER, null, null, null),        
-        LOGGED_ON("logged_on", "s.logged_on", TblsData.Sample.LOGGED_ON, null, null, null),
-        READY_FOR_REVISION(TblsData.Sample.READY_FOR_REVISION.getName(), "s."+TblsData.Sample.READY_FOR_REVISION.getName(), TblsData.Sample.READY_FOR_REVISION, null, null, null),
-        LIMIT_ID("limit_id", "spcLim.limit_id", TblsCnfg.SpecLimits.LIMIT_ID, null, null, null),
-        SPEC_CODE("spec_code", "spcLim.code", TblsCnfg.SpecLimits.CODE, null, null, null),
-        SPEC_CONFIG_VERSION("spec_config_version", "spcLim.config_version", TblsCnfg.SpecLimits.CONFIG_VERSION, null, null, null),
-        SPEC_VARIATION_NAME("spec_variation_name", "spcLim.variation_name", TblsCnfg.SpecLimits.VARIATION_NAME, null, null, null),
-        ANALYSIS_SPEC_LIMITS("analysis_spec_limits", "spcLim.analysis", TblsCnfg.SpecLimits.ANALYSIS, null, null, null),
-        METHOD_NAME_SPEC_LIMITS("method_name_spec_limits", "spcLim.method_name", TblsCnfg.SpecLimits.METHOD_NAME, null, null, null),
-        METHOD_VERSION_SPEC_LIMITS("method_version_spec_limits", "spcLim.method_version", TblsCnfg.SpecLimits.METHOD_VERSION, null, null, null),
-        PARAMETER("parameter", "spcLim.parameter", TblsCnfg.SpecLimits.PARAMETER, null, null, null),
-        RULE_TYPE("rule_type", "spcLim.rule_type", TblsCnfg.SpecLimits.RULE_TYPE, null, null, null),
-        RULE_VARIABLES("rule_variables", "spcLim.rule_variables", TblsCnfg.SpecLimits.RULE_VARIABLES, null, null, null),
-        UOM_SPEC_LIMITS("uom_spec_limits", "spcLim.uom", TblsCnfg.SpecLimits.UOM, null, null, null),
-        UOM_CONVERSION_MODE_SPEC_LIMITS("uom_conversion_mode_spec_limits", "spcLim.uom_conversion_mode", TblsCnfg.SpecLimits.UOM_CONVERSION_MODE, null, null, null),
-        MIN_VAL_ALLOWED("min_val_allowed", "spcLim.min_val_allowed", TblsCnfg.SpecLimits.MIN_VAL_ALLOWED, null, null, null),
-        MAX_VAL_ALLOWED("max_val_allowed", "spcLim.max_val_allowed", TblsCnfg.SpecLimits.MAX_VAL_ALLOWED, null, null, null),
-        MIN_VAL_ALLOWED_IS_STRICT("min_allowed_strict", "spcLim.min_allowed_strict", TblsCnfg.SpecLimits.MIN_VAL_ALLOWED_IS_STRICT, null, null, null),
-        MAX_VAL_ALLOWED_IS_STRICT("max_allowed_strict", "spcLim.max_allowed_strict", TblsCnfg.SpecLimits.MAX_VAL_ALLOWED_IS_STRICT, null, null, null),
-        MIN_VAL_FOR_UNDETERMINED("min_undetermined", "spcLim.min_undetermined", TblsCnfg.SpecLimits.MIN_VAL_FOR_UNDETERMINED, null, null, null),
-        MAX_VAL_FOR_UNDETERMINED("max_undetermined", "spcLim.max_undetermined", TblsCnfg.SpecLimits.MAX_VAL_FOR_UNDETERMINED, null, null, null),
-        MIN_VAL_UNDETERMINED_IS_STRICT("min_undet_strict", "spcLim.min_undet_strict", TblsCnfg.SpecLimits.MIN_VAL_UNDETERMINED_IS_STRICT, null, null, null),
-        MAX_VAL_UNDETERMINED_IS_STRICT("max_undet_strict", "spcLim.max_undet_strict", TblsCnfg.SpecLimits.MAX_VAL_UNDETERMINED_IS_STRICT, null, null, null),
-        HAS_PREINVEST("has_pre_invest", "CASE WHEN pca.id IS NULL THEN 'NO' ELSE 'YES' END", TblsCnfg.SpecLimits.MAX_VAL_ALLOWED_IS_STRICT, null, null, null),
-        PREINVEST_ID("pre_invest_id", "pca.id", TblsProcedure.ProgramCorrectiveAction.ID, null, null, null),
-        HAS_INVEST("has_invest", "CASE WHEN io.id IS NULL THEN 'NO' ELSE 'YES' END", TblsCnfg.SpecLimits.MAX_VAL_ALLOWED_IS_STRICT, null, null, null),
-        INVEST_ID("invest_id", "io.invest_id", TblsProcedure.InvestObjects.INVEST_ID, null, null, null),
-        INVEST_OBJECT_ID("invest_object_id", "io.id", TblsProcedure.InvestObjects.OBJECT_ID, null, null, null),
-        SAMPLE_REVIEWER("sample_reviewer", "s.reviewer", TblsData.Sample.REVIEWER, null, null, null),
+        LOT_NAME("s", Sample.LOT_NAME.getName(), "s.lot_name", Sample.LOT_NAME, null, null, null),
+        BULK_ID("s", Sample.BULK_ID.getName(), "s.bulk_id", Sample.BULK_ID, null, null, null),
+        BULK_NAME("s", Sample.BULK_NAME.getName(), "s.bulk_name", Sample.BULK_NAME, null, null, null),
+        RESULT_ID("sar", TblsData.SampleAnalysisResult.RESULT_ID.getName(), "sar.result_id", TblsData.SampleAnalysisResult.RESULT_ID, null, null, null),
+        TEST_ID("sar", TblsData.SampleAnalysis.TEST_ID.getName(), "sar.test_id", TblsData.SampleAnalysisResult.TEST_ID, null, null, null),
+        SAMPLE_ID("sar", TblsData.Sample.SAMPLE_ID.getName(), "sar.sample_id", TblsData.SampleAnalysisResult.SAMPLE_ID, null, null, null),
+        STATUS("sar", FIELDS_NAMES_STATUS, "sar.status", TblsData.SampleAnalysisResult.STATUS, null, null, null),
+        STATUS_PREVIOUS("sar", FIELDS_NAMES_STATUS_PREVIOUS, "sar.status_previous", TblsData.SampleAnalysisResult.STATUS_PREVIOUS, null, null, null),
+        ANALYSIS("sar", FIELDS_NAMES_ANALYSIS, "sar.analysis", TblsData.SampleAnalysisResult.ANALYSIS, null, null, null),
+        METHOD_NAME("sar", LPDatabase.FIELDS_NAMES_METHOD_NAME, "sar.method_name", TblsData.SampleAnalysisResult.METHOD_NAME, null, null, null),
+        METHOD_VERSION("sar", LPDatabase.FIELDS_NAMES_METHOD_VERSION, "sar.method_version", TblsData.SampleAnalysisResult.METHOD_VERSION, null, null, null),
+        REPLICA("sar", FIELDS_NAMES_REPLICA, "sar.replica", TblsData.SampleAnalysisResult.REPLICA, null, null, null),
+        PARAM_NAME("sar", "param_name", "sar.param_name", TblsData.SampleAnalysisResult.PARAM_NAME, null, null, null),
+        PARAM_TYPE("sar", "param_type", "sar.param_type", TblsData.SampleAnalysisResult.PARAM_TYPE, null, null, null),
+        MANDATORY("sar", "mandatory", "sar.mandatory", TblsData.SampleAnalysisResult.MANDATORY, null, null, null),
+        REQUIRES_LIMIT("sar", "requires_limit", "sar.requires_limit", TblsData.SampleAnalysisResult.REQUIRES_LIMIT, null, null, null),
+        RAW_VALUE("sar", "raw_value", "sar.raw_value", TblsData.SampleAnalysisResult.RAW_VALUE, null, null, null),
+        RAW_VALUE_NUM("sar", "raw_value_num", "case when isnumeric(sar.raw_value) then to_number(sar.raw_value::text, '9999'::text) else null end", TblsData.SampleAnalysisResult.REPLICA, null, null, null),
+        PRETTY_VALUE("sar", "pretty_value", "sar.pretty_value", TblsData.SampleAnalysisResult.PRETTY_VALUE, null, null, null),
+        ENTERED_ON("sar", "entered_on", "sar.entered_on", TblsData.SampleAnalysisResult.ENTERED_ON, null, null, null),
+        ENTERED_BY("sar", "entered_by", "sar.entered_by", TblsData.SampleAnalysisResult.ENTERED_BY, null, null, null),
+        REENTERED("sar", "reentered", "sar.reentered", TblsData.SampleAnalysisResult.REENTERED, null, null, null),
+        SPEC_EVAL("sar", FIELDS_NAMES_SPEC_EVAL, "sar.spec_eval", TblsData.SampleAnalysisResult.SPEC_EVAL, null, null, null),
+        SPEC_EVAL_DETAIL("sar", "spec_eval_detail", "sar.spec_eval_detail", TblsData.SampleAnalysisResult.SPEC_EVAL_DETAIL, null, null, null),
+        UOM("sar", "uom", "sar.uom", TblsData.SampleAnalysisResult.UOM, null, null, null),
+        UOM_CONVERSION_MODE("sar", "uom_conversion_mode", "sar.uom_conversion_mode", TblsData.SampleAnalysisResult.UOM_CONVERSION_MODE, null, null, null),
+        ALIQUOT_ID("sar", FIELDS_NAMES_ALIQUOT_ID, "sar.aliquot_id", TblsData.SampleAnalysisResult.ALIQUOT_ID, null, null, null),
+        SUBALIQUOT_ID("sar", FIELDS_NAMES_SUBALIQUOT_ID, "sar.subaliquot_id", TblsData.SampleAnalysisResult.SUBALIQUOT_ID, null, null, null),
+        MAX_DP("sar", "max_dp", "sar.max_dp", TblsData.SampleAnalysisResult.MAX_DP, null, null, null),
+        MIN_ALLOWED("sar", "min_allowed", "sar.min_allowed", TblsData.SampleAnalysisResult.MIN_ALLOWED, null, null, null),
+        MAX_ALLOWED("sar", "max_allowed", "sar.max_allowed", TblsData.SampleAnalysisResult.MAX_ALLOWED, null, null, null),
+        LIST_ENTRY("sar", "list_entry", "sar.list_entry", TblsData.SampleAnalysisResult.LIST_ENTRY, null, null, null),
+        SAMPLE_STATUS("s", "sample_status", "s.status", TblsData.Sample.STATUS, null, null, null),
+        CURRENT_STAGE("s", "current_stage", "s.current_stage", TblsData.Sample.CURRENT_STAGE, null, null, null),
+        SAMPLE_ANALYSIS_STATUS("ss", "sample_analysis_status", "sa.status", TblsData.SampleAnalysis.STATUS, null, null, null),
+        SAMPLE_ANALYSIS_READY_FOR_REVISION("sa", "sample_analysis_"+TblsData.SampleAnalysis.READY_FOR_REVISION.getName(), "sa.sample_analysis_"+TblsData.Sample.READY_FOR_REVISION.getName(), TblsData.SampleAnalysis.READY_FOR_REVISION, null, null, null),
+        TESTING_GROUP("sa", "testing_group", "sa.testing_group", TblsData.SampleAnalysis.TESTING_GROUP, null, null, null),
+        SAMPLE_ANALYSIS_REVIEWER("sa", "sample_analysis_reviewer", "sa.reviewer", TblsData.SampleAnalysis.REVIEWER, null, null, null),        
+        LOGGED_ON("s", "logged_on", "s.logged_on", TblsData.Sample.LOGGED_ON, null, null, null),
+        READY_FOR_REVISION("s", "sample_"+TblsData.Sample.READY_FOR_REVISION.getName(), "s."+TblsData.Sample.READY_FOR_REVISION.getName()+" AS sample_ready_for_revision ", TblsData.Sample.READY_FOR_REVISION, null, null, null),
+        LIMIT_ID("spcLim", "limit_id", "spcLim.limit_id", TblsCnfg.SpecLimits.LIMIT_ID, null, null, null),
+        SPEC_CODE("spcLim", "spec_code", "spcLim.code", TblsCnfg.SpecLimits.CODE, null, null, null),
+        SPEC_CONFIG_VERSION("spcLim", "spec_config_version", "spcLim.config_version", TblsCnfg.SpecLimits.CONFIG_VERSION, null, null, null),
+        SPEC_VARIATION_NAME("spcLim", "spec_variation_name", "spcLim.variation_name", TblsCnfg.SpecLimits.VARIATION_NAME, null, null, null),
+        ANALYSIS_SPEC_LIMITS("spcLim", "analysis_spec_limits", "spcLim.analysis", TblsCnfg.SpecLimits.ANALYSIS, null, null, null),
+        METHOD_NAME_SPEC_LIMITS("spcLim", "method_name_spec_limits", "spcLim.method_name", TblsCnfg.SpecLimits.METHOD_NAME, null, null, null),
+        METHOD_VERSION_SPEC_LIMITS("spcLim", "method_version_spec_limits", "spcLim.method_version", TblsCnfg.SpecLimits.METHOD_VERSION, null, null, null),
+        PARAMETER("spcLim", "parameter", "spcLim.parameter", TblsCnfg.SpecLimits.PARAMETER, null, null, null),
+        RULE_TYPE("spcLim", "rule_type", "spcLim.rule_type", TblsCnfg.SpecLimits.RULE_TYPE, null, null, null),
+        RULE_VARIABLES("spcLim", "rule_variables", "spcLim.rule_variables", TblsCnfg.SpecLimits.RULE_VARIABLES, null, null, null),
+        UOM_SPEC_LIMITS("spcLim", "uom_spec_limits", "spcLim.uom", TblsCnfg.SpecLimits.UOM, null, null, null),
+        UOM_CONVERSION_MODE_SPEC_LIMITS("spcLim", "uom_conversion_mode_spec_limits", "spcLim.uom_conversion_mode", TblsCnfg.SpecLimits.UOM_CONVERSION_MODE, null, null, null),
+        MIN_VAL_ALLOWED("spcLim", "min_val_allowed", "spcLim.min_val_allowed", TblsCnfg.SpecLimits.MIN_VAL_ALLOWED, null, null, null),
+        MAX_VAL_ALLOWED("spcLim", "max_val_allowed", "spcLim.max_val_allowed", TblsCnfg.SpecLimits.MAX_VAL_ALLOWED, null, null, null),
+        MIN_VAL_ALLOWED_IS_STRICT("spcLim", "min_allowed_strict", "spcLim.min_allowed_strict", TblsCnfg.SpecLimits.MIN_VAL_ALLOWED_IS_STRICT, null, null, null),
+        MAX_VAL_ALLOWED_IS_STRICT("spcLim", "max_allowed_strict", "spcLim.max_allowed_strict", TblsCnfg.SpecLimits.MAX_VAL_ALLOWED_IS_STRICT, null, null, null),
+        MIN_VAL_FOR_UNDETERMINED("spcLim", "min_undetermined", "spcLim.min_undetermined", TblsCnfg.SpecLimits.MIN_VAL_FOR_UNDETERMINED, null, null, null),
+        MAX_VAL_FOR_UNDETERMINED("spcLim", "max_undetermined", "spcLim.max_undetermined", TblsCnfg.SpecLimits.MAX_VAL_FOR_UNDETERMINED, null, null, null),
+        MIN_VAL_UNDETERMINED_IS_STRICT("spcLim", "min_undet_strict", "spcLim.min_undet_strict", TblsCnfg.SpecLimits.MIN_VAL_UNDETERMINED_IS_STRICT, null, null, null),
+        MAX_VAL_UNDETERMINED_IS_STRICT("spcLim", "max_undet_strict", "spcLim.max_undet_strict", TblsCnfg.SpecLimits.MAX_VAL_UNDETERMINED_IS_STRICT, null, null, null),
+        HAS_PREINVEST("pca", "has_pre_invest", "CASE WHEN pca.id IS NULL THEN 'NO' ELSE 'YES' END", TblsCnfg.SpecLimits.MAX_VAL_ALLOWED_IS_STRICT, null, null, null),
+        PREINVEST_ID("pca", "pre_invest_id", "pca.id", TblsProcedure.ProgramCorrectiveAction.ID, null, null, null),
+        HAS_INVEST("io", "has_invest", "CASE WHEN io.id IS NULL THEN 'NO' ELSE 'YES' END", TblsCnfg.SpecLimits.MAX_VAL_ALLOWED_IS_STRICT, null, null, null),
+        INVEST_ID("io", "invest_id", "io.invest_id", TblsProcedure.InvestObjects.INVEST_ID, null, null, null),
+        INVEST_OBJECT_ID("io", "invest_object_id", "io.id", TblsProcedure.InvestObjects.OBJECT_ID, null, null, null),
+        SAMPLE_REVIEWER("s", "sample_reviewer", "s.reviewer AS sample_reviewer", TblsData.Sample.REVIEWER, null, null, null),
         ;
-        private ViewSampleAnalysisResultWithSpecLimits(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
+        private ViewSampleAnalysisResultWithSpecLimits(String tblAliasInView,String name, String vwFldAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
             this.fldName=name;
-            this.fldAliasInView=vwAliasName;
+            this.fldAliasInView=vwFldAliasName;
             this.fldMask=fldMask;
             this.fldComment=comment;
             this.fldBusinessRules=busRules;
             this.fldObj=fldObj;
+            this.tblAliasInView=tblAliasInView;
 /*            }catch(Exception e){
                 String s= e.getMessage();
                 //String s2=name;
                 this.fldName="";
             }*/
         }
+        private final String tblAliasInView;
         private final String fldName;
         private final String fldAliasInView;
         private final EnumIntTableFields fldObj;
@@ -247,11 +248,12 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         private final String fldComment;
         private final FldBusinessRules[] fldBusinessRules;        
         @Override public String getName() {return fldName;}
-        @Override public String getViewAliasName() {return this.fldAliasInView;}
+        @Override public String getFldViewAliasName() {return this.fldAliasInView;}
         @Override public String getFieldMask() {return this.fldMask;}
         @Override public String getFieldComment() {return this.fldComment;}
         @Override public FldBusinessRules[] getFldBusinessRules() {return this.fldBusinessRules;}
         @Override public EnumIntTableFields getTableField() {return this.fldObj;}
+        @Override public String getTblAliasInView() {return this.tblAliasInView;}
     }        
 
 
@@ -719,19 +721,20 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }            
     public enum ViewSampleTestingGroup implements EnumIntViewFields{
-        SAMPLE_ID(Sample.SAMPLE_ID.getName(), "s.sample_id", Sample.SAMPLE_ID, null, null, null),
-        SAMPLE_CONFIG_CODE("sample_config_code", "s."+TblsData.Sample.CONFIG_CODE.getName(), Sample.CONFIG_CODE, null, null, null),
-        SAMPLE_STATUS("sample_status", "s.status as sample_status", Sample.STATUS, null, null, null),
-        CURRENT_STAGE("current_stage", "s.current_stage", Sample.CURRENT_STAGE, null, null, null),
-        LOT_NAME("lot_name", "s.lot_name", Sample.LOT_NAME, null, null, null),
-        TESTING_GROUP("testing_group", "stg.testing_group", TblsData.SampleRevisionTestingGroup.TESTING_GROUP, null, null, null),
-        READY_FOR_REVISION("ready_for_revision", "stg.ready_for_revision", TblsData.SampleRevisionTestingGroup.READY_FOR_REVISION, null, null, null),
-        REVIEWED("reviewed", "stg.reviewed", TblsData.SampleRevisionTestingGroup.REVIEWED, null, null, null),
-        REVISION_ON("revision_on", "stg.revision_on", TblsData.SampleRevisionTestingGroup.REVISION_ON, null, null, null),
-        REVISION_BY("revision_by", "stg.revision_by", TblsData.SampleRevisionTestingGroup.REVISION_BY, null, null, null)
+        SAMPLE_ID("s", Sample.SAMPLE_ID.getName(), "s.sample_id", Sample.SAMPLE_ID, null, null, null),
+        SAMPLE_CONFIG_CODE("s", "sample_config_code", "s."+TblsData.Sample.CONFIG_CODE.getName(), Sample.CONFIG_CODE, null, null, null),
+        SAMPLE_STATUS("s", "sample_status", "s.status as sample_status", Sample.STATUS, null, null, null),
+        CURRENT_STAGE("s", "current_stage", "s.current_stage", Sample.CURRENT_STAGE, null, null, null),
+        LOT_NAME("s", "lot_name", "s.lot_name", Sample.LOT_NAME, null, null, null),
+        TESTING_GROUP("stg", "testing_group", "stg.testing_group", TblsData.SampleRevisionTestingGroup.TESTING_GROUP, null, null, null),
+        READY_FOR_REVISION("stg", "ready_for_revision", "stg.ready_for_revision", TblsData.SampleRevisionTestingGroup.READY_FOR_REVISION, null, null, null),
+        REVIEWED("stg", "reviewed", "stg.reviewed", TblsData.SampleRevisionTestingGroup.REVIEWED, null, null, null),
+        REVISION_ON("stg", "revision_on", "stg.revision_on", TblsData.SampleRevisionTestingGroup.REVISION_ON, null, null, null),
+        REVISION_BY("stg", "revision_by", "stg.revision_by", TblsData.SampleRevisionTestingGroup.REVISION_BY, null, null, null)
         ;
-        private ViewSampleTestingGroup(String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
+        private ViewSampleTestingGroup(String tblAliasInView, String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
             this.fldName=name;
+            this.tblAliasInView = tblAliasInView;
             this.fldAliasInView=vwAliasName;
             this.fldMask=fldMask;
             this.fldComment=comment;
@@ -744,14 +747,15 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         private final String fldMask;
         private final String fldComment;
         private final FldBusinessRules[] fldBusinessRules; 
-        
+        private final String tblAliasInView;
         
         @Override public String getName() {return fldName;}
-        @Override public String getViewAliasName() {return this.fldAliasInView;}
+        @Override public String getFldViewAliasName() {return this.fldAliasInView;}
         @Override public String getFieldMask() {return this.fldMask;}
         @Override public String getFieldComment() {return this.fldComment;}
         @Override public FldBusinessRules[] getFldBusinessRules() {return this.fldBusinessRules;}
         @Override public EnumIntTableFields getTableField() {return this.fldObj;}
+        @Override public String getTblAliasInView() {return this.tblAliasInView;}
     } 
     
     
