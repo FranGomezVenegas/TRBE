@@ -1280,6 +1280,7 @@ public class ProcedureDefinitionToInstance {
                 }
             }
             Parameter parm = new Parameter();
+            
             parm.addProcBusinessRule(LpPlatformBusinessRules.PROCEDURE_ACTIONS.getAreaName(),
                     LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName(), allEnabledActions.toString());
             parm.addProcBusinessRule(LpPlatformBusinessRules.ESIGN_REQUIRED.getAreaName(),
