@@ -106,7 +106,7 @@ public class LPMath {
             Double.parseDouble(strNum);
         } catch (NumberFormatException nfe) {
             if (strNum.contains(",")) {
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.COMMA_IS_DECIMAL_SEPARATOR, null);
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.DOT_IS_DECIMAL_SEPARATOR, null);
             }
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.VALUE_NOT_NUMERIC, null);
         }
