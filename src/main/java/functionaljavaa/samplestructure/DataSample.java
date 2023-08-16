@@ -376,6 +376,7 @@ public class DataSample {
      * @return
      */
     public Object[] setSamplingDate(Integer sampleId) {
+        try{
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         Token token = procReqSession.getToken();
         String procInstanceName = procReqSession.getProcedureInstance();
@@ -407,6 +408,9 @@ public class DataSample {
                     sampleId, sampleId, null, null, sampleFieldName, sampleFieldValue);
         }
         return diagnoses;
+        }catch(Exception e){
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.UNHANDLED_EXCEPTION_IN_CODE, new Object[]{e.getMessage()});
+        }
     }
 
     public Object[] setSamplingDateEnd(Integer sampleId) {
