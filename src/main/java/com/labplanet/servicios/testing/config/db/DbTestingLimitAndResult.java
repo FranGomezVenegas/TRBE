@@ -260,8 +260,8 @@ public class DbTestingLimitAndResult extends HttpServlet {
                             resSpecEvaluation = specLimits[0];
                             resSpecEvaluation = LPArray.addValueToArray1D(resSpecEvaluation, "Regla No encontrada ");
                         } else {
-                            Integer limitId = (Integer) specLimits[0][0];
-                            String specUomName = (String) specLimits[0][4];
+                            Integer limitId = Integer.valueOf(specLimits[0][0].toString());
+                            String specUomName = specLimits[0][4].toString();
                             ConfigSpecRule specRule = new ConfigSpecRule();
                             specRule.specLimitsRule(limitId, null);
                             if (Boolean.FALSE.equals(specRule.getRuleIsQualitative()) && Boolean.FALSE.equals(specRule.getRuleIsQuantitative())) {
