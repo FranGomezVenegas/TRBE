@@ -112,7 +112,9 @@ public class TestingServer extends HttpServlet {
         request = LPHttp.requestPreparation(request);
         response = LPHttp.responsePreparation(response);
         try (PrintWriter out = response.getWriter()) {
+            out.println("automated upload ...");
           out.println(Mosquitto.sendMosquitto());
+          
 if (1==1)return;            
             Rdbms.stablishDBConection("labplanet");
             String procInstanceName = "inv-draft";
