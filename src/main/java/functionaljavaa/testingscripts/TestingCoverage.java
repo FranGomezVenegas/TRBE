@@ -513,7 +513,8 @@ public final class TestingCoverage {
         this.endpointsVisitedTotal = 0;
         this.endpointsMissingTotal = 0;
         this.endpointsCoverageDetail = new JSONObject();
-        this.procActionsArr = this.procBusRules.getProcedureBusinessRule(LPPlatform.LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName()).split("\\|");
+        this.procActionsArr = this.procBusRules.getProcedureBusinessRule(LPPlatform.LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName()).replaceAll("\\|\\|", "\\|").split("\\|");
+        this.procActionsArr = LPArray.getUniquesArray(this.procActionsArr);        
         this.msgCodeCoverageDetail = new JSONObject();
     }
 
