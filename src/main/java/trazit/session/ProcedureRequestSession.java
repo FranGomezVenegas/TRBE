@@ -513,19 +513,22 @@ public class ProcedureRequestSession {
         }
         return theSession;
     }
-
     public static Object[] isTheProcActionEnabled(Token tokn, String procInstanceName, String actionNm, BusinessRules procBusinessRules) {
+        return isTheProcActionEnabled(tokn, procInstanceName, actionNm, procBusinessRules, false);
+    }
+    public static Object[] isTheProcActionEnabled(Token tokn, String procInstanceName, String actionNm, BusinessRules procBusinessRules, Boolean isProcManagement) {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(tokn.getUserName())) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.INVALID_TOKEN, null);
         }
-
         Object[] actionEnabled = LPPlatform.procActionEnabled(procInstanceName, tokn, actionNm, procBusinessRules);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) {
             return actionEnabled;
         }
-        actionEnabled = LPPlatform.procUserRoleActionEnabled(procInstanceName, tokn.getUserRole(), actionNm, procBusinessRules);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) {
-            return actionEnabled;
+        if (Boolean.FALSE.equals(isProcManagement)){
+            actionEnabled = LPPlatform.procUserRoleActionEnabled(procInstanceName, tokn.getUserRole(), actionNm, procBusinessRules);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) {
+                return actionEnabled;
+            }
         }
 
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_FINE, null);

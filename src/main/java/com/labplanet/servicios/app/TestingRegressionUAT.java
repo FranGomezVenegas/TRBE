@@ -225,11 +225,11 @@ public class TestingRegressionUAT extends HttpServlet {
                                     new String[]{token.getUserName(), procInstanceName, userProceduresList})));
                             return;
                         }
-                        if (Boolean.FALSE.equals(isProcManagement)) {
+                        //if (Boolean.FALSE.equals(isProcManagement)) {
                             String[] actionsList = null;
                             for (Object[] curStep : scriptStepsTblInfo) {
                                 Object[] theProcActionEnabled = null;
-                                theProcActionEnabled = isTheProcActionEnabled(token, procInstanceName, (String) LPNulls.replaceNull(curStep[1]), bi);
+                                theProcActionEnabled = isTheProcActionEnabled(token, procInstanceName, (String) LPNulls.replaceNull(curStep[1]), bi, isProcManagement);
                                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(theProcActionEnabled[0].toString()) && Boolean.FALSE.equals(actionIsOneQuery(curStep[1].toString()))) {
                                     actionsList = LPArray.addValueToArray1D(actionsList, "Step " + curStep[0].toString() + ", Action:" + curStep[1].toString());
                                     Logger.getLogger("In the script " + scriptId + " and step " + LPNulls.replaceNull(curStep[0]).toString() + "the action" + LPNulls.replaceNull(curStep[1]).toString() + " is not enabled");
@@ -254,7 +254,14 @@ public class TestingRegressionUAT extends HttpServlet {
                                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.REGRESSIONTESTING_ACTIONSNOTALLOWEDFORPROC.getErrorCode(), new Object[]{procInstanceName, scriptId, Arrays.toString(actionsList), this.getServletName()}, language, null);
                                 return;
                             }
-                        }
+                        /*}else{
+                            for (Object[] curStep : scriptStepsTblInfo) {
+                                    TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
+                                    if (testingBusinessRulesVisitedObj != null) {
+                                        testingBusinessRulesVisitedObj.addObject(procInstanceName, "procedure", "ND", LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName() + LPNulls.replaceNull(curStep[1]).toString(), "ND");
+                                    }                                
+                            }                            
+                        }*/
                     }
                     RequestDispatcher rd = request.getRequestDispatcher(endPoints.getServletUrl());
                     rd.forward(request, response);
