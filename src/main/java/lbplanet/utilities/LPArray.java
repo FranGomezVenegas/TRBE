@@ -758,6 +758,8 @@ public class LPArray {
      */
     public static Object[][] addColumnToArray2D(Object[][] array, Object newValue) {
 
+        if (array==null)
+            array=new Object[][]{{}};
         Object[][] newArray = new Object[array.length][array[0].length + 1];
 
         for (int row = 0; row < array.length; row++) {
