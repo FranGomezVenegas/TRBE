@@ -203,7 +203,7 @@ public class DataSampleStages {
         }
 
         String sampleStageNextStage = Parameter.getBusinessRuleProcedureFile(procInstanceName, GlobalVariables.Schemas.DATA.getName(), LBL_PREFIX_SAMPLE_STAGE + currStage + "Next");
-        if (sampleStageNextStage.length() == 0) {
+        if (sampleStageNextStage.length() == 0||"NULL".equalsIgnoreCase(sampleStageNextStage)) {
             return new Object[]{LPPlatform.LAB_FALSE, "Next Stage is blank for " + currStage};
         }
 
@@ -233,7 +233,7 @@ public class DataSampleStages {
         }
 
         String sampleStagePreviousStage = Parameter.getBusinessRuleProcedureFile(procInstanceName, GlobalVariables.Schemas.DATA.getName(), LBL_PREFIX_SAMPLE_STAGE + currStage + "Previous");
-        if (sampleStagePreviousStage.length() == 0) {
+        if (sampleStagePreviousStage.length() == 0||"NULL".equalsIgnoreCase(sampleStagePreviousStage)) {
             return new Object[]{LPPlatform.LAB_FALSE, "Previous Stage is blank for " + currStage};
         }
 
@@ -378,7 +378,7 @@ public class DataSampleStages {
                     engine.eval(new FileReader(fileName));
                 } catch (FileNotFoundException ex2) {
                     Logger.getLogger(DataSampleStages.class.getName()).log(Level.SEVERE, null, ex2);
-                    return new Object[]{LPPlatform.LAB_TRUE, "FileNotFoundException", labelMsgError + ex2.getMessage()
+                    return new Object[]{LPPlatform.LAB_FALSE, "FileNotFoundException", labelMsgError + ex2.getMessage()
                         + "(tried two paths: " + "/app/" + procInstanceName + "-sample-stage.js" + " and " + LOD_JAVASCRIPT_LOCAL_FORMULA.replace(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME, procInstanceName) + ") "};
                 }
             }
