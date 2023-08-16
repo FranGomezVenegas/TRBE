@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPDate;
+import lbplanet.utilities.LPMath;
 
 
 /**
@@ -116,31 +117,45 @@ public class TestingConfigSpecQuantitativeRuleFormat extends HttpServlet {
                 if (testingContent[iLines][0]==null){tstAssertSummary.increasetotalLabPlanetBooleanUndefined();}
                 if (testingContent[iLines][1]==null){tstAssertSummary.increasetotalLabPlanetErrorCodeUndefined();}
 
-                Integer lineNumCols = testingContent[0].length-1;
+                Object[] resSpecEvaluation = new Object[0];
                 BigDecimal minSpec = null;
-                if (lineNumCols>=numEvaluationArguments)
-                    {minSpec = LPTestingOutFormat.csvExtractFieldValueBigDecimal(testingContent[iLines][tstOut.getActionNamePosic()]);}
                 BigDecimal minControl = null;
-                if (lineNumCols>=numEvaluationArguments+1)
-                    {minControl = LPTestingOutFormat.csvExtractFieldValueBigDecimal(testingContent[iLines][tstOut.getActionNamePosic()+1]);}
                 BigDecimal maxControl = null;
-                if (lineNumCols>=numEvaluationArguments+2)
-                    {maxControl = LPTestingOutFormat.csvExtractFieldValueBigDecimal(testingContent[iLines][tstOut.getActionNamePosic()+2]);}
                 BigDecimal maxSpec = null;
-                if (lineNumCols>=numEvaluationArguments+3)
-                    {maxSpec = LPTestingOutFormat.csvExtractFieldValueBigDecimal(testingContent[iLines][tstOut.getActionNamePosic()+3]);}
+                
+                Boolean hasErrors=false;
+                for (int i=0; i<4;i++){
+                    Object[] isNumeric=LPMath.isNumeric(testingContent[iLines][tstOut.getActionNamePosic()+i].toString());
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isNumeric[0].toString())){
+                        resSpecEvaluation=isNumeric;
+                        hasErrors=true;
+                    }                    
+                }
+                if (hasErrors){
                     
-                Object[] resSpecEvaluation = new Object[0];                
-                if (minControl==null){
-                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, getprettyValue(minSpec, false, "MIN"), getprettyValue(maxSpec, false, "MAX")}));
-                    resSpecEvaluation = mSpec.specLimitIsCorrectQuantitative(minSpec,maxSpec, minControl, maxControl);
                 }else{
-                    fileContentTable2Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, getprettyValue(minSpec, false, "MIN"), getprettyValue(minControl, false, "MIN"), getprettyValue(maxControl, false, "MAX"), getprettyValue(maxSpec, false, "MAX")}));
-                    resSpecEvaluation = mSpec.specLimitIsCorrectQuantitative(minSpec,maxSpec, minControl, maxControl);
-                }        
+                    Integer lineNumCols = testingContent[0].length-1;
+                    if (lineNumCols>=numEvaluationArguments){
+                        {minSpec = LPTestingOutFormat.csvExtractFieldValueBigDecimal(testingContent[iLines][tstOut.getActionNamePosic()]);}                
+                    }
+                    if (lineNumCols>=numEvaluationArguments+1)
+                        {minControl = LPTestingOutFormat.csvExtractFieldValueBigDecimal(testingContent[iLines][tstOut.getActionNamePosic()+1]);}
+                    if (lineNumCols>=numEvaluationArguments+2)
+                        {maxControl = LPTestingOutFormat.csvExtractFieldValueBigDecimal(testingContent[iLines][tstOut.getActionNamePosic()+2]);}
+                    if (lineNumCols>=numEvaluationArguments+3)
+                        {maxSpec = LPTestingOutFormat.csvExtractFieldValueBigDecimal(testingContent[iLines][tstOut.getActionNamePosic()+3]);}
+                    
+                    if (minControl==null){
+                        fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, getprettyValue(minSpec, false, "MIN"), getprettyValue(maxSpec, false, "MAX")}));
+                        resSpecEvaluation = mSpec.specLimitIsCorrectQuantitative(minSpec,maxSpec, minControl, maxControl);
+                    }else{
+                        fileContentTable2Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, getprettyValue(minSpec, false, "MIN"), getprettyValue(minControl, false, "MIN"), getprettyValue(maxControl, false, "MAX"), getprettyValue(maxSpec, false, "MAX")}));
+                        resSpecEvaluation = mSpec.specLimitIsCorrectQuantitative(minSpec,maxSpec, minControl, maxControl);
+                    }        
+                }
                 BigDecimal secondsInDateRange = LPDate.secondsInDateRange(timeStartedStep, LPDate.getCurrentTimeStamp(), true);
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(String.valueOf(secondsInDateRange)));
-                
+
                 if (numEvaluationArguments==0){                    
                     if (minControl==null){
                         fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(Arrays.toString(resSpecEvaluation)));                     
@@ -157,7 +172,7 @@ public class TestingConfigSpecQuantitativeRuleFormat extends HttpServlet {
                         fileContentTable2Builder.append(LPTestingOutFormat.rowAddFields(evaluate));                        
                         fileContentTable2Builder.append(LPTestingOutFormat.ROW_END);                                                
                     }
-                }
+                }                
             }    
             tstAssertSummary.notifyResults();
             fileContentTable1Builder.append(LPTestingOutFormat.TABLE_END);                                                
