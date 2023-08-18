@@ -74,7 +74,7 @@ public class MonitoringAPIactions extends HttpServlet {
                             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
                                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clssInv.getMessageDynamicData());
                             } else {
-                                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPointSmp, clssInv.getMessageDynamicData(), clssInv.getRelatedObj().getRelatedObject());
+                                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(InvestigationAPI.InvestigationAPIactionsEndpoints.valueOf(procReqInstance.getActionName().toUpperCase()), clssInv.getMessageDynamicData(), clssInv.getRelatedObj().getRelatedObject());
                                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
                             }
                         }
