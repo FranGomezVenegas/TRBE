@@ -61,7 +61,8 @@ public class UserSessionAPIqueries extends HttpServlet {
         USER_SESSIONS("USER_SESSIONS", "", new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_SESSION_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PERSON, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
             new LPAPIArguments(TblsApp.AppSession.DATE_STARTED.getName().toLowerCase(), LPAPIArguments.ArgumentType.DATE.toString(), false, 8),
-            new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 9)
+            new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 9),
+            new LPAPIArguments("sessionId", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 10)
         },
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TblsApp.TablesApp.APP_SESSION.getTableName()).build()).build(),
@@ -193,6 +194,11 @@ public class UserSessionAPIqueries extends HttpServlet {
                     }
                     SqlWhere sW = new SqlWhere();
                     sW.addConstraint(TblsApp.AppSession.PERSON, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{token.getPersonName()}, null);
+                    String sessionIdStr = LPNulls.replaceNull(request.getParameter("sessionId"));
+                    if (sessionIdStr.length() > 0) {
+                        int sessionIdInt = Integer.valueOf(sessionIdStr);
+                        sW.addConstraint(TblsApp.AppSession.SESSION_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sessionIdInt}, null);
+                    }                                        
 
                     String samplingDayStart = request.getParameter(TblsApp.AppSession.DATE_STARTED.getName().toLowerCase() + "_start");
                     String samplingDayEnd = request.getParameter(TblsApp.AppSession.DATE_STARTED.getName().toLowerCase() + "_end");
@@ -206,8 +212,8 @@ public class UserSessionAPIqueries extends HttpServlet {
                         }
                     }
                     String numDays = LPNulls.replaceNull(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_NUM_DAYS.toLowerCase()));
-                    if (LPNulls.replaceNull(samplingDayStart).length() == 0 && numDays.length() == 0) {
-                        numDays = "7";
+                    if (LPNulls.replaceNull(samplingDayStart).length() == 0 && numDays.length() == 0&&sW.getAllWhereEntries().size()<2) {
+                        numDays = "30";
                     }
                     if (numDays.length() > 0) {
                         int numDaysInt = 0 - Integer.valueOf(numDays);
@@ -215,6 +221,7 @@ public class UserSessionAPIqueries extends HttpServlet {
                         Date refAgoDays = LPDate.addDays(refDate, numDaysInt);
                         sW.addConstraint(TblsApp.AppSession.DATE_STARTED, SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{refAgoDays, refDate}, null);
                     }
+                    
                     Object[][] userSessionInfo = QueryUtilitiesEnums.getTableData(TblsApp.TablesApp.APP_SESSION,
                             EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.APP_SESSION, "ALL"),
                             sW, new String[]{TblsApp.AppSession.SESSION_ID.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
