@@ -12,6 +12,8 @@ import functionaljavaa.parameter.Parameter;
 import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceUtility.procedureRolesList;
 import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceUtility.procedureUsersList;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
+import functionaljavaa.testingscripts.LPTestingParams;
+import functionaljavaa.testingscripts.TestingScript;
 import static functionaljavaa.unitsofmeasurement.UnitsOfMeasurement.getUomFromConfig;
 import java.io.IOException;
 import java.util.Arrays;
@@ -87,15 +89,19 @@ public class ClassReqProcedureActions {
             this.messageDynamicData = new Object[]{argValues[2].toString()};
             return;
         }
-        String procedureName = argValues[0].toString();
-        Integer procedureVersion = (Integer) argValues[1];
-        String procInstanceName = argValues[2].toString();
-        if (Boolean.TRUE.equals(isProcInstLocked(procedureName, procedureVersion, procInstanceName))) {
-            LPFrontEnd.servletReturnResponseError(request, response,
-                    ReqProcedureDefinitionErrorTraping.INSTANCE_LOCKED_FOR_ACTIONS.getErrorCode(), new Object[]{procedureName, procedureVersion, procInstanceName}, DEFAULTLANGUAGE, LPPlatform.ApiErrorTraping.class.getSimpleName());
-            return;
+        String procedureName = null;
+        Integer procedureVersion = null;
+        String procInstanceName = null;
+        if (Boolean.FALSE.equals("SUGGEST_SPEC_LIMITS_TESTING".equalsIgnoreCase(endPoint.getName()))){
+            procedureName = argValues[0].toString();
+            procedureVersion = (Integer) argValues[1];
+            procInstanceName = argValues[2].toString();
+            if (Boolean.TRUE.equals(isProcInstLocked(procedureName, procedureVersion, procInstanceName))) {
+                LPFrontEnd.servletReturnResponseError(request, response,
+                        ReqProcedureDefinitionErrorTraping.INSTANCE_LOCKED_FOR_ACTIONS.getErrorCode(), new Object[]{procedureName, procedureVersion, procInstanceName}, DEFAULTLANGUAGE, LPPlatform.ApiErrorTraping.class.getSimpleName());
+                return;
+            }
         }
-
         this.functionFound = true;
         switch (endPoint) {
             case SET_PROCEDURE_BUSINESS_RULES:
@@ -300,21 +306,26 @@ public class ClassReqProcedureActions {
                 }
                 break;
             case SUGGEST_SPEC_LIMITS_TESTING:
-                procedureName = argValues[0].toString();
-                procedureVersion = (Integer) argValues[1];
+                procedureName = LPNulls.replaceNull(argValues[0]).toString();                
+                procedureVersion=null;
+                String procedureVersionStr = LPNulls.replaceNull(argValues[1]).toString();
+                if (procedureVersionStr.length()>0)
+                    procedureVersion=Integer.valueOf(procedureVersionStr);
                 procInstanceName = argValues[2].toString();
                 String spec = argValues[3].toString();
                 Integer specVersion = null;
                 if (LPNulls.replaceNull(argValues[4]).toString().length() > 0) {
                     specVersion = (Integer) argValues[4];
                 }
-                Integer testScriptId = null;
-                if (LPNulls.replaceNull(argValues[5]).toString().length() > 0) {
-                    testScriptId = (Integer) argValues[5];
+                Object[] testing = DataSpec.suggestTestingForSpec(spec, specVersion);
+                Boolean saveScript=Boolean.valueOf(LPNulls.replaceNull(argValues[5]).toString());
+                Object[][] testingData=(Object[][]) testing[1];
+                
+                if (saveScript && testingData.length>0){
+                    TestingScript.newScript(LPTestingParams.TestingServletsConfig.DB_SCHEMACONFIG_SPEC_RESULTCHECK.name(), true, (String[]) testing[0], (Object[][]) testing[1]);
                 }
-                Object[] testing = DataSpec.suggestTestingForSpec("Calcium Carbonate", specVersion, testScriptId);
                 JSONArray jArr = new JSONArray();
-                for (Object[] curRow : (Object[][]) testing[1]) {
+                for (Object[] curRow : testingData) {
                     jArr.add(LPJson.convertArrayRowToJSONObject((String[]) testing[0], curRow));
                 }
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);

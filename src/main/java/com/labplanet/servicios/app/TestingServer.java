@@ -85,6 +85,7 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntViewFields;
+import static trazit.procedureinstance.definition.apis.ReqProcedureDefinitionQueries.getScriptWithSteps;
 import trazit.procedureinstance.definition.logic.ClassReqProcedUserAndActions;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
@@ -112,6 +113,8 @@ public class TestingServer extends HttpServlet {
         request = LPHttp.requestPreparation(request);
         response = LPHttp.responsePreparation(response);
         try (PrintWriter out = response.getWriter()) {
+            Rdbms.stablishDBConection("labplanet");
+            JSONObject myData=getScriptWithSteps(11, "em-demo-a", null, null);
             out.println("automated upload ...");
           out.println(Mosquitto.sendMosquitto());
           

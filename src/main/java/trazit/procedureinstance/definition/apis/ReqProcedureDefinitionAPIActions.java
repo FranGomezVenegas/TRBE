@@ -67,6 +67,9 @@ public class ReqProcedureDefinitionAPIActions extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             ClassReqProcedureActions clss=new ClassReqProcedureActions(request, response, endPoint);
             Object[] diagnostic=clss.getDiagnostic();
+            if (diagnostic==null){
+                return;
+            }
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clss.getMessageDynamicData());   
             }else{

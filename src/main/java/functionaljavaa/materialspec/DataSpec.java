@@ -9,6 +9,7 @@ import databases.Rdbms;
 import databases.TblsCnfg;
 import functionaljavaa.materialspec.ConfigSpecRule.qualitativeRules;
 import functionaljavaa.materialspec.ConfigSpecRule.qualitativeRulesErrors;
+import functionaljavaa.parameter.Parameter;
 import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleStructureSuccess;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
@@ -501,115 +502,143 @@ public class DataSpec {
         return diagnoses;
     }
 
-    public static Object[] suggestTestingForSpec(String spec, Integer specVersion, Integer testScriptId) {
+    public static Object[] suggestTestingForSpec(String spec, Integer specVersion) {
 
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
+        String[] fldsToGetArr = new String[]{
+            TblsCnfg.SpecLimits.CODE.getName(), TblsCnfg.SpecLimits.CONFIG_VERSION.getName(), TblsCnfg.SpecLimits.LIMIT_ID.getName(),
+            TblsCnfg.SpecLimits.VARIATION_NAME.getName(), TblsCnfg.SpecLimits.ANALYSIS.getName(), TblsCnfg.SpecLimits.PARAMETER.getName(),
+            TblsCnfg.SpecLimits.METHOD_NAME.getName(), TblsCnfg.SpecLimits.METHOD_VERSION.getName(),
+            TblsCnfg.SpecLimits.MIN_VAL_ALLOWED.getName(), TblsCnfg.SpecLimits.MAX_VAL_ALLOWED.getName(),
+            TblsCnfg.SpecLimits.SPEC_TEXT_EN.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_ES.getName(),
+            TblsCnfg.SpecLimits.SPEC_TEXT_GREEN_AREA_EN.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_GREEN_AREA_ES.getName(),
+            TblsCnfg.SpecLimits.SPEC_TEXT_YELLOW_AREA_EN.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_YELLOW_AREA_ES.getName(),
+            TblsCnfg.SpecLimits.SPEC_TEXT_RED_AREA_EN.getName(), TblsCnfg.SpecLimits.SPEC_TEXT_RED_AREA_ES.getName()};        
+
         Object[][] specLimits = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(),
                 new String[]{TblsCnfg.SpecLimits.CODE.getName(), TblsCnfg.SpecLimits.CONFIG_VERSION.getName()}, new Object[]{spec, specVersion},
-                new String[]{TblsCnfg.SpecLimits.CODE.getName(), TblsCnfg.SpecLimits.CONFIG_VERSION.getName(), TblsCnfg.SpecLimits.LIMIT_ID.getName(),
-                    TblsCnfg.SpecLimits.VARIATION_NAME.getName(), TblsCnfg.SpecLimits.ANALYSIS.getName(), TblsCnfg.SpecLimits.METHOD_NAME.getName(), TblsCnfg.SpecLimits.MIN_VAL_ALLOWED.getName(), TblsCnfg.SpecLimits.MAX_VAL_ALLOWED.getName()});
+                fldsToGetArr, new String[]{TblsCnfg.SpecLimits.VARIATION_NAME.getName(), TblsCnfg.SpecLimits.ANALYSIS.getName()});
         if ((LPPlatform.LAB_FALSE.equalsIgnoreCase(specLimits[0][0].toString())) && (Boolean.FALSE.equals(Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode().equalsIgnoreCase(specLimits[0][4].toString())))) {
             return specLimits;
         }
-        Object[] allResults = new Object[]{};
-        Integer numPosicsPerRow = 4;
-        String[] fldsArr = new String[]{"limit_id", "value_to_check", "reason", "evaluation"};
+        Object[] allResults = new Object[]{};        
+        String[] fldsArr = LPArray.addValueToArray1D(fldsToGetArr, new String[]{"rule_representation", "suggested_value", "reason", "evaluation"
+        , "evaluation_pretty_en", "evaluation_pretty_es"    
+        });
+        try{
         for (Object[] curRow : specLimits) {
-            Integer specLimitId = Integer.valueOf(LPNulls.replaceNull(curRow[2]).toString());
+            Object[] newRowFix=LPArray.addValueToArray1D(new Object[]{}, curRow);
+            Integer specLimitId = Integer.valueOf(LPNulls.replaceNull(curRow[LPArray.valuePosicInArray(fldsToGetArr, TblsCnfg.SpecLimits.LIMIT_ID.getName())]).toString());
             ConfigSpecRule specRule = new ConfigSpecRule();
             specRule.specLimitsRule(specLimitId, null);
             Object[] resSpecEvaluation = null;
             DataSpec resChkSpec = new DataSpec();
             String reason = "";
-            String reasonInfo = "Variation:" + LPNulls.replaceNull(curRow[3]).toString();
-            reasonInfo = reasonInfo + ".Analysis:" + LPNulls.replaceNull(curRow[4]).toString();
-            reasonInfo = reasonInfo + ".Method:" + LPNulls.replaceNull(curRow[5]).toString();
             BigDecimal minAllowed = null;
-            if (LPNulls.replaceNull(curRow[6]).toString().length() > 0) {
-                minAllowed = BigDecimal.valueOf(Double.valueOf(LPNulls.replaceNull(curRow[6]).toString()));
+            if (LPNulls.replaceNull(curRow[LPArray.valuePosicInArray(fldsToGetArr, TblsCnfg.SpecLimits.MIN_VAL_ALLOWED.getName())]).toString().length() > 0) {
+                minAllowed = BigDecimal.valueOf(Double.valueOf(LPNulls.replaceNull(curRow[LPArray.valuePosicInArray(fldsToGetArr, TblsCnfg.SpecLimits.MIN_VAL_ALLOWED.getName())]).toString()));
             }
             BigDecimal maxAllowed = null;
-            if (LPNulls.replaceNull(curRow[7]).toString().length() > 0) {
-                maxAllowed = BigDecimal.valueOf(Double.valueOf(LPNulls.replaceNull(curRow[7]).toString()));
+            if (LPNulls.replaceNull(curRow[LPArray.valuePosicInArray(fldsToGetArr, TblsCnfg.SpecLimits.MAX_VAL_ALLOWED.getName())]).toString().length() > 0) {
+                maxAllowed = BigDecimal.valueOf(Double.valueOf(LPNulls.replaceNull(curRow[LPArray.valuePosicInArray(fldsToGetArr, TblsCnfg.SpecLimits.MAX_VAL_ALLOWED.getName())]).toString()));
             }
             if (Boolean.TRUE.equals(specRule.getRuleIsQualitative())) {
                 String resultValue = specRule.getQualitativeRuleValues();
                 for (String curVal : resultValue.split("\\|")) {
-                    reason = reasonInfo + ". One of the values that contains the rule";
+                    reason = "One of the values that contains the rule";
                     resSpecEvaluation = resChkSpec.resultCheck((String) curVal, specRule.getQualitativeRule(),
                             specRule.getQualitativeRuleValues(), specRule.getQualitativeRuleSeparator(), specRule.getQualitativeRuleListName());
-                    Object[] newRow = new Object[]{specLimitId, curVal, reason,
-                        resSpecEvaluation[resSpecEvaluation.length - 1].toString()};
+                    Object[] newRow = LPArray.addValueToArray1D(newRowFix, new Object[]{LPNulls.replaceNull(specRule.getRuleRepresentation()), curVal, reason,
+                        resSpecEvaluation[resSpecEvaluation.length - 1].toString()});
+                    newRow = LPArray.addValueToArray1D(newRow, new String[]{getEvaluationPrettyValue(resSpecEvaluation[resSpecEvaluation.length - 1].toString(), "en"), getEvaluationPrettyValue(resSpecEvaluation[resSpecEvaluation.length - 1].toString(), "es")});
                     allResults = LPArray.addValueToArray1D(allResults, newRow);
                     resSpecEvaluation = resChkSpec.resultCheck("NOOOOT " + curVal, specRule.getQualitativeRule(),
                             specRule.getQualitativeRuleValues(), specRule.getQualitativeRuleSeparator(), specRule.getQualitativeRuleListName());
-                    reason = reasonInfo + ". Opposite to one of the values that contains the rule";
-                    newRow = new Object[]{specLimitId, "NOOOOT " + curVal, reason,
-                        resSpecEvaluation[resSpecEvaluation.length - 1].toString()};
+                    reason = "Opposite to one of the values that contains the rule";
+                    newRow = LPArray.addValueToArray1D(newRowFix, new Object[]{LPNulls.replaceNull(specRule.getRuleRepresentation()), "NOOOOT " + curVal, reason,
+                        resSpecEvaluation[resSpecEvaluation.length - 1].toString()});   
+                    newRow = LPArray.addValueToArray1D(newRow, new String[]{getEvaluationPrettyValue(resSpecEvaluation[resSpecEvaluation.length - 1].toString(), "en"), getEvaluationPrettyValue(resSpecEvaluation[resSpecEvaluation.length - 1].toString(), "es")});
                     allResults = LPArray.addValueToArray1D(allResults, newRow);
                 }
             } else {
                 if (specRule.getMinControl() != null) {
                     BigDecimal[] curValArr = new BigDecimal[]{specRule.getMinControl().add(BigDecimal.valueOf(0.00001)), specRule.getMinControl(), specRule.getMinControl().subtract(BigDecimal.valueOf(0.00001))};
                     for (BigDecimal curVal : curValArr) {
-                        reason = reasonInfo + ". Value due to it has " + specRule.getMinControl().toString() + " as Min Control";
+                        reason = "Value due to it has " + specRule.getMinControl().toString() + " as Min Control";
                         resSpecEvaluation = resChkSpec.resultCheck(curVal, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
-                        Object[] newRow = new Object[]{specLimitId, curVal, reason, resSpecEvaluation[resSpecEvaluation.length - 1].toString()};
+                        Object[] newRow = LPArray.addValueToArray1D(newRowFix, new Object[]{LPNulls.replaceNull(specRule.getRuleRepresentation()), curVal, reason, resSpecEvaluation[resSpecEvaluation.length - 1].toString()});
+                        newRow = LPArray.addValueToArray1D(newRow, new String[]{getEvaluationPrettyValue(resSpecEvaluation[resSpecEvaluation.length - 1].toString(), "en"), getEvaluationPrettyValue(resSpecEvaluation[resSpecEvaluation.length - 1].toString(), "es")});
                         allResults = LPArray.addValueToArray1D(allResults, newRow);
                     }
                 }
                 if (specRule.getMinSpec() != null) {
                     BigDecimal[] curValArr = new BigDecimal[]{specRule.getMinSpec().add(BigDecimal.valueOf(0.00001)), specRule.getMinSpec(), specRule.getMinSpec().subtract(BigDecimal.valueOf(0.00001))};
                     for (BigDecimal curVal : curValArr) {
-                        reason = reasonInfo + ". Value due to it has " + specRule.getMinSpec().toString() + " as Min Spec";
+                        reason = "Value due to it has " + specRule.getMinSpec().toString() + " as Min Spec";
                         resSpecEvaluation = resChkSpec.resultCheck(curVal, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
-                        Object[] newRow = new Object[]{specLimitId, curVal, reason, resSpecEvaluation[resSpecEvaluation.length - 1].toString()};
+                        Object[] newRow = LPArray.addValueToArray1D(newRowFix, new Object[]{LPNulls.replaceNull(specRule.getRuleRepresentation()), curVal, reason, resSpecEvaluation[resSpecEvaluation.length - 1].toString()});
+                        newRow = LPArray.addValueToArray1D(newRow, new String[]{getEvaluationPrettyValue(resSpecEvaluation[resSpecEvaluation.length - 1].toString(), "en"), getEvaluationPrettyValue(resSpecEvaluation[resSpecEvaluation.length - 1].toString(), "es")});
                         allResults = LPArray.addValueToArray1D(allResults, newRow);
                     }
                 }
                 if (specRule.getMaxSpec() != null) {
                     BigDecimal[] curValArr = new BigDecimal[]{specRule.getMaxSpec().subtract(BigDecimal.valueOf(0.00001)), specRule.getMaxSpec(), specRule.getMaxSpec().add(BigDecimal.valueOf(0.00001))};
                     for (BigDecimal curVal : curValArr) {
-                        reason = reasonInfo + ". Value due to it has " + specRule.getMaxSpec().toString() + " as Max Spec";
+                        reason = "Value due to it has " + specRule.getMaxSpec().toString() + " as Max Spec";
                         resSpecEvaluation = resChkSpec.resultCheck(curVal, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
-                        Object[] newRow = new Object[]{specLimitId, curVal, reason, resSpecEvaluation[resSpecEvaluation.length - 1].toString()};
+                        Object[] newRow = LPArray.addValueToArray1D(newRowFix, new Object[]{LPNulls.replaceNull(specRule.getRuleRepresentation()), curVal, reason, resSpecEvaluation[resSpecEvaluation.length - 1].toString()});
+                        newRow = LPArray.addValueToArray1D(newRow, new String[]{getEvaluationPrettyValue(resSpecEvaluation[resSpecEvaluation.length - 1].toString(), "en"), getEvaluationPrettyValue(resSpecEvaluation[resSpecEvaluation.length - 1].toString(), "es")});
                         allResults = LPArray.addValueToArray1D(allResults, newRow);
                     }
                 }
                 if (specRule.getMaxControl() != null) {
                     BigDecimal[] curValArr = new BigDecimal[]{specRule.getMaxControl().subtract(BigDecimal.valueOf(0.00001)), specRule.getMaxControl(), specRule.getMaxControl().add(BigDecimal.valueOf(0.00001))};
                     for (BigDecimal curVal : curValArr) {
-                        reason = reasonInfo + ". Value due to it has " + specRule.getMaxControl().toString() + " as Max Control";
+                        reason = "Value due to it has " + specRule.getMaxControl().toString() + " as Max Control";
                         resSpecEvaluation = resChkSpec.resultCheck(curVal, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
-                        Object[] newRow = new Object[]{specLimitId, curVal, reason, resSpecEvaluation[resSpecEvaluation.length - 1].toString()};
+                        Object[] newRow = LPArray.addValueToArray1D(newRowFix, new Object[]{LPNulls.replaceNull(specRule.getRuleRepresentation()), curVal, reason, resSpecEvaluation[resSpecEvaluation.length - 1].toString()});
+                        newRow = LPArray.addValueToArray1D(newRow, new String[]{getEvaluationPrettyValue(resSpecEvaluation[resSpecEvaluation.length - 1].toString(), "en"), getEvaluationPrettyValue(resSpecEvaluation[resSpecEvaluation.length - 1].toString(), "es")});
                         allResults = LPArray.addValueToArray1D(allResults, newRow);
                     }
                 }
                 if (minAllowed != null) {
                     BigDecimal[] curValArr = new BigDecimal[]{minAllowed.add(BigDecimal.valueOf(0.00001)), minAllowed, minAllowed.subtract(BigDecimal.valueOf(0.00001))};
                     for (BigDecimal curVal : curValArr) {
-                        reason = reasonInfo + ". Value due to it has " + minAllowed.toString() + " as Min Allowed";
+                        reason = "Value due to it has " + minAllowed.toString() + " as Min Allowed";
                         resSpecEvaluation = resChkSpec.resultCheck(curVal, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
-                        Object[] newRow = new Object[]{specLimitId, curVal, reason, resSpecEvaluation[resSpecEvaluation.length - 1].toString()};
+                        Object[] newRow = LPArray.addValueToArray1D(newRowFix, new Object[]{LPNulls.replaceNull(specRule.getRuleRepresentation()), curVal, reason, resSpecEvaluation[resSpecEvaluation.length - 1].toString()});
+                        newRow = LPArray.addValueToArray1D(newRow, new String[]{getEvaluationPrettyValue(resSpecEvaluation[resSpecEvaluation.length - 1].toString(), "en"), getEvaluationPrettyValue(resSpecEvaluation[resSpecEvaluation.length - 1].toString(), "es")});
                         allResults = LPArray.addValueToArray1D(allResults, newRow);
                     }
                 }
                 if (maxAllowed != null) {
                     BigDecimal[] curValArr = new BigDecimal[]{maxAllowed.add(BigDecimal.valueOf(0.00001)), maxAllowed, maxAllowed.subtract(BigDecimal.valueOf(0.00001))};
                     for (BigDecimal curVal : curValArr) {
-                        reason = reasonInfo + ". Value due to it has " + maxAllowed.toString() + " as Max Allowed";
+                        reason = "Value due to it has " + maxAllowed.toString() + " as Max Allowed";
                         resSpecEvaluation = resChkSpec.resultCheck(curVal, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
-                        Object[] newRow = new Object[]{specLimitId, curVal, reason, resSpecEvaluation[resSpecEvaluation.length - 1].toString()};
+                        Object[] newRow = LPArray.addValueToArray1D(newRowFix, new Object[]{LPNulls.replaceNull(specRule.getRuleRepresentation()), curVal, reason, resSpecEvaluation[resSpecEvaluation.length - 1].toString()});
+                        newRow = LPArray.addValueToArray1D(newRow, new String[]{getEvaluationPrettyValue(resSpecEvaluation[resSpecEvaluation.length - 1].toString(), "en"), getEvaluationPrettyValue(resSpecEvaluation[resSpecEvaluation.length - 1].toString(), "es")});
                         allResults = LPArray.addValueToArray1D(allResults, newRow);
                     }
                 }
             }
-
         }
-        if (testScriptId!=null){
-            
+        }catch(Exception e){
+            String errMsg=e.getMessage();
         }
-        return new Object[]{fldsArr, LPArray.array1dTo2d(allResults, numPosicsPerRow)};
+        return new Object[]{fldsArr, LPArray.array1dTo2d(allResults, fldsArr.length)};
     }
+    
+    public static String getEvaluationPrettyValue(String evalCodeStr, String lang){
+        //errorDetail = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_ERRORTRAPING, null, msgCode, language, callerInfo, true, className);
+        try{
+            DataSampleStructureSuccess.valueOf(evalCodeStr);
+            return Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE + "DataSampleStructureSuccess", null, DataSampleStructureSuccess.valueOf(evalCodeStr).getErrorCode(), lang, null, true, null);// DataSampleStructureSuccess.getClass().getSimpleName());
+        }catch(Exception e){
+            return "*** code not found "+evalCodeStr;
+        }
+        
+    }
+            
 }

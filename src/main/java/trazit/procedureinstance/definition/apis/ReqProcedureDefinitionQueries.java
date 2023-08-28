@@ -517,7 +517,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
             return curTestObj;
         }
         curTestObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieveScripts, curTest);
-        String[] fieldsToRetrieveScriptSteps = EnumIntTableFields.getAllFieldNames(TblsTesting.TablesTesting.SCRIPT_STEPS);
+        String[] fieldsToRetrieveScriptSteps = EnumIntTableFields.getAllFieldNames(TblsTesting.TablesTesting.SCRIPT_STEPS, procInstanceName);
         Integer scriptIdPosic = LPArray.valuePosicInArray(fieldsToRetrieveScripts, TblsTesting.Script.SCRIPT_ID.getName());
         if (scriptIdPosic > -1) {
             Object[][] scriptStepsTblInfo = Rdbms.getRecordFieldsByFilter(repositoryName, TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(),
