@@ -215,6 +215,11 @@ public class ProcedureRequestSession {
                 }
                 this.procedureInstance = procInstanceName;
             }
+            if (procInstanceName==null||procInstanceName.length()==0){
+                    this.hasErrors = true;
+                    this.errorMessage = "procInstanceName argument not found and is mandatory";
+                    return;                
+            }
             if (this.token != null && !isPlatform) {
                 this.procedureVersion = this.token.getProcedureInstanceVersion(procInstanceName);
                 this.procedureHashCode = this.token.getProcedureInstanceHashCode(procInstanceName);
