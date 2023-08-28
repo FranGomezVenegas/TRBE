@@ -234,6 +234,13 @@ public class InstrumentsEnums {
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build(),
                 null, null),
+        CONFIG_NEW_INSTRUMENT_FAMILY("CONFIG_NEW_INSTRUMENT_FAMILY", GlobalAPIsParams.REQUEST_PARAM_INSTRUMENT_NAME, "", "configInstrumentFamilyCreated_success",
+                new LPAPIArguments[]{new LPAPIArguments("instrFamilyName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
+                    new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 8),},
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
+                        .add(GlobalAPIsParams.LBL_TABLE, TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build(),
+                null, null),  
         CONFIG_UPDATE_INSTRUMENT_FAMILY("CONFIG_UPDATE_INSTRUMENT_FAMILY", GlobalAPIsParams.REQUEST_PARAM_INSTRUMENT_NAME, "", "instrumentServiceStarted_success",
                 new LPAPIArguments[]{new LPAPIArguments("instrFamilyName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),

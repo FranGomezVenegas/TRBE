@@ -563,6 +563,28 @@ public class ClassInstruments {
                     break;
                 }
                 break;
+            case CONFIG_NEW_INSTRUMENT_FAMILY:
+                instrName = argValues[0].toString();
+                fieldName = argValues[1].toString();
+                fieldValue = argValues[2].toString();
+                fieldNames = null;
+                fieldValues = null;
+                if (fieldValue != null && fieldValue.length() > 0) {
+                    if (fieldName != null) {
+                        fieldNames = fieldName.split("\\|");
+                    }
+                    fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
+                }
+                if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                    actionDiagnoses = (InternalMessage) fieldValues[1];
+                } else {
+                    actionDiagnoses = ConfigInstrumentsFamily.configNewInstrumentFamily(instrName, fieldNames, fieldValues);
+                }
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(), actionDiagnoses.getNewObjectId());
+                }
+                break;                
             case CONFIG_UPDATE_INSTRUMENT_FAMILY:
                 instrName = argValues[0].toString();
                 fieldName = argValues[1].toString();
