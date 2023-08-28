@@ -50,9 +50,9 @@ public class ConfigInstrumentsFamily {
         RdbmsObject updateTableRecordFieldsByFilter = Rdbms.insertRecordInTable(TblsInstrumentsConfig.TablesInstrumentsConfig.INSTRUMENTS_FAMILY,
                 fieldNames, fieldValues);
         if (updateTableRecordFieldsByFilter.getRunSuccess()) {
-            AppInstrumentsAudit.instrumentsConfigAuditAdd(InstrumentsEnums.AppConfigInstrumentsAuditEvents.INSTRUMENT_FAMILY_UPDATED, TblsInstrumentsConfigAudit.TablesInstrumentsConfigAudit.INSTRUMENTS_FAMILY, family,
+            AppInstrumentsAudit.instrumentsConfigAuditAdd(InstrumentsEnums.AppConfigInstrumentsAuditEvents.INSTRUMENT_FAMILY_CREATED, TblsInstrumentsConfigAudit.TablesInstrumentsConfigAudit.INSTRUMENTS_FAMILY, family,
                     fieldNames, fieldValues);
-            messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.CONFIG_UPDATE_INSTRUMENT_FAMILY, new Object[]{family});
+            messages.addMainForSuccess(InstrumentsEnums.InstrumentsAPIactionsEndpoints.CONFIG_NEW_INSTRUMENT_FAMILY, new Object[]{family});
             return new InternalMessage(LPPlatform.LAB_TRUE, InstrEventsErrorTrapping.EVENT_NOTHING_PENDING, null, null);
         } else {
             return new InternalMessage(LPPlatform.LAB_FALSE, updateTableRecordFieldsByFilter.getErrorMessageCode(), updateTableRecordFieldsByFilter.getErrorMessageVariables(), null);
