@@ -38,7 +38,10 @@ public class DataSampleStructureEnums {
         EVALUATION_IN("IN", "", ""),
         EVALUATION_OUT("OUT", "", ""),
         EVALUATION_UPON_CONTROL_MIN("inAlertMin", "", ""),
-        EVALUATION_UPON_CONTROL_MAX("inAlertMax", "", ""),;
+        EVALUATION_UPON_CONTROL_MAX("inAlertMax", "", ""), 
+        QUANTITATIVE_LESS_THAN_MIN_VAL_ALLOWED("lessThanMinAllowedValue", "", ""),
+        QUANTITATIVE_GREATER_THAN_MAX_VAL_ALLOWED("greaterThanMaxAllowedValue", "", ""),
+        ;
 
         DataSampleStructureSuccess(String cl, String msgEn, String msgEs) {
             this.errorCode = cl;
