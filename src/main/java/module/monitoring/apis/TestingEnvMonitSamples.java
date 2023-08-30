@@ -168,7 +168,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
                                 fileContentTable1Builder.append(clssEnvMonIncubController.getRowArgsRows());  
                                 clssEnvMonIncubController=null;
                             }else{                            
-                                ClassEnvMonQueriesController clssEnvMonQueriesController=new ClassEnvMonQueriesController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
+                                ClassEnvMonQueriesController clssEnvMonQueriesController=new ClassEnvMonQueriesController(request, response, actionName.toString(), testingContent, iLines, table1NumArgs);
                                 if (Boolean.TRUE.equals(clssEnvMonQueriesController.getFunctionFound())){
                                     functionRelatedObjects=clssEnvMonQueriesController.getFunctionRelatedObjects();
                                     functionEvaluation=(Object[]) clssEnvMonQueriesController.getFunctionDiagn();
