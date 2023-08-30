@@ -5,13 +5,9 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
-import module.monitoring.definition.ClassEnvMon;
 import module.monitoring.definition.TblsEnvMonitData;
 import module.monitoring.definition.TblsEnvMonitConfig;
 import lbplanet.utilities.LPArray;
-import lbplanet.utilities.LPFrontEnd;
-import lbplanet.utilities.LPHttp;
-import lbplanet.utilities.LPPlatform;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.TblsData;
 import databases.TblsProcedure;
@@ -28,7 +24,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.LPFrontEnd;
+import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPNulls;
+import lbplanet.utilities.LPPlatform;
+import module.monitoring.definition.ClassEnvMon;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
@@ -192,7 +192,6 @@ public class EnvMonAPI extends HttpServlet {
                         .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName()).build()).build()
         , null, null)
         ;
-
         private EnvMonQueriesAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
             this.name = name;
             this.successMessageCode = successMessageCode;
