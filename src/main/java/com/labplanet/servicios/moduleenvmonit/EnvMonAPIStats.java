@@ -10,6 +10,7 @@ import databases.SqlWhere;
 import databases.SqlWhereEntry;
 import databases.TblsData;
 import databases.TblsProcedure;
+import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
@@ -521,14 +522,27 @@ public class EnvMonAPIStats extends HttpServlet {
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) {
                         jObj = LPFrontEnd.responseJSONDiagnosticLPFalse(Rdbms.RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);
                     } else {
+                        Integer limitIdFldPosic = EnumIntViewFields.getFldPosicInArray(fieldsToGet, TblsData.ViewSampleAnalysisResultWithSpecLimits.LIMIT_ID.getName());
                         for (Object[] curRec : sampleInfo) {
                             jObj = LPJson.convertArrayRowToJSONObject(EnumIntViewFields.getAllFieldNames(fieldsToGet), curRec);
+
+                            if (limitIdFldPosic > -1) {
+                                String calcResultSpecLimitId = LPNulls.replaceNull(curRec[limitIdFldPosic]).toString();
+                                ConfigSpecRule specRule = new ConfigSpecRule();
+                                specRule.specLimitsRule(Integer.valueOf(calcResultSpecLimitId), null);
+                                jObj.put("speclimit_min_spec", specRule.getMinSpec()!=null?specRule.getMinSpec():"");
+                                jObj.put("speclimit_max_spec", specRule.getMaxSpec()!=null?specRule.getMaxSpec():"");
+                                jObj.put("speclimit_min_control", specRule.getMinControl()!=null?specRule.getMinControl():"");
+                                jObj.put("speclimit_max_control", specRule.getMaxControl()!=null?specRule.getMaxControl():"");
+                            }
+
                             if (Boolean.TRUE.equals(Boolean.valueOf(includeMicroOrganisms))) {
                                 Integer curSampleId = Integer.valueOf(curRec[LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_ID.getName())].toString());
                                 Object[][] sampleMicroOrgInfo = QueryUtilitiesEnums.getTableData(TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM,
                                         EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM, new String[]{TblsEnvMonitData.SampleMicroorganism.MICROORG_NAME.getName()}),
                                         new String[]{TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID.getName()}, new Object[]{curSampleId},
                                         new String[]{TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
+
                                 String microOrgList = "";
                                 if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleMicroOrgInfo[0][0].toString()))) {
                                     for (Object[] curMicroOrg : sampleMicroOrgInfo) {
@@ -547,7 +561,6 @@ public class EnvMonAPIStats extends HttpServlet {
                                         }
                                     }
                                     if (findNumber == microOrganismsToFind.split("\\|").length) {
-                                        //    if (microOrgList.toUpperCase().contains(microOrganismsToFind.toUpperCase())){
                                         sampleJsonArr.add(jObj);
                                     }
                                 }

@@ -5,6 +5,7 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
+import static com.labplanet.servicios.app.AuthenticationAPIParams.RESPONSE_JSON_DATATABLE;
 import module.monitoring.definition.TblsEnvMonitData;
 import module.monitoring.definition.TblsEnvMonitConfig;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NUM_DAYS;
@@ -30,6 +31,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.SqlStatementEnums;
+import databases.SqlWhere;
 import databases.TblsCnfg;
 import databases.TblsProcedure;
 import functionaljavaa.materialspec.SpecFrontEndUtilities;
@@ -46,6 +48,7 @@ import lbplanet.utilities.LPJson;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
+import trazit.enums.EnumIntViewFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.globalvariables.GlobalVariables.ApiUrls;
@@ -70,8 +73,8 @@ public class EnvMonAPIqueries extends HttpServlet {
     public static final String DEFAULT_PARAMS_PROGRAMS_LIST_PROGRAM_LOCATION_SORT_FLDS = "order_number|location_name";
     public static final String DEFAULT_PARAMS_PROGRAMS_LIST_CARD_FIELDS = "program_name|location_name|area|spec_code|spec_code_version|spec_variation_name|spec_analysis_variation";
     public static final String DEFAULT_PARAMS_PROGRAMS_LIST_CARD_SORT_FLDS = "order_number|location_name";
-    public static final String[] programLocationCardFieldsInteger = new String[]{"spec_code_version"};
-    public static final String[] programLocationCardFieldsNoDbType = new String[]{"description_en"};
+    public static final String[] DEFAULT_PARAMS_SPEC_CODE_VERSION = new String[]{"spec_code_version"};
+    public static final String[] DEFAULT_PARAMS_DESCRIPTION_EN = new String[]{"description_en"};
     public static final String DEFAULT_PARAMS_PROGRAM_CORRECTIVE_ACTION_LIST_FLDS_TO_GET = "id|status|status_previous|created_on|created_by|program_name|location_name|area|sample_id|test_id|result_id|limit_id|spec_eval|spec_eval_detail|analysis|method_name|method_version|param_name|spec_rule_with_detail";
     public static final String DEFAULT_PARAMS_PROGRAM_CORRECTIVE_ACTION_LIST_FLDS_TO_SORT = "program_name|created_on desc";
     public static final String JSON_TAG_NAME_NAME = "name";
@@ -138,8 +141,14 @@ GlobalAPIsParams.
                 }, EndPointsToRequirements.endpointWithNoOutputObjects,
                  null, null),
         DEACTIVATED_PRODUCTION_LOTS_LAST_N_DAYS("DEACTIVATED_PRODUCTION_LOTS_LAST_N_DAYS", "", new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects,
-                 null, null),;
-
+                 null, null),
+        GET_SCHEDULED_SAMPLES("GET_SCHEDULED_SAMPLES", "",
+                new LPAPIArguments[]{
+                    new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_START, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_END, LPAPIArguments.ArgumentType.STRING.toString(), false, 8)},
+                    EndPointsToRequirements.endpointWithNoOutputObjects, null, null)        
+        ;
         private EnvMonAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
             this.name = name;
             this.successMessageCode = successMessageCode;
@@ -363,11 +372,11 @@ GlobalAPIsParams.
                                         programLocationCardInfoJsonObj.putIfAbsent(JSON_TAG_NAME_VALUE, programLocationCardInfo[xProc][yProc]);
                                         programLocationCardInfoJsonObj.putIfAbsent(JSON_TAG_NAME_TYPE, JSON_TAG_NAME_TYPE_VALUE_TEXT);
                                         String fieldName = programLocationCardInfoFldNameArray[yProc];
-                                        Integer posicInArray = LPArray.valuePosicInArray(programLocationCardFieldsInteger, fieldName);
+                                        Integer posicInArray = LPArray.valuePosicInArray(DEFAULT_PARAMS_SPEC_CODE_VERSION, fieldName);
                                         if (posicInArray > -1) {
                                             programLocationCardInfoJsonObj.putIfAbsent(JSON_TAG_NAME_DB_TYPE, JSON_TAG_NAME_DB_TYPE_VALUE_INTEGER);
                                         } else {
-                                            posicInArray = LPArray.valuePosicInArray(programLocationCardFieldsNoDbType, fieldName);
+                                            posicInArray = LPArray.valuePosicInArray(DEFAULT_PARAMS_DESCRIPTION_EN, fieldName);
                                             if (posicInArray == -1) {
                                                 programLocationCardInfoJsonObj.putIfAbsent(JSON_TAG_NAME_DB_TYPE, JSON_TAG_NAME_DB_TYPE_VALUE_STRING);
                                             } else {
@@ -533,6 +542,48 @@ GlobalAPIsParams.
                     Rdbms.closeRdbms();
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     return;
+                case GET_SCHEDULED_SAMPLES:
+                    SqlWhere wObj = new SqlWhere();
+                    programName = request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME);
+                    if (programName != null && programName.length() > 0) {
+                        wObj.addConstraint(TblsEnvMonitConfig.ViewProgramScheduledLocations.PROGRAM_NAME,
+                                programName.contains("*") ? SqlStatement.WHERECLAUSE_TYPES.LIKE : SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{programName}, null);
+                    }
+
+                    String loginDayStart = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_START);
+                    String loginDayEnd = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_END);
+
+                    Object[] buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsEnvMonitConfig.ViewProgramScheduledLocations.DATE.getName(), loginDayStart, loginDayEnd);
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))) {
+                        if (buildDateRangeFromStrings.length == 4) {
+                            wObj.addConstraint(TblsEnvMonitConfig.ViewProgramScheduledLocations.DATE, SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{buildDateRangeFromStrings[2], buildDateRangeFromStrings[3]}, null);
+                        } else {
+                            wObj.addConstraint(TblsEnvMonitConfig.ViewProgramScheduledLocations.DATE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{buildDateRangeFromStrings[2]}, null);
+                        }
+                    }
+                    JSONObject jObj = new JSONObject();
+                    JSONArray sampleJsonArr = new JSONArray();
+                    if (Boolean.FALSE.equals(wObj.getAllWhereEntries().isEmpty())) {
+                        EnumIntViewFields[] fieldsToGet = EnumIntViewFields.getViewFieldsFromString(TblsEnvMonitConfig.ViewsEnvMonConfig.PROG_SCHED_LOCATIONS_VIEW, "ALL");
+                        Object[][] programSchedEntries = QueryUtilitiesEnums.getViewData(TblsEnvMonitConfig.ViewsEnvMonConfig.PROG_SCHED_LOCATIONS_VIEW,
+                        fieldsToGet,
+                        wObj, //new SqlWhere(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, filterFieldName, filterFieldValue),
+                        new String[]{TblsEnvMonitConfig.ViewProgramScheduledLocations.SAMPLE_ID.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()}, false);
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programSchedEntries[0][0].toString())) {
+                            jObj = LPFrontEnd.responseJSONDiagnosticLPFalse(Rdbms.RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);
+                            sampleJsonArr.add(jObj);
+                        } else {
+                            for (Object[] curRec : programSchedEntries) {
+                                jObj = LPJson.convertArrayRowToJSONObject(EnumIntViewFields.getAllFieldNames(fieldsToGet), curRec);
+                                sampleJsonArr.add(jObj);
+                            }
+                        }
+                    }
+                    JSONObject jObjMainObject = new JSONObject();
+                    jObjMainObject.put(RESPONSE_JSON_DATATABLE, sampleJsonArr);
+                    jObjMainObject.put(GlobalAPIsParams.LBL_TABLE, "GET_SCHEDULED_SAMPLES v1");
+                    LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
+                    break;                            
                 default:
                     RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
                     rd.forward(request, response);
