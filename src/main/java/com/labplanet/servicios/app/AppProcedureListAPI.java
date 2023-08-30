@@ -151,8 +151,8 @@ public class AppProcedureListAPI extends HttpServlet {
                             procedure = LPJson.convertArrayRowToJSONObject(procFldNameArray, procInfo[0]);
 
                             Object[][] rulesInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(curProc.toString(), GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(),
-                                    new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.AREA.getName()},
-                                    new Object[]{UserSop.UserSopBusinessRules.USERSOP_MODE.getTagName(), UserSop.UserSopBusinessRules.WINDOWOPENABLE_WHENNOTSOPCERTIFIED.getAreaName()},
+                                    new String[]{TblsProcedure.ProcedureBusinessRules.AREA.getName(), TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause()},
+                                    new Object[]{UserSop.UserSopBusinessRules.USERSOP_MODE.getAreaName(), UserSop.UserSopBusinessRules.USERSOP_MODE.getTagName()+ "|" +UserSop.UserSopBusinessRules.WINDOWOPENABLE_WHENNOTSOPCERTIFIED.getTagName()},
                                     new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});
                             if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(rulesInfo[0][0].toString()))) {
                                 for (Object[] curRule : rulesInfo) {
