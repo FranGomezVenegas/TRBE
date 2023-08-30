@@ -2606,5 +2606,39 @@ private static final int CLIENT_CODE_STACK_INDEX;
             return new RdbmsObject(false, query, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{tblObj.getTableName(), Arrays.toString(whereObj.getAllWhereEntriesFldValues()), schemaName});
         }
     }
-
+    
+    public static Object[][] runQueryByString(String query, Integer numFldsToRetrieve, Object[] whereFieldValues){
+        try {
+            ResultSet res = null;
+            res = Rdbms.prepRdQuery(query, whereFieldValues);
+            if (res == null) {
+                Object[] errorLog = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL, query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES + Arrays.toString(whereFieldValues)});
+                return LPArray.array1dTo2d(errorLog, 1);
+            }
+            res.last();
+            if (res.getRow() > 0) {
+                Integer totalLines = res.getRow();
+                res.first();
+                Integer icurrLine = 0;
+                Object[][] diagnoses2 = new Object[totalLines][numFldsToRetrieve];
+                while (icurrLine <= totalLines - 1) {
+                    for (Integer icurrCol = 0; icurrCol < numFldsToRetrieve; icurrCol++) {
+                        Object currValue = res.getObject(icurrCol + 1);
+                        diagnoses2[icurrLine][icurrCol] = LPNulls.replaceNull(currValue);
+                    }
+                    res.next();
+                    icurrLine++;
+                }
+                //diagnoses2 = DbEncryption.decryptTableFieldArray(schemaName, tableName, fieldsToRetrieve, diagnoses2);
+                return diagnoses2;
+            } else {
+                Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{query, Arrays.toString(whereFieldValues)});
+                return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
+            }
+        } catch (SQLException er) {
+            Logger.getLogger(query).log(Level.SEVERE, null, er);
+            Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{er.getLocalizedMessage() + er.getCause(), query});
+            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
+        }
+    }    
 }

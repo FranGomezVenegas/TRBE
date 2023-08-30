@@ -148,15 +148,15 @@ public class ClassReqProcedureQueries {
             return LPJson.convertArrayRowToJSONFieldNameAndValueObject(fldsToGet, procTblRows[0], null);
         }
     }
-    public static JSONArray dbRowsToJsonArr(String procInstanceName, EnumIntTables tblObj, EnumIntTableFields[] fldsToGet, SqlWhere wObj, String[] sortFlds, String[] jsonFlds, Boolean emptyWhenNoData) {
+    public static JSONArray dbRowsToJsonArr(String procInstanceName, EnumIntTables tblObj, EnumIntTableFields[] fldsToGet, SqlWhere wObj, String[] sortFlds, String[] fldsToExclude, Boolean emptyWhenNoData) {
         Object[][] procTblRows = Rdbms.getRecordFieldsByFilter(procInstanceName, tblObj,
                 wObj, fldsToGet, sortFlds, false);
-        return convertArray2DtoJArr(procTblRows, EnumIntTableFields.getAllFieldNames(fldsToGet), jsonFlds, emptyWhenNoData);
+        return convertArray2DtoJArr(procTblRows, EnumIntTableFields.getAllFieldNames(fldsToGet), fldsToExclude, emptyWhenNoData);
     }
-    public static JSONArray dbRowsToJsonArr(String procInstanceName, String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue, String[] sortFlds, String[] jsonFlds, Boolean emptyWhenNoData) {
+    public static JSONArray dbRowsToJsonArr(String procInstanceName, String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue, String[] sortFlds, String[] fldsToExclude, Boolean emptyWhenNoData) {
         Object[][] procTblRows = Rdbms.getRecordFieldsByFilter(procInstanceName, tblName,
                 whereFldName, whereFldValue, fldsToGet, sortFlds);
-        return convertArray2DtoJArr(procTblRows, fldsToGet, jsonFlds, emptyWhenNoData);
+        return convertArray2DtoJArr(procTblRows, fldsToGet, fldsToExclude, emptyWhenNoData);
     }
     
     private static JSONArray convertArray2DtoJArr(Object[][] procTblRows, String[] fldsToGet, String[] jsonFlds, Boolean emptyWhenNoData){

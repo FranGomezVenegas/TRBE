@@ -34,6 +34,7 @@ import databases.SqlStatementEnums;
 import databases.SqlWhere;
 import databases.TblsCnfg;
 import databases.TblsProcedure;
+import databases.TblsProcedureConfig;
 import functionaljavaa.materialspec.SpecFrontEndUtilities;
 import module.monitoring.logic.ConfigMasterData;
 import module.monitoring.logic.DataProgramCorrectiveAction.ProgramCorrectiveActionStatuses;
@@ -52,6 +53,7 @@ import trazit.enums.EnumIntViewFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.globalvariables.GlobalVariables.ApiUrls;
+import static trazit.procedureinstance.definition.logic.ClassReqProcedureQueries.dbRowsToJsonArr;
 import static trazit.queries.QueryUtilities.getFieldsListToRetrieve;
 import static trazit.queries.QueryUtilities.getKPIInfoFromRequest;
 import static trazit.queries.QueryUtilities.getNdaysArray;
@@ -143,6 +145,12 @@ GlobalAPIsParams.
         DEACTIVATED_PRODUCTION_LOTS_LAST_N_DAYS("DEACTIVATED_PRODUCTION_LOTS_LAST_N_DAYS", "", new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects,
                  null, null),
         GET_SCHEDULED_SAMPLES("GET_SCHEDULED_SAMPLES", "",
+                new LPAPIArguments[]{
+                    new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_START, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_END, LPAPIArguments.ArgumentType.STRING.toString(), false, 8)},
+                    EndPointsToRequirements.endpointWithNoOutputObjects, null, null),
+        GET_STAGES_TIMING_CAPTURE_DATA("GET_STAGES_TIMING_CAPTURE_DATA", "",
                 new LPAPIArguments[]{
                     new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
                     new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_START, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
@@ -583,7 +591,91 @@ GlobalAPIsParams.
                     jObjMainObject.put(RESPONSE_JSON_DATATABLE, sampleJsonArr);
                     jObjMainObject.put(GlobalAPIsParams.LBL_TABLE, "GET_SCHEDULED_SAMPLES v1");
                     LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
-                    break;                            
+                    break;    
+                case GET_STAGES_TIMING_CAPTURE_DATA:
+                    jObjMainObject = new JSONObject();
+                    wObj = new SqlWhere();
+                    wObj.addConstraint(TblsProcedureConfig.StageTimingInterval.STAGE, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, null);
+                    JSONArray qryJsonArr=dbRowsToJsonArr(procInstanceName, TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL, 
+                        EnumIntTableFields.getTableFieldsFromString(TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL, "ALL"), 
+                        wObj, new String[]{TblsProcedureConfig.StageTimingInterval.STAGE.getName()}, 
+                        null, true);
+                    jObjMainObject.put(TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL.getTableName(), qryJsonArr);
+                    
+                    wObj = new SqlWhere();
+                    wObj.addConstraint(TblsProcedureConfig.StageTimingInterval.STAGE, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, null);
+                    
+                    qryJsonArr=dbRowsToJsonArr(procInstanceName, TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL, 
+                        EnumIntTableFields.getTableFieldsFromString(TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL, "ALL"), 
+                        wObj, new String[]{TblsProcedureConfig.StageTimingInterval.STAGE.getName()}, 
+                        null, true);
+                    jObjMainObject.put(TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL.getTableName(), qryJsonArr);
+
+//                    LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
+                    
+                    wObj = new SqlWhere();
+                    SqlWhere wObj2 = new SqlWhere();
+                    Object[] whereForPercentagesView=new Object[]{};
+/*                    programName = request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME);
+                    if (programName != null && programName.length() > 0) {
+                        wObj.addConstraint(TblsEnvMonitConfig.ViewProgramScheduledLocations.PROGRAM_NAME,
+                                programName.contains("*") ? SqlStatement.WHERECLAUSE_TYPES.LIKE : SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{programName}, null);
+                    }*/
+                    loginDayStart = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_START);
+                    loginDayEnd = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_END);
+
+                    buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsEnvMonitConfig.ViewProgramScheduledLocations.DATE.getName(), loginDayStart, loginDayEnd);
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))) {
+                        if (buildDateRangeFromStrings.length == 4) {
+                            wObj.addConstraint(TblsProcedure.SampleStageTimingCapture.STARTED_ON, SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{buildDateRangeFromStrings[2], buildDateRangeFromStrings[3]}, null);
+                            wObj2.addConstraint(TblsProcedure.SampleStageTimingCapture.ENDED_ON, SqlStatement.WHERECLAUSE_TYPES.BETWEEN, new Object[]{buildDateRangeFromStrings[2], buildDateRangeFromStrings[3]}, null);
+                            whereForPercentagesView=LPArray.addValueToArray1D(whereForPercentagesView, new Object[]{buildDateRangeFromStrings[2], buildDateRangeFromStrings[3]});
+                        } else {
+                            wObj.addConstraint(TblsProcedure.SampleStageTimingCapture.STARTED_ON, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{buildDateRangeFromStrings[2]}, null);
+                            wObj2.addConstraint(TblsProcedure.SampleStageTimingCapture.ENDED_ON, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{buildDateRangeFromStrings[2]}, null);
+                            whereForPercentagesView=LPArray.addValueToArray1D(whereForPercentagesView, buildDateRangeFromStrings[2]);
+                        }
+                    }
+                    qryJsonArr=dbRowsToJsonArr(procInstanceName, TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE, 
+                        EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE, "ALL"), 
+                        wObj, new String[]{TblsProcedure.SampleStageTimingCapture.STARTED_ON.getName()}, 
+                        null, true);
+                    jObjMainObject.put(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE.getTableName(), qryJsonArr);
+
+                    qryJsonArr=dbRowsToJsonArr(procInstanceName, TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION, 
+                        EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION, "ALL"), 
+                        wObj2, new String[]{TblsProcedure.SampleStageTimingIntervalDeviation.ENDED_ON.getName()}, 
+                        null, true);
+                    jObjMainObject.put(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION.getTableName(), qryJsonArr);
+                    
+                    String tblCreateScript="SELECT    st.current_stage,	"
+                            + "COUNT(DISTINCT sst.sample_id) AS violated_samples,"
+                            + "COUNT(DISTINCT st.sample_id) AS total_samples,"
+                            + "ROUND((COUNT(DISTINCT sst.sample_id) * 100.0 / COUNT(DISTINCT st.sample_id)), 4) AS percentage_violated"
+                            + " FROM "
+                            + "    \""+procInstanceName+"-procedure\".sample_stage_timing_capture st "
+                            + " left outer JOIN "
+                            + "    \""+procInstanceName+"-procedure\".sample_stage_timing_interval_deviation sst ON st.sample_id = sst.sample_id "
+                            + " WHERE    st.started_on >= ? AND st.started_on <= ? "
+                            + "GROUP BY "
+                            + "    st.current_stage;";     
+                    sampleJsonArr = new JSONArray();
+                    Object[][] data=Rdbms.runQueryByString(tblCreateScript, 4, whereForPercentagesView);
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(data[0][0].toString())) {
+                        jObj = LPFrontEnd.responseJSONDiagnosticLPFalse(Rdbms.RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);
+                        sampleJsonArr.add(jObj);
+                    } else {
+                        for (Object[] curRec : data) {
+                            jObj = LPJson.convertArrayRowToJSONObject(new String[]{"stage", "violated_sample_stages", "total_sample_stages", "percentage"}, 
+                                    curRec);
+                            sampleJsonArr.add(jObj);
+                        }
+                    }
+                    jObjMainObject.put("violations_percentage", sampleJsonArr);
+
+                    //jObjMainObject.put(GlobalAPIsParams.LBL_TABLE, "GET_SCHEDULED_SAMPLES v1"); 
+                    LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
+                    break;    
                 default:
                     RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
                     rd.forward(request, response);
