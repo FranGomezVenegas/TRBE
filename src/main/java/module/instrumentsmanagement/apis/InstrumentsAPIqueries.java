@@ -52,6 +52,7 @@ import module.instrumentsmanagement.definition.InstrumentsEnums;
 import module.instrumentsmanagement.definition.TblsInstrumentsProcedure;
 import module.instrumentsmanagement.logic.DataInstrumentsCorrectiveAction;
 import static module.instrumentsmanagement.logic.SchedInstruments.logNextEventWhenExpiredOrClose;
+import static module.monitoring.logic.DataProgramCorrectiveAction.isProgramCorrectiveActionEnable;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
@@ -618,10 +619,12 @@ public class InstrumentsAPIqueries extends HttpServlet {
                     JSONArray jArray = new JSONArray();
                     String statusClosed = DataInstrumentsCorrectiveAction.InstrumentsCorrectiveActionStatuses.STATUS_CLOSED.getStatusCode();
                     String createInvCorrectiveAction = Parameter.getBusinessRuleProcedureFile(procReqInstance.getProcedureInstance(), InstrumentsEnums.InstrumentsBusinessRules.CORRECTIVE_ACTION_FOR_REJECTED_EVENT.getAreaName(), InstrumentsEnums.InstrumentsBusinessRules.CORRECTIVE_ACTION_FOR_REJECTED_EVENT.getTagName());
-                    if (Boolean.FALSE.equals(isTagValueOneOfEnableOnes(createInvCorrectiveAction))) {
+                    if (Boolean.FALSE.equals(isProgramCorrectiveActionEnable(procReqInstance.getProcedureInstance()))){
                         JSONObject jObj = new JSONObject();
-                        jObj.put(TblsInstrumentsProcedure.TablesInstrumentsProcedure.INSTRUMENT_CORRECTIVE_ACTION.getTableName(), "corrective action not active!");
+                        jObj.put("corrective_action_not_active", "please check the business rule, "+
+                            Parameter.getBusinessRuleProcedureFile(procReqInstance.getProcedureInstance(), DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getAreaName(), DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getTagName()));
                         jArray.add(jObj);
+                        LPFrontEnd.servletReturnSuccess(request, response, jArray);
                     } else {
                         fieldsToRetrieveObj = TblsInstrumentsProcedure.TablesInstrumentsProcedure.INSTRUMENT_CORRECTIVE_ACTION.getTableFields();
                         Object[][] investigationResultsPendingDecision = QueryUtilitiesEnums.getTableData(TblsInstrumentsProcedure.TablesInstrumentsProcedure.INSTRUMENT_CORRECTIVE_ACTION,
@@ -690,9 +693,10 @@ public class InstrumentsAPIqueries extends HttpServlet {
                     jArray = new JSONArray();
                     statusClosed = DataProgramCorrectiveAction.ProgramCorrectiveActionStatuses.STATUS_CLOSED.getStatusCode();
                     createInvCorrectiveAction = Parameter.getBusinessRuleProcedureFile(procReqInstance.getProcedureInstance(), InstrumentsEnums.InstrumentsBusinessRules.CORRECTIVE_ACTION_FOR_REJECTED_EVENT.getAreaName(), InstrumentsEnums.InstrumentsBusinessRules.CORRECTIVE_ACTION_FOR_REJECTED_EVENT.getTagName());
-                    if (Boolean.FALSE.equals(isTagValueOneOfEnableOnes(createInvCorrectiveAction))) {
+                    if (Boolean.FALSE.equals(isProgramCorrectiveActionEnable(procReqInstance.getProcedureInstance()))){
                         JSONObject jObj = new JSONObject();
-                        jObj.put(TblsInstrumentsProcedure.TablesInstrumentsProcedure.INSTRUMENT_CORRECTIVE_ACTION.getTableName(), "corrective action not active!");
+                        jObj.put("corrective_action_not_active", "please check the business rule, "+
+                            Parameter.getBusinessRuleProcedureFile(procReqInstance.getProcedureInstance(), DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getAreaName(), DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getTagName()));
                         jArray.add(jObj);
                         LPFrontEnd.servletReturnSuccess(request, response, jArray);
                     }

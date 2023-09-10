@@ -69,8 +69,8 @@ public class DataProgramCorrectiveAction {
     public enum DataProgramCorrectiveActionBusinessRules implements EnumIntBusinessRules {
         STATUS_CLOSED("programCorrectiveAction_statusClosed", GlobalVariables.Schemas.DATA.getName(), null, null, '|', null, null),
         STATUS_FIRST("programCorrectiveAction_statusFirst", GlobalVariables.Schemas.DATA.getName(), null, null, '|', null, null),
-        ACTION_MODE("programCorrectiveActionMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
-        STILLOPEN_NOTIFMODE("programCorrectiveActionNotifModeStillInProgress", GlobalVariables.Schemas.PROCEDURE.getName(),
+        ACTION_MODE("correctiveActionMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
+        STILLOPEN_NOTIFMODE("correctiveActionNotifModeStillInProgress", GlobalVariables.Schemas.PROCEDURE.getName(),
                 null, false, '|', null, null), //(JSONArray) Json.createArrayBuilder().add("locking").add("warning").add("silent").build()
         ;
 
@@ -321,8 +321,10 @@ public class DataProgramCorrectiveAction {
                 EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION, updFldName), updFldValue, sqlWhere, null);
     }
 
+    
     public static Boolean isProgramCorrectiveActionEnable(String procInstanceName) {
-        return "ENABLE".equalsIgnoreCase(Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getAreaName(), DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getTagName()));
+        return Parameter.isTagValueOneOfEnableOnes(Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getAreaName(), DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getTagName()));
+        //return "ENABLE".equalsIgnoreCase(Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getAreaName(), DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getTagName()));
     }
 
     public static Object[] markAsAddedToInvestigation(Integer investId, String objectType, Object objectId) {

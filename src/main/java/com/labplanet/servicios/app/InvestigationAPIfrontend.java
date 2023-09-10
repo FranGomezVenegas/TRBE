@@ -127,7 +127,7 @@ public class InvestigationAPIfrontend extends HttpServlet {
                     String statusClosed=DataProgramCorrectiveAction.ProgramCorrectiveActionStatuses.STATUS_CLOSED.getStatusCode();
                     if (Boolean.FALSE.equals(isProgramCorrectiveActionEnable(procInstanceName))){
                       JSONObject jObj=new JSONObject();
-                      jObj.put(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(), "program corrective action not active!");
+                      jObj.put(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(), "corrective action not active!");
                       jArray.add(jObj);
                     }
                     else{

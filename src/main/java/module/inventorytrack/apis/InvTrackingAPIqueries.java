@@ -34,6 +34,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import module.instrumentsmanagement.definition.InstrumentsEnums;
 import module.inventorytrack.definition.InvTrackingEnums;
 import module.inventorytrack.definition.TblsInvTrackingDataAudit;
 import module.inventorytrack.definition.InvTrackingEnums.InvLotStatuses;
@@ -42,6 +43,7 @@ import module.inventorytrack.definition.TblsInvTrackingConfig;
 import module.inventorytrack.definition.TblsInvTrackingData;
 import module.inventorytrack.definition.TblsInvTrackingProcedure;
 import module.inventorytrack.logic.DataInventory;
+import static module.monitoring.logic.DataProgramCorrectiveAction.isProgramCorrectiveActionEnable;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
@@ -673,10 +675,11 @@ public class InvTrackingAPIqueries extends HttpServlet {
                 case INVESTIGATION_RESULTS_PENDING_DECISION:
                     jArray = new JSONArray();
                     statusClosed = DataProgramCorrectiveAction.ProgramCorrectiveActionStatuses.STATUS_CLOSED.getStatusCode();
-                    createInvCorrectiveAction = Parameter.getBusinessRuleProcedureFile(procReqInstance.getProcedureInstance(), InvTrackingEnums.InventoryTrackBusinessRules.CORRECTIVE_ACTION_FOR_REJECTED_QUALIFICATION.getAreaName(), InvTrackingEnums.InventoryTrackBusinessRules.CORRECTIVE_ACTION_FOR_REJECTED_QUALIFICATION.getTagName());
-                    if (Boolean.FALSE.equals(isTagValueOneOfEnableOnes(createInvCorrectiveAction))) {
+                    createInvCorrectiveAction = Parameter.getBusinessRuleProcedureFile(procReqInstance.getProcedureInstance(), InstrumentsEnums.InstrumentsBusinessRules.CORRECTIVE_ACTION_FOR_REJECTED_EVENT.getAreaName(), InstrumentsEnums.InstrumentsBusinessRules.CORRECTIVE_ACTION_FOR_REJECTED_EVENT.getTagName());
+                    if (Boolean.FALSE.equals(isProgramCorrectiveActionEnable(procReqInstance.getProcedureInstance()))){
                         jObj = new JSONObject();
-                        jObj.put(TblsInvTrackingProcedure.TablesInvTrackingProcedure.INVENTORY_CORRECTIVE_ACTION.getTableName(), "corrective action not active!");
+                        jObj.put("corrective_action_not_active", "please check the business rule, "+
+                            Parameter.getBusinessRuleProcedureFile(procReqInstance.getProcedureInstance(), DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getAreaName(), DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getTagName()));
                         jArray.add(jObj);
                         LPFrontEnd.servletReturnSuccess(request, response, jArray);
                     }
