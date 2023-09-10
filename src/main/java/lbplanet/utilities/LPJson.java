@@ -271,8 +271,6 @@ for (JsonElement element : list) {
 
     public static boolean ValueInJsonArray(JsonArray  jArr, String valueToFind) {
         JsonParser parser = new JsonParser();
-
-// check if "demo" is part of the JsonArray
         boolean containsDemo = false;
         for (JsonElement element : jArr) {
             if (parser.parse(element.toString()).getAsString().equals(valueToFind)) {
@@ -281,5 +279,41 @@ for (JsonElement element : list) {
             }
         }
         return containsDemo;
+    }
+/*    
+    public static Object[] filterJArrByProperty2(JSONArray arr, String filterPropName, String filterPropValue, String propToGet){
+        Object[] newArr=new Object[]{};
+        
+        arr.forEach(curEntry -> {
+            JSONObject entry = (JSONObject) curEntry;
+            
+            String stage = entry.get(filterPropName).toString();
+            Object id = (Object) entry.get(propToGet);
+
+            if (filterPropValue.equalsIgnoreCase(stage)) {
+                newArr=LPArray.addValueToArray1D(newArr, id);
+                //System.out.println("ID with stage X: " + id);
+            }
+        };  
+        return newArr;
+        );
+    }
+*/        
+    public static Object[] filterJArrByProperty(JSONArray arr, String filterPropName, String filterPropValue, String propToGet) {
+        Object[] newArr = new Object[]{}; // Initialize the array to the same length as the original array
+        
+        for (int i = 0; i < arr.size(); i++) {
+            JSONObject entry = (JSONObject) arr.get(i);
+            
+            String stage = entry.get(filterPropName).toString();
+            Object id = entry.get(propToGet);
+
+            if (filterPropValue.equalsIgnoreCase(stage)) {
+                newArr=LPArray.addValueToArray1D(newArr, id);
+                //newArr[i] = id;
+            }
+        }
+        
+        return newArr;    
     }
 }
