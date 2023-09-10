@@ -355,6 +355,7 @@ public class DataInstruments {
         if (Boolean.TRUE.equals(this.isDecommissioned)) {
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.getName()}, null);
         }
+        String procedureInstance = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getProcedureInstance();
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         if (fldNames == null || fldNames[0].length() == 0) {
             fldNames = new String[]{};
@@ -370,6 +371,16 @@ public class DataInstruments {
             messages.addMainForError(InstrumentsErrorTrapping.IS_LOCKED, new Object[]{getName(), this.lockedReason});
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.IS_LOCKED, new Object[]{getName(), this.lockedReason}, null);
         }
+        Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procedureInstance, GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
+                new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName(), TblsInstrumentsData.InstrumentEvent.COMPLETED_ON.getName() + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()},
+                new Object[]{this.getName(), ""}, new String[]{TblsInstrumentsData.InstrumentEvent.ID.getName()});
+
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString()))) {
+            messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_HAS_PENDING_EVENTS, new Object[]{getName()});
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_HAS_PENDING_EVENTS, new Object[]{getName()}, getName());
+        }
+        
+        
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsInstrumentsData.Instruments.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{getName()}, "");
         Object[] instUpdateDiagn = Rdbms.updateRecordFieldsByFilter(TablesInstrumentsData.INSTRUMENTS,
