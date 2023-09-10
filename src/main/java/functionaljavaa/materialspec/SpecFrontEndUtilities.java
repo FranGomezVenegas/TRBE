@@ -111,6 +111,9 @@ public class SpecFrontEndUtilities {
                 tableFieldsFromString, sortFields, Boolean.FALSE);
         fieldsName=EnumIntTableFields.getAllFieldNames(tableFieldsFromString);
         JSONArray jArr = new JSONArray();
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(records[0][0].toString())){
+            return jArr;
+        }
         for (Object[] curRec : records) {
             Integer posicInArr = LPArray.valuePosicInArray(fieldsName, TblsCnfg.SpecLimits.LIMIT_ID.getName());
             if (posicInArr > -1) {
