@@ -132,6 +132,8 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                             curProcObj.put("views", procInstanceViewsInRequirements());
                             curProcObj.put("testing", ReqProcDefTestingCoverageSummary.procInstanceTestingInfo(curProc[valuePosicInArray].toString()));
                             curProcObj.put("manuals", procInstanceManualsInRequirements(curProc[valuePosicInArray].toString()));
+                            curProcObj.put("frontend_testing", procInstanceFrontendTestingInRequirements(curProc[valuePosicInArray].toString()));
+                            
                         }
                         proceduresList.add(curProcObj);
 
@@ -493,6 +495,12 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         return ClassReqProcedureQueries.dbRowsToJsonArr(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_MASTER_DATA.getTableName(),
                 getAllFieldNames(TblsReqs.TablesReqs.PROC_MASTER_DATA.getTableFields()), new String[]{TblsReqs.ProcedureMasterData.PROC_INSTANCE_NAME.getName()}, new Object[]{procInstanceName},
                 null, new String[]{TblsReqs.ProcedureMasterData.JSON_OBJ.getName()}, true);
+    }
+
+    private static JSONArray procInstanceFrontendTestingInRequirements(String procInstanceName) {
+        return ClassReqProcedureQueries.dbRowsToJsonArr(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_FRONT_TESTING_WITNESS.getTableName(),
+                getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_FRONT_TESTING_WITNESS.getTableFields()), new String[]{TblsReqs.ProcedureFrontendTestingWitness.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureFrontendTestingWitness.ACTIVE.getName()}, new Object[]{procInstanceName, true},
+                new String[]{TblsReqs.ProcedureFrontendTestingWitness.ORDER_NUMBER.getName()}, new String[]{}, true);
     }
 
     private static JSONArray procInstanceManualsInRequirements(String procInstanceName) {

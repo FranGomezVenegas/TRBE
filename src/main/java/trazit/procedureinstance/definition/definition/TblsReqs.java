@@ -116,6 +116,13 @@ public class TblsReqs {
                     new ForeignkeyFld(ProcedureManuals.PROC_INSTANCE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureManuals.PROC_INSTANCE_NAME.getName())
                 },
                 "Roles for a given process instance"),
+        PROCEDURE_FRONT_TESTING_WITNESS(null, "procedure_frontend_testing_witness", SCHEMA_NAME, false, ProcedureFrontendTestingWitness.values(), null,
+                new String[]{ProcedureRoles.PROCEDURE_NAME.getName(), ProcedureFrontendTestingWitness.PROCEDURE_VERSION.getName(), ProcedureFrontendTestingWitness.PROC_INSTANCE_NAME.getName(), ProcedureFrontendTestingWitness.TEST_NAME.getName()},
+                new Object[]{new ForeignkeyFld(ProcedureFrontendTestingWitness.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureFrontendTestingWitness.PROCEDURE_NAME.getName()),
+                    new ForeignkeyFld(ProcedureFrontendTestingWitness.PROCEDURE_VERSION.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureFrontendTestingWitness.PROCEDURE_VERSION.getName()),
+                    new ForeignkeyFld(ProcedureFrontendTestingWitness.PROC_INSTANCE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureFrontendTestingWitness.PROC_INSTANCE_NAME.getName())
+                },
+                "Roles for a given process instance"),        
         JAVA_CLASS_DOC(null, "java_class_doc", SCHEMA_NAME, false, ProcedureFEModel.values(), "id",
                 new String[]{"id"},
                 null,
@@ -1132,6 +1139,66 @@ public class TblsReqs {
         @Override
         public EnumIntTableFields getTableField() {
             return this.fldObj;
+        }
+    }
+    public enum ProcedureFrontendTestingWitness implements EnumIntTableFields {
+        PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
+        PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
+        PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
+        TEST_NAME("test_name", LPDatabase.stringNotNull(), null, null, null, null),
+        DESCRIPTION(FIELDS_NAMES_DESCRIPTION, LPDatabase.string(), null, null, null, null),
+        REPORT_URL("report_url", LPDatabase.string(), null, null, null, null),
+        LAST_EXEC_EVAL("last_execution_eval", LPDatabase.string(), null, null, null, null),
+        LAST_EXEC("last_execution", LPDatabase.dateTime(), null, null, null, null),
+        ACCEPTED("accepted", LPDatabase.booleanFld(false), null, null, null, null),
+        ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, null, null),
+        ACTIVE("active", LPDatabase.booleanFld(true), null, null, null, null),
+        AREA("area", LPDatabase.string(), null, null, null, null),;        
+        ;
+        private ProcedureFrontendTestingWitness(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules) {
+            this.fieldName = dbObjName;
+            this.fieldType = dbObjType;
+            this.fieldMask = fieldMask;
+            this.reference = refer;
+            this.fieldComment = comment;
+            this.fldBusinessRules = fldBusRules;
+        }
+        private final String fieldName;
+
+        @Override
+        public String getName() {
+            return this.fieldName;
+        }
+        private final String fieldType;
+
+        @Override
+        public String getFieldType() {
+            return this.fieldType;
+        }
+        private final String fieldMask;
+
+        @Override
+        public String getFieldMask() {
+            return this.fieldMask;
+        }
+        private final ReferenceFld reference;
+
+        @Override
+        public ReferenceFld getReferenceTable() {
+            return this.reference;
+        }
+        private final String fieldComment;
+
+        @Override
+        public String getFieldComment() {
+            return this.fieldComment;
+        }
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override
+        public FldBusinessRules[] getFldBusinessRules() {
+            return this.fldBusinessRules;
         }
     }
 
