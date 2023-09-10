@@ -52,7 +52,9 @@ import java.net.URL;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -81,6 +83,8 @@ import static lbplanet.utilities.LPDate.secondsInDateRange;
 import static lbplanet.utilities.LPLdap.LdapValidateUser;
 import static lbplanet.utilities.LPLdap.createLdapNewUser;
 import static module.instrumentsmanagement.logic.DataInstrumentsEvents.objectVariableSetValue;
+import module.inventorytrack.logic.OperationMetricsConsumptionEntry;
+import module.inventorytrack.logic.OperationMetricsConsumptionStock;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.simple.JSONArray;
@@ -113,7 +117,35 @@ public class TestingServer extends HttpServlet {
         request = LPHttp.requestPreparation(request);
         response = LPHttp.responsePreparation(response);
         try (PrintWriter out = response.getWriter()) {
-            Rdbms.stablishDBConection("labplanet");
+            
+        out.println(OperationMetricsConsumptionStock.main());
+        List<OperationMetricsConsumptionEntry> consumptionData = new ArrayList<>();
+        // Populate consumptionData with historical consumption entries
+        consumptionData.add(new OperationMetricsConsumptionEntry(LocalDate.of(2023, 1, 1), 200));
+        consumptionData.add(new OperationMetricsConsumptionEntry(LocalDate.of(2023, 1, 2), 200));
+        consumptionData.add(new OperationMetricsConsumptionEntry(LocalDate.of(2023, 1, 3), 200)); 
+        double currentQuantity = 1000;
+        double minStockAlert = 20;
+        
+       
+        out.println("Current quantity is "+currentQuantity);
+        out.println("min stock alert when quantity is "+minStockAlert);
+        out.println("The last consumes are:");
+        for (OperationMetricsConsumptionEntry entry : consumptionData) {
+            out.println(entry.getDate()+ " - consume " + entry.getConsumedGrams() + " grams");
+            //totalConsumedGrams += entry.getConsumedGrams();
+        }
+/*        String[] predConclusion=OperationMetricsConsumptionStock.main(currentQuantity, minStockAlert, consumptionData);
+        for (String curStr: predConclusion){
+            out.println(curStr);
+        }*/
+        //out.println("Weka determines...."+OperationMetricsConsumptionStock.mainWeka());
+        for (String curStr: OperationMetricsConsumptionStock.mainWeka(currentQuantity, minStockAlert, consumptionData)){
+            out.println(curStr);
+        }
+if (1==1)return;            
+
+Rdbms.stablishDBConection("labplanet");
             JSONObject myData=getScriptWithSteps(11, "em-demo-a", null, null);
             out.println("automated upload ...");
           out.println(Mosquitto.sendMosquitto());
