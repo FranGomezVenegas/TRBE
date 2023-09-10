@@ -181,7 +181,7 @@ public final class LPKPIs {
 
                 }
                 Object[] buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(
-                    curFldName.replace("*START", ""), (Date) curWhereFieldsValueArr[startPosic], endDateValue);                    
+                    curFldName.replace("*START", ""), (Date) curWhereFieldsValueArr[startPosic], (Date) endDateValue);                    
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString())){
                     JSONObject jObjMainObject=new JSONObject();
                     jObjMainObject.put("is_error", true);

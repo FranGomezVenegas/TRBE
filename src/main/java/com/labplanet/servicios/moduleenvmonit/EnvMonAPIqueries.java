@@ -40,12 +40,15 @@ import module.monitoring.logic.ConfigMasterData;
 import module.monitoring.logic.DataProgramCorrectiveAction.ProgramCorrectiveActionStatuses;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.JsonArray;
 import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPJson;
+import lbplanet.utilities.LPMath;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
@@ -610,17 +613,10 @@ GlobalAPIsParams.
                         wObj, new String[]{TblsProcedureConfig.StageTimingInterval.STAGE.getName()}, 
                         null, true);
                     jObjMainObject.put(TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL.getTableName(), qryJsonArr);
-
-//                    LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
                     
                     wObj = new SqlWhere();
                     SqlWhere wObj2 = new SqlWhere();
                     Object[] whereForPercentagesView=new Object[]{};
-/*                    programName = request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME);
-                    if (programName != null && programName.length() > 0) {
-                        wObj.addConstraint(TblsEnvMonitConfig.ViewProgramScheduledLocations.PROGRAM_NAME,
-                                programName.contains("*") ? SqlStatement.WHERECLAUSE_TYPES.LIKE : SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{programName}, null);
-                    }*/
                     loginDayStart = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_START);
                     loginDayEnd = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_END);
 
@@ -641,14 +637,103 @@ GlobalAPIsParams.
                         wObj, new String[]{TblsProcedure.SampleStageTimingCapture.STARTED_ON.getName()}, 
                         null, true);
                     jObjMainObject.put(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE.getTableName(), qryJsonArr);
+                    
+                    wObj.addConstraint(TblsProcedure.SampleStageTimingCapture.STARTED_ON, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, null);
+                    wObj.addConstraint(TblsProcedure.SampleStageTimingCapture.ENDED_ON, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, null);
+                    programInfo = QueryUtilitiesEnums.getTableData(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE,
+                            new EnumIntTableFields[]{TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT, TblsProcedure.SampleStageTimingCapture.STARTED_ON, TblsProcedure.SampleStageTimingCapture.ENDED_ON},
+                            wObj, null);
+                    Object[] durArr=new Double[]{};
+                    String[] allStages=LPArray.getUniquesArray(LPArray.getColumnFromArray2D(programInfo, 0));
+                    JSONArray statAnalysisArr=new JSONArray();
+                    for (String curStage:allStages){
+                        int iRows=0;
+                        Integer[] valueAllPosicInArray2D = LPArray.valueAllPosicInArray2D(programInfo, curStage, 0);                        
+                        Object[][] programInfoFiltered = new Object[valueAllPosicInArray2D.length][];
+                        for (int i = 0; i < valueAllPosicInArray2D.length; i++) {
+                            int rowIndex = valueAllPosicInArray2D[i];
 
+                            if (rowIndex >= 0 && rowIndex < programInfo.length) {
+                                programInfoFiltered[i] = programInfo[rowIndex];
+                            } else {
+                                // Handle out-of-bounds index if needed
+                            }
+                        }
+                        int iF=0;
+                        for (Object[] curRow: programInfoFiltered){
+                            LocalDateTime dStart = LPDate.stringFormatToLocalDateTime(curRow[1].toString()+":00");
+                            LocalDateTime dEnd = LPDate.stringFormatToLocalDateTime(curRow[2].toString()+":00");
+                            if (iF==124){
+                                String h="hola";
+                            }
+                            if (dStart!=null&&dEnd!=null){
+                                long secondsInDateRange = LPDate.secondsInDateRange(dStart, dEnd);
+                                if (!Double.isNaN(secondsInDateRange)&&secondsInDateRange>0){
+                                    durArr= LPArray.addValueToArray1D(durArr, Double.valueOf(secondsInDateRange));
+                                }
+                            }    
+                            iF++;
+                        }
+                        double[] doubleArray = new double[durArr.length];
+                        for (int i = 0; i < durArr.length; i++) {
+                            if (durArr[i] instanceof Double) {
+                                doubleArray[i] = ((Double) durArr[i]).doubleValue();
+                            } else {
+                                // Handle the case where the element is not a Double
+                                // You might want to throw an exception or provide a default value
+                            }
+                        }
+                        JSONObject statAnalysis = LPMath.statAnalysis((double[]) doubleArray, durArr, "Hours");
+                        statAnalysis.put("stage", curStage);
+                        statAnalysisArr.add(statAnalysis);
+                    }
+                    jObjMainObject.put("statistics_per_stage", statAnalysisArr);
+                    
+                    String tblCreateScript="select sample_id, min(started_on), max(ended_on) "
+                            + " FROM "
+                            + "    \""+procInstanceName+"-procedure\".sample_stage_timing_capture st "
+                            + " WHERE    st.started_on >= ? AND st.started_on <= ? "
+                            + "GROUP BY st.sample_id;";  
+                    durArr=new Object[]{};
+                    sampleJsonArr = new JSONArray();
+                    Object[][] data=Rdbms.runQueryByString(tblCreateScript, 3, whereForPercentagesView);
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(data[0][0].toString())) {
+                        jObj = LPFrontEnd.responseJSONDiagnosticLPFalse(Rdbms.RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);
+                        sampleJsonArr.add(jObj);
+                    } else {
+                        for (Object[] curRow: data){
+                            if (curRow[1]!=null&&curRow[2]!=null&&curRow[1].toString().length()>0&&curRow[2].toString().length()>0){
+                                LocalDateTime dStart = LPDate.stringFormatToLocalDateTime(curRow[1].toString());
+                                LocalDateTime dEnd = LPDate.stringFormatToLocalDateTime(curRow[2].toString());
+                                if (dStart!=null&&dEnd!=null){
+                                    long secondsInDateRange = LPDate.secondsInDateRange(dStart, dEnd);
+                                    if (!Double.isNaN(secondsInDateRange)&&secondsInDateRange>0){
+                                        durArr= LPArray.addValueToArray1D(durArr, Double.valueOf(secondsInDateRange));
+                                    }
+                                }
+                            }    
+                        }
+                        double[] doubleArray = new double[durArr.length];
+                        for (int i = 0; i < durArr.length; i++) {
+                            if (durArr[i] instanceof Double) {
+                                doubleArray[i] = ((Double) durArr[i]).doubleValue();
+                            } else {
+                                // Handle the case where the element is not a Double
+                                // You might want to throw an exception or provide a default value
+                            }
+                        }
+                        JSONObject statAnalysis = LPMath.statAnalysis((double[]) doubleArray, durArr, "Days");                        
+                        jObjMainObject.put("statistics_per_end_to_end_sample_process", statAnalysis);
+                    }                    
+                    
+                    
                     qryJsonArr=dbRowsToJsonArr(procInstanceName, TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION, 
                         EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION, "ALL"), 
                         wObj2, new String[]{TblsProcedure.SampleStageTimingIntervalDeviation.ENDED_ON.getName()}, 
                         null, true);
                     jObjMainObject.put(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION.getTableName(), qryJsonArr);
                     
-                    String tblCreateScript="SELECT    st.current_stage,	"
+                    tblCreateScript="SELECT    st.current_stage,	"
                             + "COUNT(DISTINCT sst.sample_id) AS violated_samples,"
                             + "COUNT(DISTINCT st.sample_id) AS total_samples,"
                             + "ROUND((COUNT(DISTINCT sst.sample_id) * 100.0 / COUNT(DISTINCT st.sample_id)), 4) AS percentage_violated"
@@ -660,7 +745,7 @@ GlobalAPIsParams.
                             + "GROUP BY "
                             + "    st.current_stage;";     
                     sampleJsonArr = new JSONArray();
-                    Object[][] data=Rdbms.runQueryByString(tblCreateScript, 4, whereForPercentagesView);
+                    data=Rdbms.runQueryByString(tblCreateScript, 4, whereForPercentagesView);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(data[0][0].toString())) {
                         jObj = LPFrontEnd.responseJSONDiagnosticLPFalse(Rdbms.RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);
                         sampleJsonArr.add(jObj);
@@ -675,7 +760,7 @@ GlobalAPIsParams.
 
                     //jObjMainObject.put(GlobalAPIsParams.LBL_TABLE, "GET_SCHEDULED_SAMPLES v1"); 
                     LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
-                    break;    
+                    break;       
                 default:
                     RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
                     rd.forward(request, response);

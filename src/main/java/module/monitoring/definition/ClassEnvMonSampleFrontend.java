@@ -25,6 +25,7 @@ import databases.TblsProcedure;
 import databases.features.Token;
 import functionaljavaa.certification.AnalysisMethodCertif;
 import functionaljavaa.instruments.incubator.DataIncubatorNoteBook;
+import functionaljavaa.instruments.incubator.OperationMetricsIncubatorNoteBook;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import module.monitoring.logic.DataProgramCorrectiveAction;
 import static module.monitoring.logic.DataProgramCorrectiveAction.isProgramCorrectiveActionEnable;
@@ -853,7 +854,7 @@ public class ClassEnvMonSampleFrontend {
                     this.responseSuccessJObj = jObjMainObject;
                     break;
                 case GET_PRODLOT_REPORT:
-                    String lotName = argValues[0].toString();
+                    incubName = argValues[0].toString();
                     String prodLotfieldsToRetrieveStr = argValues[1].toString();
                     prodLotfieldsToDisplayStr = argValues[2].toString();
                     String[] prodLotfieldToRetrieveArr = null;
@@ -882,10 +883,10 @@ public class ClassEnvMonSampleFrontend {
                     String[] prodLotTblAllFields = EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableFields());
                     Object[][] prodLotInfo = QueryUtilitiesEnums.getTableData(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT,
                             EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT, prodLotTblAllFields),
-                            new String[]{TblsEnvMonitData.ProductionLot.LOT_NAME.getName()}, new Object[]{lotName}, null);
+                            new String[]{TblsEnvMonitData.ProductionLot.LOT_NAME.getName()}, new Object[]{incubName}, null);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(prodLotInfo[0][0].toString())) {
                         this.isSuccess = false;
-                        this.responseError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{lotName, TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableName()});
+                        this.responseError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{incubName, TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableName()});
                         return;
                     }
                     JSONObject jObjProdLotInfo = new JSONObject();
@@ -932,7 +933,7 @@ public class ClassEnvMonSampleFrontend {
                     }
                     if (Boolean.FALSE.equals(LPArray.valueInArray(sampleWhereFieldsNameArr, TblsEnvMonitData.Sample.PRODUCTION_LOT.getName()))) {
                         sampleWhereFieldsNameArr = LPArray.addValueToArray1D(sampleWhereFieldsNameArr, TblsEnvMonitData.Sample.PRODUCTION_LOT.getName());
-                        sampleWhereFieldsValueArr = LPArray.addValueToArray1D(sampleWhereFieldsValueArr, lotName);
+                        sampleWhereFieldsValueArr = LPArray.addValueToArray1D(sampleWhereFieldsValueArr, incubName);
                     }
                     sampleInfo = QueryUtilitiesEnums.getTableData(TblsEnvMonitData.TablesEnvMonitData.SAMPLE,
                             EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.SAMPLE, sampleFieldToRetrieveArr),
@@ -966,7 +967,7 @@ public class ClassEnvMonSampleFrontend {
                             String[] groupInfo = currGroup.split("\\*");
                             String[] smpGroupFldsArr = groupInfo[0].split(",");
                             Object[][] groupedInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(),
-                                    smpGroupFldsArr, new String[]{TblsEnvMonitData.Sample.PRODUCTION_LOT.getName()}, new Object[]{lotName},
+                                    smpGroupFldsArr, new String[]{TblsEnvMonitData.Sample.PRODUCTION_LOT.getName()}, new Object[]{incubName},
                                     null);
                             smpGroupFldsArr = LPArray.addValueToArray1D(smpGroupFldsArr, "count");
                             smpGroupFldsArr = LPArray.addValueToArray1D(smpGroupFldsArr, "grouper");
@@ -987,7 +988,7 @@ public class ClassEnvMonSampleFrontend {
                     this.responseSuccessJObj = jObjMainObject;
                     break;
                 case GET_INCUBATOR_REPORT:
-                    lotName = argValues[0].toString();
+                    incubName = argValues[0].toString();
                     prodLotfieldsToRetrieveStr = argValues[1].toString();
                     prodLotfieldsToDisplayStr = argValues[2].toString();
 
@@ -1014,10 +1015,10 @@ public class ClassEnvMonSampleFrontend {
                     String[] incubTblAllFields = EnumIntTableFields.getAllFieldNames(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableFields());
                     Object[][] incubInfo = QueryUtilitiesEnums.getTableData(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR,
                             EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, incubTblAllFields),
-                            new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()}, new Object[]{lotName}, null);
+                            new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()}, new Object[]{incubName}, null);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubInfo[0][0].toString())) {
                         this.isSuccess = false;
-                        this.responseError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{lotName, TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName()});
+                        this.responseError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{incubName, TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName()});
                         return;
                     }
                     jObjProdLotInfo = new JSONObject();
@@ -1052,17 +1053,17 @@ public class ClassEnvMonSampleFrontend {
                     }
                     Object[][] instrReadings = new Object[0][0];
                     if (startDateStr == null && endDateStr == null) {
-                        instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(lotName, numPointsInt);
+                        instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(incubName, numPointsInt);
                     }
                     if (startDateStr != null && endDateStr == null) {
 
                         startDateStr = startDateStr.replace(" ", "T");
-                        instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(lotName, numPointsInt, dateStringFormatToLocalDateTime(startDateStr));
+                        instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(incubName, numPointsInt, dateStringFormatToLocalDateTime(startDateStr));
                     }
                     if (startDateStr != null && endDateStr != null) {
                         startDateStr = startDateStr.replace(" ", "T");
                         endDateStr = endDateStr.replace(" ", "T");
-                        instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(lotName, numPointsInt, dateStringFormatToLocalDateTime(startDateStr), dateStringFormatToLocalDateTime(endDateStr), true);
+                        instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(incubName, numPointsInt, dateStringFormatToLocalDateTime(startDateStr), dateStringFormatToLocalDateTime(endDateStr), true);
                     }
                     jArrLastTempReadings = new JSONArray();
                     for (Object[] currReading : instrReadings) {
@@ -1077,6 +1078,7 @@ public class ClassEnvMonSampleFrontend {
                     }
                     jObjMainObject.put(GlobalAPIsParams.INCUBATION_REPORT_JSON_TAG_NAME_LAST_N_TEMP_READINGS, jArrLastTempReadings);
                     jObjMainObject.put(reportInfoTagNAme, endPoint.getReportInfo());
+                    jObjMainObject.put("operation_metrics", OperationMetricsIncubatorNoteBook.incubTempReadingStatistics(incubName, startDateStr, endDateStr));
                     this.isSuccess = true;
                     this.responseSuccessJObj = jObjMainObject;
                     break;

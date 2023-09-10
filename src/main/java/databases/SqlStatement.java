@@ -44,7 +44,7 @@ public class SqlStatement {
         }
     }
 
-    public static Object[] buildDateRangeFromStrings(String fieldName, Date startStr, Object endStr) {
+    public static Object[] buildDateRangeFromStrings(String fieldName, Date startStr, Date endStr) {
         if (startStr == null) {
             return new Object[]{LPPlatform.LAB_FALSE};
         }
