@@ -374,6 +374,7 @@ public class ClassInspLotRMactions {
                 this.functionFound = false;
                 break;
         }
+        this.actionDiagnosesObj = actionDiagnoses;
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
             this.diagnostic = ApiMessageReturn.trapMessage(actionDiagnoses.getDiagnostic(), actionDiagnoses.getMessageCodeObj(), actionDiagnoses.getMessageCodeVariables());
         } else {
