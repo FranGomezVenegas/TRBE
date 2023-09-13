@@ -317,7 +317,7 @@ public class ClassEnvMonSampleFrontend {
         @Override
         public String getSuccessMessageCode() {
             return this.successMessageCode;
-        }
+        }        
     }
 
     public ClassEnvMonSampleFrontend(HttpServletRequest request, EnvMonSampleAPIqueriesEndpoints endPoint) {
@@ -1980,11 +1980,11 @@ public class ClassEnvMonSampleFrontend {
     /**
      * @return the contentSuccessResponse
      */
-    public Object getResponseContentJArr() {
+    public JSONArray getResponseContentJArr() {
         return responseSuccessJArr;
     }
 
-    public Object getResponseContentJObj() {
+    public JSONObject getResponseContentJObj() {
         return responseSuccessJObj;
     }
 

@@ -4,8 +4,10 @@ import module.monitoring.definition.ClassEnvMonSampleFrontend;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import com.labplanet.servicios.app.GlobalAPIsParams;
+import com.labplanet.servicios.modulesample.ClassSampleQueries;
 import module.monitoring.definition.ClassEnvMonSampleFrontend.EnvMonSampleAPIqueriesEndpoints;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
+import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIqueriesEndpoints;
 import java.io.PrintWriter;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -13,8 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import trazit.enums.EnumIntEndpoints;
 import trazit.session.ProcedureRequestSession;
 
 public class EnvMonitSampleAPIfrontend extends HttpServlet {
@@ -32,24 +33,35 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
         }
         String actionName=procReqInstance.getActionName();
         try (PrintWriter out = response.getWriter()) {
-            EnvMonSampleAPIqueriesEndpoints endPoint = null;
-            try{
-                endPoint = EnvMonSampleAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
-            }catch(Exception e){
-                procReqInstance.killIt();
-                RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
-                rd.forward(request, response);                                   
-                return;                   
-            }
+            EnumIntEndpoints endPoint = null;            
             if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return;}
-            ClassEnvMonSampleFrontend clss=new ClassEnvMonSampleFrontend(request, endPoint);
-            if (Boolean.TRUE.equals(clss.getIsSuccess())){
-                if (clss.getResponseContentJArr()!=null)
-                    LPFrontEnd.servletReturnSuccess(request, response, (JSONArray) clss.getResponseContentJArr());
-                if (clss.getResponseContentJObj()!=null)
-                    LPFrontEnd.servletReturnSuccess(request, response, (JSONObject) clss.getResponseContentJObj());
-            }else
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, (Object[]) clss.getResponseError());              
+            
+            try{ 
+                endPoint = EnvMonSampleAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
+                ClassEnvMonSampleFrontend clss=new ClassEnvMonSampleFrontend(request, (EnvMonSampleAPIqueriesEndpoints) endPoint);                    
+                if (Boolean.TRUE.equals(clss.getIsSuccess())){
+                    if (clss.getResponseContentJArr()!=null)//&&Boolean.FALSE.equals(clss.getResponseSuccessJArr().isEmpty()))
+                        LPFrontEnd.servletReturnSuccess(request, response, clss.getResponseContentJArr());
+                    if (clss.getResponseContentJObj()!=null)//&&Boolean.FALSE.equals(clss.getResponseSuccessJObj().isEmpty()))
+                        LPFrontEnd.servletReturnSuccess(request, response, clss.getResponseContentJObj());
+                }            
+            }catch(Exception e){
+                try{
+                    SampleAPIqueriesEndpoints endPoint2 = SampleAPIParams.SampleAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
+                    ClassSampleQueries clss=new ClassSampleQueries(request, response, endPoint2);
+                    if (Boolean.TRUE.equals(clss.getIsSuccess())){
+                        if (clss.getResponseSuccessJArr()!=null)//&&Boolean.FALSE.equals(clss.getResponseSuccessJArr().isEmpty()))
+                            LPFrontEnd.servletReturnSuccess(request, response, clss.getResponseSuccessJArr());
+                        if (clss.getResponseSuccessJObj()!=null)//&&Boolean.FALSE.equals(clss.getResponseSuccessJObj().isEmpty()))
+                            LPFrontEnd.servletReturnSuccess(request, response, clss.getResponseSuccessJObj());
+                    }            
+                }catch(Exception e2){               
+                    procReqInstance.killIt();
+                    RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
+                    rd.forward(request, response);                                   
+                    return;                   
+                }                
+            }
         }catch(Exception e){      
             String exceptionMessage =e.getMessage();
             procReqInstance.killIt();
