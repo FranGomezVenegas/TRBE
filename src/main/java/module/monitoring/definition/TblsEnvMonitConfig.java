@@ -709,13 +709,13 @@ public class TblsEnvMonitConfig {
         DESCRIPTION(LPDatabase.FIELDS_NAMES_DESCRIPTION, LPDatabase.string(200), null, null, null, null),
         CREATED_BY(LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(200), null, null, null, null),
         CREATED_ON(LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.dateTime(), null, null, null, null),
-        ACTIVE("active", LPDatabase.booleanNotNull(Boolean.TRUE), null, null, null, null),
+        ACTIVE("active", LPDatabase.booleanFld(Boolean.TRUE), null, null, null, null),
         LAST_DEACTIVATION_ON("last_deactivation_on", LPDatabase.dateTime(), null, null, null, null),
         STAGE("stage", LPDatabase.stringNotNull(), null, null, null, null),
         MIN("min", LPDatabase.real(), null, null, null, null),
-        IS_MIN_STRICT("is_min_strict", LPDatabase.booleanNotNull(Boolean.TRUE), null, null, null, null),
+        IS_MIN_STRICT("is_min_strict", LPDatabase.booleanFld(Boolean.TRUE), null, null, null, null),
         MAX("max", LPDatabase.real(), null, null, null, null),
-        IS_MAX_STRICT("is_max_strict", LPDatabase.booleanNotNull(Boolean.TRUE), null, null, null, null),
+        IS_MAX_STRICT("is_max_strict", LPDatabase.booleanFld(Boolean.TRUE), null, null, null, null),
         LOCKED("locked", LPDatabase.booleanFld(), null, null, null, null),
         LOCKED_REASON("locked_reason", LPDatabase.booleanFld(), null, null, null, null),;
 
