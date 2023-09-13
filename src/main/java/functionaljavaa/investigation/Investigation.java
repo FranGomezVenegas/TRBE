@@ -146,12 +146,12 @@ public final class Investigation {
         }
     }
 
-    public static Object[] closeInvestigation(Integer investId) {
+    public static InternalMessage closeInvestigation(Integer investId) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         InternalMessage investigationClosed = isInvestigationClosed(investId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationClosed.getDiagnostic())) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, investigationClosed.getMessageCodeObj(), investigationClosed.getMessageCodeVariables());
+            return new InternalMessage(LPPlatform.LAB_FALSE, investigationClosed.getMessageCodeObj(), investigationClosed.getMessageCodeVariables());
         }
 
         String[] updFieldName = new String[]{TblsProcedure.Investigation.CLOSED.getName(), TblsProcedure.Investigation.CLOSED_ON.getName(), TblsProcedure.Investigation.CLOSED_BY.getName()};
@@ -161,7 +161,7 @@ public final class Investigation {
         Object[] diagnostic = Rdbms.updateRecordFieldsByFilter(TblsProcedure.TablesProcedure.INVESTIGATION,
                 EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.INVESTIGATION, updFieldName), updFieldValue, sqlWhere, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
-            return diagnostic;
+            return new InternalMessage(LPPlatform.LAB_FALSE, diagnostic[diagnostic.length - 1].toString(), new Object[]{investId}, null);
         }
         ProcedureInvestigationAudit.investigationAuditAdd(
                 DataInvestigationAuditEvents.CLOSED_INVESTIGATION.toString(), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(),
@@ -170,19 +170,18 @@ public final class Investigation {
         Object[][] investObjects = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(),
                 new String[]{TblsProcedure.InvestObjects.INVEST_ID.getName()}, new Object[]{investId},
                 new String[]{TblsProcedure.InvestObjects.OBJECT_TYPE.getName(), TblsProcedure.InvestObjects.OBJECT_ID.getName(), TblsProcedure.InvestObjects.OBJECT_NAME.getName()});
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investObjects[0][0].toString())) {
-            return diagnostic;
-        }
-        for (Object[] curInvObj : investObjects) {
-            String curObj = curInvObj[0].toString() + "*";
-            if (curInvObj[1] != null && curInvObj[1].toString().length() > 0) {
-                curObj = curObj + curInvObj[1].toString();
-            } else {
-                curObj = curObj + curInvObj[2].toString();
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(investObjects[0][0].toString()))) {
+            for (Object[] curInvObj : investObjects) {
+                String curObj = curInvObj[0].toString() + "*";
+                if (curInvObj[1] != null && curInvObj[1].toString().length() > 0) {
+                    curObj = curObj + curInvObj[1].toString();
+                } else {
+                    curObj = curObj + curInvObj[2].toString();
+                }
+                addAuditRecordForObject(curObj, investId, SampleAudit.DataSampleAuditEvents.INVESTIGATION_CLOSED);
             }
-            addAuditRecordForObject(curObj, investId, SampleAudit.DataSampleAuditEvents.INVESTIGATION_CLOSED);
         }
-        return diagnostic;
+        return new InternalMessage(LPPlatform.LAB_TRUE, InvestigationAPIactionsEndpoints.CLOSE_INVESTIGATION , new Object[]{investId}, investId);
     }
 
     public static InternalMessage addInvestObjects(Integer investId, String objectsToAdd, Integer parentAuditId) {

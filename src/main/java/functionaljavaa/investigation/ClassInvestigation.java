@@ -147,14 +147,19 @@ public class ClassInvestigation {
                     }
                     break;
                 case CLOSE_INVESTIGATION:
-                    actionDiagnoses = Investigation.closeInvestigation(Integer.valueOf(argValues[0].toString()));
+                    this.diagnosticObj = Investigation.closeInvestigation(Integer.valueOf(argValues[0].toString()));
                     investigationIdStr = argValues[0].toString();
                     if (investigationIdStr != null && investigationIdStr.length() > 0) {
                         investigationId = Integer.valueOf(investigationIdStr);
                     }
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())) {
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())) {
+                        actionDiagnoses = ApiMessageReturn.trapMessage(this.diagnosticObj.getDiagnostic(),
+                                this.diagnosticObj.getMessageCodeEndpoint().getSuccessMessageCode(), this.diagnosticObj.getMessageCodeVariables());
                         messages.addMainForSuccess(endPoint, new Object[]{investigationId});
                         dynamicDataObjects = new Object[]{investigationId};
+                    }else{
+                        actionDiagnoses = ApiMessageReturn.trapMessage(this.diagnosticObj.getDiagnostic(),
+                                this.diagnosticObj.getMessageCodeObj(), this.diagnosticObj.getMessageCodeVariables());
                     }
                     break;
                 case INVESTIGATION_CAPA_DECISION:
