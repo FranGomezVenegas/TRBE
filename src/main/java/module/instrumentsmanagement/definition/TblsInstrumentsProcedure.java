@@ -63,7 +63,7 @@ public class TblsInstrumentsProcedure {
         CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTime(), null, null, null, null),
         CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
         INVEST_ID("invest_id", LPDatabase.integer(), null, null, null, null),
-        OBJECT_TYPE("object_type", LPDatabase.integer(), null, null, null, null),
+        OBJECT_TYPE("object_type", LPDatabase.string(), null, null, null, null),
         INSTRUMENT("instrument", LPDatabase.string(), null, null, null, null),
         EVENT_ID("event_id", LPDatabase.integerNotNull(), null, null, null, null),
         ;
