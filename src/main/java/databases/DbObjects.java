@@ -108,20 +108,23 @@ public class DbObjects {
         }
         schemasObj.put("config", jsonObj);
 
-        tblCreateScript = createTableScript(TablesProcedure.PROCEDURE_BUSINESS_RULE, "app", false, true, null);
-        tblCreateScript=tblCreateScript.replace(GlobalVariables.Schemas.APP_PROCEDURE.getName(), "app-business-rules");
-        Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(TablesProcedure.PROCEDURE_BUSINESS_RULE.getRepositoryName(), TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), tblCreateScript, new Object[]{});
+        EnumIntTables[] appProcTables=new EnumIntTables[]{TablesProcedure.PROCEDURE_BUSINESS_RULE, TablesProcedure.PROCEDURE_INFO, TablesProcedure.PROCEDURE_EVENTS, TablesProcedure.PERSON_PROFILE};
+        for (EnumIntTables curTbl: appProcTables){
+            tblCreateScript = createTableScript(curTbl, "app", false, true, null);
+            tblCreateScript=tblCreateScript.replace(GlobalVariables.Schemas.APP_PROCEDURE.getName(), curTbl.toString());
+            Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
 
-        JSONObject scriptLog=new JSONObject();
-        scriptLog.put("script", tblCreateScript);
-        if (Boolean.FALSE.equals(tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE)) && Boolean.FALSE.equals(tblCreateScript.toLowerCase().contains("already")) )            
-            scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
-        if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains(GlobalAPIsParams.LBL_ERROR))
-            errorsOnlyObj.put("app."+TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), scriptLog);
-        jsonObj.put(TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), scriptLog);
-        
-        
-        String[] fields=new String[]{"area", "rule_name", "rule_value", "disabled"};
+            JSONObject scriptLog=new JSONObject();
+            scriptLog.put("script", tblCreateScript);
+            if (Boolean.FALSE.equals(tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE)) && Boolean.FALSE.equals(tblCreateScript.toLowerCase().contains("already")) )            
+                scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
+            if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains(GlobalAPIsParams.LBL_ERROR))
+                errorsOnlyObj.put("app."+curTbl.getTableName(), scriptLog);
+            jsonObj.put(curTbl.getTableName(), scriptLog);
+        }
+            
+        String[] fields=new String[]{TblsProcedure.ProcedureBusinessRules.AREA.getName(), TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(),
+            TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName(), TblsProcedure.ProcedureBusinessRules.DISABLED.getName()};
         Object[][] values=new Object[][]{{"frontend_locksession", "enableLockSession", "true", false},
             {"frontend_locksession", "enableLogoutSession", "true", false},
             {"frontend_locksession", "minsLockSession", "2", false},
@@ -137,14 +140,47 @@ public class DbObjects {
             else
                 jsonObj.put("inserting_business_rule_diagn", curRule[1]+" "+insertRecord.getErrorMessageCode());
         }
-        schemasObj.put("app-business-rules", jsonObj);
+        schemasObj.put(TablesApp.APP_BUSINESS_RULES.toString(), jsonObj);
+
+        fields=new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName(), TblsProcedure.PersonProfile.ROLE_NAME.getName(),
+            TblsProcedure.PersonProfile.ACTIVE.getName()};
+        values=new Object[][]{{"adminz", "superuser", "true"}};
+        for (Object[] curRule: values){
+            
+            RdbmsObject insertRecord = Rdbms.insertRecord(TablesApp.APP_PERSON_PROFILE, fields, curRule, TblsApp.TablesApp.APP_PERSON_PROFILE.getRepositoryName());
+            
+            if (Boolean.TRUE.equals(insertRecord.getRunSuccess()))
+                jsonObj.put("inserting_business_rule_diagn", curRule[1]+" "+insertRecord.getRunSuccess());
+            else
+                jsonObj.put("inserting_business_rule_diagn", curRule[1]+" "+insertRecord.getErrorMessageCode());
+        }
+        schemasObj.put(TablesApp.APP_PERSON_PROFILE.toString(), jsonObj);
+        
+        fields=new String[]{TblsProcedure.ProcedureEvents.NAME.getName(), TblsProcedure.ProcedureEvents.ROLE_NAME.getName(),
+            TblsProcedure.ProcedureEvents.MODE.getName(), TblsProcedure.ProcedureEvents.TYPE.getName(),
+            TblsProcedure.ProcedureEvents.LABEL_EN.getName(), TblsProcedure.ProcedureEvents.LABEL_ES.getName(), 
+            TblsProcedure.ProcedureEvents.ORDER_NUMBER.getName(), TblsProcedure.ProcedureEvents.LP_FRONTEND_PAGE_NAME.getName()};
+        values=new Object[][]{{"BlackIpList", "superuser", "edit", "simple", "Black IP Lists", "Lista IPs denegadas", 1, "BlackIpList" },
+            {"PlatformBusRules", "superuser", "edit", "simple", "Business Rules", "Reglas de Negocio", 3, "PlatformBusRules"},
+            {"WhiteIpList", "superuser", "edit", "simple", "White IP Lists", "Lista IPs autorizadas", 2, "WhiteIpList"}};
+        for (Object[] curRule: values){
+            
+            RdbmsObject insertRecord = Rdbms.insertRecord(TablesApp.APP_PROCEDURE_EVENTS, fields, curRule, TblsApp.TablesApp.APP_PROCEDURE_EVENTS.getRepositoryName());
+            
+            if (Boolean.TRUE.equals(insertRecord.getRunSuccess()))
+                jsonObj.put("inserting_diagn", curRule[1]+" "+insertRecord.getRunSuccess());
+            else
+                jsonObj.put("inserting_diagn", curRule[1]+" "+insertRecord.getErrorMessageCode());
+        }
+        schemasObj.put(TablesApp.APP_PROCEDURE_EVENTS.toString(), jsonObj);
+        
         
         jsonObj=new JSONObject();
         TablesReqs[] tblsReqs = TablesReqs.values();
         for (TablesReqs curTbl: tblsReqs){
             tblCreateScript = createTableScript(curTbl, null, false, true, null);
-            prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
-            scriptLog=new JSONObject();
+            Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
+            JSONObject scriptLog = new JSONObject();
             scriptLog.put("script", tblCreateScript);
             if (Boolean.FALSE.equals(tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE)) && Boolean.FALSE.equals(tblCreateScript.toLowerCase().contains("already")) )
                 scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
@@ -154,6 +190,109 @@ public class DbObjects {
         }
         schemasObj.put("requirements", jsonObj);
         
+        
+        String procNameInReqs="platform-settings";
+        
+        fields=new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName(),
+                    TblsReqs.ProcedureInfo.ACTIVE.getName(), TblsReqs.ProcedureInfo.LOCKED_FOR_ACTIONS.getName(),
+                    TblsReqs.ProcedureInfo.MODULE_NAME.getName(), TblsReqs.ProcedureInfo.LABEL_EN.getName(), TblsReqs.ProcedureInfo.LABEL_ES.getName()};
+        values=new Object[][]{{procNameInReqs, 1, procNameInReqs, true, false, "APP","Platform settings", "Configuración de Plataforma"}};
+        for (Object[] curRule: values){            
+            RdbmsObject insertRecord = Rdbms.insertRecord(TblsReqs.TablesReqs.PROCEDURE_INFO, fields, curRule, TblsReqs.TablesReqs.PROCEDURE_INFO.getRepositoryName());            
+            if (Boolean.TRUE.equals(insertRecord.getRunSuccess()))
+                jsonObj.put("inserting_diagn", curRule[1]+" "+insertRecord.getRunSuccess());
+            else
+                jsonObj.put("inserting_diagn", curRule[1]+" "+insertRecord.getErrorMessageCode());
+        }
+        schemasObj.put(TblsReqs.TablesReqs.PROCEDURE_INFO.toString(), jsonObj);
+
+        fields=new String[]{TblsReqs.ProcedureUsers.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUsers.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureUsers.PROC_INSTANCE_NAME.getName(),
+                    TblsReqs.ProcedureUsers.USER_NAME.getName(), TblsReqs.ProcedureUsers.FULL_NAME.getName()};
+        values=new Object[][]{{procNameInReqs, 1, procNameInReqs, "admin", "admin"}};
+        for (Object[] curRule: values){            
+            RdbmsObject insertRecord = Rdbms.insertRecord(TblsReqs.TablesReqs.PROC_USERS, fields, curRule, 
+                    TblsReqs.TablesReqs.PROC_USERS.getRepositoryName());            
+            if (Boolean.TRUE.equals(insertRecord.getRunSuccess()))
+                jsonObj.put("inserting_diagn", curRule[1]+" "+insertRecord.getRunSuccess());
+            else
+                jsonObj.put("inserting_diagn", curRule[1]+" "+insertRecord.getErrorMessageCode());
+        }
+        schemasObj.put(TblsReqs.TablesReqs.PROC_USERS.toString(), jsonObj);
+
+        fields=new String[]{TblsReqs.ProcedureRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureRoles.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureRoles.PROC_INSTANCE_NAME.getName(),
+                    TblsReqs.ProcedureRoles.ROLE_NAME.getName(), TblsReqs.ProcedureRoles.DESCRIPTION.getName()};
+        values=new Object[][]{{procNameInReqs, 1, procNameInReqs, "superuser", "superuser can do everything as admin role"}};
+        for (Object[] curRule: values){            
+            RdbmsObject insertRecord = Rdbms.insertRecord(TblsReqs.TablesReqs.PROCEDURE_ROLES, fields, curRule, 
+                    TblsReqs.TablesReqs.PROCEDURE_ROLES.getRepositoryName());            
+            if (Boolean.TRUE.equals(insertRecord.getRunSuccess()))
+                jsonObj.put("inserting_diagn", curRule[1]+" "+insertRecord.getRunSuccess());
+            else
+                jsonObj.put("inserting_diagn", curRule[1]+" "+insertRecord.getErrorMessageCode());
+        }
+        schemasObj.put(TblsReqs.TablesReqs.PROCEDURE_ROLES.toString(), jsonObj);
+
+        fields=new String[]{TblsReqs.ProcedureUserRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRoles.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureUserRoles.PROC_INSTANCE_NAME.getName(),
+                    TblsReqs.ProcedureUserRoles.USER_NAME.getName(), TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()};
+        values=new Object[][]{{procNameInReqs, 1, procNameInReqs, "admin", "superuser"}};
+        for (Object[] curRule: values){            
+            RdbmsObject insertRecord = Rdbms.insertRecord(TblsReqs.TablesReqs.PROC_USER_ROLES, fields, curRule, 
+                    TblsReqs.TablesReqs.PROC_USER_ROLES.getRepositoryName());            
+            if (Boolean.TRUE.equals(insertRecord.getRunSuccess()))
+                jsonObj.put("inserting_diagn", curRule[1]+" "+insertRecord.getRunSuccess());
+            else
+                jsonObj.put("inserting_diagn", curRule[1]+" "+insertRecord.getErrorMessageCode());
+        }
+        schemasObj.put(TblsReqs.TablesReqs.PROC_USER_ROLES.toString(), jsonObj);
+
+        fields=new String[]{TblsReqs.ProcedureModuleTables.PROCEDURE_NAME.getName(), TblsReqs.ProcedureModuleTables.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureModuleTables.PROC_INSTANCE_NAME.getName(),
+                    TblsReqs.ProcedureModuleTables.SCHEMA_NAME.getName(), TblsReqs.ProcedureModuleTables.TABLE_NAME.getName(), TblsReqs.ProcedureModuleTables.IS_VIEW.getName()};
+        values=new Object[][]{{procNameInReqs, 1, procNameInReqs, TblsApp.TablesApp.IP_BLACK_LIST.getRepositoryName(), TblsApp.TablesApp.IP_BLACK_LIST.getTableName(), false}};
+        for (Object[] curRule: values){            
+            RdbmsObject insertRecord = Rdbms.insertRecord(TblsReqs.TablesReqs.PROC_MODULE_TABLES, fields, curRule, 
+                    TblsReqs.TablesReqs.PROC_MODULE_TABLES.getRepositoryName());            
+            if (Boolean.TRUE.equals(insertRecord.getRunSuccess()))
+                jsonObj.put("inserting_diagn", curRule[1]+" "+insertRecord.getRunSuccess());
+            else
+                jsonObj.put("inserting_diagn", curRule[1]+" "+insertRecord.getErrorMessageCode());
+        }
+        schemasObj.put(TblsReqs.TablesReqs.PROC_MODULE_TABLES.toString(), jsonObj);
+
+        fields=new String[]{TblsReqs.ProcedureModuleTables.PROCEDURE_NAME.getName(), TblsReqs.ProcedureModuleTables.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureModuleTables.PROC_INSTANCE_NAME.getName(),
+                    TblsReqs.ProcedureModuleTables.SCHEMA_NAME.getName(), TblsReqs.ProcedureModuleTables.TABLE_NAME.getName(), TblsReqs.ProcedureModuleTables.IS_VIEW.getName()};
+        values=new Object[][]{{procNameInReqs, 1, procNameInReqs, TblsApp.TablesApp.IP_WHITE_LIST.getRepositoryName(), TblsApp.TablesApp.IP_WHITE_LIST.getTableName(), false}};
+        for (Object[] curRule: values){            
+            RdbmsObject insertRecord = Rdbms.insertRecord(TblsReqs.TablesReqs.PROC_MODULE_TABLES, fields, curRule, 
+                    TblsReqs.TablesReqs.PROC_MODULE_TABLES.getRepositoryName());            
+            if (Boolean.TRUE.equals(insertRecord.getRunSuccess()))
+                jsonObj.put("inserting_diagn", curRule[1]+" "+insertRecord.getRunSuccess());
+            else
+                jsonObj.put("inserting_diagn", curRule[1]+" "+insertRecord.getErrorMessageCode());
+        }
+        schemasObj.put(TblsReqs.TablesReqs.PROC_MODULE_TABLES.toString(), jsonObj);
+        
+
+        fields=new String[]{TblsProcedure.ProcedureEvents.NAME.getName(), TblsProcedure.ProcedureEvents.ROLE_NAME.getName(),
+            TblsProcedure.ProcedureEvents.MODE.getName(), TblsProcedure.ProcedureEvents.TYPE.getName(),
+            TblsProcedure.ProcedureEvents.LABEL_EN.getName(), TblsProcedure.ProcedureEvents.LABEL_ES.getName(), 
+            TblsProcedure.ProcedureEvents.ORDER_NUMBER.getName(), TblsProcedure.ProcedureEvents.LP_FRONTEND_PAGE_NAME.getName()};
+        values=new Object[][]{{"BlackIpList", "superuser", "edit", "simple", "Black IP Lists", "Lista IPs denegadas", 1, "BlackIpList" },
+            {"PlatformBusRules", "superuser", "edit", "simple", "Business Rules", "Reglas de Negocio", 3, "PlatformBusRules"},
+            {"WhiteIpList", "superuser", "edit", "simple", "White IP Lists", "Lista IPs autorizadas", 2, "WhiteIpList"}};
+        for (Object[] curRule: values){
+            
+            RdbmsObject insertRecord = Rdbms.insertRecord(TablesApp.APP_PROCEDURE_EVENTS, fields, curRule, TblsApp.TablesApp.APP_PROCEDURE_EVENTS.getRepositoryName());
+            
+            if (Boolean.TRUE.equals(insertRecord.getRunSuccess()))
+                jsonObj.put("inserting_business_rule_diagn", curRule[1]+" "+insertRecord.getRunSuccess());
+            else
+                jsonObj.put("inserting_business_rule_diagn", curRule[1]+" "+insertRecord.getErrorMessageCode());
+        }
+        schemasObj.put(TablesApp.APP_PROCEDURE_EVENTS.toString(), jsonObj);
+
+        
+
+
         if (errorsOnlyObj.isEmpty())
             schemasObj.put("summary", "all fine");
         else

@@ -14,7 +14,22 @@ import databases.TblsApp;
 import databases.TblsAppConfig;
 import databases.TblsProcedure;
 import databases.features.DbEncryption;
+import functionaljavaa.parameter.Parameter;
+import static functionaljavaa.parameter.Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.Base64;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
@@ -29,7 +44,28 @@ import trazit.session.ApiMessageReturn;
  */
 public class PlatformNewInstance {
     private PlatformNewInstance() {throw new IllegalStateException("Utility class");}
+    public static String decrypt(String encryptedValue, SecretKey secretKey)  {
+        try {
+            Cipher cipher = Cipher.getInstance("AES");
+            cipher.init(Cipher.DECRYPT_MODE, secretKey);
+            byte[] decodedValue = Base64.getDecoder().decode(encryptedValue);
+            byte[] decryptedBytes = cipher.doFinal(decodedValue);
+            return new String(decryptedBytes, StandardCharsets.UTF_8);
+        } catch (InvalidKeyException|IllegalBlockSizeException|BadPaddingException|NoSuchAlgorithmException|NoSuchPaddingException ex) {
+            Logger.getLogger(PlatformNewInstance.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
     public static JSONObject createCheckPlatformProcedure(String platfName){
+        ResourceBundle propConfig = ResourceBundle.getBundle(BUNDLE_TAG_PARAMETER_CONFIG_CONF);  
+        String fileDir = propConfig.getString(Parameter.PropertyFilesType.UNDECODE_FOR_TESTING.getAppConfigParamName());
+        byte[] decodedKey = Base64.getDecoder().decode(fileDir);
+        SecretKey secretKey = new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
+        String fakeProcUserName2 = decrypt("bMB9/9Rg5v7WOKdG/SkqCw==", secretKey);
+        if (fakeProcUserName2==null){
+            JSONObject jObj=new JSONObject();
+            jObj.put("error", jObj);
+        }
         String fakeProcName = "check-platform";
         String fakeProcUserName = "demo";
         String personId="d1m2";

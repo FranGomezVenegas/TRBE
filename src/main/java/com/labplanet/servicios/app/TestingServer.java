@@ -91,6 +91,7 @@ import org.json.simple.JSONArray;
 import trazit.enums.EnumIntViewFields;
 import static trazit.procedureinstance.definition.apis.ReqProcedureDefinitionQueries.getScriptWithSteps;
 import trazit.procedureinstance.definition.logic.ClassReqProcedUserAndActions;
+import static trazit.procedureinstance.deployment.logic.PlatformNewInstance.createCheckPlatformProcedure;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 import trazit.thirdparties.sap.ExcelExporter;
@@ -118,6 +119,7 @@ public class TestingServer extends HttpServlet {
         response = LPHttp.responsePreparation(response);
         try (PrintWriter out = response.getWriter()) {
             
+        createCheckPlatformProcedure("hola");
         out.println(OperationMetricsConsumptionStock.main());
         List<OperationMetricsConsumptionEntry> consumptionData = new ArrayList<>();
         // Populate consumptionData with historical consumption entries

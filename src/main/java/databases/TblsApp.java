@@ -44,6 +44,12 @@ public class TblsApp {
             new String[]{VideoTutorialJson.AREA.getName()}, null, "Video Tutorial JSON entries table"),
         APP_BUSINESS_RULES(null, "procedure_business_rules", GlobalVariables.Schemas.APP_PROCEDURE.getName(), IS_PRODEDURE_INSTANCE, TblsProcedure.ProcedureBusinessRules.values(), null,
             new String[]{TblsProcedure.ProcedureBusinessRules.AREA.getName(), TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()}, null, "App business rules entries table"),
+        APP_PERSON_PROFILE(null, "person_profile", GlobalVariables.Schemas.APP_PROCEDURE.getName(), IS_PRODEDURE_INSTANCE, TblsProcedure.PersonProfile.values(), null,
+            new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName(), TblsProcedure.PersonProfile.ROLE_NAME.getName()}, null, "App Person Profile entries table"),
+        APP_PROCEDURE_INFO(null, "procedure_info", GlobalVariables.Schemas.APP_PROCEDURE.getName(), IS_PRODEDURE_INSTANCE, TblsProcedure.ProcedureInfo.values(), null,
+            new String[]{TblsProcedure.ProcedureInfo.NAME.getName()}, null, "App Procedure Info entries table"),
+        APP_PROCEDURE_EVENTS(null, "procedure_events", GlobalVariables.Schemas.APP_PROCEDURE.getName(), IS_PRODEDURE_INSTANCE, TblsProcedure.ProcedureEvents.values(), null,
+            new String[]{TblsProcedure.ProcedureEvents.NAME.getName(), TblsProcedure.ProcedureEvents.ROLE_NAME.getName()}, null, "App Procedure Events entries table"),
         LDAP_SETTINGS(null, "ldap_setting", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, LdapSetting.values(), null,
             new String[]{LdapSetting.NAME.getName()}, null, "LDAP Settings declaration"),
         ;

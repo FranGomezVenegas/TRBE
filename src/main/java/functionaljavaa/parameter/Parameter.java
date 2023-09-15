@@ -35,7 +35,9 @@ public class Parameter {
         PROCEDURE_BUSINESS_RULES_DIR_PATH("procedureBusinessRulesDirPath", ":"),
         ENDPOINTDOCUMENTATION("EndPointDocumentation", ":"),
         AUDITEVENTS("AuditEventsDirPath", ":"),
-        ERROR_TRAPING("ErrorTrapingDirPath", ":")
+        ERROR_TRAPING("ErrorTrapingDirPath", ":"),
+        UNDECODE_FOR_TESTING("uncodeForTesting", ":")
+        
         ;
         private PropertyFilesType(String appConfigParamName, String appConfigSeparator){
             this.appConfigParamName=appConfigParamName;
