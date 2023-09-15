@@ -24,9 +24,7 @@ import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.ApiErrorTraping;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import module.inventorytrack.definition.ClassInvTracking;
-import module.inventorytrack.definition.TblsInvTrackingData;
 import module.inventorytrack.definition.InvTrackingEnums.InventoryTrackAPIactionsEndpoints;
-import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
 import org.json.simple.JSONObject;
@@ -202,17 +200,21 @@ public class InvTrackingAPIactions extends HttpServlet {
 
         if (diagnosticObj != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosticObj.getDiagnostic())) {
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnosticObj.getMessageCodeObj(), diagnosticObj.getMessageCodeVariables());
+            return;
         } else if (diagnosticObj == null && diagnostic!=null && diagnostic.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
             LPFrontEnd.responseError(diagnostic);
+            return;
         } else {
             JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, messageDynamicData, relatedObj.getRelatedObject());
             LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
+            return;
         }
 
-
+/*
         if (diagnostic != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
             procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnosticObj.getMessageCodeObj(), diagnosticObj.getMessageCodeVariables());
+            return;
         } else {
             RelatedObjects rObj = RelatedObjects.getInstanceForActions();
             rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsInvTrackingData.TablesInvTrackingData.LOT.getTableName(), lotName);
@@ -220,7 +222,8 @@ public class InvTrackingAPIactions extends HttpServlet {
             rObj.killInstance();
             procReqInstance.killIt();
             LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
+            return;
         }
-
+*/
     }
 }
