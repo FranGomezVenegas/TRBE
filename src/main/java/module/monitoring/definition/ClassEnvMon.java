@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -75,6 +76,7 @@ public class ClassEnvMon {
                     Integer batchTemplateVersion = (Integer) argValues[2];
                     String fieldName=argValues[3].toString();
                     String fieldValue=argValues[4].toString();
+                    String incubStage=LPNulls.replaceNull(argValues[5]).toString();
                     String[] fieldNames=new String[0];
                     Object[] fieldValues=new Object[0];
                     if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            
@@ -82,6 +84,10 @@ public class ClassEnvMon {
                     if (fieldValues!=null && fieldValues.length>0 && fieldValues[0].toString().length()>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
                         actionDiagnoses=fieldValues;
                         break;
+                    }
+                    if (incubStage.length()>0){
+                        fieldNames=LPArray.addValueToArray1D(fieldNames, TblsEnvMonitData.IncubBatch.INCUB_STAGE.getName());
+                        fieldValues=LPArray.addValueToArray1D(fieldValues, incubStage);
                     }
                         actionDiagnoses= DataBatchIncubator.createBatch(batchName, batchTemplateId, batchTemplateVersion, fieldNames, fieldValues);
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), batchName);                
@@ -100,7 +106,7 @@ public class ClassEnvMon {
                 case EM_BATCH_ASSIGN_INCUB: 
                     batchName = argValues[0].toString();
                     incubationName = argValues[1].toString();
-                    String incubStage=argValues[2].toString(); 
+                    incubStage=argValues[2].toString(); 
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), "incubator", incubationName);  // TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName()               
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), batchName);                
                     this.messageDynamicData=new Object[]{batchName, incubationName};

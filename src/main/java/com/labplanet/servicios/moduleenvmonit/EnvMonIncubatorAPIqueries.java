@@ -167,6 +167,15 @@ public class EnvMonIncubatorAPIqueries extends HttpServlet {
                 //String[] fieldsToRetrieve=new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.STAGE.getName()};
 
                 case GET_INCUBATORS_LIST:
+                    
+                    String[] whereFieldsNameArr = new String[]{TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()};
+                    Object[] whereFieldsValueArr = new Object[]{true};
+                    String incubStage=LPNulls.replaceNull(argValues[0]).toString();  
+                    if (incubStage.length()>0) {
+                        whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsEnvMonitConfig.InstrIncubator.STAGE.getName());
+                        whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, incubStage);
+                    }
+                    
                     String[] fieldsToRetrieve = EnumIntTableFields.getAllFieldNames(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableFields());
 //                String[] fieldsToRetrieve=new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.STAGE.getName()};
                     String[] fieldsToRetrieveReadings = new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.EVENT_TYPE.getName(),
@@ -174,9 +183,7 @@ public class EnvMonIncubatorAPIqueries extends HttpServlet {
                         TblsEnvMonitData.InstrIncubatorNoteBook.TEMPERATURE.getName()};
                     EnumIntTableFields[] fieldsToRetrieveObj = EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR, fieldsToRetrieve);
                     Object[][] incubatorsList = QueryUtilitiesEnums.getTableData(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR,
-                            fieldsToRetrieveObj,
-                            new String[]{TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()}, new Object[]{true},
-                            new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()});
+                            fieldsToRetrieveObj, whereFieldsNameArr, whereFieldsValueArr, new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()});
                     JSONArray jArr = new JSONArray();
                     for (Object[] currInstrument : incubatorsList) {
                         JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrument);
@@ -194,6 +201,8 @@ public class EnvMonIncubatorAPIqueries extends HttpServlet {
                     }
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     break;
+
+
                 case GET_INCUBATOR_TEMP_READINGS:
                     String instrName = argValues[0].toString();
                     String numPoints = LPNulls.replaceNull(argValues[1]).toString();

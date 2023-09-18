@@ -331,6 +331,7 @@ public class TblsEnvMonitData {
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }
 
+    
     public enum IncubBatch implements EnumIntTableFields{
         NAME("name",  LPDatabase.stringNotNull(100), null, null, null, null),
         INCUB_BATCH_CONFIG_ID("incub_batch_config_id", LPDatabase.integerNotNull(), null, null, null, null),

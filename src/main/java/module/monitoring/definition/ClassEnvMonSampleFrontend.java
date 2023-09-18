@@ -215,7 +215,8 @@ public class ClassEnvMonSampleFrontend {
             new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB + GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 50),
             new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB + GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 51),
             new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB + GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 52),
-            new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB + GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 53),}, EndPointsToRequirements.endpointWithNoOutputObjects, null,
+            new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_ALLPENDINGANYINCUB + GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 53),
+            new LPAPIArguments("incubStage", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 54),}, EndPointsToRequirements.endpointWithNoOutputObjects, null,
                 null, null),
         SAMPLES_BY_STAGE("SAMPLES_BY_STAGE", "",
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6),
@@ -1268,6 +1269,12 @@ public class ClassEnvMonSampleFrontend {
                         whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsEnvMonitData.IncubBatch.ACTIVE.getName());
                         whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, true);
                     }
+                    String incubStage=LPNulls.replaceNull(argValues[48]).toString();  
+                    if (incubStage.length()>0) {
+                        whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsEnvMonitData.IncubBatch.INCUB_STAGE.getName());
+                        whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, incubStage);
+                    }
+                    
                     jArr = getActiveBatchData(fieldsToRetrieve, whereFieldsNameArr, whereFieldsValueArr);
                     jObj = new JSONObject();
                     jObj.put("active_batches", jArr);
@@ -1293,61 +1300,62 @@ public class ClassEnvMonSampleFrontend {
                         }
                     }
                     jObj.put("samples_stillIncubationStageAndBothIncubCompleted", jArr);
-
                     String includSplittedByIncubNumber = LPNulls.replaceNull(argValues[0]).toString();
                     if (Boolean.TRUE.equals(Boolean.valueOf(includSplittedByIncubNumber))) {
                         int j = 5;
                         for (int i = 1; i < 3; i++) {
-                            whereFieldsName = argValues[j].toString();
-                            j++;
-                            whereFieldsValue = argValues[j].toString();
-                            j++;
-                            sampleFieldToRetrieve = argValues[j].toString();
-                            j++;
-                            if (sampleFieldToRetrieve.length() == 0 || "ALL".equalsIgnoreCase(sampleFieldToRetrieve)) {
-                                sampleFieldToRetrieveArr = EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableFields());
-                            } else {
-                                sampleFieldToRetrieveArr = sampleFieldToRetrieve.split("\\|");
+                            if (incubStage.length()==0||(incubStage.length()>0&& incubStage.equalsIgnoreCase(String.valueOf(i)))){
+                                whereFieldsName = argValues[j].toString();
+                                j++;
+                                whereFieldsValue = argValues[j].toString();
+                                j++;
+                                sampleFieldToRetrieve = argValues[j].toString();
+                                j++;
+                                if (sampleFieldToRetrieve.length() == 0 || "ALL".equalsIgnoreCase(sampleFieldToRetrieve)) {
+                                    sampleFieldToRetrieveArr = EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableFields());
+                                } else {
+                                    sampleFieldToRetrieveArr = sampleFieldToRetrieve.split("\\|");
+                                }
+                                String sampleAnalysisFieldToRetrieve = argValues[j].toString();
+                                j++;
+                                String sampleLastLevel = argValues[j].toString();
+                                j++;
+                                String addSampleAnalysis = argValues[j].toString();
+                                j++;
+                                sampleAnalysisFieldToRetrieve = argValues[j].toString();
+                                j++;
+                                String[] sampleAnalysisFieldToRetrieveArr = null;
+                                if (sampleAnalysisFieldToRetrieve.length() == 0 || "ALL".equalsIgnoreCase(sampleAnalysisFieldToRetrieve)) {
+                                    sampleAnalysisFieldToRetrieveArr = EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableFields());
+                                } else {
+                                    sampleAnalysisFieldToRetrieveArr = sampleAnalysisFieldToRetrieve.split("\\|");
+                                }
+                                sampleAnalysisWhereFieldsName = argValues[j].toString();
+                                j++;
+                                sampleAnalysisWhereFieldsValue = argValues[j].toString();
+                                j++;
+                                String addSampleAnalysisResult = argValues[j].toString();
+                                j++;
+                                String sampleAnalysisResultFieldToRetrieve = argValues[j].toString();
+                                j++;
+                                String[] sampleAnalysisResultFieldToRetrieveArr = null;
+                                if (sampleAnalysisResultFieldToRetrieve.length() == 0 || "ALL".equalsIgnoreCase(sampleAnalysisResultFieldToRetrieve)) {
+                                    sampleAnalysisResultFieldToRetrieveArr = EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableFields());
+                                } else {
+                                    sampleAnalysisResultFieldToRetrieveArr = sampleAnalysisResultFieldToRetrieve.split("\\|");
+                                }
+                                String sampleAnalysisResultWhereFieldsName = argValues[j].toString();
+                                j++;
+                                String sampleAnalysisResultWhereFieldsValue = argValues[j].toString();
+                                j++;
+                                sortFieldsName = argValues[j].toString();
+                                j++;
+                                JSONArray samplesArray = samplesByStageData(sampleLastLevel, sampleFieldToRetrieveArr, whereFieldsName,
+                                        whereFieldsValue, sortFieldsName,
+                                        addSampleAnalysis, sampleAnalysisFieldToRetrieveArr, sampleAnalysisWhereFieldsName, sampleAnalysisWhereFieldsValue,
+                                        addSampleAnalysisResult, sampleAnalysisResultFieldToRetrieveArr, sampleAnalysisResultWhereFieldsName, sampleAnalysisResultWhereFieldsValue, false);
+                                jObj.put("incub_" + i, samplesArray);
                             }
-                            String sampleAnalysisFieldToRetrieve = argValues[j].toString();
-                            j++;
-                            String sampleLastLevel = argValues[j].toString();
-                            j++;
-                            String addSampleAnalysis = argValues[j].toString();
-                            j++;
-                            sampleAnalysisFieldToRetrieve = argValues[j].toString();
-                            j++;
-                            String[] sampleAnalysisFieldToRetrieveArr = null;
-                            if (sampleAnalysisFieldToRetrieve.length() == 0 || "ALL".equalsIgnoreCase(sampleAnalysisFieldToRetrieve)) {
-                                sampleAnalysisFieldToRetrieveArr = EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableFields());
-                            } else {
-                                sampleAnalysisFieldToRetrieveArr = sampleAnalysisFieldToRetrieve.split("\\|");
-                            }
-                            sampleAnalysisWhereFieldsName = argValues[j].toString();
-                            j++;
-                            sampleAnalysisWhereFieldsValue = argValues[j].toString();
-                            j++;
-                            String addSampleAnalysisResult = argValues[j].toString();
-                            j++;
-                            String sampleAnalysisResultFieldToRetrieve = argValues[j].toString();
-                            j++;
-                            String[] sampleAnalysisResultFieldToRetrieveArr = null;
-                            if (sampleAnalysisResultFieldToRetrieve.length() == 0 || "ALL".equalsIgnoreCase(sampleAnalysisResultFieldToRetrieve)) {
-                                sampleAnalysisResultFieldToRetrieveArr = EnumIntTableFields.getAllFieldNames(TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableFields());
-                            } else {
-                                sampleAnalysisResultFieldToRetrieveArr = sampleAnalysisResultFieldToRetrieve.split("\\|");
-                            }
-                            String sampleAnalysisResultWhereFieldsName = argValues[j].toString();
-                            j++;
-                            String sampleAnalysisResultWhereFieldsValue = argValues[j].toString();
-                            j++;
-                            sortFieldsName = argValues[j].toString();
-                            j++;
-                            JSONArray samplesArray = samplesByStageData(sampleLastLevel, sampleFieldToRetrieveArr, whereFieldsName,
-                                    whereFieldsValue, sortFieldsName,
-                                    addSampleAnalysis, sampleAnalysisFieldToRetrieveArr, sampleAnalysisWhereFieldsName, sampleAnalysisWhereFieldsValue,
-                                    addSampleAnalysisResult, sampleAnalysisResultFieldToRetrieveArr, sampleAnalysisResultWhereFieldsName, sampleAnalysisResultWhereFieldsValue, false);
-                            jObj.put("incub_" + i, samplesArray);
                         }
                     }
                     String includeAllWithAnyPendingIncubation = LPNulls.replaceNull(argValues[1]).toString();
