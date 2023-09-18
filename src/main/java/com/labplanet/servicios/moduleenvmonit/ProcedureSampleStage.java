@@ -206,7 +206,8 @@ public class ProcedureSampleStage {
             else
                 paramName=asJsonObject.get("param_name").getAsString();
             
-            if ("Recuento".equals(paramName)){ 
+            if (paramName.toUpperCase().contains("COUNT")||paramName.toUpperCase().contains("CUENT")
+                    ||paramName.toUpperCase().equalsIgnoreCase("Recuento")||paramName.toUpperCase().contains("RESULT")){ 
                 return LPPlatform.LAB_TRUE;
             }        
             return LPPlatform.LAB_FALSE+"YOUWIN";
