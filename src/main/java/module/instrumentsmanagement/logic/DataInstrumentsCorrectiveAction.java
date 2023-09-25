@@ -282,7 +282,7 @@ public class DataInstrumentsCorrectiveAction {
         String statusClosed = InstrumentsCorrectiveActionStatuses.STATUS_CLOSED.getStatusCode();
         String objectIdClass = null;
         String fieldToFindRecord = null;
-        if (TblsInstrumentsData.TablesInstrumentsData.INSTRUMENT_EVENT.getTableName().equalsIgnoreCase(objectType)) {
+        if (TblsInstrumentsProcedure.InstrumentsCorrectiveAction.EVENT_ID.getName().equalsIgnoreCase(objectType)) {
             fieldToFindRecord = TblsInstrumentsProcedure.InstrumentsCorrectiveAction.EVENT_ID.getName();
         }
         if (fieldToFindRecord == null) {
