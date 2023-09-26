@@ -60,23 +60,27 @@ public class BusinessRules {
         }
     }
 
+    public static Object[] getProcInstanceActionsInfo(String procedureInstanceName){
+        String[] fldNames=new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.ROLES_NAME.getName(),
+            TblsProcedure.ProcedureActions.ARE_YOU_SURE_REQUIRED.getName(), TblsProcedure.ProcedureActions.JUSTIF_REASON_REQUIRED.getName(), TblsProcedure.ProcedureActions.ESIGN_REQUIRED.getName(),
+            TblsProcedure.ProcedureActions.USER_CREDENTIAL_REQUIRED.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(),
+            TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName()};
+        Object[][] actionsInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procedureInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName(),
+                new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
+                new Object[]{},fldNames);        
+        return new Object[]{fldNames, actionsInfo};
+    }
     private void setActions(String procedureInstanceName){
         Object[] dbTableExists = Rdbms.dbTableExists(procedureInstanceName + "-procedure", 
                 TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())) {return;}
         JSONArray jArr = new JSONArray();
-        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(this.procedureInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName(),
-                new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
-                new Object[]{},
-                new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.ROLES_NAME.getName(),
-                    TblsProcedure.ProcedureActions.ARE_YOU_SURE_REQUIRED.getName(), TblsProcedure.ProcedureActions.JUSTIF_REASON_REQUIRED.getName(), TblsProcedure.ProcedureActions.ESIGN_REQUIRED.getName(),
-                    TblsProcedure.ProcedureActions.USER_CREDENTIAL_REQUIRED.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(),
-                    TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName(),
-                });
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())) {
+        Object[] procInstanceActionsListAll=getProcInstanceActionsInfo(procedureInstanceName);
+        Object[][] procInstanceActionsList=(Object[][])procInstanceActionsListAll[1];
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInstanceActionsList[0][0].toString())) {
             return;
         }        
-        for (Object[] curAction : ruleValue) {
+        for (Object[] curAction : procInstanceActionsList) {
             this.actions.add(new ActionInfo(curAction[0].toString(), curAction[1].toString(), Boolean.valueOf(curAction[2].toString()), Boolean.valueOf(curAction[3].toString()), 
                 Boolean.valueOf(curAction[4].toString()), Boolean.valueOf(curAction[5].toString()),
                 curAction[6].toString(), curAction[7].toString(), curAction[8].toString()));
@@ -137,21 +141,6 @@ public class BusinessRules {
         return Collections.unmodifiableList(this.procedure);
     }
 
-    public String xgetActionsRoles(String procInstanceName, String ruleName) {
-        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())) {
-            return "DISABLED";
-        }
-        if (this.actions != null) {
-            for (ActionInfo curElement : this.actions) {
-                if (ruleName.equalsIgnoreCase(curElement.getActionName())) 
-                {
-                    return curElement.getActionRoles();
-                }
-            }
-        }
-        return "";
-    }
     public ActionInfo getActionDefinition(String actionName) {
         if (this.actions != null) {
             for (ActionInfo curElement : this.actions) {

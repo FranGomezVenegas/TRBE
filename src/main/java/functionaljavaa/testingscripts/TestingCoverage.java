@@ -12,8 +12,10 @@ import com.labplanet.servicios.ResponseError;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.SqlWhere;
+import databases.TblsProcedure;
 import databases.TblsTesting;
 import functionaljavaa.businessrules.BusinessRules;
+import static functionaljavaa.businessrules.BusinessRules.getProcInstanceActionsInfo;
 import functionaljavaa.businessrules.RuleInfo;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
@@ -513,8 +515,21 @@ public final class TestingCoverage {
         this.endpointsVisitedTotal = 0;
         this.endpointsMissingTotal = 0;
         this.endpointsCoverageDetail = new JSONObject();
-        this.procActionsArr = this.procBusRules.getProcedureBusinessRule(LPPlatform.LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName()).replaceAll("\\|\\|", "\\|").split("\\|");
-        this.procActionsArr = LPArray.getUniquesArray(this.procActionsArr);        
+        
+        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())){
+            this.procActionsArr = this.procBusRules.getProcedureBusinessRule(LPPlatform.LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName()).replaceAll("\\|\\|", "\\|").split("\\|");
+            this.procActionsArr = LPArray.getUniquesArray(this.procActionsArr);                
+        }else{
+            Object[] procInstanceActionsInfo = getProcInstanceActionsInfo(procInstanceName);
+            Object[][] procInstanceActionsList=(Object[][])procInstanceActionsInfo[1];
+            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procInstanceActionsList[0][0].toString()))) {
+                this.procActionsArr = LPArray.convertObjectArrayToStringArray(LPArray.getColumnFromArray2D(procInstanceActionsList, 0));
+            }                            
+        }
+         
+        
+        
         this.msgCodeCoverageDetail = new JSONObject();
     }
 
@@ -527,10 +542,10 @@ public final class TestingCoverage {
         mainObj.put("Coverage_Record_Info", coverageObj);
 
         JSONObject endpointsObj = new JSONObject();
-        endpointsObj.put("endpoints_coverage_percentage", this.endpointsCovPerc);
-        endpointsObj.put("endpoints_coverage_detail", this.endpointsCoverageDetail);
-        endpointsObj.put("endpoints_visited", this.endpointsVisitedTotal);
-        mainObj.put("Endpoints_Info", endpointsObj);
+        endpointsObj.put("actions_coverage_percentage", this.endpointsCovPerc);
+        endpointsObj.put("actions_coverage_detail", this.endpointsCoverageDetail);
+        endpointsObj.put("actions_visited", this.endpointsVisitedTotal);
+        mainObj.put("Actions_Info", endpointsObj);
 
         JSONObject busRulesObj = new JSONObject();
         busRulesObj.put("bus_rules_coverage_percentage", this.busRuleCovPerc);
