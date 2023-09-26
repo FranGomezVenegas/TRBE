@@ -247,6 +247,12 @@ public class ProcedureDefinitionToInstance {
     }
 
     public static final JSONObject createdDBProcedureActions(String procedure, Integer procVersion, String procInstanceName) {
+        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
+        return (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))? 
+            createdDBProcedureActionsInBusRules(procedure, procVersion, procInstanceName):
+            createdDBProcedureActionsInTable(procedure, procVersion, procInstanceName);
+    }
+    private static final JSONObject createdDBProcedureActionsInBusRules(String procedure, Integer procVersion, String procInstanceName) {
         JSONObject jMainObj = new JSONObject();
         JSONArray jArr = new JSONArray();
         SqlWhere sw = new SqlWhere();
@@ -416,14 +422,206 @@ public class ProcedureDefinitionToInstance {
         jMainObj.put("createdDBProcedureActions", jArr);
         return jMainObj;
     }
+    private static final JSONObject createdDBProcedureActionsInTable(String procedure, Integer procVersion, String procInstanceName) {
+        JSONObject jMainObj = new JSONObject();
+        JSONArray jArr = new JSONArray();
+        SqlWhere sw = new SqlWhere();
+        sw.addConstraint(TblsProcedure.ProcedureActions.ACTION_NAME, WHERECLAUSE_TYPES.NOT_EQUAL, new Object[]{"<<>>"}, "");
+        Rdbms.removeRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS, sw, procInstanceName);
+        sw = new SqlWhere();
+        Object[][] procUsrReqs = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS.getTableName(),
+                new String[]{TblsReqs.ProcedureUserRequirements.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRequirements.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureUserRequirements.PROC_INSTANCE_NAME.getName()},
+                new Object[]{procedure, procVersion, procInstanceName},
+                new String[]{TblsReqs.ProcedureUserRequirements.WINDOW_ACTION.getName(), TblsReqs.ProcedureUserRequirements.ROLES.getName(),
+                    TblsReqs.ProcedureUserRequirements.CONFIRM_DIALOG.getName(), TblsReqs.ProcedureUserRequirements.CONFIRM_DIALOG_DETAIL.getName()});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procUsrReqs[0][0].toString())) {
+            JSONObject jObj = new JSONObject();
+            jObj.put(GlobalAPIsParams.LBL_ERROR, "no entries in " + TblsReqs.TablesReqs.PROCEDURE_USER_REQS.getTableName() + " table");
+            jArr.add(jObj);
+        } else {
+/*            String allProcActionsInOne = LPArray.convertArrayToString(LPArray.getColumnFromArray2D(procUsrReqs, 0), "|", "", true);
+            allProcActionsInOne = allProcActionsInOne.replace("||", "|");
+            String[] fldNames = new String[]{TblsProcedure.ProcedureBusinessRules.DISABLED.getName(), TblsProcedure.ProcedureBusinessRules.AREA.getName(),
+                TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()};
+            Object[] fldValues = new Object[]{false, LPPlatform.LpPlatformBusinessRules.PROCEDURE_ACTIONS.getAreaName(),
+                LPPlatform.LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName(), allProcActionsInOne};
+            RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, fldNames, fldValues);
+            JSONObject jObj = new JSONObject();
+            if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
+                jObj.put(LPPlatform.LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName(), allProcActionsInOne + " " + "Added");
+            } else {
+                jObj.put(LPPlatform.LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName(), allProcActionsInOne + " " + "error adding" + insertRecordInTable.getErrorMessageCode());
+            }
+            jArr.add(jObj);
+*/            
+            StringBuilder esigns = new StringBuilder(0);
+            StringBuilder verifUsers = new StringBuilder(0);
+            StringBuilder actionConfirm = new StringBuilder(0);
+            StringBuilder justifReason = new StringBuilder(0);
+            RdbmsObject insertRecordInTable;
+            JSONObject jObj = new JSONObject();
+            for (Object[] curAction : procUsrReqs) {
+                String[] fldNames=null;
+                Object[] fldValues=null;                
+                String actionName = LPNulls.replaceNull(curAction[0]).toString();
+                if (actionName.length()==0){
+                    continue;
+                }
+                String allRolesStr = LPNulls.replaceNull(curAction[1]).toString();
 
-    /**
-     *
-     * @param procedure
-     * @param procVersion
-     * @param procInstanceName
-     * @return
-     */
+                fldNames=LPArray.addValueToArray1D(fldNames, TblsProcedure.ProcedureActions.ACTION_NAME.getName());
+                fldValues=LPArray.addValueToArray1D(fldValues, actionName);
+                fldNames=LPArray.addValueToArray1D(fldNames, TblsProcedure.ProcedureActions.ROLES_NAME.getName());
+                fldValues=LPArray.addValueToArray1D(fldValues, allRolesStr);
+                
+                String[] confirmDialog = LPNulls.replaceNull(curAction[2]).toString().split("\\|");
+                if (confirmDialog.length > 0) {
+                    Boolean fieldAdded=false;
+                    if (Arrays.toString(confirmDialog).toLowerCase().contains("esign")) {
+                        fldNames=LPArray.addValueToArray1D(fldNames, TblsProcedure.ProcedureActions.ESIGN_REQUIRED.getName());
+                        fieldAdded=true;
+                    }
+                    if (Arrays.toString(confirmDialog).toLowerCase().contains("user")) {
+                        fldNames=LPArray.addValueToArray1D(fldNames, TblsProcedure.ProcedureActions.USER_CREDENTIAL_REQUIRED.getName());
+                        fieldAdded=true;
+                    }
+                    if (Arrays.toString(confirmDialog).toLowerCase().contains("confirm")) {
+                        fldNames=LPArray.addValueToArray1D(fldNames, TblsProcedure.ProcedureActions.ARE_YOU_SURE_REQUIRED.getName());
+                        fieldAdded=true;
+                    }
+                    if (Arrays.toString(confirmDialog).toLowerCase().contains("justif")) {
+                        fldNames=LPArray.addValueToArray1D(fldNames, TblsProcedure.ProcedureActions.JUSTIF_REASON_REQUIRED.getName());
+                        fieldAdded=true;
+                    }
+                    if (fieldAdded){
+                        fldValues=LPArray.addValueToArray1D(fldValues, true);                    
+                    }
+                }
+                String confirmDialogPhrase = curAction[3].toString();
+                if (confirmDialogPhrase.length() > 0) {
+                    fldNames=LPArray.addValueToArray1D(fldNames, TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName());
+                    fldValues=LPArray.addValueToArray1D(fldValues, confirmDialogPhrase);
+                }                
+                insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS, fldNames, fldValues);
+                jObj = new JSONObject();
+                if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
+                    jObj.put(TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName()+"_"+ curAction[0].toString(), "Added");
+                } else {
+                    jObj.put(TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName()+"_"+ curAction[0].toString(), "error adding" + insertRecordInTable.getErrorMessageCode());
+                }
+                jObj.put("detail",LPJson.convertArrayRowToJSONObject(fldNames, fldValues));
+                jArr.add(jObj);
+/*
+                if (actionName.trim().length() > 0) {
+                    for (String curRole : allRoles) {
+                        fldValues = new Object[]{false, LPPlatform.LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getAreaName(),
+                            LPPlatform.LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName() + curAction[0].toString(), curRole};
+                        insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, fldNames, fldValues);
+                        jObj = new JSONObject();
+                        if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
+                            jObj.put(LPPlatform.LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName() + curAction[0].toString(), curRole + " " + "Added");
+                        } else {
+                            jObj.put(LPPlatform.LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName() + curAction[0].toString(), curRole + " " + "error adding" + insertRecordInTable.getErrorMessageCode());
+                        }
+                        jArr.add(jObj);
+                    }
+                    String[] confirmDialog = LPNulls.replaceNull(curAction[2]).toString().split("\\|");
+                    if (confirmDialog.length > 0) {
+                        if (Arrays.toString(confirmDialog).toLowerCase().contains("esign")) {
+                            if (esigns.length() > 0) {
+                                esigns.append("|");
+                            }
+                            esigns.append(actionName);
+                        }
+                        if (Arrays.toString(confirmDialog).toLowerCase().contains("user")) {
+                            if (verifUsers.length() > 0) {
+                                verifUsers.append("|");
+                            }
+                            verifUsers.append(actionName);
+                        }
+                        if (Arrays.toString(confirmDialog).toLowerCase().contains("confirm")) {
+                            if (actionConfirm.length() > 0) {
+                                actionConfirm.append("|");
+                            }
+                            actionConfirm.append(actionName);
+                        }
+                        if (Arrays.toString(confirmDialog).toLowerCase().contains("justif")) {
+                            if (justifReason.length() > 0) {
+                                justifReason.append("|");
+                            }
+                            justifReason.append(actionName);
+                        }
+                    }
+                    String confirmDialogPhrase = curAction[3].toString();
+                    if (confirmDialogPhrase.length() > 0) {
+                        fldValues = new Object[]{false, LPPlatform.LpPlatformBusinessRules.AUDITREASON_PHRASE.getAreaName(),
+                            actionName + LPPlatform.LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName(), confirmDialogPhrase};
+                        insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, fldNames, fldValues);
+                        jObj = new JSONObject();
+                        if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
+                            jObj.put(actionName + LPPlatform.LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName(), confirmDialogPhrase + " " + "Added");
+                        } else {
+                            jObj.put(actionName + LPPlatform.LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName(), confirmDialogPhrase + " " + "error adding" + insertRecordInTable.getErrorMessageCode());
+                        }
+                        jArr.add(jObj);
+                    }
+                }
+            }
+            if (esigns.length() > 0) {
+                fldValues = new Object[]{false, LPPlatform.LpPlatformBusinessRules.ESIGN_REQUIRED.getAreaName(),
+                    LPPlatform.LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName(), esigns};
+                insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, fldNames, fldValues);
+                jObj = new JSONObject();
+                if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
+                    jObj.put(LPPlatform.LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName(), esigns + " " + "Added");
+                } else {
+                    jObj.put(LPPlatform.LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName(), esigns + " " + "error adding" + insertRecordInTable.getErrorMessageCode());
+                }
+                jArr.add(jObj);
+            }
+            if (verifUsers.length() > 0) {
+                fldValues = new Object[]{false, LPPlatform.LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getAreaName(),
+                    LPPlatform.LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName(), verifUsers};
+                insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, fldNames, fldValues);
+                jObj = new JSONObject();
+                if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
+                    jObj.put(LPPlatform.LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName(), verifUsers + " " + "Added");
+                } else {
+                    jObj.put(LPPlatform.LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName(), verifUsers + " " + "error adding" + insertRecordInTable.getErrorMessageCode());
+                }
+                jArr.add(jObj);
+            }
+            if (actionConfirm.length() > 0) {
+                fldValues = new Object[]{false, LPPlatform.LpPlatformBusinessRules.ACTIONCONFIRM_REQUIRED.getAreaName(),
+                    LPPlatform.LpPlatformBusinessRules.ACTIONCONFIRM_REQUIRED.getTagName(), actionConfirm};
+                insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, fldNames, fldValues);
+                jObj = new JSONObject();
+                if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
+                    jObj.put(LPPlatform.LpPlatformBusinessRules.ACTIONCONFIRM_REQUIRED.getTagName(), actionConfirm + " " + "Added");
+                } else {
+                    jObj.put(LPPlatform.LpPlatformBusinessRules.ACTIONCONFIRM_REQUIRED.getTagName(), actionConfirm + " " + "error adding" + insertRecordInTable.getErrorMessageCode());
+                }
+                jArr.add(jObj);
+            }
+            if (justifReason.length() > 0) {
+                fldValues = new Object[]{false, LPPlatform.LpPlatformBusinessRules.AUDIT_JUSTIF_REASON_REQUIRED.getAreaName(),
+                    LPPlatform.LpPlatformBusinessRules.AUDIT_JUSTIF_REASON_REQUIRED.getTagName(), justifReason};
+                insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, fldNames, fldValues);
+                jObj = new JSONObject();
+                if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
+                    jObj.put(LPPlatform.LpPlatformBusinessRules.AUDIT_JUSTIF_REASON_REQUIRED.getTagName(), justifReason + " " + "Added");
+                } else {
+                    jObj.put(LPPlatform.LpPlatformBusinessRules.AUDIT_JUSTIF_REASON_REQUIRED.getTagName(), justifReason + " " + "error adding" + insertRecordInTable.getErrorMessageCode());
+                }
+                jArr.add(jObj);
+            }
+//          procedureActionsAndRoles(procInstanceName, ProcedureDefinitionQueries.ProcBusinessRulesQueries bsnRuleQry, mainObj); */
+            }
+        }
+        jMainObj.put("createdDBProcedureActions", jArr);
+        return jMainObj;
+    }
+
     public static final JSONObject createDBPersonProfiles(String procedure, Integer procVersion, String procInstanceName) {
         String defaultMail = "info@trazit.net";
         String pasEsingn = "trazit4ever";
