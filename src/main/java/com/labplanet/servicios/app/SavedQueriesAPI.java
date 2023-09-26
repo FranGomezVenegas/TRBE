@@ -10,6 +10,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import databases.TblsData;
 import databases.features.Token;
+import functionaljavaa.businessrules.ActionsControl;
 import functionaljavaa.businessrules.BusinessRules;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
@@ -228,12 +229,12 @@ public class SavedQueriesAPI extends HttpServlet {
         }
         mandatoryParams = null;
         BusinessRules bi = new BusinessRules(procInstanceName, null);
-        Object[] procActionRequiresUserConfirmation = LPPlatform.procActionRequiresUserConfirmation(procInstanceName, actionName, bi);
+        Object[] procActionRequiresUserConfirmation = ActionsControl.procActionRequiresUserConfirmation(procInstanceName, actionName, bi);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresUserConfirmation[0].toString())) {
             mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK);
             mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK);
         }
-        Object[] procActionRequiresEsignConfirmation = LPPlatform.procActionRequiresEsignConfirmation(procInstanceName, actionName, bi);
+        Object[] procActionRequiresEsignConfirmation = ActionsControl.procActionRequiresEsignConfirmation(procInstanceName, actionName, bi);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresEsignConfirmation[0].toString())) {
             mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK);
         }
@@ -267,12 +268,12 @@ public class SavedQueriesAPI extends HttpServlet {
             return;
         }
         try (PrintWriter out = response.getWriter()) {
-            Object[] actionEnabled = LPPlatform.procActionEnabled(procInstanceName, token, actionName, bi);
+            Object[] actionEnabled = ActionsControl.procActionEnabled(procInstanceName, token, actionName, bi);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) {
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
                 return;
             }
-            actionEnabled = LPPlatform.procUserRoleActionEnabled(procInstanceName, token.getUserRole(), actionName, bi);
+            actionEnabled = ActionsControl.procUserRoleActionEnabled(procInstanceName, token.getUserRole(), actionName, bi);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) {
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
                 return;

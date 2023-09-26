@@ -44,6 +44,8 @@ public class TblsProcedure {
                 new String[]{TblsProcedure.ProcedureBusinessRules.AREA.getName(), ProcedureBusinessRules.RULE_NAME.getName()}, null, "Procedure Business Rules Info"),
         PROCEDURE_EVENTS(null, "procedure_events", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProcedureEvents.values(), null,
                 new String[]{TblsProcedure.ProcedureEvents.NAME.getName(), ProcedureEvents.ROLE_NAME.getName()}, null, "Procedure Events Info"),
+        PROCEDURE_ACTIONS(null, "procedure_actions", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProcedureActions.values(), null,
+                new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName()}, null, "Procedure Actions Info"),
         PROCEDURE_EVENTS_HELP_CONTENT(null, "procedure_events_help_content", SCHEMA_NAME, false, ProcedureEventsHelpContent.values(), null,
                 new String[]{ProcedureEventsHelpContent.LP_FRONTEND_PAGE_NAME.getName(), ProcedureEventsHelpContent.LP_FRONTEND_PAGE_FILTER.getName(), ProcedureEventsHelpContent.ORDER_NUMBER.getName()},
                 new Object[]{new ForeignkeyFld(ProcedureEventsHelpContent.LP_FRONTEND_PAGE_NAME.getName(), SCHEMA_NAME, TablesProcedure.PROCEDURE_EVENTS.getTableName(), ProcedureEvents.LP_FRONTEND_PAGE_NAME.getName()),
@@ -309,6 +311,64 @@ public class TblsProcedure {
         ICON_NAME_WHENNOTCERTIF("icon_name_when_not_certified", LPDatabase.string(), null, null, null, null);
 
         private ProcedureEvents(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules) {
+            this.fieldName = dbObjName;
+            this.fieldType = dbObjType;
+            this.fieldMask = fieldMask;
+            this.reference = refer;
+            this.fieldComment = comment;
+            this.fldBusinessRules = fldBusRules;
+        }
+        private final String fieldName;
+
+        @Override
+        public String getName() {
+            return this.fieldName;
+        }
+        private final String fieldType;
+
+        @Override
+        public String getFieldType() {
+            return this.fieldType;
+        }
+        private final String fieldMask;
+
+        @Override
+        public String getFieldMask() {
+            return this.fieldMask;
+        }
+        private final ReferenceFld reference;
+
+        @Override
+        public ReferenceFld getReferenceTable() {
+            return this.reference;
+        }
+        private final String fieldComment;
+
+        @Override
+        public String getFieldComment() {
+            return this.fieldComment;
+        }
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override
+        public FldBusinessRules[] getFldBusinessRules() {
+            return this.fldBusinessRules;
+        }
+    }
+
+    public enum ProcedureActions implements EnumIntTableFields {
+        ACTION_NAME("action_name", LPDatabase.stringNotNull(), null, null, null, null),
+        ROLES_NAME("roles_name", LPDatabase.stringNotNull(), null, null, null, null),
+        ARE_YOU_SURE_REQUIRED("are_you_sure_required", LPDatabase.booleanFld(false), null, null, null, null),
+        JUSTIF_REASON_REQUIRED("justif_reason_required", LPDatabase.booleanFld(false), null, null, null, null),        
+        ESIGN_REQUIRED("esign_required", LPDatabase.booleanFld(false), null, null, null, null),
+        USER_CREDENTIAL_REQUIRED("user_credential_required", LPDatabase.booleanFld(false), null, null, null, null),
+        AUDIT_REASON_TYPE("audit_reason_type", LPDatabase.string(), null, null, null, null),
+        AUDIT_LIST_EN("audit_reason_list_en", LPDatabase.string(), null, null, null, null),
+        AUDIT_LIST_ES("audit_reason_list_es", LPDatabase.string(), null, null, null, null),
+        ;
+        private ProcedureActions(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules) {
             this.fieldName = dbObjName;
             this.fieldType = dbObjType;

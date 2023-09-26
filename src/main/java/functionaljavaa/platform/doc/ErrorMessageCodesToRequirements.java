@@ -15,7 +15,6 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,7 +30,12 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
-
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 /**
  *
  * @author User
@@ -239,5 +243,58 @@ public class ErrorMessageCodesToRequirements {
             parm=null;
         }
     }
+    
+    private static void searchEnumReference(String enumName, File directory, List<String> result) {
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.isDirectory()) {
+                    searchEnumReference(enumName, file, result);
+                } else if (file.getName().endsWith(".java")) {
+                    try {
+                        String content = new String(Files.readAllBytes(file.toPath()));
+                        Pattern pattern = Pattern.compile(enumName);
+                        Matcher matcher = pattern.matcher(content);
+                        while (matcher.find()) {
+                            result.add("Archivo: " + file.getAbsolutePath() + ", Enum en línea: " + content.substring(matcher.start(), matcher.end()));
+                        }
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }    
+ /*   public static void getEnumsUsage(String[] args) {
+        String enumNameToFind = "ACTIONNOTDECLARED_TOPERFORMAUTOMOVETONEXT";
+        String directoryPath = "ruta/a/tu/directorio/proyecto"; // Reemplaza con la ruta de tu proyecto
 
+        List<String> methodsUsingEnum = new ArrayList<>();
+
+        Files.walk(Paths.get(directoryPath), EnumSet.of(FileVisitOption.FOLLOW_LINKS))
+                .filter(Files::isRegularFile)
+                .filter(path -> path.toString().endsWith(".java"))
+                .forEach(filePath -> {
+                    try {
+                        BufferedReader reader = new BufferedReader(new FileReader(filePath.toFile()));
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+                            if (Pattern.compile("\\b" + enumNameToFind + "\\b").matcher(line).find()) {
+                                // Encontramos el enum en esta línea, registra el método
+                                methodsUsingEnum.add("En archivo: " + filePath + ", Línea: " + line.trim());
+                            }
+                        }
+                        reader.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+
+        // Imprime los métodos que utilizan el enum
+        for (String method : methodsUsingEnum) {
+            System.out.println(method);
+        }
+        return;
+    }    
+*/
 }

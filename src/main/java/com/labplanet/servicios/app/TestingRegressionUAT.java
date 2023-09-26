@@ -13,6 +13,7 @@ import databases.SqlStatement;
 import databases.SqlWhere;
 import databases.TblsTesting;
 import databases.features.Token;
+import functionaljavaa.businessrules.ActionsControl;
 import functionaljavaa.businessrules.BusinessRules;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.rowAddFields;
@@ -48,7 +49,6 @@ import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.globalvariables.GlobalVariables.DEFAULTLANGUAGE;
 import trazit.session.ApiMessageReturn;
-import static trazit.session.ProcedureRequestSession.isTheProcActionEnabled;
 
 /**
  *
@@ -229,7 +229,7 @@ public class TestingRegressionUAT extends HttpServlet {
                             String[] actionsList = null;
                             for (Object[] curStep : scriptStepsTblInfo) {
                                 Object[] theProcActionEnabled = null;
-                                theProcActionEnabled = isTheProcActionEnabled(token, procInstanceName, (String) LPNulls.replaceNull(curStep[1]), bi, isProcManagement);
+                                theProcActionEnabled = ActionsControl.isTheProcActionEnabled(token, procInstanceName, (String) LPNulls.replaceNull(curStep[1]), bi, isProcManagement);
                                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(theProcActionEnabled[0].toString()) && Boolean.FALSE.equals(actionIsOneQuery(curStep[1].toString()))) {
                                     actionsList = LPArray.addValueToArray1D(actionsList, "Step " + curStep[0].toString() + ", Action:" + curStep[1].toString());
                                     Logger.getLogger("In the script " + scriptId + " and step " + LPNulls.replaceNull(curStep[0]).toString() + "the action" + LPNulls.replaceNull(curStep[1]).toString() + " is not enabled");

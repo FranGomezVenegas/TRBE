@@ -7,6 +7,7 @@ package functionaljavaa.audit;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.features.Token;
+import functionaljavaa.businessrules.ActionsControl;
 import functionaljavaa.businessrules.BusinessRules;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -146,7 +147,7 @@ public class AuditAndUserValidation {
             return;
         }
         BusinessRules bi=new BusinessRules(procInstanceName, null);   
-        Object[] procActionRequiresUserConfirmation = LPPlatform.procActionRequiresUserConfirmation(procInstanceName, actionName, bi);
+        Object[] procActionRequiresUserConfirmation = ActionsControl.procActionRequiresUserConfirmation(procInstanceName, actionName, bi);
         if (procActionRequiresUserConfirmation[0].toString().contains(LPPlatform.LAB_TRUE)){     
             if (Boolean.FALSE.equals(procActionRequiresUserConfirmation[0].toString().equalsIgnoreCase(LPPlatform.LAB_TRUE)))
                 mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE);                
@@ -154,14 +155,14 @@ public class AuditAndUserValidation {
             mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK);    
             isValidAuditPhrase(procInstanceName, actionName, auditReasonPhrase, busRulesProcInstance);
         }
-        Object[] procActionRequiresEsignConfirmation = LPPlatform.procActionRequiresEsignConfirmation(procInstanceName, actionName, bi);
+        Object[] procActionRequiresEsignConfirmation = ActionsControl.procActionRequiresEsignConfirmation(procInstanceName, actionName, bi);
         if (procActionRequiresEsignConfirmation[0].toString().contains(LPPlatform.LAB_TRUE)){      
             if (Boolean.FALSE.equals(procActionRequiresEsignConfirmation[0].toString().equalsIgnoreCase(LPPlatform.LAB_TRUE)))
                 mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE);                
             mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK);    
             isValidAuditPhrase(procInstanceName, actionName, auditReasonPhrase, busRulesProcInstance);
         }        
-        Object[] procActionRequiresJustificationPhrase = LPPlatform.procActionRequiresJustificationPhrase(procInstanceName, actionName, bi);
+        Object[] procActionRequiresJustificationPhrase = ActionsControl.procActionRequiresJustificationPhrase(procInstanceName, actionName, bi);
         if (procActionRequiresJustificationPhrase[0].toString().contains(LPPlatform.LAB_TRUE)){      
             if (Boolean.FALSE.equals(procActionRequiresJustificationPhrase[0].toString().equalsIgnoreCase(LPPlatform.LAB_TRUE)))
                 mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE);

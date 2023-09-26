@@ -7,14 +7,16 @@ package functionaljavaa.businessrules;
 
 import databases.Rdbms;
 import databases.TblsProcedure;
-import databases.TblsTesting;
 import java.util.ArrayList;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import databases.SqlStatement;
+import databases.TblsTesting;
 import java.util.Collections;
 import java.util.List;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
+import org.json.simple.JSONArray;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
@@ -27,6 +29,7 @@ public class BusinessRules {
 
     static String startsMark = " *** ";
     String procedureInstanceName;
+    ArrayList<ActionInfo> actions;
     ArrayList<RuleInfo> procedure;
     ArrayList<RuleInfo> data;
     ArrayList<RuleInfo> config;
@@ -34,6 +37,7 @@ public class BusinessRules {
 
     public BusinessRules(String procedureInstanceName, Integer scriptId, JsonArray busRulesList) {
         this.procedureInstanceName = procedureInstanceName;
+        this.actions = new ArrayList<>();
         this.procedure = new ArrayList<>();
         this.data = new ArrayList<>();
         this.config = new ArrayList<>();
@@ -52,11 +56,37 @@ public class BusinessRules {
                 this.config.add(new RuleInfo(ruleName, ruleValue));
             }
             this.totalBusinessRules = this.procedure.size() + this.config.size() + this.data.size();
+            setActions(procedureInstanceName);
         }
     }
 
+    private void setActions(String procedureInstanceName){
+        Object[] dbTableExists = Rdbms.dbTableExists(procedureInstanceName + "-procedure", 
+                TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())) {return;}
+        JSONArray jArr = new JSONArray();
+        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(this.procedureInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName(),
+                new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
+                new Object[]{},
+                new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.ROLES_NAME.getName(),
+                    TblsProcedure.ProcedureActions.ARE_YOU_SURE_REQUIRED.getName(), TblsProcedure.ProcedureActions.JUSTIF_REASON_REQUIRED.getName(), TblsProcedure.ProcedureActions.ESIGN_REQUIRED.getName(),
+                    TblsProcedure.ProcedureActions.USER_CREDENTIAL_REQUIRED.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(),
+                    TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName(),
+                });
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())) {
+            return;
+        }        
+        for (Object[] curAction : ruleValue) {
+            this.actions.add(new ActionInfo(curAction[0].toString(), curAction[1].toString(), Boolean.valueOf(curAction[2].toString()), Boolean.valueOf(curAction[3].toString()), 
+                Boolean.valueOf(curAction[4].toString()), Boolean.valueOf(curAction[5].toString()),
+                curAction[6].toString(), curAction[7].toString(), curAction[8].toString()));
+        }
+    }    
+        
+            
     public BusinessRules(String procedureInstanceName, Integer scriptId) {
         this.procedureInstanceName = procedureInstanceName;
+        this.actions = new ArrayList<>();
         this.procedure = new ArrayList<>();
         this.data = new ArrayList<>();
         this.config = new ArrayList<>();
@@ -96,6 +126,7 @@ public class BusinessRules {
             }
         }
         this.totalBusinessRules = this.procedure.size() + this.config.size() + this.data.size();
+        setActions(procedureInstanceName);
     }
 
     public Integer getTotalBusinessRules() {
@@ -106,10 +137,37 @@ public class BusinessRules {
         return Collections.unmodifiableList(this.procedure);
     }
 
+    public String xgetActionsRoles(String procInstanceName, String ruleName) {
+        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())) {
+            return "DISABLED";
+        }
+        if (this.actions != null) {
+            for (ActionInfo curElement : this.actions) {
+                if (ruleName.equalsIgnoreCase(curElement.getActionName())) 
+                {
+                    return curElement.getActionRoles();
+                }
+            }
+        }
+        return "";
+    }
+    public ActionInfo getActionDefinition(String actionName) {
+        if (this.actions != null) {
+            for (ActionInfo curElement : this.actions) {
+                if (actionName.equalsIgnoreCase(curElement.getActionName())) 
+                {
+                    return curElement;
+                }
+            }
+        }
+        return null;
+    }    
+
     public String getProcedureBusinessRule(String ruleName) {
         if (this.procedure != null) {
             for (RuleInfo curElement : this.procedure) {
-                if (ruleName.equalsIgnoreCase(curElement.getRuleName())) //                LPPlatform.saveParameterPropertyInDbErrorLog("", this.procedureInstanceName+"-"+"procedure", new Object[]{}, ruleName);                
+                if (ruleName.equalsIgnoreCase(curElement.getRuleName())) 
                 {
                     return curElement.getRuleValue();
                 }

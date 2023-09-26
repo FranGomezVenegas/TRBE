@@ -10,6 +10,7 @@ import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPHttp;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.features.Token;
+import functionaljavaa.businessrules.ActionsControl;
 import functionaljavaa.businessrules.BusinessRules;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
@@ -197,12 +198,12 @@ public class BatchAPI extends HttpServlet {
         }
         try (PrintWriter out = response.getWriter()) {
             BusinessRules bi = new BusinessRules(procInstanceName, null);
-            Object[] actionEnabled = LPPlatform.procActionEnabled(procInstanceName, token, actionName, bi);
+            Object[] actionEnabled = ActionsControl.procActionEnabled(procInstanceName, token, actionName, bi);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) {
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
                 return;
             }
-            actionEnabled = LPPlatform.procUserRoleActionEnabled(procInstanceName, token.getUserRole(), actionName, bi);
+            actionEnabled = ActionsControl.procUserRoleActionEnabled(procInstanceName, token.getUserRole(), actionName, bi);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) {
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
                 return;

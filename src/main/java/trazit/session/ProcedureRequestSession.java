@@ -10,6 +10,7 @@ import static databases.features.DbEncryption.getEncryptFields;
 import databases.Rdbms;
 import databases.features.Token;
 import functionaljavaa.audit.AuditAndUserValidation;
+import functionaljavaa.businessrules.ActionsControl;
 import functionaljavaa.businessrules.BusinessRules;
 import functionaljavaa.testingscripts.TestingAuditIds;
 import functionaljavaa.testingscripts.TestingBusinessRulesVisited;
@@ -226,7 +227,7 @@ public class ProcedureRequestSession {
             }
             if (Boolean.FALSE.equals(isForTesting) && Boolean.FALSE.equals(isForUAT) && Boolean.FALSE.equals(isQuery)
                     && Boolean.FALSE.equals(isPlatform) && Boolean.FALSE.equals(isForDocumentation)) {
-                Object[] theProcActionEnabled = isTheProcActionEnabled(tokn, procInstanceName, actionName, this.busRulesProcInstance);
+                Object[] theProcActionEnabled = ActionsControl.isTheProcActionEnabled(tokn, procInstanceName, actionName, this.busRulesProcInstance);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(theProcActionEnabled[0].toString())) {
                     this.hasErrors = true;
                     this.errorMessage = theProcActionEnabled[theProcActionEnabled.length - 1].toString();
@@ -236,13 +237,13 @@ public class ProcedureRequestSession {
             }
             if (Boolean.FALSE.equals(isForTesting) && Boolean.FALSE.equals(isForUAT) && Boolean.FALSE.equals(isQuery)
                     && Boolean.FALSE.equals(isPlatform) && Boolean.FALSE.equals(isForDocumentation)) {
-                Object[] actionEnabled = LPPlatform.procActionEnabled(procInstanceName, token, actionName, this.busRulesProcInstance);
+                Object[] actionEnabled = ActionsControl.procActionEnabled(procInstanceName, token, actionName, this.busRulesProcInstance);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) {
                     this.hasErrors = true;
                     this.errorMessage = actionEnabled[actionEnabled.length - 1].toString();
                     return;
                 }
-                actionEnabled = LPPlatform.procUserRoleActionEnabled(procInstanceName, token.getUserRole(), actionName, this.busRulesProcInstance);
+                actionEnabled = ActionsControl.procUserRoleActionEnabled(procInstanceName, token.getUserRole(), actionName, this.busRulesProcInstance);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) {
                     this.hasErrors = true;
                     this.errorMessage = actionEnabled[actionEnabled.length - 1].toString();
@@ -517,26 +518,6 @@ public class ProcedureRequestSession {
             theSession = new ProcedureRequestSession(req, resp, endPoint, isTesting, true, false, theActionName, false, false);
         }
         return theSession;
-    }
-    public static Object[] isTheProcActionEnabled(Token tokn, String procInstanceName, String actionNm, BusinessRules procBusinessRules) {
-        return isTheProcActionEnabled(tokn, procInstanceName, actionNm, procBusinessRules, false);
-    }
-    public static Object[] isTheProcActionEnabled(Token tokn, String procInstanceName, String actionNm, BusinessRules procBusinessRules, Boolean isProcManagement) {
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(tokn.getUserName())) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.INVALID_TOKEN, null);
-        }
-        Object[] actionEnabled = LPPlatform.procActionEnabled(procInstanceName, tokn, actionNm, procBusinessRules);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) {
-            return actionEnabled;
-        }
-        if (Boolean.FALSE.equals(isProcManagement)){
-            actionEnabled = LPPlatform.procUserRoleActionEnabled(procInstanceName, tokn.getUserRole(), actionNm, procBusinessRules);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) {
-                return actionEnabled;
-            }
-        }
-
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_FINE, null);
     }
 
     public void setBusinessRulesTesting(BusinessRules br) {

@@ -22,10 +22,7 @@ import javax.crypto.spec.SecretKeySpec;
 import databases.Rdbms;
 import databases.TblsCnfg;
 import trazit.procedureinstance.definition.definition.TblsReqs;
-import databases.features.Token;
-import functionaljavaa.businessrules.BusinessRules;
 import static functionaljavaa.parameter.Parameter.getBusinessRuleAppFile;
-import functionaljavaa.testingscripts.TestingBusinessRulesVisited;
 import java.util.ArrayList;
 import java.util.Map;
 import org.json.simple.JSONArray;
@@ -232,6 +229,7 @@ public class LPPlatform {
         BUS_RUL_NOT_FOUND("LpPlatform_BusinessRuleNotFound", "sampleTestingByGroup_ReviewByTestingGroup not found or not define", "Regla de negocio sampleTestingByGroup_ReviewByTestingGroup no encontrada o no definida"),
         BUS_RUL_REVIEWBYTESTINGGROUP_NOT_FOUND("LpPlatform_BusinessRulesampleTestingByGroup_ReviewByTestingGroupNotFound", "sampleTestingByGroup_ReviewByTestingGroup not found or not define", "Regla de negocio sampleTestingByGroup_ReviewByTestingGroup no encontrada o no definida"),
         USER_NOTASSIGNED_TOPROCEDURE("userNotAssignedToProcedure", "", ""),
+        ACTION_NOTFOUND("action_NotFound", "", ""),
         USRROLACTIONENABLED_DENIED_RULESNOTFOUND("userRoleActionEnabled_denied_rulesNotFound", "", ""),
         USRROLACTIONENABLED_DENIED("userRoleActionEnabled_denied", "", ""),
         USRROLACTIONENABLED_ACTIONENABLEDFORROLES_BUSRULE_NOTFOUND("userRoleActionEnabled_actionEnabledForRolesBusRuleNotFound", "", ""),
@@ -291,179 +289,6 @@ public class LPPlatform {
     public static final String BUSINESS_RULES_VALUE_ENABLED = "ENABLE";
     public static final Object[] breakPointArray = new Object[]{"MissingMandatoryParametersInRequest"};
 
-    /**
-     *
-     * @param procInstanceName
-     * @param token
-     * @param actionName
-     * @param procBusinessRules
-     * @return
-     */
-    public static Object[] procActionEnabled(String procInstanceName, Token token, String actionName, BusinessRules procBusinessRules) {
-
-        String userProceduresList = token.getUserProcedures();
-        userProceduresList = userProceduresList.replace("[", "");
-        userProceduresList = userProceduresList.replace("]", "");
-        if (Boolean.FALSE.equals(LPArray.valueInArray(userProceduresList.split(", "), procInstanceName))) {
-            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USER_NOTASSIGNED_TOPROCEDURE, new String[]{token.getUserName(), procInstanceName, userProceduresList});
-        }
-
-        actionName = actionName.toUpperCase();
-        String[] procedureActions = procBusinessRules.getProcedureBusinessRule(LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName()).split("\\|");
-        if (Boolean.TRUE.equals(ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting())) {
-            TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
-            if (testingBusinessRulesVisitedObj != null) {
-                testingBusinessRulesVisitedObj.addObject(procInstanceName, "procedure", "TestingRegresssionUAT", LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName(), Arrays.toString(procedureActions));
-            }
-        }
-
-        if (LPArray.valueInArray(procedureActions, "ALL")) {
-            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformSuccess.USRROLACTIONENABLED_ENABLED_BYALL, new String[]{procInstanceName, actionName});
-        }
-        if ((procedureActions.length == 1 && "".equals(procedureActions[0]))) {
-            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_DENIED_RULESNOTFOUND, new String[]{procInstanceName, Arrays.toString(procedureActions)});
-        } else if (Boolean.FALSE.equals(LPArray.valueInArray(procedureActions, actionName))) {
-            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_DENIED, new String[]{actionName, procInstanceName, Arrays.toString(procedureActions)});
-        } else {
-            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformSuccess.USRROLACTIONENABLED_ENABLED, new String[]{procInstanceName, actionName});
-        }
-    }
-
-    /**
-     *
-     * @param procInstanceName
-     * @param userRole
-     * @param actionName
-     * @param procBusinessRules
-     * @return
-     */
-    public static Object[] procUserRoleActionEnabled(String procInstanceName, String userRole, String actionName, BusinessRules procBusinessRules) {
-        String[] procedureActionsUserRoles = procBusinessRules.getProcedureBusinessRule(LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName() + actionName).split("\\|");
-        if (Boolean.TRUE.equals(ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting())) {
-            TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
-            if (testingBusinessRulesVisitedObj != null) {
-                testingBusinessRulesVisitedObj.addObject(procInstanceName, "procedure", "TestingRegresssionUAT", LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName() + actionName, Arrays.toString(procedureActionsUserRoles));
-            }
-        }
-        if (LPArray.valueInArray(procedureActionsUserRoles, "ALL")) {
-            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformSuccess.USRROLACTIONENABLED_ENABLED_BYALL, new Object[]{procInstanceName});
-        }
-        if ((procedureActionsUserRoles.length == 1 && "".equals(procedureActionsUserRoles[0]))) {
-            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_MISSEDPARAMETER, new Object[]{actionName, procInstanceName});
-        } else if (Boolean.FALSE.equals(LPArray.valueInArray(procedureActionsUserRoles, userRole))) {
-            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.USRROLACTIONENABLED_ROLENOTINCLUDED, new Object[]{procInstanceName, actionName, userRole, Arrays.toString(procedureActionsUserRoles)});
-        } else {
-            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformSuccess.USRROLACTIONENABLED_ENABLED, new Object[]{procInstanceName, actionName});
-        }
-    }
-
-    /**
-     *
-     * @param procInstanceName
-     * @param actionName
-     * @param procBusinessRules
-     * @return
-     */
-    public static Object[] procActionRequiresUserConfirmation(String procInstanceName, String actionName, BusinessRules procBusinessRules) {
-        actionName = actionName.toUpperCase();
-        String[] actionRequiresUserConfirmationRuleValue = procBusinessRules.getProcedureBusinessRule(LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName()).split("\\|");
-        if (Boolean.TRUE.equals(ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting())) {
-            TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
-            if (testingBusinessRulesVisitedObj != null) {
-                testingBusinessRulesVisitedObj.addObject(procInstanceName, "procedure", "TestingRegresssionUAT", LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName() + actionName, Arrays.toString(actionRequiresUserConfirmationRuleValue));
-            }
-        }
-
-        if (LPArray.valueInArray(actionRequiresUserConfirmationRuleValue, "ALL")) {
-            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_ENABLED_BY_ALL, new Object[]{procInstanceName, actionName});
-        }
-        if ((actionRequiresUserConfirmationRuleValue.length == 1 && "".equals(actionRequiresUserConfirmationRuleValue[0]))) {
-            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_DENIED_RULENOTFOUND, new Object[]{procInstanceName, Arrays.toString(actionRequiresUserConfirmationRuleValue)});
-        } else if (Boolean.FALSE.equals(LPArray.valueInArray(actionRequiresUserConfirmationRuleValue, actionName))) {
-            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.VERIFYUSERREQUIRED_DENIED, new Object[]{actionName, procInstanceName, Arrays.toString(actionRequiresUserConfirmationRuleValue)});
-        } else {
-            String diagnStr = LAB_TRUE;
-            diagnStr = diagnStr + LPNulls.replaceNull(auditReasonType(procInstanceName, actionName, procBusinessRules));
-            return ApiMessageReturn.trapMessage(diagnStr, LpPlatformSuccess.VERIFYUSERREQUIRED_ENABLED, new Object[]{procInstanceName, actionName});
-        }
-    }
-
-    /**
-     * VERIFYUSERREQUIRED_ENABLED_BY_ALL VERIFYUSERREQUIRED_DENIED_RULENOTFOUND
-     * VERIFYUSERREQUIRED_DENIED VERIFYUSERREQUIRED_ENABLED
-     *
-     * @param procInstanceName
-     * @param actionName
-     * @param procBusinessRules
-     * @return
-     */
-    public static Object[] procActionRequiresEsignConfirmation(String procInstanceName, String actionName, BusinessRules procBusinessRules) {
-        actionName = actionName.toUpperCase();
-        String[] procedureActions = procBusinessRules.getProcedureBusinessRule(LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()).split("\\|"); 
-        if (Boolean.TRUE.equals(ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting())) {
-            TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
-            if (testingBusinessRulesVisitedObj != null) {
-                testingBusinessRulesVisitedObj.addObject(procInstanceName, "procedure", "TestingRegresssionUAT", LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName() + actionName, Arrays.toString(procedureActions));
-            }
-        }
-        if (LPArray.valueInArray(procedureActions, "ALL")) {
-            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformSuccess.ESIGNREQUIRED_ENABLED_BY_ALL, new Object[]{procInstanceName, actionName});
-        }
-        if ((procedureActions.length == 1 && "".equals(procedureActions[0]))) {
-            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.ESIGNREQUIRED_DENIED_RULENOTFOUND, new Object[]{procInstanceName, Arrays.toString(procedureActions)});
-        } else if (Boolean.FALSE.equals(LPArray.valueInArray(procedureActions, actionName))) {
-            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.ESIGNREQUIRED_DENIED, new Object[]{actionName, procInstanceName, Arrays.toString(procedureActions)});
-        } else {
-            return ApiMessageReturn.trapMessage(LAB_TRUE + auditReasonType(procInstanceName, actionName, procBusinessRules), LpPlatformSuccess.ESIGNREQUIRED_ENABLED, new Object[]{procInstanceName, actionName});
-        }
-    }
-
-    public static Object[] procActionRequiresJustificationPhrase(String procInstanceName, String actionName, BusinessRules procBusinessRules) {
-        actionName = actionName.toUpperCase();
-        String[] procedureActions = procBusinessRules.getProcedureBusinessRule(LpPlatformBusinessRules.AUDIT_JUSTIF_REASON_REQUIRED.getTagName()).split("\\|"); // Parameter.getBusinessRuleProcedureFile(procInstanceName, LpPlatformBusinessRules.ESIGN_REQUIRED.getAreaName(), LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()).toString().split("\\|");
-        if (Boolean.TRUE.equals(ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting())) {
-            TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
-            if (testingBusinessRulesVisitedObj != null) {
-                testingBusinessRulesVisitedObj.addObject(procInstanceName, "procedure", "TestingRegresssionUAT", LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName() + actionName, Arrays.toString(procedureActions));
-            }
-        }
-        if (LPArray.valueInArray(procedureActions, "ALL")) {
-            return ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformSuccess.JUSTIFPHRASEREQUIRED_ENABLED_BY_ALL, new Object[]{procInstanceName, actionName});
-        }
-        if ((procedureActions.length == 1 && "".equals(procedureActions[0]))) {
-            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_DENIED_RULENOTFOUND, new Object[]{procInstanceName, Arrays.toString(procedureActions)});
-        } else if (Boolean.FALSE.equals(LPArray.valueInArray(procedureActions, actionName))) {
-            return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_DENIED, new Object[]{actionName, procInstanceName, Arrays.toString(procedureActions)});
-        } else {
-            return ApiMessageReturn.trapMessage(LAB_TRUE + auditReasonType(procInstanceName, actionName, procBusinessRules), LpPlatformSuccess.JUSTIFPHRASEREQUIRED_ENABLED, new Object[]{procInstanceName, actionName});
-        }
-    }
-
-    private static String auditReasonType(String procInstanceName, String actionName) {
-        return auditReasonType(procInstanceName, actionName, null);
-    }
-
-    private static String auditReasonType(String procInstanceName, String actionName, BusinessRules procBusinessRules) {
-        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(null, null, false);
-        BusinessRules businessRulesProcInstance = procReqInstance.getBusinessRulesProcInstance();
-        String auditReasonType = null;
-        if (businessRulesProcInstance != null) {
-            auditReasonType = businessRulesProcInstance.getProcedureBusinessRule(actionName + LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName());
-        } else {
-            auditReasonType = procBusinessRules.getProcedureBusinessRule(actionName + LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName());
-        }
-
-        if (auditReasonType.length() == 0) {
-            return "TEXT";
-        }
-        if (auditReasonType.length() > 0 && auditReasonType.equalsIgnoreCase("DISABLE")) {
-            return "";
-        }
-        if (auditReasonType.length() > 0 && auditReasonType.equalsIgnoreCase("NO")) {
-            return "";
-        }
-        return auditReasonType;
-    }
 
     /**
      *

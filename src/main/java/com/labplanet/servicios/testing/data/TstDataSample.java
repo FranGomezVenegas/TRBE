@@ -14,6 +14,7 @@ import lbplanet.utilities.LPNulls;
 import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIactionsEndpoints;
 import databases.Rdbms;
 import databases.TblsData;
+import functionaljavaa.businessrules.ActionsControl;
 import functionaljavaa.businessrules.BusinessRules;
 import functionaljavaa.changeofcustody.ChangeOfCustody;
 import functionaljavaa.samplestructure.DataSample;
@@ -162,7 +163,7 @@ public class TstDataSample extends HttpServlet {
                             dataSample[1] = ""; dataSample[2] = ""; dataSample[3] = ""; dataSample[4] = ""; dataSample[5] = "";                         
                     }else{
                         BusinessRules bi=new BusinessRules(procInstanceName, null);
-                        Object[] actionEnabledForRole = LPPlatform.procUserRoleActionEnabled(procInstanceName, userRole, actionName, bi);
+                        Object[] actionEnabledForRole = ActionsControl.procUserRoleActionEnabled(procInstanceName, userRole, actionName, bi);
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabledForRole[0].toString())){
                             if (SampleAPIactionsEndpoints.GETSAMPLEINFO.getName().equalsIgnoreCase(actionName)){                
                                     dataSample2D[0][0] = actionEnabledForRole[0];

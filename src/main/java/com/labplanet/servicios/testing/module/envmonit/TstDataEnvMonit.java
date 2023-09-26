@@ -12,6 +12,7 @@ import lbplanet.utilities.LPPlatform;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import databases.features.Token;
+import functionaljavaa.businessrules.ActionsControl;
 import functionaljavaa.businessrules.BusinessRules;
 import module.monitoring.logic.DataProgramSampleAnalysis;
 import functionaljavaa.samplestructure.DataSample;
@@ -94,12 +95,12 @@ public class TstDataEnvMonit extends HttpServlet {
         }
         mandatoryParams = null;                        
         BusinessRules bi=new BusinessRules(procInstanceName, null);
-         Object[] procActionRequiresUserConfirmation = LPPlatform.procActionRequiresUserConfirmation(procInstanceName, actionName, bi);
+         Object[] procActionRequiresUserConfirmation = ActionsControl.procActionRequiresUserConfirmation(procInstanceName, actionName, bi);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresUserConfirmation[0].toString())){     
             mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK);    
             mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK);    
         }
-        Object[] procActionRequiresEsignConfirmation = LPPlatform.procActionRequiresEsignConfirmation(procInstanceName, actionName, bi);
+        Object[] procActionRequiresEsignConfirmation = ActionsControl.procActionRequiresEsignConfirmation(procInstanceName, actionName, bi);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresEsignConfirmation[0].toString())){                                                      
             mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK);    
         }        
