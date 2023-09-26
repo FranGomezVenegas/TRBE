@@ -40,6 +40,7 @@ import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
+import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -335,17 +336,21 @@ public class DataSampleStages {
                 msgVariables = new Object[]{errorCodeArr[1]};
             }
             ResponseMessages messages = instanceForActions.getMessages();
-            ProcedureSampleStageErrorTrapping smpStgErr = null;
+            EnumIntMessages smpStgErr = null;
             try {
                 smpStgErr = ProcedureSampleStageErrorTrapping.valueOf(errorCodeArr[0].toUpperCase());
                 errorCodeArr[0] = smpStgErr.getErrorCode();
+                
             } catch (Exception e) {
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "StageChecker_"+errorCodeArr[0].toUpperCase(), new Object[]{e.getMessage()});
             }
             if (messages.getMainMessage() == null) {
                 messages.addMainForError(errorCodeArr[0], msgVariables, null);
             } else {
-                messages.addMinorForError(errorCodeArr[0], msgVariables, null);
+                messages.addMinorForError(smpStgErr, msgVariables);                
+                Object[] trapMessage = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, smpStgErr, msgVariables);
+                trapMessage[trapMessage.length-1]=errorCodeArr[1];
+                return trapMessage;
             }
 
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "SpecialFunctionReturnedFALSE", new Object[]{errorCode});

@@ -30,6 +30,7 @@ public class ProcedureSampleStage {
         INCUB_INPROGRESS("EnvMonSampleStageChecker_IncubationNext_stagesCheckerIncubationInProgress", "", ""),
         ALREADY_LASTSTAGE("EnvMonSampleStageChecker_EndNext_InLastStage", "END is the last stage, has no next one.", ""),
         SAMPLEWITHNORESULT("EnvMonSampleStageChecker_stagesCheckerSampleWithNoResult", "", ""),
+        SAMPLEWITHNOSECONDENTRYRESULT("EnvMonSampleStageChecker_stagesCheckerSampleWithNoSecondEntryResult", "", ""),
         PARAMNAMEEMPTY("EnvMonSampleStageChecker_stagesParamNameEmpty", "", ""),
         YOUWIN("EnvMonSampleStageChecker_YoWin", "You win! This logic is not handled", "")
         
@@ -234,7 +235,7 @@ public class ProcedureSampleStage {
 
             String rawValue="";
             if (asJsonObject.get("sar2_"+"raw_value").isJsonNull())
-                return LPPlatform.LAB_FALSE+"SAMPLEWITHNORESULT"+"@"+sampleId;
+                return LPPlatform.LAB_FALSE+"SAMPLEWITHNOSECONDENTRYRESULT"+"@"+sampleId;
             else
                 rawValue=asJsonObject.get("sar2_"+"raw_value").getAsString();
 

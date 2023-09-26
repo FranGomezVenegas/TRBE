@@ -655,15 +655,13 @@ public class ClassSample {
             default:
                 break;
         }
-        if (diagn
-                != null && LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString())) {
+        if (diagn!= null && LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString())) {
             DataSampleStages smpStage = new DataSampleStages();
             if (Boolean.TRUE.equals(smpStage.isSampleStagesEnable()) && sampleId != null) {
                 smpStage.dataSampleActionAutoMoveToNext(endPoint.getName().toUpperCase(), sampleId);
             }
         }
-        if (diagn
-                != null && LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString())) {
+        if (diagn!= null && LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString())) {
             diagn = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{argValues[0], procInstanceName});
         }
 
