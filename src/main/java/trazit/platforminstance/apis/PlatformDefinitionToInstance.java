@@ -40,14 +40,6 @@ public class PlatformDefinitionToInstance extends HttpServlet {
     private static final Boolean CREATE_CHECKPLATFORM_PROCEDURE = false;
     private static final Boolean REMOVE_CHECKPLATFORM_PROCEDURE = false;
 
-    /*    private static final Boolean  PROC_DEPLOY_PROCEDURE_INFO=false;
-    private static final Boolean  PROC_DEPLOY_PROCEDURE_USER_ROLES=false;
-    private static final Boolean  PROC_DEPLOY_PROCEDURE_SOP_META_DATA=false;
-    private static final Boolean  PROC_DEPLOY_ASSIGN_PROCEDURE_SOPS_TO_USERS=false;
-    private static final Boolean  PROC_DEPLOY_PROCEDURE_EVENTS=false;
-    private static final Boolean  PROC_DEPLOY_BUSINESS_RULES_PROPERTIES_FILES=false;
-    private static final Boolean  PROC_DEPLOY_MODULE_TABLES_AND_FIELDS=false;*/
-
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
