@@ -14,6 +14,7 @@ import databases.TblsApp.TablesApp;
 import databases.TblsAppAudit.TablesAppAudit;
 import databases.TblsAppConfig.TablesAppConfig;
 import databases.TblsProcedure.TablesProcedure;
+import databases.features.DbEncryption;
 import trazit.procedureinstance.definition.definition.TblsReqs.TablesReqs;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
 import functionaljavaa.parameter.Parameter;
@@ -29,6 +30,7 @@ import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntTables;
 import static trazit.enums.deployrepository.DeployTables.createTableScript;
+import static trazit.globalvariables.GlobalVariables.PROC_MANAGEMENT_SPECIAL_ROLE;
 
 
 /**
@@ -122,7 +124,17 @@ public class DbObjects {
                 errorsOnlyObj.put("app."+curTbl.getTableName(), scriptLog);
             jsonObj.put(curTbl.getTableName(), scriptLog);
         }
-            
+
+        RdbmsObject insertRecord2 = Rdbms.insertRecord(TblsProcedure.TablesProcedure.PROCEDURE_INFO, 
+                new String[]{TblsProcedure.ProcedureInfo.NAME.getName(), TblsProcedure.ProcedureInfo.VERSION.getName(), TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE.getName(),
+                    TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName(), TblsProcedure.ProcedureInfo.MODULE_NAME.getName(), 
+                    TblsProcedure.ProcedureInfo.INCLUDE_CONFIG_CHANGES.getName(), TblsProcedure.ProcedureInfo.ENABLE_CHANGE_TRACKING.getName(), TblsProcedure.ProcedureInfo.CREATE_PICT_ONGCHNGE.getName()}, 
+                new Object[]{"app", 1, -1, "app", "app", true, true, false}, TblsApp.TablesApp.APP_PERSON_PROFILE.getRepositoryName());
+        if (Boolean.TRUE.equals(insertRecord2.getRunSuccess()))
+            schemasObj.put("inserting_procedure_info_"+"app",insertRecord2.getRunSuccess());
+        else
+            schemasObj.put("inserting_procedure_info_"+"app",insertRecord2.getErrorMessageCode());
+        
         String[] fields=new String[]{TblsProcedure.ProcedureBusinessRules.AREA.getName(), TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(),
             TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName(), TblsProcedure.ProcedureBusinessRules.DISABLED.getName()};
         Object[][] values=new Object[][]{{"frontend_locksession", "enableLockSession", "true", false},
@@ -141,20 +153,50 @@ public class DbObjects {
                 jsonObj.put("inserting_business_rule_diagn", curRule[1]+" "+insertRecord.getErrorMessageCode());
         }
         schemasObj.put(TablesApp.APP_BUSINESS_RULES.toString(), jsonObj);
-
-        fields=new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName(), TblsProcedure.PersonProfile.ROLE_NAME.getName(),
-            TblsProcedure.PersonProfile.ACTIVE.getName()};
-        values=new Object[][]{{"adminz", "superuser", "true"}};
-        for (Object[] curRule: values){
-            
-            RdbmsObject insertRecord = Rdbms.insertRecord(TablesApp.APP_PERSON_PROFILE, fields, curRule, TblsApp.TablesApp.APP_PERSON_PROFILE.getRepositoryName());
-            
-            if (Boolean.TRUE.equals(insertRecord.getRunSuccess()))
-                jsonObj.put("inserting_business_rule_diagn", curRule[1]+" "+insertRecord.getRunSuccess());
-            else
-                jsonObj.put("inserting_business_rule_diagn", curRule[1]+" "+insertRecord.getErrorMessageCode());
+        String fakeEsingn="firmademo";
+        String defaultMail="info@trazit.net";
+        Object[] encryptValue=DbEncryption.encryptValue(fakeEsingn);        
+        String fakeEsingnEncrypted = encryptValue[encryptValue.length-1].toString();
+        Object[] encryptPa=DbEncryption.encryptValue("trazit4ever");        
+        String paEncrypted = encryptPa[encryptPa.length-1].toString();
+        Object[] encryptPers=DbEncryption.encryptValue("adminz");        
+        String persEncrypted = encryptPers[encryptPers.length-1].toString();
+        RdbmsObject insertRecordInTable = Rdbms.insertRecord(TblsApp.TablesApp.USERS, 
+                new String[]{TblsApp.Users.USER_NAME.getName(), TblsApp.Users.EMAIL.getName(), TblsApp.Users.ESIGN.getName(),
+                    TblsApp.Users.PASSWORD.getName(), TblsApp.Users.PERSON_NAME.getName()},
+                new Object[]{"admin", defaultMail, fakeEsingnEncrypted, paEncrypted, persEncrypted}, null);
+        if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess()))
+            jsonObj.put("insert_user_admin", insertRecordInTable.getRunSuccess());
+        else{
+            jsonObj.put("insert_user_admin", insertRecordInTable.getErrorMessageCode());
         }
-        schemasObj.put(TablesApp.APP_PERSON_PROFILE.toString(), jsonObj);
+        
+            
+        insertRecord2 = Rdbms.insertRecord(TablesApp.APP_PERSON_PROFILE, 
+                new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName(), TblsProcedure.PersonProfile.ROLE_NAME.getName(), TblsProcedure.PersonProfile.ACTIVE.getName()}, 
+                new Object[]{persEncrypted, "superuser", true}, TblsApp.TablesApp.APP_PERSON_PROFILE.getRepositoryName());
+        if (Boolean.TRUE.equals(insertRecord2.getRunSuccess()))
+            schemasObj.put("inserting_person_profile_"+"superuser",insertRecord2.getRunSuccess());
+        else
+            schemasObj.put("inserting_person_profile_"+"superuser",insertRecord2.getErrorMessageCode());
+        
+
+        insertRecord2 = Rdbms.insertRecord(TablesApp.APP_PERSON_PROFILE, 
+                new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName(), TblsProcedure.PersonProfile.ROLE_NAME.getName(), TblsProcedure.PersonProfile.ACTIVE.getName()}, 
+                new Object[]{persEncrypted, PROC_MANAGEMENT_SPECIAL_ROLE, true}, TblsApp.TablesApp.APP_PERSON_PROFILE.getRepositoryName());
+        if (Boolean.TRUE.equals(insertRecord2.getRunSuccess()))
+            schemasObj.put("inserting_person_profile_"+PROC_MANAGEMENT_SPECIAL_ROLE,insertRecord2.getRunSuccess());
+        else
+            schemasObj.put("inserting_person_profile_"+PROC_MANAGEMENT_SPECIAL_ROLE,insertRecord2.getErrorMessageCode());
+
+        insertRecord2 = Rdbms.insertRecord(TablesApp.USER_PROCESS, 
+                new String[]{TblsApp.UserProcess.USER_NAME.getName(), TblsApp.UserProcess.PROC_NAME.getName(), TblsApp.UserProcess.ACTIVE.getName()}, 
+                new Object[]{"admin", "app", true}, TblsApp.TablesApp.APP_PERSON_PROFILE.getRepositoryName());
+        if (Boolean.TRUE.equals(insertRecord2.getRunSuccess()))
+            schemasObj.put("inserting_user_process_"+"admin",insertRecord2.getRunSuccess());
+        else
+            schemasObj.put("inserting_user_process_"+"admin",insertRecord2.getErrorMessageCode());
+
         
         fields=new String[]{TblsProcedure.ProcedureEvents.NAME.getName(), TblsProcedure.ProcedureEvents.ROLE_NAME.getName(),
             TblsProcedure.ProcedureEvents.MODE.getName(), TblsProcedure.ProcedureEvents.TYPE.getName(),
@@ -394,9 +436,9 @@ public class DbObjects {
         sw.addConstraint(TblsProcedure.ProcedureEvents.NAME, WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, "");
         Rdbms.removeRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS, sw, procInstanceName);
         Object[] insertRecordInTableFromTable = insertRecordInTableFromTable(true, 
-                getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_USER_REQS_EVENTS.getTableFields()),
-                    GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS_EVENTS.getTableName(), 
-                new String[]{TblsReqs.ProcedureUserRequirementsEvents.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRequirementsEvents.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureUserRequirementsEvents.PROC_INSTANCE_NAME.getName()},
+                getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableFields()),
+                    GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableName(), 
+                new String[]{TblsReqs.ProcedureReqSolution.PROCEDURE_NAME.getName(), TblsReqs.ProcedureReqSolution.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureReqSolution.PROC_INSTANCE_NAME.getName()},
                 new Object[]{procedure, procVersion, procInstanceName},
                 LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), 
                     TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(), getAllFieldNames(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableFields()));
