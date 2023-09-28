@@ -68,7 +68,8 @@ public class PlatformNewInstance {
         }
         String fakeProcName = "check-platform";
         String fakeProcUserName = "demo";
-        String personId="d1m2";
+        Object[] encryptPers=DbEncryption.encryptValue("demoz");        
+        String persEncrypted = encryptPers[encryptPers.length-1].toString();        
         String fakeEsingn="firmademo";
         String defaultMail="info@trazit.net";
         Object[] encryptValue=DbEncryption.encryptValue(fakeEsingn);        
@@ -88,7 +89,7 @@ public class PlatformNewInstance {
         RdbmsObject insertRecordInTable=Rdbms.insertRecord(TblsProcedure.TablesProcedure.PERSON_PROFILE, 
             new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName(), TblsProcedure.PersonProfile.ROLE_NAME.getName(), 
                 TblsProcedure.PersonProfile.ACTIVE.getName(), TblsProcedure.PersonProfile.USER_TITLE.getName()}, 
-            new Object[]{personId, "testing", true, "Testing user access / Testeo acceso usuario"}, fakeProcName);
+            new Object[]{persEncrypted, "testing", true, "Testing user access / Testeo acceso usuario"}, fakeProcName);
         if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess()))
             actionLog="success";
         else{
@@ -113,7 +114,7 @@ public class PlatformNewInstance {
         insertRecordInTable = Rdbms.insertRecord(TblsApp.TablesApp.USERS, 
                 new String[]{TblsApp.Users.USER_NAME.getName(), TblsApp.Users.EMAIL.getName(), TblsApp.Users.ESIGN.getName(),
                     TblsApp.Users.PASSWORD.getName(), TblsApp.Users.PERSON_NAME.getName()},
-                new Object[]{fakeProcUserName, defaultMail, fakeEsingnEncrypted, fakeProcUserName+fakeProcUserName, personId}, null);
+                new Object[]{fakeProcUserName, defaultMail, fakeEsingnEncrypted, fakeProcUserName+fakeProcUserName, persEncrypted}, null);
         if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess()))
             actionLog="success";
         else{
@@ -136,7 +137,7 @@ public class PlatformNewInstance {
         insertRecordInTable=Rdbms.insertRecord(TblsAppConfig.TablesAppConfig.PERSON, 
             new String[]{TblsAppConfig.Person.PERSON_ID.getName(), TblsAppConfig.Person.FIRST_NAME.getName(), 
                 TblsAppConfig.Person.LAST_NAME.getName(), TblsAppConfig.Person.PHOTO.getName()}, 
-            new Object[]{personId, "I'm a user demo", "for demos "+platfName, "https://hasta-pronto.ru/wp-content/uploads/2014/09/chibcha.jpg"}, null);
+            new Object[]{persEncrypted, "I'm a user demo", "for demos "+platfName, "https://hasta-pronto.ru/wp-content/uploads/2014/09/chibcha.jpg"}, null);
         if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess()))
             actionLog="success";
         else{
