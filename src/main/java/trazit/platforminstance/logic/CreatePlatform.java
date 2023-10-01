@@ -36,7 +36,8 @@ import trazit.enums.EnumIntTables;
 import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import static trazit.globalvariables.GlobalVariables.PROC_MANAGEMENT_SPECIAL_ROLE;
 import trazit.procedureinstance.definition.definition.TblsReqs;
-
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
 /**
  *
  * @author User
@@ -208,6 +209,7 @@ public class CreatePlatform {
         JSONObject curSchemaObj=new JSONObject();
         JSONObject prcDeplSectionLog=new JSONObject();
         JSONObject prcReqsSectionLog=new JSONObject();
+        JSONObject recordsLogObj=new JSONObject();
         for (EnumIntTables curTbl: appProcTables){
             org.json.JSONObject curTblObj=new org.json.JSONObject();
             String tblCreateScript = createTableScript(curTbl, "app", false, true, null);
@@ -223,17 +225,57 @@ public class CreatePlatform {
             curSchemaObj.put(curTbl.getTableName(), curTblObj);
         }
         allLog.put("app_procedure_tables", curSchemaObj);
+        String procNameInReqs="platform-settings";
 
-        
-        JSONObject recordsLogObj=new JSONObject();
-        RdbmsObject insertRecord2 = Rdbms.insertRecord(TblsProcedure.TablesProcedure.PROCEDURE_INFO, 
-                new String[]{TblsProcedure.ProcedureInfo.NAME.getName(), TblsProcedure.ProcedureInfo.VERSION.getName(), TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE.getName(),
-                    TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName(), TblsProcedure.ProcedureInfo.MODULE_NAME.getName(), 
-                    TblsProcedure.ProcedureInfo.INCLUDE_CONFIG_CHANGES.getName(), TblsProcedure.ProcedureInfo.ENABLE_CHANGE_TRACKING.getName(), TblsProcedure.ProcedureInfo.CREATE_PICT_ONGCHNGE.getName()}, 
-                new Object[]{"app", 1, -1, "app", "app", true, true, false}, TblsApp.TablesApp.APP_PERSON_PROFILE.getRepositoryName());
-        Boolean errorForInsertRecord = isErrorForInsertRecord(TblsProcedure.TablesProcedure.PROCEDURE_INFO, insertRecord2, "app");
-        prcDeplSectionLog.put(TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), 
-                infoToReportForInsertRecord(TblsProcedure.TablesProcedure.PROCEDURE_INFO, insertRecord2, "app", errorForInsertRecord));
+        ClassLoader classLoader = DbObjects.class.getClassLoader();
+        String[][] platfModels= new String[][]{
+            {procNameInReqs, "PlatformModels/model_platform-settings.txt", "JSONObject"},
+            {"app", "PlatformModels/model_app.txt", "JSONObject"},
+            {"proc_management", "PlatformModels/model_proc_management.txt", "JSONArray"}
+        };
+        for (String[] curModel: platfModels){
+            String filePath = curModel[1]; //"JavaScript/model_platform-settings.txt";
+            StringBuilder jsonDataModel = new StringBuilder();    
+            try (InputStream inputStream = classLoader.getResourceAsStream(filePath)) {
+                if (inputStream != null) {
+                    // Read the content of the text file
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        jsonDataModel.append(line).append("\n");
+                    }
+                } else {
+                    System.err.println("File not found: " + filePath);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }  
+            Object[] fieldValues=null;
+            if ("JSONObject".equalsIgnoreCase(curModel[2])){
+                JSONObject jObjModel = new JSONObject(jsonDataModel.toString());       
+                fieldValues = new Object[]{curModel[0], 1, curModel[0], jObjModel, true};
+            }else{
+                //JSONArray jObjModel = new JSONArray(jsonDataModel.toString());       
+                JsonArray jObjModel = JsonParser.parseString(jsonDataModel.toString()).getAsJsonArray();
+                fieldValues = new Object[]{curModel[0], 1, curModel[0], jObjModel, true};
+            }                        
+            String[] fields = new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName(),
+                TblsReqs.ProcedureInfo.ACTIVE.getName(), TblsReqs.ProcedureInfo.LOCKED_FOR_ACTIONS.getName(),
+                TblsReqs.ProcedureInfo.MODULE_NAME.getName(), TblsReqs.ProcedureInfo.DESCRIPTION.getName(), TblsReqs.ProcedureInfo.LABEL_EN.getName(), TblsReqs.ProcedureInfo.LABEL_ES.getName(), TblsReqs.ProcedureInfo.PROCEDURE_HASH_CODE.getName()};
+            LocalDateTime currentTimeStamp = LPDate.getCurrentTimeStamp();
+            int hashCode = currentTimeStamp.hashCode();        
+            Object[] values1D = new Object[]{curModel[0], 1, curModel[0], true, false, "APP", "Platform settings", "Platform settings", "Configuración de Plataforma", hashCode};
+            RdbmsObject insertRecord2 = Rdbms.insertRecord(TblsReqs.TablesReqs.PROCEDURE_INFO, fields, values1D, TblsReqs.TablesReqs.PROCEDURE_INFO.getRepositoryName());            
+            Boolean errorForInsertRecord = isErrorForInsertRecord(TblsReqs.TablesReqs.PROCEDURE_INFO, insertRecord2, curModel[0]);
+            prcReqsSectionLog.put(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName()+"_"+curModel[0], 
+                    infoToReportForInsertRecord(TblsReqs.TablesReqs.PROCEDURE_INFO, insertRecord2, curModel[0], errorForInsertRecord));
+
+            String[] fieldNames = new String[]{TblsReqs.ProcedureFEModel.PROCEDURE_NAME.getName(), TblsReqs.ProcedureFEModel.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureFEModel.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureFEModel.MODEL_JSON.getName(), TblsReqs.ProcedureFEModel.ACTIVE.getName()};            
+            insertRecord2 = Rdbms.insertRecord(TblsReqs.TablesReqs.PROC_FE_MODEL, fieldNames, fieldValues, TblsReqs.TablesReqs.PROC_FE_MODEL.getRepositoryName());
+            errorForInsertRecord = isErrorForInsertRecord(TblsReqs.TablesReqs.PROC_FE_MODEL, insertRecord2, curModel[0]);
+            prcReqsSectionLog.put(TblsReqs.TablesReqs.PROC_FE_MODEL.getTableName()+"_"+curModel[0], 
+                    infoToReportForInsertRecord(TblsReqs.TablesReqs.PROC_FE_MODEL, insertRecord2, curModel[0], errorForInsertRecord));
+        }        
                 
         String[] fields=new String[]{TblsProcedure.ProcedureBusinessRules.AREA.getName(), TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(),
             TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName(), TblsProcedure.ProcedureBusinessRules.DISABLED.getName()};
@@ -247,9 +289,20 @@ public class CreatePlatform {
         for (Object[] curRule: values){            
             RdbmsObject insertRecord = Rdbms.insertRecord(TblsApp.TablesApp.APP_BUSINESS_RULES, fields, curRule,
 TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
-            errorForInsertRecord = isErrorForInsertRecord(TblsApp.TablesApp.APP_BUSINESS_RULES, insertRecord, curRule[1].toString());
+            Boolean errorForInsertRecord = isErrorForInsertRecord(TblsApp.TablesApp.APP_BUSINESS_RULES, insertRecord, curRule[1].toString());
             jArr.add(infoToReportForInsertRecord(TblsApp.TablesApp.APP_BUSINESS_RULES, insertRecord, curRule[1].toString(), errorForInsertRecord));                        
         }        
+        
+            RdbmsObject insertRecord2 = Rdbms.insertRecord(TblsProcedure.TablesProcedure.PROCEDURE_INFO, 
+                    new String[]{TblsProcedure.ProcedureInfo.NAME.getName(), TblsProcedure.ProcedureInfo.VERSION.getName(), TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE.getName(),
+                        TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName(), TblsProcedure.ProcedureInfo.MODULE_NAME.getName(), 
+                        TblsProcedure.ProcedureInfo.INCLUDE_CONFIG_CHANGES.getName(), TblsProcedure.ProcedureInfo.ENABLE_CHANGE_TRACKING.getName(), TblsProcedure.ProcedureInfo.CREATE_PICT_ONGCHNGE.getName()}, 
+                    new Object[]{procNameInReqs, 1, -1, procNameInReqs, procNameInReqs, true, true, false}, TblsApp.TablesApp.APP_PERSON_PROFILE.getRepositoryName());
+            Boolean errorForInsertRecord = isErrorForInsertRecord(TblsProcedure.TablesProcedure.PROCEDURE_INFO, insertRecord2, procNameInReqs);
+            prcDeplSectionLog.put(TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), 
+                    infoToReportForInsertRecord(TblsProcedure.TablesProcedure.PROCEDURE_INFO, insertRecord2, procNameInReqs, errorForInsertRecord));
+        
+        
         prcDeplSectionLog.put(TblsApp.TablesApp.APP_BUSINESS_RULES.getTableName(), jArr);
         fields=new String[]{TblsProcedure.ProcedureEvents.NAME.getName(), TblsProcedure.ProcedureEvents.ROLE_NAME.getName(),
             TblsProcedure.ProcedureEvents.MODE.getName(), TblsProcedure.ProcedureEvents.TYPE.getName(),
@@ -267,7 +320,6 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
         }        
         prcDeplSectionLog.put(TblsApp.TablesApp.APP_PROCEDURE_EVENTS.getTableName(), jArr);
         
-        String procNameInReqs="platform-settings";
         String fakeEsingn="firmademo";
         String defaultMail="info@trazit.net";
         Object[] encryptValue=DbEncryption.encryptValue(fakeEsingn);        
@@ -276,10 +328,10 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
         String paEncrypted = encryptPa[encryptPa.length-1].toString();
         Object[] encryptPers=DbEncryption.encryptValue("adminz");        
         String persEncrypted = encryptPers[encryptPers.length-1].toString();
-        RdbmsObject insertRecordInTable = Rdbms.insertRecord(TblsApp.TablesApp.USERS, 
+        insertRecord2 = Rdbms.insertRecord(TblsApp.TablesApp.USERS, 
                 new String[]{TblsApp.Users.USER_NAME.getName(), TblsApp.Users.EMAIL.getName(), TblsApp.Users.ESIGN.getName(),
                     TblsApp.Users.PASSWORD.getName(), TblsApp.Users.PERSON_NAME.getName()},
-                new Object[]{"admin", defaultMail, fakeEsingnEncrypted, paEncrypted, persEncrypted}, null);        
+                new Object[]{"admin", defaultMail, fakeEsingnEncrypted, paEncrypted, persEncrypted}, null);                
         errorForInsertRecord = isErrorForInsertRecord(TblsApp.TablesApp.USERS, insertRecord2, "admin");
         prcDeplSectionLog.put(TblsApp.TablesApp.USERS.getTableName(), 
                 infoToReportForInsertRecord(TblsApp.TablesApp.USERS, insertRecord2, "admin", errorForInsertRecord));
@@ -335,54 +387,16 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
         prcReqsSectionLog.put(TblsReqs.TablesReqs.PROC_USER_ROLES.getTableName(), 
                 infoToReportForInsertRecord(TblsReqs.TablesReqs.PROC_USER_ROLES, insertRecord2, "admin-superuser", errorForInsertRecord));
         
-        fields=new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName(),
-                    TblsReqs.ProcedureInfo.ACTIVE.getName(), TblsReqs.ProcedureInfo.LOCKED_FOR_ACTIONS.getName(),
-                    TblsReqs.ProcedureInfo.MODULE_NAME.getName(), TblsReqs.ProcedureInfo.DESCRIPTION.getName(), TblsReqs.ProcedureInfo.LABEL_EN.getName(), TblsReqs.ProcedureInfo.LABEL_ES.getName(), TblsReqs.ProcedureInfo.PROCEDURE_HASH_CODE.getName()};
-        LocalDateTime currentTimeStamp = LPDate.getCurrentTimeStamp();
-        int hashCode = currentTimeStamp.hashCode();        
-        values1D=new Object[]{procNameInReqs, 1, procNameInReqs, true, false, "APP", "Platform settings", "Platform settings", "Configuración de Plataforma", hashCode};
-        insertRecord2 = Rdbms.insertRecord(TblsReqs.TablesReqs.PROCEDURE_INFO, fields, values1D, TblsReqs.TablesReqs.PROCEDURE_INFO.getRepositoryName());            
-        errorForInsertRecord = isErrorForInsertRecord(TblsReqs.TablesReqs.PROCEDURE_INFO, insertRecord2, procNameInReqs);
-        prcReqsSectionLog.put(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName(), 
-                infoToReportForInsertRecord(TblsReqs.TablesReqs.PROCEDURE_INFO, insertRecord2, "admin-superuser", errorForInsertRecord));
 
-
-        ClassLoader classLoader = DbObjects.class.getClassLoader();
-        String filePath = "JavaScript/platform-settingsModel.txt";
-        StringBuilder jsonDataModel = new StringBuilder();    
-        try (InputStream inputStream = classLoader.getResourceAsStream(filePath)) {
-            if (inputStream != null) {
-                // Read the content of the text file
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    jsonDataModel.append(line).append("\n");
-                }
-            } else {
-                System.err.println("File not found: " + filePath);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }  
-        
-        
-        JSONObject jObjModel = new JSONObject(jsonDataModel.toString());       
-        String[] fieldNames = new String[]{TblsReqs.ProcedureFEModel.PROCEDURE_NAME.getName(), TblsReqs.ProcedureFEModel.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureFEModel.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureFEModel.MODEL_JSON.getName(), TblsReqs.ProcedureFEModel.ACTIVE.getName()};
-        Object[] fieldValues = new Object[]{procNameInReqs, 1, procNameInReqs, jObjModel, true};
-        insertRecord2 = Rdbms.insertRecord(TblsReqs.TablesReqs.PROC_FE_MODEL, fieldNames, fieldValues, TblsReqs.TablesReqs.PROC_FE_MODEL.getRepositoryName());
-        errorForInsertRecord = isErrorForInsertRecord(TblsReqs.TablesReqs.PROC_FE_MODEL, insertRecord2, procNameInReqs);
-        prcReqsSectionLog.put(TblsReqs.TablesReqs.PROC_FE_MODEL.getTableName(), 
-                infoToReportForInsertRecord(TblsReqs.TablesReqs.PROC_FE_MODEL, insertRecord2, "admin-superuser", errorForInsertRecord));
-        
         fields=new String[]{TblsReqs.ProcedureModuleTables.PROCEDURE_NAME.getName(), TblsReqs.ProcedureModuleTables.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureModuleTables.PROC_INSTANCE_NAME.getName(),
                     TblsReqs.ProcedureModuleTables.SCHEMA_NAME.getName(), TblsReqs.ProcedureModuleTables.TABLE_NAME.getName(), TblsReqs.ProcedureModuleTables.IS_VIEW.getName()};
         values1D=new Object[]{procNameInReqs, 1, procNameInReqs, TblsApp.TablesApp.IP_BLACK_LIST.getRepositoryName(), TblsApp.TablesApp.IP_BLACK_LIST.getTableName(), false};
         insertRecord = Rdbms.insertRecord(TblsReqs.TablesReqs.PROC_MODULE_TABLES, fields, values, 
                 TblsReqs.TablesReqs.PROC_MODULE_TABLES.getRepositoryName());            
-        errorForInsertRecord = isErrorForInsertRecord(TblsReqs.TablesReqs.PROC_MODULE_TABLES, insertRecord2, "admin-superuser");
+        errorForInsertRecord = isErrorForInsertRecord(TblsReqs.TablesReqs.PROC_MODULE_TABLES, insertRecord2, procNameInReqs);
         prcReqsSectionLog.put(TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableName(), 
-                infoToReportForInsertRecord(TblsReqs.TablesReqs.PROC_MODULE_TABLES, insertRecord2, "admin-superuser", errorForInsertRecord));
-
+                infoToReportForInsertRecord(TblsReqs.TablesReqs.PROC_MODULE_TABLES, insertRecord2, procNameInReqs, errorForInsertRecord));
+        
 
         recordsLogObj.put("app_procedure_deployment", prcDeplSectionLog);
         recordsLogObj.put("requirements", prcReqsSectionLog);             
