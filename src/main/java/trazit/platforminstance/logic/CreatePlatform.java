@@ -27,6 +27,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import org.json.JSONObject;
 import org.json.simple.JSONArray;
@@ -49,8 +50,8 @@ public class CreatePlatform {
         diagnSummary="";
         executionLog = new JSONObject();
         errorsList = new JSONArray();        
-//        createBasicSchemasAndTablesStructure(platformName);
-//        createAppProcTables(platformName);
+        createBasicSchemasAndTablesStructure(platformName);
+        createAppProcTables(platformName);
         createModules(platformName);
     }
 
@@ -97,19 +98,24 @@ public class CreatePlatform {
         return curTbl.getRepositoryName()+"."+curTbl.getTableName()+" Error: "+tblCreateScript;
     }
     Boolean isErrorForInsertRecord(EnumIntTables curTbl,  RdbmsObject insertRecord, String keyValue){
-        if (Boolean.TRUE.equals(insertRecord.getRunSuccess())){
+        return isErrorForInsertRecord(curTbl, insertRecord, keyValue, null);
+    }   
+    Boolean isErrorForInsertRecord(EnumIntTables curTbl,  RdbmsObject insertRecord, String keyValue, String errorDetailStr){
+        if (insertRecord!=null&&Boolean.TRUE.equals(insertRecord.getRunSuccess())){
             return false;  
         }else{
             JSONObject log= new JSONObject();
-            Object[] errorDetail=insertRecord.getErrorMessageVariables();
-            String errorDetailStr=errorDetail[errorDetail.length-1].toString();
+            if (insertRecord!=null){
+                Object[] errorDetail=insertRecord.getErrorMessageVariables();
+                errorDetailStr=errorDetail[errorDetail.length-1].toString();
+            }
             if (errorDetailStr.toUpperCase().contains("ALREADY")&&errorDetailStr.toUpperCase().contains("EXIST")){
                 return false;  
             }
-            if ("RDBMS_RECORD_CREATED".equalsIgnoreCase(insertRecord.getErrorMessageCode().getErrorCode())){
+            if (insertRecord!=null&&"RDBMS_RECORD_CREATED".equalsIgnoreCase(insertRecord.getErrorMessageCode().getErrorCode())){
                 return false;
             }
-            log.put("inserting_procedure_info_"+"app",insertRecord.getErrorMessageCode());
+            log.put("inserting_procedure_info_"+"app",insertRecord!=null?insertRecord.getErrorMessageCode():errorDetailStr);
             this.errorsList.add(log);
             return true;
         }
@@ -117,12 +123,15 @@ public class CreatePlatform {
     String infoToReportForInsertRecord(EnumIntTables curTbl, RdbmsObject insertRecord, String keyValue, Boolean isError){
         if (Boolean.FALSE.equals(isError)){
             Object[] errorDetail=insertRecord.getErrorMessageVariables();
-            String errorDetailStr=errorDetail[errorDetail.length-1].toString();
-            if (errorDetailStr.toUpperCase().contains("ALREADY")&&errorDetailStr.toUpperCase().contains("EXIST")){
-                return "Record "+keyValue+" already exists";
-            }else{            
+            if (errorDetail!=null){
+                String errorDetailStr=errorDetail[errorDetail.length-1].toString();
+                if (errorDetailStr.toUpperCase().contains("ALREADY")&&errorDetailStr.toUpperCase().contains("EXIST")){
+                    return "Record "+keyValue+" already exists";
+                }else{            
+                    return "Added "+keyValue+" properly";
+                }
+            }else
                 return "Added "+keyValue+" properly";
-            }
         }
         else{
             return "Error adding "+keyValue+". Error: "+insertRecord.getErrorMessageCode();
@@ -431,14 +440,15 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
                             moduleName=jFileContentObjModel.getString("name");
                             Integer moduleVersion=jFileContentObjModel.getInt("version");
                             String releaseDate=jFileContentObjModel.getString("releaseDate");
-                            JSONObject moduleSettings=jFileContentObjModel.getJSONObject("ModuleSettings");
-                            
+                            JSONObject moduleSettings=jFileContentObjModel.getJSONObject("ModuleSettings");                            
+                            String descEn=jFileContentObjModel.getString("description_en");
+                            String descEs=jFileContentObjModel.getString("description_es");
                             jFileContentObjModel = new JSONObject(jsonDataModel.toString());       
                             String[] fieldNames = new String[]{TblsReqs.Modules.MODULE_NAME.getName(), TblsReqs.Modules.MODULE_VERSION.getName(),
+                                TblsReqs.Modules.DESCRIPTION_EN.getName(), TblsReqs.Modules.DESCRIPTION_ES.getName(),
                                 TblsReqs.Modules.INFO_JSON.getName(), TblsReqs.Modules.ACTIVE.getName(), TblsReqs.Modules.MODULE_SETTINGS.getName()
                             };
-
-                            Object[] fieldValues = new Object[]{moduleName, moduleVersion, jFileContentObjModel, true, moduleSettings};
+                            Object[] fieldValues = new Object[]{moduleName, moduleVersion, descEn, descEs, jFileContentObjModel, true, moduleSettings};
                             RdbmsObject insertRecord = Rdbms.insertRecord(TblsReqs.TablesReqs.MODULES, fieldNames, fieldValues, TblsReqs.TablesReqs.MODULES.getRepositoryName());
                             Boolean errorForInsertRecord = isErrorForInsertRecord(TblsReqs.TablesReqs.MODULES, insertRecord, moduleName);
                             prcReqsSectionLog.put(TblsReqs.TablesReqs.MODULES.getTableName(), 
@@ -477,23 +487,48 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
             String curApi=get.toString();
             JSONObject curApiObj=new JSONObject();
             curApiObj.put("api_name", curApi);
-                ClassInfo getMine = classesImplementingEndPoints.get(i);
-            List<Object> enumConstantObjects = getMine.getEnumConstantObjects();
-            JSONArray apiEndpointsArr=new JSONArray();
-            for (int j = 0; j < enumConstantObjects.size(); j++) {
-                EnumIntEndpoints curEndpoint = (EnumIntEndpoints) enumConstantObjects.get(j);
-                apiEndpointsArr.add(curEndpoint.getName());
+            ClassInfo getMine = null; // classesImplementingEndPoints.get(curApi);
+            List<Object> enumConstantObjects = null; // getMine.getEnumConstantObjects();
+            ClassInfo selectedEnum=null;
+            for (int j = 0; j < classesImplementingEndPoints.size(); j++) {
+                ClassInfo enumObject = classesImplementingEndPoints.get(j);
+                String curEndpointName=enumObject.getName().toUpperCase();
+                // Check if the enumObject's class name matches the enumNameToFind
+                if (curEndpointName.contains(curApi.toUpperCase())) {
+                    // Add the enumObject to your JSONArray or perform any other desired action
+                    //apiEndpointsArr.put(enumObject);
+//                    getMine=enumObject;
+                    selectedEnum= enumObject;
+                    enumConstantObjects = enumObject.getEnumConstantObjects();
+                    continue;
+                }
+            }            
+            if (enumConstantObjects==null){
+                Boolean errorForInsertRecord = isErrorForInsertRecord(TblsReqs.TablesReqs.MODULE_ACTIONS_N_QUERIES, null, curApi);
+                curApiObj.put("error", curApi+" not found.");
+            }else{
+                JSONArray apiEndpointsArr=new JSONArray();
+                Object[][] values=new Object[][]{{}};
+                String[] apiNameArr=selectedEnum.getName().split("\\$");
+                
                 String[] fields=new String[]{TblsReqs.ModuleActionsAndQueries.MODULE_NAME.getName(), TblsReqs.ModuleActionsAndQueries.MODULE_VERSION.getName(), TblsReqs.ModuleActionsAndQueries.API_NAME.getName(),
-                            TblsReqs.ModuleActionsAndQueries.ENDPOINT_NAME.getName(), TblsReqs.ModuleActionsAndQueries.ENTITY.getName(), TblsReqs.ModuleActionsAndQueries.ACTIVE.getName()};
-                Object[] values1D=new Object[]{moduleName, moduleVersion, curEndpoint.getApiUrl(), curEndpoint.getName(), "curEndpoint.getEntity()", true};
-                RdbmsObject insertRecord = Rdbms.insertRecord(TblsReqs.TablesReqs.MODULE_ACTIONS_N_QUERIES, fields, values1D, 
-                        TblsReqs.TablesReqs.PROC_MODULE_TABLES.getRepositoryName());            
-                Boolean errorForInsertRecord = isErrorForInsertRecord(TblsReqs.TablesReqs.MODULE_ACTIONS_N_QUERIES, insertRecord, curEndpoint.getApiUrl()+"."+curEndpoint.getName());
-                jMainObj.put(TblsReqs.TablesReqs.MODULE_ACTIONS_N_QUERIES.getTableName(), 
-                        infoToReportForInsertRecord(TblsReqs.TablesReqs.MODULE_ACTIONS_N_QUERIES, insertRecord, curEndpoint.getApiUrl()+"."+curEndpoint.getName(), errorForInsertRecord));
+                    TblsReqs.ModuleActionsAndQueries.ENDPOINT_NAME.getName(), TblsReqs.ModuleActionsAndQueries.ENTITY.getName(), TblsReqs.ModuleActionsAndQueries.ACTIVE.getName()};
+                for (int j = 0; j < enumConstantObjects.size(); j++) {
+                    EnumIntEndpoints curEndpoint = (EnumIntEndpoints) enumConstantObjects.get(j);
+                    apiEndpointsArr.add(curEndpoint.getName());
+                    Object[] values1D=new Object[]{moduleName, moduleVersion, apiNameArr[1], curEndpoint.getName(), "curEndpoint.getEntity()", true};
+                    values=LPArray.array1dTo2d(LPArray.addValueToArray1D(LPArray.array2dTo1d(values),values1D), fields.length); 
+                }                
+                for (Object[]  curRow: values){
+                    RdbmsObject insertRecord = Rdbms.insertRecord(TblsReqs.TablesReqs.MODULE_ACTIONS_N_QUERIES, fields, curRow, 
+                            TblsReqs.TablesReqs.PROC_MODULE_TABLES.getRepositoryName());
+                    Boolean errorForInsertRecord = isErrorForInsertRecord(TblsReqs.TablesReqs.MODULE_ACTIONS_N_QUERIES, insertRecord, apiNameArr[1]+"."+curRow[3]);
+                    jMainObj.put(TblsReqs.TablesReqs.MODULE_ACTIONS_N_QUERIES.getTableName()+"."+apiNameArr[1]+"."+curRow[3].toString(), 
+                            infoToReportForInsertRecord(TblsReqs.TablesReqs.MODULE_ACTIONS_N_QUERIES, insertRecord, apiNameArr[1]+"."+curRow[3].toString(), errorForInsertRecord));
+                }
+                curApiObj.put("endpoints", apiEndpointsArr);
+                curApiObj.put("inserts_log", jMainObj);
             }
-            curApiObj.put("endpoints", apiEndpointsArr);
-            curApiObj.put("inserts_log", jMainObj);
             allApisArr.add(curApiObj);
         }
         return allApisArr;
