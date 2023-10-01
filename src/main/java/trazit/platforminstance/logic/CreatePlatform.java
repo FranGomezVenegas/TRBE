@@ -516,7 +516,7 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
                 for (int j = 0; j < enumConstantObjects.size(); j++) {
                     EnumIntEndpoints curEndpoint = (EnumIntEndpoints) enumConstantObjects.get(j);
                     apiEndpointsArr.add(curEndpoint.getName());
-                    Object[] values1D=new Object[]{moduleName, moduleVersion, apiNameArr[1], curEndpoint.getName(), "curEndpoint.getEntity()", true};
+                    Object[] values1D=new Object[]{moduleName, moduleVersion, apiNameArr[1], curEndpoint.getName(), curEndpoint.getEntity(), true};
                     values=LPArray.array1dTo2d(LPArray.addValueToArray1D(LPArray.array2dTo1d(values),values1D), fields.length); 
                 }                
                 for (Object[]  curRow: values){

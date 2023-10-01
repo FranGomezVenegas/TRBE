@@ -151,7 +151,7 @@ public class GenomaProjectAPI extends HttpServlet {
             hm.put(request, argValues);
             return hm;
         }
-
+        @Override public String getEntity() {return "project";}
         @Override
         public String getName() {
             return this.name;

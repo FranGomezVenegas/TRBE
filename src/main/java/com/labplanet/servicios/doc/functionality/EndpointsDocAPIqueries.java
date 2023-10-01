@@ -69,6 +69,7 @@ public class EndpointsDocAPIqueries extends HttpServlet {
         @Override        public String getDeveloperCommentTag() {            return this.devCommentTag;        }
         private final String devComment;
         private final String devCommentTag;
+        @Override public String getEntity() {return "documentation";}
     }
 
     /**

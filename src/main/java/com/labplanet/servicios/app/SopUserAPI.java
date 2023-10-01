@@ -79,7 +79,7 @@ public class SopUserAPI extends HttpServlet {
         public String getSuccessMessageCode() {
             return this.successMessageCode;
         }
-
+        @Override public String getEntity() {return "sop";}
         @Override
         public JsonArray getOutputObjectTypes() {
             return outputObjectTypes;

@@ -179,7 +179,7 @@ GlobalAPIsParams.
             hm.put(request, argValues);
             return hm;
         }
-
+        @Override public String getEntity() {return "program";}
         @Override
         public String getName() {
             return this.name;

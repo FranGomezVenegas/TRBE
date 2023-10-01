@@ -54,6 +54,7 @@ public class InspLotRMAPIqueries extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
+        @Override public String getEntity() {return "inspection_lot";}
         @Override        public String getName(){return this.name;}
         @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
         @Override        public LPAPIArguments[] getArguments() {return arguments;} 

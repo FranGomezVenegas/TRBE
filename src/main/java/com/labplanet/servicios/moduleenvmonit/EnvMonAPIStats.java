@@ -197,7 +197,7 @@ public class EnvMonAPIStats extends HttpServlet {
             hm.put(request, argValues);
             return hm;
         }
-
+        @Override public String getEntity() {return "queries";}
         @Override
         public String getName() {
             return this.name;

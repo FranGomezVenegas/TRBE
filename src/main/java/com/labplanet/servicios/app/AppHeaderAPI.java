@@ -78,6 +78,7 @@ public class AppHeaderAPI extends HttpServlet {
         private final String devComment;
         private final String devCommentTag;
 
+        @Override public String getEntity() {return "platform";}
     }
 
     /**

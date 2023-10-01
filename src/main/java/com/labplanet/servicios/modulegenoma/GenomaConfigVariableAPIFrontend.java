@@ -62,6 +62,7 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }
+        @Override public String getEntity() {return "config_variable";}
         @Override        public String getName(){return this.name;}
         @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
         @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     

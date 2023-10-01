@@ -80,7 +80,7 @@ public class EnvMonIncubatorAPIqueries extends HttpServlet {
             hm.put(request, argValues);
             return hm;
         }
-
+        @Override public String getEntity() {return "incubator";}
         @Override
         public String getName() {
             return this.name;

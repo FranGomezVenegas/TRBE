@@ -5,7 +5,6 @@
  */
 package module.monitoring.apis;
 
-import module.inspectionlot.rawmaterial.apis.*;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.modulesample.ClassSampleQueriesController;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
@@ -55,6 +54,7 @@ public class MonitoringAPIqueries extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
+        @Override public String getEntity() {return "inspection_lot";}
         @Override        public String getName(){return this.name;}
         @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
         @Override        public LPAPIArguments[] getArguments() {return arguments;} 

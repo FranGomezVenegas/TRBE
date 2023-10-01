@@ -75,7 +75,7 @@ public class ModuleDefinitionAPI extends HttpServlet {
             hm.put(request, argValues);
             return hm;
         }
-
+        @Override public String getEntity() {return "documentation";}
         @Override
         public String getName() {
             return this.name;

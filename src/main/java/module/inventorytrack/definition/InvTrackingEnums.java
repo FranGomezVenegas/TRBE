@@ -248,7 +248,7 @@ public class InvTrackingEnums {
             hm.put(request, argValues);
             return hm;
         }
-
+        @Override public String getEntity() {return "inventory_lot";}
         @Override
         public String getName() {
             return this.name;
@@ -374,7 +374,7 @@ public class InvTrackingEnums {
             hm.put(request, argValues);
             return hm;
         }
-
+        @Override public String getEntity() {return "inventory_lot";}
         @Override
         public String getName() {
             return this.name;

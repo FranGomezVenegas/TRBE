@@ -90,6 +90,7 @@ public class CertifyAPIfrontend extends HttpServlet {
         @Override        public String getApiUrl(){return ApiUrls.CERTIFY_QUERIES.getUrl();}
         @Override public String getDeveloperComment() { return this.devComment;}
         @Override        public String getDeveloperCommentTag() {            return this.devCommentTag;        }
+        @Override public String getEntity() {return "certification";}
         private final String name;
         private final String successMessageCode;
         private final LPAPIArguments[] arguments;

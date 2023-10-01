@@ -115,7 +115,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
             hm.put(request, argValues);
             return hm;
         }
-
+        @Override public String getEntity() {return "study";}
         @Override
         public String getName() {
             return this.name;

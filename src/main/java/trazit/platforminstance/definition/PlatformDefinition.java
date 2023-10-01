@@ -50,7 +50,7 @@ public class PlatformDefinition {
             hm.put(request, argValues);
             return hm;
         }
-
+        @Override public String getEntity() {return "platform";}
         @Override
         public String getName() {
             return this.name;

@@ -71,7 +71,7 @@ public class DbTestingLimitAndResult extends HttpServlet {
             this.devComment = LPNulls.replaceNull(devComment);
             this.devCommentTag = LPNulls.replaceNull(devCommentTag);
         }
-
+        @Override public String getEntity() {return "testing";}
         @Override
         public String getName() {
             return this.name;

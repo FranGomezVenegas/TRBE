@@ -91,7 +91,7 @@ public class UserSessionAPIqueries extends HttpServlet {
             hm.put(request, argValues);
             return hm;
         }
-
+        @Override public String getEntity() {return "user_session";}
         @Override
         public String getName() {
             return this.name;

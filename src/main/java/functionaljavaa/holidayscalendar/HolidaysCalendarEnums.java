@@ -78,7 +78,7 @@ public class HolidaysCalendarEnums {
             this.devComment = LPNulls.replaceNull(devComment);
             this.devCommentTag = LPNulls.replaceNull(devCommentTag);
         }
-
+        @Override public String getEntity() {return "noliday_calendar";}
         @Override
         public String getName() {
             return this.name;
@@ -167,7 +167,7 @@ public class HolidaysCalendarEnums {
             hm.put(request, argValues);
             return hm;
         }
-
+        @Override public String getEntity() {return "holiday_calendar";}
         @Override
         public String getName() {
             return this.name;

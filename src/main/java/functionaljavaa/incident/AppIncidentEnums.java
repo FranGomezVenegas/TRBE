@@ -72,7 +72,7 @@ public class AppIncidentEnums {
             this.devComment = LPNulls.replaceNull(devComment);
             this.devCommentTag = LPNulls.replaceNull(devCommentTag);
         }
-
+        @Override public String getEntity() {return "incident";}
         @Override
         public String getName() {
             return this.name;

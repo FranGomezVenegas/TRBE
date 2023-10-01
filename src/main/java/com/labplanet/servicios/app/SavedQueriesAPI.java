@@ -76,7 +76,7 @@ public class SavedQueriesAPI extends HttpServlet {
         public String getName() {
             return this.name;
         }
-
+        @Override public String getEntity() {return "queries";}
         @Override
         public String getSuccessMessageCode() {
             return this.successMessageCode;
@@ -155,6 +155,7 @@ public class SavedQueriesAPI extends HttpServlet {
         public LPAPIArguments[] getArguments() {
             return arguments;
         }
+        @Override public String getEntity() {return "queries";}
         private final String name;
         private final String successMessageCode;
         private final LPAPIArguments[] arguments;

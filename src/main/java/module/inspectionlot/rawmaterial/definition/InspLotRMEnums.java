@@ -287,7 +287,7 @@ public class InspLotRMEnums {
             hm.put(request, argValues);
             return hm;
         }
-
+        @Override public String getEntity() {return "inspection_lot";}
         @Override
         public String getName() {
             return this.name;
@@ -391,7 +391,7 @@ public class InspLotRMEnums {
             hm.put(request, argValues);
             return hm;
         }
-
+        @Override public String getEntity() {return "inspection_lot";}
         @Override
         public String getName() {
             return this.name;

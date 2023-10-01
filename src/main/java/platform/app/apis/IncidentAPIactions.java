@@ -85,7 +85,7 @@ public class IncidentAPIactions extends HttpServlet {
             hm.put(request, argValues);
             return hm;
         }
-
+        @Override public String getEntity() {return "incident";}
         @Override
         public String getName() {
             return this.name;

@@ -205,6 +205,7 @@ public class EnvMonSampleAPI extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }
+        @Override public String getEntity() {return "sample";}
         @Override        public String getName(){return this.name;}
         @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
         @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     

@@ -75,7 +75,7 @@ public class TestingAPIActions extends HttpServlet {
         public String getName() {
             return this.name;
         }
-
+        @Override public String getEntity() {return "testing";}
         @Override
         public String getSuccessMessageCode() {
             return this.successMessageCode;

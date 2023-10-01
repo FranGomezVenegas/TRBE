@@ -104,6 +104,7 @@ static final String USER_CHANGE_PSWD_SUCCESS="userChangePswd_success";
         @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
         @Override        public LPAPIArguments[] getArguments() {return arguments;}
         @Override        public String getApiUrl(){return ApiUrls.APP_AUTHENTICATION_ACTIONS.getUrl();}
+        @Override public String getEntity() {return "platform";}
         private final String name;
         private final String successMessageCode;  
         private final  LPAPIArguments[] arguments;

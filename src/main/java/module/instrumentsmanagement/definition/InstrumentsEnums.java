@@ -282,7 +282,7 @@ public class InstrumentsEnums {
             this.devCommentTag = LPNulls.replaceNull(devCommentTag);
 
         }
-
+        @Override public String getEntity() {return "instrument";}
         @Override
         public String getName() {
             return this.name;
@@ -426,7 +426,7 @@ public class InstrumentsEnums {
             hm.put(request, argValues);
             return hm;
         }
-
+        @Override public String getEntity() {return "instrument";}
         @Override
         public String getName() {
             return this.name;

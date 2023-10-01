@@ -107,7 +107,7 @@ public class InvestigationAPI extends HttpServlet {
         public String getName() {
             return this.name;
         }
-
+        @Override public String getEntity() {return "investigation";}
         @Override
         public String getSuccessMessageCode() {
             return this.successMessageCode;
@@ -190,7 +190,7 @@ public class InvestigationAPI extends HttpServlet {
         public JsonArray getOutputObjectTypes() {
             return outputObjectTypes;
         }
-
+        @Override public String getEntity() {return "investigation";}
         @Override
         public LPAPIArguments[] getArguments() {
             return arguments;

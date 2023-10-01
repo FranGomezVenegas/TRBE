@@ -137,6 +137,7 @@ public class CertifyAnalysisMethodAPI extends HttpServlet {
         public String getApiUrl() {
             return ApiUrls.CERTIFY_ANALYSISMETHODS_ACTIONS.getUrl();
         }
+        @Override public String getEntity() {return "certification";}
         private final String name;
         private final String successMessageCode;
         private final String auditEvent;

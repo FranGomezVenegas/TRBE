@@ -74,6 +74,7 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
             hm.put(request, argValues);            
             return hm;
         }        
+        @Override public String getEntity() {return "incub_batch";}
         @Override        public String getName(){return this.name;}
         @Override        public String getSuccessMessageCode(){return this.successMessageCode;}           
         @Override        public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     

@@ -152,7 +152,7 @@ public class ReqProcedureEnums {
             hm.put(request, argValues);
             return hm;
         }
-
+        @Override public String getEntity() {return "procedure_deployment";}
         @Override
         public String getName() {
             return this.name;
@@ -232,7 +232,7 @@ public class ReqProcedureEnums {
             hm.put(request, argValues);
             return hm;
         }
-
+        @Override public String getEntity() {return "procedure_deployment";}
         @Override
         public String getName() {
             return this.name;

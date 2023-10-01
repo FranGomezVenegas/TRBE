@@ -132,7 +132,7 @@ public class PlatformAdminEnums {
             hm.put(request, argValues);
             return hm;
         }
-
+        @Override public String getEntity() {return "platform_admin";}
         @Override
         public String getName() {
             return this.name;
@@ -206,7 +206,7 @@ public class PlatformAdminEnums {
             hm.put(request, argValues);
             return hm;
         }
-
+        @Override public String getEntity() {return "platform_admin";}
         @Override
         public String getName() {
             return this.name;

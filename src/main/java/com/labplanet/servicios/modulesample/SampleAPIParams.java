@@ -323,7 +323,7 @@ public class SampleAPIParams extends HttpServlet {
             hm.put(request, argValues);
             return hm;
         }
-
+        @Override public String getEntity() {return "sample";}
         @Override
         public String getName() {
             return this.name;
@@ -563,7 +563,7 @@ public class SampleAPIParams extends HttpServlet {
             hm.put(request, argValues);
             return hm;
         }
-
+        @Override public String getEntity() {return "sample";}
         @Override
         public String getName() {
             return this.name;

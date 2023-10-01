@@ -66,7 +66,7 @@ public class BatchAPI extends HttpServlet {
             hm.put(request, argValues);
             return hm;
         }
-
+        @Override public String getEntity() {return "batch";}
         @Override
         public String getName() {
             return this.name;
