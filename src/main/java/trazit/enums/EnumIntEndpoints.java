@@ -15,6 +15,7 @@ import lbplanet.utilities.LPAPIArguments;
 public interface EnumIntEndpoints {
     String getApiUrl();
     String getName();
+    //String getEntity();
     String getSuccessMessageCode();
     JsonArray getOutputObjectTypes();
     LPAPIArguments[] getArguments();

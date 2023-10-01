@@ -91,7 +91,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 runSection=Boolean.valueOf(argValues[5].toString()) || CREATE_REPOSITORIES_AND_PROC_TBLS;
                 sectionsSettingJobj.put("1) CREATE_REPOSITORIES_AND_PROC_TBLS", runSection);
                 if (Boolean.TRUE.equals(runSection)){
-                    JSONObject createDBProcedureInfo = DbObjects.createModuleSchemasAndBaseTables(procInstanceName);
+                    org.json.JSONObject createDBProcedureInfo = DbObjects.createModuleSchemasAndBaseTables(procInstanceName);
                     sectionsDetailObj.put("CREATE_REPOSITORIES_AND_PROC_TBLS", createDBProcedureInfo);
                 }               
             }

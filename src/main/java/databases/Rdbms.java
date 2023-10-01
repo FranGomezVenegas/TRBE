@@ -1731,7 +1731,7 @@ public class Rdbms {
                         case "class json.Na"://to skip fields
                             break;
                         case "class java.lang.String":
-                            prepsta.setString(indexval, (String) obj);
+                            prepsta.setString(indexval, obj.toString());
                             break;
                         case "class [Ljava.lang.String;":
                             Array array = conn.createArrayOf("VARCHAR", (Object[]) obj);
@@ -1752,7 +1752,7 @@ public class Rdbms {
                             prepsta.setBytes(indexval, (byte[]) obj);
                             break;                            
                         default:
-                            prepsta.setString(indexval, (String) obj);
+                            prepsta.setString(indexval, obj.toString());
                             break;
                     }
                 }

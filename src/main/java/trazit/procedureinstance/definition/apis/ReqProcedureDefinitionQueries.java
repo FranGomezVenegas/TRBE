@@ -476,13 +476,13 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                 "tables", dbRowsGroupedToJsonArr);
 
         jMainObj.put(
-                "user_requirements_events", ClassReqProcedureQueries.dbRowsToJsonArr(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS_EVENTS.getTableName(),
-                        getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_USER_REQS_EVENTS.getTableFields()), new String[]{TblsReqs.ProcedureUserRequirementsEvents.PROC_INSTANCE_NAME.getName()
+                "user_requirements_events", ClassReqProcedureQueries.dbRowsToJsonArr(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableName(),
+                        getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableFields()), new String[]{TblsReqs.ProcedureReqSolution.PROC_INSTANCE_NAME.getName()
         },
                         new Object[]{procInstanceName
                         },
                         new String[]{
-                            TblsReqs.ProcedureUserRequirementsEvents.ORDER_NUMBER.getName()
+                            TblsReqs.ProcedureReqSolution.ORDER_NUMBER.getName()
                         },
                         null, true));
 

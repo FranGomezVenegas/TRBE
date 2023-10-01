@@ -21,7 +21,6 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 import databases.Rdbms;
 import databases.TblsCnfg;
-import trazit.procedureinstance.definition.definition.TblsReqs;
 import static functionaljavaa.parameter.Parameter.getBusinessRuleAppFile;
 import java.util.ArrayList;
 import java.util.Map;
@@ -505,7 +504,7 @@ public class LPPlatform {
         getFilterFldName = LPArray.addValueToArray1D(getFilterFldName, currField);
         getFilterFldValue = LPArray.addValueToArray1D(getFilterFldValue, fldValue[specialFieldIndex]);
 
-        String[] getFields = new String[]{"id", ApiMessageReturn.JAVADOC_LINE_FLDNAME, "last_update_on", "created_on"};
+/*        String[] getFields = new String[]{"id", ApiMessageReturn.JAVADOC_LINE_FLDNAME, "last_update_on", "created_on"};
         Object[][] diagnoses = Rdbms.getRecordFieldsByFilter(TblsReqs.TablesReqs.JAVA_CLASS_DOC.getRepositoryName(), TblsReqs.TablesReqs.JAVA_CLASS_DOC.getTableName(), getFilterFldName, getFilterFldValue, getFields);
         if (LAB_FALSE.equalsIgnoreCase(diagnoses[0][0].toString())) {
             Rdbms.insertRecordInTable(TblsReqs.TablesReqs.JAVA_CLASS_DOC, fldName, fldValue);
@@ -518,6 +517,7 @@ public class LPPlatform {
                 fieldsUpdateValue = LPArray.addValueToArray1D(fieldsUpdateValue, elementsDev[1].getLineNumber());
             }
         }
+*/        
     }
 
     /**

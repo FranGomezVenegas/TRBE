@@ -1,0 +1,16 @@
+{
+    "name": "INTRUMENTS",
+    "version": 1,
+    "releaseDate": "2023-09-01",
+    "description_en": "Instruments Manager",
+    "description_es": "Gestión Instrumental",
+    "ModuleSettings":{
+            "actionsEndpoints":[
+                  { "name": "Instruments" , "url" : "/app/procs/InstrumentsAPIactions"}
+            ],
+            "queriesEndpoints":[
+                  { "name": "Instruments" , "url" : "/app/procs/InstrumentsAPIqueries"}
+            ]
+    },
+    "apis":[ "InstrumentsAPIactionsEndpoints", "InstrumentsAPIqueriesEndpoints", "InvestigationAPIactionsEndpoints", "InvestigationAPIqueriesEndpoints"]	
+}

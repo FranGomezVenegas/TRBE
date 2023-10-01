@@ -7,7 +7,6 @@ package trazit.platforminstance.apis;
 
 import com.labplanet.servicios.ResponseSuccess;
 import trazit.platforminstance.definition.PlatformDefinition.PlatformDefinitionAPIactionsEndpoints;
-import databases.DbObjects;
 import static databases.DbObjects.createSchemas;
 import lbplanet.utilities.LPFrontEnd;
 import databases.Rdbms;
@@ -28,6 +27,7 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
+import trazit.platforminstance.logic.CreatePlatform;
 
 /**
  *
@@ -89,31 +89,35 @@ public class PlatformDefinitionToInstance extends HttpServlet {
                 sectionsDetailObj.put("CREATE_DATABASE", createSchemas);
             }
             runSection = Boolean.valueOf(argValues[2].toString()) || CREATE_SCHEMAS_AND_PLATFORM_TBLS;
+            org.json.JSONObject createDBPlatformSchemas=new org.json.JSONObject();
             sectionsSettingJobj.put("2) CREATE_SCHEMAS_AND_PLATFORM_TBLS", runSection);
             if (Boolean.TRUE.equals(runSection)) {
                 Rdbms.closeRdbms();
-                Rdbms.stablishDBConection(platfName);
-                JSONObject createDBPlatformSchemas = DbObjects.createPlatformSchemasAndBaseTables(platfName);
+                Rdbms.stablishDBConection(platfName);                
+                CreatePlatform nwPlatf= new CreatePlatform(platfName);
+                createDBPlatformSchemas=nwPlatf.publishReport();
+                nwPlatf=null;
                 sectionsDetailObj.put("CREATE_SCHEMAS_AND_PLATFORM_TBLS", createDBPlatformSchemas);
             }
             runSection = Boolean.valueOf(argValues[3].toString()) || CREATE_CHECKPLATFORM_PROCEDURE;
             sectionsSettingJobj.put("3) CREATE_CHECKPLATFORM_PROCEDURE", runSection);
+            JSONObject createCheckPlatformProcedure =new JSONObject();
             if (Boolean.TRUE.equals(runSection)) {
                 Rdbms.closeRdbms();
                 Rdbms.stablishDBConection(platfName);
-                JSONObject createCheckPlatformProcedure = createCheckPlatformProcedure(platfName);
-                sectionsDetailObj.put("CREATE_CHECKPLATFORM_PROCEDURE", createCheckPlatformProcedure);
+                createCheckPlatformProcedure = createCheckPlatformProcedure(platfName);
+                //sectionsDetailObj.put("CREATE_CHECKPLATFORM_PROCEDURE", createCheckPlatformProcedure);
             }
             runSection = Boolean.valueOf(argValues[4].toString()) || REMOVE_CHECKPLATFORM_PROCEDURE;
             sectionsSettingJobj.put("4) REMOVE_CHECKPLATFORM_PROCEDURE", runSection);
             if (Boolean.TRUE.equals(runSection)) {
                 Rdbms.closeRdbms();
                 Rdbms.stablishDBConection(platfName);
-                JSONObject createCheckPlatformProcedure = removeCheckPlatformProcedure(platfName);
+                createCheckPlatformProcedure = removeCheckPlatformProcedure(platfName);
                 sectionsDetailObj.put("REMOVE_CHECKPLATFORM_PROCEDURE", createCheckPlatformProcedure);
             }
-            mainObj.put("endpoint_call_settings", sectionsSettingJobj);
-            mainObj.put("sections_log", sectionsDetailObj);
+            //mainObj.put("endpoint_call_settings", sectionsSettingJobj);
+            mainObj.put("report", createDBPlatformSchemas);
             Rdbms.closeRdbms();
             LPFrontEnd.servletReturnSuccess(request, response, mainObj);
         } catch (Exception e) {

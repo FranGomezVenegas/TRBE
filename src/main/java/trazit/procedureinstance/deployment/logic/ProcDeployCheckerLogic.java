@@ -180,12 +180,12 @@ public class ProcDeployCheckerLogic {
         JSONArray personProfilesDest = new JSONArray();
         JSONArray procUserRolesSource = new JSONArray();
 
-        String[] procUserRolesSourceFlds = getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_USER_REQS_EVENTS.getTableFields());
-        Object[][] procUserAndRolesRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS_EVENTS.getTableName(), 
+        String[] procUserRolesSourceFlds = getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableFields());
+        Object[][] procUserAndRolesRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableName(), 
             new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(),TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procedure, procVersion, procInstanceName},                 procUserRolesSourceFlds);
         for (Object[] curRow: procUserAndRolesRecordsSource)
             procUserRolesSource.add(LPJson.convertArrayRowToJSONObject(procUserRolesSourceFlds, curRow));
-        detailsObj.put(GlobalAPIsParams.LBL_DATA_IN_DEFINITION_TABLE+TblsReqs.TablesReqs.PROCEDURE_USER_REQS_EVENTS.getTableName(), procUserRolesSource);
+        detailsObj.put(GlobalAPIsParams.LBL_DATA_IN_DEFINITION_TABLE+TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableName(), procUserRolesSource);
         
         String[] personProfilesDestFlds = EnumIntTableFields.getAllFieldNames(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS);
         Object[][] personProfileRecordsDestination = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getRepositoryName()), TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(), 

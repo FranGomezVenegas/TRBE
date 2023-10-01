@@ -10,19 +10,14 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import trazit.procedureinstance.deployment.definition.ProcDeployEnums;
 import static databases.Rdbms.insertRecordInTableFromTable;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
-import databases.TblsApp.TablesApp;
-import databases.TblsAppAudit.TablesAppAudit;
-import databases.TblsAppConfig.TablesAppConfig;
-import databases.TblsProcedure.TablesProcedure;
-import databases.features.DbEncryption;
-import trazit.procedureinstance.definition.definition.TblsReqs.TablesReqs;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
 import functionaljavaa.parameter.Parameter;
+import java.net.MalformedURLException;
 import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.SCHEMA_AUTHORIZATION_ROLE;
 import java.util.Arrays;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 import trazit.globalvariables.GlobalVariables;
 import java.util.ResourceBundle;
 import lbplanet.utilities.LPArray;
@@ -30,9 +25,6 @@ import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntTables;
 import static trazit.enums.deployrepository.DeployTables.createTableScript;
-import static trazit.globalvariables.GlobalVariables.PROC_MANAGEMENT_SPECIAL_ROLE;
-
-
 /**
  *
  * @author Administrator
@@ -54,7 +46,7 @@ public class DbObjects {
      * @param platformName
      * @return one Json Object with the log built after running the script for the platform instance creation.
      */
-    public static JSONObject createPlatformSchemasAndBaseTables(String platformName){        
+    public static JSONObject createPlatformSchemasAndBaseTables(String platformName) throws MalformedURLException{        
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         
         String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());        
         EnumIntTables[] tablesToTransferData=new EnumIntTables[]{
@@ -65,6 +57,7 @@ public class DbObjects {
         
         JSONObject errorsOnlyObj=new JSONObject();
         JSONObject schemasObj=new JSONObject();
+/*  Moved        
         TablesApp[] tblsApp = TablesApp.values();
         for (TablesApp curTbl: tblsApp){
             tblCreateScript = createTableScript(curTbl, null, false, true, null);
@@ -122,10 +115,10 @@ public class DbObjects {
                 scriptLog.put("creator_diagn", prepUpQuery[prepUpQuery.length-1]);
             if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains(GlobalAPIsParams.LBL_ERROR))
                 errorsOnlyObj.put("app."+curTbl.getTableName(), scriptLog);
-            jsonObj.put(curTbl.getTableName(), scriptLog);
+            jsonObj.put(curTbl.getTableName(), scriptLog); prcDeplSectionLog prcReqsSectionLog
         }
-
-        RdbmsObject insertRecord2 = Rdbms.insertRecord(TblsProcedure.TablesProcedure.PROCEDURE_INFO, 
+*/
+/*        RdbmsObject insertRecord2 = Rdbms.insertRecord(TblsProcedure.TablesProcedure.PROCEDURE_INFO, 
                 new String[]{TblsProcedure.ProcedureInfo.NAME.getName(), TblsProcedure.ProcedureInfo.VERSION.getName(), TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE.getName(),
                     TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName(), TblsProcedure.ProcedureInfo.MODULE_NAME.getName(), 
                     TblsProcedure.ProcedureInfo.INCLUDE_CONFIG_CHANGES.getName(), TblsProcedure.ProcedureInfo.ENABLE_CHANGE_TRACKING.getName(), TblsProcedure.ProcedureInfo.CREATE_PICT_ONGCHNGE.getName()}, 
@@ -153,6 +146,7 @@ public class DbObjects {
                 jsonObj.put("inserting_business_rule_diagn", curRule[1]+" "+insertRecord.getErrorMessageCode());
         }
         schemasObj.put(TablesApp.APP_BUSINESS_RULES.toString(), jsonObj);
+
         String fakeEsingn="firmademo";
         String defaultMail="info@trazit.net";
         Object[] encryptValue=DbEncryption.encryptValue(fakeEsingn);        
@@ -215,8 +209,8 @@ public class DbObjects {
                 jsonObj.put("inserting_diagn", curRule[1]+" "+insertRecord.getErrorMessageCode());
         }
         schemasObj.put(TablesApp.APP_PROCEDURE_EVENTS.toString(), jsonObj);
-        
-        
+*/        
+/*  Moved      
         jsonObj=new JSONObject();
         TablesReqs[] tblsReqs = TablesReqs.values();
         for (TablesReqs curTbl: tblsReqs){
@@ -237,17 +231,103 @@ public class DbObjects {
         
         fields=new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName(),
                     TblsReqs.ProcedureInfo.ACTIVE.getName(), TblsReqs.ProcedureInfo.LOCKED_FOR_ACTIONS.getName(),
-                    TblsReqs.ProcedureInfo.MODULE_NAME.getName(), TblsReqs.ProcedureInfo.LABEL_EN.getName(), TblsReqs.ProcedureInfo.LABEL_ES.getName()};
-        values=new Object[][]{{procNameInReqs, 1, procNameInReqs, true, false, "APP","Platform settings", "Configuración de Plataforma"}};
+                    TblsReqs.ProcedureInfo.MODULE_NAME.getName(), TblsReqs.ProcedureInfo.DESCRIPTION.getName(), TblsReqs.ProcedureInfo.LABEL_EN.getName(), TblsReqs.ProcedureInfo.LABEL_ES.getName(), TblsReqs.ProcedureInfo.PROCEDURE_HASH_CODE.getName()};
+        LocalDateTime currentTimeStamp = LPDate.getCurrentTimeStamp();
+        int hashCode = currentTimeStamp.hashCode();        
+        values=new Object[][]{{procNameInReqs, 1, procNameInReqs, true, false, "APP", "Platform settings", "Platform settings", "Configuración de Plataforma", hashCode}};
         for (Object[] curRule: values){            
             RdbmsObject insertRecord = Rdbms.insertRecord(TblsReqs.TablesReqs.PROCEDURE_INFO, fields, curRule, TblsReqs.TablesReqs.PROCEDURE_INFO.getRepositoryName());            
             if (Boolean.TRUE.equals(insertRecord.getRunSuccess()))
-                jsonObj.put("inserting_diagn", curRule[1]+" "+insertRecord.getRunSuccess());
+                jsonObj.put(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName()+"_inserting_diagn", curRule[1]+" "+insertRecord.getRunSuccess());
             else
-                jsonObj.put("inserting_diagn", curRule[1]+" "+insertRecord.getErrorMessageCode());
+                jsonObj.put(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName()+"_inserting_diagn", curRule[1]+" "+insertRecord.getErrorMessageCode());
         }
         schemasObj.put(TblsReqs.TablesReqs.PROCEDURE_INFO.toString(), jsonObj);
 
+        ClassLoader classLoader = DbObjects.class.getClassLoader();
+        String filePath = "JavaScript/platform-settingsModel.txt";
+        StringBuilder jsonDataModel = new StringBuilder();    
+        try (InputStream inputStream = classLoader.getResourceAsStream(filePath)) {
+            if (inputStream != null) {
+                // Read the content of the text file
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    jsonDataModel.append(line).append("\n");
+                }
+            } else {
+                System.err.println("File not found: " + filePath);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }  
+        JSONObject jObjModel = new JSONObject(jsonDataModel.toString());       
+        String[] fieldNames = new String[]{TblsReqs.ProcedureFEModel.PROCEDURE_NAME.getName(), TblsReqs.ProcedureFEModel.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureFEModel.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureFEModel.MODEL_JSON.getName(), TblsReqs.ProcedureFEModel.ACTIVE.getName()};
+        Object[] fieldValues = new Object[]{procNameInReqs, 1, procNameInReqs, jObjModel, true};
+        insertRecord2 = Rdbms.insertRecord(TblsReqs.TablesReqs.PROC_FE_MODEL, fieldNames, fieldValues, TblsReqs.TablesReqs.PROC_FE_MODEL.getRepositoryName());
+        if (Boolean.TRUE.equals(insertRecord2.getRunSuccess()))
+            jsonObj.put(TblsReqs.TablesReqs.PROC_FE_MODEL.getTableName()+"_inserting_diagn", insertRecord2.getRunSuccess());
+        else
+            jsonObj.put(TblsReqs.TablesReqs.PROC_FE_MODEL.getTableName()+"_inserting_diagn", insertRecord2.getErrorMessageCode());
+        schemasObj.put(TblsReqs.TablesReqs.PROC_FE_MODEL.toString(), jsonObj);
+        
+        
+        String directoryPath = "ModulesInfo"; // Update with the actual path
+        
+        // Initialize the JSON object
+        JSONObject jsonObject = new JSONObject();
+        URL directoryUrl = classLoader.getResource(directoryPath);
+        if (directoryUrl != null) {
+            // Get the file path from the URL
+            String directoryFilePath = directoryUrl.getPath();
+
+            // Create a File object representing the directory
+            File directory = new File(directoryFilePath);
+
+            // List files in the directory
+            File[] files = directory.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isFile() && file.getName().endsWith(".txt")) {
+                        // Read the content of each text file
+                        jsonDataModel = new StringBuilder();
+
+                        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                            String line;
+                            while ((line = reader.readLine()) != null) {
+                                jsonDataModel.append(line).append("\n");
+                            }
+                            jObjModel = new JSONObject(jsonDataModel.toString());   
+                            // Wrap the JSON data in a new JSON object under the file name
+                            JSONObject fileJsonObject = new JSONObject();
+                            fileJsonObject.put("information", new JSONObject(jsonDataModel.toString()));
+
+                            // Add the file's JSON object to the main JSON object
+                            jsonObject.put(file.getName(), fileJsonObject);
+
+                            jObjModel = new JSONObject(jsonDataModel.toString());       
+                            fieldNames = new String[]{TblsReqs.Modules.MODULE_NAME.getName(), TblsReqs.Modules.MODULE_VERSION.getName(),
+                                TblsReqs.Modules.INFO_JSON.getName(), TblsReqs.Modules.ACTIVE.getName(),
+                            };
+                            fieldValues = new Object[]{procNameInReqs, 1, jObjModel, true};
+                            insertRecord2 = Rdbms.insertRecord(TblsReqs.TablesReqs.MODULES, fieldNames, fieldValues, TblsReqs.TablesReqs.MODULES.getRepositoryName());
+                            if (Boolean.TRUE.equals(insertRecord2.getRunSuccess()))
+                                jsonObj.put(TblsReqs.TablesReqs.MODULES.getTableName()+"_inserting_diagn", insertRecord2.getRunSuccess());
+                            else
+                                jsonObj.put(TblsReqs.TablesReqs.MODULES.getTableName()+"_inserting_diagn", insertRecord2.getErrorMessageCode());
+                            schemasObj.put(TblsReqs.TablesReqs.MODULES.toString(), jsonObj);
+
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
+        
+*/        
+/*        
         fields=new String[]{TblsReqs.ProcedureUsers.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUsers.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureUsers.PROC_INSTANCE_NAME.getName(),
                     TblsReqs.ProcedureUsers.USER_NAME.getName(), TblsReqs.ProcedureUsers.FULL_NAME.getName()};
         values=new Object[][]{{procNameInReqs, 1, procNameInReqs, "admin", "admin"}};
@@ -312,8 +392,8 @@ public class DbObjects {
                 jsonObj.put("inserting_diagn", curRule[1]+" "+insertRecord.getErrorMessageCode());
         }
         schemasObj.put(TblsReqs.TablesReqs.PROC_MODULE_TABLES.toString(), jsonObj);
-        
-
+*/        
+/*
         fields=new String[]{TblsProcedure.ProcedureEvents.NAME.getName(), TblsProcedure.ProcedureEvents.ROLE_NAME.getName(),
             TblsProcedure.ProcedureEvents.MODE.getName(), TblsProcedure.ProcedureEvents.TYPE.getName(),
             TblsProcedure.ProcedureEvents.LABEL_EN.getName(), TblsProcedure.ProcedureEvents.LABEL_ES.getName(), 
@@ -331,7 +411,7 @@ public class DbObjects {
                 jsonObj.put("inserting_business_rule_diagn", curRule[1]+" "+insertRecord.getErrorMessageCode());
         }
         schemasObj.put(TablesApp.APP_PROCEDURE_EVENTS.toString(), jsonObj);
-
+*/
         
 
 

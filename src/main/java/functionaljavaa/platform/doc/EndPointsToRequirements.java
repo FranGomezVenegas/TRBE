@@ -80,7 +80,7 @@ public final class EndPointsToRequirements {
         Integer totalEndpointsVisitedInt = 0;
         try (io.github.classgraph.ScanResult scanResult = new ClassGraph().enableAllInfo()//.acceptPackages("com.xyz")
                 .scan()) {
-            ClassInfoList classesImplementing = scanResult.getClassesImplementing("trazit.enums.EnumIntEndpoints");
+            ClassInfoList classesImplementing = scanResult.getClassesImplementing("trazit.enums.EnumIntEndpoints");            
             classesImplementingInt = classesImplementing.size();
             for (i = 0; i < classesImplementing.size(); i++) {
                 ClassInfo getMine = classesImplementing.get(i);

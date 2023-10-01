@@ -1,0 +1,16 @@
+{
+    "name": "STOCKS",
+    "version": 1,
+    "releaseDate": "2023-09-01",
+    "description_en": "Stocks Management",
+    "description_es": "Gestión de Stocks",
+    "ModuleSettings":{
+            "actionsEndpoints":[
+                  { "name": "InventoryLot" , "url" : "/app/procs/InvTrackingAPIactions"}
+            ],
+            "queriesEndpoints":[
+                  { "name": "InventoryLot" , "url" : "/app/procs/InvTrackingAPIqueries"}
+            ]
+    },
+    "apis":[ "InventoryTrackAPIactionsEndpoints", "InventoryTrackAPIqueriesEndpoints", "InvestigationAPIactionsEndpoints", "InvestigationAPIqueriesEndpoints"]	        
+}
