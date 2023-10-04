@@ -22,7 +22,6 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
 import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
 
@@ -59,6 +58,7 @@ public class ProcedureRequestSession {
     private Boolean isQuery;
     private Boolean isPlatform;
     private Boolean isForDocumentation;
+    private Boolean isForProcManagement;
     private Boolean hasErrors;
     private String errorMessage;
     private AuditAndUserValidation auditAndUsrValid;
@@ -78,7 +78,7 @@ public class ProcedureRequestSession {
     private DbLogSummary dbLogSummary;
     private TestingMainInfo testingMainInfo;
 
-    private ProcedureRequestSession(HttpServletRequest request, HttpServletResponse response, EnumIntEndpoints actionEndpoint, Boolean isForTesting, Boolean isForUAT, Boolean isQuery, String theActionName, Boolean isPlatform, Boolean isForDocumentation) {
+    private ProcedureRequestSession(HttpServletRequest request, HttpServletResponse response, EnumIntEndpoints actionEndpoint, Boolean isForTesting, Boolean isForUAT, Boolean isQuery, String theActionName, Boolean isPlatform, Boolean isForDocumentation, Boolean isForProcManagement) {
         try {
             if (request == null) {
                 return;
@@ -89,6 +89,7 @@ public class ProcedureRequestSession {
             this.isQuery = isQuery;
             this.isPlatform = isPlatform;
             this.isForDocumentation = isForDocumentation;
+            this.isForProcManagement=isForProcManagement;
             if (actionEndpoint != null) {
                 this.actionEndpoint = actionEndpoint;
             }
@@ -197,7 +198,7 @@ public class ProcedureRequestSession {
             if (Boolean.FALSE.equals(isPlatform)) {
                 this.procedureEncryptFields = getEncryptFields(dbNameProp, false, procInstanceName);
             }
-            if (Boolean.FALSE.equals(isPlatform)) {
+            if (Boolean.FALSE.equals(isPlatform)&&Boolean.FALSE.equals(isForProcManagement)) {
                 this.busRulesProcInstance = new BusinessRules(procInstanceName, null);
             }
 
@@ -236,7 +237,8 @@ public class ProcedureRequestSession {
 
             }
             if (Boolean.FALSE.equals(isForTesting) && Boolean.FALSE.equals(isForUAT) && Boolean.FALSE.equals(isQuery)
-                    && Boolean.FALSE.equals(isPlatform) && Boolean.FALSE.equals(isForDocumentation)) {
+                    && Boolean.FALSE.equals(isPlatform) && Boolean.FALSE.equals(isForDocumentation)
+                    &&Boolean.FALSE.equals(isForProcManagement)) {
                 Object[] actionEnabled = ActionsControl.procActionEnabled(procInstanceName, token, actionName, this.busRulesProcInstance);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) {
                     this.hasErrors = true;
@@ -250,7 +252,8 @@ public class ProcedureRequestSession {
                     return;
                 }
             }
-            if (Boolean.FALSE.equals(isForTesting) && Boolean.FALSE.equals(isForUAT) && Boolean.FALSE.equals(isQuery) && Boolean.FALSE.equals(isForDocumentation)) {
+            if (Boolean.FALSE.equals(isForTesting) && Boolean.FALSE.equals(isForUAT) && Boolean.FALSE.equals(isQuery) && Boolean.FALSE.equals(isForDocumentation)
+                    &&Boolean.FALSE.equals(isForProcManagement)) {
                 this.auditAndUsrValid = AuditAndUserValidation.getInstanceForActions(request, language, this.busRulesProcInstance, this.isPlatform);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())) {
                     this.hasErrors = true;
@@ -288,8 +291,9 @@ public class ProcedureRequestSession {
     }
 
     public void killIt() {
-        SchedProcedures.schedProcesses(theSession.getToken(), theSession.getProcedureInstance());
-
+        
+            SchedProcedures.schedProcesses(theSession.getToken(), theSession.getProcedureInstance());
+        
 //        LPSession.addProcessSession(Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.DATE_STARTED.getName()});
         // if (1==1) return;
 //        if (!this.isForQuery) 
@@ -456,28 +460,28 @@ public class ProcedureRequestSession {
 
     public static ProcedureRequestSession getInstanceForQueries(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting, Boolean isPlatform) {
         if (theSession == null || theSession.getTokenString() == null) {
-            theSession = new ProcedureRequestSession(req, resp, null, isTesting, false, true, null, isPlatform, false);
+            theSession = new ProcedureRequestSession(req, resp, null, isTesting, false, true, null, isPlatform, false, false);
         }
         return theSession;
     }
 
     public static ProcedureRequestSession getInstanceForQueries(HttpServletRequest req, HttpServletResponse resp, EnumIntEndpoints endPoint, Boolean isTesting, Boolean isPlatform) {
         if (theSession == null || theSession.getTokenString() == null) {
-            theSession = new ProcedureRequestSession(req, resp, endPoint, isTesting, false, true, null, isPlatform, false);
+            theSession = new ProcedureRequestSession(req, resp, endPoint, isTesting, false, true, null, isPlatform, false, false);
         }
         return theSession;
     }
 
     public static ProcedureRequestSession getInstanceForDocumentation(HttpServletRequest req, HttpServletResponse resp) {
         if (theSession == null || theSession.getTokenString() == null) {
-            theSession = new ProcedureRequestSession(req, resp, null, false, false, true, null, false, true);
+            theSession = new ProcedureRequestSession(req, resp, null, false, false, true, null, false, true, false);
         }
         return theSession;
     }
 
     public static ProcedureRequestSession getInstanceForDocumentation(HttpServletRequest req, HttpServletResponse resp, EnumIntEndpoints endPoint) {
         if (theSession == null || theSession.getTokenString() == null) {
-            theSession = new ProcedureRequestSession(req, resp, null, false, false, true, null, false, true);
+            theSession = new ProcedureRequestSession(req, resp, null, false, false, true, null, false, true, false);
         }
         return theSession;
     }
@@ -492,14 +496,14 @@ public class ProcedureRequestSession {
 
     public static ProcedureRequestSession getInstanceForActions(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting, Boolean isPlatform) {
         if (theSession == null || theSession.getTokenString() == null) {
-            theSession = new ProcedureRequestSession(req, resp, null, isTesting, false, false, null, isPlatform, false);
+            theSession = new ProcedureRequestSession(req, resp, null, isTesting, false, false, null, isPlatform, false, false);
         }
         return theSession;
     }
 
     public static ProcedureRequestSession getInstanceForActions(HttpServletRequest req, HttpServletResponse resp, EnumIntEndpoints endPoint, Boolean isTesting, Boolean isPlatform) {
         if (theSession == null || theSession.getTokenString() == null) {
-            theSession = new ProcedureRequestSession(req, resp, endPoint, isTesting, false, false, null, isPlatform, false);
+            theSession = new ProcedureRequestSession(req, resp, endPoint, isTesting, false, false, null, isPlatform, false, false);
         }
         return theSession;
     }
@@ -507,7 +511,7 @@ public class ProcedureRequestSession {
     public static ProcedureRequestSession getInstanceForUAT(HttpServletRequest req, HttpServletResponse resp, Boolean isTesting, String theActionName) {
 
         if (theSession == null || theSession.getTokenString() == null) {
-            theSession = new ProcedureRequestSession(req, resp, null, isTesting, true, false, theActionName, false, false);
+            theSession = new ProcedureRequestSession(req, resp, null, isTesting, true, false, theActionName, false, false, false);
         }
         return theSession;
     }
@@ -515,10 +519,17 @@ public class ProcedureRequestSession {
     public static ProcedureRequestSession getInstanceForUAT(HttpServletRequest req, HttpServletResponse resp, EnumIntEndpoints endPoint, Boolean isTesting, String theActionName) {
 
         if (theSession == null || theSession.getTokenString() == null) {
-            theSession = new ProcedureRequestSession(req, resp, endPoint, isTesting, true, false, theActionName, false, false);
+            theSession = new ProcedureRequestSession(req, resp, endPoint, isTesting, true, false, theActionName, false, false, false);
         }
         return theSession;
     }
+    public static ProcedureRequestSession getInstanceForProcManagement(HttpServletRequest req, HttpServletResponse resp,  Boolean isTesting) {
+        if (theSession == null || theSession.getTokenString() == null) {
+            theSession = new ProcedureRequestSession(req, resp, null, isTesting, true, false, null, false, false, true);
+        }
+        return theSession;
+    }
+    
 
     public void setBusinessRulesTesting(BusinessRules br) {
         this.busRulesTesting = br;
