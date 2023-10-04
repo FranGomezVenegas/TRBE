@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package trazit.procedureinstance.deployment.logic;
+package trazit.platforminstance.logic;
 
 import static databases.DbObjects.createSchemas;
 import static databases.DbObjects.removeSchemas;

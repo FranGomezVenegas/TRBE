@@ -63,7 +63,7 @@ public class TblsReqs {
                 },
                 "User Roles for a given process instance"),
         PROCEDURE_SOP_META_DATA(null, "procedure_sop_meta_data", SCHEMA_NAME, false, ProcedureSopMetaData.values(),
-                ProcedureSopMetaData.PROCEDURE_NAME.getName() + "_" + ProcedureSopMetaData.PROCEDURE_VERSION.getName() + "_" + ProcedureSopMetaData.SOP_ID.getName(),
+                ProcedureSopMetaData.SOP_ID.getName(),
                 new String[]{ProcedureSopMetaData.PROCEDURE_NAME.getName(), ProcedureSopMetaData.PROCEDURE_VERSION.getName(), ProcedureInfo.PROC_INSTANCE_NAME.getName(), ProcedureSopMetaData.SOP_ID.getName()},
                 new Object[]{new ForeignkeyFld(ProcedureSopMetaData.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_NAME.getName()),
                     new ForeignkeyFld(ProcedureSopMetaData.PROCEDURE_VERSION.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_VERSION.getName()),
@@ -219,12 +219,12 @@ public class TblsReqs {
     }
 
     public enum ViewsReqs implements EnumIntViews {
-        PROC_REQ_USER_REQUIREMENTS_ACTIONS(" ",
-                null, "proc_req_user_requirements_actions", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsReqs.ProcReqUserRequirementsActions.values(), "proc_req_user_requirements_actions",
+        PROC_REQ_SOLUTION_ACTIONS(" ",
+                null, "proc_req_solution_actions", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsReqs.ProcReqUserRequirementsActions.values(), "proc_req_user_requirements_actions",
                 new EnumIntTablesJoin[]{
-                    new EnumIntTablesJoin(TblsReqs.TablesReqs.PROCEDURE_USER_REQS, "reqs", TblsReqs.TablesReqs.PROCEDURE_INFO, "procInfo", false,
+                    new EnumIntTablesJoin(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, "reqs", TblsReqs.TablesReqs.PROCEDURE_INFO, "procInfo", false,
                             new EnumIntTableFields[][]{{TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME, TblsReqs.ProcedureUserRequirements.PROC_INSTANCE_NAME}}, "", SqlStatementEnums.JOIN_TYPES.INNER),
-                    new EnumIntTablesJoin(TblsReqs.TablesReqs.PROCEDURE_USER_REQS, "reqs", TblsReqs.TablesReqs.MODULE_ACTIONS_N_QUERIES, "modAct", false,
+                    new EnumIntTablesJoin(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, "reqs", TblsReqs.TablesReqs.MODULE_ACTIONS_N_QUERIES, "modAct", false,
                             new EnumIntTableFields[][]{{TblsReqs.ProcedureReqSolution.WINDOW_ACTION, TblsReqs.ModuleActionsAndQueries.ENDPOINT_NAME}}, "", SqlStatementEnums.JOIN_TYPES.INNER), //            new EnumIntTablesJoin(TblsReqs.TablesReqs.PROCEDURE_INFO, "procInfo", TblsReqs.TablesReqs.MODULE_ACTIONS_N_QUERIES, "modAct", false,
                 //                new EnumIntTableFields[][]{{TblsReqs.ProcedureInfo.MODULE_NAME, TblsReqs.ModuleActionsAndQueries.MODULE_NAME}}, "", SqlStatementEnums.JOIN_TYPES.INNER),
                 }, " and procInfo.module_name = modAct.module_name", false
@@ -271,7 +271,7 @@ public class TblsReqs {
     public enum Modules implements EnumIntTableFields {
         MODULE_NAME(FIELDS_NAMES_MODULE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         MODULE_VERSION(FIELDS_NAMES_MODULE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
-        ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, null, null),
+        ORDER_NUMBER("order_number", LPDatabase.real(), null, null, null, null),
         DESCRIPTION_EN(FIELDS_NAMES_DESCRIPTION+"_en", LPDatabase.string(), null, null, null, null),
         DESCRIPTION_ES(FIELDS_NAMES_DESCRIPTION+"_es", LPDatabase.string(), null, null, null, null),
         PRETTY_EN("pretty_name_en", LPDatabase.string(), null, null, null, null),
@@ -330,15 +330,16 @@ public class TblsReqs {
     public enum ModuleActionsAndQueries implements EnumIntTableFields {
         MODULE_NAME(FIELDS_NAMES_MODULE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         MODULE_VERSION(FIELDS_NAMES_MODULE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
-        ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, null, null),
+        ORDER_NUMBER("order_number", LPDatabase.real(), null, null, null, null),
         API_NAME("api_name", LPDatabase.stringNotNull(), null, null, null, null),
         ENDPOINT_NAME("endpoint_name", LPDatabase.stringNotNull(), null, null, null, null),
         ENTITY("entity", LPDatabase.string(), null, null, null, null),
         PRETTY_EN("pretty_name_en", LPDatabase.string(), null, null, null, null),
         PRETTY_ES("pretty_name_es", LPDatabase.string(), null, null, null, null),
         DESCRIPTION(FIELDS_NAMES_DESCRIPTION, LPDatabase.string(), null, null, null, null),
-        ACTIVE("active", LPDatabase.booleanFld(true), null, null, null, null),;
-
+        ACTIVE("active", LPDatabase.booleanFld(true), null, null, null, null),
+        JSON_MODEL("json_model", LPDatabase.json(), null, null, null, null)
+        ;
         private ModuleActionsAndQueries(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules) {
             this.fieldName = dbObjName;
@@ -451,7 +452,6 @@ public class TblsReqs {
         PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
         PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
         DESCRIPTION(FIELDS_NAMES_DESCRIPTION, LPDatabase.string(), null, null, null, null),
-        //        SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
         ROLE_NAME("role_name", LPDatabase.stringNotNull(), null, null, null, null),;
 
         private ProcedureRoles(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
@@ -502,29 +502,29 @@ public class TblsReqs {
     }
 
     public enum ProcedureSopMetaData implements EnumIntTableFields {
-        SOP_ID("sop_id", LPDatabase.integerNotNull(), null, null, null, null),
-        PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
-        PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
-        PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
-        //        SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
-        SOP_NAME("sop_name", LPDatabase.stringNotNull(), null, null, null, null),
-        SOP_VERSION("sop_version", LPDatabase.integerNotNull(), null, null, null, null),
-        SOP_REVISION("sop_revision", LPDatabase.integerNotNull(), null, null, null, null),
-        CURRENT_STATUS("current_status", LPDatabase.string(), null, null, null, null),
-        EXPIRES("expires", LPDatabase.booleanFld(false), null, null, null, null),
-        HAS_CHILD("has_child", LPDatabase.booleanFld(false), null, null, null, null),
-        FILE_LINK("file_link", LPDatabase.string(), null, null, null, null),
-        BRIEF_SUMMARY("brief_summary", LPDatabase.string(), null, null, null, null), // ....
+        SOP_ID("sop_id", LPDatabase.integerNotNull(), null, null, null, null, true),
+        PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null, true),
+        PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null, true),
+        PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null, true),
+        SOP_NAME("sop_name", LPDatabase.stringNotNull(), null, null, null, null, true),
+        SOP_VERSION("sop_version", LPDatabase.integerNotNull(), null, null, null, null, true),
+        SOP_REVISION("sop_revision", LPDatabase.integerNotNull(), null, null, null, null, true),
+        CURRENT_STATUS("current_status", LPDatabase.string(), null, null, null, null, true),
+        EXPIRES("expires", LPDatabase.booleanFld(false), null, null, null, null, false),
+        HAS_CHILD("has_child", LPDatabase.booleanFld(false), null, null, null, null, false),
+        FILE_LINK("file_link", LPDatabase.string(), null, null, null, null, false),
+        BRIEF_SUMMARY("brief_summary", LPDatabase.string(), null, null, null, null, false), // ....
         ;
 
         private ProcedureSopMetaData(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
-                FldBusinessRules[] fldBusRules) {
+                FldBusinessRules[] fldBusRules, Boolean isSystemField) {
             this.fieldName = dbObjName;
             this.fieldType = dbObjType;
             this.fieldMask = fieldMask;
             this.reference = refer;
             this.fieldComment = comment;
             this.fldBusinessRules = fldBusRules;
+            this.isSystemField=isSystemField;
         }
         private final String fieldName;
 
@@ -533,12 +533,18 @@ public class TblsReqs {
             return this.fieldName;
         }
         private final String fieldType;
+        private final Boolean isSystemField;
 
         @Override
         public String getFieldType() {
             return this.fieldType;
         }
         private final String fieldMask;
+        
+        @Override
+        public Boolean isSystemField() {
+            return this.isSystemField;
+        }
 
         @Override
         public String getFieldMask() {
@@ -569,7 +575,7 @@ public class TblsReqs {
         PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
         PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
-        ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, null, null),
+        ORDER_NUMBER("order_number", LPDatabase.real(), null, null, null, null),
         CODE("code", LPDatabase.string(), null, null, null, null),
         PARENT_CODE("parent_code", LPDatabase.string(), null, null, null, null),
 /*        BRANCH_NEED("branch_need", LPDatabase.string(), null, null, null, null),
@@ -656,7 +662,7 @@ public class TblsReqs {
         PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
         PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
-        //        SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
+        ORDER_NUMBER("order_number", LPDatabase.real(), null, null, null, null),
         LEVEL("level", LPDatabase.string(), null, null, null, null),
         COMMENTS("comments", LPDatabase.string(), null, null, null, null), // ....
         HASTOBE_PART_OF_TESTING("has_to_be_part_of_testing", LPDatabase.booleanFld(false), null, null, null, null),
@@ -721,8 +727,7 @@ public class TblsReqs {
         PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
         PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),        
-        //        SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
-        ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, null, null),
+        ORDER_NUMBER("order_number", LPDatabase.real(), null, null, null, null),
         NAME("name", LPDatabase.string(), null, null, null, null),
         LP_FRONTEND_PAGE_NAME("lp_frontend_page_name", LPDatabase.string(), null, null, null, null),
         LP_FRONTEND_PAGE_FILTER("lp_frontend_page_filter", LPDatabase.string(), null, null, null, null),
@@ -815,7 +820,6 @@ public class TblsReqs {
         PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
         PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
-        //        SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
         USER_NAME("user_name", LPDatabase.stringNotNull(), null, null, null, null),
         ROLE_NAME("role_name", LPDatabase.stringNotNull(), null, null, null, null), // ....
         ;
@@ -875,7 +879,7 @@ public class TblsReqs {
         PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
         PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
         USER_NAME("user_name", LPDatabase.stringNotNull(), null, null, null, null),
-        FULL_NAME("full_name", LPDatabase.stringNotNull(), null, null, null, null);
+        FULL_NAME("full_name", LPDatabase.string(), null, null, null, null);
 
         private ProcedureUsers(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules) {
@@ -931,14 +935,13 @@ public class TblsReqs {
         PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
         PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
-        //        SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
         SCHEMA_NAME("schema_name", LPDatabase.stringNotNull(), null, null, null, null),
         TABLE_NAME("table_name", LPDatabase.string(), null, null, null, null),
         IS_VIEW("is_view", LPDatabase.booleanNotNull(false), null, null, null, null),
         FIELD_NAME(GlobalAPIsParams.LBL_FIELD_NAME, LPDatabase.string(), null, null, null, null),
         FIELDS_TO_EXCLUDE("fields_to_exclude", LPDatabase.string(), null, null, null, null),
         ACTIVE("active", LPDatabase.booleanFld(), null, null, null, null),
-        ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, null, null),
+        ORDER_NUMBER("order_number", LPDatabase.real(), null, null, null, null),
         DEFINITION_EN("definition_en", LPDatabase.string(), null, null, null, null),
         DEFINITION_ES("definition_es", LPDatabase.string(), null, null, null, null)                
         ;
@@ -993,8 +996,6 @@ public class TblsReqs {
         PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
         PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
-        //        PROC_INSTANCE_NAME(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull(), null, null, null, null),
-        //        INSTANCE_NAME("instance_name", LPDatabase.stringNotNull(), null, null, null, null),
         CATEGORY("category", LPDatabase.string(), null, null, null, null),
         EXPLANATION("explanation", LPDatabase.string(), null, null, null, null),
         VALUES_ALLOWED("values_allowed", LPDatabase.string(), null, null, null, null),
@@ -1004,7 +1005,7 @@ public class TblsReqs {
         RULE_NAME("rule_name", LPDatabase.string(), null, null, null, null),
         RULE_VALUE("rule_value", LPDatabase.string(), null, null, null, null),
         ACTIVE("active", LPDatabase.booleanFld(), null, null, null, null),
-        ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, null, null),;
+        ORDER_NUMBER("order_number", LPDatabase.real(), null, null, null, null),;
 
         private ProcedureBusinessRules(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules) {
@@ -1057,7 +1058,7 @@ public class TblsReqs {
         PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
         PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
-        ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, null, null),
+        ORDER_NUMBER("order_number", LPDatabase.real(), null, null, null, null),
         DESCRIPTION(LPDatabase.FIELDS_NAMES_DESCRIPTION, LPDatabase.string(), null, null, null, null),
         OBJECT_TYPE("object_type", LPDatabase.string(), null, null, null, null),
         JSON_OBJ("json_obj", LPDatabase.string(), null, null, null, null),
@@ -1170,7 +1171,7 @@ public class TblsReqs {
         PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
         PROC_INSTANCE_NAME("proc_instance_name", LPDatabase.stringNotNull(), null, null, null, null),
-        ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, null, null),
+        ORDER_NUMBER("order_number", LPDatabase.real(), null, null, null, null),
         MANUAL_NAME("manual_name", LPDatabase.stringNotNull(), null, null, null, null),
         MANUAL_VERSION("manual_version", LPDatabase.integerNotNull(), null, null, null, null),
         DESCRIPTION("description", LPDatabase.string(), null, null, null, null),
@@ -1322,7 +1323,7 @@ public class TblsReqs {
         LAST_EXEC_EVAL("last_execution_eval", LPDatabase.string(), null, null, null, null),
         LAST_EXEC("last_execution", LPDatabase.dateTime(), null, null, null, null),
         ACCEPTED("accepted", LPDatabase.booleanFld(false), null, null, null, null),
-        ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, null, null),
+        ORDER_NUMBER("order_number", LPDatabase.real(), null, null, null, null),
         ACTIVE("active", LPDatabase.booleanFld(true), null, null, null, null),
         AREA("area", LPDatabase.string(), null, null, null, null),;        
         ;

@@ -18,7 +18,6 @@ import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -38,6 +37,9 @@ import static trazit.globalvariables.GlobalVariables.PROC_MANAGEMENT_SPECIAL_ROL
 import trazit.procedureinstance.definition.definition.TblsReqs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
+import java.io.FileInputStream;
+import java.nio.charset.StandardCharsets;
+import trazit.enums.EnumIntViews;
 /**
  *
  * @author User
@@ -95,8 +97,25 @@ public class CreatePlatform {
         }
         return false;        
     }
+    private Boolean isError(EnumIntViews curView,  Object[] prepUpQuery, String tblCreateScript){
+        if (tblCreateScript.toUpperCase().contains("ALREADY")&&tblCreateScript.toUpperCase().contains("EXIST")){
+            return false;
+        }            
+        if (Boolean.FALSE.equals(tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE)) && Boolean.FALSE.equals(tblCreateScript.toLowerCase().contains("already"))){
+            this.errorsList.add(infoToReport(curView, tblCreateScript));
+            return true;
+        }
+        if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains(GlobalAPIsParams.LBL_ERROR)){
+            this.errorsList.add(infoToReport(curView, tblCreateScript));
+            return true;
+        }
+        return false;        
+    }
     private String infoToReport(EnumIntTables curTbl, String tblCreateScript){
         return curTbl.getRepositoryName()+"."+curTbl.getTableName()+" Error: "+tblCreateScript;
+    }
+    private String infoToReport(EnumIntViews curView, String tblCreateScript){
+        return curView.getRepositoryName()+"."+curView.getViewName()+" Error: "+tblCreateScript;
     }
     Boolean isErrorForInsertRecord(EnumIntTables curTbl,  RdbmsObject insertRecord, String keyValue){
         return isErrorForInsertRecord(curTbl, insertRecord, keyValue, null);
@@ -141,7 +160,7 @@ public class CreatePlatform {
 
     
     private void createBasicSchemasAndTablesStructure(String platformName){
-        String tblCreateScript="";
+        String viewCreateScript="";
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         
         String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());        
         EnumIntTables[] tablesToTransferData=new EnumIntTables[]{
@@ -163,38 +182,60 @@ public class CreatePlatform {
             JSONArray curSchemaArr=new JSONArray();
             for (EnumIntTables curTbl: enumArray){
                 org.json.JSONObject curTblObj=new org.json.JSONObject();
-                tblCreateScript = createTableScript(curTbl, null, false, true, null);
-                Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), tblCreateScript, new Object[]{});
+                viewCreateScript = createTableScript(curTbl, null, false, true, null);
+                Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl.getRepositoryName(), curTbl.getTableName(), viewCreateScript, new Object[]{});
                 curTblObj.put("table", curTbl.getTableName());
-                Boolean hadError=isError(curTbl, prepUpQuery, tblCreateScript);
+                Boolean hadError=isError(curTbl, prepUpQuery, viewCreateScript);
                 curTblObj.put("Errors_found?", hadError);
                 if (hadError){
-                    curTblObj.put("error", tblCreateScript);
+                    curTblObj.put("error", viewCreateScript);
                 }else{
-                    curTblObj.put("script", tblCreateScript);            
+                    curTblObj.put("script", viewCreateScript);            
                 }
                 curSchemaArr.add(curTblObj);
             }
             curSchemaObj.put("tables", curSchemaArr);
             allSchemasObj.put(enumArray[0].getRepositoryName(), curSchemaObj);
         }
-        
+//        org.json.JSONObject curSchemaObj=new org.json.JSONObject();
+        JSONArray allViewsArr=new JSONArray();
+        for (TblsReqs.ViewsReqs curView : TblsReqs.ViewsReqs.values()) {
+//            curSchemaObj.put("repository", curView.getRepositoryName());
+            
+//            for (EnumIntTables curTbl: enumArray){
+                org.json.JSONObject curViewObj=new org.json.JSONObject();
+                viewCreateScript = EnumIntViews.getViewScriptCreation(curView, "", false, false, false, null);
+                Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curView.getRepositoryName(), curView.getViewName(), viewCreateScript, new Object[]{});
+                curViewObj.put("view", curView.getViewName());
+                Boolean hadError=isError(curView, prepUpQuery, viewCreateScript);
+                curViewObj.put("Errors_found?", hadError);
+                if (hadError){
+                    curViewObj.put("error", viewCreateScript);
+                }else{
+                    curViewObj.put("script", viewCreateScript);            
+                }
+                curViewObj.put("repository", curView.getRepositoryName());
+                allViewsArr.add(curViewObj);
+//            }
+        }        
+        mainBlockReport.put("views", allViewsArr);
+//        allSchemasObj.put(enumArray[0].getRepositoryName(), curSchemaObj);
         mainBlockReport.put("schemas_and_tables", allSchemasObj);
         JSONObject allTablesLogObj=new JSONObject();
         for (EnumIntTables curTable: tablesToTransferData){
             org.json.JSONObject curTableLogObj=new org.json.JSONObject();
             Object[] tableContent = FromInstanceToInstance.tableContent(curTable, dbTrazitModules, platformName);
             String detail="Transfer Data for "+curTable.getRepositoryName()+"."+curTable.getTableName()+" from "+dbTrazitModules;
-            tblCreateScript=tableContent[tableContent.length-2].toString();
+            viewCreateScript=tableContent[tableContent.length-2].toString();
             org.json.JSONObject curTblObj=new org.json.JSONObject();
-            curTableLogObj.put("script", tblCreateScript); 
+            curTableLogObj.put("script", viewCreateScript); 
             curTableLogObj.put("detail", detail);
-            Boolean hadError=isError(curTable, tableContent, tblCreateScript);
+            Boolean hadError=isError(curTable, tableContent, viewCreateScript);
             curTblObj.put("Errors_found?", hadError);
             if (hadError){
-                curTableLogObj.put("error", tblCreateScript);
+                curTableLogObj.put("error", viewCreateScript);
             }else{
-                curTableLogObj.put("script", tblCreateScript);            
+                curTableLogObj.put("script", viewCreateScript);            
             }            
             allTablesLogObj.put(curTable.getTableName(), curTableLogObj);
         }
@@ -239,7 +280,7 @@ public class CreatePlatform {
             try (InputStream inputStream = classLoader.getResourceAsStream(filePath)) {
                 if (inputStream != null) {
                     // Read the content of the text file
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+                    BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));                    
                     String line;
                     while ((line = reader.readLine()) != null) {
                         jsonDataModel.append(line).append("\n");
@@ -439,7 +480,8 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
                         // Read the content of each text file
                         StringBuilder jsonDataModel = new StringBuilder();
 
-                        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                        //try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
                             String line;
                             while ((line = reader.readLine()) != null) {
                                 jsonDataModel.append(line).append("\n");
