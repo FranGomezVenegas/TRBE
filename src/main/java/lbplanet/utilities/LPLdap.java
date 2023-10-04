@@ -35,7 +35,7 @@ public class LPLdap {
     public static DirContext connectToOpenLDAP(String LdapName) {
 
         EnumIntTableFields[] allFieldNames = TblsApp.TablesApp.LDAP_SETTINGS.getTableFields();
-        Object[][] ldapInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.LDAP_SETTINGS.getTableName(),
+        Object[][] ldapInfo = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.LDAP_SETTINGS.getTableName(),
                 new String[]{TblsApp.LdapSetting.NAME.getName()}, new Object[]{LdapName}, getAllFieldNames(allFieldNames));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ldapInfo[0][0].toString())) {
             return null;

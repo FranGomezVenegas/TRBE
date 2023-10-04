@@ -48,7 +48,7 @@ public class DataInspectionLotCertificate {
                 return new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.ERROR_INSERTING_INSPLOT_RECORD,  errorDetailVariables); 
             }                                           
         }else{
-            Object[] lotExists=Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), 
+            Object[] lotExists=Rdbms.existsRecord(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), 
                     new String[]{TblsInspLotRMData.LotCertificate.LOT_NAME.getName(), TblsInspLotRMData.LotCertificate.CERTIFICATE_ID.getName()}, new Object[]{lotName, certifId});
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(lotExists[0].toString())){      
                 SqlWhere sqlWhere = new SqlWhere();

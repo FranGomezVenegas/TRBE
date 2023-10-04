@@ -379,7 +379,7 @@ public class UserSop {
         int correctProcess = 0;
         StringBuilder query = new StringBuilder(0);
         for (String currProcInstanceName : procInstanceName) {
-            Object[] viewExistInSchema = Rdbms.dbViewExists(currProcInstanceName, GlobalVariables.Schemas.DATA.getName(), viewName);
+            Object[] viewExistInSchema = Rdbms.dbViewExists("",  currProcInstanceName, GlobalVariables.Schemas.DATA.getName(), viewName);
             Object[] dbViewFieldExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(currProcInstanceName, TblsData.TablesData.USER_SOP.getRepositoryName()),
                     TblsData.TablesData.USER_SOP.getTableName(), filterFieldName[0]);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(viewExistInSchema[0].toString()) && LPPlatform.LAB_TRUE.equalsIgnoreCase(dbViewFieldExists[0].toString())) {
@@ -503,7 +503,7 @@ public class UserSop {
 //        Object[] procedureSopEnable = isProcedureSopEnable(procInstanceName);
 //        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureSopEnable[0].toString())) return procedureSopEnable;
         String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
-        Object[] exists = Rdbms.existsRecord(schemaName, TblsData.TablesData.USER_SOP.getTableName(), new String[]{TblsData.UserSop.USER_ID.getName(), sopIdFieldName}, new Object[]{personName, sopIdFieldValue});
+        Object[] exists = Rdbms.existsRecord(procInstanceName, schemaName, TblsData.TablesData.USER_SOP.getTableName(), new String[]{TblsData.UserSop.USER_ID.getName(), sopIdFieldName}, new Object[]{personName, sopIdFieldValue});
 
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(exists[0].toString())) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UserSopErrorTrapping.SOP_ALREADY_ASSIGNED, new Object[]{sopIdFieldValue, personName, schemaName});

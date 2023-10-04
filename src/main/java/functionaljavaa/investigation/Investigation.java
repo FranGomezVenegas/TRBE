@@ -167,7 +167,7 @@ public final class Investigation {
                 DataInvestigationAuditEvents.CLOSED_INVESTIGATION.toString(), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(),
                 investId, investId.toString(),
                 LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null);
-        Object[][] investObjects = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(),
+        Object[][] investObjects = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(),
                 new String[]{TblsProcedure.InvestObjects.INVEST_ID.getName()}, new Object[]{investId},
                 new String[]{TblsProcedure.InvestObjects.OBJECT_TYPE.getName(), TblsProcedure.InvestObjects.OBJECT_ID.getName(), TblsProcedure.InvestObjects.OBJECT_NAME.getName()});
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(investObjects[0][0].toString()))) {
@@ -294,7 +294,7 @@ public final class Investigation {
             checkFieldValue = LPArray.addValueToArray1D(checkFieldValue, investId);
         }
         String[] fldsToRetrieve = LPArray.addValueToArray1D(checkFieldName, TblsProcedure.InvestObjects.INVEST_ID.getName());
-        Object[][] invObjectInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()),
+        Object[][] invObjectInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()),
                 TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(),
                 checkFieldName, checkFieldValue, fldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(invObjectInfo[0][0].toString())) {
@@ -372,7 +372,7 @@ public final class Investigation {
 
     private static InternalMessage isInvestigationClosed(Integer investId) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Object[][] investigationInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(),
+        Object[][] investigationInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(),
                 new String[]{TblsProcedure.Investigation.ID.getName()}, new Object[]{investId}, new String[]{TblsProcedure.Investigation.CLOSED.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationInfo[0][0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.NOT_FOUND, new Object[]{investId});
@@ -409,7 +409,7 @@ public final class Investigation {
                 return;
             case "SAMPLE_ANALYSIS":
                 testId = (Integer) ((Object[]) decodeObjectDetail[1])[1];
-                Object[][] objInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
+                Object[][] objInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
                         new String[]{TblsData.SampleAnalysis.TEST_ID.getName()},
                         new Object[]{testId}, new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName()});
                 sampleId = Integer.valueOf(objInfo[0][0].toString());
@@ -418,7 +418,7 @@ public final class Investigation {
                 return;
             case "SAMPLE_ANALYSIS_RESULT":
                 resultId = Integer.valueOf(((Object[]) decodeObjectDetail[1])[1].toString());
-                objInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
+                objInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
                         new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()},
                         new Object[]{resultId}, new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName()});
                 sampleId = Integer.valueOf(objInfo[0][0].toString());

@@ -41,7 +41,7 @@ public class UserProfile {
             filterFieldValue[1]=true;
             filterFieldName[2]="proc_name is not null";                        
             //if (!Rdbms.stablishDBConection()){return new Object[0];}   
-            Object[][] userProc =  Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), tableName, 
+            Object[][] userProc =  Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.APP.getName(), tableName, 
                 filterFieldName, filterFieldValue, fieldsToReturn);            
             return LPArray.array2dTo1d(userProc);                         
     }
@@ -64,7 +64,7 @@ public class UserProfile {
             filterFieldName[2]="proc_name is not null";          
             String tableName = "user_profile";                                  
             
-            Object[][] userProc =  Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), tableName, filterFieldName, filterFieldValue, fieldsToReturn);
+            Object[][] userProc =  Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.APP.getName(), tableName, filterFieldName, filterFieldValue, fieldsToReturn);
             return LPArray.array2dTo1d(userProc);                         
         }
         
@@ -78,7 +78,7 @@ public class UserProfile {
             String[] filterFieldName = new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName(), FIELDVALUE_ACTIVE, TblsProcedure.PersonProfile.ROLE_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()};
             Object[] filterFieldValue = new Object[]{personName, true};            
             
-            Object[][] userProc =  Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), 
+            Object[][] userProc =  Rdbms.getRecordFieldsByFilter("", LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), 
                     filterFieldName, filterFieldValue, new String[] {TblsProcedure.PersonProfile.ROLE_NAME.getName()});
             return LPArray.array2dTo1d(userProc);                         
         }

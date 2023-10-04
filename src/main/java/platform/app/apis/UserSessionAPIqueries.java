@@ -266,7 +266,7 @@ public class UserSessionAPIqueries extends HttpServlet {
                                             String curTable = curTableRowArr[1];
                                             String[] procAuditTablesFieldsToRetrieve = EnumIntTableFields.getAllFieldNamesFromDatabase(curTable, curSchema);
                                             if (LPArray.valueInArray(procAuditTablesFieldsToRetrieve, TblsDataAudit.Sample.APP_SESSION_ID.getName())) {
-                                                Object[][] dataAuditCurTableInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(curSchema, ""),
+                                                Object[][] dataAuditCurTableInfo = Rdbms.getRecordFieldsByFilter("", LPPlatform.buildSchemaName(curSchema, ""),
                                                         curTable, new String[]{TblsDataAudit.Sample.APP_SESSION_ID.getName()}, new Object[]{sessionId},
                                                         procAuditTablesFieldsToRetrieve, new String[]{TblsDataAudit.Sample.AUDIT_ID.getName()});
                                                 if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(dataAuditCurTableInfo[0][0].toString()))) {

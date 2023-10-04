@@ -98,7 +98,7 @@ public class ProcedureDeployment extends HttpServlet {
             if (Boolean.TRUE.equals(PROC_DISPLAY_PROC_DEF_REQUIREMENTS)){
                 Requirement.getProcedureByProcInstanceName(procName);
             }
-            Object[][] procEvent = Rdbms.getRecordFieldsByFilter(procInstanceSchemaProcName, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(),
+            Object[][] procEvent = Rdbms.getRecordFieldsByFilter(procName, procInstanceSchemaProcName, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(),
                     new String[]{TblsProcedure.ProcedureEvents.ROLE_NAME+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new String[]{""}, PROCDISP_PROCINSTNC_REQS_FLD_NAME.split("\\|"),
                     PROCDISP_PROCINSTNC_REQS_SORT.split("\\|"), true );
             Object[][] procEventSOPStemp = Rdbms.getRecordFieldsByFilter(procInstanceSchemaProcName, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(),
@@ -120,7 +120,7 @@ public class ProcedureDeployment extends HttpServlet {
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(procEvent);
             }
             if (Boolean.TRUE.equals(PROCDISP_PROCINSTNC_ROLES)){
-                Object[][] procRoles = Rdbms.getRecordFieldsByFilter(procInstanceSchemaProcName, TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(),
+                Object[][] procRoles = Rdbms.getRecordFieldsByFilter(procName, procInstanceSchemaProcName, TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(),
                         new String[]{TblsProcedure.PersonProfile.ROLE_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new String[]{""},
                         PROCDISP_PROCINSTNC_ROLES_FLD_NAME.split("\\|"), PROCDISP_PROCINSTNC_ROLES_SORT.split("\\|"), true );
                 procRoles = LPArray.joinTwo2DArrays(LPArray.array1dTo2d(PROCDISP_PROCINSTNC_ROLES_FLD_NAME.split("\\|"),
@@ -128,7 +128,7 @@ public class ProcedureDeployment extends HttpServlet {
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(procRoles);
             }
             if (Boolean.TRUE.equals(PROC_DISPLAY_PROC_INSTANCE_USERS)){
-                Object[][] procUserPerson = Rdbms.getRecordFieldsByFilter(procInstanceSchemaProcName, TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(),
+                Object[][] procUserPerson = Rdbms.getRecordFieldsByFilter(procName, procInstanceSchemaProcName, TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(),
                         new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new String[]{""}, PROCDISP_PROCINSTNC_USRSPRS_FLDNAME.split("\\|"),
                         PROCDISP_PROCINSTNC_USRSPERS_SRT.split("\\|"), true );
                 
@@ -141,7 +141,7 @@ public class ProcedureDeployment extends HttpServlet {
                         PROCDISP_PROCINSTNC_USRSPRS_FLDNAME.split("\\|").length), procUsers2D);
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(procUsers2D);
             }
-            Object[][] procSopInMetaData = Rdbms.getRecordFieldsByFilter(procInstanceSchemaConfigName, TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(),
+            Object[][] procSopInMetaData = Rdbms.getRecordFieldsByFilter(procName, procInstanceSchemaConfigName, TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(),
                     new String[]{TblsCnfg.SopMetaData.SOP_ID.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, PROCDISP_PROCINSTNC_SOPS_FLD_NAME.split("\\|"),
                     PROCDISP_PROCINSTNC_SOPS_SORT.split("\\|"), true );
             if (Boolean.TRUE.equals(PROC_DISPLAY_PROC_INSTANCE_SOPS)){

@@ -250,7 +250,7 @@ public class DbTestingLimitAndResult extends HttpServlet {
                         }
                         resSpecEvaluation = LPArray.addValueToArray1D(resSpecEvaluation, "numeric field(s) empty");
                     } else {
-                        Object[][] specLimits = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(),
+                        Object[][] specLimits = Rdbms.getRecordFieldsByFilter(schemaName, schemaConfigName, TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(),
                                 new String[]{TblsCnfg.SpecLimits.CODE.getName(), TblsCnfg.SpecLimits.CONFIG_VERSION.getName(),
                                     TblsCnfg.SpecLimits.VARIATION_NAME.getName(), TblsCnfg.SpecLimits.ANALYSIS.getName(), TblsCnfg.SpecLimits.METHOD_NAME.getName(), TblsCnfg.SpecLimits.METHOD_VERSION.getName(), TblsCnfg.SpecLimits.PARAMETER.getName()},
                                 new Object[]{specCode, specCodeVersion, variation, analysis, methodName, methodVersion, parameterName},

@@ -211,7 +211,7 @@ public class TestingAPIActions extends HttpServlet {
             return;
         }
         String[] scriptFldToRetrieve = getAllFieldNames(TblsTesting.TablesTesting.SCRIPT.getTableFields());
-        Object[][] scriptInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT.getTableName(),
+        Object[][] scriptInfo = Rdbms.getRecordFieldsByFilter(procReqInstance.getProcedureInstance(), LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT.getTableName(),
                 new String[]{TblsTesting.Script.SCRIPT_ID.getName()},
                 new Object[]{scriptId},
                 scriptFldToRetrieve);
@@ -220,7 +220,7 @@ public class TestingAPIActions extends HttpServlet {
             return;
         }
         JSONObject jObj = LPJson.convertArrayRowToJSONObject(scriptFldToRetrieve, scriptInfo[0]);
-        Object[][] scriptStepsInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(),
+        Object[][] scriptStepsInfo = Rdbms.getRecordFieldsByFilter(procReqInstance.getProcedureInstance(), LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(),
                 new String[]{TblsTesting.ScriptSteps.SCRIPT_ID.getName()},
                 new Object[]{scriptId},
                 getAllFieldNames(TblsTesting.TablesTesting.SCRIPT_STEPS.getTableFields()));
@@ -231,7 +231,7 @@ public class TestingAPIActions extends HttpServlet {
             }
         }
         jObj.put("steps", scriptStepsJArr);
-        Object[][] scriptBusRulesInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT_BUS_RULES.getTableName(),
+        Object[][] scriptBusRulesInfo = Rdbms.getRecordFieldsByFilter(procReqInstance.getProcedureInstance(), LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT_BUS_RULES.getTableName(),
                 new String[]{TblsTesting.ScriptBusinessRules.SCRIPT_ID.getName()},
                 new Object[]{scriptId},
                 getAllFieldNames(TblsTesting.TablesTesting.SCRIPT_BUS_RULES.getTableFields()));

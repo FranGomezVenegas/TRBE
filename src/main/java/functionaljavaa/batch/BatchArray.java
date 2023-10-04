@@ -251,10 +251,10 @@ public final class BatchArray extends Batch{
      * @param batchName
      * @return
      */
-    public static BatchArray dbGetBatchArray(String schemaName, String batchName){
-        schemaName = LPPlatform.buildSchemaName(schemaName, GlobalVariables.Schemas.DATA.getName());
+    public static BatchArray dbGetBatchArray(String procSchemaName, String batchName){
+        String schemaName = LPPlatform.buildSchemaName(procSchemaName, GlobalVariables.Schemas.DATA.getName());
         String tableName = "batch_java";
-        Object[][] recordFieldsByFilter = Rdbms.getRecordFieldsByFilter(schemaName, tableName, 
+        Object[][] recordFieldsByFilter = Rdbms.getRecordFieldsByFilter(procSchemaName, schemaName, tableName, 
                 new String[]{"name"}, new Object[]{batchName}, 
                 new String[]{"name", "template", "template_version", "operator" , "array_num_rows",
                     "array_num_cols", "array_total_positions", "array_total_objects",

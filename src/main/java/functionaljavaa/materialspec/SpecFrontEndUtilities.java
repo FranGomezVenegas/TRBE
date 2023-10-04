@@ -54,7 +54,7 @@ public class SpecFrontEndUtilities {
                 fieldsName = getAllFieldNames(tblObj.getTableFields());
             }
         }
-        Object[][] records = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), tblObj.getTableName(),
+        Object[][] records = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), tblObj.getTableName(),
                 new String[]{TblsCnfg.Spec.CODE.getName(), TblsCnfg.Spec.CONFIG_VERSION.getName()},
                 new Object[]{code, configVersion},
                 fieldsName, sortFields);

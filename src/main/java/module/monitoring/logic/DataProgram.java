@@ -166,7 +166,7 @@ Object[] createProgram(String projectTemplate, Integer projectTemplateVersion, S
         if (mandatoryFieldsMissingBuilder.length()>0){
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{mandatoryFieldsMissingBuilder.toString()});
         }        
-        Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, tableName, new String[]{GlobalVariables.Schemas.CONFIG.getName(),"config_version"}, new Object[]{projectTemplate, projectTemplateVersion});
+        Object[] diagnosis = Rdbms.existsRecord(procInstanceName, schemaConfigName, tableName, new String[]{GlobalVariables.Schemas.CONFIG.getName(),"config_version"}, new Object[]{projectTemplate, projectTemplateVersion});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString())) return diagnosis;
 
         String[] specialFields = labIntChecker.getStructureSpecialFields("projectStructure");

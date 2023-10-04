@@ -182,7 +182,7 @@ public final class DataInventoryRetain {
             fldName=LPArray.addValueToArray1D(fldName, TblsInspLotRMData.InventoryRetain.ID.getName());
             fldValue=LPArray.addValueToArray1D(fldValue, id);
         }
-        Object[][] retainRowsInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN.getTableName(), 
+        Object[][] retainRowsInfo=Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN.getTableName(), 
                 fldName, fldValue, fldNameToGet);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(retainRowsInfo[0][0].toString())) 
             return new Object[]{new InternalMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{lotName, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName())}, lotName)};

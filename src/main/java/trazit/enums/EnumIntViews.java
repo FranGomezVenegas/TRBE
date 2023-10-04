@@ -54,7 +54,7 @@ public interface EnumIntViews {
                             .append(" ").append(curTblJoin.getMainTableAlias());
                     tblAliases = LPArray.addValueToArray1D(tblAliases, curTblJoin.getMainTableAlias());
                 }
-                Object[] dbMainTableExists = Rdbms.dbTableExists(mainTableSchemaName.replace("\"", ""), curTblJoin.getMainTable().getTableName());
+                Object[] dbMainTableExists = Rdbms.dbTableExists("", mainTableSchemaName.replace("\"", ""), curTblJoin.getMainTable().getTableName());
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbMainTableExists[0].toString()) && Boolean.TRUE.equals(curTblJoin.childMandatoy)) {
                     return "View " + mainTableSchemaName + "." + curTblJoin.mainTbl.getTableName() + " was not found but declared as mandatory for this view, cannot continue";
                 }
@@ -64,7 +64,7 @@ public interface EnumIntViews {
                 } else {
                     childTableSchemaName = LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), curTblJoin.getChildTable().getRepositoryName(), isForTesting, curTblJoin.getChildTable().getTableName());
                 }
-                Object[] dbChildTableExists = Rdbms.dbTableExists(childTableSchemaName.replace("\"", ""), curTblJoin.getChildTable().getTableName());
+                Object[] dbChildTableExists = Rdbms.dbTableExists("", childTableSchemaName.replace("\"", ""), curTblJoin.getChildTable().getTableName());
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbChildTableExists[0].toString()) && Boolean.TRUE.equals(curTblJoin.childMandatoy)) {
                     return "View " + childTableSchemaName + "." + curTblJoin.childTbl.getTableName() + " was not found but declared as mandatory for this view, cannot continue";
                 }

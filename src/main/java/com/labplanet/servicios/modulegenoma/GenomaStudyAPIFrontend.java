@@ -207,7 +207,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                     }
                     String schemaConfig = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
                     JSONObject projectsListObj = new JSONObject();
-                    Object[][] projectInfo = Rdbms.getRecordFieldsByFilter(schemaConfig, TblsGenomaData.TablesGenomaData.PROJECT.getTableName(),
+                    Object[][] projectInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaConfig, TblsGenomaData.TablesGenomaData.PROJECT.getTableName(),
                             new String[]{TblsGenomaData.Project.ACTIVE.getName()}, new Object[]{true},
                             EnumIntTableFields.getAllFieldNames(TblsGenomaData.TablesGenomaData.PROJECT.getTableFields()), new String[]{TblsGenomaData.Project.NAME.getName()});
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projectInfo[0][0].toString())) {
@@ -223,7 +223,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                         String curProjectName = curProject[LPArray.valuePosicInArray(EnumIntTableFields.getAllFieldNames(TblsGenomaData.TablesGenomaData.PROJECT.getTableFields()), TblsGenomaData.Project.NAME.getName())].toString();
                         curProgramJson = projectUsersJson(curProgramJson, curProjectName, getOnlyActiveObjects);
 
-                        Object[][] projStudyInfo = Rdbms.getRecordFieldsByFilter(schemaConfig, TblsGenomaData.TablesGenomaData.STUDY.getTableName(),
+                        Object[][] projStudyInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaConfig, TblsGenomaData.TablesGenomaData.STUDY.getTableName(),
                                 new String[]{TblsGenomaData.Study.PROJECT.getName()}, new Object[]{curProjectName},
                                 EnumIntTableFields.getAllFieldNames(TblsGenomaData.TablesGenomaData.STUDY.getTableFields()), new String[]{TblsGenomaData.Study.NAME.getName()});
                         JSONArray projStudiesJsonArr = new JSONArray();
@@ -255,7 +255,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                 case ALL_ACTIVE_VARIABLES_AND_VARIABLES_SET:
                     schemaConfig = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
                     JSONObject variablesAndVariablesSetObj = new JSONObject();
-                    Object[][] variablesInfo = Rdbms.getRecordFieldsByFilter(schemaConfig, TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableName(),
+                    Object[][] variablesInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaConfig, TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableName(),
                             new String[]{TblsGenomaConfig.Variables.ACTIVE.getName()}, new Object[]{true},
                             EnumIntTableFields.getAllFieldNames(TblsGenomaConfig.Variables.values()), new String[]{TblsGenomaConfig.Variables.NAME.getName()});
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(variablesInfo[0][0].toString())) {
@@ -269,7 +269,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                     }
                     variablesAndVariablesSetObj.put(TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableName(), variablesArr);
 
-                    Object[][] variablesSetInfo = Rdbms.getRecordFieldsByFilter(schemaConfig, TblsGenomaConfig.TablesGenomaConfig.VARIABLES_SET.getTableName(),
+                    Object[][] variablesSetInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaConfig, TblsGenomaConfig.TablesGenomaConfig.VARIABLES_SET.getTableName(),
                             new String[]{TblsGenomaConfig.VariablesSet.ACTIVE.getName()}, new Object[]{true},
                             EnumIntTableFields.getAllFieldNames(TblsGenomaConfig.VariablesSet.values()), new String[]{TblsGenomaConfig.VariablesSet.NAME.getName()});
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(variablesSetInfo[0][0].toString())) {
@@ -283,7 +283,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                         String curVariablesList = curVariablesSet[LPArray.valuePosicInArray(EnumIntTableFields.getAllFieldNames(TblsGenomaConfig.VariablesSet.values()), TblsGenomaConfig.VariablesSet.VARIABLES_LIST.getName())].toString();
                         JSONArray variablesSetVarListArr = new JSONArray();
                         for (String curVariableFromList : curVariablesList.split("\\|")) {
-                            Object[][] variableInfo = Rdbms.getRecordFieldsByFilter(schemaConfig, TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableName(),
+                            Object[][] variableInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaConfig, TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableName(),
                                     new String[]{TblsGenomaConfig.Variables.NAME.getName()}, new Object[]{curVariableFromList},
                                     EnumIntTableFields.getAllFieldNames(TblsGenomaConfig.Variables.values()), new String[]{TblsGenomaConfig.Variables.NAME.getName()});
 
@@ -402,7 +402,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
-        Object[][] studyFamilyInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.TablesGenomaData.STUDY_OBJECTS_FILES.getTableName(),
+        Object[][] studyFamilyInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, TblsGenomaData.TablesGenomaData.STUDY_OBJECTS_FILES.getTableName(),
                 new String[]{TblsGenomaData.StudyObjectsFiles.STUDY.getName()}, new Object[]{curStudyName},
                 EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyObjectsFiles.values()), new String[]{TblsGenomaData.StudyObjectsFiles.FILE_ID.getName()});
         JSONArray studyFamiliesJsonArr = new JSONArray();
@@ -425,7 +425,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
             whereFldValues = LPArray.addValueToArray1D(whereFldValues, true);
         }
         String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
-        Object[][] studyFamilyInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName(),
+        Object[][] studyFamilyInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName(),
                 whereFldNames, whereFldValues,
                 EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyFamily.values()), new String[]{TblsGenomaData.StudyFamily.NAME.getName()});
         JSONArray studyFamiliesJsonArr = new JSONArray();
@@ -453,7 +453,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
             whereFldNames = LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.ProjectUsers.ACTIVE.getName());
             whereFldValues = LPArray.addValueToArray1D(whereFldValues, true);
         }
-        Object[][] projectUsersInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName(),
+        Object[][] projectUsersInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName(),
                 whereFldNames, whereFldValues,
                 EnumIntTableFields.getAllFieldNames(TblsGenomaData.ProjectUsers.values()));
         JSONArray projectUsersJsonArr = new JSONArray();
@@ -477,7 +477,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
             whereFldNames = LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyUsers.ACTIVE.getName());
             whereFldValues = LPArray.addValueToArray1D(whereFldValues, true);
         }
-        Object[][] studyUsersInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.TablesGenomaData.STUDY_USERS.getTableName(),
+        Object[][] studyUsersInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, TblsGenomaData.TablesGenomaData.STUDY_USERS.getTableName(),
                 whereFldNames, whereFldValues,
                 EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyUsers.values()));
         JSONArray studyUsersJsonArr = new JSONArray();
@@ -498,7 +498,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
         String[] whereFldNames = new String[]{TblsGenomaData.StudyIndividual.STUDY.getName()};
         Object[] whereFldValues = new Object[]{curStudyName};
         if (familyName != null && familyName.length() > 0) {
-            Object[][] studyFamilyIndividualInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.TablesGenomaData.STUDY_FAMILY_INDIVIDUAL.getTableName(),
+            Object[][] studyFamilyIndividualInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, TblsGenomaData.TablesGenomaData.STUDY_FAMILY_INDIVIDUAL.getTableName(),
                     LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyFamilyIndividual.FAMILY_NAME.getName()),
                     LPArray.addValueToArray1D(whereFldValues, familyName),
                     new String[]{TblsGenomaData.StudyFamilyIndividual.INDIVIDUAL_ID.getName()}, new String[]{TblsGenomaData.StudyFamilyIndividual.INDIVIDUAL_ID.getName()});
@@ -519,7 +519,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
             whereFldNames = LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyIndividual.ACTIVE.getName());
             whereFldValues = LPArray.addValueToArray1D(whereFldValues, true);
         }
-        Object[][] studyIndividualInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName(),
+        Object[][] studyIndividualInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName(),
                 whereFldNames, whereFldValues,
                 EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyIndividual.values()), new String[]{TblsGenomaData.StudyIndividual.INDIVIDUAL_ID.getName()});
         JSONArray studyIndividualJsonArr = new JSONArray();
@@ -545,7 +545,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
         String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
         String[] whereFldNames = new String[]{TblsGenomaData.StudyFamilyIndividual.STUDY.getName(), TblsGenomaData.StudyFamilyIndividual.INDIVIDUAL_ID.getName()};
         Object[] whereFldValues = new Object[]{curStudyName, individualId};
-        Object[][] studyFamilyInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.TablesGenomaData.STUDY_FAMILY_INDIVIDUAL.getTableName(),
+        Object[][] studyFamilyInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, TblsGenomaData.TablesGenomaData.STUDY_FAMILY_INDIVIDUAL.getTableName(),
                 whereFldNames, whereFldValues,
                 EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyFamilyIndividual.values()), new String[]{TblsGenomaData.StudyFamilyIndividual.FAMILY_NAME.getName()});
         JSONArray studyFamiliesJsonArr = new JSONArray();
@@ -575,7 +575,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
         }
         Object[][] studyIndividualSampleInfo = new Object[0][0];
 //    if (familyName==null || familyName.length()==0){
-        studyIndividualSampleInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName(),
+        studyIndividualSampleInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName(),
                 whereFldNames, whereFldValues,
                 EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyIndividualSample.values()), new String[]{TblsGenomaData.StudyIndividualSample.INDIVIDUAL_ID.getName()});
         JSONArray studyIndividualSampleJsonArr = new JSONArray();
@@ -604,7 +604,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
             sampleId.toString(), sampleId.toString() + "|%", "%|" + sampleId.toString(), "%|" + sampleId.toString() + "|%"};
         JSONArray studyFamiliesJsonArr = new JSONArray();
         for (String currSamplePosic : samplePossiblePosics) {
-            Object[][] studyFamilyInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(),
+            Object[][] studyFamilyInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(),
                     new String[]{TblsGenomaData.StudySamplesSet.STUDY.getName(), TblsGenomaData.StudySamplesSet.UNSTRUCT_CONTENT.getName() + " LIKE "}, new Object[]{curStudyName, currSamplePosic},
                     EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudySamplesSet.values()), new String[]{TblsGenomaData.StudySamplesSet.NAME.getName()});
             if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(studyFamilyInfo[0][0].toString()))) {
@@ -636,7 +636,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
             whereFldValues = LPArray.addValueToArray1D(whereFldValues, familyName);
         }
 
-        Object[][] studyVariableValueInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES.getTableName(),
+        Object[][] studyVariableValueInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES.getTableName(),
                 whereFldNames, whereFldValues,
                 EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyVariableValues.values()), new String[]{TblsGenomaData.StudyVariableValues.INDIVIDUAL.getName()});
         JSONArray studyIndividualSampleJsonArr = new JSONArray();
@@ -659,7 +659,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
             whereFldValues = LPArray.addValueToArray1D(whereFldValues, true);
         }
         String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
-        Object[][] studySamplesSetInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(),
+        Object[][] studySamplesSetInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(),
                 whereFldNames, whereFldValues,
                 EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudySamplesSet.values()), new String[]{TblsGenomaData.StudySamplesSet.NAME.getName()});
         JSONArray studySamplesSetJsonArr = new JSONArray();
@@ -670,7 +670,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                 String curStudySamplesSetSamplesContent = curStudySamplesSet[LPArray.valuePosicInArray(EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudySamplesSet.values()), TblsGenomaData.StudySamplesSet.UNSTRUCT_CONTENT.getName())].toString();
                 JSONArray studySamplesSetContentJsonArr = new JSONArray();
                 if (curStudySamplesSetSamplesContent.length() > 0) {
-                    Object[][] samplesSetSamplesContentInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName(),
+                    Object[][] samplesSetSamplesContentInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName(),
                             new String[]{TblsGenomaData.StudyIndividualSample.SAMPLE_ID.getName() + " in "}, new Object[]{"INTEGER*" + curStudySamplesSetSamplesContent},
                             EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyIndividualSample.values()), new String[]{TblsGenomaData.StudyIndividualSample.INDIVIDUAL_ID.getName()});
                     for (Object[] curStudySamplesSetContent : samplesSetSamplesContentInfo) {
@@ -703,7 +703,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName());
         String[] fldsArr = new String[]{TblsProcedure.ViewProcUserAndRoles.USER_NAME.getName()};
-        Object[][] procUsers = Rdbms.getRecordFieldsByFilter(schemaName, "proc_user_and_roles",
+        Object[][] procUsers = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, "proc_user_and_roles",
                 new String[]{TblsProcedure.ViewProcUserAndRoles.ACTIVE.getName()},
                 new Object[]{true}, fldsArr);
         JSONArray jBlockArr = new JSONArray();
@@ -720,7 +720,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
         String[] fldsArr = EnumIntTableFields.getAllFieldNames(TblsGenomaConfig.TablesGenomaConfig.VARIABLES_SET.getTableFields());
-        Object[][] variableSetListInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaConfig.TablesGenomaConfig.VARIABLES_SET.getTableName(),
+        Object[][] variableSetListInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, TblsGenomaConfig.TablesGenomaConfig.VARIABLES_SET.getTableName(),
                 new String[]{TblsProcedure.ViewProcUserAndRoles.ACTIVE.getName()},
                 new Object[]{true}, fldsArr);
         JSONArray jBlockArr = new JSONArray();
@@ -736,7 +736,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
         String[] fldsArr = EnumIntTableFields.getAllFieldNames(TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableFields());
-        Object[][] variablesListInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableName(),
+        Object[][] variablesListInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableName(),
                 new String[]{TblsProcedure.ViewProcUserAndRoles.ACTIVE.getName()},
                 new Object[]{true}, fldsArr);
         JSONArray jBlockArr = new JSONArray();

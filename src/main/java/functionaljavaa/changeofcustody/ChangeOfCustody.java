@@ -185,7 +185,7 @@ public class ChangeOfCustody {
             return changeOfCustodyEnable;
         }
 
-        Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), cocTableName,
+        Object[] existsRecord = Rdbms.existsRecord(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), cocTableName,
                 new String[]{objectFieldName.getName(), TblsData.SampleCoc.STATUS.getName()},
                 new Object[]{objectId, cocStartChangeStatus});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())) {
@@ -257,7 +257,7 @@ public class ChangeOfCustody {
             return changeOfCustodyEnable;
         }
 
-        Object[][] startedProcessData = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), cocTableName,
+        Object[][] startedProcessData = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), cocTableName,
                 new String[]{objectFieldName.getName(), TblsData.SampleCoc.STATUS.getName()},
                 new Object[]{objectId, cocStartChangeStatus},
                 new String[]{"id", TblsData.SampleCoc.STATUS.getName(), TblsData.SampleCoc.CUSTODIAN_CANDIDATE.getName()});

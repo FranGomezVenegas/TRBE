@@ -349,7 +349,7 @@ public class TstDataSample extends HttpServlet {
                                     if (lineNumCols>=numEvaluationArguments+5)                
                                         fieldsToGet=LPTestingOutFormat.csvExtractFieldValueStringArr(csvFileContent[iLines][numEvaluationArguments+5]);
                                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{Arrays.toString(fieldsToGet), sampleId}));
-                                    dataSample2D = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(), 
+                                    dataSample2D = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaDataName, TblsData.TablesData.SAMPLE.getTableName(), 
                                             new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId}, fieldsToGet);
                                     break;
                                 case ENTERRESULT_LOD:

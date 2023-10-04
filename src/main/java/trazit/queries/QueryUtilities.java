@@ -45,7 +45,7 @@ public final class QueryUtilities {
 
     public static Object[][] getTableData(ProcedureRequestSession procReqSession, String schema, String tableName, String fldToRetrieve, String[] tableAllFields, String[] whereFldName, Object[] whereFldValue, String[] orderBy) {
         String[] fieldsToRetrieve = getFieldsListToRetrieve(fldToRetrieve, tableAllFields);
-        return Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), schema),
+        return Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), schema),
                 tableName, whereFldName, whereFldValue, fieldsToRetrieve, orderBy);
     }
 

@@ -37,7 +37,7 @@ private ProcReqSessionAutomatisms() {throw new IllegalStateException("Utility cl
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())) {
                 return;
             }
-            Object[][] expiredRecordsArr = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, curEntityInfo[0]), curEntityInfo[1],
+            Object[][] expiredRecordsArr = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, curEntityInfo[0]), curEntityInfo[1],
                     new String[]{TblsData.CertifUserAnalysisMethod.LIGHT.getName(), TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName() + WHERECLAUSE_TYPES.LESS_THAN.getSqlClause()},
                     new Object[]{CertifGlobalVariables.CertifLight.GREEN.toString(), LPDate.getCurrentTimeStamp()}, new String[]{curEntityInfo[2]});
             if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(expiredRecordsArr[0][0].toString()))) {
@@ -50,7 +50,7 @@ private ProcReqSessionAutomatisms() {throw new IllegalStateException("Utility cl
                 }
                 String[] updFldName = new String[]{TblsData.CertifUserAnalysisMethod.LIGHT.getName(), TblsData.CertifUserAnalysisMethod.STATUS.getName()};
                 Object[] updFldValue = new Object[]{CertifGlobalVariables.CertifLight.GREEN.toString(), "NOT_PASS"};
-                Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, curEntityInfo[0]), curEntityInfo[1],
+                Rdbms.updateRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, curEntityInfo[0]), curEntityInfo[1],
                         updFldName, updFldValue, new String[]{curEntityInfo[2] + " " + WHERECLAUSE_TYPES.IN.getSqlClause()},
                         new Object[]{whereFldValue});
                 /*                SqlWhere sqlWhere = new SqlWhere();

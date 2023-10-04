@@ -99,11 +99,11 @@ public class DataInventory {
         }
         Object[][] invLotInfo = null;
         if (lotName != null) {
-            invLotInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(),
+            invLotInfo = Rdbms.getRecordFieldsByFilter(procInstanceName,  LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(),
                     new String[]{TblsInvTrackingData.Lot.LOT_NAME.getName(), TblsInvTrackingData.Lot.REFERENCE.getName(), TblsInvTrackingData.Lot.CATEGORY.getName()},
                     new Object[]{lotName, reference, category}, getAllFieldNames(TblsInvTrackingData.TablesInvTrackingData.LOT.getTableFields()));
         } else {
-            invLotInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(),
+            invLotInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(),
                     new String[]{TblsInvTrackingData.Lot.STATUS.getName(), TblsInvTrackingData.Lot.REFERENCE.getName(), TblsInvTrackingData.Lot.CATEGORY.getName()},
                     new Object[]{InvLotStatuses.AVAILABLE_FOR_USE.toString(), reference, category}, getAllFieldNames(TblsInvTrackingData.TablesInvTrackingData.LOT.getTableFields()));
             if (Boolean.TRUE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(invLotInfo[0][0].toString())) && invLotInfo.length > 1) {
@@ -146,7 +146,7 @@ public class DataInventory {
             this.reference = LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.REFERENCE.getName())]).toString();
             this.category = LPNulls.replaceNull(invLotInfo[0][LPArray.valuePosicInArray(lotFieldNames, TblsInvTrackingData.Lot.CATEGORY.getName())]).toString();
             if (this.reference != null && this.reference.length() > 0) {
-                Object[][] invReferenceInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName(),
+                Object[][] invReferenceInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName(),
                         new String[]{TblsInvTrackingConfig.Reference.NAME.getName(), TblsInvTrackingConfig.Reference.CATEGORY.getName()},
                         new Object[]{this.reference, this.category}, getAllFieldNames(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableFields()));
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(invReferenceInfo[0][0].toString())) {
@@ -183,7 +183,7 @@ public class DataInventory {
         if (Boolean.FALSE.equals(this.getRequiresQualification())) {
             return;
         }
-        Object[][] invLotQualifInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(externalProcedure, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION.getTableName(),
+        Object[][] invLotQualifInfo = Rdbms.getRecordFieldsByFilter(externalProcedure, LPPlatform.buildSchemaName(externalProcedure, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION.getTableName(),
                 new String[]{TblsInvTrackingData.LotQualification.LOT_NAME.getName(), TblsInvTrackingData.LotQualification.CATEGORY.getName(), TblsInvTrackingData.LotQualification.REFERENCE.getName()},
                 new Object[]{this.getLotName(), this.getCategory(), this.getReference()}, getAllFieldNames(TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION.getTableFields()));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(invLotQualifInfo[0][0].toString())) {
@@ -282,7 +282,7 @@ public class DataInventory {
         }
         Object[][] referenceInfo = null;
         if (reference != null && reference.length() > 0) {
-            referenceInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(externalProcedure, GlobalVariables.Schemas.CONFIG.getName()), TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName(),
+            referenceInfo = Rdbms.getRecordFieldsByFilter(externalProcedure, LPPlatform.buildSchemaName(externalProcedure, GlobalVariables.Schemas.CONFIG.getName()), TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName(),
                     new String[]{TblsInvTrackingConfig.Reference.NAME.getName(), TblsInvTrackingConfig.Reference.CATEGORY.getName()}, new Object[]{reference, category},
                     getAllFieldNames(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableFields()));
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceInfo[0][0].toString())) {
@@ -322,7 +322,7 @@ public class DataInventory {
             } else {
                 fldValues[lotNamePosic] = newName;
             }
-            Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(externalProcedure, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT.getTableName(),
+            Object[] existsRecord = Rdbms.existsRecord(externalProcedure, LPPlatform.buildSchemaName(externalProcedure, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT.getTableName(),
                     new String[]{TblsInvTrackingData.Lot.LOT_NAME.getName()}, new Object[]{newName});
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())) {
                 return new InternalMessage(LPPlatform.LAB_FALSE, InventoryTrackingErrorTrapping.ALREADY_EXISTS, new Object[]{newName}, null);

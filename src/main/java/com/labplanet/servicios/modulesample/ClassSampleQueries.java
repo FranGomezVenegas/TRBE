@@ -435,7 +435,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                 } else {
                     fieldToRetrieveViewArr = fieldToRetrieve.split("\\|");
                 }
-                String myData = Rdbms.getRecordFieldsByFilterJSON(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsData.ViewsData.SAMPLE_TESTING_GROUP_VIEW.getViewName(),
+                String myData = Rdbms.getRecordFieldsByFilterJSON(procReqInstance.getProcedureInstance(), LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsData.ViewsData.SAMPLE_TESTING_GROUP_VIEW.getViewName(),
                         new String[]{TblsData.ViewSampleTestingGroup.READY_FOR_REVISION.getName(), TblsData.ViewSampleTestingGroup.REVIEWED.getName(), TblsData.ViewSampleTestingGroup.TESTING_GROUP.getName()},
                         new Object[]{true, false, testingGroup},
                         fieldToRetrieveViewArr,
@@ -458,7 +458,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                     sampleFieldToRetrieveArr = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, sampleFieldToRetrieve.split("\\|"));
                 }
 
-                myData = Rdbms.getRecordFieldsByFilterJSON(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(),
+                myData = Rdbms.getRecordFieldsByFilterJSON(procReqInstance.getProcedureInstance(), LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(),
                         new String[]{TblsData.Sample.READY_FOR_REVISION.getName(), "(" + TblsData.Sample.REVIEWED.getName(), SqlStatement.WHERECLAUSE_TYPES.OR.getSqlClause() + " " + TblsData.Sample.REVIEWED.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause() + ")"},
                         new Object[]{true, false, null},
                         EnumIntTableFields.getAllFieldNames(sampleFieldToRetrieveArr),
@@ -615,7 +615,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                         if ("TRUE".equalsIgnoreCase(addSampleAnalysisResult)) {
                             sampleAnalysisFieldToRetrieveArr = LPArray.addValueToArray1D(sampleAnalysisFieldToRetrieveArr, TblsData.SampleAnalysis.TEST_ID.getName());
                         }
-                        Object[][] mySampleAnalysis = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
+                        Object[][] mySampleAnalysis = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
                                 testWhereFieldsNameArr, testWhereFieldsValueArr, sampleAnalysisFieldToRetrieveArr);
                         JSONArray mySamplesAnaJSArr = new JSONArray();
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(mySampleAnalysis[0][0].toString())) {
@@ -635,7 +635,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                                     }
 
                                     sarWhereFieldsValueArr = LPArray.getUniquesArray(sarWhereFieldsValueArr);
-                                    Object[][] mySampleAnalysisResults = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
+                                    Object[][] mySampleAnalysisResults = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
                                             sarWhereFieldsNameArr, sarWhereFieldsValueArr, sampleAnalysisResultFieldToRetrieveArr);
                                     JSONArray mySamplesAnaResJSArr = new JSONArray();
                                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(mySampleAnalysisResults[0][0].toString())) {
@@ -662,7 +662,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
             whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, "");
             JSONArray samplesArray = new JSONArray();
             JSONArray sampleArray = new JSONArray();
-            Object[][] mySamples = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(),
+            Object[][] mySamples = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaDataName, TblsData.TablesData.SAMPLE.getTableName(),
                     whereFieldsNameArr, whereFieldsValueArr, EnumIntTableFields.getAllFieldNames(sampleFieldToRetrieveArr));
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(mySamples[0][0].toString())) {
                 return new JSONArray();
@@ -673,7 +673,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                 if (("TEST".equals(sampleLastLevel)) || ("RESULT".equals(sampleLastLevel))) {
                     String[] testWhereFieldsNameArr = new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName()};
                     Object[] testWhereFieldsValueArr = new Object[]{sampleId};
-                    Object[][] mySampleAnalysis = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
+                    Object[][] mySampleAnalysis = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
                             testWhereFieldsNameArr, testWhereFieldsValueArr, sampleAnalysisFieldToRetrieveArr);
                     for (Object[] mySampleAnalysi : mySampleAnalysis) {
                         JSONObject testObj = new JSONObject();
@@ -782,7 +782,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
         if (Boolean.FALSE.equals(isProgramCorrectiveActionEnable(procInstanceName))) {
             return new Object[]{fldNameArr, fldValueArr};
         }
-        Object[][] notClosedProgramCorrreciveAction = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(),
+        Object[][] notClosedProgramCorrreciveAction = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(),
                 new String[]{TblsProcedure.ProgramCorrectiveAction.RESULT_ID.getName(), TblsProcedure.ProgramCorrectiveAction.STATUS.getName() + "<>"},
                 new Object[]{resultId, DataProgramCorrectiveAction.ProgramCorrectiveStatus.CLOSED.toString()},
                 SAMPLEANALYSISRESULTLOCKDATA_RETRIEVEDATA_PROGRAMCORRECTIVEACTION);
@@ -830,7 +830,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
             return false;
         }
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Object[][] groupedInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
+        Object[][] groupedInfo = Rdbms.getGrouper(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
                 new String[]{TblsData.SampleAnalysis.STATUS.getName()},
                 new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName(), TblsData.SampleAnalysis.STATUS.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause()},
                 new Object[]{fldsValue[smFldPosic],

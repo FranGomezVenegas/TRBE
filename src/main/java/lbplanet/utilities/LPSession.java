@@ -39,7 +39,7 @@ public class LPSession {
         if (remoteAddrParts.length < 4) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AuthenticationErrorTrapping.WRONG_IP, new Object[]{remoteAddr});
         }
-        Object[] existRecordBlackList = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TablesApp.IP_BLACK_LIST.getTableName(),
+        Object[] existRecordBlackList = Rdbms.existsRecord("", GlobalVariables.Schemas.APP.getName(), TablesApp.IP_BLACK_LIST.getTableName(),
                 new String[]{TblsApp.IPBlackList.ACTIVE.getName(), TblsApp.IPBlackList.IP_VALUE1.getName(),
                     "(" + TblsApp.IPBlackList.IP_VALUE2.getName(), "OR " + TblsApp.IPBlackList.IP_VALUE2.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause() + " )",
                     "(" + TblsApp.IPBlackList.IP_VALUE3.getName(), "OR " + TblsApp.IPBlackList.IP_VALUE3.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause() + " )",
@@ -49,11 +49,11 @@ public class LPSession {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AuthenticationErrorTrapping.IP_IN_BLACK_LIST, new Object[]{remoteAddr});
         }
 
-        Object[] existRecordWhiteList = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TablesApp.IP_WHITE_LIST.getTableName(),
+        Object[] existRecordWhiteList = Rdbms.existsRecord("", GlobalVariables.Schemas.APP.getName(), TablesApp.IP_WHITE_LIST.getTableName(),
                 new String[]{TblsApp.IPWhiteList.ACTIVE.getName()},
                 new Object[]{true});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existRecordWhiteList[0].toString())) {
-            existRecordWhiteList = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TablesApp.IP_WHITE_LIST.getTableName(),
+            existRecordWhiteList = Rdbms.existsRecord("", GlobalVariables.Schemas.APP.getName(), TablesApp.IP_WHITE_LIST.getTableName(),
                     new String[]{TblsApp.IPWhiteList.ACTIVE.getName(), TblsApp.IPWhiteList.IP_VALUE1.getName(),
                         "(" + TblsApp.IPWhiteList.IP_VALUE2.getName(), "OR " + TblsApp.IPWhiteList.IP_VALUE2.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause() + " )",
                         "(" + TblsApp.IPWhiteList.IP_VALUE3.getName(), "OR " + TblsApp.IPWhiteList.IP_VALUE3.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause() + " )",
@@ -98,7 +98,7 @@ public class LPSession {
             fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, TblsApp.AppSession.DATE_STARTED.getName());
         }
 
-        Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), tableName,
+        Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.APP.getName(), tableName,
                 new String[]{TblsApp.AppSession.SESSION_ID.getName()}, new Object[]{appSessionId}, fieldsToRetrieve);
         return LPArray.array2dTo1d(recordFieldsBySessionId);
     }
@@ -123,7 +123,7 @@ public class LPSession {
         String processName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String schemaAuditName = LPPlatform.buildSchemaName(processName, GlobalVariables.Schemas.DATA_AUDIT.getName());
 
-        Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(schemaAuditName, tableName,
+        Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(processName, schemaAuditName, tableName,
                 new String[]{TblsDataAudit.Session.SESSION_ID.getName()}, new Object[]{appSessionId}, fieldsNamesToInsert);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsBySessionId[0][0].toString())) {
             Object[] appSession = getAppSession(appSessionId, fieldsNamesToInsert);
@@ -153,7 +153,7 @@ public class LPSession {
     public static Object[] addProcessToAppSession(Integer appSessionId) {
         String processName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         //String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.APP_SESSION.getTableName(),
+        Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.APP_SESSION.getTableName(),
                 new String[]{TblsApp.AppSession.SESSION_ID.getName()}, new Object[]{appSessionId},
                 new String[]{TblsApp.AppSession.PROCEDURES.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsBySessionId[0][0].toString())) {
@@ -186,7 +186,7 @@ public class LPSession {
     public static Object[] addAppSession(Integer appSessionId, String[] fieldsNamesToInsert) {
         String tableName = TblsAppAudit.TablesAppAudit.SESSION.getTableName();
 
-        Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP_AUDIT.getName(), tableName,
+        Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.APP_AUDIT.getName(), tableName,
                 new String[]{TblsAppAudit.Session.SESSION_ID.getName()}, new Object[]{appSessionId}, fieldsNamesToInsert);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsBySessionId[0][0].toString())) {
             Object[] appSession = getAppSession(appSessionId, fieldsNamesToInsert);

@@ -47,12 +47,12 @@ public final class LPKPIs {
             if (curgrouperName.length()==0)curgrouperName="grouper_"+i;
             Object[][] dataInfo = new Object[][]{{}};
             if (Boolean.TRUE.equals(Boolean.valueOf(curdataGrouped))){
-                dataInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), curtblCategory), curtblName, 
+                dataInfo = Rdbms.getGrouper(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), curtblCategory), curtblName, 
                     curFldsToRetrieveArr, curWhereFieldsNameArr, curWhereFieldsValueArr, 
                     null);
                 curFldsToRetrieveArr=LPArray.addValueToArray1D(curFldsToRetrieveArr, "count");
             }else{
-                dataInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), curtblCategory), curtblName, 
+                dataInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), curtblCategory), curtblName, 
                     curWhereFieldsNameArr, curWhereFieldsValueArr, curFldsToRetrieveArr, caseSensitive);
             }
             JSONObject jObj = new JSONObject();

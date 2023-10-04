@@ -203,7 +203,7 @@ public class ModuleTableOrViewGet {
                     try {
                         this.tableObj = TblsInspLotRMProcedure.TablesInspLotRMProcedure.valueOf(tblName.toUpperCase());
                         this.found = true;
-                        String schemaForTesting = Rdbms.suffixForTesting(LPPlatform.buildSchemaName(procInstanceName, curSchemaName), tblName);
+                        String schemaForTesting = Rdbms.suffixForTesting(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, curSchemaName), tblName);
                         if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName))) {
                             this.mirrorForTesting = true;
                         }
@@ -212,7 +212,7 @@ public class ModuleTableOrViewGet {
                         try {
                             this.tableObj = TblsProcedure.TablesProcedure.valueOf(tblName.toUpperCase());
                             this.found = true;
-                            String schemaForTesting = Rdbms.suffixForTesting(LPPlatform.buildSchemaName(procInstanceName, curSchemaName), tblName);
+                            String schemaForTesting = Rdbms.suffixForTesting(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, curSchemaName), tblName);
                             if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName))) {
                                 this.mirrorForTesting = true;
                             }
@@ -296,7 +296,7 @@ public class ModuleTableOrViewGet {
                     try {
                         this.tableObj = TblsInvTrackingProcedure.TablesInvTrackingProcedure.valueOf(tblName.toUpperCase());
                         this.found = true;
-                        String schemaForTesting = Rdbms.suffixForTesting(LPPlatform.buildSchemaName(procInstanceName, curSchemaName), tblName);
+                        String schemaForTesting = Rdbms.suffixForTesting(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, curSchemaName), tblName);
                         if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName))) {
                             this.mirrorForTesting = true;
                         }
@@ -305,7 +305,7 @@ public class ModuleTableOrViewGet {
                         try {
                             this.tableObj = TblsProcedure.TablesProcedure.valueOf(tblName.toUpperCase());
                             this.found = true;
-                            String schemaForTesting = Rdbms.suffixForTesting(LPPlatform.buildSchemaName(procInstanceName, curSchemaName), tblName);
+                            String schemaForTesting = Rdbms.suffixForTesting(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, curSchemaName), tblName);
                             if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName))) {
                                 this.mirrorForTesting = true;
                             }
@@ -492,7 +492,7 @@ public class ModuleTableOrViewGet {
                         this.found = false;
                         this.viewObj = TblsProcedure.ViewsProcedure.valueOf(tblName.toUpperCase());
                         this.found = true;
-                        String schemaForTesting = Rdbms.suffixForTesting(LPPlatform.buildSchemaName(procInstanceName, curSchemaName), tblName);
+                        String schemaForTesting = Rdbms.suffixForTesting(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, curSchemaName), tblName);
                         if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName))) {
                             this.mirrorForTesting = true;
                         }

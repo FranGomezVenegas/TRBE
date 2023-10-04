@@ -162,7 +162,7 @@ public class ClassMasterData {
             }
             if (endPoint.getInvolvedTables() != null && endPoint.getInvolvedTables().length > 0) {
                 for (EnumIntTables curTbl : endPoint.getInvolvedTables()) {
-                    Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(instanceName, curTbl.getRepositoryName()), curTbl.getTableName());
+                    Object[] dbTableExists = Rdbms.dbTableExists(instanceName, LPPlatform.buildSchemaName(instanceName, curTbl.getRepositoryName()), curTbl.getTableName());
                     if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString()))) {
                         this.diagnostic = new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_TABLE_NOT_FOUND, new Object[]{curTbl.getTableName()}, null);
                         this.globalDiagn = LPPlatform.LAB_FALSE;
@@ -363,7 +363,7 @@ public class ClassMasterData {
                             ruleValues = mSpec.getQualitativeRuleValues();
                         }
                         if (Boolean.FALSE.equals(LPArray.valueInArray(fieldName, TblsCnfg.SpecLimits.UOM.getName()))) {
-                            Object[][] paramUOM = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(),
+                            Object[][] paramUOM = Rdbms.getRecordFieldsByFilter(instanceName, LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(),
                                     new String[]{TblsCnfg.AnalysisMethodParams.ANALYSIS.getName(), TblsCnfg.AnalysisMethodParams.METHOD_NAME.getName(),
                                         TblsCnfg.AnalysisMethodParams.PARAM_NAME.getName()},
                                     new Object[]{jO.getAsJsonObject().get(TblsCnfg.SpecLimits.ANALYSIS.getName()).getAsString(), jO.getAsJsonObject().get(TblsCnfg.SpecLimits.METHOD_NAME.getName()).getAsString(),

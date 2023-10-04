@@ -37,7 +37,7 @@ public class HolidaysCalendar {
             fldNames = new String[]{};
             fldValues = new Object[]{};
         }
-        Object[] existsRecord = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.HOLIDAYS_CALENDAR.getTableName(),
+        Object[] existsRecord = Rdbms.existsRecord("", GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.HOLIDAYS_CALENDAR.getTableName(),
                 new String[]{TblsApp.HolidaysCalendar.CODE.getName()},
                 new Object[]{name});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())) {
@@ -63,7 +63,7 @@ public class HolidaysCalendar {
             fldNames = new String[]{};
             fldValues = new Object[]{};
         }
-        Object[] existsRecord = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.HOLIDAYS_CALENDAR.getTableName(),
+        Object[] existsRecord = Rdbms.existsRecord("", GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.HOLIDAYS_CALENDAR.getTableName(),
                 new String[]{TblsApp.HolidaysCalendar.CODE.getName()},
                 new Object[]{code});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsRecord[0].toString())) {
@@ -85,7 +85,7 @@ public class HolidaysCalendar {
 
     public static InternalMessage deleteCalendarDate(String code, Integer dateId) {
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
-        Object[] existsRecord = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.HOLIDAYS_CALENDAR_DATE.getTableName(),
+        Object[] existsRecord = Rdbms.existsRecord("", GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.HOLIDAYS_CALENDAR_DATE.getTableName(),
                 new String[]{TblsApp.HolidaysCalendarDate.CALENDAR_CODE.getName(), TblsApp.HolidaysCalendarDate.ID.getName()},
                 new Object[]{code, dateId});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsRecord[0].toString())) {
@@ -106,7 +106,7 @@ public class HolidaysCalendar {
     public static InternalMessage calendarChangeActiveFlag(String code, Boolean fldValue, CalendarAPIactionsEndpoints endP) {
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null, null);
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
-        Object[][] calendarInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.HOLIDAYS_CALENDAR.getTableName(),
+        Object[][] calendarInfo = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.HOLIDAYS_CALENDAR.getTableName(),
                 new String[]{TblsApp.HolidaysCalendar.CODE.getName()},
                 new Object[]{code}, new String[]{TblsApp.HolidaysCalendar.CODE.getName(), TblsApp.HolidaysCalendar.ACTIVE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(calendarInfo[0][0].toString())) {

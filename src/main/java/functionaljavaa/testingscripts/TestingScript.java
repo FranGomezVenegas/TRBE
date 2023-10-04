@@ -142,7 +142,7 @@ public class TestingScript {
         if (codeFldPosic==-1||codeVersionFldPosic==-1){
             return new InternalMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{});
         }                
-        Object[][] scriptsArr = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT.getTableName(),
+        Object[][] scriptsArr = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT.getTableName(),
             new String[]{TblsTesting.Script.TESTER_NAME.getName(), TblsTesting.Script.PURPOSE.getName()}, new Object[]{testerName, scriptPurpose},
             new String[]{TblsTesting.Script.SCRIPT_ID.getName()});
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptsArr[0][0].toString()))){
@@ -215,7 +215,7 @@ public class TestingScript {
         if (codeFldPosic==-1||codeVersionFldPosic==-1){
             return new InternalMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{});
         }
-        Object[][] spec = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.SPEC.getTableName(),
+        Object[][] spec = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.SPEC.getTableName(),
             new String[]{TblsCnfg.Spec.CODE.getName(), TblsCnfg.Spec.CONFIG_VERSION.getName()}, 
             new Object[]{rows[0][codeFldPosic], rows[0][codeVersionFldPosic]},
             new String[]{TblsCnfg.Spec.TESTING_SCRIPTS.getName()});

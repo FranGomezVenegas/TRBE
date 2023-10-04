@@ -167,7 +167,7 @@ public class DataInsLotsCorrectiveAction {
             keyFldsN = LPArray.addValueToArray1D(keyFldsN, TblsInspLotRMProcedure.LotsCorrectiveAction.BULK_ID.getName());
             keyFldsV = LPArray.addValueToArray1D(keyFldsV, bulkId);
         }
-        Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsInspLotRMProcedure.TablesInspLotRMProcedure.LOT_CORRECTIVE_ACTION.getTableName(),
+        Object[] existsRecord = Rdbms.existsRecord(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsInspLotRMProcedure.TablesInspLotRMProcedure.LOT_CORRECTIVE_ACTION.getTableName(),
                 keyFldsN, keyFldsV);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, ProgramCorrectiveActionErrorTrapping.RECORD_ALREADY_EXISTS, new Object[]{bulkId, procInstanceName});
@@ -245,7 +245,7 @@ public class DataInsLotsCorrectiveAction {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
-        Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsInspLotRMProcedure.TablesInspLotRMProcedure.LOT_CORRECTIVE_ACTION.getTableName(),
+        Object[] existsRecord = Rdbms.existsRecord(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsInspLotRMProcedure.TablesInspLotRMProcedure.LOT_CORRECTIVE_ACTION.getTableName(),
                 new String[]{TblsInspLotRMProcedure.LotsCorrectiveAction.BULK_ID.getName()}, new Object[]{bulkId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, ProgramCorrectiveActionErrorTrapping.RECORD_ALREADY_EXISTS, new Object[]{bulkId, procInstanceName});
@@ -333,7 +333,7 @@ public class DataInsLotsCorrectiveAction {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String statusClosed = LotsCorrectiveActionStatuses.STATUS_CLOSED.getStatusCode();
-        Object[][] correctiveActionInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsInspLotRMProcedure.TablesInspLotRMProcedure.LOT_CORRECTIVE_ACTION.getTableName(),
+        Object[][] correctiveActionInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsInspLotRMProcedure.TablesInspLotRMProcedure.LOT_CORRECTIVE_ACTION.getTableName(),
                 new String[]{TblsInspLotRMProcedure.LotsCorrectiveAction.ID.getName()}, new Object[]{correctiveActionId},
                 new String[]{TblsInspLotRMProcedure.LotsCorrectiveAction.STATUS.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(correctiveActionInfo[0][0].toString())) {
@@ -379,12 +379,12 @@ public class DataInsLotsCorrectiveAction {
         }
         Object[][] programCorrectiveActionsToMarkAsCompleted = null;
         if (objectIdClass!=null&&LPDatabase.integer().equalsIgnoreCase(objectIdClass)) {
-            programCorrectiveActionsToMarkAsCompleted = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsInspLotRMProcedure.TablesInspLotRMProcedure.LOT_CORRECTIVE_ACTION.getTableName(),
+            programCorrectiveActionsToMarkAsCompleted = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsInspLotRMProcedure.TablesInspLotRMProcedure.LOT_CORRECTIVE_ACTION.getTableName(),
                     new String[]{fieldToFindRecord, TblsInspLotRMProcedure.LotsCorrectiveAction.STATUS.getName() + " " + WHERECLAUSE_TYPES.NOT_IN.getSqlClause()}, 
                     new Object[]{Integer.valueOf(objectId.toString()), statusClosed},
                     new String[]{TblsInspLotRMProcedure.LotsCorrectiveAction.ID.getName(), TblsInspLotRMProcedure.LotsCorrectiveAction.INVEST_ID.getName()});
         } else {
-            programCorrectiveActionsToMarkAsCompleted = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsInspLotRMProcedure.TablesInspLotRMProcedure.LOT_CORRECTIVE_ACTION.getTableName(),
+            programCorrectiveActionsToMarkAsCompleted = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsInspLotRMProcedure.TablesInspLotRMProcedure.LOT_CORRECTIVE_ACTION.getTableName(),
                     new String[]{fieldToFindRecord, TblsInspLotRMProcedure.LotsCorrectiveAction.STATUS.getName() + " " + WHERECLAUSE_TYPES.NOT_IN.getSqlClause()}, new Object[]{objectId.toString(), statusClosed},
                     new String[]{TblsInspLotRMProcedure.LotsCorrectiveAction.ID.getName(), TblsInspLotRMProcedure.LotsCorrectiveAction.INVEST_ID.getName()});
         }

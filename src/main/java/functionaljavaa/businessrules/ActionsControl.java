@@ -27,7 +27,7 @@ public class ActionsControl {
 
     public static JSONObject auditSignMode(String procInstanceName) {
         JSONObject jObj = new JSONObject();
-        Object[][] rulesValues = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause()}, new Object[]{"sampleAuditChildRevisionRequired|sampleAuditRevisionMode"}, new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});
+        Object[][] rulesValues = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause()}, new Object[]{"sampleAuditChildRevisionRequired|sampleAuditRevisionMode"}, new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(rulesValues[0][0].toString())) {
             return jObj;
         }
@@ -38,7 +38,7 @@ public class ActionsControl {
     }
 
     public static JSONArray procActionsWithJustifReason(String procInstanceName) {
-        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
+        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())) {
             return procActionsWithJustifReasonInBusRules(procInstanceName);
         }
@@ -46,7 +46,7 @@ public class ActionsControl {
     }
     private static JSONArray procActionsWithJustifReasonInBusRules(String procInstanceName) {
         JSONArray jArr = new JSONArray();
-        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()}, new Object[]{LPPlatform.LpPlatformBusinessRules.AUDIT_JUSTIF_REASON_REQUIRED.getTagName()}, new String[]{TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});
+        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()}, new Object[]{LPPlatform.LpPlatformBusinessRules.AUDIT_JUSTIF_REASON_REQUIRED.getTagName()}, new String[]{TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())) {
             return jArr;
         }
@@ -61,7 +61,7 @@ public class ActionsControl {
     }
     private static JSONArray procActionsWithJustifReasonInTable(String procInstanceName) {
         JSONArray jArr = new JSONArray();
-        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName(), new String[]{TblsProcedure.ProcedureActions.JUSTIF_REASON_REQUIRED.getName()}, new Object[]{true}, new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName()});
+        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName(), new String[]{TblsProcedure.ProcedureActions.JUSTIF_REASON_REQUIRED.getName()}, new Object[]{true}, new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())) {
             return jArr;
         }
@@ -75,7 +75,7 @@ public class ActionsControl {
     }
 
     public static JSONArray procActionsWithActionConfirm(String procInstanceName) {
-        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
+        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())) {
             return procActionsWithActionConfirmInBusRules(procInstanceName);
         }
@@ -83,7 +83,7 @@ public class ActionsControl {
     }
     private static JSONArray procActionsWithActionConfirmInBusRules(String procInstanceName) {
         JSONArray jArr = new JSONArray();
-        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()}, new Object[]{LPPlatform.LpPlatformBusinessRules.ACTIONCONFIRM_REQUIRED.getTagName()}, new String[]{TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});
+        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()}, new Object[]{LPPlatform.LpPlatformBusinessRules.ACTIONCONFIRM_REQUIRED.getTagName()}, new String[]{TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())) {
             return jArr;
         }
@@ -93,7 +93,7 @@ public class ActionsControl {
     }
     private static JSONArray procActionsWithActionConfirmInTable(String procInstanceName) {
         JSONArray jArr = new JSONArray();
-        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName(), new String[]{TblsProcedure.ProcedureActions.ARE_YOU_SURE_REQUIRED.getName()}, new Object[]{true}, new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName()});
+        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName(), new String[]{TblsProcedure.ProcedureActions.ARE_YOU_SURE_REQUIRED.getName()}, new Object[]{true}, new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())) {
             return jArr;
         }
@@ -107,7 +107,7 @@ public class ActionsControl {
     }
 
     public static JSONArray procActionsWithESign(String procInstanceName) {
-        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
+        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())) {
             return procActionsWithESignInBusRules(procInstanceName);
         }
@@ -115,7 +115,7 @@ public class ActionsControl {
     }
     private static JSONArray procActionsWithESignInBusRules(String procInstanceName) {
         JSONArray jArr = new JSONArray();
-        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()}, new Object[]{LPPlatform.LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()}, new String[]{TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});
+        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()}, new Object[]{LPPlatform.LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName()}, new String[]{TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())) {
             return jArr;
         }
@@ -130,7 +130,7 @@ public class ActionsControl {
     }
     private static JSONArray procActionsWithESignInTable(String procInstanceName) {
         JSONArray jArr = new JSONArray();
-        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName(), new String[]{TblsProcedure.ProcedureActions.ESIGN_REQUIRED.getName()}, new Object[]{true}, new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName()});
+        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName(), new String[]{TblsProcedure.ProcedureActions.ESIGN_REQUIRED.getName()}, new Object[]{true}, new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())) {
             return jArr;
         }
@@ -144,7 +144,7 @@ public class ActionsControl {
     }
 
     public static JSONArray procActionsWithConfirmUser(String procInstanceName) {
-        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
+        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())) {
             return procActionsWithConfirmUserInBusRules(procInstanceName);
         }
@@ -152,7 +152,7 @@ public class ActionsControl {
     }
     private static JSONArray procActionsWithConfirmUserInBusRules(String procInstanceName) {
         JSONArray jArr = new JSONArray();
-        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()}, new Object[]{LPPlatform.LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName()}, new String[]{TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});
+        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()}, new Object[]{LPPlatform.LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName()}, new String[]{TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())) {
             return jArr;
         }
@@ -167,7 +167,7 @@ public class ActionsControl {
     }
     private static JSONArray procActionsWithConfirmUserInTable(String procInstanceName) {
         JSONArray jArr = new JSONArray();
-        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName(), new String[]{TblsProcedure.ProcedureActions.USER_CREDENTIAL_REQUIRED.getName()}, new Object[]{true}, new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName()});
+        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName(), new String[]{TblsProcedure.ProcedureActions.USER_CREDENTIAL_REQUIRED.getName()}, new Object[]{true}, new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())) {
             return jArr;
         }
@@ -183,7 +183,7 @@ public class ActionsControl {
     private static JSONObject actionDetailInBusRules(String procInstanceName, String actionName) {
         JSONObject jObj = new JSONObject();
         actionName = actionName + "AuditReasonPhrase";
-        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()}, new Object[]{actionName}, new String[]{TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});
+        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()}, new Object[]{actionName}, new String[]{TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});
         String[] actionDetail = LPNulls.replaceNull(ruleValue[0][0]).toString().split("\\|");
         jObj.put("name", actionName);
         jObj.put("type", actionDetail[0]);
@@ -234,7 +234,7 @@ public class ActionsControl {
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, null);
     }
     public static Object[] procUserRoleActionEnabled(String procInstanceName, String userRole, String actionName, BusinessRules procBusinessRules) {
-        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
+        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
         return (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))? 
             procUserRoleActionEnabledInBusRules(procInstanceName, userRole, actionName, procBusinessRules):
             procUserRoleActionEnabledInTable(procInstanceName, userRole, actionName, procBusinessRules);        
@@ -279,7 +279,7 @@ public class ActionsControl {
         }
     }
     public static Object[] procActionEnabled(String procInstanceName, Token token, String actionName, BusinessRules procBusinessRules) {
-        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
+        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
         return (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))? 
             procActionEnabledInBusRules(procInstanceName, token, actionName, procBusinessRules):
             procActionEnabledInTable(procInstanceName, token, actionName, procBusinessRules);
@@ -345,7 +345,7 @@ public class ActionsControl {
     }
 
     public static Object[] procActionRequiresJustificationPhrase(String procInstanceName, String actionName, BusinessRules procBusinessRules) {
-        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
+        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
         return (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))? 
             procActionRequiresJustificationPhraseInBusRules(procInstanceName, actionName, procBusinessRules):
             procActionRequiresJustificationPhraseInTable(procInstanceName, actionName, procBusinessRules);                
@@ -384,7 +384,7 @@ public class ActionsControl {
     }
 
     public static Object[] procActionRequiresEsignConfirmation(String procInstanceName, String actionName, BusinessRules procBusinessRules) {
-        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
+        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
         return (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))? 
             procActionRequiresEsignConfirmationInBusRules(procInstanceName, actionName, procBusinessRules):
             procActionRequiresEsignConfirmationInTable(procInstanceName, actionName, procBusinessRules);                        
@@ -423,7 +423,7 @@ public class ActionsControl {
     }
 
     public static Object[] procActionRequiresUserConfirmation(String procInstanceName, String actionName, BusinessRules procBusinessRules) {
-        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
+        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
         return (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))? 
             procActionRequiresUserConfirmationInBusRules(procInstanceName, actionName, procBusinessRules):
             procActionRequiresUserConfirmationInTable(procInstanceName, actionName, procBusinessRules);

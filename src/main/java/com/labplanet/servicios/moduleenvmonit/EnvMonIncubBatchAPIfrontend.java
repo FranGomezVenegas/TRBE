@@ -206,7 +206,7 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                 String[] incubatorFldsToRetrieve=new String[]{TblsEnvMonitConfig.InstrIncubator.LOCKED.getName(), TblsEnvMonitConfig.InstrIncubator.LOCKED_REASON.getName()};
                 whereFieldsNameArr=new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()};
                 whereFieldsValueArr=new Object[]{currBatch[incubPosic].toString()};
-                Object[][] instrIncubatorInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), 
+                Object[][] instrIncubatorInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), 
                         whereFieldsNameArr, whereFieldsValueArr, incubatorFldsToRetrieve);
                 String[] tempReadingFldsToRetrieve=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.EVENT_TYPE.getName(),
                     TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_BY.getName(),

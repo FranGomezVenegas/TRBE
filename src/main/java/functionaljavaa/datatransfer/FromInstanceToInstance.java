@@ -29,7 +29,7 @@ public class FromInstanceToInstance {
         Object[][] tableFldsInfo = dbTableGetFieldDefinition.get(fldDefinitionColName);
         String[] tableFldsInfoColumns = LPArray.convertObjectArrayToStringArray(LPArray.getColumnFromArray2D(tableFldsInfo, LPArray.valuePosicInArray(fldDefinitionColName, "column_name")));
         
-        Object[][] recordsInSourceDB = Rdbms.getRecordFieldsByFilter(tblObj.getRepositoryName(), tblObj.getTableName(),
+        Object[][] recordsInSourceDB = Rdbms.getRecordFieldsByFilter("", tblObj.getRepositoryName(), tblObj.getTableName(),
                 new String[]{tableFldsInfoColumns[0]+" "+SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause()}, 
                 new Object[]{"<<<>>>"}, tableFldsInfoColumns);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(recordsInSourceDB[0][0].toString())) 

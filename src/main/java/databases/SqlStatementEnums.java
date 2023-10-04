@@ -783,7 +783,7 @@ public class SqlStatementEnums {
             schemaName = LPPlatform.buildSchemaName(alternativeProcInstanceName, schemaName);
         }
         String tableName = tblOrVwName;
-        schemaName = addSuffixIfItIsForTesting(schemaName, tableName);
+        schemaName = addSuffixIfItIsForTesting(alternativeProcInstanceName, schemaName, tableName);
         return new Object[]{schemaName};
         //return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, new Object[]{});
     }

@@ -26,7 +26,7 @@ public final class GenomaUtilities {
     public static Object[] addObjectToUnstructuredField(EnumIntTables tableObj, String[] tableKeyFieldName, Object[] tableKeyFieldValue, String unstructuredFieldName, String newObjectId, String newObjectInfoToStore){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String[] sampleInfoFieldsToRetrieve = new String[]{unstructuredFieldName};
-        Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, tableObj.getRepositoryName()), tableObj.getTableName(), 
+        Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, tableObj.getRepositoryName()), tableObj.getTableName(), 
                 tableKeyFieldName, tableKeyFieldValue, sampleInfoFieldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) {
             return LPArray.array2dTo1d(sampleInfo);
@@ -54,7 +54,7 @@ public final class GenomaUtilities {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         
         String[] sampleInfoFieldsToRetrieve = new String[]{unstructuredFieldName};
-        Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, tableObj.getRepositoryName()), tableObj.getTableName(), 
+        Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, tableObj.getRepositoryName()), tableObj.getTableName(), 
                 tableKeyFieldName, tableKeyFieldValue, sampleInfoFieldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) {
             return LPArray.array2dTo1d(sampleInfo);

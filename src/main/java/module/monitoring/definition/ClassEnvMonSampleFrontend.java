@@ -567,7 +567,7 @@ public class ClassEnvMonSampleFrontend {
                         if (fldSampleIdPosic > -1) {
                             JSONArray jMicArr = new JSONArray();
                             Integer curSmpId = Integer.valueOf(curRec[fldSampleIdPosic].toString());
-                            Object[][] grouper = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM.getTableName(),
+                            Object[][] grouper = Rdbms.getGrouper(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE_MICROORGANISM.getTableName(),
                                     new String[]{TblsEnvMonitData.SampleMicroorganism.MICROORG_NAME.getName()},
                                     new String[]{TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID.getName()},
                                     new Object[]{curSmpId}, new String[]{TblsEnvMonitData.SampleMicroorganism.MICROORG_NAME.getName()});
@@ -967,7 +967,7 @@ public class ClassEnvMonSampleFrontend {
                             JSONArray sampleGrouperJsonArr = new JSONArray();
                             String[] groupInfo = currGroup.split("\\*");
                             String[] smpGroupFldsArr = groupInfo[0].split(",");
-                            Object[][] groupedInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(),
+                            Object[][] groupedInfo = Rdbms.getGrouper(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(),
                                     smpGroupFldsArr, new String[]{TblsEnvMonitData.Sample.PRODUCTION_LOT.getName()}, new Object[]{incubName},
                                     null);
                             smpGroupFldsArr = LPArray.addValueToArray1D(smpGroupFldsArr, "count");
@@ -1108,7 +1108,7 @@ public class ClassEnvMonSampleFrontend {
                         whereFieldNames = new String[]{TblsEnvMonitData.Sample.PROGRAM_NAME.getName() + " not in"};
                         whereFieldValues = new Object[]{"<<"};
                     }
-                    Object[][] samplesCounterPerStage = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(),
+                    Object[][] samplesCounterPerStage = Rdbms.getGrouper(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(),
                             prodLotfieldToRetrieveArr,
                             whereFieldNames, whereFieldValues,
                             new String[]{"COUNTER desc"});
@@ -1577,7 +1577,7 @@ public class ClassEnvMonSampleFrontend {
                         if ("TRUE".equalsIgnoreCase(addSampleAnalysisResult)) {
                             sampleAnalysisFieldToRetrieveArr = LPArray.addValueToArray1D(sampleAnalysisFieldToRetrieveArr, TblsData.SampleAnalysis.TEST_ID.getName());
                         }
-                        Object[][] mySampleAnalysis = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
+                        Object[][] mySampleAnalysis = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
                                 testWhereFieldsNameArr, testWhereFieldsValueArr, sampleAnalysisFieldToRetrieveArr);
                         JSONArray mySamplesAnaJSArr = new JSONArray();
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(mySampleAnalysis[0][0].toString())) {
@@ -1596,7 +1596,7 @@ public class ClassEnvMonSampleFrontend {
                                         sarWhereFieldsValueArr = LPArray.addValueToArray1D(sarWhereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(LPNulls.replaceNull(sampleAnalysisResultWhereFieldsValue).split("\\|")));
                                     }
 
-                                    Object[][] mySampleAnalysisResults = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
+                                    Object[][] mySampleAnalysisResults = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
                                             sarWhereFieldsNameArr, sarWhereFieldsValueArr, sampleAnalysisResultFieldToRetrieveArr);
                                     JSONArray mySamplesAnaResJSArr = new JSONArray();
                                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(mySampleAnalysisResults[0][0].toString())) {
@@ -1623,7 +1623,7 @@ public class ClassEnvMonSampleFrontend {
             whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, "");
             JSONArray samplesArray = new JSONArray();
             JSONArray sampleArray = new JSONArray();
-            Object[][] mySamples = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(),
+            Object[][] mySamples = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaDataName, TblsData.TablesData.SAMPLE.getTableName(),
                     whereFieldsNameArr, whereFieldsValueArr, sampleFieldToRetrieveArr);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(mySamples[0][0].toString())) {
                 return new JSONArray();
@@ -1634,7 +1634,7 @@ public class ClassEnvMonSampleFrontend {
                 if (("TEST".equals(sampleLastLevel)) || ("RESULT".equals(sampleLastLevel))) {
                     String[] testWhereFieldsNameArr = new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName()};
                     Object[] testWhereFieldsValueArr = new Object[]{sampleId};
-                    Object[][] mySampleAnalysis = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
+                    Object[][] mySampleAnalysis = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
                             testWhereFieldsNameArr, testWhereFieldsValueArr, sampleAnalysisFieldToRetrieveArr);
                     for (Object[] mySampleAnalysi : mySampleAnalysis) {
                         JSONObject testObj = new JSONObject();
@@ -2006,7 +2006,7 @@ public class ClassEnvMonSampleFrontend {
             return false;
         }
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Object[][] groupedInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
+        Object[][] groupedInfo = Rdbms.getGrouper(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
                 new String[]{TblsData.SampleAnalysis.STATUS.getName()},
                 new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName(), TblsData.SampleAnalysis.STATUS.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause()},
                 new Object[]{fldsValue[smFldPosic],

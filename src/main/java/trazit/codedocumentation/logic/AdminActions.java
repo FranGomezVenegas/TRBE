@@ -153,13 +153,13 @@ private AdminActions() {throw new IllegalStateException("Utility class");}
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         Object[] existsRecord = null;
         if (insertStatement.equalsIgnoreCase(sqlAction.toUpperCase())) {
-            existsRecord = Rdbms.existsRecord(tblObj.getRepositoryName(), tblObj.getTableName(), fldNames, fldValues);
+            existsRecord = Rdbms.existsRecord("", tblObj.getRepositoryName(), tblObj.getTableName(), fldNames, fldValues);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())) {
                 messages.addMainForError(TrazitUtilitiesErrorTrapping.RECORD_ALREADY_EXISTS, null);
                 return new InternalMessage(LPPlatform.LAB_FALSE, existsRecord[existsRecord.length - 1].toString(), fldValues, null);
             }
         } else {
-            existsRecord = Rdbms.existsRecord(tblObj.getRepositoryName(), tblObj.getTableName(), new String[]{TblsApp.IPWhiteList.ID.getName()}, new Object[]{id});
+            existsRecord = Rdbms.existsRecord("", tblObj.getRepositoryName(), tblObj.getTableName(), new String[]{TblsApp.IPWhiteList.ID.getName()}, new Object[]{id});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsRecord[0].toString())) {
                 messages.addMainForError(RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, null);
                 return new InternalMessage(LPPlatform.LAB_FALSE, existsRecord[existsRecord.length - 1].toString(), fldValues, null);

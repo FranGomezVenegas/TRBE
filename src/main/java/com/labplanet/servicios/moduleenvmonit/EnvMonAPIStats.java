@@ -647,7 +647,7 @@ public class EnvMonAPIStats extends HttpServlet {
                     JSONArray sampleGrouperJsonArr = new JSONArray();
                     String[] groupInfo = currGroup.split("\\*");
                     String[] smpGroupFldsArr = groupInfo[0].split(",");
-                    Object[][] groupedInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName(),
+                    Object[][] groupedInfo = Rdbms.getGrouper(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName(),
                             smpGroupFldsArr, wObj, //filterFieldName, filterFieldValue, 
                             null, false);
                     smpGroupFldsArr = LPArray.addValueToArray1D(smpGroupFldsArr, "count");
@@ -670,7 +670,7 @@ public class EnvMonAPIStats extends HttpServlet {
                     JSONArray investigationGrouperJsonArr = new JSONArray();
                     String[] groupInfo = currGroup.split("\\*");
                     String[] invGroupFldsArr = groupInfo[0].split(",");
-                    Object[][] groupedInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(),
+                    Object[][] groupedInfo = Rdbms.getGrouper(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(),
                             invGroupFldsArr, wObj, //filterFieldName, filterFieldValue, 
                             null, false);
                     invGroupFldsArr = LPArray.addValueToArray1D(invGroupFldsArr, "count");

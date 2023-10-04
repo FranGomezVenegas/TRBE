@@ -269,7 +269,7 @@ public class DataIncubatorNoteBook {
                     new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()}, new Object[]{instName},
                     new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()});
         } else {
-            instrInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(),
+            instrInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(),
                     new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()}, new Object[]{instName},
                     new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()});
         }
@@ -302,7 +302,7 @@ public class DataIncubatorNoteBook {
                     fieldsToRetrieveObj, whereFieldName, whereFieldValue,
                     new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.ID.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
         } else {
-            instrNotebook = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK.getTableName(),
+            instrNotebook = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK.getTableName(),
                     whereFieldName, whereFieldValue,
                     fieldsToRetrieve, new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.ID.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
         }

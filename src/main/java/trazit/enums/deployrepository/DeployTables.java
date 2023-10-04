@@ -41,7 +41,7 @@ public class DeployTables {
     public static String createTableScript(EnumIntTables tableObj, String procInstanceName, Boolean run, Boolean refreshTableIfExists, Boolean isView, String fieldsToExclude) {
         try{
         String schemaName = LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), tableObj.getRepositoryName());
-        Object[] dbTableExists = Rdbms.dbTableExists(schemaName, tableObj.getTableName());
+        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, schemaName, tableObj.getTableName());
         StringBuilder seqScript = new StringBuilder(0);
         String[] fieldsToExcludeArr = new String[]{};
         if (fieldsToExclude != null) {
@@ -223,7 +223,7 @@ public class DeployTables {
 
     private static String createTableBeginScript(EnumIntTables tableObj, String procInstanceName, String[] fieldsToExcludeArr) {
         BusinessRules bi = null;
-        Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ZZZ_DB_ERROR.getTableName());
+        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ZZZ_DB_ERROR.getTableName());
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))) {
             bi = new BusinessRules(procInstanceName, null);
         }

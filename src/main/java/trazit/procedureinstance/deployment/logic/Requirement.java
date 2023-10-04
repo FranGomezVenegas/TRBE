@@ -29,6 +29,6 @@ public class Requirement {
         Object[] whereFldValue = new Object[]{procInstanceName};
         String[] fieldsToRetrieve = new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName()};
         
-        return Rdbms.getRecordFieldsByFilter(schemaName, tableName, whereFldName, whereFldValue, fieldsToRetrieve);        
+        return Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, tableName, whereFldName, whereFldValue, fieldsToRetrieve);        
     }    
 }

@@ -553,11 +553,11 @@ public class SopUserAPIqueries extends HttpServlet {
             }
             JSONArray myPendingSopsByProc = new JSONArray();
             for (String currProc : allUserProcedurePrefix) {
-                Object[] dbTableExists = Rdbms.dbTableExists(currProc + "-config", TblsCnfg.TablesConfig.SOP_META_DATA.getTableName());
+                Object[] dbTableExists = Rdbms.dbTableExists(currProc, currProc + "-config", TblsCnfg.TablesConfig.SOP_META_DATA.getTableName());
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())) {
                     return new JSONArray();
                 }
-                Object[][] procSops = Rdbms.getRecordFieldsByFilter(currProc + "-config", TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(),
+                Object[][] procSops = Rdbms.getRecordFieldsByFilter(currProc, currProc + "-config", TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(),
                         new String[]{TblsCnfg.SopMetaData.SOP_ID.getName() + WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, fieldsToRetrieve);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(procSops[0]))) {
                     LPFrontEnd.responseError(procSops);

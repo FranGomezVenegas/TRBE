@@ -148,7 +148,7 @@ public class DataInspectionLot {
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
         String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
 
-        Object[] lotExists = Rdbms.existsRecord(schemaDataName, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(),
+        Object[] lotExists = Rdbms.existsRecord(procInstanceName, schemaDataName, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(),
                 new String[]{TblsInspLotRMData.Lot.NAME.getName()}, new Object[]{lotName});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(lotExists[0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.LOT_ALREADY_EXISTS, new Object[]{lotName, procInstanceName});
@@ -184,7 +184,7 @@ public class DataInspectionLot {
             mandatoryFields = LPArray.addValueToArray1D(mandatoryFields, TblsInspLotRMData.Lot.SPEC_CODE_VERSION.getName());
         //    mandatoryFields = LPArray.addValueToArray1D(mandatoryFields, TblsInspLotRMData.Lot.SPEC_VARIATION_NAME.getName());
          */
-        Object[][] materialInfo = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsInspLotRMConfig.TablesInspLotRMConfig.MATERIAL.getTableName(),
+        Object[][] materialInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaConfigName, TblsInspLotRMConfig.TablesInspLotRMConfig.MATERIAL.getTableName(),
                 new String[]{TblsInspLotRMConfig.Material.NAME.getName()}, new Object[]{materialName},
                 new String[]{TblsInspLotRMConfig.Material.SPEC_CODE.getName(), TblsInspLotRMConfig.Material.SPEC_CODE_VERSION.getName(), TblsInspLotRMConfig.Material.ANALYSIS_VARIATION_NAME.getName(),
                     TblsInspLotRMConfig.Material.INVENTORY_MANAGEMENT.getName(), TblsInspLotRMConfig.Material.PERFORM_BULK_CONTROL.getName(), TblsInspLotRMConfig.Material.BULK_SAMPLING_DEFAULT_ALGORITHM.getName()});
@@ -192,7 +192,7 @@ public class DataInspectionLot {
             return new InternalMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{lotName, TblsInspLotRMConfig.TablesInspLotRMConfig.MATERIAL.getTableName(), LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName())}, lotName);
         }        
 
-        Object[][] specInfo = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsInspLotRMConfig.TablesInspLotRMConfig.SPEC.getTableName(),
+        Object[][] specInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaConfigName, TblsInspLotRMConfig.TablesInspLotRMConfig.SPEC.getTableName(),
                 new String[]{TblsCnfg.Spec.CODE.getName(), TblsCnfg.Spec.CONFIG_VERSION.getName()}, new Object[]{materialInfo[0][0], materialInfo[0][1]},
                 new String[]{TblsInspLotRMConfig.Spec.TOTAL_SAMPLE_REQ_Q.getName(), TblsInspLotRMConfig.Spec.TOTAL_SAMPLE_REQ_Q_UOM.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(specInfo[0][0].toString())) {
@@ -225,7 +225,7 @@ public class DataInspectionLot {
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, mandatoryFieldsMissingBuilder.toString());
             return new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.MISSING_MANDATORY_FIELDS, errorDetailVariables);
         }
-        Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, TblsInspLotRMConfig.TablesInspLotRMConfig.LOT.getTableName(),
+        Object[] diagnosis = Rdbms.existsRecord(procInstanceName, schemaConfigName, TblsInspLotRMConfig.TablesInspLotRMConfig.LOT.getTableName(),
                 new String[]{TblsInspLotRMConfig.Lot.CODE.getName(), TblsInspLotRMConfig.Lot.CODE_VERSION.getName()}, new Object[]{template, templateVersion});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.DataInspLotErrorTrapping.MISSING_CONFIG_CODE, new Object[]{template, templateVersion, schemaConfigName, diagnosis[5]});
@@ -500,7 +500,7 @@ public class DataInspectionLot {
     public static InternalMessage lotQuantityReduce(String lotName, Integer bulkId, String decision, String[] fieldName, Object[] fieldValue) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        Object[][] lotInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(),
+        Object[][] lotInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(),
                 new String[]{TblsInspLotRMData.Lot.NAME.getName()}, new Object[]{lotName},
                 new String[]{TblsInspLotRMData.Lot.MATERIAL_NAME.getName(), TblsInspLotRMData.Lot.SPEC_CODE.getName(),
                     TblsInspLotRMData.Lot.SPEC_CODE_VERSION.getName(), TblsInspLotRMData.Lot.QUANTITY.getName(), TblsInspLotRMData.Lot.QUANTITY_UOM.getName(),
@@ -511,7 +511,7 @@ public class DataInspectionLot {
         Double lotQuantity = Double.valueOf(lotInfo[0][3].toString());
         String lotQuantityUOM = lotInfo[0][4].toString();
         if (decision.toUpperCase().contains("REJECT")) {
-            Object[][] lotBulkInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.LOT_BULK.getTableName(),
+            Object[][] lotBulkInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInspLotRMData.TablesInspLotRMData.LOT_BULK.getTableName(),
                     new String[]{TblsInspLotRMData.LotBulk.LOT_NAME.getName(), TblsInspLotRMData.LotBulk.BULK_ID.getName()}, new Object[]{lotName, bulkId},
                     new String[]{TblsInspLotRMData.LotBulk.QUANTITY.getName(), TblsInspLotRMData.LotBulk.QUANTITY_UOM.getName()});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(lotBulkInfo[0][0].toString())) {

@@ -90,13 +90,13 @@ public class ProcDeployCheckerLogic {
         Boolean anyMismatch=false;
         JSONObject detailsObj=new JSONObject();
         JSONObject mismatchesObj=new JSONObject();        
-        Object[][] procInfoRecordsDestination = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, TblsProcedure.TablesProcedure.PROCEDURE_INFO.getRepositoryName()), TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), 
+        Object[][] procInfoRecordsDestination = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsProcedure.TablesProcedure.PROCEDURE_INFO.getRepositoryName()), TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), 
                new String[]{TblsProcedure.ProcedureInfo.NAME.getName(), TblsProcedure.ProcedureInfo.VERSION.getName()}, new Object[]{procedure, procVersion}, 
                FLDSTORETR_PROCEDURE_INFO_SOURCE.split("\\|"));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfoRecordsDestination[0][0].toString())){
             anyMismatch=true;
             String errMsg="Not Deployed yet, there is no record in table "+TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName();
-            Object[][] procInfoRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName(), 
+            Object[][] procInfoRecordsSource = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName(), 
                new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(),TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procedure, procVersion, procInstanceName}, 
                FLDSTORETR_REQS_PROCINFOSRC.split("\\|"));
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfoRecordsSource[0][0].toString()))
@@ -121,7 +121,7 @@ public class ProcDeployCheckerLogic {
         JSONArray procUserRolesSource = new JSONArray();
         String[] personProfilesDestFlds = EnumIntTableFields.getAllFieldNames(TblsProcedure.TablesProcedure.PERSON_PROFILE);
 
-        Object[][] personProfileRecordsDestination = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, TblsProcedure.TablesProcedure.PERSON_PROFILE.getRepositoryName()), TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), 
+        Object[][] personProfileRecordsDestination = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsProcedure.TablesProcedure.PERSON_PROFILE.getRepositoryName()), TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), 
                new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}, 
                personProfilesDestFlds);
         Integer personNameFldPosic=LPArray.valuePosicInArray(personProfilesDestFlds, TblsProcedure.PersonProfile.PERSON_NAME.getName());
@@ -134,7 +134,7 @@ public class ProcDeployCheckerLogic {
         detailsObj.put(GlobalAPIsParams.LBL_DATA_DEPLOYED_TABLE+TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), personProfilesDest);
 
         String[] procUserRolesSourceFlds = new String[]{TblsReqs.ProcedureUserRoles.USER_NAME.getName() , TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()};
-        Object[][] procUserAndRolesRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USER_ROLES.getTableName(), 
+        Object[][] procUserAndRolesRecordsSource = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USER_ROLES.getTableName(), 
            new String[]{TblsReqs.ProcedureUserRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRoles.PROCEDURE_VERSION.getName(),TblsReqs.ProcedureUserRoles.PROC_INSTANCE_NAME.getName()}, new Object[]{procedure, procVersion, procInstanceName}, 
            procUserRolesSourceFlds);
         for (Object[] curRow: procUserAndRolesRecordsSource)
@@ -181,14 +181,14 @@ public class ProcDeployCheckerLogic {
         JSONArray procUserRolesSource = new JSONArray();
 
         String[] procUserRolesSourceFlds = getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableFields());
-        Object[][] procUserAndRolesRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableName(), 
+        Object[][] procUserAndRolesRecordsSource = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableName(), 
             new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(),TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procedure, procVersion, procInstanceName},                 procUserRolesSourceFlds);
         for (Object[] curRow: procUserAndRolesRecordsSource)
             procUserRolesSource.add(LPJson.convertArrayRowToJSONObject(procUserRolesSourceFlds, curRow));
         detailsObj.put(GlobalAPIsParams.LBL_DATA_IN_DEFINITION_TABLE+TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableName(), procUserRolesSource);
         
         String[] personProfilesDestFlds = EnumIntTableFields.getAllFieldNames(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS);
-        Object[][] personProfileRecordsDestination = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getRepositoryName()), TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(), 
+        Object[][] personProfileRecordsDestination = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getRepositoryName()), TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(), 
                new String[]{TblsProcedure.ProcedureEvents.NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}, 
                personProfilesDestFlds);
         for (Object[] curRow: personProfileRecordsDestination)
@@ -240,7 +240,7 @@ public class ProcDeployCheckerLogic {
         JSONArray procUserRolesSource = new JSONArray();
 
         String[] procUserRolesSourceFlds = getAllFieldNames(TblsReqs.TablesReqs.PROC_BUS_RULES.getTableFields());
-        Object[][] procUserAndRolesRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_BUS_RULES.getTableName(), 
+        Object[][] procUserAndRolesRecordsSource = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_BUS_RULES.getTableName(), 
                 new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(),TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procedure, procVersion, procInstanceName}, 
                 procUserRolesSourceFlds);
         for (Object[] curRow: procUserAndRolesRecordsSource)
@@ -248,7 +248,7 @@ public class ProcDeployCheckerLogic {
         detailsObj.put(GlobalAPIsParams.LBL_DATA_IN_DEFINITION_TABLE+TblsReqs.TablesReqs.PROC_BUS_RULES.getTableName(), procUserRolesSource);
         
         String[] personProfilesDestFlds = EnumIntTableFields.getAllFieldNames(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE);
-        Object[][] personProfileRecordsDestination = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getRepositoryName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), 
+        Object[][] personProfileRecordsDestination = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getRepositoryName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), 
                new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}, 
                personProfilesDestFlds);
         for (Object[] curRow: personProfileRecordsDestination)
@@ -299,7 +299,7 @@ public class ProcDeployCheckerLogic {
         JSONArray procUserRolesSource = new JSONArray();
 
         String[] procUserRolesSourceFlds = getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableFields());
-        Object[][] procUserAndRolesRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableName(), 
+        Object[][] procUserAndRolesRecordsSource = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableName(), 
                 new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(),TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procedure, procVersion, procInstanceName}, 
                 procUserRolesSourceFlds);
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserAndRolesRecordsSource[0][0].toString()))){
@@ -308,7 +308,7 @@ public class ProcDeployCheckerLogic {
             detailsObj.put(GlobalAPIsParams.LBL_DATA_IN_DEFINITION_TABLE+TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableName(), procUserRolesSource);
         }
         String[] personProfilesDestFlds = EnumIntTableFields.getAllFieldNames(TblsCnfg.TablesConfig.SOP_META_DATA.getTableFields());
-        Object[][] personProfileRecordsDestination = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, TblsCnfg.TablesConfig.SOP_META_DATA.getRepositoryName()), TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
+        Object[][] personProfileRecordsDestination = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsCnfg.TablesConfig.SOP_META_DATA.getRepositoryName()), TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
                new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}, 
                personProfilesDestFlds);
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(personProfileRecordsDestination[0][0].toString()))){
@@ -357,7 +357,7 @@ public class ProcDeployCheckerLogic {
         JSONArray procUserRolesSource = new JSONArray();
 
         String[] procUserRolesSourceFlds = getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableFields());
-        Object[][] procUserAndRolesRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableName(), 
+        Object[][] procUserAndRolesRecordsSource = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableName(), 
                 new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(),TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procedure, procVersion, procInstanceName}, 
                 procUserRolesSourceFlds);
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserAndRolesRecordsSource[0][0].toString()))){
@@ -366,7 +366,7 @@ public class ProcDeployCheckerLogic {
             detailsObj.put(GlobalAPIsParams.LBL_DATA_IN_DEFINITION_TABLE+TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableName(), procUserRolesSource);
         }
         String[] personProfilesDestFlds = EnumIntTableFields.getAllFieldNames(TblsCnfg.TablesConfig.SOP_META_DATA.getTableFields());
-        Object[][] personProfileRecordsDestination = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, TblsCnfg.TablesConfig.SOP_META_DATA.getRepositoryName()), TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
+        Object[][] personProfileRecordsDestination = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsCnfg.TablesConfig.SOP_META_DATA.getRepositoryName()), TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
                new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}, 
                personProfilesDestFlds);
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(personProfileRecordsDestination[0][0].toString()))){
@@ -412,7 +412,7 @@ public class ProcDeployCheckerLogic {
         JSONArray procUserRolesSource = new JSONArray();
                 
         String[] procUserRolesSourceFlds = getAllFieldNames(TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableFields());
-        Object[][] procUserAndRolesRecordsSource = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableName(), 
+        Object[][] procUserAndRolesRecordsSource = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableName(), 
                 new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(),TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procedure, procVersion, procInstanceName}, 
                 procUserRolesSourceFlds);
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserAndRolesRecordsSource[0][0].toString()))){
@@ -446,7 +446,7 @@ public class ProcDeployCheckerLogic {
         try{
             JSONArray jsonArr=new JSONArray();
             JSONObject jsonObj = new JSONObject();
-             Object[][] procMasterDataObjs = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_MASTER_DATA.getTableName(), 
+             Object[][] procMasterDataObjs = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_MASTER_DATA.getTableName(), 
                 new String[]{TblsReqs.ProcedureMasterData.PROCEDURE_NAME.getName(), TblsReqs.ProcedureMasterData.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureMasterData.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureMasterData.ACTIVE.getName()}, 
                     new Object[]{procedure, procVersion, instanceName, true}, 
                 new String[]{TblsReqs.ProcedureMasterData.OBJECT_TYPE.getName(), TblsReqs.ProcedureMasterData.JSON_OBJ.getName()},

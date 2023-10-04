@@ -91,7 +91,7 @@ public final class TestingCoverage {
         this.coverageId = coverageId;
         this.busRuleExcludedByExcludeEndpoint = new String[]{};
         String[] covFldNameArr = getAllFieldNames(TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableFields());
-        Object[][] coverageInfoArr = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableName(),
+        Object[][] coverageInfoArr = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableName(),
                 new String[]{TblsTesting.ScriptsCoverage.COVERAGE_ID.getName()},
                 new Object[]{coverageId}, covFldNameArr);
         //if (LPPlatform.LAB_FALSE.equalsIgnoreCase(coverageInfo[0][0].toString())){return;}
@@ -116,7 +116,7 @@ public final class TestingCoverage {
         initializeCounters();
         this.scriptsFldNameArr = new String[]{TblsTesting.Script.SCRIPT_ID.getName(), TblsTesting.Script.BUSINESS_RULES_VISITED.getName(), TblsTesting.Script.MESSAGES_VISITED.getName(),
             TblsTesting.Script.DATE_EXECUTION.getName(), TblsTesting.Script.PURPOSE.getName(), TblsTesting.Script.RUN_SUMMARY.getName()};
-        this.scriptsInfoArr = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT.getTableName(),
+        this.scriptsInfoArr = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT.getTableName(),
                 new String[]{TblsTesting.Script.SCRIPT_ID.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause() + "|"}, new Object[]{scrId},
                 this.scriptsFldNameArr);
         List<String> calcProcedureBusRules = new ArrayList<>();
@@ -143,7 +143,7 @@ public final class TestingCoverage {
 
     public void calculateCoverageEndpoints(String scrId, List<String> calcProcedureActions) {
         Object[] whereFldValue = new Object[]{scrId, true};
-        Object[][] scriptsEndpoints = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(),
+        Object[][] scriptsEndpoints = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(),
                 new String[]{TblsTesting.ScriptSteps.SCRIPT_ID.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause() + "|", TblsTesting.ScriptSteps.ACTIVE.getName()}, whereFldValue,
                 new String[]{TblsTesting.ScriptSteps.SCRIPT_ID.getName(), TblsTesting.ScriptSteps.ACTION_NAME.getName()});
         JSONArray visitedjObj = new JSONArray();
@@ -516,7 +516,7 @@ public final class TestingCoverage {
         this.endpointsMissingTotal = 0;
         this.endpointsCoverageDetail = new JSONObject();
         
-        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
+        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())){
             this.procActionsArr = this.procBusRules.getProcedureBusinessRule(LPPlatform.LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName()).replaceAll("\\|\\|", "\\|").split("\\|");
             this.procActionsArr = LPArray.getUniquesArray(this.procActionsArr);                

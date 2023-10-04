@@ -96,7 +96,7 @@ public class UserMethod {
         String[] getFieldName = new String[]{FLDNDATA_USR_METHD_ACTIVE, FLDNDATA_USR_METHD_TRAIN_INTERVAL,
                 FLDNDATA_USR_METHD_LAST_TRAINING_ON, FLDNDATA_USR_METHD_LAST_ANALYSIS_ON};
                 
-        Object[][] userMethodData = Rdbms.getRecordFieldsByFilter(schemaDataName, TABLENAME_DATA_USER_METHOD, whereFieldName, whereFieldValue, getFieldName);
+        Object[][] userMethodData = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaDataName, TABLENAME_DATA_USER_METHOD, whereFieldName, whereFieldValue, getFieldName);
         if (LPPlatform.LAB_FALSE.equals(userMethodData[0][0].toString())){return userMethodNotAssigned;}    
         
         Boolean userMethodActive = (Boolean) userMethodData[0][0];
@@ -125,7 +125,7 @@ public class UserMethod {
         String[] updFields = new String[]{UserMethod.FLDNDATA_USR_METHD_LAST_TRAINING_ON, UserMethod.FLDNDATA_USR_METHD_LAST_SAMPLE, FLDNDATA_USR_METHD_LAST_SMP_ANA};
         Object[] updFieldsValue = new Object[]{Rdbms.getLocalDate(), sampleId, testId};
         Object[][] userMethodInfo;
-        userMethodInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, UserMethod.TABLENAME_DATA_USER_METHOD, whereFields, whereFieldsValue, 
+        userMethodInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaDataName, UserMethod.TABLENAME_DATA_USER_METHOD, whereFields, whereFieldsValue, 
                 new String[]{FLDNDATA_USR_METHD_USER_METHOD_ID, UserMethod.FLDNDATA_USR_METHD_USER_ID, FLDNDATA_USR_METHD_ANALYSIS, 
                     FLDNDATA_USR_METHD_METHOD_NAME, FLDNDATA_USR_METHD_METHOD_VERSION});
         if ( Boolean.FALSE.equals((LPPlatform.LAB_FALSE.equalsIgnoreCase(userMethodInfo[0][0].toString()))) &&
@@ -157,7 +157,7 @@ public class UserMethod {
         int correctProcess=0;
         StringBuilder query = new StringBuilder(0);
         for(String currProcInstanceName: procInstanceName){ 
-            Object[] viewExistInSchema= Rdbms.dbViewExists(currProcInstanceName, GlobalVariables.Schemas.DATA.getName(), viewName);
+            Object[] viewExistInSchema= Rdbms.dbViewExists(currProcInstanceName, currProcInstanceName, GlobalVariables.Schemas.DATA.getName(), viewName);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(viewExistInSchema[0].toString())){
                 correctProcess++;
                 query.append("(select ");

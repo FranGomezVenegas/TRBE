@@ -130,7 +130,7 @@ public class DataSampleStructureRevisionRules {
         Object[] canBeAnyAuthorIsEnable = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, DataSampleStructureRevisionRls.SAMPLE_REVIEW_CAN_BE_ANY_AUTHOR.getAreaName(), DataSampleStructureRevisionRls.SAMPLE_REVIEW_CAN_BE_ANY_AUTHOR.getTagName());
         Object[] canBeAnyTestReviewerIsEnable = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, DataSampleStructureRevisionRls.SAMPLE_REVIEW_CAN_BE_ANY_TEST_REVIEWER.getAreaName(), DataSampleStructureRevisionRls.SAMPLE_REVIEW_CAN_BE_ANY_TEST_REVIEWER.getTagName());
         Object[] canBeAnyTestingGroupReviewerIsEnable = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, DataSampleStructureRevisionRls.SAMPLE_REVIEW_CAN_BE_ANY_TESTING_GROUP_REVIEWER.getAreaName(), DataSampleStructureRevisionRls.SAMPLE_REVIEW_CAN_BE_ANY_TESTING_GROUP_REVIEWER.getTagName());
-        Object[] testingGroupTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP.getTableName());
+        Object[] testingGroupTableExists = Rdbms.dbTableExists(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP.getTableName());
 
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(canBeAnyAuthorIsEnable[0].toString())
                 && LPPlatform.LAB_TRUE.equalsIgnoreCase(canBeAnyTestReviewerIsEnable[0].toString())&& 
@@ -142,7 +142,7 @@ public class DataSampleStructureRevisionRules {
                 || LPPlatform.LAB_FALSE.equalsIgnoreCase(canBeAnyTestReviewerIsEnable[0].toString())) {
             String[] fieldsToRetrieve = new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.ENTERED_BY.getName(),
                 TblsData.ViewSampleAnalysisResultWithSpecLimits.TEST_REVIEWER.getName()};
-            Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName(),
+            Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName(),
                     new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_ID.getName()}, new Object[]{sampleId}, fieldsToRetrieve);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(canBeAnyAuthorIsEnable[0].toString())
                     && (LPArray.valueInArray(LPArray.getColumnFromArray2D(sampleInfo, 0), token.getPersonName()))) {
@@ -157,7 +157,7 @@ public class DataSampleStructureRevisionRules {
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(testingGroupTableExists[0].toString())
                 && (LPPlatform.LAB_FALSE.equalsIgnoreCase(canBeAnyTestingGroupReviewerIsEnable[0].toString()))) {
             String[] fieldsToRetrieve = new String[]{TblsData.SampleRevisionTestingGroup.REVISION_BY.getName()};
-            Object[][] testingGroupInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP.getTableName(),
+            Object[][] testingGroupInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP.getTableName(),
                     new String[]{TblsData.SampleRevisionTestingGroup.SAMPLE_ID.getName()}, new Object[]{sampleId}, fieldsToRetrieve);
             Object[] testingGroupInfo1D = LPArray.getColumnFromArray2D(testingGroupInfo, 0);
             if (LPArray.valueInArray(testingGroupInfo1D, token.getPersonName())) {
@@ -189,7 +189,7 @@ public class DataSampleStructureRevisionRules {
         }
         String[] whereFieldName = new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName(), TblsData.SampleAnalysis.TESTING_GROUP.getName()};
         Object[] whereFieldValue = new Object[]{sampleId, testingGroup};
-        Object[][] grouper = Rdbms.getGrouper(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
+        Object[][] grouper = Rdbms.getGrouper(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
                 new String[]{TblsData.SampleAnalysis.REVIEWER.getName()}, whereFieldName, whereFieldValue, null);
         if ((LPArray.valueInArray(LPArray.getColumnFromArray2D(grouper, 0), tokenUserName))
                 || (LPArray.valueInArray(LPArray.getColumnFromArray2D(grouper, 0), tokenPersonName))) {

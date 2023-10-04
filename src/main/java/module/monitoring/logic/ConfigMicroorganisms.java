@@ -38,10 +38,10 @@ public class ConfigMicroorganisms {
     public static RdbmsObject adhocMicroorganismAdd(String orgName){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken(); 
-        Object[] existsMicroorg = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.MICROORGANISM.getTableName(), 
+        Object[] existsMicroorg = Rdbms.existsRecord(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.MICROORGANISM.getTableName(), 
                 new String[]{TblsEnvMonitConfig.MicroOrganism.NAME.getName()}, new Object[]{orgName});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsMicroorg[0].toString())){
-            Object[] existsMicroorgAdhoc = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.MICROORGANISM_ADHOC.getTableName(), 
+            Object[] existsMicroorgAdhoc = Rdbms.existsRecord(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.MICROORGANISM_ADHOC.getTableName(), 
                     new String[]{TblsEnvMonitConfig.MicroOrganismAdhoc.NAME.getName()}, new Object[]{orgName});            
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsMicroorgAdhoc[0].toString()))
                 return Rdbms.insertRecordInTable(TblsEnvMonitConfig.TablesEnvMonitConfig.MICROORGANISM_ADHOC, 

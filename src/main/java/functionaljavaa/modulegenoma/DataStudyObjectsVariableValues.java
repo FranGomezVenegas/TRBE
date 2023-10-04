@@ -105,7 +105,7 @@ public class DataStudyObjectsVariableValues {
             return studyOpenToChanges;
         }
 
-        Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getRepositoryName()), TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableName(),
+        Object[] existsRecord = Rdbms.existsRecord(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getRepositoryName()), TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableName(),
                 new String[]{TblsGenomaConfig.Variables.NAME.getName()}, new Object[]{variableName});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsRecord[0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, GenomaEnums.GenomaErrorTrapping.VARIABLE_NOT_FOUND, null);
@@ -143,7 +143,7 @@ public class DataStudyObjectsVariableValues {
         String[] fieldsName = new String[]{TblsGenomaData.StudyVariableValues.STUDY.getName(), TblsGenomaData.StudyVariableValues.OWNER_TABLE.getName(), TblsGenomaData.StudyVariableValues.OWNER_ID.getName(),
             TblsGenomaData.StudyVariableValues.VARIABLE_SET.getName(), TblsGenomaData.StudyVariableValues.NAME.getName()};
         Object[] fieldsValue = new Object[]{studyName, ownerTable, ownerId, variableSetName, variableName};
-        Object[][] objectVariablePropInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES.getTableName(),
+        Object[][] objectVariablePropInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES.getTableName(),
                 fieldsName, fieldsValue, fieldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(objectVariablePropInfo[0]))) {
             return objectVariablePropInfo;

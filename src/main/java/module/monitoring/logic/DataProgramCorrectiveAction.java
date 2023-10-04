@@ -172,7 +172,7 @@ public class DataProgramCorrectiveAction {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
-        Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(),
+        Object[] existsRecord = Rdbms.existsRecord(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(),
                 new String[]{TblsProcedure.ProgramCorrectiveAction.RESULT_ID.getName()}, new Object[]{resultId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ProgramCorrectiveActionErrorTrapping.RECORD_ALREADY_EXISTS, new Object[]{resultId, procInstanceName});
@@ -212,7 +212,7 @@ public class DataProgramCorrectiveAction {
                 return new Object[]{LPPlatform.LAB_FALSE};
             }
             sampleId = Integer.valueOf(LPNulls.replaceNull(sampleFieldValues[posicInArray].toString()));
-            Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(),
+            Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(),
                     new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId},
                     new String[]{TblsProcedure.ProgramCorrectiveAction.PROGRAM_NAME.getName()});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) {
@@ -229,7 +229,7 @@ public class DataProgramCorrectiveAction {
             myFldName = LPArray.addValueToArray1D(myFldName, TblsProcedure.ProgramCorrectiveAction.RESULT_ID.getName());
             myFldValue = LPArray.addValueToArray1D(myFldValue, resultId);
         }
-        Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(),
+        Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(),
                 new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId}, sampleFldsToGet);
         for (int iFld = 0; iFld < sampleFldsToGet.length; iFld++) {
             String currFld = sampleFldsToGet[iFld];
@@ -241,7 +241,7 @@ public class DataProgramCorrectiveAction {
                 myFldValue[posicInArray] = sampleInfo[0][iFld];
             }
         }
-        Object[][] resultInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
+        Object[][] resultInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
                 new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}, new Object[]{resultId}, sampleAnalysisResultToGet);
         for (int iFld = 0; iFld < sampleAnalysisResultToGet.length; iFld++) {
             String currFld = sampleAnalysisResultToGet[iFld];
@@ -300,7 +300,7 @@ public class DataProgramCorrectiveAction {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String statusClosed = ProgramCorrectiveActionStatuses.STATUS_CLOSED.getStatusCode();
-        Object[][] correctiveActionInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(),
+        Object[][] correctiveActionInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(),
                 new String[]{TblsProcedure.ProgramCorrectiveAction.ID.getName()}, new Object[]{correctiveActionId},
                 new String[]{TblsProcedure.ProgramCorrectiveAction.STATUS.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(correctiveActionInfo[0][0].toString())) {
@@ -349,11 +349,11 @@ public class DataProgramCorrectiveAction {
         }
         Object[][] programCorrectiveActionsToMarkAsCompleted = null;
         if (LPDatabase.integer().equalsIgnoreCase(objectIdClass)) {
-            programCorrectiveActionsToMarkAsCompleted = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(),
+            programCorrectiveActionsToMarkAsCompleted = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(),
                     new String[]{fieldToFindRecord, TblsProcedure.ProgramCorrectiveAction.STATUS.getName() + " " + WHERECLAUSE_TYPES.NOT_IN.getSqlClause()}, new Object[]{Integer.valueOf(objectId.toString()), statusClosed},
                     new String[]{TblsProcedure.ProgramCorrectiveAction.ID.getName(), TblsProcedure.ProgramCorrectiveAction.INVEST_ID.getName()});
         } else {
-            programCorrectiveActionsToMarkAsCompleted = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(),
+            programCorrectiveActionsToMarkAsCompleted = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(),
                     new String[]{fieldToFindRecord, TblsProcedure.ProgramCorrectiveAction.STATUS.getName() + " " + WHERECLAUSE_TYPES.NOT_IN.getSqlClause()}, new Object[]{objectId.toString(), statusClosed},
                     new String[]{TblsProcedure.ProgramCorrectiveAction.ID.getName(), TblsProcedure.ProgramCorrectiveAction.INVEST_ID.getName()});
         }

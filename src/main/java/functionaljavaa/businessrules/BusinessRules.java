@@ -65,13 +65,13 @@ public class BusinessRules {
             TblsProcedure.ProcedureActions.ARE_YOU_SURE_REQUIRED.getName(), TblsProcedure.ProcedureActions.JUSTIF_REASON_REQUIRED.getName(), TblsProcedure.ProcedureActions.ESIGN_REQUIRED.getName(),
             TblsProcedure.ProcedureActions.USER_CREDENTIAL_REQUIRED.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(),
             TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName()};
-        Object[][] actionsInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procedureInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName(),
+        Object[][] actionsInfo = Rdbms.getRecordFieldsByFilter(procedureInstanceName, LPPlatform.buildSchemaName(procedureInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName(),
                 new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
                 new Object[]{},fldNames);        
         return new Object[]{fldNames, actionsInfo};
     }
     private void setActions(String procedureInstanceName){
-        Object[] dbTableExists = Rdbms.dbTableExists(procedureInstanceName + "-procedure", 
+        Object[] dbTableExists = Rdbms.dbTableExists(procedureInstanceName, procedureInstanceName + "-procedure", 
                 TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())) {return;}
         JSONArray jArr = new JSONArray();
@@ -105,11 +105,11 @@ public class BusinessRules {
             }
         }
         if (scriptId != null && scriptId > 0) {
-            testingBusRulsInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procedureInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT_BUS_RULES.getTableName(),
+            testingBusRulsInfo = Rdbms.getRecordFieldsByFilter(procedureInstanceName, LPPlatform.buildSchemaName(procedureInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT_BUS_RULES.getTableName(),
                     new String[]{TblsTesting.ScriptBusinessRules.SCRIPT_ID.getName(), TblsTesting.ScriptBusinessRules.ACTIVE.getName()}, new Object[]{scriptId, true},
                     new String[]{TblsTesting.ScriptBusinessRules.REPOSITORY.getName(), TblsTesting.ScriptBusinessRules.RULE_NAME.getName(), TblsTesting.ScriptBusinessRules.RULE_VALUE.getName()});
         } else if (procedureInstanceName != null && procedureInstanceName.length() > 0) {
-            testingBusRulsInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procedureInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(),
+            testingBusRulsInfo = Rdbms.getRecordFieldsByFilter(procedureInstanceName, LPPlatform.buildSchemaName(procedureInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(),
                     new String[]{TblsProcedure.ProcedureBusinessRules.DISABLED.getName()}, new Object[]{false},
                     new String[]{TblsProcedure.ProcedureBusinessRules.AREA.getName(), TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});
         } else {

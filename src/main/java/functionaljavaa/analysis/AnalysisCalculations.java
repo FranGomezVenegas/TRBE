@@ -73,7 +73,7 @@ public class AnalysisCalculations {
         String[] resultFieldsArr = new String[]{TblsData.SampleAnalysisResult.PARAM_NAME.getName(), TblsData.SampleAnalysisResult.RAW_VALUE.getName(),
             TblsData.SampleAnalysisResult.PARAM_TYPE.getName(), TblsData.SampleAnalysisResult.RESULT_ID.getName(),
             TblsData.SampleAnalysisResult.LIMIT_ID.getName(), TblsData.SampleAnalysisResult.STATUS.getName()};
-        Object[][] resultData = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
+        Object[][] resultData = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
                 new String[]{TblsData.SampleAnalysisResult.TEST_ID.getName()}, new Object[]{testId},
                 resultFieldsArr);
         if (LPPlatform.LAB_FALSE.equals(resultData[0][0].toString())) {
@@ -164,7 +164,7 @@ public class AnalysisCalculations {
                         DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId);
                     }
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
-                        Object[][] sampleData = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(),
+                        Object[][] sampleData = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaDataName, TblsData.TablesData.SAMPLE.getTableName(),
                                 new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId},
                                 new String[]{TblsData.Sample.SAMPLE_ID.getName(), TblsData.Sample.CONFIG_CODE.getName(), TblsData.Sample.CONFIG_CODE_VERSION.getName()});
                         if (LPPlatform.LAB_FALSE.equals(sampleData[0][0].toString())) {
@@ -220,7 +220,7 @@ public class AnalysisCalculations {
         String[] resultFieldsArr = new String[]{TblsData.SampleAnalysisResult.PARAM_NAME.getName(), TblsData.SampleAnalysisResult.RAW_VALUE.getName(),
             TblsData.SampleAnalysisResult.PARAM_TYPE.getName(), TblsData.SampleAnalysisResult.RESULT_ID.getName(),
             TblsData.SampleAnalysisResult.LIMIT_ID.getName(), TblsData.SampleAnalysisResult.STATUS.getName()};
-        Object[][] resultData = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
+        Object[][] resultData = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
                 new String[]{TblsData.SampleAnalysisResult.TEST_ID.getName()}, new Object[]{testId},
                 resultFieldsArr);
         if (LPPlatform.LAB_FALSE.equals(resultData[0][0].toString())) {
@@ -314,7 +314,7 @@ public class AnalysisCalculations {
                         DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId);
                     }
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
-                        Object[][] sampleData = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(),
+                        Object[][] sampleData = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaDataName, TblsData.TablesData.SAMPLE.getTableName(),
                                 new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId},
                                 new String[]{TblsData.Sample.SAMPLE_ID.getName(), TblsData.Sample.CONFIG_CODE.getName(), TblsData.Sample.CONFIG_CODE_VERSION.getName()});
                         if (LPPlatform.LAB_FALSE.equals(sampleData[0][0].toString())) {
@@ -370,7 +370,7 @@ public class AnalysisCalculations {
         String[] resultFieldsArr = new String[]{TblsData.SampleAnalysisResult.PARAM_NAME.getName(), TblsData.SampleAnalysisResult.RAW_VALUE.getName(),
             TblsData.SampleAnalysisResult.PARAM_TYPE.getName(), TblsData.SampleAnalysisResult.RESULT_ID.getName(),
             TblsData.SampleAnalysisResult.LIMIT_ID.getName(), TblsData.SampleAnalysisResult.STATUS.getName()};
-        Object[][] resultData = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
+        Object[][] resultData = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
                 new String[]{TblsData.SampleAnalysisResult.TEST_ID.getName()}, new Object[]{testId},
                 resultFieldsArr);
         if (LPPlatform.LAB_FALSE.equals(resultData[0][0].toString())) {
@@ -464,7 +464,7 @@ public class AnalysisCalculations {
                         DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId);
                     }
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
-                        Object[][] sampleData = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.TablesData.SAMPLE.getTableName(),
+                        Object[][] sampleData = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaDataName, TblsData.TablesData.SAMPLE.getTableName(),
                                 new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId},
                                 new String[]{TblsData.Sample.SAMPLE_ID.getName(), TblsData.Sample.CONFIG_CODE.getName(), TblsData.Sample.CONFIG_CODE_VERSION.getName()});
                         if (LPPlatform.LAB_FALSE.equals(sampleData[0][0].toString())) {

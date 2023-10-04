@@ -156,7 +156,7 @@ public class TestingRegressionUAT extends HttpServlet {
             }
             String[] fldsToRetrieve = new String[]{TblsTesting.Script.TESTER_NAME.getName(), TblsTesting.Script.EVAL_NUM_ARGS.getName(), TblsTesting.Script.AUDIT_IDS_TO_GET.getName(),
                 TblsTesting.Script.GET_DB_ERRORS.getName(), TblsTesting.Script.GET_MSG_ERRORS.getName(), TblsTesting.Script.SAVE_EXEC_EVID_ON_SUCCESS.getName()};
-            scriptTblInfo = Rdbms.getRecordFieldsByFilter(repositoryName, TblsTesting.TablesTesting.SCRIPT.getTableName(),
+            scriptTblInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, repositoryName, TblsTesting.TablesTesting.SCRIPT.getTableName(),
                     new String[]{TblsTesting.Script.SCRIPT_ID.getName()}, new Object[]{scriptId},
                     fldsToRetrieve, new String[]{TblsTesting.Script.SCRIPT_ID.getName()});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptTblInfo[0][0].toString())) {
@@ -196,7 +196,7 @@ public class TestingRegressionUAT extends HttpServlet {
                 case DB_SCHEMADATA_ENVMONIT_SAMPLES:
                 case DB_SCHEMADATA_INSPECTION_LOT_RM:
                 case MODULE_INVENTORY_LOT:
-                    Object[][] scriptStepsTblInfo = Rdbms.getRecordFieldsByFilter(repositoryName, TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(),
+                    Object[][] scriptStepsTblInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, repositoryName, TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(),
                             new String[]{TblsTesting.Script.SCRIPT_ID.getName(), TblsTesting.Script.ACTIVE.getName()}, new Object[]{scriptId, true},
                             new String[]{TblsTesting.ScriptSteps.STEP_ID.getName(), TblsTesting.ScriptSteps.ACTION_NAME.getName()},
                             new String[]{TblsTesting.ScriptSteps.STEP_ID.getName()});

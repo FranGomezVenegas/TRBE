@@ -129,7 +129,7 @@ public class EndpointsDocAPIqueries extends HttpServlet {
             ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
             String dbTrazitModules = prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
             Rdbms.getRdbms().startRdbms(dbTrazitModules);
-            Object[][] reqEndpointInfo = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION.getTableName(),
+            Object[][] reqEndpointInfo = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION.getTableName(),
                     whereFldName, whereFldValue, endpointDeclarationAllFieldNames,
                     new String[]{TblsTrazitDocTrazit.EndpointsDeclaration.API_NAME.getName()});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(reqEndpointInfo[0][0].toString())) {

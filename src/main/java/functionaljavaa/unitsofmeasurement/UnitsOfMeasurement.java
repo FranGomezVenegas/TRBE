@@ -145,9 +145,9 @@ public class UnitsOfMeasurement {
 
         String[] fieldsToGet = new String[]{TblsCnfg.UnitsOfMeasurement.NAME.getName(), familyFieldNameDataBase, TblsCnfg.UnitsOfMeasurement.IS_BASE.getName(),
             TblsCnfg.UnitsOfMeasurement.FACTOR_VALUE.getName(), TblsCnfg.UnitsOfMeasurement.OFFSET_VALUE.getName()};
-        Object[][] currentUnitInfo = Rdbms.getRecordFieldsByFilter(schemaName, tableName,
+        Object[][] currentUnitInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, tableName,
                  new String[]{TblsCnfg.UnitsOfMeasurement.NAME.getName()},  new Object[]{currentUnit}, fieldsToGet );
-        Object[][] newUnitInfo = Rdbms.getRecordFieldsByFilter(schemaName, tableName,
+        Object[][] newUnitInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, tableName,
                  new String[]{TblsCnfg.UnitsOfMeasurement.NAME.getName()},  new Object[]{newUnit}, fieldsToGet);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(currentUnitInfo[0][0].toString())){
             return currentUnitInfo[0];
@@ -191,7 +191,7 @@ public class UnitsOfMeasurement {
             TblsCnfg.UnitsOfMeasurement.FACTOR_VALUE.getName(), TblsCnfg.UnitsOfMeasurement.OFFSET_VALUE.getName()};
         
         if (LPNulls.replaceNull(this.origQuantityUom).length()==0){
-            Object[][] newUnitInfo = Rdbms.getRecordFieldsByFilter(schemaName, tableName,
+            Object[][] newUnitInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, tableName,
                      new String[]{TblsCnfg.UnitsOfMeasurement.NAME.getName()},  new Object[]{newUnit}, fieldsToGet);           
             conversion = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, MESSAGE_TRAPPING_CONVERTED_SUCCESS,
                 new Object[]{this.getOrigQuantityUom(), newUnitInfo, this.getOrigQuantity(), valueConverted, procInstanceName,
@@ -210,9 +210,9 @@ public class UnitsOfMeasurement {
             this.conversionErrorDetail=unitsCompatible;
             return;
         }
-        Object[][] currentUnitInfo = Rdbms.getRecordFieldsByFilter(schemaName, tableName,
+        Object[][] currentUnitInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, tableName,
                  new String[]{TblsCnfg.UnitsOfMeasurement.NAME.getName()},  new Object[]{this.getOrigQuantityUom()}, fieldsToGet );
-        Object[][] newUnitInfo = Rdbms.getRecordFieldsByFilter(schemaName, tableName,
+        Object[][] newUnitInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, tableName,
                  new String[]{TblsCnfg.UnitsOfMeasurement.NAME.getName()},  new Object[]{newUnit}, fieldsToGet);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(currentUnitInfo[0][0].toString())){
             this.convertedFine=false;
@@ -290,7 +290,7 @@ public class UnitsOfMeasurement {
             return LPArray.array1dTo2d(conversion, conversion.length);
         }
 
-        Object[][] unitsList = Rdbms.getRecordFieldsByFilter(schemaName, tableName,
+        Object[][] unitsList = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, tableName,
                  new String[]{TblsCnfg.UnitsOfMeasurement.MEASUREMENT_FAMILY.getName()},  new Object[]{family}, fieldsToRetrieve,
                  new String[]{TblsCnfg.UnitsOfMeasurement.FACTOR_VALUE.getName(), TblsCnfg.UnitsOfMeasurement.OFFSET_VALUE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(unitsList[0][0].toString())) return unitsList;
@@ -310,7 +310,7 @@ public class UnitsOfMeasurement {
         String schemaName = GlobalVariables.Schemas.CONFIG.getName();
         schemaName = LPPlatform.buildSchemaName(procInstanceName, schemaName);
 
-        Object[][] unitsList = Rdbms.getRecordFieldsByFilter(schemaName, tableName,
+        Object[][] unitsList = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, tableName,
                  new String[]{TblsCnfg.UnitsOfMeasurement.MEASUREMENT_FAMILY.getName(), TblsCnfg.UnitsOfMeasurement.IS_BASE.getName()},  new Object[]{family, true}, new String[]{TblsCnfg.UnitsOfMeasurement.NAME.getName()});
         return unitsList[0][0].toString();
     }

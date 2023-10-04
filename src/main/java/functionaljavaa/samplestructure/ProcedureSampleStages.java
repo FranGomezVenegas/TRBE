@@ -36,7 +36,7 @@ public class ProcedureSampleStages {
         Boolean businessRuleIsEnable = Parameter.isTagValueOneOfEnableOnes(tagValue);
         if (Boolean.FALSE.equals(businessRuleIsEnable))
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "ruleDisabled", null);
-        Object[][] sampleStageTimingCaptureInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE.getTableName(), 
+        Object[][] sampleStageTimingCaptureInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE.getTableName(), 
             new String[]{TblsProcedure.SampleStageTimingCapture.SAMPLE_ID.getName(), TblsProcedure.SampleStageTimingCapture.STAGE_CURRENT.getName()},    
             new Object[]{sampleId, stage},
             new String[]{TblsProcedure.SampleStageTimingCapture.STARTED_ON.getName(), TblsProcedure.SampleStageTimingCapture.ENDED_ON.getName()},
@@ -45,7 +45,7 @@ public class ProcedureSampleStages {
             return sampleStageTimingCaptureInfo;
         String stageStartDateStr=sampleStageTimingCaptureInfo[sampleStageTimingCaptureInfo.length-1][0].toString();        
         LocalDateTime stageStartDate=LPDate.stringFormatToLocalDateTime(stageStartDateStr);
-        Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
+        Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
             new String[]{TblsData.Sample.SAMPLE_ID.getName()},    
             new Object[]{sampleId},
             new String[]{TblsData.Sample.CONFIG_CODE.getName(), TblsData.Sample.CONFIG_CODE_VERSION.getName()});
@@ -53,7 +53,7 @@ public class ProcedureSampleStages {
             return sampleInfo;
         String configCode=sampleInfo[0][0].toString();
         Integer configVersion=(Integer)sampleInfo[0][1];
-        Object[][] sampleStageProcInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE_CONFIG.getName()), TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL.getTableName(), 
+        Object[][] sampleStageProcInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE_CONFIG.getName()), TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL.getTableName(), 
                 new String[]{TblsProcedureConfig.StageTimingInterval.SAMPLE_CONFIG_CODE.getName(), TblsProcedureConfig.StageTimingInterval.SAMPLE_CONFIG_VERSION.getName(), TblsProcedureConfig.StageTimingInterval.STAGE.getName()},
                 new Object[]{configCode, configVersion, stage}, 
                 getAllFieldNames(TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL.getTableFields()));

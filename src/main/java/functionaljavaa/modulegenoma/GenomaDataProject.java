@@ -114,7 +114,7 @@ public class GenomaDataProject {
             if (mandatoryFieldsMissingBuilder.length() > 0) {
                 return new InternalMessage(LPPlatform.LAB_FALSE, GenomaDataProjectErrorTrapping.NEW_PROJECT_MISSING_MANDATORY_FIELDS, new String[]{projectName, mandatoryFieldsMissingBuilder.toString(), procInstanceName});
             }
-            Object[] diagnosis = Rdbms.existsRecord(
+            Object[] diagnosis = Rdbms.existsRecord(procInstanceName,
                     LPPlatform.buildSchemaName(procInstanceName, TblsGenomaData.TablesGenomaData.PROJECT.getRepositoryName()),
                      TblsGenomaData.TablesGenomaData.PROJECT.getTableName(),
                     new String[]{TblsGenomaData.Project.NAME.getName()}, new Object[]{projectName});
@@ -352,7 +352,7 @@ public class GenomaDataProject {
 
     public static Object[] isProjectOpenToChanges(String projectName) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.PROJECT.getTableName(),
+        Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.PROJECT.getTableName(),
                 new String[]{TblsGenomaData.Project.NAME.getName()}, new Object[]{projectName}, new String[]{TblsGenomaData.Project.ACTIVE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "The project <*1*> does not exist in procedure <*2*>", new Object[]{projectName, procInstanceName});
@@ -365,7 +365,7 @@ public class GenomaDataProject {
 
     public static InternalMessage isProjectOpenToChanges2(String projectName) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.PROJECT.getTableName(),
+        Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.PROJECT.getTableName(),
                 new String[]{TblsGenomaData.Project.NAME.getName()}, new Object[]{projectName}, new String[]{TblsGenomaData.Project.ACTIVE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString()) &&
             (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) ){

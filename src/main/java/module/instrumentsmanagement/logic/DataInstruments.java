@@ -107,7 +107,7 @@ public class DataInstruments {
     public DataInstruments(String instrName) {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         String procInstanceName = procReqSession.getProcedureInstance();
-        Object[][] instrInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(),
+        Object[][] instrInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(),
                 new String[]{TblsInstrumentsData.Instruments.NAME.getName()}, new Object[]{instrName}, getAllFieldNames(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS.getTableFields()));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString())) {
             this.name = null;
@@ -136,7 +136,7 @@ public class DataInstruments {
             }
             this.family = LPNulls.replaceNull(instrInfo[0][LPArray.valuePosicInArray(fieldNames, TblsInstrumentsData.Instruments.FAMILY.getName())]).toString();
             if (this.family != null && this.family.length() > 0) {
-                Object[][] instrFamilyInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsInstrumentsConfig.TablesInstrumentsConfig.INSTRUMENTS_FAMILY.getTableName(),
+                Object[][] instrFamilyInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsInstrumentsConfig.TablesInstrumentsConfig.INSTRUMENTS_FAMILY.getTableName(),
                         new String[]{TblsInstrumentsConfig.InstrumentsFamily.NAME.getName()}, new Object[]{this.family}, getAllFieldNames(TblsInstrumentsConfig.TablesInstrumentsConfig.INSTRUMENTS_FAMILY.getTableFields()));
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrFamilyInfo[0][0].toString())) {
                     familyFieldNames = null;
@@ -186,7 +186,7 @@ public class DataInstruments {
             fldValues = new Object[]{};
         }
         if (familyName != null && familyName.length() > 0) {
-            Object[][] instrFamilyInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsInstrumentsConfig.TablesInstrumentsConfig.INSTRUMENTS_FAMILY.getTableName(),
+            Object[][] instrFamilyInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsInstrumentsConfig.TablesInstrumentsConfig.INSTRUMENTS_FAMILY.getTableName(),
                     new String[]{TblsInstrumentsConfig.InstrumentsFamily.NAME.getName()}, new Object[]{familyName},
                     getAllFieldNames(TblsInstrumentsConfig.TablesInstrumentsConfig.INSTRUMENTS_FAMILY.getTableFields()));
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrFamilyInfo[0][0].toString())) {
@@ -199,7 +199,7 @@ public class DataInstruments {
         fldNames = LPArray.addValueToArray1D(fldNames, new String[]{TblsInstrumentsData.Instruments.NAME.getName(), TblsInstrumentsData.Instruments.ON_LINE.getName(),
             TblsInstrumentsData.Instruments.CREATED_ON.getName(), TblsInstrumentsData.Instruments.CREATED_BY.getName()});
         fldValues = LPArray.addValueToArray1D(fldValues, new Object[]{name, false, LPDate.getCurrentTimeStamp(), token.getPersonName()});
-        Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS.getTableName(),
+        Object[] existsRecord = Rdbms.existsRecord(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS.getTableName(),
                 new String[]{TblsInstrumentsData.Instruments.NAME.getName()}, new Object[]{name});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_EXISTS, new Object[]{name}, null);
@@ -371,7 +371,7 @@ public class DataInstruments {
             messages.addMainForError(InstrumentsErrorTrapping.IS_LOCKED, new Object[]{getName(), this.lockedReason});
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.IS_LOCKED, new Object[]{getName(), this.lockedReason}, null);
         }
-        Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procedureInstance, GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
+        Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(procedureInstance, LPPlatform.buildSchemaName(procedureInstance, GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
                 new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName(), TblsInstrumentsData.InstrumentEvent.COMPLETED_ON.getName() + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()},
                 new Object[]{this.getName(), ""}, new String[]{TblsInstrumentsData.InstrumentEvent.ID.getName()});
 
@@ -430,7 +430,7 @@ public class DataInstruments {
         Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
 
-        Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
+        Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
                 new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName(), TblsInstrumentsData.InstrumentEvent.EVENT_TYPE.getName(),
                     TblsInstrumentsData.InstrumentEvent.COMPLETED_ON.getName() + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()},
                 new Object[]{this.getName(), AppInstrumentsAuditEvents.CALIBRATION.toString(), ""}, new String[]{TblsInstrumentsData.InstrumentEvent.ID.getName()});
@@ -482,7 +482,7 @@ public class DataInstruments {
         }
         Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
 
-        Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
+        Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
                 new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName(), TblsInstrumentsData.InstrumentEvent.EVENT_TYPE.getName(),
                     TblsInstrumentsData.InstrumentEvent.COMPLETED_ON.getName() + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()},
                 new Object[]{this.getName(), AppInstrumentsAuditEvents.CALIBRATION.toString(), ""},
@@ -555,7 +555,7 @@ public class DataInstruments {
         Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
 
-        Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
+        Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
                 new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName(), TblsInstrumentsData.InstrumentEvent.EVENT_TYPE.getName(),
                     TblsInstrumentsData.InstrumentEvent.COMPLETED_ON.getName() + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()},
                 new Object[]{this.getName(), AppInstrumentsAuditEvents.PREVENTIVE_MAINTENANCE.toString(), ""}, new String[]{TblsInstrumentsData.InstrumentEvent.ID.getName()});
@@ -608,7 +608,7 @@ public class DataInstruments {
         }
         Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
 
-        Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
+        Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
                 new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName(), TblsInstrumentsData.InstrumentEvent.EVENT_TYPE.getName(),
                     TblsInstrumentsData.InstrumentEvent.COMPLETED_ON.getName() + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()},
                 new Object[]{this.getName(), AppInstrumentsAuditEvents.PREVENTIVE_MAINTENANCE.toString(), ""},
@@ -668,7 +668,7 @@ public class DataInstruments {
         Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
 
-        Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
+        Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
                 new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName(), TblsInstrumentsData.InstrumentEvent.EVENT_TYPE.getName(),
                     TblsInstrumentsData.InstrumentEvent.COMPLETED_ON.getName() + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()},
                 new Object[]{this.getName(), AppInstrumentsAuditEvents.VERIFICATION.toString(), ""}, new String[]{TblsInstrumentsData.InstrumentEvent.ID.getName()});
@@ -722,7 +722,7 @@ public class DataInstruments {
         }
         Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
 
-        Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
+        Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
                 new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName(), TblsInstrumentsData.InstrumentEvent.EVENT_TYPE.getName(),
                     TblsInstrumentsData.InstrumentEvent.COMPLETED_ON.getName() + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()},
                 new Object[]{this.getName(), AppInstrumentsAuditEvents.VERIFICATION.toString(), ""},
@@ -775,7 +775,7 @@ public class DataInstruments {
         Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
 
-        Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
+        Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
                 new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName(), TblsInstrumentsData.InstrumentEvent.EVENT_TYPE.getName(),
                     TblsInstrumentsData.InstrumentEvent.COMPLETED_ON.getName() + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()},
                 new Object[]{this.getName(), AppInstrumentsAuditEvents.SERVICE.toString(), ""}, new String[]{TblsInstrumentsData.InstrumentEvent.ID.getName()});
@@ -828,7 +828,7 @@ public class DataInstruments {
         }
         Token token = ProcedureRequestSession.getInstanceForQueries(null, null, false).getToken();
 
-        Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
+        Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
                 new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName(), TblsInstrumentsData.InstrumentEvent.EVENT_TYPE.getName(),
                     TblsInstrumentsData.InstrumentEvent.COMPLETED_ON.getName() + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()},
                 new Object[]{this.getName(), AppInstrumentsAuditEvents.SERVICE.toString(), ""},
@@ -880,7 +880,7 @@ public class DataInstruments {
         }
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
 
-        Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
+        Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
                 new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName(), TblsInstrumentsData.InstrumentEvent.ID.getName()},
                 new Object[]{this.getName(), instrEventId},
                 new String[]{TblsInstrumentsData.InstrumentEvent.COMPLETED_ON.getName(), TblsInstrumentsData.InstrumentEvent.COMPLETED_DECISION.getName()});
@@ -927,7 +927,7 @@ public class DataInstruments {
         }
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         if (instrEventId != null) {
-            Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
+            Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
                     new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName(), TblsInstrumentsData.InstrumentEvent.ID.getName()},
                     new Object[]{this.getName(), instrEventId},
                     new String[]{TblsInstrumentsData.InstrumentEvent.COMPLETED_ON.getName(), TblsInstrumentsData.InstrumentEvent.COMPLETED_DECISION.getName()});
@@ -970,7 +970,7 @@ public class DataInstruments {
         }
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         if (instrEventId != null) {
-            Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
+            Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
                     new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName(), TblsInstrumentsData.InstrumentEvent.ID.getName()},
                     new Object[]{this.getName(), instrEventId},
                     new String[]{TblsInstrumentsData.InstrumentEvent.COMPLETED_ON.getName(), TblsInstrumentsData.InstrumentEvent.COMPLETED_DECISION.getName()});
@@ -1007,7 +1007,7 @@ public class DataInstruments {
         }
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
         if (instrEventId != null) {
-            Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
+            Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
                     new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName(), TblsInstrumentsData.InstrumentEvent.ID.getName()},
                     new Object[]{this.getName(), instrEventId},
                     new String[]{TblsInstrumentsData.InstrumentEvent.COMPLETED_ON.getName(), TblsInstrumentsData.InstrumentEvent.COMPLETED_DECISION.getName()});

@@ -202,7 +202,7 @@ public final class Token {
                 if (procHashCodes.length() > 0) {
                     procHashCodes.append("|");
                 }
-                Object[][] procInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(curProcPrefix.toString(), GlobalVariables.Schemas.PROCEDURE.getName()),
+                Object[][] procInfo = Rdbms.getRecordFieldsByFilter(curProcPrefix.toString(), LPPlatform.buildSchemaName(curProcPrefix.toString(), GlobalVariables.Schemas.PROCEDURE.getName()),
                         TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(),
                         new String[]{TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{curProcPrefix.toString()},
                         new String[]{TblsProcedure.ProcedureInfo.VERSION.getName(), TblsProcedure.ProcedureInfo.PROCEDURE_HASH_CODE.getName(), TblsProcedure.ProcedureInfo.MODULE_NAME.getName()});
@@ -415,7 +415,7 @@ public final class Token {
             return "notFound";
         if ("APP".equalsIgnoreCase(instanceName)){return instanceName;}
         if (this.procsModuleNames == null || !this.procsModuleNames.contains(instanceName)) {      
-        Object[][] procInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), 
+        Object[][] procInfo=Rdbms.getRecordFieldsByFilter(instanceName, LPPlatform.buildSchemaName(instanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), 
             new String[]{TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{""}, new String[]{TblsProcedure.ProcedureInfo.MODULE_NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfo[0][0].toString())){           
             return "notFound";

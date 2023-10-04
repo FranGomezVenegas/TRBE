@@ -162,7 +162,7 @@ public class DataInventoryCorrectiveAction {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
-        Object[] existsRecord = Rdbms.existsRecord(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsInvTrackingProcedure.TablesInvTrackingProcedure.INVENTORY_CORRECTIVE_ACTION.getTableName(),
+        Object[] existsRecord = Rdbms.existsRecord(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsInvTrackingProcedure.TablesInvTrackingProcedure.INVENTORY_CORRECTIVE_ACTION.getTableName(),
                 new String[]{TblsInvTrackingProcedure.InventoryCorrectiveAction.QUALIF_ID.getName()}, new Object[]{qualifId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, ProgramCorrectiveActionErrorTrapping.RECORD_ALREADY_EXISTS, new Object[]{qualifId, procInstanceName});
@@ -199,7 +199,7 @@ public class DataInventoryCorrectiveAction {
         }else{programName=invTrackingFieldValues[posicInArray].toString();}
 
         myFldValue[0]=programName;*/
-        Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION.getTableName(),
+        Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION.getTableName(),
                 new String[]{TblsInvTrackingData.LotQualification.QUALIF_ID.getName()}, new Object[]{qualifId}, sampleFldsToGet);
         for (int iFld = 0; iFld < sampleFldsToGet.length; iFld++) {
             String currFld = sampleFldsToGet[iFld];
@@ -251,7 +251,7 @@ public class DataInventoryCorrectiveAction {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String statusClosed = InventoryCorrectiveActionStatuses.STATUS_CLOSED.getStatusCode();
-        Object[][] correctiveActionInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsInvTrackingProcedure.TablesInvTrackingProcedure.INVENTORY_CORRECTIVE_ACTION.getTableName(),
+        Object[][] correctiveActionInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsInvTrackingProcedure.TablesInvTrackingProcedure.INVENTORY_CORRECTIVE_ACTION.getTableName(),
                 new String[]{TblsInvTrackingProcedure.InventoryCorrectiveAction.ID.getName()}, new Object[]{correctiveActionId},
                 new String[]{TblsInvTrackingProcedure.InventoryCorrectiveAction.STATUS.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(correctiveActionInfo[0][0].toString())) {
@@ -292,11 +292,11 @@ public class DataInventoryCorrectiveAction {
         }
         Object[][] programCorrectiveActionsToMarkAsCompleted = null;
         if (LPDatabase.integer().equalsIgnoreCase(objectIdClass)) {
-            programCorrectiveActionsToMarkAsCompleted = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsInvTrackingProcedure.TablesInvTrackingProcedure.INVENTORY_CORRECTIVE_ACTION.getTableName(),
+            programCorrectiveActionsToMarkAsCompleted = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsInvTrackingProcedure.TablesInvTrackingProcedure.INVENTORY_CORRECTIVE_ACTION.getTableName(),
                     new String[]{fieldToFindRecord, TblsInvTrackingProcedure.InventoryCorrectiveAction.STATUS.getName() + " " + WHERECLAUSE_TYPES.NOT_IN.getSqlClause()}, new Object[]{Integer.valueOf(objectId.toString()), statusClosed},
                     new String[]{TblsInvTrackingProcedure.InventoryCorrectiveAction.ID.getName(), TblsInvTrackingProcedure.InventoryCorrectiveAction.INVEST_ID.getName()});
         } else {
-            programCorrectiveActionsToMarkAsCompleted = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsInvTrackingProcedure.TablesInvTrackingProcedure.INVENTORY_CORRECTIVE_ACTION.getTableName(),
+            programCorrectiveActionsToMarkAsCompleted = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsInvTrackingProcedure.TablesInvTrackingProcedure.INVENTORY_CORRECTIVE_ACTION.getTableName(),
                     new String[]{fieldToFindRecord, TblsInvTrackingProcedure.InventoryCorrectiveAction.STATUS.getName() + " " + WHERECLAUSE_TYPES.NOT_IN.getSqlClause()}, new Object[]{objectId.toString(), statusClosed},
                     new String[]{TblsInvTrackingProcedure.InventoryCorrectiveAction.ID.getName(), TblsInvTrackingProcedure.InventoryCorrectiveAction.INVEST_ID.getName()});
         }

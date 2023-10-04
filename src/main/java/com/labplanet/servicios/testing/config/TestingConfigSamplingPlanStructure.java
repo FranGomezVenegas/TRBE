@@ -50,7 +50,7 @@ public class TestingConfigSamplingPlanStructure extends HttpServlet {
                 return;
             }
 
-            Object[] exRec = Rdbms.existsRecord(GlobalVariables.Schemas.APP.getName(), "users", new String[]{"user_name"}, new Object[]{"labplanet"});
+            Object[] exRec = Rdbms.existsRecord("", GlobalVariables.Schemas.APP.getName(), "users", new String[]{"user_name"}, new Object[]{"labplanet"});
             out.println("Exists record? " + Arrays.toString(exRec));
 
             String csvFileName = "dbActions.txt";
