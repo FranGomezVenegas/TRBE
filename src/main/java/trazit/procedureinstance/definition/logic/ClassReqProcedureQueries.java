@@ -21,6 +21,7 @@ import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.globalvariables.GlobalVariables;
+import static trazit.procedureinstance.definition.logic.ClassReqProcedUserAndActions.usersByRoles;
 
 /**
  *
@@ -77,6 +78,8 @@ public class ClassReqProcedureQueries {
         jBlockObj.put("user_role", jBlockArr);
 
         jBlockObj.put("roles_actions", actionsByRoles(procInstanceName, procRoles));
+        jBlockObj.put("users_per_roles", usersByRoles(procInstanceName, procRoles));
+        
         return jBlockObj;
     }
 
