@@ -499,12 +499,13 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
                             JSONObject moduleSettings=jFileContentObjModel.getJSONObject("ModuleSettings");                            
                             String descEn=jFileContentObjModel.getString("description_en");
                             String descEs=jFileContentObjModel.getString("description_es");
+                            String picture=jFileContentObjModel.getString("picture");
                             jFileContentObjModel = new JSONObject(jsonDataModel.toString());       
                             String[] fieldNames = new String[]{TblsReqs.Modules.MODULE_NAME.getName(), TblsReqs.Modules.MODULE_VERSION.getName(),
                                 TblsReqs.Modules.DESCRIPTION_EN.getName(), TblsReqs.Modules.DESCRIPTION_ES.getName(),
-                                TblsReqs.Modules.INFO_JSON.getName(), TblsReqs.Modules.ACTIVE.getName(), TblsReqs.Modules.MODULE_SETTINGS.getName()
-                            };
-                            Object[] fieldValues = new Object[]{moduleName, moduleVersion, descEn, descEs, jFileContentObjModel, true, moduleSettings};
+                                TblsReqs.Modules.INFO_JSON.getName(), TblsReqs.Modules.ACTIVE.getName(), TblsReqs.Modules.MODULE_SETTINGS.getName(),
+                                TblsReqs.Modules.PICTURE.getName()};
+                            Object[] fieldValues = new Object[]{moduleName, moduleVersion, descEn, descEs, jFileContentObjModel, true, moduleSettings, picture};
                             RdbmsObject insertRecord = Rdbms.insertRecord(TblsReqs.TablesReqs.MODULES, fieldNames, fieldValues, TblsReqs.TablesReqs.MODULES.getRepositoryName());
                             Boolean errorForInsertRecord = isErrorForInsertRecord(TblsReqs.TablesReqs.MODULES, insertRecord, moduleName);
                             prcReqsSectionLog.put(TblsReqs.TablesReqs.MODULES.getTableName(), 

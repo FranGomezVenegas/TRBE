@@ -12,5 +12,6 @@
                   { "name": "Instruments" , "url" : "/app/procs/InstrumentsAPIqueries"}
             ]
     },
+    "picture": "/images/procedures_pictures/instruments.jpg",
     "apis":[ "InstrumentsAPIactionsEndpoints", "InstrumentsAPIqueriesEndpoints", "InvestigationAPIactionsEndpoints", "InvestigationAPIqueriesEndpoints"]	
 }

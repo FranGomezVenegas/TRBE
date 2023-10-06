@@ -12,5 +12,6 @@
                   { "name": "InventoryLot" , "url" : "/app/procs/InvTrackingAPIqueries"}
             ]
     },
+    "picture": "/images/procedures_pictures/inventory.jpg",
     "apis":[ "InventoryTrackAPIactionsEndpoints", "InventoryTrackAPIqueriesEndpoints", "InvestigationAPIactionsEndpoints", "InvestigationAPIqueriesEndpoints"]	        
 }
