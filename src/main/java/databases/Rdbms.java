@@ -50,6 +50,7 @@ import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntTables;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import static trazit.globalvariables.GlobalVariables.VALIDATION_MODE_REPO;
 import trazit.session.ApiMessageReturn;
 import trazit.session.DbLogSummary;
 
@@ -637,8 +638,8 @@ public class Rdbms {
      * @param keyFieldValues
      * @return
      */
-    public static Object[] existsRecord(String schemaName, String tableName, String[] keyFieldNames, Object[] keyFieldValues) {
-        schemaName = addSuffixIfItIsForTesting(schemaName, tableName);
+    public static Object[] existsRecord(String procInstanceName, String schemaName, String tableName, String[] keyFieldNames, Object[] keyFieldValues) {
+        schemaName = addSuffixIfItIsForTesting(procInstanceName, schemaName, tableName);
         String[] errorDetailVariables = new String[0];
         Object[] filteredValues = new Object[0];
 
@@ -671,7 +672,7 @@ public class Rdbms {
     }
 
     public static Object[] existsRecord(EnumIntTables tblObj, String[] keyFieldNames, Object[] keyFieldValues, String alternativeProcInstanceName) {
-        String schemaName = addSuffixIfItIsForTesting(tblObj.getRepositoryName(), tblObj.getTableName());
+        String schemaName = addSuffixIfItIsForTesting(alternativeProcInstanceName, tblObj.getRepositoryName(), tblObj.getTableName());
         String[] errorDetailVariables = new String[0];
         Object[] filteredValues = new Object[0];
 
@@ -715,9 +716,9 @@ public class Rdbms {
      * @param fieldsSortBy
      * @return
      */
-    public static String getRecordFieldsByFilterJSON(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, String[] fieldsSortBy) {
+    public static String getRecordFieldsByFilterJSON(String procInstanceName, String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, String[] fieldsSortBy) {
         schemaName = LPPlatform.buildSchemaName(schemaName, "");
-        schemaName = addSuffixIfItIsForTesting(schemaName, tableName);
+        schemaName = addSuffixIfItIsForTesting(procInstanceName, schemaName, tableName);
 
         if (whereFieldNames.length == 0) {
             ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});
@@ -761,18 +762,18 @@ public class Rdbms {
      * @param fieldsToRetrieve
      * @return
      */
-    public static Object[][] getRecordFieldsByFilter(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve) {
-        return getRecordFieldsByFilter(schemaName, tableName, whereFieldNames, whereFieldValues, fieldsToRetrieve, false);
+    public static Object[][] getRecordFieldsByFilter(String procInstanceName, String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve) {
+        return getRecordFieldsByFilter(procInstanceName, schemaName, tableName, whereFieldNames, whereFieldValues, fieldsToRetrieve, false);
     }
 
-    public static Object[][] getRecordFieldsByFilter(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, Boolean excludeTestingSuffix) {
+    public static Object[][] getRecordFieldsByFilter(String procInstanceName, String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, Boolean excludeTestingSuffix) {
         if ((schemaName == null) || (schemaName.length() == 0)) {
             Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Rdbms_NotschemaNameSpecified", new Object[]{tableName, schemaName});
             return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
         }
         schemaName = LPPlatform.buildSchemaName(schemaName, "");
         if (excludeTestingSuffix == null || !excludeTestingSuffix) {
-            schemaName = addSuffixIfItIsForTesting(schemaName, tableName);
+            schemaName = addSuffixIfItIsForTesting(procInstanceName, schemaName, tableName);
         }
 
         if ((whereFieldNames == null) || (whereFieldNames.length == 0)) {
@@ -829,7 +830,7 @@ public class Rdbms {
      * @param fieldsToRetrieve
      * @return
      */
-    public static Object[][] getRecordFieldsByFilter(String schemaName, String[] tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve) {
+    public static Object[][] getRecordFieldsByFilter(String procInstanceName, String schemaName, String[] tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve) {
         if (whereFieldNames.length == 0) {
             String[] errorDetailVariables = new String[]{Arrays.toString(tableName), schemaName};
             Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, errorDetailVariables);
@@ -845,7 +846,7 @@ public class Rdbms {
         query.append("select ").append(fieldsToRetrieveStr).append(" from ");
         Integer i = 1;
         for (String tbl : tableName) {
-            schemaName = addSuffixIfItIsForTesting(schemaName, tbl);
+            schemaName = addSuffixIfItIsForTesting(procInstanceName, schemaName, tbl);
             if (i > 1) {
                 query.append(" , ");
             }
@@ -913,8 +914,8 @@ public class Rdbms {
      * @param orderBy
      * @return
      */
-    public static Object[][] getRecordFieldsByFilter(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, String[] orderBy) {
-        return getRecordFieldsByFilter(schemaName, tableName, whereFieldNames, whereFieldValues, fieldsToRetrieve, orderBy, false);
+    public static Object[][] getRecordFieldsByFilter(String procInstanceName, String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, String[] orderBy) {
+        return getRecordFieldsByFilter(procInstanceName, schemaName, tableName, whereFieldNames, whereFieldValues, fieldsToRetrieve, orderBy, false);
     }
 
     /**
@@ -928,8 +929,8 @@ public class Rdbms {
      * @param inforceDistinct
      * @return
      */
-    public static Object[][] getRecordFieldsByFilter(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, String[] orderBy, Boolean inforceDistinct) {
-        schemaName = addSuffixIfItIsForTesting(schemaName, tableName);
+    public static Object[][] getRecordFieldsByFilter(String procInstanceName, String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, String[] orderBy, Boolean inforceDistinct) {
+        schemaName = addSuffixIfItIsForTesting(procInstanceName, schemaName, tableName);
         if (whereFieldNames.length == 0) {
             Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});
             return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
@@ -977,7 +978,7 @@ public class Rdbms {
     }
 
     public static Object[][] getRecordFieldsByFilter(String alternativeProcedure, EnumIntTables tblObj, SqlWhere sWhere, EnumIntTableFields[] fieldsToRetrieve, String[] orderBy, Boolean inforceDistinct) {
-        String schemaName = addSuffixIfItIsForTesting(tblObj.getRepositoryName(), tblObj.getTableName());
+        String schemaName = addSuffixIfItIsForTesting(alternativeProcedure, tblObj.getRepositoryName(), tblObj.getTableName());
         if (sWhere.getAllWhereEntries().isEmpty()) {
             Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tblObj.getTableName(), tblObj.getRepositoryName()});
             return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
@@ -1029,8 +1030,8 @@ public class Rdbms {
         }
     }
 
-    public static Object[][] getGrouper(String schemaName, String tableName, String[] fieldsToGroup, String[] whereFieldNames, Object[] whereFieldValues, String[] orderBy) {
-        schemaName = addSuffixIfItIsForTesting(schemaName, tableName);
+    public static Object[][] getGrouper(String procInstanceName, String schemaName, String tableName, String[] fieldsToGroup, String[] whereFieldNames, Object[] whereFieldValues, String[] orderBy) {
+        schemaName = addSuffixIfItIsForTesting(procInstanceName, schemaName, tableName);
         if (whereFieldNames.length == 0) {
             Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});
             return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
@@ -1089,8 +1090,8 @@ public class Rdbms {
         }
     }
 
-    public static Object[][] getGrouper(String schemaName, String tableName, String[] fieldsToGroup, SqlWhere sWhere, String[] orderBy, Boolean caseSensitive) {
-        schemaName = addSuffixIfItIsForTesting(schemaName, tableName);
+    public static Object[][] getGrouper(String procInstanceName, String schemaName, String tableName, String[] fieldsToGroup, SqlWhere sWhere, String[] orderBy, Boolean caseSensitive) {
+        schemaName = addSuffixIfItIsForTesting(procInstanceName, schemaName, tableName);
         if (sWhere.getAllWhereEntries().isEmpty()) {
             Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});
             return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
@@ -1151,7 +1152,7 @@ public class Rdbms {
     }
 
     //The query is for the main table but want to apply filters in linked tables, for example: samples where sample_analysis are assigned to the user X.
-    public static Object[][] getRecordFieldsByFilterAndSubfilters(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, Boolean excludeTestingSuffix,
+    public static Object[][] getRecordFieldsByFilterAndSubfilters(String procInstanceName, String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, Boolean excludeTestingSuffix,
             String schemaNameChild, String tableNameChild, String[] whereFieldNamesChild, Object[] whereFieldValuesChild, String fieldInMainForLink, String fieldInChildForLink) {
         if ((schemaName == null) || (schemaName.length() == 0)) {
             Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Rdbms_NotschemaNameSpecified", new Object[]{tableName, schemaName});
@@ -1159,7 +1160,7 @@ public class Rdbms {
         }
         schemaName = LPPlatform.buildSchemaName(schemaName, "");
         if (excludeTestingSuffix == null || !excludeTestingSuffix) {
-            schemaName = addSuffixIfItIsForTesting(schemaName, tableName);
+            schemaName = addSuffixIfItIsForTesting(procInstanceName, schemaName, tableName);
         }
 
         if ((whereFieldNames == null) || (whereFieldNames.length == 0)) {
@@ -1207,8 +1208,8 @@ public class Rdbms {
         }
     }
 
-    public static Object[] insertRecordInTableZZZ(String schemaName, String tableName, String[] fieldNames, Object[] fieldValues) {
-        schemaName = addSuffixIfItIsForTesting(schemaName, tableName);
+    public static Object[] insertRecordInTableZZZ(String procInstanceName, String schemaName, String tableName, String[] fieldNames, Object[] fieldValues) {
+        schemaName = addSuffixIfItIsForTesting(procInstanceName, schemaName, tableName);
         if (fieldNames.length == 0) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});
         }
@@ -1241,8 +1242,8 @@ public class Rdbms {
         }
     }
 
-    public static RdbmsObject insertRecordxxx(String schemaName, String tableName, String[] fieldNames, Object[] fieldValues) {
-        schemaName = addSuffixIfItIsForTesting(schemaName, tableName);
+    public static RdbmsObject insertRecordxxx(String procInstanceName, String schemaName, String tableName, String[] fieldNames, Object[] fieldValues) {
+        schemaName = addSuffixIfItIsForTesting(procInstanceName, schemaName, tableName);
         if (fieldNames.length == 0) {
             return new RdbmsObject(false, "", RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});
         }
@@ -1331,8 +1332,8 @@ public class Rdbms {
      * @param whereFieldValues
      * @return
      */
-    public static Object[] updateRecordFieldsByFilter(String schemaName, String tableName, String[] updateFieldNames, Object[] updateFieldValues, String[] whereFieldNames, Object[] whereFieldValues) {
-        schemaName = addSuffixIfItIsForTesting(schemaName, tableName);
+    public static Object[] updateRecordFieldsByFilter(String procInstanceName, String schemaName, String tableName, String[] updateFieldNames, Object[] updateFieldValues, String[] whereFieldNames, Object[] whereFieldValues) {
+        schemaName = addSuffixIfItIsForTesting(procInstanceName, schemaName, tableName);
         updateFieldValues = DbEncryption.decryptTableFieldArray(schemaName, tableName, updateFieldNames, updateFieldValues);
         if (whereFieldNames.length == 0) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});
@@ -1393,9 +1394,10 @@ public class Rdbms {
                 crs.populate(res);
                 return crs;
             }
-        } catch (Exception ex) {
-            if (ex.getMessage().contains("current transaction is aborted")) return null;
+        } catch (Exception ex) {            
             ProcedureRequestSession instanceForDocumentation = ProcedureRequestSession.getInstanceForDocumentation(null, null);
+            if (instanceForDocumentation.getIsForProcManagement()) return null;
+            if (ex.getMessage().contains("current transaction is aborted")) return null;
             ResponseMessages messages = instanceForDocumentation.getMessages();
             messages.addMainForError(RdbmsErrorTrapping.DB_ERROR, new Object[]{ex.getMessage()+". Query:"+consultaconinterrogaciones+". Values:"+Arrays.toString(valoresinterrogaciones)});
             String className = "";
@@ -1576,8 +1578,8 @@ public class Rdbms {
      * @param table
      * @return
      */
-    public static String[] getTableFieldsArrayEj(String schema, String table) {
-        schema = addSuffixIfItIsForTesting(schema, table);
+    public static String[] getTableFieldsArrayEj(String procInstanceName, String schema, String table) {
+        schema = addSuffixIfItIsForTesting(procInstanceName, schema, table);
         String query = "select array(SELECT column_name || ''  FROM information_schema.columns WHERE table_schema = ? AND table_name   = ?) fields";
         CachedRowSet res;
         try {
@@ -1603,8 +1605,8 @@ public class Rdbms {
      * @param addTableName
      * @return
      */
-    public static String getTableFieldsArrayEj(String schema, String table, String separator, Boolean addTableName) {
-        schema = addSuffixIfItIsForTesting(schema, table);
+    public static String getTableFieldsArrayEj(String procInstanceName, String schema, String table, String separator, Boolean addTableName) {
+        schema = addSuffixIfItIsForTesting(procInstanceName, schema, table);
         try {
             String query = "select array(SELECT column_name || ''  FROM information_schema.columns WHERE table_schema = ? AND table_name   = ?) fields";
             CachedRowSet res;
@@ -1956,8 +1958,8 @@ public class Rdbms {
         }
     }
 
-    public static Object[] dbTableExists(String schemaName, String tableName) {
-        return dbTableExists(schemaName, tableName, null);
+    public static Object[] dbTableExists(String procInstanceName, String schemaName, String tableName) {
+        return dbTableExists(procInstanceName, schemaName, tableName, null);
     }
 /*
     public static Object[][] dbTablesInGivenSchema(String schemaName, String tableName, String fieldName) {
@@ -1996,9 +1998,9 @@ public class Rdbms {
         }
     }
     */
-    public static Object[] dbTableExists(String schemaName, String tableName, String fieldName) {
+    public static Object[] dbTableExists(String procInstanceName, String schemaName, String tableName, String fieldName) {
         String schema = schemaName.replace("\"", "");
-        schemaName = addSuffixIfItIsForTesting(schemaName, tableName);
+        schemaName = addSuffixIfItIsForTesting(procInstanceName, schemaName, tableName);
         String query = "select table_schema from INFORMATION_SCHEMA.COLUMNS "
                 + " where table_name=? " + " and table_schema=?";
         if (fieldName != null) {
@@ -2145,7 +2147,7 @@ public class Rdbms {
     }
 
     public static Map<String[], Object[][]> dbTableGetFieldDefinition(String schemaName, String tableName, String alternativeProcInstanceName) {
-        schemaName = addSuffixIfItIsForTesting(schemaName, tableName);
+        schemaName = addSuffixIfItIsForTesting(alternativeProcInstanceName, schemaName, tableName);
         schemaName = schemaName.replace("\"", "");
         Map<String[], Object[][]> hm = new HashMap<>();
         String[] fieldsToRetrieve = new String[]{"table_schema", "table_name", "column_name", "data_type"};
@@ -2197,9 +2199,9 @@ public class Rdbms {
 
     }
 
-    public static Object[] dbViewExists(String schemaName, String viewCategory, String viewName) {
+    public static Object[] dbViewExists(String procInstanceName, String schemaName, String viewCategory, String viewName) {
         String schema = schemaName;
-        schemaName = addSuffixIfItIsForTesting(schemaName, viewName);
+        schemaName = addSuffixIfItIsForTesting(procInstanceName, schemaName, viewName);
         if (viewCategory.length() > 0) {
             schema = LPPlatform.buildSchemaName(schema, viewCategory).replace("\"", "");
             //schema=schema+"-"+viewCategory;
@@ -2326,46 +2328,47 @@ public class Rdbms {
         }
     }
 
-    public static String addSuffixIfItIsForTesting(String schemaName, String tableName) {
+    public static String addSuffixIfItIsForTesting(String procInstanceName, String schemaName, String tableName) {
         if (Boolean.TRUE.equals(ProcedureRequestSession.getInstanceForActions(null, null, null).getIsForTesting())) {
-            return suffixForTesting(schemaName, tableName);
+            return suffixForTesting(procInstanceName, schemaName, tableName);
         }
         return schemaName;
     }
 
-    public static String suffixForTesting(String schemaName, String tableName) {
+    public static String suffixForTesting(String procInstanceName, String schemaName, String tableName) {
+        schemaName=schemaName.replace(procInstanceName+"-", "");
         if (schemaName.contains(GlobalVariables.Schemas.DATA.getName())) {
-            if (schemaName.endsWith("\"")) {
-                schemaName = schemaName.substring(0, schemaName.length() - 1) + "_testing\"";
+            if (schemaName.startsWith("\"")) {
+                schemaName=VALIDATION_MODE_REPO+schemaName.substring(1, schemaName.length() - 1);
             } else {
-                schemaName = schemaName + "_testing";
+                schemaName = VALIDATION_MODE_REPO + schemaName;
             }
         }
         if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE_CONFIG.getName())) {
-            return schemaName;
+            return procInstanceName+"-"+schemaName;
         }
         if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE_AUDIT.getName())) {
             if (!LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureAuditSchema_TablesWithNoTestingClone, tableName)) {
-                if (schemaName.endsWith("\"")) {
-                    schemaName = schemaName.substring(0, schemaName.length() - 1) + "_testing\"";
+                if (schemaName.startsWith("\"")) {
+                    schemaName= VALIDATION_MODE_REPO+schemaName.substring(1, schemaName.length() - 1);
                 } else {
-                    schemaName = schemaName + "_testing";
+                    schemaName = VALIDATION_MODE_REPO + schemaName;
                 }
-                return schemaName;
+                return procInstanceName+"-"+schemaName;
 
             }
         }
         if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE.getName())) {
             if (!LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone, tableName)) {
-                if (schemaName.endsWith("\"")) {
-                    schemaName = schemaName.substring(0, schemaName.length() - 1) + "_testing\"";
+                if (schemaName.startsWith("\"")) {
+                    schemaName=VALIDATION_MODE_REPO+schemaName.substring(1, schemaName.length() - 1);
                 } else {
-                    schemaName = schemaName + "_testing";
+                    schemaName = VALIDATION_MODE_REPO +schemaName;
                 }
             }
-            return schemaName;
+            return procInstanceName+"-"+schemaName;
         }
-        return schemaName;
+        return procInstanceName+"-"+schemaName;
     }
 
     public static Object[][] resultSetToArray(ResultSet res, String[] fieldsToGroupAltered) {
@@ -2489,7 +2492,7 @@ private static final int CLIENT_CODE_STACK_INDEX;
     public static RdbmsObject insertRecord(EnumIntTables tblObj, String[] fieldNames, Object[] fieldValues, String alternativeProcInstanceName, Boolean encryptAllFlds) {
         String query = "";
         try {
-            String schemaName = addSuffixIfItIsForTesting(tblObj.getRepositoryName(), tblObj.getTableName());
+            String schemaName = addSuffixIfItIsForTesting(alternativeProcInstanceName, tblObj.getRepositoryName(), tblObj.getTableName());
             if (fieldNames.length == 0) {
                 return new RdbmsObject(false, "", RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tblObj.getTableName(), schemaName});
             }
@@ -2532,7 +2535,7 @@ private static final int CLIENT_CODE_STACK_INDEX;
     public static Object[] updateRecordFieldsByFilter(EnumIntTables tblObj, EnumIntTableFields[] updateFieldNames, Object[] updateFieldValues, SqlWhere whereObj, String alternativeProcInstanceName) {
         DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
 
-        String schemaName = addSuffixIfItIsForTesting(tblObj.getRepositoryName(), tblObj.getTableName());
+        String schemaName = addSuffixIfItIsForTesting(alternativeProcInstanceName, tblObj.getRepositoryName(), tblObj.getTableName());
         updateFieldValues = DbEncryptionObject.decryptTableFieldArray(tblObj, updateFieldNames, updateFieldValues, false);
         if (whereObj.getAllWhereEntries().isEmpty()) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tblObj.getTableName(), schemaName});
@@ -2558,7 +2561,7 @@ private static final int CLIENT_CODE_STACK_INDEX;
 
     public static RdbmsObject removeRecordInTable(EnumIntTables tblObj, SqlWhere whereObj, String alternativeProcInstanceName) {
         DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
-        String schemaName = addSuffixIfItIsForTesting(tblObj.getRepositoryName(), tblObj.getTableName());
+        String schemaName = addSuffixIfItIsForTesting(alternativeProcInstanceName, tblObj.getRepositoryName(), tblObj.getTableName());
         SqlStatementEnums sql = new SqlStatementEnums();
         Map<String, Object[]> hmQuery = sql.buildSqlStatementTable("DELETE", tblObj,
                 whereObj, null, null, null, null, null, null, alternativeProcInstanceName);
@@ -2582,7 +2585,7 @@ private static final int CLIENT_CODE_STACK_INDEX;
     public static RdbmsObject updateTableRecordFieldsByFilter(EnumIntTables tblObj, EnumIntTableFields[] updateFieldNames, Object[] updateFieldValues, SqlWhere whereObj, String alternativeProcInstanceName) {
         DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
 
-        String schemaName = addSuffixIfItIsForTesting(tblObj.getRepositoryName(), tblObj.getTableName());
+        String schemaName = addSuffixIfItIsForTesting(alternativeProcInstanceName, tblObj.getRepositoryName(), tblObj.getTableName());
         updateFieldValues = DbEncryptionObject.decryptTableFieldArray(tblObj, updateFieldNames, updateFieldValues, false);
         if (whereObj.getAllWhereEntries().isEmpty()) {
             return new RdbmsObject(false, "no sql yet", RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED,
