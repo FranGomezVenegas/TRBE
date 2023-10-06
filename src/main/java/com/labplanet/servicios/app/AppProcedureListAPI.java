@@ -34,12 +34,12 @@ import functionaljavaa.sop.UserSop;
 import static functionaljavaa.sop.UserSop.isProcedureSopEnable;
 import static functionaljavaa.user.UserProfile.getProcedureUsers;
 import static functionaljavaa.user.UserProfile.getProcedureUsersAndRolesList;
-import java.util.Arrays;
 import lbplanet.utilities.LPNulls;
 import module.inspectionlot.rawmaterial.logic.InspLotRawMaterialMasterData;
 import module.instrumentsmanagement.logic.InstrumentsFrontendMasterData;
 import module.inventorytrack.logic.InvTrackingFrontendMasterData;
 import trazit.globalvariables.GlobalVariables;
+import trazit.procedureinstance.definition.logic.ReqProcedureFrontendMasterData;
 
 /**
  *
@@ -145,13 +145,13 @@ public class AppProcedureListAPI extends HttpServlet {
                             return new JSONObject();
                         }
 
-                        Object[][] procInfo = Rdbms.getRecordFieldsByFilter(schemaNameProcedure, TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(),
+                        Object[][] procInfo = Rdbms.getRecordFieldsByFilter(schemaNameProcedure, schemaNameProcedure, TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(),
                                 new String[]{TblsProcedure.ProcedureInfo.NAME.getName() + WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null,
                                 PROC_FLD_NAME.split("\\|"));
                         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfo[0][0].toString()))) {
                             procedure = LPJson.convertArrayRowToJSONObject(procFldNameArray, procInfo[0]);
 
-                            Object[][] rulesInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(curProc.toString(), GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(),
+                            Object[][] rulesInfo = Rdbms.getRecordFieldsByFilter(curProc.toString(), LPPlatform.buildSchemaName(curProc.toString(), GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(),
                                     new String[]{TblsProcedure.ProcedureBusinessRules.AREA.getName(), TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause()},
                                     new Object[]{UserSop.UserSopBusinessRules.USERSOP_MODE.getAreaName(), UserSop.UserSopBusinessRules.USERSOP_MODE.getTagName()+ "|" +UserSop.UserSopBusinessRules.WINDOWOPENABLE_WHENNOTSOPCERTIFIED.getTagName()},
                                     new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});
@@ -206,7 +206,7 @@ public class AppProcedureListAPI extends HttpServlet {
     public static JsonObject procModel(String procInstanceName, Integer sizeValue) {
         try {
             JsonObject jArr = new JsonObject();
-            Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_FE_MODEL.getTableName(),
+            Object[][] ruleValue = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_FE_MODEL.getTableName(),
                     new String[]{TblsReqs.ProcedureFEModel.PROCEDURE_NAME.getName(), SqlStatement.WHERECLAUSE_TYPES.OR.getSqlClause() + " " + TblsReqs.ProcedureFEModel.PROC_INSTANCE_NAME.getName()},
                     new Object[]{procInstanceName, procInstanceName},
                     new String[]{TblsReqs.ProcedureFEModel.MODEL_JSON.getName(), TblsReqs.ProcedureFEModel.MODEL_JSON_MOBILE.getName()});
@@ -224,7 +224,7 @@ public class AppProcedureListAPI extends HttpServlet {
 
     public static com.google.gson.JsonArray procModelArray(String procInstanceName, Integer sizeValue) {
         try {
-            Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_FE_MODEL.getTableName(),
+            Object[][] ruleValue = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_FE_MODEL.getTableName(),
                     new String[]{TblsReqs.ProcedureFEModel.PROCEDURE_NAME.getName(), SqlStatement.WHERECLAUSE_TYPES.OR.getSqlClause() + " " + TblsReqs.ProcedureFEModel.PROC_INSTANCE_NAME.getName()},
                     new Object[]{procInstanceName, procInstanceName},
                     new String[]{TblsReqs.ProcedureFEModel.MODEL_JSON.getName(), TblsReqs.ProcedureFEModel.MODEL_JSON_MOBILE.getName()});
@@ -243,6 +243,12 @@ public class AppProcedureListAPI extends HttpServlet {
     public static JSONObject getMasterData(Token token, String procInstanceName) {
         JSONObject jObj = new JSONObject();
         try {
+            if (GlobalVariables.PROC_MANAGEMENT_SPECIAL_ROLE.equalsIgnoreCase(procInstanceName)){
+                ReqProcedureFrontendMasterData procMngrMasterData= new ReqProcedureFrontendMasterData();
+                jObj=procMngrMasterData.getMasterDataJsonObject(procInstanceName);
+                return jObj;
+            }
+                    
             String moduleNameFromProcInstance = token.getModuleNameFromProcInstance(procInstanceName);
             if ("notFound".equalsIgnoreCase(moduleNameFromProcInstance)) {
                 return jObj;
@@ -377,7 +383,7 @@ public class AppProcedureListAPI extends HttpServlet {
             String rolName = token.getUserRole();
             String[] procEventFldNameIconsDownArray = PROC_EVENT_ICONS_DOWN_FLD_NAME.split("\\|");
             String schemaNameProcedure = LPPlatform.buildSchemaName(curProc.toString(), GlobalVariables.Schemas.PROCEDURE.getName());
-            Object[][] procEventIconsDown = Rdbms.getRecordFieldsByFilter(schemaNameProcedure, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(),
+            Object[][] procEventIconsDown = Rdbms.getRecordFieldsByFilter(curProc.toString(), schemaNameProcedure, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(),
                     new String[]{TblsProcedure.ProcedureEvents.ROLE_NAME.getName(), TblsProcedure.ProcedureEvents.POSITION.getName(), TblsProcedure.ProcedureEvents.TYPE.getName()}, new String[]{rolName, iconPosition.DOWN.toString().toLowerCase(), elementType.ICON_BUTTON.toString().toLowerCase().replace("_", "-")},
                     procEventFldNameIconsDownArray, new String[]{TblsProcedure.ProcedureEvents.ORDER_NUMBER.getName()});
             JSONObject procedure = new JSONObject();
@@ -406,7 +412,7 @@ public class AppProcedureListAPI extends HttpServlet {
             String rolName = token.getUserRole();
             String[] procEventFldNameIconsUpArray = PROC_EVENT_ICONS_UP_FLD_NAME.split("\\|");
             String schemaNameProcedure = LPPlatform.buildSchemaName(curProc.toString(), GlobalVariables.Schemas.PROCEDURE.getName());
-            Object[][] procEventIconsUp = Rdbms.getRecordFieldsByFilter(schemaNameProcedure, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(),
+            Object[][] procEventIconsUp = Rdbms.getRecordFieldsByFilter(curProc.toString(), schemaNameProcedure, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(),
                     new String[]{TblsProcedure.ProcedureEvents.ROLE_NAME.getName(), TblsProcedure.ProcedureEvents.POSITION.getName(), TblsProcedure.ProcedureEvents.TYPE.getName()}, new String[]{rolName, iconPosition.UP.toString().toLowerCase(), elementType.ICON_BUTTON.toString().toLowerCase().replace("_", "-")},
                     procEventFldNameIconsUpArray, new String[]{TblsProcedure.ProcedureEvents.ORDER_NUMBER.getName()});
             JSONObject procedure = new JSONObject();
@@ -445,7 +451,7 @@ public class AppProcedureListAPI extends HttpServlet {
             TblsProcedure.ProcedureEvents.TYPE.getName(), TblsProcedure.ProcedureEvents.LP_FRONTEND_PAGE_NAME.getName(),
             TblsProcedure.ProcedureEvents.POSITION.getName()
         };
-        Object[][] procEvent = Rdbms.getRecordFieldsByFilter(schemaNameProcedure, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(),
+        Object[][] procEvent = Rdbms.getRecordFieldsByFilter(curProc.toString(), schemaNameProcedure, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(),
                 new String[]{TblsProcedure.ProcedureEvents.ROLE_NAME.getName(), TblsProcedure.ProcedureEvents.TYPE.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause()},
                 new String[]{rolName, elementType.SIMPLE.toString().toLowerCase().replace("_", "-") + "|" + elementType.TWOICONS.toString().toLowerCase()},
                 procEventFldNameArray, new String[]{TblsProcedure.ProcedureEvents.ORDER_NUMBER.getName(), TblsProcedure.ProcedureEvents.TYPE.getName(), TblsProcedure.ProcedureEvents.POSITION.getName()});
