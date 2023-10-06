@@ -308,8 +308,9 @@ public class TblsProcedure {
         ESIGN_REQUIRED("esign_required", LPDatabase.booleanFld(), null, null, null, null),
         USERCONFIRM_REQUIRED("userconfirm_required", LPDatabase.booleanFld(), null, null, null, null),
         ICON_NAME("icon_name", LPDatabase.string(), null, null, null, null),
-        ICON_NAME_WHENNOTCERTIF("icon_name_when_not_certified", LPDatabase.string(), null, null, null, null);
-
+        ICON_NAME_WHENNOTCERTIF("icon_name_when_not_certified", LPDatabase.string(), null, null, null, null),
+        JSON_MODEL("json_model", LPDatabase.json(), null, null, null, null)
+        ;
         private ProcedureEvents(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules) {
             this.fieldName = dbObjName;
