@@ -217,10 +217,12 @@ public class ProcedureRequestSession {
                 }
                 this.procedureInstance = procInstanceName;
             }
-            if (procInstanceName==null||procInstanceName.length()==0){
+            if (procInstanceName==null||procInstanceName.length()==0||"undefined".equalsIgnoreCase(procInstanceName)){
+                if (Boolean.FALSE.equals((this.isForProcManagement&&"NEW_PROCEDURE".equalsIgnoreCase(this.actionName)))){
                     this.hasErrors = true;
                     this.errorMessage = "procInstanceName argument not found and is mandatory";
                     return;                
+                }
             }
             if (this.token != null && !isPlatform) {
                 this.procedureVersion = this.token.getProcedureInstanceVersion(procInstanceName);
@@ -586,6 +588,9 @@ public class ProcedureRequestSession {
      */
     public Boolean getIsForQuery() {
         return isForQuery;
+    }
+    public Boolean getIsForProcManagement() {
+        return this.isForProcManagement;
     }
 
     /**

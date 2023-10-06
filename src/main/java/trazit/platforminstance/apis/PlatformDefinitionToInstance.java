@@ -10,8 +10,8 @@ import trazit.platforminstance.definition.PlatformDefinition.PlatformDefinitionA
 import static databases.DbObjects.createSchemas;
 import lbplanet.utilities.LPFrontEnd;
 import databases.Rdbms;
-import static trazit.procedureinstance.deployment.logic.PlatformNewInstance.createCheckPlatformProcedure;
-import static trazit.procedureinstance.deployment.logic.PlatformNewInstance.removeCheckPlatformProcedure;
+import static trazit.platforminstance.logic.PlatformNewInstance.createCheckPlatformProcedure;
+import static trazit.platforminstance.logic.PlatformNewInstance.removeCheckPlatformProcedure;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.io.IOException;
 import java.io.PrintWriter;
