@@ -24,6 +24,7 @@ public class ProcDeployEnums {
     }
     public static EnumIntTables[] moduleBaseTables(){
         return new EnumIntTables[]{TblsProcedure.TablesProcedure.PERSON_PROFILE, TblsProcedure.TablesProcedure.PROCEDURE_INFO,
+        TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS,
         TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS,
         TblsTesting.TablesTesting.SCRIPT, TblsTesting.TablesTesting.SCRIPT_STEPS,
         TblsTesting.TablesTesting.SCRIPT_BUS_RULES, TblsTesting.TablesTesting.SCRIPTS_COVERAGE, TblsTesting.TablesTesting.SCRIPT_SAVE_POINT,
