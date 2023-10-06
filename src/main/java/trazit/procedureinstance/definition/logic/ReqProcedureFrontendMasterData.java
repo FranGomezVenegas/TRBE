@@ -23,17 +23,26 @@ public class ReqProcedureFrontendMasterData implements FrontendMasterData{
     @Override
     public JSONObject getMasterDataJsonObject(String alternativeProcInstanceName) {
         JSONObject jSummaryObj=new JSONObject();        
-        jSummaryObj.put(TblsReqs.TablesReqs.MODULES.getTableName(), getActiveModules(alternativeProcInstanceName));
+        jSummaryObj.put(TblsReqs.TablesReqs.MODULES.getTableName(), getActiveModulesJSON(alternativeProcInstanceName, null));
         return jSummaryObj;
     }
     
-    public static JSONArray getActiveModules(String procInstanceName){
-        String[] fieldsToGet = EnumIntTableFields.getAllFieldNames(TblsReqs.TablesReqs.MODULES.getTableFields());
+    public static Object[][] getActiveModules(String procInstanceName, String[] fieldsToGet){
+        if (fieldsToGet==null){
+            fieldsToGet = EnumIntTableFields.getAllFieldNames(TblsReqs.TablesReqs.MODULES.getTableFields());    
+        }
         Object[][] procAndInstanceArr = Rdbms.getRecordFieldsByFilter( "", 
                 TblsReqs.TablesReqs.MODULES.getRepositoryName(), TblsReqs.TablesReqs.MODULES.getTableName(),
                 new String[]{TblsReqs.Modules.ACTIVE.getName()}, 
                 new Object[]{true},
                 fieldsToGet, new String[]{TblsReqs.Modules.MODULE_NAME.getName()});
+        return procAndInstanceArr;
+    }
+    public static JSONArray getActiveModulesJSON(String procInstanceName, String[] fieldsToGet){     
+        if (fieldsToGet==null){
+            fieldsToGet = EnumIntTableFields.getAllFieldNames(TblsReqs.TablesReqs.MODULES.getTableFields());  
+        }
+        Object[][] procAndInstanceArr=getActiveModules(procInstanceName, fieldsToGet);
         JSONArray proceduresList = new JSONArray();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procAndInstanceArr[0][0].toString())) {
             return proceduresList;

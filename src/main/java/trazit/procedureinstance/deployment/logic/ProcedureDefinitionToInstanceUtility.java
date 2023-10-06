@@ -23,7 +23,7 @@ public class ProcedureDefinitionToInstanceUtility {
 
 
     public static final Object[] procedureUsersList(String procInstanceName, Integer procVersion){
-        Object[][] procedureRolesListArr = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USERS.getTableName(), 
+        Object[][] procedureRolesListArr = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USERS.getTableName(), 
                 new String[]{TblsReqs.ProcedureUsers.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUsers.PROCEDURE_VERSION.getName()}, new Object[]{procInstanceName, procVersion}, 
                 new String[]{TblsReqs.ProcedureUsers.USER_NAME.getName()}, new String[]{TblsReqs.ProcedureUsers.USER_NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureRolesListArr[0][0].toString()))
@@ -32,7 +32,7 @@ public class ProcedureDefinitionToInstanceUtility {
     }
     
     public static final Object[] procedureRolesList(String procInstanceName, Integer procVersion){
-        Object[][] procedureRolesListArr = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_ROLES.getTableName(), 
+        Object[][] procedureRolesListArr = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_ROLES.getTableName(), 
                 new String[]{TblsReqs.ProcedureRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureRoles.PROCEDURE_VERSION.getName()}, new Object[]{procInstanceName, procVersion}, 
                 new String[]{TblsReqs.ProcedureRoles.ROLE_NAME.getName()}, new String[]{TblsReqs.ProcedureRoles.ROLE_NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureRolesListArr[0][0].toString()))
@@ -49,12 +49,20 @@ public class ProcedureDefinitionToInstanceUtility {
      * @param sopVersion
      * @param sopRevision
      * @return
-     */    
-    public static final Object[][] procedureAddSopToUsersByRole( String procInstanceName, Integer procVersion, String schemaName, String roleName, String sopName, Integer sopVersion, Integer sopRevision){
+     */  
+    public static final Object[] procedureSops(String procInstanceName, Integer procVersion){
+        Object[][] procedureRolesListArr = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA.getTableName(), 
+                new String[]{TblsReqs.ProcedureSopMetaData.PROCEDURE_NAME.getName(), TblsReqs.ProcedureSopMetaData.PROCEDURE_VERSION.getName()}, new Object[]{procInstanceName, procVersion}, 
+                new String[]{TblsReqs.ProcedureSopMetaData.SOP_NAME.getName()}, new String[]{TblsReqs.ProcedureSopMetaData.SOP_NAME.getName()});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureRolesListArr[0][0].toString()))
+            return new Object[]{};
+        return LPArray.getColumnFromArray2D(procedureRolesListArr, 0);
+    }    
+    public static final Object[][] procedureAddSopToUsersByRole(String procInstanceName, Integer procVersion, String schemaName, String roleName, String sopName, Integer sopVersion, Integer sopRevision){
         String schemaNameDestinationProcedure=LPPlatform.buildSchemaName(schemaName, GlobalVariables.Schemas.PROCEDURE.getName());
         UserSop usSop = new UserSop();
         Object[][] diagnoses = new Object[0][0];
-        Object[][] personPerRole = Rdbms.getRecordFieldsByFilter(schemaNameDestinationProcedure, TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(),
+        Object[][] personPerRole = Rdbms.getRecordFieldsByFilter(schemaName, schemaNameDestinationProcedure, TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(),
         new String[]{TblsProcedure.PersonProfile.ROLE_NAME.getName()}, new Object[]{roleName}, new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName()});
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(personPerRole[0][0].toString())){
             for (Object[] curPersRole: personPerRole){
@@ -91,7 +99,7 @@ public class ProcedureDefinitionToInstanceUtility {
         String newEntry = "";
         StringBuilder sopListBuilder = new StringBuilder(0);
         
-        Object[][] procUserReqInfo = Rdbms.getRecordFieldsByFilter(schemaName, tableName, 
+        Object[][] procUserReqInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, tableName, 
                         new String[]{"procedure", "version", "code is not null", "active", "in_scope", "in_system"}, 
                         new Object[]{procInstanceName, procVersion, "", true, true, true}, 
                         new String[]{"code", "name", "sop_name", "sop_section", "roles", "schema_name schema_name"}, 
@@ -113,12 +121,12 @@ public class ProcedureDefinitionToInstanceUtility {
                 String[] sopNames = sopName.split(",");
                 for (String sp: sopNames){
                     if (sopSectionName!=null){sp = sp+"-"+sopSectionName;}  
-                    Object[] diagnoses = Rdbms.existsRecord(schemaName+"-config", TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
+                    Object[] diagnoses = Rdbms.existsRecord(procInstanceName, schemaName+"-config", TblsCnfg.TablesConfig.SOP_META_DATA.getTableName(), 
                             new String[]{TblsCnfg.SopMetaData.SOP_NAME.getName()}, new Object[]{sp});
                     if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) && (role!=null) ){                  
                         String[] roles = role.split(",");
                         for (String r: roles){         
-                            Object[][] userProfileInfo = Rdbms.getRecordFieldsByFilter(schemaName, tableName, 
+                            Object[][] userProfileInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, tableName, 
                                             new String[]{"role_id"}, 
                                             new Object[]{procInstanceName+"_"+r}, 
                                             new String[]{"user_info_id"});
