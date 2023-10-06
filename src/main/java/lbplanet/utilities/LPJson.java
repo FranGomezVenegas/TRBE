@@ -161,7 +161,22 @@ public class LPJson {
         });
         return jsonArray;
     }
+    public static JsonArray convertJsonArrayToJSONArray(JSONArray jsonArray) {
+    JsonArray jsonArrayResult = new JsonArray();
 
+    for (int i = 0; i < jsonArray.size(); i++) {
+        try {
+            // Convert each element to a JsonElement using Gson
+            JsonElement jsonElement = JsonParser.parseString(jsonArray.get(i).toString());
+            
+            // Add the JsonElement to the result JsonArray
+            jsonArrayResult.add(jsonElement);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+        return jsonArrayResult;
+    }
     public static Object[] convertToJsonObjectStringedObject(String value) {
         return convertToJsonObjectStringedObject(value, false);
     }

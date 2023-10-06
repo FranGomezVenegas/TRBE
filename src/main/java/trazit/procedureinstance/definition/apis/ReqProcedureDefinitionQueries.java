@@ -45,7 +45,7 @@ import org.json.simple.JSONObject;
 import trazit.procedureinstance.definition.definition.TblsReqs;
 import trazit.procedureinstance.definition.logic.ClassReqProcedUserAndActions;
 import trazit.procedureinstance.definition.logic.ClassReqProcedureQueries;
-import static trazit.procedureinstance.definition.logic.ReqProcedureFrontendMasterData.getActiveModules;
+import static trazit.procedureinstance.definition.logic.ReqProcedureFrontendMasterData.getActiveModulesJSON;
 
 public class ReqProcedureDefinitionQueries extends HttpServlet {
 
@@ -285,7 +285,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                     return;
                 case GET_ALL_ACTIVE_MODULES:
                         jMainObj = new JSONObject();
-                        jMainObj.put("all_active_modules", getActiveModules(procInstanceName));
+                        jMainObj.put("all_active_modules", getActiveModulesJSON(procInstanceName, null));
                         LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
                         return;                                        
                 default:

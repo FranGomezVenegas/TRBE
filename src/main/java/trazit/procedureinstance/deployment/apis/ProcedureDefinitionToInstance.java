@@ -49,6 +49,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    @SuppressWarnings("unchecked")
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response=LPTestingOutFormat.responsePreparation(response);
         if (Boolean.FALSE.equals(LPFrontEnd.servletStablishDBConection(request, response))){return;}   

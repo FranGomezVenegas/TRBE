@@ -5,6 +5,7 @@
  */
 package com.labplanet.servicios.app;
 
+import static trazit.globalvariables.GlobalVariables.VALIDATION_MODE_REPO;
 import static com.labplanet.servicios.app.AppProcedureListAPI.PROC_NEW_EVENT_FLD_NAME;
 import module.monitoring.definition.TblsEnvMonitData.ViewsEnvMonData;
 import databases.features.DbEncryption;
@@ -91,7 +92,7 @@ import org.json.simple.JSONArray;
 import trazit.enums.EnumIntViewFields;
 import static trazit.procedureinstance.definition.apis.ReqProcedureDefinitionQueries.getScriptWithSteps;
 import trazit.procedureinstance.definition.logic.ClassReqProcedUserAndActions;
-import static trazit.procedureinstance.deployment.logic.PlatformNewInstance.createCheckPlatformProcedure;
+import static trazit.platforminstance.logic.PlatformNewInstance.createCheckPlatformProcedure;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 import trazit.thirdparties.sap.ExcelExporter;
@@ -156,7 +157,7 @@ if (1==1)return;
             Rdbms.stablishDBConection("labplanet");
             String procInstanceName = "inv-draft";
             String[] fldsArr = new String[]{TblsReqs.ProcedureRoles.ROLE_NAME.getName()};
-            Object[][] procRoles = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_ROLES.getTableName(),
+            Object[][] procRoles = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_ROLES.getTableName(),
                     new String[]{TblsReqs.ProcedureRoles.PROC_INSTANCE_NAME.getName()},
                     new Object[]{procInstanceName}, fldsArr,
                     new String[]{TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()});
@@ -246,7 +247,7 @@ if (1==1)return;
             }
 //out.println(connectToOpenLDAP("demo"));
             Rdbms.stablishDBConection("labplanet");
-            out.println(EnumIntViews.getViewScriptCreation(TblsReqs.ViewsReqs.PROC_REQ_USER_REQUIREMENTS_ACTIONS, "", false, false, false, null));
+            out.println(EnumIntViews.getViewScriptCreation(TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_ACTIONS, "", false, false, false, null));
             out.println("************ ViewsReqs.PROC_REQ_USER_REQUIREMENTS_ACTIONS NO testing. End");
 
             if (1 == 1) {
@@ -668,8 +669,8 @@ if (1==1) return;*/
                 //isConnected = Rdbms.getRdbms().startRdbms(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW);      
 
                 out.println("Hello");
-                out.println(Rdbms.dbViewExists("em-demo-a", "data", "pr_scheduled_locations")[0].toString());
-                dbTableExists("em-demo-a-data", "sample");
+                out.println(Rdbms.dbViewExists("em-demo-a", "em-demo-a", "data", "pr_scheduled_locations")[0].toString());
+                dbTableExists("em-demo-a", "em-demo-a-data", "sample");
                 procInstanceName = "em-demo-a";
                 Object[] dbSchemaAndTestingSchemaTablesAndFieldsIsMirror = Rdbms.dbSchemaAndTestingSchemaTablesAndFieldsIsMirror(procInstanceName, GlobalVariables.Schemas.DATA.getName(), GlobalVariables.Schemas.DATA_TESTING.getName());
                 Object[][] mismatches = (Object[][]) dbSchemaAndTestingSchemaTablesAndFieldsIsMirror[0];
@@ -854,7 +855,7 @@ procInstanceName="genoma-1";
                 if (schManip.endsWith("\"")) {
                     schManip = schManip.substring(0, schManip.length() - 1) + "_testing\"";
                 } else {
-                    schManip = sch + "_testing";
+                    schManip = VALIDATION_MODE_REPO + sch ;
                 }
             }
             out.println(sch);
@@ -928,9 +929,9 @@ out.println("FIN");
             //isConnected = Rdbms.getRdbms().startRdbms(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW);      
 
             out.println("Hello");
-            out.println(Rdbms.dbViewExists("em-demo-a", "data", "pr_scheduled_locations")[0].toString());
-            out.println(Rdbms.dbViewExists("requirements", "", "pr_scheduled_locations")[0].toString());
-            out.println(Rdbms.dbViewExists("em-demo-a", "data", "padsasr_scheduled_locationssss")[0].toString());
+            out.println(Rdbms.dbViewExists("em-demo-a", "em-demo-a", "data", "pr_scheduled_locations")[0].toString());
+            out.println(Rdbms.dbViewExists("requirements", "requirements", "", "pr_scheduled_locations")[0].toString());
+            out.println(Rdbms.dbViewExists("em-demo-a", "em-demo-a", "data", "padsasr_scheduled_locationssss")[0].toString());
             out.println("Bye");
 //if (1==1) return;
 
