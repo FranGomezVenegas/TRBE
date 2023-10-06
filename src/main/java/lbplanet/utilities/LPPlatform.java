@@ -28,6 +28,7 @@ import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;
+import static trazit.globalvariables.GlobalVariables.VALIDATION_MODE_REPO;
 import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
 
@@ -550,7 +551,7 @@ public class LPPlatform {
             if (Boolean.FALSE.equals(procInstanceName.contains(schemaName))) {
                 schemaName = procInstanceName + "-" + schemaName;
                 if (Boolean.TRUE.equals(isForTesting)) {
-                    schemaName = Rdbms.suffixForTesting(schemaName, tableName);
+                    schemaName = Rdbms.suffixForTesting(procInstanceName, schemaName, tableName);
                 }
                 return "\"" + schemaName + "\"";
             } else {
@@ -559,7 +560,7 @@ public class LPPlatform {
         }
         schemaName = schemaName.replace("\"", "");
         if (Boolean.TRUE.equals(isForTesting)) {
-            schemaName = schemaName + "_testing";
+            schemaName = VALIDATION_MODE_REPO +schemaName;
         }
         return "\"" + schemaName + "\"";
     }
@@ -776,7 +777,7 @@ public class LPPlatform {
             }
 
         }
-        Object[] diagnosis = Rdbms.existsRecord(procInstanceName, configTableName, configTableKeyFieldName, configTableKeyFielValue);
+        Object[] diagnosis = Rdbms.existsRecord(procInstanceName, procInstanceName, configTableName, configTableKeyFieldName, configTableKeyFielValue);
         if (Boolean.FALSE.equals(LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString()))) {
             String[] configTableFilter = LPArray.joinTwo1DArraysInOneOf1DString(configTableKeyFieldName, configTableKeyFielValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);
             return ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.MISSINGTABLECONFIGCODE, new Object[]{tableName, Arrays.toString(configTableFilter), procInstanceName, diagnosis[5]});
@@ -896,10 +897,10 @@ public class LPPlatform {
         if (Boolean.FALSE.equals(Rdbms.getRdbms().getIsStarted())) {
             return;
         }
-        Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ZZZ_DB_ERROR.getTableName());
+        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ZZZ_DB_ERROR.getTableName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())) {
             procInstanceName = "";
-            dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ZZZ_DB_ERROR.getTableName());
+            dbTableExists = Rdbms.dbTableExists(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ZZZ_DB_ERROR.getTableName());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())) {
                 return;
             }
@@ -932,11 +933,11 @@ public class LPPlatform {
             return;
         }
         String procInstanceName = LPNulls.replaceNull(schemaName);
-        Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ZZZ_PROPERTIES_ERROR.getTableName());
+        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ZZZ_PROPERTIES_ERROR.getTableName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())) {
             procInstanceName = "";
         } else {
-            dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ZZZ_PROPERTIES_ERROR.getTableName());
+            dbTableExists = Rdbms.dbTableExists(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ZZZ_PROPERTIES_ERROR.getTableName());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())) {
                 return;
             }
