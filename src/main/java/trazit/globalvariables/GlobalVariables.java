@@ -16,8 +16,11 @@ public class GlobalVariables {
         APP_PROCEDURE("app-procedure"),
         APP_PROC_DATA("app-proc-data"), APP_PROC_DATA_AUDIT("app-proc-data-audit"),
         CONFIG("config"), CONFIG_AUDIT("config-audit"), REQUIREMENTS("requirements"),
-        DATA("data"), DATA_AUDIT("data-audit"), TESTING("testing"), DATA_TESTING("data_testing"), DATA_AUDIT_TESTING("data-audit_testing"),
-        PROCEDURE("procedure"), PROCEDURE_CONFIG("procedure-config"), PROCEDURE_TESTING("procedure_testing"), PROCEDURE_AUDIT("procedure-audit"), PROCEDURE_AUDIT_TESTING("procedure-audit_testing"), MODULES_TRAZIT_TRAZIT("trazit")
+        DATA("data"), DATA_AUDIT("data-audit"), TESTING("testing"), 
+        DATA_TESTING(VALIDATION_MODE_REPO+"data"), DATA_AUDIT_TESTING(VALIDATION_MODE_REPO+"data-audit"),
+        PROCEDURE("procedure"), PROCEDURE_CONFIG("procedure-config"), 
+        PROCEDURE_TESTING(VALIDATION_MODE_REPO+"procedure"), PROCEDURE_AUDIT("procedure-audit"), 
+        PROCEDURE_AUDIT_TESTING(VALIDATION_MODE_REPO+"procedure-audit"), MODULES_TRAZIT_TRAZIT("trazit")
         ;
         Schemas(String nm){
             this.name=nm;
@@ -30,6 +33,7 @@ public class GlobalVariables {
     public static final String DEFAULTLANGUAGE="en";
     public static final String TRAZIT_SCHEDULER="TRAZIT_SCHEDULER";
     public static final String PROC_MANAGEMENT_SPECIAL_ROLE="proc_management";
+    public static final String VALIDATION_MODE_REPO="valid_";
     
     public static final String LANGUAGE_ALL_LANGUAGES="ALL";
     public enum Languages{EN("en"), ES("es")
