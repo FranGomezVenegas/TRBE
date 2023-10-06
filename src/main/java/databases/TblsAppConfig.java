@@ -7,8 +7,9 @@ package databases;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import lbplanet.utilities.LPDatabase;
-import trazit.enums.EnumIntTableFields;
+
 import trazit.enums.EnumIntTables;
+import trazit.enums.EnumIntTableFields;
 import trazit.enums.FldBusinessRules;
 import trazit.enums.ReferenceFld;
 import trazit.globalvariables.GlobalVariables;
@@ -27,6 +28,10 @@ public class TblsAppConfig {
             new String[]{TblsAppConfig.TblFldsEncrypt.SCHEMA_NAME.getName(), TblsAppConfig.TblFldsEncrypt.TABLE_NAME.getName(), TblsAppConfig.TblFldsEncrypt.FIELD_NAME.getName()}, null, ""),
         TBL_FLD_DATE_FORMAT(null, "table_field_date_format", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsAppConfig.TblFldsDateFormat.values(), null,
             new String[]{TblsAppConfig.TblFldsDateFormat.SCHEMA_NAME.getName(), TblsAppConfig.TblFldsDateFormat.TABLE_NAME.getName(), TblsAppConfig.TblFldsDateFormat.FIELD_NAME.getName()}, null, ""),
+        UOM(null, "units_of_measurement", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, 
+                TblsCnfg.UnitsOfMeasurement.values(), null,
+            new String[]{TblsCnfg.UnitsOfMeasurement.NAME.getName()}, 
+                null, "UnitsOfMeasurement"), 
         ;
         private TablesAppConfig(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){
