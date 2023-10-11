@@ -152,7 +152,7 @@ public class TestingScript {
             sWhere.addConstraint(TblsTesting.ScriptSteps.ARGUMENT_02, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{rows[0][codeVersionFldPosic].toString()}, null);
             sWhere.addConstraint(TblsTesting.ScriptSteps.SCRIPT_ID, SqlStatement.WHERECLAUSE_TYPES.IN, 
                     new Object[]{"INTEGER*" +LPArray.convertArrayToString(LPArray.getColumnFromArray2D(scriptsArr, 0), "-", "")}, "-");
-            Object[][] existsRecord = Rdbms.getRecordFieldsByFilter(
+            Object[][] existsRecord = Rdbms.getRecordFieldsByFilter(procInstanceName, 
                     LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), 
                     TblsTesting.TablesTesting.SCRIPT_STEPS, 
                     sWhere, new EnumIntTableFields[]{TblsTesting.ScriptSteps.SCRIPT_ID, TblsTesting.ScriptSteps.SCRIPT_ID}, null, false);
