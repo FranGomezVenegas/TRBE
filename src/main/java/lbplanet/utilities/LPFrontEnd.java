@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
@@ -265,6 +266,25 @@ public class LPFrontEnd {
                 JSONObject masterData = getMasterData(procReqInstance.getToken(), procReqInstance.getProcedureInstance());
                 jsonObj.put("master_data", masterData);
             }
+            request.setAttribute(GlobalVariables.ServletsResponse.SUCCESS.getAttributeName(), jsonObj.toString());
+        }
+        servetInvokeResponseSuccessServlet(request, response);
+    }
+        public static final void servletReturnSuccess(HttpServletRequest request, HttpServletResponse response, org.json.JSONObject jsonObj) {
+        if (jsonObj == null) {
+            request.setAttribute(GlobalVariables.ServletsResponse.SUCCESS.getAttributeName(), "");
+        } else {
+            ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, false);
+            if (procReqInstance.getToken() != null) {
+                JSONObject masterData = getMasterData(procReqInstance.getToken(), procReqInstance.getProcedureInstance());
+                jsonObj.put("master_data", masterData);
+            }
+        TreeMap<String, Object> sortedProperties;
+            sortedProperties = new TreeMap<>(jsonObj.toMap());
+
+        // Create a new JSONObject with sorted properties
+        org.json.JSONObject sortedJsonObject = new org.json.JSONObject(sortedProperties);
+            
             request.setAttribute(GlobalVariables.ServletsResponse.SUCCESS.getAttributeName(), jsonObj.toString());
         }
         servetInvokeResponseSuccessServlet(request, response);
