@@ -977,8 +977,8 @@ public class Rdbms {
         }
     }
 
-    public static Object[][] getRecordFieldsByFilter(String alternativeProcedure, EnumIntTables tblObj, SqlWhere sWhere, EnumIntTableFields[] fieldsToRetrieve, String[] orderBy, Boolean inforceDistinct) {
-        String schemaName = addSuffixIfItIsForTesting(alternativeProcedure, tblObj.getRepositoryName(), tblObj.getTableName());
+    public static Object[][] getRecordFieldsByFilter(String alternativeProcedure, String schemaName, EnumIntTables tblObj, SqlWhere sWhere, EnumIntTableFields[] fieldsToRetrieve, String[] orderBy, Boolean inforceDistinct) {
+        schemaName = addSuffixIfItIsForTesting(alternativeProcedure, schemaName, tblObj.getTableName());
         if (sWhere.getAllWhereEntries().isEmpty()) {
             Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tblObj.getTableName(), tblObj.getRepositoryName()});
             return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
@@ -2336,7 +2336,11 @@ public class Rdbms {
     }
 
     public static String suffixForTesting(String procInstanceName, String schemaName, String tableName) {
-        schemaName=schemaName.replace(procInstanceName+"-", "");
+        if (procInstanceName==null){procInstanceName="";}
+        if (LPNulls.replaceNull(procInstanceName).length()>0){
+            schemaName=schemaName.replace(procInstanceName+"-", "");
+            procInstanceName=procInstanceName+"-";
+        }
         if (schemaName.contains(GlobalVariables.Schemas.DATA.getName())) {
             if (schemaName.startsWith("\"")) {
                 schemaName=VALIDATION_MODE_REPO+schemaName.substring(1, schemaName.length() - 1);
@@ -2345,7 +2349,7 @@ public class Rdbms {
             }
         }
         if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE_CONFIG.getName())) {
-            return procInstanceName+"-"+schemaName;
+            return procInstanceName+schemaName;
         }
         if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE_AUDIT.getName())) {
             if (!LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureAuditSchema_TablesWithNoTestingClone, tableName)) {
@@ -2354,8 +2358,7 @@ public class Rdbms {
                 } else {
                     schemaName = VALIDATION_MODE_REPO + schemaName;
                 }
-                return procInstanceName+"-"+schemaName;
-
+                return procInstanceName+schemaName;
             }
         }
         if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE.getName())) {
@@ -2366,9 +2369,9 @@ public class Rdbms {
                     schemaName = VALIDATION_MODE_REPO +schemaName;
                 }
             }
-            return procInstanceName+"-"+schemaName;
+            return procInstanceName+schemaName;
         }
-        return procInstanceName+"-"+schemaName;
+        return procInstanceName+schemaName;
     }
 
     public static Object[][] resultSetToArray(ResultSet res, String[] fieldsToGroupAltered) {

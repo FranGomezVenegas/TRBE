@@ -53,7 +53,7 @@ public class OperationMetricsIncubatorNoteBook {
                 whereForPercentagesView = LPArray.addValueToArray1D(whereForPercentagesView, buildDateRangeFromStrings[2]);
             }
         }
-        JSONArray qryJsonArr = dbRowsToJsonArr(procInstanceName, TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK,
+        JSONArray qryJsonArr = dbRowsToJsonArr(procInstanceName, procInstanceName, TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK,
                 EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK, "ALL"),
                 wObj, new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName()},
                 null, true);
@@ -143,7 +143,7 @@ public class OperationMetricsIncubatorNoteBook {
             jObjMainObject.put("statistics_per_end_to_end_sample_process", statAnalysis);
         }
 
-        qryJsonArr = dbRowsToJsonArr(procInstanceName, TblsEnvMonitProcedure.TablesEnvMonitProcedure.INCUB_TEMP_READING_VIOLATIONS,
+        qryJsonArr = dbRowsToJsonArr(procInstanceName, procInstanceName, TblsEnvMonitProcedure.TablesEnvMonitProcedure.INCUB_TEMP_READING_VIOLATIONS,
                 EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitProcedure.TablesEnvMonitProcedure.INCUB_TEMP_READING_VIOLATIONS, "ALL"),
                 wObj2, new String[]{TblsEnvMonitProcedure.IncubatorTempReadingViolations.CREATED_BY.getName()},
                 null, true);
