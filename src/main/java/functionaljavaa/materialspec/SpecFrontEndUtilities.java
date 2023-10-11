@@ -107,7 +107,7 @@ public class SpecFrontEndUtilities {
             sW.addConstraint(TblsCnfg.SpecLimits.VARIATION_NAME, SqlStatement.WHERECLAUSE_TYPES.IN, specAnaVariationName.split("\\|"), null);
         }
         EnumIntTableFields[] tableFieldsFromString = EnumIntTableFields.getTableFieldsFromString(tblObj, fieldsName);
-        Object[][] records = Rdbms.getRecordFieldsByFilter(procInstanceName, TblsCnfg.TablesConfig.SPEC_LIMITS, sW,
+        Object[][] records = Rdbms.getRecordFieldsByFilter(procInstanceName, procInstanceName, TblsCnfg.TablesConfig.SPEC_LIMITS, sW,
                 tableFieldsFromString, sortFields, Boolean.FALSE);
         fieldsName=EnumIntTableFields.getAllFieldNames(tableFieldsFromString);
         JSONArray jArr = new JSONArray();
