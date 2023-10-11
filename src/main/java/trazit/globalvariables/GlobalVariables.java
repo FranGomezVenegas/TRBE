@@ -20,7 +20,7 @@ public class GlobalVariables {
         DATA_TESTING(VALIDATION_MODE_REPO+"data"), DATA_AUDIT_TESTING(VALIDATION_MODE_REPO+"data-audit"),
         PROCEDURE("procedure"), PROCEDURE_CONFIG("procedure-config"), 
         PROCEDURE_TESTING(VALIDATION_MODE_REPO+"procedure"), PROCEDURE_AUDIT("procedure-audit"), 
-        PROCEDURE_AUDIT_TESTING(VALIDATION_MODE_REPO+"procedure-audit"), MODULES_TRAZIT_TRAZIT("trazit")
+        PROCEDURE_AUDIT_TESTING(VALIDATION_MODE_REPO+"procedure-audit"), MODULES_TRAZIT_TRAZIT("trazit"), MODULES_TRAZIT_MODULES("modules")
         ;
         Schemas(String nm){
             this.name=nm;
