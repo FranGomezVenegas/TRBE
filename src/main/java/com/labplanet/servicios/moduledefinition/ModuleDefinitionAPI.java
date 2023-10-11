@@ -55,6 +55,10 @@ public class ModuleDefinitionAPI extends HttpServlet {
         DOC_API_AUDIT_EVENTS_IN_DB("DOC_API_AUDIT_EVENTS_IN_DB", "documentedApiMessageCodesInDb_success", new LPAPIArguments[]{},
                 null, null),
         DOC_API_ALL_IN_ONE("DOC_API_ALL_IN_ONE", "documentedApiMessageCodesInDb_success", new LPAPIArguments[]{},
+                null, null),
+        DOC_OBJECTS_NOT_IN_MODULES("DOC_OBJECTS_NOT_IN_MODULES", "documentedApiMessageCodesInDb_success", new LPAPIArguments[]{},
+                null, null),
+        DOC_ENDPOINTS_WITH_NO_JSON_MODEL("DOC_ENDPOINTS_WITH_NO_JSON_MODEL", "documentedApiMessageCodesInDb_success", new LPAPIArguments[]{},
                 null, null);
 
         private ModuleDefinitionAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, String devComment, String devCommentTag) {
