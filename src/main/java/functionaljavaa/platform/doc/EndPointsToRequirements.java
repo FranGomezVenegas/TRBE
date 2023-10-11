@@ -39,7 +39,7 @@ import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.globalvariables.GlobalVariables.Languages;
-
+import java.util.TreeMap;
 /**
  *
  * @author User
@@ -51,13 +51,19 @@ public final class EndPointsToRequirements {
     String[] endpointsApiAndEndpointNamesKey;
     Object[] apiName1d;
     Object[] endpointName1d;
-    JSONObject summaryInfo;
+    org.json.JSONObject summaryInfo;
 
-    public JSONObject getSummaryInfo() {
+    public org.json.JSONObject getSummaryInfo() {
         return this.summaryInfo;
     }
 
     public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse response) {
+        Integer totalEndpointsVisitedInt = 0;
+        int totalEndpointsVisitedInjection = 0;
+        int currentEntityIndex = 0;
+        Integer totalEntities=0;
+        String evName = "";
+    try{
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
         String dbTrazitModules = prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
         Rdbms.getRdbms().startRdbms(dbTrazitModules);
@@ -73,17 +79,20 @@ public final class EndPointsToRequirements {
         JSONArray endpointsFound = new JSONArray();
         JSONArray endpointsNotFound = new JSONArray();
         String audEvObjStr = "";
-        String evName = "";
-        int i = 0;
-        int totalEndpointsVisitedInjection = 0;
+        JSONArray successMessageWithNoNotificationTranslation = new JSONArray();
+        
         Integer classesImplementingInt = -999;
-        Integer totalEndpointsVisitedInt = 0;
         try (io.github.classgraph.ScanResult scanResult = new ClassGraph().enableAllInfo()//.acceptPackages("com.xyz")
                 .scan()) {
             ClassInfoList classesImplementing = scanResult.getClassesImplementing("trazit.enums.EnumIntEndpoints");            
             classesImplementingInt = classesImplementing.size();
-            for (i = 0; i < classesImplementing.size(); i++) {
-                ClassInfo getMine = classesImplementing.get(i);
+            totalEntities=classesImplementing.size();
+            for (currentEntityIndex = 0; currentEntityIndex < classesImplementing.size(); currentEntityIndex++) {
+                Thread.sleep(500);
+                if (currentEntityIndex==47){
+                    String hola="adios";                    
+                }
+                ClassInfo getMine = classesImplementing.get(currentEntityIndex);
                 audEvObjStr = getMine.getSimpleName();
                 List<Object> enumConstantObjects = getMine.getEnumConstantObjects();
                 JSONArray enumsIncomplete = new JSONArray();
@@ -109,9 +118,22 @@ public final class EndPointsToRequirements {
                     }
                     if (Boolean.FALSE.equals(summaryOnlyMode)) {
                         addCodeInErrorTrapping(curEndpoint.getClass().getSimpleName(), curEndpoint.getSuccessMessageCode(), "");
+                        String [] langsArr=new String[]{"en", "es"};
+                        for (String curLang: langsArr){
+                            String errorText = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE + curEndpoint.getClass().getSimpleName(), null, curEndpoint.getSuccessMessageCode(), 
+                            curLang, null, true, curEndpoint.getClass().getSimpleName());
+                            if (errorText.length() == 0) {
+                                JSONObject notifInfo=new JSONObject();
+                                notifInfo.put("api_name", curEndpoint.getClass().getSimpleName());
+                                notifInfo.put("endpoint_name", curEndpoint.getName());
+                                notifInfo.put("notification_code", curEndpoint.getSuccessMessageCode());
+                                notifInfo.put("missing_language", curLang);
+                                successMessageWithNoNotificationTranslation.add(notifInfo);
+                            }
+                        }
                         try {
                             declareInDatabase(curEndpoint.getClass().getSimpleName(), curEndpoint.getName(),
-                                    fieldNames, fieldValues, curEndpoint.getOutputObjectTypes(), enumConstantObjects.size(), numEndpointArguments, curEndpoint.getApiUrl());
+                                    fieldNames, fieldValues, curEndpoint.getOutputObjectTypes(), enumConstantObjects.size(), numEndpointArguments, curEndpoint.getApiUrl(), curEndpoint.getEntity());
                         } catch (Exception e) {
                             JSONObject jObj = new JSONObject();
                             jObj.put("enum", getMine.getSimpleName());
@@ -133,44 +155,74 @@ public final class EndPointsToRequirements {
                 }
 //                    }
             }
-        } catch (Exception e) {
-            ScanResult.closeAll();
+        } catch (Exception e) {            
             JSONArray errorJArr = new JSONArray();
             errorJArr.add("index:" + totalEndpointsVisitedInjection + audEvObjStr + "_" + evName + ":" + e.getMessage());
             LPFrontEnd.servletReturnSuccess(request, response, errorJArr);
             return;
         }
         ScanResult.closeAll();
-        JSONObject jMainObj = new JSONObject();
+        org.json.JSONObject jMainObj = new org.json.JSONObject();
         String summaryDiagnoses = "";
         if (endpointsNotFound.isEmpty()) {
             summaryDiagnoses = "SUCCESS";
         } else {
+            
             summaryDiagnoses = "WITH ERRORS";
         }
         JSONArray endpointsInDatabaseNoLongerInUse = endpointsInDatabaseNoLongerInUse(endpointsFound);
         if (Boolean.FALSE.equals(endpointsInDatabaseNoLongerInUse.isEmpty())) {
-            summaryDiagnoses = summaryDiagnoses + " There are endpoints in db no longer in use";
+            summaryDiagnoses = summaryDiagnoses + " There are "+endpointsInDatabaseNoLongerInUse.size()+ "endpoints in the dictionary but not longer in use";
         }
-
-        jMainObj.put("summary", summaryDiagnoses);
-        jMainObj.put("00_total_in_db_before_running", this.endpointsFromDatabase.length);
-        jMainObj.put("01_total_apis_in_db_before_running", this.apiName1d.length);
-        jMainObj.put("02_total_enums", classesImplementingInt.toString());
-        jMainObj.put("03_total_visited_enums", enumsCompleteSuccess.size());
-        jMainObj.put("04_enums_visited_list", enumsCompleteSuccess);
-        jMainObj.put("05_total_number_of_messages_visited", totalEndpointsVisitedInt);
-        jMainObj.put("06_found", endpointsFound);
-        jMainObj.put("06_found_total", endpointsFound.size());
-        jMainObj.put("07_not_found", endpointsNotFound);
-        jMainObj.put("07_not_found_total", endpointsNotFound.size());
+        if (Boolean.FALSE.equals(successMessageWithNoNotificationTranslation.isEmpty())) {
+            summaryDiagnoses = summaryDiagnoses + " There are "+successMessageWithNoNotificationTranslation.size()+" missing translations for endpoints success notification";
+        }
+        jMainObj.put("00_summary", summaryDiagnoses);
+        jMainObj.put("01_total_apis_in_dictionary_before_running", this.apiName1d.length);
+        jMainObj.put("01_total_endpoints_in_dictionary_before_running", this.endpointsFromDatabase.length);
+        jMainObj.put("02_total_apis_in_code", classesImplementingInt.toString());
+        jMainObj.put("03_total_apis_visited_in_this_run", enumsCompleteSuccess.size());
+        jMainObj.put("03_list_of_apis_visited_in_this_run", enumsCompleteSuccess);
+        jMainObj.put("04_total_number_of_messages_visited", totalEndpointsVisitedInt);
+        jMainObj.put("04_list of_endpoints_found", endpointsFound);
+        jMainObj.put("05_total_endpoints_found", endpointsFound.size());
+        jMainObj.put("05_list_of_endpoints_not_found", endpointsNotFound);
+        jMainObj.put("05_total_endpoints_not_found", endpointsNotFound.size());
+        jMainObj.put("05_total_success_notifications_with_no_pretty_text", successMessageWithNoNotificationTranslation.size());
+        jMainObj.put("05_list_of_success_notifications_with_no_pretty_text", successMessageWithNoNotificationTranslation);
+        
         if (Boolean.FALSE.equals(endpointsInDatabaseNoLongerInUse.isEmpty())) {
-            jMainObj.put("08_Endpoints_in_db_no_longer_in_use", endpointsInDatabaseNoLongerInUse);
+            jMainObj.put("05_endpoints_in_dictionary_not_longer_in_use", endpointsInDatabaseNoLongerInUse);
+        }
+/*        TreeMap<String, Object> sortedJsonData = new TreeMap<>();
+        Iterator<String> keys = jMainObj.keys();
+        while (keys.hasNext()) {
+            String key = keys.next();
+            sortedJsonData.put(key, jMainObj.get(key));
         }
 
-        this.summaryInfo = jMainObj;
-    }
+        // Create a new JSONObject from the sorted TreeMap 
+        JSONObject sortedJsonObject = new JSONObject(sortedJsonData);
+        */ 
+        TreeMap<String, Object> sortedProperties;
+            sortedProperties = new TreeMap<>(jMainObj.toMap());
 
+        // Create a new JSONObject with sorted properties
+        org.json.JSONObject sortedJsonObject = new org.json.JSONObject(sortedProperties);
+        
+        this.summaryInfo = sortedJsonObject;
+    } catch (Exception e) {        
+        JSONArray errorsJArr = new JSONArray();
+        errorsJArr.add("totalEndpointsVisitedInjection:" + totalEndpointsVisitedInjection + " current event when failed:"+evName+". Error:" + e.getMessage());
+        JSONObject jObj=new JSONObject();
+        jObj.put("current_entity", currentEntityIndex);
+        jObj.put("total_entities", totalEntities);
+        errorsJArr.add(jObj);
+        LPFrontEnd.servletReturnSuccess(request, response, errorsJArr);
+        return;                
+    }
+    }
+    
     public EndPointsToRequirements() {
     }
 
@@ -220,7 +272,7 @@ public final class EndPointsToRequirements {
         return this.endpointsFromDatabase[valuePosicInArray];
     }
 
-    public void declareInDatabase(String apiName, String endpointName, String[] fieldNames, Object[] fieldValues, JsonArray outputObjectTypes, Integer numEndpointsInApi, Integer numEndpointArguments, String apiUrl) {
+    public void declareInDatabase(String apiName, String endpointName, String[] fieldNames, Object[] fieldValues, JsonArray outputObjectTypes, Integer numEndpointsInApi, Integer numEndpointArguments, String apiUrl, String entity) {
         try {
             Object[] reqEndpointInfo = existsEndPointInDatabase(apiName, endpointName);
             if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(reqEndpointInfo[0].toString()))) {
@@ -230,8 +282,8 @@ public final class EndPointsToRequirements {
                     SqlWhere sqlWhere = new SqlWhere();
                     sqlWhere.addConstraint(TblsTrazitDocTrazit.EndpointsDeclaration.ID,
                             SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{reqEndpointInfo[0]}, "");
-                    String[] fldNames = new String[]{EndpointsDeclaration.ARGUMENTS_ARRAY.getName(), EndpointsDeclaration.LAST_UPDATE.getName(), EndpointsDeclaration.NUM_ARGUMENTS.getName()};
-                    Object[] fldValues = new Object[]{newArgumentsArray, LPDate.getCurrentTimeStamp(), numEndpointArguments};
+                    String[] fldNames = new String[]{EndpointsDeclaration.ARGUMENTS_ARRAY.getName(), EndpointsDeclaration.LAST_UPDATE.getName(), EndpointsDeclaration.NUM_ARGUMENTS.getName(), EndpointsDeclaration.ENTITY.getName()};
+                    Object[] fldValues = new Object[]{newArgumentsArray, LPDate.getCurrentTimeStamp(), numEndpointArguments, entity};
                     fldNames = LPArray.addValueToArray1D(fldNames, EndpointsDeclaration.OUTPUT_OBJECT_TYPES.getName());
                     if (outputObjectTypes == null && "ACTION".equalsIgnoreCase(apiName)) {
                         fldValues = LPArray.addValueToArray1D(fldValues, "TBD-To be defined");
@@ -265,6 +317,8 @@ public final class EndPointsToRequirements {
                     fieldValues = LPArray.addValueToArray1D(fieldValues, numEndpointArguments);
                     fldNames = LPArray.addValueToArray1D(fldNames, EndpointsDeclaration.API_URL.getName());
                     fldValues = LPArray.addValueToArray1D(fldValues, apiUrl);
+                    fldNames = LPArray.addValueToArray1D(fldNames, EndpointsDeclaration.ENTITY.getName());
+                    fldValues = LPArray.addValueToArray1D(fldValues, entity);
                     Rdbms.updateRecordFieldsByFilter(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION,
                             EnumIntTableFields.getTableFieldsFromString(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION,
                                     fldNames), fldValues, sqlWhere, null);

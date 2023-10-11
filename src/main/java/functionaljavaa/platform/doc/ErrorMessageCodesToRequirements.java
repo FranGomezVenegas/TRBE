@@ -66,13 +66,14 @@ public class ErrorMessageCodesToRequirements {
                 summaryOnlyMode=Boolean.valueOf(LPNulls.replaceNull(request.getAttribute("summaryOnly")).toString());
             
             if (this.fldNames==null) return;
-            JSONArray enumsCompleteSuccess = new JSONArray();
-            JSONArray msgCodesFound = new JSONArray();
-            JSONArray msgCodesNotFound = new JSONArray();        
-            String audEvObjStr="";
-            String evName="";
-            Integer classesImplementingInt=-999;
-            Integer totalEndpointsVisitedInt=0;
+                JSONArray enumsCompleteSuccess = new JSONArray();
+                JSONArray msgCodesFound = new JSONArray();
+                JSONArray msgCodesNotFound = new JSONArray();        
+                String audEvObjStr="";
+                String evName="";
+                Integer classesImplementingInt=-999;
+                Integer totalEndpointsVisitedInt=0;
+                JSONArray successMessageWithNoNotificationTranslation = new JSONArray();
                 try (       io.github.classgraph.ScanResult scanResult = new ClassGraph().enableAllInfo()//.acceptPackages("com.xyz")
                 .scan()) {    
                     ClassInfoList classesImplementing = scanResult.getClassesImplementing("trazit.enums.EnumIntMessages");
@@ -96,6 +97,18 @@ public class ErrorMessageCodesToRequirements {
                                 msgCodesNotFound.add(curBusRul.getClass().getSimpleName()+"-"+curBusRul.getErrorCode());
                             if (Boolean.FALSE.equals(summaryOnlyMode)){
                                 addCodeInErrorTrapping(curBusRul.getErrorCode(), "");
+                                String [] langsArr=new String[]{"en", "es"};
+                                for (String curLang: langsArr){
+                                    String errorText = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE + curBusRul.getClass().getSimpleName(), null, curBusRul.getErrorCode(), 
+                                    curLang, null, true, curBusRul.getClass().getSimpleName());
+                                    if (errorText.length() == 0) {
+                                        JSONObject notifInfo=new JSONObject();
+                                        notifInfo.put("family_name", curBusRul.getClass().getSimpleName());
+                                        notifInfo.put("notification_code", curBusRul.getErrorCode());
+                                        notifInfo.put("missing_language", curLang);
+                                        successMessageWithNoNotificationTranslation.add(notifInfo);
+                                    }
+                                }                                
                                 try{                                    
                                     declareMessageInDatabase(curBusRul.getClass().getSimpleName(), curBusRul.getErrorCode(), fieldNames, fieldValues);
                                 }catch(Exception e){
@@ -128,20 +141,39 @@ public class ErrorMessageCodesToRequirements {
             
             ScanResult.closeAll();        
             JSONObject jMainObj=new JSONObject();
-            if (msgCodesNotFound.isEmpty())
-                jMainObj.put("summary", "SUCCESS");
-            else
-                jMainObj.put("summary", "WITH ERRORS");
-            jMainObj.put("00_total_in_db_before_running", messageCodeFromDatabase.length);
-            jMainObj.put("01_total_apis_in_db_before_running", this.enumName1d.length);
-            jMainObj.put("02_total_enums",classesImplementingInt.toString());
-            jMainObj.put("03_total_visited_enums",enumsCompleteSuccess.size());
-            jMainObj.put("04_enums_visited_list", enumsCompleteSuccess);
-            jMainObj.put("05_total_number_of_messages_visited", totalEndpointsVisitedInt);
-            jMainObj.put("06_found", msgCodesFound);
-            jMainObj.put("07_not_found", msgCodesNotFound);        
-            jMainObj.put("06_found_total", msgCodesFound.size());
-            jMainObj.put("07_not_found_total", msgCodesNotFound.size());        
+            if (msgCodesNotFound.isEmpty()){
+                jMainObj.put("00_summary", "SUCCESS");
+            }else{
+                jMainObj.put("00_summary", "WITH ERRORS");
+            }
+            String summaryDiagnoses = "";
+            if (msgCodesNotFound.isEmpty()) {
+                summaryDiagnoses = "SUCCESS";
+            } else {
+
+                summaryDiagnoses = "WITH ERRORS";
+            }
+            
+            if (Boolean.FALSE.equals(msgCodesNotFound.isEmpty())) {
+                summaryDiagnoses = summaryDiagnoses + " There are "+msgCodesNotFound.size()+ "notifications not found";
+            }
+            if (Boolean.FALSE.equals(successMessageWithNoNotificationTranslation.isEmpty())) {
+                summaryDiagnoses = summaryDiagnoses + " There are "+successMessageWithNoNotificationTranslation.size()+" missing translations for endpoints success notification";
+            }
+            
+            jMainObj.put("01_total_in_dictionary_before_running", messageCodeFromDatabase.length);
+            jMainObj.put("01_total_families_in_dictionary_before_running", this.enumName1d.length);
+            jMainObj.put("02_total_families_in_code",classesImplementingInt.toString());
+            jMainObj.put("03_total_families_visited",enumsCompleteSuccess.size());
+            jMainObj.put("04_list_of_families_visited_in_this_run", enumsCompleteSuccess);
+            jMainObj.put("04_total_number_of_notifications_visited_in_this_run", totalEndpointsVisitedInt);
+            jMainObj.put("05_total_notifications_found", msgCodesFound.size());
+            jMainObj.put("05_list_of_notifications_found", msgCodesFound);
+            jMainObj.put("05_total_notifications_not_found", msgCodesNotFound.size());        
+            jMainObj.put("05_list_of_notifications_not_found", msgCodesNotFound);  
+            jMainObj.put("05_total_notifications_with_no_pretty_text", successMessageWithNoNotificationTranslation.size());
+            jMainObj.put("05_list_of_notifications_with_no_pretty_text", successMessageWithNoNotificationTranslation);
+            
             this.summaryInfo=jMainObj;
             //LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
         }catch(Exception e){

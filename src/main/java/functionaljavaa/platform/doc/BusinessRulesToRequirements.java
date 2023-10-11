@@ -60,6 +60,10 @@ public class BusinessRulesToRequirements {
         JSONArray busRulesVisitedSuccess = new JSONArray();
         JSONArray eventsFound = new JSONArray();
         JSONArray eventsNotFound = new JSONArray();        
+        ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         
+        String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
+        Rdbms.getRdbms().startRdbms(dbTrazitModules);
+        
         Boolean summaryOnlyMode= Boolean.valueOf(request.getParameter("summaryOnly"));
         if (Boolean.FALSE.equals(summaryOnlyMode))
             summaryOnlyMode=Boolean.valueOf(LPNulls.replaceNull(request.getAttribute("summaryOnly")).toString());
@@ -98,8 +102,8 @@ public class BusinessRulesToRequirements {
                                 curBusRul.getAllowMultiValue(),curBusRul.getMultiValueSeparator());            
                             }catch(Exception e){
                                 JSONObject jObj=new JSONObject();
-                                jObj.put("enum",getMine.getSimpleName());
-                                jObj.put("endpoint",curBusRul.toString());
+                                jObj.put("family",getMine.getSimpleName());
+                                jObj.put("business_rule",curBusRul.toString());
                                 jObj.put(GlobalAPIsParams.LBL_ERROR,e.getMessage());
                                 enumsIncomplete.add(jObj);
                             }
@@ -110,8 +114,8 @@ public class BusinessRulesToRequirements {
                         return;
                     }else{
                         JSONObject jObj=new JSONObject();
-                        jObj.put("enum",getMine.getSimpleName());
-                        jObj.put("endpoints",enumConstantObjects.size());
+                        jObj.put("family",getMine.getSimpleName());
+                        jObj.put("business_rule",enumConstantObjects.size());
                         busRulesVisitedSuccess.add(jObj);
                     }
                 }
@@ -127,17 +131,17 @@ public class BusinessRulesToRequirements {
         ScanResult.closeAll();        
         JSONObject jMainObj=new JSONObject();
         if (eventsNotFound.isEmpty())
-            jMainObj.put("summary", "SUCCESS");
+            jMainObj.put("00_summary", "SUCCESS");
         else
-            jMainObj.put("summary", "WITH ERRORS");
-        jMainObj.put("02_total_visited_enums",busRulesVisitedSuccess.size());
-        jMainObj.put("01_total_enums",classesImplementingInt.toString());
-        jMainObj.put("03_enums_visited_list", busRulesVisitedSuccess);
+            jMainObj.put("00_summary", "WITH ERRORS. There are "+eventsNotFound.size()+" business rules not found");
+        jMainObj.put("01_total_families_in_code",classesImplementingInt.toString());
+        jMainObj.put("02_total_families_visited",busRulesVisitedSuccess.size());
+        jMainObj.put("03_list_of_business_rules_visited", busRulesVisitedSuccess);
         jMainObj.put("04_total_number_of_endpoints_visited", totalEndpointsVisitedInt);
-        jMainObj.put("05_found", eventsFound);
-        jMainObj.put("06_not_found", eventsNotFound);        
-        jMainObj.put("05_found_total", eventsFound.size());
-        jMainObj.put("06_not_found_total", eventsNotFound.size());
+        jMainObj.put("05_total_business_rules_found", eventsFound.size());
+        jMainObj.put("05_list_of_business_rules_found", eventsFound);
+        jMainObj.put("05_total_business_rules_not_found", eventsNotFound.size());
+        jMainObj.put("05_list_of_business_rules_not_found", eventsNotFound);        
         this.summaryInfo=jMainObj;
     }
 private static void declareBusinessRuleInDatabaseOld(String apiName, String areaName, String tagName, String[] fieldNames, Object[] fieldValues){

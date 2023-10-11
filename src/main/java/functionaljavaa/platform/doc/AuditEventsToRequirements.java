@@ -68,6 +68,7 @@ public final class AuditEventsToRequirements {
         JSONArray enumsCompleteSuccess = new JSONArray();
         JSONArray eventsFound = new JSONArray();
         JSONArray eventsNotFound = new JSONArray();
+        JSONArray auditWithNoPrettyValues=new JSONArray();
         Integer classesImplementingInt=-999;
         Integer totalEndpointsVisitedInt=0;
         String audEvObjStr="";
@@ -101,6 +102,19 @@ public final class AuditEventsToRequirements {
                                 enumsIncomplete.add(jObj);
                             }
                         }
+                        String[] langsArr = new String[]{"en", "es"};
+                        for (String curLang: langsArr){
+                            String propValue = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
+                                    audEvObjStr, null, evName, curLang, false, null);
+                            if (LPNulls.replaceNull(propValue).toString().length()==0||evName.equalsIgnoreCase(propValue)){
+                                JSONObject jObj=new JSONObject();
+                                jObj.put("audit_group", audEvObjStr);
+                                jObj.put("entry", evName);
+                                jObj.put("language", curLang);
+                                jObj.put("value_found", propValue);
+                                auditWithNoPrettyValues.add(jObj);
+                            }
+                        }
                     }
                     if (Boolean.FALSE.equals(enumsIncomplete.isEmpty())){
                         LPFrontEnd.servletReturnSuccess(request, response, enumsIncomplete);
@@ -123,19 +137,30 @@ public final class AuditEventsToRequirements {
         
         ScanResult.closeAll();        
         JSONObject jMainObj=new JSONObject();
-        if (eventsNotFound.isEmpty())
-            jMainObj.put("summary", "SUCCESS");
-        else
-            jMainObj.put("summary", "WITH ERRORS");        
-        jMainObj.put("00_total_in_db_before_running", this.auditEventsFromDatabase.length);
-        jMainObj.put("02_total_enums",classesImplementingInt.toString());
-        jMainObj.put("03_total_visited_enums",enumsCompleteSuccess.size());
-        jMainObj.put("04_enums_visited_list", enumsCompleteSuccess);
-        jMainObj.put("05_total_number_of_messages_visited", totalEndpointsVisitedInt);
-        jMainObj.put("06_found", eventsFound);
-        jMainObj.put("07_not_found", eventsNotFound);
-        jMainObj.put("06_found_total", eventsFound.size());
-        jMainObj.put("07_not_found_total", eventsNotFound.size());
+        if (eventsNotFound.isEmpty()&&auditWithNoPrettyValues.isEmpty())
+            jMainObj.put("00_summary", "SUCCESS");
+        else{
+            String errorMsg="WITH ERRORS.";
+            if (Boolean.FALSE.equals(auditWithNoPrettyValues.isEmpty())){
+               errorMsg=errorMsg+"The are "+auditWithNoPrettyValues.size()+" audit events with no pretty value";
+            }
+            if (Boolean.FALSE.equals(eventsNotFound.isEmpty())){
+               errorMsg=errorMsg+"The are "+eventsNotFound.size()+" audit events not found";
+            }
+            jMainObj.put("00_summary", errorMsg);
+        }
+        jMainObj.put("00_total_audit_events_in_dictionary_before_running", this.auditEventsFromDatabase.length);
+        jMainObj.put("01_total_entities_in_code",classesImplementingInt.toString());
+        jMainObj.put("02_total_entities_visited",enumsCompleteSuccess.size());
+        jMainObj.put("03_list_of_audit_events_visited", enumsCompleteSuccess);
+        jMainObj.put("04_total_audit_events_visited", totalEndpointsVisitedInt);
+        jMainObj.put("05_total_audit_events_found", eventsFound.size());
+        jMainObj.put("05_list_of_audit_events_found", eventsFound);
+        jMainObj.put("05_total_audit_events_not_found", eventsNotFound.size());
+        jMainObj.put("05_list_of_audit_events_not_found", eventsNotFound);
+        jMainObj.put("05_total_audit_events_with_no_pretty_message", auditWithNoPrettyValues.size());
+        jMainObj.put("05_list_of_audit_events_with_no_pretty_message", auditWithNoPrettyValues);
+        
         this.summaryInfo=jMainObj;
     }    
 
@@ -152,7 +177,7 @@ private static JSONArray getEndPointArguments(LPAPIArguments[] arguments){
 }
 private static void declareInDatabase(String objectName, String eventName){
     Object[][] reqEvAuditInfo = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.TablesTrazitDocTrazit.AUDIT_EVENTS_DECLARATION.getTableName(), 
-            new String[]{AuditEventsDeclaration.AUDIT_OBJECT.getName(), AuditEventsDeclaration.EVENT_NAME.getName()},
+            new String[]{AuditEventsDeclaration.ENTITY.getName(), AuditEventsDeclaration.EVENT_NAME.getName()},
             new Object[]{objectName, eventName}, 
             new String[]{AuditEventsDeclaration.ID.getName(), AuditEventsDeclaration.EVENT_PRETTY_EN.getName(), AuditEventsDeclaration.EVENT_PRETTY_ES.getName()});
     getDocInfoForAuditEvent(objectName, eventName);
@@ -184,7 +209,7 @@ private static void declareInDatabase(String objectName, String eventName){
         String[] fieldNames=new String[]{};
         Object[] fieldValues=new Object[]{};
         fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{AuditEventsDeclaration.CREATION_DATE.getName(),
-            AuditEventsDeclaration.AUDIT_OBJECT.getName(), AuditEventsDeclaration.EVENT_NAME.getName()});
+            AuditEventsDeclaration.ENTITY.getName(), AuditEventsDeclaration.EVENT_NAME.getName()});
         fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{LPDate.getCurrentTimeStamp(), objectName, eventName});
         String propValueEn = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
             objectName, null, eventName, DEFAULTLANGUAGE, false, null);
@@ -226,10 +251,10 @@ public static Object[] getDocInfoForAuditEvent(String object, String auditEvent)
 private void getAuditEventsFromDatabase(){
     this.fldNames=EnumIntTableFields.getAllFieldNames(TblsTrazitDocTrazit.TablesTrazitDocTrazit.AUDIT_EVENTS_DECLARATION.getTableFields());
     Object[][] reqAuditEventsInfo = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.TablesTrazitDocTrazit.AUDIT_EVENTS_DECLARATION.getTableName(), 
-            new String[]{AuditEventsDeclaration.AUDIT_OBJECT.getName()+SqlStatement.WHERECLAUSE_TYPES.NOT_EQUAL.getSqlClause()},
+            new String[]{AuditEventsDeclaration.ENTITY.getName()+SqlStatement.WHERECLAUSE_TYPES.NOT_EQUAL.getSqlClause()},
             new Object[]{"zzz"}, this.fldNames);
     this.auditEventsFromDatabase=reqAuditEventsInfo;
-    Integer apiNamePosic=LPArray.valuePosicInArray(this.fldNames, AuditEventsDeclaration.AUDIT_OBJECT.getName());
+    Integer apiNamePosic=LPArray.valuePosicInArray(this.fldNames, AuditEventsDeclaration.ENTITY.getName());
     Integer endpointNamePosic=LPArray.valuePosicInArray(this.fldNames, AuditEventsDeclaration.EVENT_NAME.getName());
     Object[] auditObj1d = LPArray.array2dTo1d(this.auditEventsFromDatabase, apiNamePosic);
     Object[] eventName1d = LPArray.array2dTo1d(this.auditEventsFromDatabase, endpointNamePosic);
