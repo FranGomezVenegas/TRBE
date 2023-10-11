@@ -5,6 +5,8 @@ import functionaljavaa.platform.doc.AuditEventsToRequirements;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.platform.doc.ErrorMessageCodesToRequirements;
 import functionaljavaa.platform.doc.BusinessRulesToRequirements;
+import functionaljavaa.platform.doc.DevObjectsInModules;
+import functionaljavaa.platform.doc.EndpointsWithNoJsonModel;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,6 +48,15 @@ public class ClassTrazitCodeDoc {
                     AuditEventsToRequirements auditEvToReq=new AuditEventsToRequirements(request, response);
                     LPFrontEnd.servletReturnSuccess(request, response, auditEvToReq.getSummaryInfo());
                     break;
+                case DOC_OBJECTS_NOT_IN_MODULES:
+                    DevObjectsInModules objsInModules=new DevObjectsInModules(request, response);
+                    LPFrontEnd.servletReturnSuccess(request, response, objsInModules.getSummaryInfo());
+                    break;      
+                case DOC_ENDPOINTS_WITH_NO_JSON_MODEL:
+                    EndpointsWithNoJsonModel endpointsNoJsonModel=new EndpointsWithNoJsonModel(request, response);
+                    LPFrontEnd.servletReturnSuccess(request, response, endpointsNoJsonModel.getSummaryInfo());
+                    break;
+                    
                 case DOC_API_ALL_IN_ONE:
                     JSONObject mainObj=new JSONObject();
                     request.setAttribute("summaryOnly", true);
