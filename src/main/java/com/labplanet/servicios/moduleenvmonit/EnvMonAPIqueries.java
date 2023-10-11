@@ -599,7 +599,7 @@ GlobalAPIsParams.
                     jObjMainObject = new JSONObject();
                     wObj = new SqlWhere();
                     wObj.addConstraint(TblsProcedureConfig.StageTimingInterval.STAGE, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, null);
-                    JSONArray qryJsonArr=dbRowsToJsonArr(procInstanceName, TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL, 
+                    JSONArray qryJsonArr=dbRowsToJsonArr(procInstanceName, procInstanceName, TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL, 
                         EnumIntTableFields.getTableFieldsFromString(TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL, "ALL"), 
                         wObj, new String[]{TblsProcedureConfig.StageTimingInterval.STAGE.getName()}, 
                         null, true);
@@ -608,7 +608,7 @@ GlobalAPIsParams.
                     wObj = new SqlWhere();
                     wObj.addConstraint(TblsProcedureConfig.StageTimingInterval.STAGE, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, null);
                     
-                    qryJsonArr=dbRowsToJsonArr(procInstanceName, TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL, 
+                    qryJsonArr=dbRowsToJsonArr(procInstanceName, procInstanceName, TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL, 
                         EnumIntTableFields.getTableFieldsFromString(TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL, "ALL"), 
                         wObj, new String[]{TblsProcedureConfig.StageTimingInterval.STAGE.getName()}, 
                         null, true);
@@ -632,7 +632,7 @@ GlobalAPIsParams.
                             whereForPercentagesView=LPArray.addValueToArray1D(whereForPercentagesView, buildDateRangeFromStrings[2]);
                         }
                     }
-                    qryJsonArr=dbRowsToJsonArr(procInstanceName, TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE, 
+                    qryJsonArr=dbRowsToJsonArr(procInstanceName, procInstanceName, TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE, 
                         EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE, "ALL"), 
                         wObj, new String[]{TblsProcedure.SampleStageTimingCapture.STARTED_ON.getName()}, 
                         null, true);
@@ -727,7 +727,7 @@ GlobalAPIsParams.
                     }                    
                     
                     
-                    qryJsonArr=dbRowsToJsonArr(procInstanceName, TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION, 
+                    qryJsonArr=dbRowsToJsonArr(procInstanceName, procInstanceName, TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION, 
                         EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION, "ALL"), 
                         wObj2, new String[]{TblsProcedure.SampleStageTimingIntervalDeviation.ENDED_ON.getName()}, 
                         null, true);

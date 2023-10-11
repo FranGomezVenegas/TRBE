@@ -598,7 +598,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
                     }
                     Object[] isReviewByTestingGroupEnable = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName(), DataSampleRevisionTestingGroup.DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP.getTagName());
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isReviewByTestingGroupEnable[0].toString())) {
-                        Object[][] analysisTestingGroup = Rdbms.getRecordFieldsByFilter(procInstanceName, TblsCnfg.TablesConfig.SPEC_LIMITS, sW,
+                        Object[][] analysisTestingGroup = Rdbms.getRecordFieldsByFilter(procInstanceName, procInstanceName, TblsCnfg.TablesConfig.SPEC_LIMITS, sW,
                                 EnumIntTableFields.getTableFieldsFromString(TblsCnfg.TablesConfig.SPEC_LIMITS, new String[]{TblsCnfg.SpecLimits.TESTING_GROUP.getName()}), new String[]{}, Boolean.FALSE);
 
 //                        Object[][] analysisTestingGroup = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(),
