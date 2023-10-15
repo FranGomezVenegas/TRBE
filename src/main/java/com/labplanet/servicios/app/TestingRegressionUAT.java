@@ -190,12 +190,12 @@ public class TestingRegressionUAT extends HttpServlet {
             //      This code below the cases should be considered as the checker
             // The dispatcher for both is exactly the same, there is not one for regression and another for unit testing.
             switch (endPoints) {
-                case DB_PLATFORM_INSTRUMENTS:
-                case DB_SCHEMADATA_GENOMA:
-                case DB_SCHEMADATA_SAMPLES:
-                case DB_SCHEMADATA_ENVMONIT_SAMPLES:
-                case DB_SCHEMADATA_INSPECTION_LOT_RM:
-                case MODULE_INVENTORY_LOT:
+                case INSTRUMENTS:
+                case GENOMICS:
+                case SAMPLES:
+                case MONITORING:
+                case INSPECTION_LOT:
+                case STOCKS:
                     Object[][] scriptStepsTblInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, repositoryName, TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(),
                             new String[]{TblsTesting.Script.SCRIPT_ID.getName(), TblsTesting.Script.ACTIVE.getName()}, new Object[]{scriptId, true},
                             new String[]{TblsTesting.ScriptSteps.STEP_ID.getName(), TblsTesting.ScriptSteps.ACTION_NAME.getName()},

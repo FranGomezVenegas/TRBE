@@ -386,7 +386,7 @@ public class ClassInvTracking {
                 }
                 jArr.add(jsonValuesObj);
                 jsonObj.put("values", jArr);
-                ClassMasterData clss = new ClassMasterData(procReqSession.getProcedureInstance(), TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName(), jsonObj.toJSONString(), TrazitModules.INVENTORY_TRACKING.toString());
+                ClassMasterData clss = new ClassMasterData(procReqSession.getProcedureInstance(), TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName(), jsonObj.toJSONString(), TrazitModules.STOCKS.toString());
                 actionDiagnoses = clss.getDiagnostic();
                 this.messageDynamicData = new Object[]{argValues[0].toString()};
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(clss.getDiagnostic().getDiagnostic())) {

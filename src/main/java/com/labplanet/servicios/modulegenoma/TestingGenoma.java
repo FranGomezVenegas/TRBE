@@ -55,11 +55,11 @@ public class TestingGenoma extends HttpServlet {
         JSONArray functionRelatedObjects = new JSONArray();
         Integer scriptId = Integer.valueOf(LPNulls.replaceNull(request.getParameter("scriptId")));
 
-        String testerFileName = LPTestingParams.TestingServletsConfig.DB_SCHEMADATA_GENOMA.getTesterFileName();
+        String testerFileName = LPTestingParams.TestingServletsConfig.GENOMICS.getTesterFileName();
 
         TestingScript ts = new TestingScript(request, testerFileName, instanceForActions);
 
-        LPTestingOutFormat tstOut = new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.DB_SCHEMADATA_GENOMA.name(), testerFileName);
+        LPTestingOutFormat tstOut = new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.GENOMICS.name(), testerFileName);
         Map<String, Object> csvHeaderTags = tstOut.getCsvHeaderTags();
         StringBuilder fileContentBuilder = new StringBuilder(0);
         try (PrintWriter out = response.getWriter()) {
@@ -139,7 +139,7 @@ public class TestingGenoma extends HttpServlet {
 
     protected void processRequest2(HttpServletRequest request, HttpServletResponse response) throws IOException {
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        String table1Header = TestingServletsConfig.DB_SCHEMADATA_GENOMA.getTablesHeaders();
+        String table1Header = TestingServletsConfig.GENOMICS.getTablesHeaders();
         Integer table1NumArgs = 13;
         LocalDateTime timeStarted = LPDate.getCurrentTimeStamp();
 
@@ -150,8 +150,8 @@ public class TestingGenoma extends HttpServlet {
         response = LPTestingOutFormat.responsePreparation(response);
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
 
-        String testerFileName = LPTestingParams.TestingServletsConfig.DB_SCHEMADATA_GENOMA.getTesterFileName();
-        LPTestingOutFormat tstOut = new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.DB_SCHEMADATA_GENOMA.name(), testerFileName);
+        String testerFileName = LPTestingParams.TestingServletsConfig.GENOMICS.getTesterFileName();
+        LPTestingOutFormat tstOut = new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.GENOMICS.name(), testerFileName);
         Map<String, Object> csvHeaderTags = tstOut.getCsvHeaderTags();
 
         StringBuilder fileContentBuilder = new StringBuilder(0);

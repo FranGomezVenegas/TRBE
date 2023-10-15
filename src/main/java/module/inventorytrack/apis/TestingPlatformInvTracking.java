@@ -51,7 +51,7 @@ public class TestingPlatformInvTracking extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String table1Header = TestingServletsConfig.DB_PLATFORM_INSTRUMENTS.getTablesHeaders();
+        String table1Header = TestingServletsConfig.INSTRUMENTS.getTablesHeaders();
         Integer table1NumArgs=13;
         LocalDateTime timeStarted=LPDate.getCurrentTimeStamp();
         Object[] functionEvaluation=new Object[0];
@@ -62,8 +62,8 @@ public class TestingPlatformInvTracking extends HttpServlet {
         response = LPTestingOutFormat.responsePreparation(response);        
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
 
-        String testerFileName=LPTestingParams.TestingServletsConfig.DB_PLATFORM_INSTRUMENTS.getTesterFileName();                         
-        LPTestingOutFormat tstOut=new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.DB_PLATFORM_INSTRUMENTS.name(), testerFileName);
+        String testerFileName=LPTestingParams.TestingServletsConfig.INSTRUMENTS.getTesterFileName();                         
+        LPTestingOutFormat tstOut=new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.INSTRUMENTS.name(), testerFileName);
         Map<String, Object> csvHeaderTags=tstOut.getCsvHeaderTags();
         
         StringBuilder fileContentBuilder = new StringBuilder(0);        

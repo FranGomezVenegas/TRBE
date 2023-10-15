@@ -253,16 +253,16 @@ public class AppProcedureListAPI extends HttpServlet {
             if ("notFound".equalsIgnoreCase(moduleNameFromProcInstance)) {
                 return jObj;
             }
-            if (GlobalVariables.TrazitModules.ENVIRONMENTAL_MONITORING.name().equalsIgnoreCase(moduleNameFromProcInstance)) {
+            if (GlobalVariables.TrazitModules.MONITORING.name().equalsIgnoreCase(moduleNameFromProcInstance)) {
                 BusinessRules bi = new BusinessRules(procInstanceName, null);
                 jObj = ConfigMasterData.getMasterData(procInstanceName, bi);
             } else if (GlobalVariables.TrazitModules.INSTRUMENTS.name().equalsIgnoreCase(moduleNameFromProcInstance)) {
                 InstrumentsFrontendMasterData mdObj = new InstrumentsFrontendMasterData();
                 jObj = mdObj.getMasterDataJsonObject(procInstanceName);
-            } else if (GlobalVariables.TrazitModules.INVENTORY_TRACKING.name().equalsIgnoreCase(moduleNameFromProcInstance)) {
+            } else if (GlobalVariables.TrazitModules.STOCKS.name().equalsIgnoreCase(moduleNameFromProcInstance)) {
                 InvTrackingFrontendMasterData mdObj = new InvTrackingFrontendMasterData();
                 jObj = mdObj.getMasterDataJsonObject(procInstanceName);
-            } else if (GlobalVariables.TrazitModules.INSPECTION_LOTS_RAW_MAT.name().equalsIgnoreCase(moduleNameFromProcInstance)) {
+            } else if (GlobalVariables.TrazitModules.INSPECTION_LOT.name().equalsIgnoreCase(moduleNameFromProcInstance)) {
                 InspLotRawMaterialMasterData mdObj = new InspLotRawMaterialMasterData();
                 jObj = mdObj.getMasterDataJsonObject(procInstanceName);
             } else {

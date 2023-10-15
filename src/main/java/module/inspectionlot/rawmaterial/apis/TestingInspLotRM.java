@@ -52,7 +52,7 @@ public class TestingInspLotRM extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String table1Header = TestingServletsConfig.DB_SCHEMADATA_INSPECTION_LOT_RM.getTablesHeaders();
+        String table1Header = TestingServletsConfig.INSPECTION_LOT.getTablesHeaders();
         Integer table1NumArgs=13;
         LocalDateTime timeStarted=LPDate.getCurrentTimeStamp();
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
@@ -64,8 +64,8 @@ public class TestingInspLotRM extends HttpServlet {
         response = LPTestingOutFormat.responsePreparation(response);        
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
 
-        String testerFileName=LPTestingParams.TestingServletsConfig.DB_SCHEMADATA_INSPECTION_LOT_RM.getTesterFileName();                         
-        LPTestingOutFormat tstOut=new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.DB_SCHEMADATA_INSPECTION_LOT_RM.name(), testerFileName);
+        String testerFileName=LPTestingParams.TestingServletsConfig.INSPECTION_LOT.getTesterFileName();                         
+        LPTestingOutFormat tstOut=new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.INSPECTION_LOT.name(), testerFileName);
         Map<String, Object> csvHeaderTags=tstOut.getCsvHeaderTags();
         
         StringBuilder fileContentBuilder = new StringBuilder(0);        

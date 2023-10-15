@@ -11,7 +11,6 @@ import trazit.procedureinstance.definition.definition.ReqProcedureEnums.ReqProce
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.SqlWhere;
-import databases.SqlWhereEntry;
 import databases.TblsTesting;
 import databases.features.Token;
 import static functionaljavaa.requirement.ProcedureDefinitionQueries.*;
@@ -397,34 +396,32 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
 
     private static JSONObject procInstanceDefinitionInRequirements(String procInstanceName) {
         JSONObject jMainObj = new JSONObject();
-
-        jMainObj.put("procedure_info", ClassReqProcedureQueries.dbSingleRowToJsonObj(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName(),
-                getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableFields()), new String[]{TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procInstanceName}));
+        JSONObject dbSingleRowToJsonObj = ClassReqProcedureQueries.dbSingleRowToJsonObj(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName(),
+                getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableFields()), new String[]{TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procInstanceName});
+        jMainObj.put("procedure_info", dbSingleRowToJsonObj);
+        
+        String moduleName=dbSingleRowToJsonObj.get("module_name").toString();
+        Integer moduleVersion=dbSingleRowToJsonObj.get("module_version").toString().length()>0?Integer.valueOf(dbSingleRowToJsonObj.get("module_version").toString()):-1;        
         
         SqlWhere wObj = new SqlWhere();
-        wObj.addConstraint(TblsReqs.ProcedureBusinessRules.PROC_INSTANCE_NAME,
-                SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{procInstanceName}, null);
-        SqlWhereEntry[] orClauses = new SqlWhereEntry[]{
-            new SqlWhereEntry(TblsReqs.ProcedureBusinessRules.CATEGORY,
-            SqlStatement.WHERECLAUSE_TYPES.NOT_IN, new Object[]{"ACCESS"}, null),
-            new SqlWhereEntry(TblsReqs.ProcedureBusinessRules.CATEGORY,
-            SqlStatement.WHERECLAUSE_TYPES.IS_NULL, new Object[]{}, null)
-        };
-        wObj.addOrClauseConstraint(orClauses);
+        wObj.addConstraint(TblsReqs.ModuleBusinessRules.MODULE_NAME,
+                SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{moduleName}, null);        
+        wObj.addConstraint(TblsReqs.ModuleBusinessRules.MODULE_VERSION,
+                SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{moduleVersion}, null);        
         JSONArray dbRowsToJsonArr = new JSONArray();        
-        dbRowsToJsonArr = ClassReqProcedureQueries.dbRowsToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_BUS_RULES,
-                EnumIntTableFields.getTableFieldsFromString(TblsReqs.TablesReqs.PROC_BUS_RULES, new String[]{TblsReqs.ProcedureBusinessRules.CATEGORY.getName(),
-            TblsReqs.ProcedureBusinessRules.RULE_NAME.getName(), TblsReqs.ProcedureBusinessRules.RULE_VALUE.getName(),
-            TblsReqs.ProcedureBusinessRules.EXPLANATION.getName(), TblsReqs.ProcedureBusinessRules.VALUES_ALLOWED.getName()}),
+        dbRowsToJsonArr = ClassReqProcedureQueries.dbRowsToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.MODULE_BUSINESS_RULES,
+                EnumIntTableFields.getTableFieldsFromString(TblsReqs.TablesReqs.MODULE_BUSINESS_RULES, new String[]{TblsReqs.ModuleBusinessRules.AREA.getName(),
+            TblsReqs.ModuleBusinessRules.RULE_NAME.getName(), TblsReqs.ModuleBusinessRules.VALUES_LIST.getName(),
+            TblsReqs.ModuleBusinessRules.PREREQUISITE.getName(), TblsReqs.ModuleBusinessRules.IS_MANDATORY.getName()}),
                 wObj,
                 new String[]{
-                    TblsReqs.ProcedureBusinessRules.CATEGORY.getName(),
-                    TblsReqs.ProcedureBusinessRules.ORDER_NUMBER.getName(),
-                    TblsReqs.ProcedureBusinessRules.RULE_NAME.getName()
+                    TblsReqs.ModuleBusinessRules.AREA.getName(),
+                    TblsReqs.ModuleBusinessRules.ORDER_NUMBER.getName(),
+                    TblsReqs.ModuleBusinessRules.RULE_NAME.getName()
                 },
                 new String[]{},
                 true);
-        jMainObj.put("business_rules", dbRowsToJsonArr);
+        jMainObj.put("module_business_rules", dbRowsToJsonArr);
         jMainObj.put("process_accesses", ClassReqProcedureQueries.procAccessBlockInRequirements(procInstanceName));
 
         wObj = new SqlWhere();

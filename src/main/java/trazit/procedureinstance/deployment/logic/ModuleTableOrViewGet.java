@@ -14,7 +14,6 @@ import databases.TblsProcedureAudit;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
-import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMConfig;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMData;
@@ -27,6 +26,7 @@ import module.inventorytrack.definition.TblsInvTrackingProcedure;
 import trazit.enums.EnumIntTables;
 import trazit.enums.EnumIntViews;
 import trazit.globalvariables.GlobalVariables;
+import trazit.globalvariables.GlobalVariables.TrazitModules;
 
 /**
  *
@@ -50,12 +50,6 @@ public class ModuleTableOrViewGet {
         }
         //this.found = false;
         //this.errorMsg = "Not developed yet";
-    }
-
-    public static Boolean moduleExists(String moduleName) {
-        String[] modulesListArr = new String[]{"ENVIRONMENTAL_MONITORING", "SAMPLES", "INSPECTION_LOTS_RAW_MAT",
-            "GENOMIC", "INVENTORY_TRACKING"};
-        return LPArray.valueInArray(modulesListArr, moduleName);
     }
 
     public enum ModulesTablesDefinition {
@@ -128,11 +122,12 @@ public class ModuleTableOrViewGet {
         if (curSchemaName.toLowerCase().contains(GlobalVariables.Schemas.CONFIG.getName())) {
             this.mirrorForTesting = false;
         }
-        switch (moduleName) {
-            case "ENVIRONMENTAL_MONITORING":
-            case "SAMPLES":
+        TrazitModules moduleObj = TrazitModules.valueOf(moduleName);
+        switch (moduleObj) {
+            case MONITORING:
+            case SAMPLES_MANAGEMENT:
                 return;
-            case "INSPECTION_LOTS_RAW_MAT":
+            case INSPECTION_LOT:
                 if (curSchemaName.toLowerCase().contains(GlobalVariables.Schemas.CONFIG.getName())) {
                     try {
                         this.tableObj = TblsInspLotRMConfig.TablesInspLotRMConfig.valueOf(tblName.toUpperCase());
@@ -225,7 +220,7 @@ public class ModuleTableOrViewGet {
                     }
                 }
                 break;
-            case "INVENTORY_TRACKING":
+            case STOCKS:
                 if (curSchemaName.toLowerCase().contains(GlobalVariables.Schemas.CONFIG.getName())) {
                     try {
                         this.tableObj = TblsInvTrackingConfig.TablesInvTrackingConfig.valueOf(tblName.toUpperCase());
@@ -329,11 +324,12 @@ public class ModuleTableOrViewGet {
         if (curSchemaName.toLowerCase().contains(GlobalVariables.Schemas.CONFIG.getName())) {
             this.mirrorForTesting = false;
         }
-        switch (moduleName) {
-            case "ENVIRONMENTAL_MONITORING":
-            case "SAMPLES":
+        TrazitModules moduleNameObj = TrazitModules.valueOf(moduleName);
+        switch (moduleNameObj) {
+            case MONITORING:
+            case SAMPLES_MANAGEMENT:
                 return;
-            case "INSPECTION_LOTS_RAW_MAT":
+            case INSPECTION_LOT:
                 if (curSchemaName.toLowerCase().contains(GlobalVariables.Schemas.CONFIG.getName())) {
                     try {
                         //this.viewObj = TblsInspLotRMConfig.TablesInspLotRMConfig.valueOf(tblName.toUpperCase());
@@ -419,7 +415,7 @@ public class ModuleTableOrViewGet {
                     }
                 }
                 break;
-            case "INVENTORY_TRACKING":
+            case STOCKS:
                 if (curSchemaName.toLowerCase().contains(GlobalVariables.Schemas.CONFIG.getName())) {
                     try {
                         this.viewObj = TblsInvTrackingConfig.ViewsInvTrackingConfig.valueOf(tblName.toUpperCase());

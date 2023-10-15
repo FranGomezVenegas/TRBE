@@ -47,8 +47,8 @@ public class GlobalVariables {
         private final String name;        
     }    
     
-    public enum TrazitModules{INVENTORY_TRACKING, INSTRUMENTS, ENVIRONMENTAL_MONITORING, GENOMICS,
-        PLATFORM_ADMIN, SAMPLES_MANAGEMENT, INSPECTION_LOTS_RAW_MAT}
+    public enum TrazitModules{STOCKS, INSTRUMENTS, MONITORING, GENOMICS,
+        PLATFORM_ADMIN, SAMPLES_MANAGEMENT, INSPECTION_LOT}
     
     public enum ServletsResponse{SUCCESS("/ResponseSuccess", "response"), ERROR("/ResponseError", "errorDetail");
         ServletsResponse(String svlt, String attr){

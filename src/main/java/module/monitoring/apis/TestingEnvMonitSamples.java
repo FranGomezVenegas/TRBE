@@ -59,7 +59,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String table1Header = TestingServletsConfig.DB_SCHEMADATA_ENVMONIT_SAMPLES.getTablesHeaders();
+        String table1Header = TestingServletsConfig.MONITORING.getTablesHeaders();
         Integer table1NumArgs=13;
         LocalDateTime timeStarted=LPDate.getCurrentTimeStamp();
         Object[] functionEvaluation=new Object[0];
@@ -69,8 +69,8 @@ public class TestingEnvMonitSamples extends HttpServlet {
         response = LPTestingOutFormat.responsePreparation(response);        
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
 
-        String testerFileName=LPTestingParams.TestingServletsConfig.DB_SCHEMADATA_ENVMONIT_SAMPLES.getTesterFileName();                         
-        LPTestingOutFormat tstOut=new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.DB_SCHEMADATA_ENVMONIT_SAMPLES.name(), testerFileName);
+        String testerFileName=LPTestingParams.TestingServletsConfig.MONITORING.getTesterFileName();                         
+        LPTestingOutFormat tstOut=new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.MONITORING.name(), testerFileName);
         Map<String, Object> csvHeaderTags=tstOut.getCsvHeaderTags();
         
         StringBuilder fileContentBuilder = new StringBuilder(0);        

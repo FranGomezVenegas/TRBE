@@ -232,16 +232,16 @@ public final class Investigation {
                 String moduleNameFromProcInstance = token.getModuleNameFromProcInstance(procReqSession.getProcedureInstance());
                 TrazitModules moduleNameObj = TrazitModules.valueOf(moduleNameFromProcInstance);
                 switch (moduleNameObj) {
-                    case ENVIRONMENTAL_MONITORING:
+                    case MONITORING:
                         diagnostic = DataProgramCorrectiveAction.markAsAddedToInvestigation(investId, curObjDetail[0], curObjDetail[1]);
                         break;
                     case INSTRUMENTS:
                         diagnostic = DataInstrumentsCorrectiveAction.markAsAddedToInvestigation(investId, curObjDetail[0], curObjDetail[1]);
                         break;
-                    case INVENTORY_TRACKING:
+                    case STOCKS:
                         diagnostic = DataInventoryCorrectiveAction.markAsAddedToInvestigation(investId, curObjDetail[0], curObjDetail[1]);
                         break;
-                    case INSPECTION_LOTS_RAW_MAT:
+                    case INSPECTION_LOT:
                         diagnostic = DataInsLotsCorrectiveAction.markAsAddedToInvestigation(investId, curObjDetail[0], curObjDetail[1]);
                         break;
                     default:

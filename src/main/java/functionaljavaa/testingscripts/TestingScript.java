@@ -44,7 +44,7 @@ public class TestingScript {
     public TestingScript(HttpServletRequest request, String testerFileName, ProcedureRequestSession instanceForAct) {
         timeStarted = LPDate.getCurrentTimeStamp();
         tstAssertSummary = new TestingAssertSummary();
-        tstOut = new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.DB_SCHEMADATA_GENOMA.name(), testerFileName);
+        tstOut = new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.GENOMICS.name(), testerFileName);
         numEvaluationArguments = tstOut.getNumEvaluationArguments();
         instanceForActions = instanceForAct;
         busRulesProcInstance = instanceForAct.getBusinessRulesProcInstance();

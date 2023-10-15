@@ -791,8 +791,9 @@ public class ProcedureDefinitionToInstance {
                     diagn = "table NOT exists in this repository";
                     String tblCreateScript = null;
                     String tblCreateScriptTesting = null;
-                    switch (moduleName.toUpperCase()) {
-                        case "ENVIRONMENTAL_MONITORING":
+                    GlobalVariables.TrazitModules moduleObj = GlobalVariables.TrazitModules.valueOf(moduleName);
+                    switch (moduleObj) {
+                        case MONITORING:
                             Boolean cont = true;
                             try {
                                 switch (curSchemaName.toLowerCase()) {
@@ -966,7 +967,7 @@ public class ProcedureDefinitionToInstance {
                         if (GlobalVariables.Schemas.PROCEDURE.getName().equalsIgnoreCase(curSchemaName.toString()))
                             tableCreationScriptTable = TblsEnvMonitProcedure.getTableCreationScriptFromDataProcedureTableEnvMonit(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
                              */ break;
-                        case "INSTRUMENTS":
+                        case INSTRUMENTS:
                             cont = true;
                             try {
                                 switch (curSchemaName.toLowerCase()) {
@@ -1105,7 +1106,7 @@ public class ProcedureDefinitionToInstance {
                         if (GlobalVariables.Schemas.PROCEDURE.getName().equalsIgnoreCase(curSchemaName.toString()))
                             tableCreationScriptTable = TblsEnvMonitProcedure.getTableCreationScriptFromDataProcedureTableEnvMonit(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
                              */ break;
-                        case "SAMPLES":
+                        case SAMPLES_MANAGEMENT:
                             cont = true;
                             try {
                                 switch (curSchemaName.toLowerCase()) {
@@ -1217,7 +1218,7 @@ public class ProcedureDefinitionToInstance {
                         if (GlobalVariables.Schemas.PROCEDURE.getName().equalsIgnoreCase(curSchemaName.toString()))
                             tableCreationScriptTable = TblsEnvMonitProcedure.getTableCreationScriptFromDataProcedureTableEnvMonit(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
                              */ break;
-                        case "INSPECTION_LOT_RAW_MATERIAL":
+                        //case INSPECTION_LOT:
                             /*                    if (GlobalVariables.Schemas.CONFIG.getName().equalsIgnoreCase(curSchemaName.toString())){
                             Object[] tableExists=dbTableExists(procInstanceName+"-"+GlobalVariables.Schemas.CONFIG.getName(), curTableName.toString());
                             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(tableExists[0].toString()))
@@ -1234,12 +1235,11 @@ public class ProcedureDefinitionToInstance {
                             tableCreationScriptTable = TblsInspLotRMDataAudit.getTableCreationScriptFromDataAuditTableInspLotRM(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
                         if (GlobalVariables.Schemas.PROCEDURE.getName().equalsIgnoreCase(curSchemaName.toString()))
                             tableCreationScriptTable = TblsInspLotRMProcedure.getTableCreationScriptFromDataProcedureTableInspLotRM(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));                  
-                             */ break;
-                        case "GENOME":
+                              break; */
+                        case GENOMICS:
                             break;
-                        case "INSPECTION_LOTS_RAW_MAT":
-                        case "INVENTORY_TRACKING":
-                        case "INVENTORY_TRACK":
+                        case INSPECTION_LOT:
+                        case STOCKS:
                             ModuleTableOrViewGet tblDiagn = new ModuleTableOrViewGet(Boolean.valueOf(curIsView), moduleName, curSchemaName, curTableName.toUpperCase(), procInstanceName);
                             if (curIsView == null || !Boolean.valueOf(curIsView)) {
                                 //EnumIntTables moduleTableObj = getModuleTableObj(moduleName, curSchemaName, curTableName.toUpperCase());
