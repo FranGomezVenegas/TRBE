@@ -42,14 +42,14 @@ public class TblsProcedure {
                 new String[]{TblsProcedure.ProcedureInfo.NAME.getName()}, null, "Procedure Info"),
         PROCEDURE_BUSINESS_RULE(null, "procedure_business_rules", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProcedureBusinessRules.values(), null,
                 new String[]{TblsProcedure.ProcedureBusinessRules.AREA.getName(), ProcedureBusinessRules.RULE_NAME.getName()}, null, "Procedure Business Rules Info"),
-        PROCEDURE_EVENTS(null, "procedure_events", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProcedureEvents.values(), null,
-                new String[]{TblsProcedure.ProcedureEvents.NAME.getName(), ProcedureEvents.ROLE_NAME.getName()}, null, "Procedure Events Info"),
+        PROCEDURE_VIEWS(null, "procedure_views", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProcedureViews.values(), null,
+                new String[]{TblsProcedure.ProcedureViews.NAME.getName(), ProcedureViews.ROLE_NAME.getName()}, null, "Procedure Events Info"),
         PROCEDURE_ACTIONS(null, "procedure_actions", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProcedureActions.values(), null,
                 new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName()}, null, "Procedure Actions Info"),
         PROCEDURE_EVENTS_HELP_CONTENT(null, "procedure_events_help_content", SCHEMA_NAME, false, ProcedureEventsHelpContent.values(), null,
                 new String[]{ProcedureEventsHelpContent.LP_FRONTEND_PAGE_NAME.getName(), ProcedureEventsHelpContent.LP_FRONTEND_PAGE_FILTER.getName(), ProcedureEventsHelpContent.ORDER_NUMBER.getName()},
-                new Object[]{new ForeignkeyFld(ProcedureEventsHelpContent.LP_FRONTEND_PAGE_NAME.getName(), SCHEMA_NAME, TablesProcedure.PROCEDURE_EVENTS.getTableName(), ProcedureEvents.LP_FRONTEND_PAGE_NAME.getName()),
-                    new ForeignkeyFld(ProcedureEventsHelpContent.LP_FRONTEND_PAGE_FILTER.getName(), SCHEMA_NAME, TablesProcedure.PROCEDURE_EVENTS.getTableName(), ProcedureEvents.LP_FRONTEND_PAGE_FILTER.getName())
+                new Object[]{new ForeignkeyFld(ProcedureEventsHelpContent.LP_FRONTEND_PAGE_NAME.getName(), SCHEMA_NAME, TablesProcedure.PROCEDURE_VIEWS.getTableName(), ProcedureViews.LP_FRONTEND_PAGE_NAME.getName()),
+                    new ForeignkeyFld(ProcedureEventsHelpContent.LP_FRONTEND_PAGE_FILTER.getName(), SCHEMA_NAME, TablesProcedure.PROCEDURE_VIEWS.getTableName(), ProcedureViews.LP_FRONTEND_PAGE_FILTER.getName())
                 }, "procedure_events_help_content"),
         PROGRAM_CORRECTIVE_ACTION(null, "program_corrective_action", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsProcedure.ProgramCorrectiveAction.values(), TblsProcedure.ProgramCorrectiveAction.ID.getName(),
                 new String[]{TblsProcedure.ProgramCorrectiveAction.ID.getName()}, null, "Program Corrective Action for results OOS and/or OOC Info"),
@@ -292,7 +292,7 @@ public class TblsProcedure {
         }
     }
 
-    public enum ProcedureEvents implements EnumIntTableFields {
+    public enum ProcedureViews implements EnumIntTableFields {
         NAME("name", LPDatabase.stringNotNull(), null, null, null, null),
         ROLE_NAME("role_name", LPDatabase.stringNotNull(), null, null, null, null),
         MODE("mode", LPDatabase.string(), null, null, null, null),
@@ -309,9 +309,9 @@ public class TblsProcedure {
         USERCONFIRM_REQUIRED("userconfirm_required", LPDatabase.booleanFld(), null, null, null, null),
         ICON_NAME("icon_name", LPDatabase.string(), null, null, null, null),
         ICON_NAME_WHENNOTCERTIF("icon_name_when_not_certified", LPDatabase.string(), null, null, null, null),
-        JSON_MODEL("json_model", LPDatabase.json(), null, null, null, null)
+        JSON_MODEL("json_model", LPDatabase.json(), null, null, null, null),        
         ;
-        private ProcedureEvents(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+        private ProcedureViews(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules) {
             this.fieldName = dbObjName;
             this.fieldType = dbObjType;

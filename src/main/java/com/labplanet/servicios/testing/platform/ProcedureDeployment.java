@@ -98,12 +98,12 @@ public class ProcedureDeployment extends HttpServlet {
             if (Boolean.TRUE.equals(PROC_DISPLAY_PROC_DEF_REQUIREMENTS)){
                 Requirement.getProcedureByProcInstanceName(procName);
             }
-            Object[][] procEvent = Rdbms.getRecordFieldsByFilter(procName, procInstanceSchemaProcName, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(),
-                    new String[]{TblsProcedure.ProcedureEvents.ROLE_NAME+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new String[]{""}, PROCDISP_PROCINSTNC_REQS_FLD_NAME.split("\\|"),
+            Object[][] procEvent = Rdbms.getRecordFieldsByFilter(procName, procInstanceSchemaProcName, TblsProcedure.TablesProcedure.PROCEDURE_VIEWS.getTableName(),
+                    new String[]{TblsProcedure.ProcedureViews.ROLE_NAME+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new String[]{""}, PROCDISP_PROCINSTNC_REQS_FLD_NAME.split("\\|"),
                     PROCDISP_PROCINSTNC_REQS_SORT.split("\\|"), true );
-            Object[][] procEventSOPStemp = Rdbms.getRecordFieldsByFilter(procInstanceSchemaProcName, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(),
-                    new String[]{TblsProcedure.ProcedureEvents.SOP+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new String[]{""}, new String[]{TblsProcedure.ProcedureEvents.SOP.getName()},
-                    new String[]{TblsProcedure.ProcedureEvents.SOP.getName()} );
+            Object[][] procEventSOPStemp = Rdbms.getRecordFieldsByFilter(procInstanceSchemaProcName, TblsProcedure.TablesProcedure.PROCEDURE_VIEWS.getTableName(),
+                    new String[]{TblsProcedure.ProcedureViews.SOP+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new String[]{""}, new String[]{TblsProcedure.ProcedureViews.SOP.getName()},
+                    new String[]{TblsProcedure.ProcedureViews.SOP.getName()} );
             Object[] procEventSOPS = new Object[0];
             for (Object[] prSop: procEventSOPStemp){
                 if (prSop!=null){

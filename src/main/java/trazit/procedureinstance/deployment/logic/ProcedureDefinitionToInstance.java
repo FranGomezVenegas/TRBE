@@ -63,7 +63,7 @@ public class ProcedureDefinitionToInstance {
     }
 
     public static final String[] ProcedureAuditSchema_TablesWithNoTestingClone = new String[]{TblsProcedureAudit.TablesProcedureAudit.PROC_HASH_CODES.getTableName()};
-    public static final String[] ProcedureSchema_TablesWithNoTestingClone = new String[]{TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(),
+    public static final String[] ProcedureSchema_TablesWithNoTestingClone = new String[]{TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(), TblsProcedure.TablesProcedure.PROCEDURE_VIEWS.getTableName(),
         TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName(), TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), TblsProcedure.ViewProcUserAndRoles.TBL.getName(), 
         TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), TblsProcedure.TablesProcedure.PROCEDURE_EVENTS_HELP_CONTENT.getTableName()};
 
@@ -142,16 +142,16 @@ public class ProcedureDefinitionToInstance {
 
     private static final JSONObject createProcEventParent(String procedure, Integer procVersion, String procInstanceName, String role, String[] procEventFldNamesToGet, Object[] values) {
         JSONObject jsonObj = new JSONObject();
-        String type = values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.TYPE.getName())].toString();
-        String position = values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.POSITION.getName())].toString();
+        String type = values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureViews.TYPE.getName())].toString();
+        String position = values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureViews.POSITION.getName())].toString();
         if (Boolean.FALSE.equals(elementType.TWOICONS.toString().equalsIgnoreCase(type)) || Boolean.FALSE.equals("1".equalsIgnoreCase(position))) {
             return jsonObj;
         }
-        values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.POSITION.getName())] = "0";
-        values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.NAME.getName())] = "PARENT_" + values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.NAME.getName())].toString();
-        values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.ESIGN_REQUIRED.getName())] = Boolean.valueOf(values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.ESIGN_REQUIRED.getName())].toString());
-        values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.USERCONFIRM_REQUIRED.getName())] = Boolean.valueOf(values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.USERCONFIRM_REQUIRED.getName())].toString());
-        RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS, procEventFldNamesToGet, values);
+        values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureViews.POSITION.getName())] = "0";
+        values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureViews.NAME.getName())] = "PARENT_" + values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureViews.NAME.getName())].toString();
+        values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureViews.ESIGN_REQUIRED.getName())] = Boolean.valueOf(values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureViews.ESIGN_REQUIRED.getName())].toString());
+        values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureViews.USERCONFIRM_REQUIRED.getName())] = Boolean.valueOf(values[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureViews.USERCONFIRM_REQUIRED.getName())].toString());
+        RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_VIEWS, procEventFldNamesToGet, values);
         if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess())) {
             jsonObj.put("insert error log",
                     insertRecordInTable.getErrorMessageCode() + " " + Arrays.toString(insertRecordInTable.getErrorMessageVariables()));
@@ -163,15 +163,15 @@ public class ProcedureDefinitionToInstance {
 
     public static final JSONObject createDBProcedureEvents(String procedure, Integer procVersion, String procInstanceName) {
         SqlWhere sw = new SqlWhere();
-        sw.addConstraint(TblsProcedure.ProcedureEvents.NAME, WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, "");
-        Rdbms.removeRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS, sw, procInstanceName);
+        sw.addConstraint(TblsProcedure.ProcedureViews.NAME, WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, "");
+        Rdbms.removeRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_VIEWS, sw, procInstanceName);
         Object[] insertRecordInTableFromTable = insertRecordInTableFromTable(true,
                 getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableFields()),
                 GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableName(),
                 new String[]{TblsReqs.ProcedureReqSolution.PROCEDURE_NAME.getName(), TblsReqs.ProcedureReqSolution.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureReqSolution.PROC_INSTANCE_NAME.getName()},
                 new Object[]{procedure, procVersion, procInstanceName},
                 LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()),
-                TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(), getAllFieldNames(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableFields()));
+                TblsProcedure.TablesProcedure.PROCEDURE_VIEWS.getTableName(), getAllFieldNames(TblsProcedure.TablesProcedure.PROCEDURE_VIEWS.getTableFields()));
         JSONObject jsonObj = new JSONObject();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(insertRecordInTableFromTable[0].toString())) {
             jsonObj.put("error_cloning_from_requirements_to_procedure", Arrays.toString(insertRecordInTableFromTable));
@@ -179,11 +179,11 @@ public class ProcedureDefinitionToInstance {
         }
         jsonObj.put("success_cloning_from_requirements_to_procedure", insertRecordInTableFromTable[insertRecordInTableFromTable.length - 2] + ":" + insertRecordInTableFromTable[insertRecordInTableFromTable.length - 1]);
 //        jsonObj.put("Diagnostic from createDBProcedureEvents", insertRecordInTableFromTable[0].toString());
-        String[] procEventFldNamesToGet = getAllFieldNames(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableFields());
-        Object[][] procEventRows = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(),
+        String[] procEventFldNamesToGet = getAllFieldNames(TblsProcedure.TablesProcedure.PROCEDURE_VIEWS.getTableFields());
+        Object[][] procEventRows = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_VIEWS.getTableName(),
                 //new String[]{TblsProcedure.ProcedureEvents.ROLE_NAME.getName(), WHERECLAUSE_TYPES.OR.getSqlClause()+" "+TblsProcedure.ProcedureEvents.ROLE_NAME.getName()+" "+WHERECLAUSE_TYPES.LIKE}, 
                 //new Object[]{"ALL", "%|%"}, 
-                new String[]{TblsProcedure.ProcedureEvents.ROLE_NAME.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
+                new String[]{TblsProcedure.ProcedureViews.ROLE_NAME.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
                 new Object[]{},
                 procEventFldNamesToGet);
         JSONArray multiRolejArr = new JSONArray();
@@ -197,23 +197,23 @@ public class ProcedureDefinitionToInstance {
             for (Object[] curProcEvent : procEventRows) {
                 JSONObject multiRolCurEvent = new JSONObject();
                 multiRolCurEvent.put("event_name",
-                        curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.NAME.getName())]);
+                        curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureViews.NAME.getName())]);
                 String multiRolesLog = "";
-                if ("ALL".equalsIgnoreCase(curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.ROLE_NAME.getName())].toString())) {
+                if ("ALL".equalsIgnoreCase(curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureViews.ROLE_NAME.getName())].toString())) {
                     procRoles = procRolesAllRoles;
                     multiRolesLog = multiRolesLog + " as for all roles, trying addition for " + LPArray.convertArrayToString(LPArray.getColumnFromArray2D(procRoles, 0), ", ", "", true);
                 } else {
-                    procRoles = LPArray.array1dTo2d(curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.ROLE_NAME.getName())].toString().split("\\|"), 1);
+                    procRoles = LPArray.array1dTo2d(curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureViews.ROLE_NAME.getName())].toString().split("\\|"), 1);
                     multiRolesLog = multiRolesLog + " as for multiple roles, trying addition for " + LPArray.convertArrayToString(LPArray.getColumnFromArray2D(procRoles, 0), ", ", "", true);
                 }
                 multiRolCurEvent.put("multirole_type", multiRolesLog);
                 for (int i = 0; i < procRoles.length; i++) {
                     if (i == 0) {
                         SqlWhere sqlWhere = new SqlWhere();
-                        sqlWhere.addConstraint(TblsProcedure.ProcedureEvents.ROLE_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.ROLE_NAME.getName())].toString()}, "");
-                        sqlWhere.addConstraint(TblsProcedure.ProcedureEvents.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.NAME.getName())]}, "");
-                        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS,
-                                EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS, new String[]{TblsProcedure.ProcedureEvents.ROLE_NAME.getName()}), new Object[]{procRoles[0][0].toString()}, sqlWhere, procInstanceName);
+                        sqlWhere.addConstraint(TblsProcedure.ProcedureViews.ROLE_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureViews.ROLE_NAME.getName())].toString()}, "");
+                        sqlWhere.addConstraint(TblsProcedure.ProcedureViews.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureViews.NAME.getName())]}, "");
+                        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(TblsProcedure.TablesProcedure.PROCEDURE_VIEWS,
+                                EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.PROCEDURE_VIEWS, new String[]{TblsProcedure.ProcedureViews.ROLE_NAME.getName()}), new Object[]{procRoles[0][0].toString()}, sqlWhere, procInstanceName);
                         multiRolCurEvent.put("updated?", !LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString()));
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString())) {
                             multiRolCurEvent.put("update error log", Arrays.toString(diagnoses));
@@ -223,8 +223,8 @@ public class ProcedureDefinitionToInstance {
                         }
                     } else {
 
-                        curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureEvents.ROLE_NAME.getName())] = procRoles[i][0].toString();
-                        RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_EVENTS, procEventFldNamesToGet, curProcEvent);
+                        curProcEvent[LPArray.valuePosicInArray(procEventFldNamesToGet, TblsProcedure.ProcedureViews.ROLE_NAME.getName())] = procRoles[i][0].toString();
+                        RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_VIEWS, procEventFldNamesToGet, curProcEvent);
                         multiRolCurEvent.put("inserted?", insertRecordInTable.getRunSuccess());
                         if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess())) {
                             multiRolCurEvent.put("insert error log",
@@ -1322,8 +1322,8 @@ public class ProcedureDefinitionToInstance {
     public static final JSONObject addProcedureSOPtoUsers(String procedure, Integer procVersion, String procInstanceName) {
         JSONObject jsonObj = new JSONObject();
         String schemaNameDestinationProc = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName());
-        Object[][] procEventSopsRecordsSource = Rdbms.getRecordFieldsByFilter("", schemaNameDestinationProc, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(),
-                new String[]{TblsProcedure.ProcedureEvents.SOP.getName() + WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{""},
+        Object[][] procEventSopsRecordsSource = Rdbms.getRecordFieldsByFilter("", schemaNameDestinationProc, TblsProcedure.TablesProcedure.PROCEDURE_VIEWS.getTableName(),
+                new String[]{TblsProcedure.ProcedureViews.SOP.getName() + WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{""},
                 FLDSTO_RETRIEVE_PROC_EVENT_DEST.split("\\|"), new String[]{"sop"});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procEventSopsRecordsSource[0][0].toString())) {
             jsonObj.put(JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procEventSopsRecordsSource[0]));
@@ -1333,9 +1333,9 @@ public class ProcedureDefinitionToInstance {
 
         String[] existingSopRole = new String[0];
         for (Object[] curProcEventSops : procEventSopsRecordsSource) {
-            Object curProcEventName = curProcEventSops[LPArray.valuePosicInArray(FLDSTO_RETRIEVE_PROC_EVENT_DEST.split("\\|"), TblsProcedure.ProcedureEvents.NAME.getName())];
-            Object curSops = curProcEventSops[LPArray.valuePosicInArray(FLDSTO_RETRIEVE_PROC_EVENT_DEST.split("\\|"), TblsProcedure.ProcedureEvents.SOP.getName())];
-            Object curRoleName = curProcEventSops[LPArray.valuePosicInArray(FLDSTO_RETRIEVE_PROC_EVENT_DEST.split("\\|"), TblsProcedure.ProcedureEvents.ROLE_NAME.getName())];
+            Object curProcEventName = curProcEventSops[LPArray.valuePosicInArray(FLDSTO_RETRIEVE_PROC_EVENT_DEST.split("\\|"), TblsProcedure.ProcedureViews.NAME.getName())];
+            Object curSops = curProcEventSops[LPArray.valuePosicInArray(FLDSTO_RETRIEVE_PROC_EVENT_DEST.split("\\|"), TblsProcedure.ProcedureViews.SOP.getName())];
+            Object curRoleName = curProcEventSops[LPArray.valuePosicInArray(FLDSTO_RETRIEVE_PROC_EVENT_DEST.split("\\|"), TblsProcedure.ProcedureViews.ROLE_NAME.getName())];
             JSONArray jsArr = new JSONArray();
             JSONObject jsUserRoleObj = new JSONObject();
             jsUserRoleObj.put("Procedure Event", curProcEventName);

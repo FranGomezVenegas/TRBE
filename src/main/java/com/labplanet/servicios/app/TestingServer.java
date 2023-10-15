@@ -417,10 +417,10 @@ out.println("************ ViewsData.USER_AND_META_DATA_SOP_VIEW NO testing. End"
             if (1 == 1) {
                 return;
             }
-            Object[][] procEvent = Rdbms.getRecordFieldsByFilter("proc-deploy-procedure", TblsProcedure.TablesProcedure.PROCEDURE_EVENTS.getTableName(),
-                    new String[]{TblsProcedure.ProcedureEvents.NAME.getName(), TblsProcedure.ProcedureEvents.ROLE_NAME.getName(), TblsProcedure.ProcedureEvents.TYPE.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause()},
+            Object[][] procEvent = Rdbms.getRecordFieldsByFilter("proc-deploy-procedure", TblsProcedure.TablesProcedure.PROCEDURE_VIEWS.getTableName(),
+                    new String[]{TblsProcedure.ProcedureViews.NAME.getName(), TblsProcedure.ProcedureViews.ROLE_NAME.getName(), TblsProcedure.ProcedureViews.TYPE.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause()},
                     new String[]{"ER-FQ", "coordinator", AppProcedureListAPI.elementType.SIMPLE.toString().toLowerCase() + "|" + AppProcedureListAPI.elementType.TWOICONS.toString().toLowerCase()},
-                    procEventFldNameArray, new String[]{TblsProcedure.ProcedureEvents.ORDER_NUMBER.getName(), TblsProcedure.ProcedureEvents.TYPE.getName(), TblsProcedure.ProcedureEvents.POSITION.getName()});
+                    procEventFldNameArray, new String[]{TblsProcedure.ProcedureViews.ORDER_NUMBER.getName(), TblsProcedure.ProcedureViews.TYPE.getName(), TblsProcedure.ProcedureViews.POSITION.getName()});
             JSONObject procEventSopDetail = new JSONObject();
             for (Object[] procEvent1 : procEvent) {
                 procEventJson = LPJson.convertArrayRowToJSONObject(procEventFldNameArray, procEvent1, null);
