@@ -403,28 +403,42 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         String moduleName=dbSingleRowToJsonObj.get("module_name").toString();
         Integer moduleVersion=dbSingleRowToJsonObj.get("module_version").toString().length()>0?Integer.valueOf(dbSingleRowToJsonObj.get("module_version").toString()):-1;        
         
-        SqlWhere wObj = new SqlWhere();
-        wObj.addConstraint(TblsReqs.ModuleBusinessRules.MODULE_NAME,
-                SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{moduleName}, null);        
-        wObj.addConstraint(TblsReqs.ModuleBusinessRules.MODULE_VERSION,
-                SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{moduleVersion}, null);        
         JSONArray dbRowsToJsonArr = new JSONArray();        
-        dbRowsToJsonArr = ClassReqProcedureQueries.dbRowsToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.MODULE_BUSINESS_RULES,
-                EnumIntTableFields.getTableFieldsFromString(TblsReqs.TablesReqs.MODULE_BUSINESS_RULES, new String[]{TblsReqs.ModuleBusinessRules.AREA.getName(),
-            TblsReqs.ModuleBusinessRules.RULE_NAME.getName(), TblsReqs.ModuleBusinessRules.VALUES_LIST.getName(),
-            TblsReqs.ModuleBusinessRules.PREREQUISITE.getName(), TblsReqs.ModuleBusinessRules.IS_MANDATORY.getName()}),
-                wObj,
-                new String[]{
-                    TblsReqs.ModuleBusinessRules.AREA.getName(),
-                    TblsReqs.ModuleBusinessRules.ORDER_NUMBER.getName(),
-                    TblsReqs.ModuleBusinessRules.RULE_NAME.getName()
-                },
+        dbRowsToJsonArr = ClassReqProcedureQueries.dbRowsToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.BUSINESS_RULES_IN_SOLUTION.getViewName(),
+                new String[]{TblsReqs.viewBusinessRulesInSolution.AREA.getName(),
+            TblsReqs.viewBusinessRulesInSolution.RULE_NAME.getName(), TblsReqs.viewBusinessRulesInSolution.PRESENT.getName(), TblsReqs.viewBusinessRulesInSolution.REQUIREMENTS_LIST.getName(),
+            TblsReqs.viewBusinessRulesInSolution.PREREQUISITE.getName(), TblsReqs.viewBusinessRulesInSolution.IS_MANDATORY.getName()},
+                new String[]{TblsReqs.ModuleBusinessRules.MODULE_NAME.getName(), TblsReqs.ModuleBusinessRules.MODULE_VERSION.getName()},
+                new Object[]{moduleName, moduleVersion},
+                new String[]{TblsReqs.viewBusinessRulesInSolution.PRESENT.getName()+" desc",  TblsReqs.viewBusinessRulesInSolution.AREA.getName(), TblsReqs.viewBusinessRulesInSolution.RULE_NAME.getName()},
                 new String[]{},
                 true);
-        jMainObj.put("module_business_rules", dbRowsToJsonArr);
+        jMainObj.put("module_in_solution_business_rules", dbRowsToJsonArr);
+        dbRowsToJsonArr = new JSONArray();        
+        dbRowsToJsonArr = ClassReqProcedureQueries.dbRowsToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.ACTIONS_IN_SOLUTION.getViewName(),
+                new String[]{TblsReqs.viewActionsInSolution.PRETTY_EN.getName(), TblsReqs.viewActionsInSolution.PRETTY_ES.getName(),
+                    TblsReqs.viewActionsInSolution.ENTITY.getName(), TblsReqs.viewActionsInSolution.PRESENT.getName(), TblsReqs.viewActionsInSolution.REQUIREMENTS_LIST.getName(),
+                    TblsReqs.viewActionsInSolution.ENDPOINT_NAME.getName(), TblsReqs.viewActionsInSolution.API_NAME.getName()},
+                new String[]{TblsReqs.viewActionsInSolution.MODULE_NAME.getName(), TblsReqs.viewActionsInSolution.MODULE_VERSION.getName()},
+                new Object[]{moduleName, moduleVersion},
+                new String[]{TblsReqs.viewActionsInSolution.PRESENT.getName()+" desc", TblsReqs.viewQueriesInSolution.ENTITY.getName(), TblsReqs.viewActionsInSolution.API_NAME.getName(), TblsReqs.viewActionsInSolution.ENDPOINT_NAME.getName()},
+                new String[]{},
+                true);
+        jMainObj.put("module_in_solution_actions", dbRowsToJsonArr);
+        dbRowsToJsonArr = ClassReqProcedureQueries.dbRowsToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.QUERIES_IN_SOLUTION.getViewName(),
+                new String[]{TblsReqs.viewActionsInSolution.PRETTY_EN.getName(), TblsReqs.viewActionsInSolution.PRETTY_ES.getName(),
+                    TblsReqs.viewQueriesInSolution.ENTITY.getName(), TblsReqs.viewQueriesInSolution.PRESENT.getName(), TblsReqs.viewQueriesInSolution.REQUIREMENTS_LIST.getName(),
+                    TblsReqs.viewQueriesInSolution.ENDPOINT_NAME.getName(), TblsReqs.viewQueriesInSolution.API_NAME.getName()},
+                new String[]{TblsReqs.ModuleBusinessRules.MODULE_NAME.getName(), TblsReqs.ModuleBusinessRules.MODULE_VERSION.getName()},
+                new Object[]{moduleName, moduleVersion},
+                new String[]{TblsReqs.viewQueriesInSolution.PRESENT.getName()+" desc",  TblsReqs.viewQueriesInSolution.ENTITY.getName(), TblsReqs.viewActionsInSolution.API_NAME.getName(), TblsReqs.viewQueriesInSolution.ENDPOINT_NAME.getName()},
+                new String[]{},
+                true);
+        jMainObj.put("module_in_solution_queries", dbRowsToJsonArr);
+
         jMainObj.put("process_accesses", ClassReqProcedureQueries.procAccessBlockInRequirements(procInstanceName));
 
-        wObj = new SqlWhere();
+        SqlWhere wObj = new SqlWhere();
         wObj.addConstraint(TblsReqs.ProcedureBusinessRules.PROC_INSTANCE_NAME,
                 SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{procInstanceName}, null);
         jMainObj.put(TblsReqs.TablesReqs.PROCEDURE_RISK_ASSESSMENT.getTableName(), 

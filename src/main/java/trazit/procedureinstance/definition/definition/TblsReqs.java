@@ -122,6 +122,7 @@ public class TblsReqs {
                     new ForeignkeyFld(ProcedureUserRequirementsEvents.PROC_INSTANCE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROC_INSTANCE_NAME.getName())
                 },
                 "URS events for a given process instance"),*/
+        
         PROC_MODULE_TABLES(null, "procedure_module_tables", SCHEMA_NAME, false, ProcedureModuleTables.values(), null,
                 new String[]{ProcedureModuleTables.PROCEDURE_NAME.getName(), ProcedureModuleTables.PROCEDURE_VERSION.getName(), ProcedureInfo.PROC_INSTANCE_NAME.getName(), ProcedureModuleTables.SCHEMA_NAME.getName(), ProcedureModuleTables.TABLE_NAME.getName()},
                 new Object[]{new ForeignkeyFld(ProcedureModuleTables.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_NAME.getName()),
@@ -245,9 +246,52 @@ public class TblsReqs {
                     new EnumIntTablesJoin(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, "reqs", TblsReqs.TablesReqs.MODULE_ACTIONS_N_QUERIES, "modAct", false,
                             new EnumIntTableFields[][]{{TblsReqs.ProcedureReqSolution.WINDOW_ACTION, TblsReqs.ModuleActionsAndQueries.ENDPOINT_NAME}}, "", SqlStatementEnums.JOIN_TYPES.INNER), //            new EnumIntTablesJoin(TblsReqs.TablesReqs.PROCEDURE_INFO, "procInfo", TblsReqs.TablesReqs.MODULE_ACTIONS_N_QUERIES, "modAct", false,
                 //                new EnumIntTableFields[][]{{TblsReqs.ProcedureInfo.MODULE_NAME, TblsReqs.ModuleActionsAndQueries.MODULE_NAME}}, "", SqlStatementEnums.JOIN_TYPES.INNER),
-                }, " and procInfo.module_name = modAct.module_name", false
-        ),;
+                }, " and procInfo.module_name = modAct.module_name", false),
+        BUSINESS_RULES_IN_SOLUTION("SELECT busRules.module_name, busRules.module_version, busRules.rule_name, busRules.is_mandatory,\n" +
+                        " 		busRules.api_name,	busRules.area, busRules.prerequite,\n" +
+                        "    COALESCE(count(sol.business_rule), 0::bigint) AS present,\n" +
+                        "    string_agg(sol.code::text, ', '::text) AS requirements_list\n" +
+                        "   FROM requirements.module_business_rules busRules\n" +
+                        "   LEFT JOIN (select reqsol.business_rule, usr.code \n" +
+                        "          		from requirements.procedure_req_solution reqsol, requirements.procedure_user_requirements usr\n" +
+                        "			  where reqsol.req_id=usr.req_id AND upper(reqsol.window_element_type::text) like '%BUS%RUL%'::text)) sol\n" +
+                        "	  ON busRules.rule_name::text = sol.business_rule::text\n" +
+                        "  GROUP BY busRules.module_name, busRules.module_version, busRules.rule_name, busRules.is_mandatory, busRules.api_name,	busRules.area, busRules.prerequite\n" +
+                        "  ORDER BY (COALESCE(count(sol.business_rule), 0::bigint)), busRules.rule_name; ",
+                null, "business_rules_in_solution", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsReqs.viewBusinessRulesInSolution.values(), "viewBusinessRulesInSolution",
+                null, " and procInfo.module_name = modAct.module_name", false),
+        ACTIONS_IN_SOLUTION("SELECT act.module_name, act.module_version, act.entity, act.endpoint_name,\n" +
+                        " 		act.api_name,	act.pretty_name_en, act.pretty_name_es,		\n" +
+                        "    COALESCE(count(sol.window_action), 0::bigint) AS present,\n" +
+                        "    string_agg(sol.code::text, ', '::text) AS requirements_list\n" +
+                        "   FROM requirements.module_actions_and_queries act\n" +
+                        "   LEFT JOIN (select reqsol.window_action, usr.code \n" +
+                        "          		from requirements.procedure_req_solution reqsol, requirements.procedure_user_requirements usr\n" +
+                        "			  where reqsol.req_id=usr.req_id and upper(window_element_type)='WINDOWACTION') sol\n" +
+                        "	  ON act.endpoint_name::text = sol.window_action::text\n" +
+                        "	WHERE upper(act.api_name) like '%ACTION%'\n" +
+                        "  GROUP BY act.module_name, act.module_version, act.entity, act.endpoint_name,\n" +
+                        " 		act.api_name,	act.pretty_name_en, act.pretty_name_es\n" +
+                        "   ORDER BY act.entity, act.api_name, (COALESCE(count(sol.window_action), 0::bigint)); ",
+                null, "actions_in_solution", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsReqs.viewActionsInSolution.values(), "viewBusinessRulesInSolution",
+                null, " and procInfo.module_name = modAct.module_name", false),
+        QUERIES_IN_SOLUTION("SELECT act.module_name, act.module_version, act.entity, act.endpoint_name,\n" +
+                        " 		act.api_name,	act.pretty_name_en, act.pretty_name_es,		\n" +
+                        "    COALESCE(count(sol.window_query), 0::bigint) AS present,\n" +
+                        "    string_agg(sol.code::text, ', '::text) AS requirements_list\n" +
+                        "   FROM requirements.module_actions_and_queries act\n" +
+                        "   LEFT JOIN (select reqsol.window_query, usr.code \n" +
+                        "          		from requirements.procedure_req_solution reqsol, requirements.procedure_user_requirements usr\n" +
+                        "			  where reqsol.req_id=usr.req_id and upper(window_element_type)='WINDOW') sol\n" +
+                        "	  ON act.endpoint_name::text = sol.window_query::text\n" +
+                        "	WHERE upper(act.api_name) like '%QUER%'\n" +
+                        "  GROUP BY act.module_name, act.module_version, act.entity, act.endpoint_name,\n" +
+                        " 		act.api_name,	act.pretty_name_en, act.pretty_name_es\n" +
+                        "   ORDER BY (COALESCE(count(sol.window_query), 0::bigint)) desc, act.entity, act.api_name;",
+                null, "queries_in_solution", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsReqs.viewQueriesInSolution.values(), "viewBusinessRulesInSolution",
+                null, " and procInfo.module_name = modAct.module_name", false),
 
+        ; 
         private ViewsReqs(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds,
                 String comment, EnumIntTablesJoin[] tablesInView, String extraFilters, Boolean useFixViewScript) {
             this.getTblBusinessRules = fldBusRules;
@@ -987,10 +1031,8 @@ public class TblsReqs {
         ESIGN_REQUIRED("esign_required", LPDatabase.booleanFld(), null, null, null, null),
         USERCONFIRM_REQUIRED("userconfirm_required", LPDatabase.booleanFld(), null, null, null, null),
         ICON_NAME("icon_name", LPDatabase.string(), null, null, null, null),
-        ICON_NAME_WHEN_NOT_CERTIFIED("icon_name_when_not_certified", LPDatabase.string(), null, null, null, null)
-        ,
-        BRANCH_NEED("branch_need", LPDatabase.string(), null, null, null, null),
-        WINDOW_ELEMENT_TYPE("window_element_type", LPDatabase.string(), null, null, null, null),
+        ICON_NAME_WHEN_NOT_CERTIFIED("icon_name_when_not_certified", LPDatabase.string(), null, null, null, null),
+        BRANCH_NEED("branch_need", LPDatabase.string(), null, null, null, null),        
         WINDOW_NAME("window_name", LPDatabase.string(), null, null, null, null),
         WINDOW_ACTION("window_action", LPDatabase.string(), null, null, null, null),
         BUSINESS_RULE("business_rule", LPDatabase.string(), null, null, null, null),
@@ -1494,7 +1536,7 @@ public class TblsReqs {
         MOD_ORDER_NUMBER("modAct", "mod_order_number", "modAct.order_number as mod_order_number", ModuleActionsAndQueries.ORDER_NUMBER, null, null, null), 
         ENTITY("modAct", ModuleActionsAndQueries.ENTITY.getName(), "modAct.entity as entity", ModuleActionsAndQueries.ENTITY, null, null, null), 
         ROLES("reqs", ProcedureReqSolution.ROLES.getName(), "reqs.roles as roles", ProcedureReqSolution.ROLES, null, null, null),
-        WINDOW_ELEMENT_TYPE("reqs", ProcedureReqSolution.WINDOW_ELEMENT_TYPE.getName(), "reqs.window_element_type as window_element_type", ProcedureReqSolution.WINDOW_ELEMENT_TYPE, null, null, null),
+        TYPE("reqs", ProcedureReqSolution.TYPE.getName(), "reqs.type as type", ProcedureReqSolution.TYPE, null, null, null),
         SOP_NAME("reqs", "sop_name", "reqs.sop_name as sop_name", ProcedureReqSolution.SOP_NAME, null, null, null)
        
         /*        RAW_VALUE_NUM("raw_value_num", "CASE " +
@@ -1559,6 +1601,182 @@ public class TblsReqs {
             return this.fldObj;
         }
     }
+    public enum viewBusinessRulesInSolution implements EnumIntViewFields {
+        MODULE_NAME("busRules", ModuleBusinessRules.MODULE_NAME.getName(), "busRules.module_name as module_name", ModuleBusinessRules.MODULE_NAME, null, null, null),
+        MODULE_VERSION("busRules", ModuleBusinessRules.MODULE_VERSION.getName(), "busRules.module_version as module_version", ModuleBusinessRules.MODULE_VERSION, null, null, null),
+        RULE_NAME("busRules", ModuleBusinessRules.RULE_NAME.getName(), "busRules.rule_name as rule_name", ModuleBusinessRules.RULE_NAME, null, null, null),
+        IS_MANDATORY("busRules", ModuleBusinessRules.IS_MANDATORY.getName(), "busRules.is_mandatory as is_mandatory", ModuleBusinessRules.IS_MANDATORY, null, null, null),
+        API_NAME("busRules", ModuleBusinessRules.API_NAME.getName(), "busRules.api_name as api_name", ModuleBusinessRules.API_NAME, null, null, null),
+        AREA("busRules", ModuleBusinessRules.AREA.getName(), "busRules.area as area", ModuleBusinessRules.AREA, null, null, null),
+        PREREQUISITE("busRules", ModuleBusinessRules.PREREQUISITE.getName(), "busRules.prerequite as prerequite", ModuleBusinessRules.PREREQUISITE, null, null, null),
+        PRESENT("sol", "present", "sol.present as present", ModuleBusinessRules.MODULE_VERSION, null, null, null),
+        REQUIREMENTS_LIST("sol", "requirements_list", "sol.requirements_list as requirements_list", ModuleBusinessRules.PREREQUISITE, null, null, null),
+        ;
+        private viewBusinessRulesInSolution(String tblAliasInView, String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules) {
+            this.fldName = name;
+            this.fldAliasInView = vwAliasName;
+            this.fldMask = fldMask;
+            this.fldComment = comment;
+            this.fldBusinessRules = busRules;
+            this.fldObj = fldObj;
+            this.tblAliasInView=tblAliasInView;
+        }
+        private final String fldName;
+        private final String tblAliasInView;
+        private final String fldAliasInView;
+        private final EnumIntTableFields fldObj;
+        private final String fldMask;
+        private final String fldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+        @Override public String getTblAliasInView() {return this.tblAliasInView;}
+        @Override
+        public String getName() {
+            return fldName;
+        }
+
+        @Override
+        public String getFldViewAliasName() {
+            return this.fldAliasInView;
+        }
+
+        @Override
+        public String getFieldMask() {
+            return this.fldMask;
+        }
+
+        @Override
+        public String getFieldComment() {
+            return this.fldComment;
+        }
+
+        @Override
+        public FldBusinessRules[] getFldBusinessRules() {
+            return this.fldBusinessRules;
+        }
+
+        @Override
+        public EnumIntTableFields getTableField() {
+            return this.fldObj;
+        }
+    }
+
+    public enum viewActionsInSolution implements EnumIntViewFields {
+        MODULE_NAME("act", ModuleActionsAndQueries.MODULE_NAME.getName(), "act.module_name as module_name", ModuleActionsAndQueries.MODULE_NAME, null, null, null),
+        MODULE_VERSION("act", ModuleActionsAndQueries.MODULE_VERSION.getName(), "act.module_version as module_version", ModuleActionsAndQueries.MODULE_VERSION, null, null, null),
+        ENTITY("act",TblsReqs.ModuleActionsAndQueries.ENTITY.getName(), "act.entity as entity", ModuleActionsAndQueries.ENTITY, null, null, null),
+        API_NAME("act", ModuleActionsAndQueries.API_NAME.getName(), "act.api_name as api_name", ModuleActionsAndQueries.API_NAME, null, null, null),
+        ENDPOINT_NAME("act", ModuleActionsAndQueries.ENDPOINT_NAME.getName(), "act.endpoint_name as endpoint_name", ModuleActionsAndQueries.ENDPOINT_NAME, null, null, null),
+        PRETTY_EN("act", ModuleActionsAndQueries.PRETTY_EN.getName(), "act.pretty_name_en as pretty_name_en", ModuleActionsAndQueries.PRETTY_EN, null, null, null),
+        PRETTY_ES("act", ModuleActionsAndQueries.PRETTY_ES.getName(), "act.pretty_name_eS as pretty_name_eS", ModuleActionsAndQueries.PRETTY_ES, null, null, null),
+        PRESENT("sol", "present", "sol.present as present", ModuleBusinessRules.MODULE_VERSION, null, null, null),
+        REQUIREMENTS_LIST("sol", "requirements_list", "sol.requirements_list as requirements_list", ModuleBusinessRules.PREREQUISITE, null, null, null),
+        ;
+        private viewActionsInSolution(String tblAliasInView, String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules) {
+            this.fldName = name;
+            this.fldAliasInView = vwAliasName;
+            this.fldMask = fldMask;
+            this.fldComment = comment;
+            this.fldBusinessRules = busRules;
+            this.fldObj = fldObj;
+            this.tblAliasInView=tblAliasInView;
+        }
+        private final String fldName;
+        private final String tblAliasInView;
+        private final String fldAliasInView;
+        private final EnumIntTableFields fldObj;
+        private final String fldMask;
+        private final String fldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+        @Override public String getTblAliasInView() {return this.tblAliasInView;}
+        @Override
+        public String getName() {
+            return fldName;
+        }
+
+        @Override
+        public String getFldViewAliasName() {
+            return this.fldAliasInView;
+        }
+
+        @Override
+        public String getFieldMask() {
+            return this.fldMask;
+        }
+
+        @Override
+        public String getFieldComment() {
+            return this.fldComment;
+        }
+
+        @Override
+        public FldBusinessRules[] getFldBusinessRules() {
+            return this.fldBusinessRules;
+        }
+
+        @Override
+        public EnumIntTableFields getTableField() {
+            return this.fldObj;
+        }
+    }
+    public enum viewQueriesInSolution implements EnumIntViewFields {
+        MODULE_NAME("act", ModuleActionsAndQueries.MODULE_NAME.getName(), "act.module_name as module_name", ModuleActionsAndQueries.MODULE_NAME, null, null, null),
+        MODULE_VERSION("act", ModuleActionsAndQueries.MODULE_VERSION.getName(), "act.module_version as module_version", ModuleActionsAndQueries.MODULE_VERSION, null, null, null),
+        ENTITY("act",TblsReqs.ModuleActionsAndQueries.ENTITY.getName(), "act.entity as entity", ModuleActionsAndQueries.ENTITY, null, null, null),
+        API_NAME("act", ModuleActionsAndQueries.API_NAME.getName(), "act.api_name as api_name", ModuleActionsAndQueries.API_NAME, null, null, null),
+        ENDPOINT_NAME("act", ModuleActionsAndQueries.ENDPOINT_NAME.getName(), "act.endpoint_name as endpoint_name", ModuleActionsAndQueries.ENDPOINT_NAME, null, null, null),
+        PRETTY_EN("act", ModuleActionsAndQueries.PRETTY_EN.getName(), "act.pretty_name_en as pretty_name_en", ModuleActionsAndQueries.PRETTY_EN, null, null, null),
+        PRETTY_ES("act", ModuleActionsAndQueries.PRETTY_ES.getName(), "act.pretty_name_eS as pretty_name_eS", ModuleActionsAndQueries.PRETTY_ES, null, null, null),
+        PRESENT("sol", "present", "sol.present as present", ModuleBusinessRules.MODULE_VERSION, null, null, null),
+        REQUIREMENTS_LIST("sol", "requirements_list", "sol.requirements_list as requirements_list", ModuleBusinessRules.PREREQUISITE, null, null, null),
+        ;
+        private viewQueriesInSolution(String tblAliasInView, String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules) {
+            this.fldName = name;
+            this.fldAliasInView = vwAliasName;
+            this.fldMask = fldMask;
+            this.fldComment = comment;
+            this.fldBusinessRules = busRules;
+            this.fldObj = fldObj;
+            this.tblAliasInView=tblAliasInView;
+        }
+        private final String fldName;
+        private final String tblAliasInView;
+        private final String fldAliasInView;
+        private final EnumIntTableFields fldObj;
+        private final String fldMask;
+        private final String fldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+        @Override public String getTblAliasInView() {return this.tblAliasInView;}
+        @Override
+        public String getName() {
+            return fldName;
+        }
+
+        @Override
+        public String getFldViewAliasName() {
+            return this.fldAliasInView;
+        }
+
+        @Override
+        public String getFieldMask() {
+            return this.fldMask;
+        }
+
+        @Override
+        public String getFieldComment() {
+            return this.fldComment;
+        }
+
+        @Override
+        public FldBusinessRules[] getFldBusinessRules() {
+            return this.fldBusinessRules;
+        }
+
+        @Override
+        public EnumIntTableFields getTableField() {
+            return this.fldObj;
+        }
+    }
+
     public enum ProcedureFrontendTestingWitness implements EnumIntTableFields {
         PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
