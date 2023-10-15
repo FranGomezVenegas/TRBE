@@ -5,17 +5,16 @@ import trazit.procedureinstance.definition.definition.ReqProcedureEnums.ReqProce
 import databases.Rdbms;
 import databases.Rdbms.RdbmsErrorTrapping;
 import databases.RdbmsObject;
+import databases.SqlWhere;
 import functionaljavaa.materialspec.DataSpec;
 import trazit.procedureinstance.definition.definition.TblsReqs;
-import trazit.procedureinstance.definition.definition.TblsReqs.TablesReqs;
 import functionaljavaa.parameter.Parameter;
-import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceUtility.procedureRolesList;
-import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceUtility.procedureUsersList;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.testingscripts.LPTestingParams;
 import functionaljavaa.testingscripts.TestingScript;
 import static functionaljavaa.unitsofmeasurement.UnitsOfMeasurement.getUomFromConfig;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,8 +39,15 @@ import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.globalvariables.GlobalVariables.DEFAULTLANGUAGE;
+import static trazit.procedureinstance.definition.definition.ReqProcedureEnums.ProcedureDefinitionAPIActionsEndpoints.ADD_ROLE;
+import static trazit.procedureinstance.definition.definition.ReqProcedureEnums.ProcedureDefinitionAPIActionsEndpoints.ADD_ROLE_TO_USER;
+import static trazit.procedureinstance.definition.definition.ReqProcedureEnums.ProcedureDefinitionAPIActionsEndpoints.ADD_USER;
+import trazit.procedureinstance.definition.definition.TblsReqs.TablesReqs;
 import static trazit.procedureinstance.definition.logic.ReqProcedureFrontendMasterData.getActiveModules;
+import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceUtility.procedureParentUserRequirementsList;
+import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceUtility.procedureRolesList;
 import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceUtility.procedureSops;
+import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceUtility.procedureUsersList;
 import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
@@ -132,7 +138,8 @@ public class ClassReqProcedureActions {
                 String lblEn = argValues[5].toString();
                 String lblEs = argValues[6].toString();
                 Object[][] modulesList = getActiveModules(procInstanceName, new String[]{TblsReqs.Modules.MODULE_NAME.getName(), TblsReqs.Modules.PICTURE.getName()});
-                if (Boolean.FALSE.equals(LPArray.valueInArray(LPArray.getColumnFromArray2D(modulesList, 0), moduleName, true))) {
+                Integer rowIndex=LPArray.valuePosicInArray2D(modulesList, moduleName, 0);
+                if (rowIndex==-1) {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.MODULE_NOT_FOUND, new Object[]{moduleName, procedureName, procedureVersion});
                     this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.MODULE_NOT_FOUND, new Object[]{moduleName, procedureName, procedureVersion});
                     this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.MODULE_NOT_FOUND;
@@ -148,14 +155,15 @@ public class ClassReqProcedureActions {
                         this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.PROCEDURE_INSTANCE_ALREADY_EXISTS, new Object[]{procedureName, procInstanceName});
                         this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.PROCEDURE_INSTANCE_ALREADY_EXISTS;
                         this.messageDynamicData = new Object[]{procedureName, procInstanceName};
-                        break;
-                        
-                    }else{
+                        break;                        
+                    }else{                        
                         RdbmsObject insertDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_INFO,
                                 new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(),
                                     TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureInfo.MODULE_NAME.getName(), TblsReqs.ProcedureInfo.MODULE_VERSION.getName(),
-                                    TblsReqs.ProcedureInfo.LABEL_EN.getName(), TblsReqs.ProcedureInfo.LABEL_ES.getName(), TblsReqs.ProcedureInfo.PROCEDURE_HASH_CODE.getName()},
-                                new Object[]{procedureName, procedureVersion, procInstanceName, moduleName, moduleVersion, lblEn, lblEs, LPDate.getCurrentTimeStamp().hashCode()});
+                                    TblsReqs.ProcedureInfo.LABEL_EN.getName(), TblsReqs.ProcedureInfo.LABEL_ES.getName(), 
+                                    TblsReqs.ProcedureInfo.PROCEDURE_HASH_CODE.getName(), TblsReqs.ProcedureInfo.NAVIGATION_ICON_NAME.getName()},
+                                new Object[]{procedureName, procedureVersion, procInstanceName, moduleName, moduleVersion, lblEn, lblEs, 
+                                    LPDate.getCurrentTimeStamp().hashCode(), modulesList[rowIndex][1].toString()});
                         if (Boolean.TRUE.equals(insertDiagn.getRunSuccess())) {
                             actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), new Object[]{moduleName});
                             this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), new Object[]{moduleName});
@@ -175,30 +183,29 @@ public class ClassReqProcedureActions {
                 procedureVersion = (Integer) argValues[1];
                 procInstanceName = argValues[2].toString();
                 String userName = argValues[3].toString();
-                Object[] procedureUsersList = procedureUsersList(procedureName, procedureVersion);
-                if (Boolean.TRUE.equals(LPArray.valueInArray(procedureUsersList, userName, true))) {
+                Object[] procedureSopsList = procedureUsersList(procedureName, procedureVersion);
+                if (Boolean.TRUE.equals(LPArray.valueInArray(procedureSopsList, userName, true))) {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_ALREADY_EXISTS, new Object[]{userName, procedureName, procedureVersion});
                     this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_ALREADY_EXISTS, new Object[]{userName, procedureName, procedureVersion});
                     this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.USER_ALREADY_EXISTS;
                     this.messageDynamicData = new Object[]{userName, procedureName, procedureVersion};
                     break;
                 }
-                RdbmsObject insertDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROC_USERS,
+                RdbmsObject removeDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROC_USERS,
                     new String[]{TblsReqs.ProcedureUsers.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUsers.PROCEDURE_VERSION.getName(),
                         TblsReqs.ProcedureUsers.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUsers.USER_NAME.getName()},
                     new Object[]{procedureName, procedureVersion, procInstanceName, userName});
-                if (Boolean.TRUE.equals(insertDiagn.getRunSuccess())) {
-                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), new Object[]{userName});
-                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), new Object[]{userName});
+                if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{userName});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{userName});
                     this.messageDynamicData = new Object[]{userName, procedureName, procedureVersion};
                 } else {
-                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
-                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
-                    this.diagnosticObjIntMsg = insertDiagn.getErrorMessageCode();
-                    this.messageDynamicData = insertDiagn.getErrorMessageVariables();
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
+                    this.messageDynamicData = removeDiagn.getErrorMessageVariables();
                 }
                 break;
-
             case ADD_ROLE:
                 procedureName = argValues[0].toString();
                 procedureVersion = (Integer) argValues[1];
@@ -212,19 +219,19 @@ public class ClassReqProcedureActions {
                     this.messageDynamicData = new Object[]{roleName, procedureName, procedureVersion};
                     break;
                 }
-                insertDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_ROLES,
+                removeDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_ROLES,
                         new String[]{TblsReqs.ProcedureRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureRoles.PROCEDURE_VERSION.getName(),
                             TblsReqs.ProcedureRoles.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureRoles.ROLE_NAME.getName()},
                         new Object[]{procedureName, procedureVersion, procInstanceName, roleName});
-                if (Boolean.TRUE.equals(insertDiagn.getRunSuccess())) {
-                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
-                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
+                if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
                     this.messageDynamicData = new Object[]{roleName};
                 } else {
-                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
-                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
-                    this.diagnosticObjIntMsg = insertDiagn.getErrorMessageCode();
-                    this.messageDynamicData = insertDiagn.getErrorMessageVariables();
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
+                    this.messageDynamicData = removeDiagn.getErrorMessageVariables();
                 }
                 trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
                 break;
@@ -234,8 +241,8 @@ public class ClassReqProcedureActions {
                 procInstanceName = argValues[2].toString();
                 userName = argValues[3].toString();
                 roleName = argValues[4].toString();
-                procedureUsersList = procedureUsersList(procedureName, procedureVersion);
-                if (Boolean.FALSE.equals(LPArray.valueInArray(procedureUsersList, userName, false))) {
+                procedureSopsList = procedureUsersList(procedureName, procedureVersion);
+                if (Boolean.FALSE.equals(LPArray.valueInArray(procedureSopsList, userName, false))) {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_NOT_FOUND, new Object[]{roleName, procedureName, procedureVersion});
                     this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_NOT_FOUND, new Object[]{roleName, procedureName, procedureVersion});
                     this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.USER_NOT_FOUND;
@@ -250,21 +257,231 @@ public class ClassReqProcedureActions {
                     this.messageDynamicData = new Object[]{roleName, procedureName, procedureVersion};
                     break;
                 }
-                insertDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROC_USER_ROLES,
+                removeDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROC_USER_ROLES,
                         new String[]{TblsReqs.ProcedureUserRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRoles.PROCEDURE_VERSION.getName(),
                             TblsReqs.ProcedureUserRoles.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUserRoles.USER_NAME.getName(), TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()},
                         new Object[]{procedureName, procedureVersion, procInstanceName, userName, roleName});
-                if (Boolean.TRUE.equals(insertDiagn.getRunSuccess())) {
-                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
-                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
+                if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
                     this.messageDynamicData = new Object[]{roleName, userName};
                 } else {
-                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
-                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
-                    this.diagnosticObjIntMsg = insertDiagn.getErrorMessageCode();
-                    this.messageDynamicData = insertDiagn.getErrorMessageVariables();
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
+                    this.messageDynamicData = removeDiagn.getErrorMessageVariables();
                 }
                 break;
+            case REMOVE_USER:
+                procedureName = argValues[0].toString();
+                procedureVersion = (Integer) argValues[1];
+                procInstanceName = argValues[2].toString();
+                userName = argValues[3].toString();
+                procedureSopsList = procedureUsersList(procedureName, procedureVersion);
+                if (Boolean.FALSE.equals(LPArray.valueInArray(procedureSopsList, userName, true))) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_NOT_FOUND, new Object[]{userName, procedureName, procedureVersion});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_NOT_FOUND, new Object[]{userName, procedureName, procedureVersion});
+                    this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.USER_NOT_FOUND;
+                    this.messageDynamicData = new Object[]{userName, procedureName, procedureVersion};
+                    break;
+                }
+                removeDiagn = Rdbms.removeRecordInTable(TblsReqs.TablesReqs.PROC_USER_ROLES,
+                    new SqlWhere(TblsReqs.TablesReqs.PROC_USER_ROLES,new String[]{TblsReqs.ProcedureUserRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRoles.PROCEDURE_VERSION.getName(),
+                        TblsReqs.ProcedureUserRoles.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUserRoles.USER_NAME.getName()},
+                    new Object[]{procedureName, procedureVersion, procInstanceName, userName}), null);
+                removeDiagn = Rdbms.removeRecordInTable(TblsReqs.TablesReqs.PROC_USERS,
+                    new SqlWhere(TblsReqs.TablesReqs.PROC_USERS,new String[]{TblsReqs.ProcedureUsers.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUsers.PROCEDURE_VERSION.getName(),
+                        TblsReqs.ProcedureUsers.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUsers.USER_NAME.getName()},
+                    new Object[]{procedureName, procedureVersion, procInstanceName, userName}), null);
+                if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{userName});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{userName});
+                    this.messageDynamicData = new Object[]{userName, procedureName, procedureVersion};
+                } else {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
+                    this.messageDynamicData = removeDiagn.getErrorMessageVariables();
+                }
+                break;
+            case REMOVE_ROLE:
+                procedureName = argValues[0].toString();
+                procedureVersion = (Integer) argValues[1];
+                procInstanceName = argValues[2].toString();
+                roleName = argValues[3].toString();
+                procedureRolesList = procedureRolesList(procedureName, procedureVersion);
+                if (Boolean.FALSE.equals(LPArray.valueInArray(procedureRolesList, roleName, true))) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.ROLE_NOT_FOUND, new Object[]{roleName, procedureName, procedureVersion});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.ROLE_NOT_FOUND, new Object[]{roleName, procedureName, procedureVersion});
+                    this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.ROLE_NOT_FOUND;
+                    this.messageDynamicData = new Object[]{roleName, procedureName, procedureVersion};
+                    break;
+                }
+                removeDiagn = Rdbms.removeRecordInTable(TblsReqs.TablesReqs.PROC_USER_ROLES,
+                    new SqlWhere(TblsReqs.TablesReqs.PROC_USER_ROLES,new String[]{TblsReqs.ProcedureUserRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRoles.PROCEDURE_VERSION.getName(),
+                        TblsReqs.ProcedureUserRoles.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()},
+                    new Object[]{procedureName, procedureVersion, procInstanceName, roleName}), null);                
+                removeDiagn = Rdbms.removeRecordInTable(TblsReqs.TablesReqs.PROCEDURE_ROLES,
+                        new SqlWhere(TblsReqs.TablesReqs.PROCEDURE_ROLES, new String[]{TblsReqs.ProcedureRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureRoles.PROCEDURE_VERSION.getName(),
+                            TblsReqs.ProcedureRoles.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureRoles.ROLE_NAME.getName()},
+                        new Object[]{procedureName, procedureVersion, procInstanceName, roleName}), null);
+                if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.messageDynamicData = new Object[]{roleName};
+                } else {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
+                    this.messageDynamicData = removeDiagn.getErrorMessageVariables();
+                }
+                trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
+                break;
+            case REMOVE_ROLE_TO_USER:
+                procedureName = argValues[0].toString();
+                procedureVersion = (Integer) argValues[1];
+                procInstanceName = argValues[2].toString();
+                userName = argValues[3].toString();
+                roleName = argValues[4].toString();
+                procedureSopsList = procedureUsersList(procedureName, procedureVersion);
+                if (Boolean.FALSE.equals(LPArray.valueInArray(procedureSopsList, userName, false))) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_NOT_FOUND, new Object[]{roleName, procedureName, procedureVersion});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_NOT_FOUND, new Object[]{roleName, procedureName, procedureVersion});
+                    this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.USER_NOT_FOUND;
+                    this.messageDynamicData = new Object[]{userName, procedureName, procedureVersion};
+                    break;
+                }
+                procedureRolesList = procedureRolesList(procedureName, procedureVersion);
+                if (Boolean.FALSE.equals(LPArray.valueInArray(procedureRolesList, roleName, false))) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.ROLE_NOT_FOUND, new Object[]{roleName, procedureName, procedureVersion});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.ROLE_NOT_FOUND, new Object[]{roleName, procedureName, procedureVersion});
+                    this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.ROLE_NOT_FOUND;
+                    this.messageDynamicData = new Object[]{roleName, procedureName, procedureVersion};
+                    break;
+                }
+                removeDiagn = Rdbms.removeRecordInTable(TblsReqs.TablesReqs.PROC_USER_ROLES,
+                        new SqlWhere(TblsReqs.TablesReqs.PROC_USER_ROLES, new String[]{TblsReqs.ProcedureUserRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRoles.PROCEDURE_VERSION.getName(),
+                            TblsReqs.ProcedureUserRoles.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUserRoles.USER_NAME.getName(), TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()},
+                        new Object[]{procedureName, procedureVersion, procInstanceName, userName, roleName}), null);
+                if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.messageDynamicData = new Object[]{roleName, userName};
+                } else {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
+                    this.messageDynamicData = removeDiagn.getErrorMessageVariables();
+                }
+                break;
+            case RENAME_USER:
+                procedureName = argValues[0].toString();
+                procedureVersion = (Integer) argValues[1];
+                procInstanceName = argValues[2].toString();
+                userName = argValues[3].toString();
+                String newuserName = argValues[4].toString();
+                procedureSopsList = procedureUsersList(procedureName, procedureVersion);
+                if (Boolean.FALSE.equals(LPArray.valueInArray(procedureSopsList, userName, true))) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_NOT_FOUND, new Object[]{userName, procedureName, procedureVersion});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_NOT_FOUND, new Object[]{userName, procedureName, procedureVersion});
+                    this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.USER_NOT_FOUND;
+                    this.messageDynamicData = new Object[]{userName, procedureName, procedureVersion};
+                    break;
+                }
+                removeDiagn = Rdbms.updateTableRecordFieldsByFilter(TblsReqs.TablesReqs.PROC_USER_ROLES,
+                    new EnumIntTableFields[]{TblsReqs.ProcedureUserRoles.USER_NAME}, new Object[]{newuserName},
+                    new SqlWhere(TblsReqs.TablesReqs.PROC_USER_ROLES,new String[]{TblsReqs.ProcedureUserRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRoles.PROCEDURE_VERSION.getName(),
+                        TblsReqs.ProcedureUserRoles.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUserRoles.USER_NAME.getName()},
+                    new Object[]{procedureName, procedureVersion, procInstanceName, userName}), null);
+                removeDiagn = Rdbms.updateTableRecordFieldsByFilter(TblsReqs.TablesReqs.PROC_USERS,
+                        new EnumIntTableFields[]{TblsReqs.ProcedureUsers.USER_NAME}, new Object[]{newuserName},
+                    new SqlWhere(TblsReqs.TablesReqs.PROC_USERS,new String[]{TblsReqs.ProcedureUsers.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUsers.PROCEDURE_VERSION.getName(),
+                        TblsReqs.ProcedureUsers.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUsers.USER_NAME.getName()},
+                    new Object[]{procedureName, procedureVersion, procInstanceName, userName}), null);
+                if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{userName});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{userName});
+                    this.messageDynamicData = new Object[]{userName, procedureName, procedureVersion};
+                } else {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
+                    this.messageDynamicData = removeDiagn.getErrorMessageVariables();
+                }
+                break;
+            case RENAME_ROLE:
+                procedureName = argValues[0].toString();
+                procedureVersion = (Integer) argValues[1];
+                procInstanceName = argValues[2].toString();
+                roleName = argValues[3].toString();
+                String newroleName = argValues[4].toString();
+                procedureRolesList = procedureRolesList(procedureName, procedureVersion);
+                if (Boolean.FALSE.equals(LPArray.valueInArray(procedureRolesList, roleName, true))) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.ROLE_NOT_FOUND, new Object[]{roleName, procedureName, procedureVersion});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.ROLE_NOT_FOUND, new Object[]{roleName, procedureName, procedureVersion});
+                    this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.ROLE_NOT_FOUND;
+                    this.messageDynamicData = new Object[]{roleName, procedureName, procedureVersion};
+                    break;
+                }
+                removeDiagn = Rdbms.updateTableRecordFieldsByFilter(TblsReqs.TablesReqs.PROC_USER_ROLES,
+                    new EnumIntTableFields[]{TblsReqs.ProcedureUserRoles.ROLE_NAME}, new Object[]{newroleName},
+                    new SqlWhere(TblsReqs.TablesReqs.PROC_USER_ROLES,new String[]{TblsReqs.ProcedureUserRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRoles.PROCEDURE_VERSION.getName(),
+                        TblsReqs.ProcedureUserRoles.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()},
+                    new Object[]{procedureName, procedureVersion, procInstanceName, roleName}), null);                
+                removeDiagn = Rdbms.updateTableRecordFieldsByFilter(TblsReqs.TablesReqs.PROCEDURE_ROLES,
+                    new EnumIntTableFields[]{TblsReqs.ProcedureRoles.ROLE_NAME}, new Object[]{newroleName},
+                    new SqlWhere(TblsReqs.TablesReqs.PROCEDURE_ROLES, new String[]{TblsReqs.ProcedureRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureRoles.PROCEDURE_VERSION.getName(),
+                        TblsReqs.ProcedureRoles.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureRoles.ROLE_NAME.getName()},
+                    new Object[]{procedureName, procedureVersion, procInstanceName, roleName}), null);
+                if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.messageDynamicData = new Object[]{roleName};
+                } else {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
+                    this.messageDynamicData = removeDiagn.getErrorMessageVariables();
+                }
+                trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
+                break;
+            case CLONE_ROLE:
+                procedureName = argValues[0].toString();
+                procedureVersion = (Integer) argValues[1];
+                procInstanceName = argValues[2].toString();
+                roleName = argValues[3].toString();
+                newroleName = argValues[4].toString();
+                procedureRolesList = procedureRolesList(procedureName, procedureVersion);
+                if (Boolean.FALSE.equals(LPArray.valueInArray(procedureRolesList, roleName, true))) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.ROLE_NOT_FOUND, new Object[]{roleName, procedureName, procedureVersion});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.ROLE_NOT_FOUND, new Object[]{roleName, procedureName, procedureVersion});
+                    this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.ROLE_NOT_FOUND;
+                    this.messageDynamicData = new Object[]{roleName, procedureName, procedureVersion};
+                    break;
+                }
+                removeDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_ROLES,
+                        new String[]{TblsReqs.ProcedureRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureRoles.PROCEDURE_VERSION.getName(),
+                            TblsReqs.ProcedureRoles.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureRoles.ROLE_NAME.getName()},
+                        new Object[]{procedureName, procedureVersion, procInstanceName, roleName});
+
+                
+/*                removeDiagn = Rdbms.updateTableRecordFieldsByFilter(TblsReqs.TablesReqs.PROCEDURE_ROLES,
+                    new EnumIntTableFields[]{TblsReqs.ProcedureRoles.ROLE_NAME}, new Object[]{newroleName},
+                    new SqlWhere(TblsReqs.TablesReqs.PROCEDURE_ROLES, new String[]{TblsReqs.ProcedureRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureRoles.PROCEDURE_VERSION.getName(),
+                        TblsReqs.ProcedureRoles.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureRoles.ROLE_NAME.getName()},
+                    new Object[]{procedureName, procedureVersion, procInstanceName, roleName}), null);*/
+                if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.messageDynamicData = new Object[]{roleName};
+                } else {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
+                    this.messageDynamicData = removeDiagn.getErrorMessageVariables();
+                }
+                trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
+                break;                
             case ADD_SOP:
                 procedureName = argValues[0].toString();
                 procedureVersion = Integer.valueOf(argValues[1].toString());
@@ -274,8 +491,8 @@ public class ClassReqProcedureActions {
                 String fileLink = argValues[5].toString();
                 String fieldName=argValues[6].toString();
                 String fieldValue=argValues[7].toString();                
-                procedureUsersList = procedureSops(procedureName, procedureVersion);
-                if (Boolean.TRUE.equals(LPArray.valueInArray(procedureUsersList, sopName, false))) {
+                procedureSopsList = procedureSops(procedureName, procedureVersion);
+                if (Boolean.TRUE.equals(LPArray.valueInArray(procedureSopsList, sopName, false))) {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.SOP_ALREADY_EXISTS, new Object[]{sopName, procedureName, procedureVersion});
                     this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.SOP_ALREADY_EXISTS, new Object[]{sopName, procedureName, procedureVersion});
                     this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.SOP_ALREADY_EXISTS;
@@ -298,7 +515,7 @@ public class ClassReqProcedureActions {
                     Object[] insFldV=new Object[]{procedureName, procedureVersion, procInstanceName, sopName, sopVersion, fileLink};
                     insFldN=LPArray.addValueToArray1D(insFldN, fieldNames);
                     insFldV=LPArray.addValueToArray1D(insFldV, fieldValues);
-                    insertDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA,insFldN, insFldV);
+                    RdbmsObject insertDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA,insFldN, insFldV);
                     if (Boolean.TRUE.equals(insertDiagn.getRunSuccess())) {
                         actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
                         this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
@@ -309,6 +526,370 @@ public class ClassReqProcedureActions {
                         this.diagnosticObjIntMsg = insertDiagn.getErrorMessageCode();
                         this.messageDynamicData = insertDiagn.getErrorMessageVariables();
                     }
+                }
+                break;
+            case REMOVE_SOP:
+                procedureName = argValues[0].toString();
+                procedureVersion = (Integer) argValues[1];
+                procInstanceName = argValues[2].toString();
+                sopName = argValues[3].toString();
+                procedureSopsList = procedureSops(procedureName, procedureVersion);
+                if (Boolean.FALSE.equals(LPArray.valueInArray(procedureSopsList, sopName, false))) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.SOP_NOT_FOUND, new Object[]{sopName, procedureName, procedureVersion});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.SOP_NOT_FOUND, new Object[]{sopName, procedureName, procedureVersion});
+                    this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.SOP_NOT_FOUND;
+                    this.messageDynamicData = new Object[]{sopName, procedureName, procedureVersion};
+                    break;
+                }
+                removeDiagn = Rdbms.removeRecordInTable(TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA,
+                    new SqlWhere(TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA,new String[]{TblsReqs.ProcedureSopMetaData.PROCEDURE_NAME.getName(), TblsReqs.ProcedureSopMetaData.PROCEDURE_VERSION.getName(),
+                        TblsReqs.ProcedureSopMetaData.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureSopMetaData.SOP_NAME.getName()},
+                    new Object[]{procedureName, procedureVersion, procInstanceName, sopName}), null);
+                if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{sopName});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{sopName});
+                    this.messageDynamicData = new Object[]{sopName, procedureName, procedureVersion};
+                } else {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
+                    this.messageDynamicData = removeDiagn.getErrorMessageVariables();
+                }
+                break;
+            case RENAME_SOP:
+                procedureName = argValues[0].toString();
+                procedureVersion = (Integer) argValues[1];
+                procInstanceName = argValues[2].toString();
+                sopName = argValues[3].toString();
+                String newsopName = argValues[4].toString();
+                procedureSopsList = procedureSops(procedureName, procedureVersion);
+                if (Boolean.FALSE.equals(LPArray.valueInArray(procedureSopsList, sopName, false))) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.SOP_NOT_FOUND, new Object[]{sopName, procedureName, procedureVersion});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.SOP_NOT_FOUND, new Object[]{sopName, procedureName, procedureVersion});
+                    this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.SOP_NOT_FOUND;
+                    this.messageDynamicData = new Object[]{sopName, procedureName, procedureVersion};
+                    break;
+                }
+                removeDiagn = Rdbms.updateTableRecordFieldsByFilter(TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA,
+                    new EnumIntTableFields[]{TblsReqs.ProcedureSopMetaData.SOP_NAME}, new Object[]{newsopName},
+                    new SqlWhere(TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA,new String[]{TblsReqs.ProcedureSopMetaData.PROCEDURE_NAME.getName(), TblsReqs.ProcedureSopMetaData.PROCEDURE_VERSION.getName(),
+                        TblsReqs.ProcedureSopMetaData.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureSopMetaData.SOP_NAME.getName()},
+                    new Object[]{procedureName, procedureVersion, procInstanceName, sopName}), null);                
+                if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.messageDynamicData = new Object[]{sopName};
+                } else {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
+                    this.messageDynamicData = removeDiagn.getErrorMessageVariables();
+                }
+                trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
+                break;
+            case NEW_PARENT_USER_REQUIREMENT:
+            case NEW_USER_REQUIREMENT:
+                int i=0;
+                procedureName = argValues[i].toString();
+                i++;
+                procedureVersion = (Integer) argValues[i];
+                i++;
+                procInstanceName = argValues[i].toString();
+                i++;
+                String parentCode = argValues[i].toString();
+                i++;
+                String code ="";
+                if ("NEW_USER_REQUIREMENT".equalsIgnoreCase(endPoint.getName())){
+                    code = argValues[i].toString();
+                    i++;
+                }
+                String description = argValues[i].toString();
+                i++;
+                String orderNumber = argValues[i].toString();
+                i++;
+                String active = argValues[i].toString();
+                i++;
+                String in_scope = argValues[i].toString();
+                i++;
+                String in_system = argValues[i].toString();
+                i++;
+                Object[] procedureParentUserReqList = procedureParentUserRequirementsList(procedureName, procedureVersion, TblsReqs.ProcedureUserRequirements.PARENT_CODE);
+                if ("NEW_USER_REQUIREMENT".equalsIgnoreCase(endPoint.getName())){
+                    if (Boolean.FALSE.equals(LPArray.valueInArray(procedureParentUserReqList, parentCode, true))) {
+                        actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND, new Object[]{parentCode, procedureName, procedureVersion});
+                        this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND, new Object[]{parentCode, procedureName, procedureVersion});
+                        this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND;
+
+                        this.messageDynamicData = new Object[]{parentCode, procedureName, procedureVersion};
+                        break;
+                    }
+                }else{
+                    if (Boolean.TRUE.equals(LPArray.valueInArray(procedureParentUserReqList, parentCode, true))) {
+                        actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_ALREADY_EXISTS, new Object[]{parentCode, procedureName, procedureVersion});
+                        this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_ALREADY_EXISTS, new Object[]{parentCode, procedureName, procedureVersion});
+                        this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_ALREADY_EXISTS;
+
+                        this.messageDynamicData = new Object[]{parentCode, procedureName, procedureVersion};
+                        break;
+                    }
+                }                
+                String[] fldN=new String[]{TblsReqs.ProcedureUserRequirements.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRequirements.PROCEDURE_VERSION.getName(),
+                        TblsReqs.ProcedureUserRequirements.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUserRequirements.PARENT_CODE.getName()};
+                Object[] fldV=new Object[]{procedureName, procedureVersion, procInstanceName, parentCode};
+                if (code.length()>0){
+                    fldN=LPArray.addValueToArray1D(fldN, TblsReqs.ProcedureUserRequirements.CODE.getName());
+                    fldV=LPArray.addValueToArray1D(fldV, code);
+                }
+                if (description.length()>0){
+                    fldN=LPArray.addValueToArray1D(fldN, TblsReqs.ProcedureUserRequirements.DESCRIPTION.getName());
+                    fldV=LPArray.addValueToArray1D(fldV, description);
+                }
+                if (orderNumber.length()>0){
+                    fldN=LPArray.addValueToArray1D(fldN, TblsReqs.ProcedureUserRequirements.ORDER_NUMBER.getName());
+                    fldV=LPArray.addValueToArray1D(fldV, new BigDecimal(orderNumber));
+                }
+                if (active.length()>0){
+                    fldN=LPArray.addValueToArray1D(fldN, TblsReqs.ProcedureUserRequirements.ACTIVE.getName());
+                    fldV=LPArray.addValueToArray1D(fldV,Boolean.valueOf(active));
+                }
+                if (in_scope.length()>0){
+                    fldN=LPArray.addValueToArray1D(fldN, TblsReqs.ProcedureUserRequirements.IN_SCOPE.getName());
+                    fldV=LPArray.addValueToArray1D(fldV, Boolean.valueOf(in_scope));
+                }
+                if (in_system.length()>0){
+                    fldN=LPArray.addValueToArray1D(fldN, TblsReqs.ProcedureUserRequirements.IN_SYSTEM.getName());
+                    fldV=LPArray.addValueToArray1D(fldV, Boolean.valueOf(in_system));
+                }
+                removeDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_USER_REQS,
+                    fldN, fldV);
+                if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{parentCode});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{parentCode});
+                    this.messageDynamicData = new Object[]{parentCode, procedureName, procedureVersion};
+                } else {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
+                    this.messageDynamicData = removeDiagn.getErrorMessageVariables();
+                }
+                break;
+            case REMOVE_PARENT_USER_REQUIREMENT:
+            case REMOVE_USER_REQUIREMENT:
+                procedureName = argValues[0].toString();
+                procedureVersion = (Integer) argValues[1];
+                procInstanceName = argValues[2].toString();
+                String reqId = argValues[3].toString();
+/*                procedureSopsList = procedureSops(procedureName, procedureVersion);
+                if (Boolean.FALSE.equals(LPArray.valueInArray(procedureSopsList, sopName, false))) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.SOP_NOT_FOUND, new Object[]{sopName, procedureName, procedureVersion});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.SOP_NOT_FOUND, new Object[]{sopName, procedureName, procedureVersion});
+                    this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.SOP_NOT_FOUND;
+                    this.messageDynamicData = new Object[]{sopName, procedureName, procedureVersion};
+                    break;
+                }*/
+                removeDiagn = Rdbms.removeRecordInTable(TblsReqs.TablesReqs.PROCEDURE_USER_REQS,
+                    new SqlWhere(TblsReqs.TablesReqs.PROCEDURE_USER_REQS,new String[]{TblsReqs.ProcedureUserRequirements.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRequirements.PROCEDURE_VERSION.getName(),
+                        TblsReqs.ProcedureUserRequirements.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUserRequirements.REQ_ID.getName()},
+                    new Object[]{procedureName, procedureVersion, procInstanceName, Integer.valueOf(reqId)}), null);
+                if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{reqId});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{reqId});
+                    this.messageDynamicData = new Object[]{reqId, procedureName, procedureVersion};
+                } else {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
+                    this.messageDynamicData = removeDiagn.getErrorMessageVariables();
+                }
+                break;
+            case NEW_RISK:
+                i=0;
+                procedureName = argValues[i].toString();
+                i++;
+                procedureVersion = (Integer) argValues[i];
+                i++;
+                procInstanceName = argValues[i].toString();
+                i++;
+                reqId = argValues[i].toString();
+                i++;
+                String level = argValues[i].toString();
+                i++;
+                String comment = argValues[i].toString();
+                i++;
+                String partOfTesting = argValues[i].toString();
+                i++;
+                String expectedTestNames = argValues[i].toString();
+/*                i++;
+                fieldName = argValues[i].toString();
+                i++;
+                fieldValue = argValues[i].toString();
+                i++;*/
+                procedureParentUserReqList = procedureParentUserRequirementsList(procedureName, procedureVersion, TblsReqs.ProcedureUserRequirements.REQ_ID);
+                if (Boolean.FALSE.equals(LPArray.valueInArray(procedureParentUserReqList, reqId, true))) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.RISK_REQUIREMENT_NOT_FOUND, new Object[]{reqId, procedureName, procedureVersion});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.RISK_REQUIREMENT_NOT_FOUND, new Object[]{reqId, procedureName, procedureVersion});
+                    this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.RISK_REQUIREMENT_NOT_FOUND;
+
+                    this.messageDynamicData = new Object[]{reqId, procedureName, procedureVersion};
+                    break;
+                }
+
+                fieldNames=new String[0];
+                fieldValues=new Object[0];
+/*                if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            
+                if (fieldValue!=null && fieldValue.length()>0) fieldValues = convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"), TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA, fieldName.split("\\|"));
+                if (fieldValues!=null && fieldValues.length>0 && fieldValues[0].toString().length()>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
+                    InternalMessage errMsg=(InternalMessage)fieldValues[1];
+                    actionDiagnoses=null;                         
+                    this.diagnosticObj=new InternalMessage(LPPlatform.LAB_FALSE, errMsg.getMessageCodeObj(), errMsg.getMessageCodeVariables());
+                    this.diagnosticObjIntMsg=errMsg.getMessageCodeObj();
+                    break;
+                }else{                
+*/                
+                    fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{TblsReqs.ProcedureRiskAssessment.PROCEDURE_NAME.getName(), TblsReqs.ProcedureRiskAssessment.PROCEDURE_VERSION.getName(),
+                        TblsReqs.ProcedureRiskAssessment.PROC_INSTANCE_NAME.getName(), 
+                        TblsReqs.ProcedureRiskAssessment.REQ_ID.getName(), TblsReqs.ProcedureRiskAssessment.LEVEL.getName(),                
+                    });
+                    fieldValues=LPArray.addValueToArray1D(fieldValues,new Object[]{procedureName, procedureVersion, procInstanceName, 
+                        Integer.valueOf(reqId),level});
+                    if (comment.length()>0){
+                        fieldNames=LPArray.addValueToArray1D(fieldNames, TblsReqs.ProcedureRiskAssessment.COMMENTS.getName());
+                        fieldValues=LPArray.addValueToArray1D(fieldValues, comment);
+                    }
+                    if (partOfTesting.length()>0){
+                        fieldNames=LPArray.addValueToArray1D(fieldNames, TblsReqs.ProcedureRiskAssessment.HASTOBE_PART_OF_TESTING.getName());
+                        fieldValues=LPArray.addValueToArray1D(fieldValues, Boolean.valueOf(partOfTesting));
+                    }
+                    if (expectedTestNames.length()>0){
+                        fieldNames=LPArray.addValueToArray1D(fieldNames, TblsReqs.ProcedureRiskAssessment.EXPECTED_TESTS.getName());
+                        fieldValues=LPArray.addValueToArray1D(fieldValues, expectedTestNames);
+                    }
+
+                    removeDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_RISK_ASSESSMENT,
+                        fieldNames, fieldValues);
+                    if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
+                        actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{reqId});
+                        this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{reqId});
+                        this.messageDynamicData = new Object[]{reqId, procedureName, procedureVersion};
+                    } else {
+                        actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                        this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                        this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
+                        this.messageDynamicData = removeDiagn.getErrorMessageVariables();
+                    }
+//                }
+                break;
+            case REMOVE_RISK:
+                procedureName = argValues[0].toString();
+                procedureVersion = (Integer) argValues[1];
+                procInstanceName = argValues[2].toString();
+                String riskId = argValues[3].toString();
+/*                procedureSopsList = procedureSops(procedureName, procedureVersion);
+                if (Boolean.FALSE.equals(LPArray.valueInArray(procedureSopsList, sopName, false))) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.RISK_REQUIREMENT_NOT_FOUND, new Object[]{sopName, procedureName, procedureVersion});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.RISK_REQUIREMENT_NOT_FOUND, new Object[]{sopName, procedureName, procedureVersion});
+                    this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.RISK_REQUIREMENT_NOT_FOUND;
+                    this.messageDynamicData = new Object[]{sopName, procedureName, procedureVersion};
+                    break;
+                }*/
+                removeDiagn = Rdbms.removeRecordInTable(TblsReqs.TablesReqs.PROCEDURE_RISK_ASSESSMENT,
+                    new SqlWhere(TblsReqs.TablesReqs.PROCEDURE_USER_REQS,new String[]{TblsReqs.ProcedureRiskAssessment.PROCEDURE_NAME.getName(), TblsReqs.ProcedureRiskAssessment.PROCEDURE_VERSION.getName(),
+                        TblsReqs.ProcedureRiskAssessment.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureRiskAssessment.REQ_ID.getName()},
+                    new Object[]{procedureName, procedureVersion, procInstanceName, Integer.valueOf(riskId)}), null);
+                if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{riskId});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{riskId});
+                    this.messageDynamicData = new Object[]{riskId, procedureName, procedureVersion};
+                } else {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
+                    this.messageDynamicData = removeDiagn.getErrorMessageVariables();
+                }
+                break;
+            case NEW_REQUIREMENT_SOLUTION:
+                i=0;
+                procedureName = argValues[i].toString();
+                i++;
+                procedureVersion = (Integer) argValues[i];
+                i++;
+                procInstanceName = argValues[i].toString();
+                i++;
+                reqId = argValues[i].toString();
+                i++;
+                String type = argValues[i].toString();
+                i++;
+                fieldName = argValues[i].toString();
+                i++;
+                fieldValue = argValues[i].toString();
+                i++;
+                procedureParentUserReqList = procedureParentUserRequirementsList(procedureName, procedureVersion, TblsReqs.ProcedureUserRequirements.REQ_ID);
+                if (Boolean.FALSE.equals(LPArray.valueInArray(procedureParentUserReqList, reqId, true))) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.SOLUTION_REQUIREMENT_NOT_FOUND, new Object[]{reqId, procedureName, procedureVersion});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.SOLUTION_REQUIREMENT_NOT_FOUND, new Object[]{reqId, procedureName, procedureVersion});
+                    this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.SOLUTION_REQUIREMENT_NOT_FOUND;
+
+                    this.messageDynamicData = new Object[]{reqId, procedureName, procedureVersion};
+                    break;
+                }
+
+                fieldNames=new String[0];
+                fieldValues=new Object[0];
+                if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            
+                if (fieldValue!=null && fieldValue.length()>0) fieldValues = convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"), TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA, fieldName.split("\\|"));
+                if (fieldValues!=null && fieldValues.length>0 && fieldValues[0].toString().length()>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
+                    InternalMessage errMsg=(InternalMessage)fieldValues[1];
+                    actionDiagnoses=null;                         
+                    this.diagnosticObj=new InternalMessage(LPPlatform.LAB_FALSE, errMsg.getMessageCodeObj(), errMsg.getMessageCodeVariables());
+                    this.diagnosticObjIntMsg=errMsg.getMessageCodeObj();
+                    break;
+                }else{                
+                    fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{TblsReqs.ProcedureReqSolution.PROCEDURE_NAME.getName(), TblsReqs.ProcedureReqSolution.PROCEDURE_VERSION.getName(),
+                        TblsReqs.ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), 
+                        TblsReqs.ProcedureReqSolution.REQ_ID.getName(), TblsReqs.ProcedureReqSolution.TYPE.getName(),                
+                    });
+                    fieldValues=LPArray.addValueToArray1D(fieldValues,new Object[]{procedureName, procedureVersion, procInstanceName, 
+                        Integer.valueOf(reqId),type});
+                    removeDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION,
+                        fieldNames, fieldValues);
+                    if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
+                        actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{reqId});
+                        this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{reqId});
+                        this.messageDynamicData = new Object[]{reqId, procedureName, procedureVersion};
+                    } else {
+                        actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                        this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                        this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
+                        this.messageDynamicData = removeDiagn.getErrorMessageVariables();
+                    }
+                }
+                break;
+            case REMOVE_REQUIREMENT_SOLUTION:
+                procedureName = argValues[0].toString();
+                procedureVersion = (Integer) argValues[1];
+                procInstanceName = argValues[2].toString();
+                String solutionId = argValues[3].toString();
+/*                procedureSopsList = procedureSops(procedureName, procedureVersion);
+                if (Boolean.FALSE.equals(LPArray.valueInArray(procedureSopsList, sopName, false))) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.SOLUTION_REQUIREMENT_NOT_FOUND, new Object[]{sopName, procedureName, procedureVersion});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.SOLUTION_REQUIREMENT_NOT_FOUND, new Object[]{sopName, procedureName, procedureVersion});
+                    this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.SOLUTION_REQUIREMENT_NOT_FOUND;
+                    this.messageDynamicData = new Object[]{sopName, procedureName, procedureVersion};
+                    break;
+                }*/
+                removeDiagn = Rdbms.removeRecordInTable(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION,
+                    new SqlWhere(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION,new String[]{TblsReqs.ProcedureReqSolution.PROCEDURE_NAME.getName(), TblsReqs.ProcedureReqSolution.PROCEDURE_VERSION.getName(),
+                        TblsReqs.ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureReqSolution.REQ_ID.getName()},
+                    new Object[]{procedureName, procedureVersion, procInstanceName, Integer.valueOf(solutionId)}), null);
+                if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{solutionId});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{solutionId});
+                    this.messageDynamicData = new Object[]{solutionId, procedureName, procedureVersion};
+                } else {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
+                    this.messageDynamicData = removeDiagn.getErrorMessageVariables();
                 }
                 break;
             case GET_UOM:

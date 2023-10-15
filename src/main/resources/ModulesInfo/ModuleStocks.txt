@@ -13,5 +13,26 @@
             ]
     },
     "picture": "/images/procedures_pictures/inventory.jpg",
-    "apis":[ "InventoryTrackAPIactionsEndpoints", "InventoryTrackAPIqueriesEndpoints", "InvestigationAPIactionsEndpoints", "InvestigationAPIqueriesEndpoints"]	        
+    "apis":[ "InventoryTrackAPIactionsEndpoints", "InventoryTrackAPIqueriesEndpoints", "InvestigationAPIactionsEndpoints", "InvestigationAPIqueriesEndpoints"],
+    "business_rules":[
+        {"type": "one_business_rule", "api_name": "DataProgramCorrectiveActionBusinessRules", "name": "correctiveActionMode", "mandatory": true},
+        {"type": "one_business_rule", "api_name": "DataProgramCorrectiveActionBusinessRules", "name": "correctiveActionNotifModeStillInProgress", "mandatory": false},
+        {"type": "one_business_rule", "api_name": "UserSopBusinessRules", "name": "userSopMode", "mandatory": true},
+        {"type": "one_business_rule", "api_name": "UserSopBusinessRules", "name": "windowOpenableWhenNotSopCertifiedUserSopCertification", "mandatory": true}
+
+    ],
+    "error_notifications":[
+        {"api_name":"InventoryTrackingErrorTrapping"}, {"api_name":"InvestigationErrorTrapping"}, {"api_name":"InvTrackingEventsErrorTrapping"}, 
+        {"api_name":"UomErrorTrapping"}, {"api_name":"UserSopErrorTrapping"}
+    ],
+    "manuals":[
+        {"manual_name":"Auditoría", "manual_version": 1, "description":"La auditorí­a en Trazit", "file_link":"https://onedrive.live.com/embed?cid=FC113EC81E46401D&resid=FC113EC81E46401D%2125255&authkey=AL-4PNfH61-f-Pw&em=2", "is_video":false, "active":true, "area": "Usuario"},
+        {"manual_name":"Configurar Inventario", "manual_version": 1, "description":"Configurando mi inventario y qué posibilidades tengo", "file_link":"https://onedrive.live.com/embed?cid=FC113EC81E46401D&resid=FC113EC81E46401D%2125150&authkey=AAlXMEcfuVZ4dDI&em=2", "is_video":false, "active":true, "area": "Admin"}
+    ],
+    "special_views":[
+        {"actions":[{}],
+         "json_model":""
+        },
+    ]
+    
 }

@@ -25,7 +25,7 @@ public class ClassReqProcedUserAndActions {
         String[] roleActionsFldsArr = new String[]{TblsReqs.ProcedureUserRoles.USER_NAME.getName(), TblsReqs.ProcedureUserRoles.USER_NAME.getName(), TblsReqs.ProcedureUserRoles.ROLE_NAME.getName(),
         //    TblsReqs.ProcedureUserRoles.MOD_ORDER_NUMBER.getName(), TblsReqs.ProcedureUserRoles.WINDOW_ACTION.getName()
         };
-        Object[][] roleActions2d = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_ACTIONS.getViewName(),
+        Object[][] roleActions2d = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USER_ROLES.getTableName(),
                 new String[]{TblsReqs.ProcedureUserRoles.PROC_INSTANCE_NAME.getName()},
                 new Object[]{procInstanceName}, roleActionsFldsArr,
                 new String[]{TblsReqs.ProcedureUserRoles.USER_NAME.getName(), TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()}, true);
@@ -72,12 +72,12 @@ public class ClassReqProcedUserAndActions {
     }
 
     public static JSONArray actionsByRoles(String procInstanceName, Object[][] procRoles) {
-        String[] roleActionsFldsArr = new String[]{TblsReqs.ProcReqUserRequirementsActions.ENTITY.getName(), TblsReqs.ProcReqUserRequirementsActions.PRETTY_EN.getName(), TblsReqs.ProcReqUserRequirementsActions.PRETTY_ES.getName(), TblsReqs.ProcReqUserRequirementsActions.ROLES.getName(),
-            TblsReqs.ProcReqUserRequirementsActions.MOD_ORDER_NUMBER.getName(), TblsReqs.ProcReqUserRequirementsActions.WINDOW_ACTION.getName()};
+        String[] roleActionsFldsArr = new String[]{TblsReqs.viewProcReqSolutionActions.ENTITY.getName(), TblsReqs.viewProcReqSolutionActions.PRETTY_EN.getName(), TblsReqs.viewProcReqSolutionActions.PRETTY_ES.getName(), TblsReqs.viewProcReqSolutionActions.ROLES.getName(),
+            TblsReqs.viewProcReqSolutionActions.MOD_ORDER_NUMBER.getName(), TblsReqs.viewProcReqSolutionActions.WINDOW_ACTION.getName()};
         Object[][] roleActions2d = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_ACTIONS.getViewName(),
-                new String[]{TblsReqs.ProcReqUserRequirementsActions.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcReqUserRequirementsActions.WINDOW_ELEMENT_TYPE.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.LIKE.getSqlClause()},
+                new String[]{TblsReqs.viewProcReqSolutionActions.PROC_INSTANCE_NAME.getName(), TblsReqs.viewProcReqSolutionActions.WINDOW_ELEMENT_TYPE.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.LIKE.getSqlClause()},
                 new Object[]{procInstanceName, "%ction%"}, roleActionsFldsArr,
-                new String[]{TblsReqs.ProcReqUserRequirementsActions.ENTITY.getName(), TblsReqs.ProcReqUserRequirementsActions.MOD_ORDER_NUMBER.getName(), TblsReqs.ProcReqUserRequirementsActions.WINDOW_ACTION.getName()}, true);
+                new String[]{TblsReqs.viewProcReqSolutionActions.ENTITY.getName(), TblsReqs.viewProcReqSolutionActions.MOD_ORDER_NUMBER.getName(), TblsReqs.viewProcReqSolutionActions.WINDOW_ACTION.getName()}, true);
         JSONArray rolesActionsOutput = new JSONArray();
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(roleActions2d[0][0].toString()))) {
             String[] procRoles1D = LPArray.getUniquesArray(LPArray.array2dTo1d(procRoles));
@@ -85,12 +85,12 @@ public class ClassReqProcedUserAndActions {
             JSONObject fldDef = new JSONObject();
             fldDef.put("label", "Entity: Action / Roles");
             fldDef.put("is_translation", true);
-            fldDef.put("name", TblsReqs.ProcReqUserRequirementsActions.PRETTY_EN.getName());
+            fldDef.put("name", TblsReqs.viewProcReqSolutionActions.PRETTY_EN.getName());
             header.put(fldDef);
             fldDef = new JSONObject();
             fldDef.put("label", "Entidad: Acción / Roles");
             fldDef.put("is_translation", true);
-            fldDef.put("name", TblsReqs.ProcReqUserRequirementsActions.PRETTY_ES.getName());
+            fldDef.put("name", TblsReqs.viewProcReqSolutionActions.PRETTY_ES.getName());
             header.put(fldDef);
             for (String curRole : procRoles1D) {
                 header.put(curRole);
@@ -177,23 +177,23 @@ public class ClassReqProcedUserAndActions {
             //viewSopsOutput.put(NO_DATA, NO_DATA);
             return viewSopsOutput;
         }
-        String[] viewFldsArr = new String[]{TblsReqs.ProcedureReqSolution.WINDOW_NAME.getName(), TblsReqs.ProcedureReqSolution.LABEL_EN.getName(), TblsReqs.ProcedureReqSolution.LABEL_ES.getName(), TblsReqs.ProcedureReqSolution.SOP_NAME.getName()};
-        Object[][] views2d = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS.getTableName(),
-                new String[]{TblsReqs.ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureReqSolution.WINDOW_ELEMENT_TYPE.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.LIKE.getSqlClause()},
+        String[] viewFldsArr = new String[]{TblsReqs.viewProcReqSolutionActions.WINDOW_NAME.getName(), TblsReqs.viewProcReqSolutionActions.WINDOW_LABEL_EN.getName(), TblsReqs.viewProcReqSolutionActions.WINDOW_LABEL_ES.getName(), TblsReqs.viewProcReqSolutionActions.SOP_NAME.getName()};
+        Object[][] views2d = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_ACTIONS.getViewName(),
+                new String[]{TblsReqs.viewProcReqSolutionActions.PROC_INSTANCE_NAME.getName(), TblsReqs.viewProcReqSolutionActions.WINDOW_ELEMENT_TYPE.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.LIKE.getSqlClause()},
                 new Object[]{procInstanceName, "%indow"}, viewFldsArr,
-                new String[]{TblsReqs.ProcedureReqSolution.ORDER_NUMBER.getName(), TblsReqs.ProcedureReqSolution.WINDOW_NAME.getName()});
+                new String[]{TblsReqs.viewProcReqSolutionActions.ORDER_NUMBER.getName(), TblsReqs.viewProcReqSolutionActions.WINDOW_NAME.getName()});
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(views2d[0][0].toString()))) {
             String[] procSops1D = LPArray.getUniquesArray(LPArray.array2dTo1d(procSops));
             JSONArray header = new JSONArray();
             JSONObject fldDef = new JSONObject();
             fldDef.put("label", "Views / SOPs");
             fldDef.put("is_translation", true);
-            fldDef.put("name", TblsReqs.ProcedureReqSolution.LABEL_EN.getName());
+            fldDef.put("name", TblsReqs.viewProcReqSolutionActions.WINDOW_LABEL_EN.getName());
             header.put(fldDef);
             fldDef = new JSONObject();
             fldDef.put("label", "Pantallas / PNTs");
             fldDef.put("is_translation", true);
-            fldDef.put("name", TblsReqs.ProcedureReqSolution.LABEL_ES.getName());
+            fldDef.put("name", TblsReqs.viewProcReqSolutionActions.WINDOW_LABEL_ES.getName());
             header.put(fldDef);
 
             for (String curRole : procSops1D) {

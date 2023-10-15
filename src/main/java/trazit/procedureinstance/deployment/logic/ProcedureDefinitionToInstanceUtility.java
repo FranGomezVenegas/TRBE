@@ -12,6 +12,7 @@ import databases.TblsProcedure;
 import trazit.procedureinstance.definition.definition.TblsReqs;
 import functionaljavaa.sop.UserSop;
 import lbplanet.utilities.LPArray;
+import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -26,6 +27,16 @@ public class ProcedureDefinitionToInstanceUtility {
         Object[][] procedureRolesListArr = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USERS.getTableName(), 
                 new String[]{TblsReqs.ProcedureUsers.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUsers.PROCEDURE_VERSION.getName()}, new Object[]{procInstanceName, procVersion}, 
                 new String[]{TblsReqs.ProcedureUsers.USER_NAME.getName()}, new String[]{TblsReqs.ProcedureUsers.USER_NAME.getName()});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureRolesListArr[0][0].toString()))
+            return new Object[]{};
+        return LPArray.getColumnFromArray2D(procedureRolesListArr, 0);
+    }
+
+    public static final Object[] procedureParentUserRequirementsList(String procInstanceName, Integer procVersion, EnumIntTableFields fldObj){
+        Object[][] procedureRolesListArr = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS.getTableName(), 
+                new String[]{TblsReqs.ProcedureUserRequirements.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRequirements.PROCEDURE_VERSION.getName()}, 
+                new Object[]{procInstanceName, procVersion}, 
+                new String[]{fldObj.getName()}, new String[]{TblsReqs.ProcedureUserRequirements.PARENT_CODE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureRolesListArr[0][0].toString()))
             return new Object[]{};
         return LPArray.getColumnFromArray2D(procedureRolesListArr, 0);

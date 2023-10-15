@@ -39,6 +39,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
+import trazit.enums.EnumIntBusinessRules;
+import trazit.enums.EnumIntMessages;
+import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntViews;
 /**
  *
@@ -54,7 +58,7 @@ public class CreatePlatform {
         executionLog = new JSONObject();
         errorsList = new JSONArray();        
         createBasicSchemasAndTablesStructure(platformName);
-        createAppProcTables(platformName);
+        //createAppProcTables(platformName);
         createModules(platformName);
     }
 
@@ -246,7 +250,7 @@ public class CreatePlatform {
 
     private void createAppProcTables(String platformName){        
         JSONObject allLog=new JSONObject();
-        EnumIntTables[] appProcTables=new EnumIntTables[]{TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, TblsProcedure.TablesProcedure.PROCEDURE_INFO, TblsProcedure.TablesProcedure.PROCEDURE_EVENTS, TblsProcedure.TablesProcedure.PERSON_PROFILE};
+        EnumIntTables[] appProcTables=new EnumIntTables[]{TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, TblsProcedure.TablesProcedure.PROCEDURE_INFO, TblsProcedure.TablesProcedure.PROCEDURE_VIEWS, TblsProcedure.TablesProcedure.PERSON_PROFILE};
         JSONObject curSchemaObj=new JSONObject();
         JSONObject prcDeplSectionLog=new JSONObject();
         JSONObject prcReqsSectionLog=new JSONObject();
@@ -345,21 +349,21 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
         
         
         prcDeplSectionLog.put(TblsApp.TablesApp.APP_BUSINESS_RULES.getTableName(), jArr);
-        fields=new String[]{TblsProcedure.ProcedureEvents.NAME.getName(), TblsProcedure.ProcedureEvents.ROLE_NAME.getName(),
-            TblsProcedure.ProcedureEvents.MODE.getName(), TblsProcedure.ProcedureEvents.TYPE.getName(),
-            TblsProcedure.ProcedureEvents.LABEL_EN.getName(), TblsProcedure.ProcedureEvents.LABEL_ES.getName(), 
-            TblsProcedure.ProcedureEvents.ORDER_NUMBER.getName(), TblsProcedure.ProcedureEvents.LP_FRONTEND_PAGE_NAME.getName()};
+        fields=new String[]{TblsProcedure.ProcedureViews.NAME.getName(), TblsProcedure.ProcedureViews.ROLE_NAME.getName(),
+            TblsProcedure.ProcedureViews.MODE.getName(), TblsProcedure.ProcedureViews.TYPE.getName(),
+            TblsProcedure.ProcedureViews.LABEL_EN.getName(), TblsProcedure.ProcedureViews.LABEL_ES.getName(), 
+            TblsProcedure.ProcedureViews.ORDER_NUMBER.getName(), TblsProcedure.ProcedureViews.LP_FRONTEND_PAGE_NAME.getName()};
         values=new Object[][]{{"BlackIpList", "superuser", "edit", "simple", "Black IP Lists", "Lista IPs denegadas", 1, "BlackIpList" },
             {"PlatformBusRules", "superuser", "edit", "simple", "Business Rules", "Reglas de Negocio", 3, "PlatformBusRules"},
             {"WhiteIpList", "superuser", "edit", "simple", "White IP Lists", "Lista IPs autorizadas", 2, "WhiteIpList"}};
         jArr=new JSONArray();
         for (Object[] curRule: values){            
-            RdbmsObject insertRecord = Rdbms.insertRecord(TblsApp.TablesApp.APP_PROCEDURE_EVENTS, fields, curRule,
+            RdbmsObject insertRecord = Rdbms.insertRecord(TblsApp.TablesApp.APP_PROCEDURE_VIEWS, fields, curRule,
 TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
-            errorForInsertRecord = isErrorForInsertRecord(TblsApp.TablesApp.APP_PROCEDURE_EVENTS, insertRecord, curRule[0].toString());
-            jArr.add(infoToReportForInsertRecord(TblsApp.TablesApp.APP_PROCEDURE_EVENTS, insertRecord, curRule[0].toString(), errorForInsertRecord));                        
+            errorForInsertRecord = isErrorForInsertRecord(TblsApp.TablesApp.APP_PROCEDURE_VIEWS, insertRecord, curRule[0].toString());
+            jArr.add(infoToReportForInsertRecord(TblsApp.TablesApp.APP_PROCEDURE_VIEWS, insertRecord, curRule[0].toString(), errorForInsertRecord));                        
         }        
-        prcDeplSectionLog.put(TblsApp.TablesApp.APP_PROCEDURE_EVENTS.getTableName(), jArr);
+        prcDeplSectionLog.put(TblsApp.TablesApp.APP_PROCEDURE_VIEWS.getTableName(), jArr);
         
         String fakeEsingn="firmademo";
         String defaultMail="info@trazit.net";
@@ -449,9 +453,12 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
         String directoryPath = "ModulesInfo"; // Update with the actual path
         JSONArray allModuleFilesInfo=new JSONArray();
         ClassInfoList classesImplementingEndPoints = null;
+        ClassInfoList classesImplementingBusinessRules = null;
+        ClassInfoList classesImplementingErrorMessages = null;
         try (io.github.classgraph.ScanResult scanResult = new ClassGraph().enableAllInfo().scan()) {        
             classesImplementingEndPoints = scanResult.getClassesImplementing("trazit.enums.EnumIntEndpoints"); 
-        
+            classesImplementingBusinessRules = scanResult.getClassesImplementing("trazit.enums.EnumIntBusinessRules"); 
+            classesImplementingErrorMessages = scanResult.getClassesImplementing("trazit.enums.EnumIntMessages"); 
         // Initialize the JSON object
         JSONObject prcReqsSectionLog = new JSONObject();
         JSONObject jsonObject = new JSONObject();
@@ -514,7 +521,15 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
                             curModuleInfo.put("moduleName", moduleName);
                             curModuleInfo.put("file_content", jFileContentObjModel);
                             curModuleInfo.put("detail", infoToReportForInsertRecord(TblsReqs.TablesReqs.MODULES, insertRecord, moduleName, errorForInsertRecord));
-                            curModuleInfo.put("getModuleActionsAndQueries", getModuleActionsAndQueries(moduleName, moduleVersion, jFileContentObjModel, classesImplementingEndPoints));
+                            curModuleInfo.put("create_module_actions_and_queries", createModuleActionsAndQueries(moduleName, moduleVersion, jFileContentObjModel, classesImplementingEndPoints));
+                            org.json.JSONArray busRules=jFileContentObjModel.getJSONArray("business_rules");
+                            org.json.JSONArray manuals=jFileContentObjModel.getJSONArray("manuals");
+                            org.json.JSONArray specialViews=jFileContentObjModel.getJSONArray("special_views");
+                            org.json.JSONArray errorNotif=jFileContentObjModel.getJSONArray("error_notifications");
+                            curModuleInfo.put("create_business_rules",createBusinessRules(moduleName, moduleVersion, busRules, classesImplementingBusinessRules));
+                            curModuleInfo.put("create_special_views",createSpecialViews(moduleName, moduleVersion, specialViews));
+                            curModuleInfo.put("create_error_notifications",createErrorNotifications(moduleName, moduleVersion, errorNotif, classesImplementingErrorMessages));
+                            curModuleInfo.put("manuals",createManuals(moduleName, moduleVersion, manuals));
                             allModuleFilesInfo.add(curModuleInfo);
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -533,7 +548,133 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
         addToLogSummary("requirement_modules", allModuleFilesInfo);
     }                
 
-    public JSONArray getModuleActionsAndQueries(String moduleName, Integer moduleVersion, JSONObject jFileContentObjModel, ClassInfoList classesImplementingEndPoints){
+    public JSONArray createBusinessRules(String moduleName, Integer moduleVersion, org.json.JSONArray jArr, ClassInfoList classInfo){
+        JSONObject jMainObj=new JSONObject();        
+        JSONArray allBusRulesArr=new JSONArray();
+        if (jArr.isEmpty())return allBusRulesArr;
+        
+        for (int i = 0; i < jArr.length(); i++) {
+            // Get the current element as a JSONObject
+            JSONObject currentApi = jArr.getJSONObject(i);
+            // You can now work with the elements in the currentApi object
+            // For example, you can access specific fields within the JSON object:
+            String apiName = currentApi.getString("api_name");
+            String ruleName = currentApi.getString("name");
+            String type = currentApi.getString("type");
+            Boolean mandatory = currentApi.getBoolean("mandatory");
+            JSONObject curApiObj=new JSONObject();
+            curApiObj.put("api_name", apiName);
+
+            List<Object> enumConstantObjects = null; // getMine.getEnumConstantObjects();
+            ClassInfo selectedEnum=null;
+            for (int j = 0; j < classInfo.size(); j++) {
+                ClassInfo enumObject = classInfo.get(j);
+                String curApi=enumObject.getName().toUpperCase();
+                // Check if the enumObject's class name matches the enumNameToFind
+                if (curApi.contains(apiName.toUpperCase())) {
+                    // Add the enumObject to your JSONArray or perform any other desired action
+                    //apiEndpointsArr.put(enumObject);
+//                    getMine=enumObject;
+                    selectedEnum= enumObject;
+                    enumConstantObjects = enumObject.getEnumConstantObjects();
+                    continue;
+                }
+            }            
+            if (enumConstantObjects==null){
+                Boolean errorForInsertRecord = isErrorForInsertRecord(TblsReqs.TablesReqs.MODULE_BUSINESS_RULES, null, apiName);
+                //curApiObj.put("error", curApi+" not found.");
+            }else{
+                for (int j = 0; j < enumConstantObjects.size(); j++) {
+                    EnumIntBusinessRules curBusRuleObj = (EnumIntBusinessRules) enumConstantObjects.get(j);
+                    if ("one_business_rule".equalsIgnoreCase(type)){
+                        if (ruleName.equalsIgnoreCase(curBusRuleObj.getTagName())){
+                            String[] fieldNames = new String[]{TblsReqs.ModuleBusinessRules.MODULE_NAME.getName(), TblsReqs.ModuleBusinessRules.MODULE_VERSION.getName(),
+                                TblsReqs.ModuleBusinessRules.API_NAME.getName(), TblsReqs.ModuleBusinessRules.AREA.getName(),
+                                TblsReqs.ModuleBusinessRules.RULE_NAME.getName(), TblsReqs.ModuleBusinessRules.IS_MANDATORY.getName(), TblsReqs.ModuleBusinessRules.PREREQUISITE.getName(),
+                                TblsReqs.ModuleBusinessRules.VALUES_LIST.getName()};
+                            Object[] fieldValues = new Object[]{moduleName, moduleVersion, apiName, curBusRuleObj.getAreaName(), curBusRuleObj.getTagName(), 
+                                Boolean.FALSE.equals(curBusRuleObj.getIsOptional()), curBusRuleObj.getPreReqs(), curBusRuleObj.getValuesList()};
+                            RdbmsObject insertRecord = Rdbms.insertRecord(TblsReqs.TablesReqs.MODULE_BUSINESS_RULES, fieldNames, fieldValues, TblsReqs.TablesReqs.MODULE_BUSINESS_RULES.getRepositoryName());                                    
+                            Boolean errorForInsertRecord = isErrorForInsertRecord(TblsReqs.TablesReqs.MODULE_BUSINESS_RULES, insertRecord, apiName+"."+curBusRuleObj.getAreaName()+"."+curBusRuleObj.getTagName());
+                            jMainObj.put(TblsReqs.TablesReqs.MODULE_BUSINESS_RULES.getTableName()+"."+apiName+"."+curBusRuleObj.getAreaName()+"."+curBusRuleObj.getTagName(), 
+                                    infoToReportForInsertRecord(TblsReqs.TablesReqs.MODULE_BUSINESS_RULES, insertRecord, apiName+"."+curBusRuleObj.getAreaName()+"."+curBusRuleObj.getTagName(), errorForInsertRecord));
+//                            return allBusRulesArr;
+                        }
+                    }else{
+                        String[] fieldNames = new String[]{TblsReqs.ModuleBusinessRules.MODULE_NAME.getName(), TblsReqs.ModuleBusinessRules.MODULE_VERSION.getName(),
+                            TblsReqs.ModuleBusinessRules.API_NAME.getName(), TblsReqs.ModuleBusinessRules.AREA.getName(),
+                            TblsReqs.ModuleBusinessRules.RULE_NAME.getName(), TblsReqs.ModuleBusinessRules.IS_MANDATORY.getName(), TblsReqs.ModuleBusinessRules.PREREQUISITE.getName(),
+                            TblsReqs.ModuleBusinessRules.VALUES_LIST.getName()};
+                        Object[] fieldValues = new Object[]{moduleName, moduleVersion, apiName, curBusRuleObj.getAreaName(), curBusRuleObj.getTagName(), 
+                            Boolean.FALSE.equals(curBusRuleObj.getIsOptional()), curBusRuleObj.getPreReqs(), curBusRuleObj.getValuesList()};
+                        RdbmsObject insertRecord = Rdbms.insertRecord(TblsReqs.TablesReqs.MODULE_BUSINESS_RULES, fieldNames, fieldValues, TblsReqs.TablesReqs.MODULE_BUSINESS_RULES.getRepositoryName());                                
+                        Boolean errorForInsertRecord = isErrorForInsertRecord(TblsReqs.TablesReqs.MODULE_BUSINESS_RULES, insertRecord, apiName+"."+curBusRuleObj.getAreaName()+"."+curBusRuleObj.getTagName());
+                        jMainObj.put(TblsReqs.TablesReqs.MODULE_BUSINESS_RULES.getTableName()+"."+apiName+"."+curBusRuleObj.getAreaName()+"."+curBusRuleObj.getTagName(), 
+                                infoToReportForInsertRecord(TblsReqs.TablesReqs.MODULE_BUSINESS_RULES, insertRecord, apiName+"."+curBusRuleObj.getAreaName()+"."+curBusRuleObj.getTagName(), errorForInsertRecord));
+                    }
+                }
+                curApiObj.put("inserts_log", jMainObj);
+            }
+            allBusRulesArr.add(curApiObj);
+        }
+        return allBusRulesArr;
+    }
+    public JSONArray createSpecialViews(String moduleName, Integer moduleVersion, org.json.JSONArray jArr){
+        JSONArray allSpecialViewsArr=new JSONArray();
+        if (jArr.isEmpty())return allSpecialViewsArr;
+        
+        return allSpecialViewsArr;
+    }
+    public JSONArray createErrorNotifications(String moduleName, Integer moduleVersion, org.json.JSONArray jArr, ClassInfoList classInfo){
+        JSONObject jMainObj=new JSONObject();        
+        JSONArray allErrorNotifArr=new JSONArray();
+        if (jArr.isEmpty())return allErrorNotifArr;
+        for (int i = 0; i < jArr.length(); i++) {
+            // Get the current element as a JSONObject
+            JSONObject currentApi = jArr.getJSONObject(i);
+            JSONObject curApiObj=new JSONObject();
+            curApiObj.put("api_name", currentApi);
+            // You can now work with the elements in the currentApi object
+            // For example, you can access specific fields within the JSON object:
+            String apiName = currentApi.getString("api_name");
+
+            List<Object> enumConstantObjects = null; // getMine.getEnumConstantObjects();
+            ClassInfo selectedEnum=null;
+            for (int j = 0; j < classInfo.size(); j++) {
+                ClassInfo enumObject = classInfo.get(j);
+                String curEndpointName=enumObject.getName().toUpperCase();
+                // Check if the enumObject's class name matches the enumNameToFind
+                if (curEndpointName.contains(apiName.toUpperCase())) {
+                    // Add the enumObject to your JSONArray or perform any other desired action
+                    //apiEndpointsArr.put(enumObject);
+//                    getMine=enumObject;
+                    selectedEnum= enumObject;
+                    enumConstantObjects = enumObject.getEnumConstantObjects();
+                    continue;
+                }
+            }            
+            if (enumConstantObjects==null){
+                Boolean errorForInsertRecord = isErrorForInsertRecord(TblsReqs.TablesReqs.MODULE_ERROR_NOTIFICATIONS, null, apiName);
+                //curApiObj.put("error", curApi+" not found.");
+            }else{
+                for (int j = 0; j < enumConstantObjects.size(); j++) {
+                    EnumIntMessages curErrorNotifObj = (EnumIntMessages) enumConstantObjects.get(j);
+                        String[] fieldNames = new String[]{TblsReqs.ModuleBusinessRules.MODULE_NAME.getName(), TblsReqs.ModuleErrorNotifications.MODULE_VERSION.getName(),
+                            TblsReqs.ModuleErrorNotifications.API_NAME.getName(), TblsReqs.ModuleErrorNotifications.ERROR_CODE.getName()};
+                        Object[] fieldValues = new Object[]{moduleName, moduleVersion, apiName, curErrorNotifObj.getErrorCode()};
+                        RdbmsObject insertRecord = Rdbms.insertRecord(TblsReqs.TablesReqs.MODULE_ERROR_NOTIFICATIONS, fieldNames, fieldValues, TblsReqs.TablesReqs.MODULE_ERROR_NOTIFICATIONS.getRepositoryName());                                
+                        Boolean errorForInsertRecord = isErrorForInsertRecord(TblsReqs.TablesReqs.MODULE_ERROR_NOTIFICATIONS, insertRecord, apiName+"."+curErrorNotifObj.getErrorCode());
+                        jMainObj.put(TblsReqs.TablesReqs.MODULE_ERROR_NOTIFICATIONS.getTableName()+"."+apiName+"."+curErrorNotifObj.getErrorCode().toString(), 
+                                infoToReportForInsertRecord(TblsReqs.TablesReqs.MODULE_ERROR_NOTIFICATIONS, insertRecord, apiName+"."+curErrorNotifObj.getErrorCode().toString(), errorForInsertRecord));
+                }
+                curApiObj.put("inserts_log", jMainObj);
+            }  
+            allErrorNotifArr.add(curApiObj);
+        } 
+        return allErrorNotifArr;
+    }
+    
+    public JSONArray createModuleActionsAndQueries(String moduleName, Integer moduleVersion, JSONObject jFileContentObjModel, ClassInfoList classesImplementingEndPoints){
         JSONObject jMainObj=new JSONObject();
         
         JSONArray allApisArr=new JSONArray();
@@ -590,5 +731,52 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
         }
         return allApisArr;
     }
-    
-}
+    public JSONArray createManuals(String moduleName, Integer moduleVersion, org.json.JSONArray jArr){
+        JSONArray allManualsArr=new JSONArray();
+        if (jArr.isEmpty())return allManualsArr;        
+        EnumIntTableFields[] tableFlds = TblsReqs.TablesReqs.MODULE_MANUALS.getTableFields();
+        for (int i = 0; i < jArr.length(); i++) {
+            String[] fldsInTable=new String[]{};
+            Object[] fieldValues=new Object[]{};
+            JSONObject curRowObj=new JSONObject();
+
+            JSONObject currenRowOfData = jArr.getJSONObject(i);
+            String manualName = currenRowOfData.getString("manual_name");
+
+            curRowObj.put("manual_name", manualName);
+
+            Iterator<String> keys = currenRowOfData.keys();
+
+            while (keys.hasNext()) {
+                String key = keys.next();
+                if (EnumIntTableFields.getFldPosicInArray(tableFlds, key) > -1){
+                //if (LPArray.valueInArray(tableFlds, key)) {
+                    Object value = currenRowOfData.get(key);
+                    String valueType = value.getClass().getSimpleName();                    
+                    fldsInTable = LPArray.addValueToArray1D(fldsInTable, key);
+                    switch (valueType){
+                        case "String":
+                            fieldValues = LPArray.addValueToArray1D(fieldValues, value.toString());
+                            break;
+                        case "Integer":
+                            fieldValues = LPArray.addValueToArray1D(fieldValues, Integer.valueOf(value.toString()));
+                            break;
+                        case "Boolean":
+                            fieldValues = LPArray.addValueToArray1D(fieldValues, Boolean.valueOf(value.toString()));
+                            break;
+                        default:
+                            break;
+                    }                    
+                }
+            }    
+            fldsInTable = LPArray.addValueToArray1D(fldsInTable, new String[]{TblsReqs.ModuleManuals.MODULE_NAME.getName(), TblsReqs.ModuleManuals.MODULE_VERSION.getName()});
+            fieldValues = LPArray.addValueToArray1D(fieldValues, new Object[]{moduleName, moduleVersion});
+            RdbmsObject insertRecord = Rdbms.insertRecord(TblsReqs.TablesReqs.MODULE_MANUALS, fldsInTable, fieldValues, TblsReqs.TablesReqs.MODULE_BUSINESS_RULES.getRepositoryName());                                
+            Boolean errorForInsertRecord = isErrorForInsertRecord(TblsReqs.TablesReqs.MODULE_MANUALS, insertRecord, manualName);
+            curRowObj.put("inserts_log", infoToReportForInsertRecord(TblsReqs.TablesReqs.MODULE_MANUALS, insertRecord, manualName, errorForInsertRecord));
+            allManualsArr.add(curRowObj);
+        }
+        return allManualsArr;    
+    }
+}                
+           

@@ -151,13 +151,13 @@ public class ClassReqProcedureQueries {
             return LPJson.convertArrayRowToJSONFieldNameAndValueObject(fldsToGet, procTblRows[0], null);
         }
     }
-    public static JSONArray dbRowsToJsonArr(String procInstanceName, EnumIntTables tblObj, EnumIntTableFields[] fldsToGet, SqlWhere wObj, String[] sortFlds, String[] fldsToExclude, Boolean emptyWhenNoData) {
-        Object[][] procTblRows = Rdbms.getRecordFieldsByFilter(procInstanceName, tblObj,
+    public static JSONArray dbRowsToJsonArr(String procInstanceName, String schemaName, EnumIntTables tblObj, EnumIntTableFields[] fldsToGet, SqlWhere wObj, String[] sortFlds, String[] fldsToExclude, Boolean emptyWhenNoData) {
+        Object[][] procTblRows = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, tblObj,
                 wObj, fldsToGet, sortFlds, false);
         return convertArray2DtoJArr(procTblRows, EnumIntTableFields.getAllFieldNames(fldsToGet), fldsToExclude, emptyWhenNoData);
     }
-    public static JSONArray dbRowsToJsonArr(String procInstanceName, String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue, String[] sortFlds, String[] fldsToExclude, Boolean emptyWhenNoData) {
-        Object[][] procTblRows = Rdbms.getRecordFieldsByFilter(procInstanceName, procInstanceName, tblName,
+    public static JSONArray dbRowsToJsonArr(String procInstanceName, String schemaName, String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue, String[] sortFlds, String[] fldsToExclude, Boolean emptyWhenNoData) {
+        Object[][] procTblRows = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, tblName,
                 whereFldName, whereFldValue, fldsToGet, sortFlds);
         return convertArray2DtoJArr(procTblRows, fldsToGet, fldsToExclude, emptyWhenNoData);
     }
@@ -242,5 +242,23 @@ public class ClassReqProcedureQueries {
         }
         return jBlockObj;
     }
+/*
+    public static JSONObject riskAssessmentBlockInRequirements(String procInstanceName) {
+        String[] fldsArr = new String[]{TblsReqs.ProcedureUsers.USER_NAME.getName()};
+        Object[][] procUsers = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USERS.getTableName(),
+                new String[]{TblsReqs.ProcedureUsers.PROC_INSTANCE_NAME.getName()},
+                new Object[]{procInstanceName}, fldsArr,
+                new String[]{TblsReqs.ProcedureUserRoles.USER_NAME.getName()});
+        JSONObject jBlockObj = new JSONObject();
+        JSONArray jBlockArr = new JSONArray();
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procUsers[0][0].toString()))) {
+            for (Object[] curRow : procUsers) {
+                jBlockArr.add(LPJson.convertArrayRowToJSONObject(fldsArr, curRow));
+            }
+        }
+        jBlockObj.put("users", jBlockArr);
 
+        return jBlockObj;
+    }*/
+    
 }

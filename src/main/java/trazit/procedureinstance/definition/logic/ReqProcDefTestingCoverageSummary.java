@@ -9,6 +9,7 @@ import trazit.procedureinstance.definition.logic.ClassReqProcedureQueries;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import databases.Rdbms;
 import databases.TblsTesting;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
@@ -25,7 +26,12 @@ public class ReqProcDefTestingCoverageSummary {
     public static JSONObject procInstanceTestingInfo(String procInstanceName) {
         JSONObject jMainObj = new JSONObject();
         JSONArray dbRowsToJsonArr2 = new JSONArray();
-        JSONArray dbRowsToJsonArr = ClassReqProcedureQueries.dbRowsToJsonArr(LPPlatform.buildSchemaName(procInstanceName, TblsTesting.TablesTesting.SCRIPT.getRepositoryName()), TblsTesting.TablesTesting.SCRIPT.getTableName(), getAllFieldNames(TblsTesting.TablesTesting.SCRIPT.getTableFields()), new String[]{TblsTesting.Script.ACTIVE.getName()}, new Object[]{true}, null, new String[]{}, true);
+        String repositoryName=LPPlatform.buildSchemaName(procInstanceName, TblsTesting.TablesTesting.SCRIPT.getRepositoryName());
+        Object[] schemaExists=Rdbms.dbSchemaExists(repositoryName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(schemaExists[0].toString())){
+            return jMainObj;
+        }
+        JSONArray dbRowsToJsonArr = ClassReqProcedureQueries.dbRowsToJsonArr(procInstanceName, repositoryName, TblsTesting.TablesTesting.SCRIPT.getTableName(), getAllFieldNames(TblsTesting.TablesTesting.SCRIPT.getTableFields()), new String[]{TblsTesting.Script.ACTIVE.getName()}, new Object[]{true}, null, new String[]{}, true);
 
         for (int i = 0; i < dbRowsToJsonArr.size(); i++) {
             JSONObject jsonObject = (JSONObject) dbRowsToJsonArr.get(i);
@@ -37,7 +43,7 @@ public class ReqProcDefTestingCoverageSummary {
         }
         jMainObj.put("scripts", dbRowsToJsonArr2);
         dbRowsToJsonArr2 = new JSONArray();
-        dbRowsToJsonArr = ClassReqProcedureQueries.dbRowsToJsonArr(LPPlatform.buildSchemaName(procInstanceName, TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getRepositoryName()), TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableName(), getAllFieldNames(TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableFields()), new String[]{TblsTesting.ScriptsCoverage.ACTIVE.getName()}, new Object[]{true}, null, new String[]{}, true);
+        dbRowsToJsonArr = ClassReqProcedureQueries.dbRowsToJsonArr(procInstanceName,LPPlatform.buildSchemaName(procInstanceName, TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getRepositoryName()), TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableName(), getAllFieldNames(TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableFields()), new String[]{TblsTesting.ScriptsCoverage.ACTIVE.getName()}, new Object[]{true}, null, new String[]{}, true);
         for (int j = 0; j < dbRowsToJsonArr.size(); j++) {
             JSONObject jsonObject = (JSONObject) dbRowsToJsonArr.get(j);
             String coverageDetail = LPNulls.replaceNull(jsonObject.get("endpoints_coverage_detail")).toString();

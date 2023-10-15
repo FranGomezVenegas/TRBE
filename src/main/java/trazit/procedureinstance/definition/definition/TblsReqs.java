@@ -33,11 +33,34 @@ public class TblsReqs {
     private static final Boolean IS_PRODEDURE_INSTANCE = false;
 
     public enum TablesReqs implements EnumIntTables {
-        MODULES(null, "modules", SCHEMA_NAME, false, Modules.values(), Modules.MODULE_NAME.getName() + "_" + Modules.MODULE_VERSION.getName(),
+        MODULES(null, "modules", SCHEMA_NAME, false, Modules.values(), null,
                 new String[]{Modules.MODULE_NAME.getName(), Modules.MODULE_VERSION.getName()}, null, "Modules Available"),
-        MODULE_ACTIONS_N_QUERIES(null, "module_actions_and_queries", SCHEMA_NAME, false, ModuleActionsAndQueries.values(), ModuleActionsAndQueries.MODULE_NAME.getName() + "_" + ModuleActionsAndQueries.MODULE_VERSION.getName(),
-                new String[]{ModuleActionsAndQueries.MODULE_NAME.getName(), ModuleActionsAndQueries.MODULE_VERSION.getName(), ModuleActionsAndQueries.API_NAME.getName(), ModuleActionsAndQueries.ENDPOINT_NAME.getName()}, null, "Relation of actions and queries belonging to each module version in use"),
-        PROCEDURE_INFO(null, "procedure_info", SCHEMA_NAME, false, ProcedureInfo.values(), ProcedureInfo.PROCEDURE_NAME.getName() + "_" + ProcedureInfo.PROCEDURE_VERSION.getName() + "_" + ProcedureInfo.PROC_INSTANCE_NAME.getName(),
+        MODULE_ACTIONS_N_QUERIES(null, "module_actions_and_queries", SCHEMA_NAME, false, ModuleActionsAndQueries.values(), null,
+                new String[]{ModuleActionsAndQueries.MODULE_NAME.getName(), ModuleActionsAndQueries.MODULE_VERSION.getName(), ModuleActionsAndQueries.API_NAME.getName(), ModuleActionsAndQueries.ENDPOINT_NAME.getName()}, 
+                new Object[]{new ForeignkeyFld(ModuleActionsAndQueries.MODULE_NAME.getName(), SCHEMA_NAME, TablesReqs.MODULES.getTableName(), Modules.MODULE_NAME.getName()),
+                    new ForeignkeyFld(ModuleActionsAndQueries.MODULE_VERSION.getName(), SCHEMA_NAME, TablesReqs.MODULES.getTableName(), Modules.MODULE_VERSION.getName())},
+                "Relation of actions and queries belonging to each module version in use"),
+        MODULE_BUSINESS_RULES(null, "module_business_rules", SCHEMA_NAME, false, ModuleBusinessRules.values(), null,
+                new String[]{ModuleBusinessRules.MODULE_NAME.getName(), ModuleBusinessRules.MODULE_VERSION.getName(), ModuleBusinessRules.API_NAME.getName(), ModuleBusinessRules.RULE_NAME.getName()}, 
+                new Object[]{new ForeignkeyFld(ModuleActionsAndQueries.MODULE_NAME.getName(), SCHEMA_NAME, TablesReqs.MODULES.getTableName(), Modules.MODULE_NAME.getName()),
+                    new ForeignkeyFld(ModuleActionsAndQueries.MODULE_VERSION.getName(), SCHEMA_NAME, TablesReqs.MODULES.getTableName(), Modules.MODULE_VERSION.getName())},
+                "Relation of business rules belonging to each module version in use"),
+        MODULE_ERROR_NOTIFICATIONS(null, "module_error_notifications", SCHEMA_NAME, false, ModuleErrorNotifications.values(), null,
+                new String[]{ModuleErrorNotifications.MODULE_NAME.getName(), ModuleErrorNotifications.MODULE_VERSION.getName(), ModuleErrorNotifications.API_NAME.getName(), ModuleErrorNotifications.ERROR_CODE.getName()}, 
+                new Object[]{new ForeignkeyFld(ModuleErrorNotifications.MODULE_NAME.getName(), SCHEMA_NAME, TablesReqs.MODULES.getTableName(), Modules.MODULE_NAME.getName()),
+                    new ForeignkeyFld(ModuleErrorNotifications.MODULE_VERSION.getName(), SCHEMA_NAME, TablesReqs.MODULES.getTableName(), Modules.MODULE_VERSION.getName())},
+                "Relation of error notifications belonging to each module version in use"),
+        MODULE_SPECIAL_VIEWS(null, "module_special_views", SCHEMA_NAME, false, ModuleSpecialViews.values(), null,
+                new String[]{ModuleSpecialViews.MODULE_NAME.getName(), ModuleSpecialViews.MODULE_VERSION.getName(), ModuleSpecialViews.VIEW_NAME.getName()}, 
+                new Object[]{new ForeignkeyFld(ModuleSpecialViews.MODULE_NAME.getName(), SCHEMA_NAME, TablesReqs.MODULES.getTableName(), Modules.MODULE_NAME.getName()),
+                    new ForeignkeyFld(ModuleSpecialViews.MODULE_VERSION.getName(), SCHEMA_NAME, TablesReqs.MODULES.getTableName(), Modules.MODULE_VERSION.getName())},
+                "Relation of special views belonging to each module version in use"),
+        MODULE_MANUALS(null, "module_manuals", SCHEMA_NAME, false, ModuleManuals.values(), null,
+                new String[]{ModuleManuals.MODULE_NAME.getName(), ModuleManuals.MODULE_VERSION.getName(), ModuleManuals.MANUAL_NAME.getName(), ModuleManuals.MANUAL_VERSION.getName()}, 
+                new Object[]{new ForeignkeyFld(ModuleManuals.MODULE_NAME.getName(), SCHEMA_NAME, TablesReqs.MODULES.getTableName(), Modules.MODULE_NAME.getName()),
+                    new ForeignkeyFld(ModuleManuals.MODULE_VERSION.getName(), SCHEMA_NAME, TablesReqs.MODULES.getTableName(), Modules.MODULE_VERSION.getName())},
+                "Relation of manuals belonging to each module version in use"),
+        PROCEDURE_INFO(null, "procedure_info", SCHEMA_NAME, false, ProcedureInfo.values(), null,
                 new String[]{ProcedureInfo.PROCEDURE_NAME.getName(), ProcedureInfo.PROCEDURE_VERSION.getName(), ProcedureInfo.PROC_INSTANCE_NAME.getName()}, null, "This table provides the general info about the process instances"),
         PROCEDURE_ROLES(null, "procedure_roles", SCHEMA_NAME, false, ProcedureRoles.values(), null,
                 new String[]{ProcedureRoles.PROCEDURE_NAME.getName(), ProcedureRoles.PROCEDURE_VERSION.getName(), ProcedureInfo.PROC_INSTANCE_NAME.getName(), ProcedureRoles.ROLE_NAME.getName()},
@@ -46,16 +69,14 @@ public class TblsReqs {
                     new ForeignkeyFld(ProcedureRoles.PROC_INSTANCE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROC_INSTANCE_NAME.getName())
                 },
                 "Roles for a given process instance"),
-        PROC_USERS(null, "procedure_users", SCHEMA_NAME, false, ProcedureUsers.values(),
-                ProcedureUsers.PROCEDURE_NAME.getName() + "_" + ProcedureUsers.PROCEDURE_VERSION.getName() + "_" + ProcedureUsers.USER_NAME.getName(),
+        PROC_USERS(null, "procedure_users", SCHEMA_NAME, false, ProcedureUsers.values(), null,                
                 new String[]{ProcedureUsers.PROCEDURE_NAME.getName(), ProcedureUsers.PROCEDURE_VERSION.getName(), ProcedureInfo.PROC_INSTANCE_NAME.getName(), ProcedureUsers.USER_NAME.getName()},
                 new Object[]{new ForeignkeyFld(ProcedureUsers.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_NAME.getName()),
                     new ForeignkeyFld(ProcedureUsers.PROCEDURE_VERSION.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_VERSION.getName()),
                     new ForeignkeyFld(ProcedureUsers.PROC_INSTANCE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROC_INSTANCE_NAME.getName())
                 },
                 "Users for a given process instance"),
-        PROC_USER_ROLES(null, "procedure_user_role", SCHEMA_NAME, false, ProcedureUserRoles.values(),
-                ProcedureUserRoles.PROCEDURE_NAME.getName() + "_" + ProcedureUserRoles.PROCEDURE_VERSION.getName() + "_" + ProcedureUserRoles.ROLE_NAME.getName() + "_" + ProcedureUserRoles.USER_NAME.getName(),
+        PROC_USER_ROLES(null, "procedure_user_role", SCHEMA_NAME, false, ProcedureUserRoles.values(), null,
                 new String[]{ProcedureUserRoles.PROCEDURE_NAME.getName(), ProcedureUserRoles.PROCEDURE_VERSION.getName(), ProcedureInfo.PROC_INSTANCE_NAME.getName(), ProcedureUserRoles.ROLE_NAME.getName(), ProcedureUserRoles.USER_NAME.getName()},
                 new Object[]{new ForeignkeyFld(ProcedureUserRoles.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_NAME.getName()),
                     new ForeignkeyFld(ProcedureUserRoles.PROCEDURE_VERSION.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_VERSION.getName()),
@@ -70,16 +91,14 @@ public class TblsReqs {
                     new ForeignkeyFld(ProcedureSopMetaData.PROC_INSTANCE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROC_INSTANCE_NAME.getName())
                 },
                 "SOPs for a given process instance"),
-        PROCEDURE_USER_REQS(null, "procedure_user_requirements", SCHEMA_NAME, false, ProcedureUserRequirements.values(),
-                ProcedureUserRequirements.PROCEDURE_NAME.getName() + "_" + ProcedureUserRequirements.PROCEDURE_VERSION.getName() + "_" + ProcedureUserRequirements.REQ_ID.getName(),
+        PROCEDURE_USER_REQS(null, "procedure_user_requirements", SCHEMA_NAME, false, ProcedureUserRequirements.values(),"procedure_user_requirements_seq",
                 new String[]{ProcedureUserRequirements.PROCEDURE_NAME.getName(), ProcedureUserRequirements.PROCEDURE_VERSION.getName(), ProcedureInfo.PROC_INSTANCE_NAME.getName(), ProcedureUserRequirements.REQ_ID.getName()},
                 new Object[]{new ForeignkeyFld(ProcedureUserRequirements.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_NAME.getName()),
                     new ForeignkeyFld(ProcedureUserRequirements.PROCEDURE_VERSION.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROCEDURE_VERSION.getName()),
                     new ForeignkeyFld(ProcedureUserRequirements.PROC_INSTANCE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_INFO.getTableName(), ProcedureInfo.PROC_INSTANCE_NAME.getName())
                 },
                 "URS for a given process instance"),
-        PROCEDURE_RISK_ASSESSMENT(null, "procedure_risk_assessment", SCHEMA_NAME, false, ProcedureRiskAssessment.values(),
-                ProcedureRiskAssessment.PROCEDURE_NAME.getName() + "_" + ProcedureRiskAssessment.PROCEDURE_VERSION.getName() + "_" + ProcedureRiskAssessment.RISK_ID.getName(),
+        PROCEDURE_RISK_ASSESSMENT(null, "procedure_risk_assessment", SCHEMA_NAME, false, ProcedureRiskAssessment.values(), "procedure_risk_assessment_seq",
                 new String[]{ProcedureRiskAssessment.PROCEDURE_NAME.getName(), ProcedureRiskAssessment.PROCEDURE_VERSION.getName(), ProcedureRiskAssessment.PROC_INSTANCE_NAME.getName(), ProcedureRiskAssessment.REQ_ID.getName(), ProcedureRiskAssessment.RISK_ID.getName()},
                 new Object[]{new ForeignkeyFld(ProcedureRiskAssessment.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_USER_REQS.getTableName(), ProcedureUserRequirements.PROCEDURE_NAME.getName()),
                     new ForeignkeyFld(ProcedureRiskAssessment.PROCEDURE_VERSION.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_USER_REQS.getTableName(), ProcedureUserRequirements.PROCEDURE_VERSION.getName()),
@@ -87,8 +106,7 @@ public class TblsReqs {
                     new ForeignkeyFld(ProcedureRiskAssessment.REQ_ID.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_USER_REQS.getTableName(), ProcedureUserRequirements.REQ_ID.getName())
                 },
                 "risk assessment for a given process instance"),
-        PROCEDURE_REQ_SOLUTION(null, "procedure_req_solution", SCHEMA_NAME, false, ProcedureReqSolution.values(),
-                ProcedureReqSolution.PROCEDURE_NAME.getName() + "_" + ProcedureReqSolution.PROCEDURE_VERSION.getName() + "_" + ProcedureReqSolution.SOLUTION_ID.getName(),
+        PROCEDURE_REQ_SOLUTION(null, "procedure_req_solution", SCHEMA_NAME, false, ProcedureReqSolution.values(), "procedure_req_solution_seq",
                 new String[]{ProcedureReqSolution.PROCEDURE_NAME.getName(), ProcedureReqSolution.PROCEDURE_VERSION.getName(), ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), ProcedureReqSolution.REQ_ID.getName(), ProcedureReqSolution.SOLUTION_ID.getName()},
                 new Object[]{new ForeignkeyFld(ProcedureReqSolution.PROCEDURE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_USER_REQS.getTableName(), ProcedureUserRequirements.PROCEDURE_NAME.getName()),
                     new ForeignkeyFld(ProcedureReqSolution.PROCEDURE_VERSION.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_USER_REQS.getTableName(), ProcedureUserRequirements.PROCEDURE_VERSION.getName()),
@@ -220,7 +238,7 @@ public class TblsReqs {
 
     public enum ViewsReqs implements EnumIntViews {
         PROC_REQ_SOLUTION_ACTIONS(" ",
-                null, "proc_req_solution_actions", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsReqs.ProcReqUserRequirementsActions.values(), "proc_req_user_requirements_actions",
+                null, "proc_req_solution_actions", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsReqs.viewProcReqSolutionActions.values(), "proc_req_user_requirements_actions",
                 new EnumIntTablesJoin[]{
                     new EnumIntTablesJoin(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, "reqs", TblsReqs.TablesReqs.PROCEDURE_INFO, "procInfo", false,
                             new EnumIntTableFields[][]{{TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME, TblsReqs.ProcedureUserRequirements.PROC_INSTANCE_NAME}}, "", SqlStatementEnums.JOIN_TYPES.INNER),
@@ -388,6 +406,232 @@ public class TblsReqs {
         }
     }
 
+    public enum ModuleBusinessRules implements EnumIntTableFields {
+        MODULE_NAME(FIELDS_NAMES_MODULE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
+        MODULE_VERSION(FIELDS_NAMES_MODULE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
+        ORDER_NUMBER("order_number", LPDatabase.real(), null, null, null, null),
+        API_NAME("api_name", LPDatabase.stringNotNull(), null, null, null, null),
+        AREA("area", LPDatabase.stringNotNull(), null, null, null, null),
+        RULE_NAME("rule_name", LPDatabase.stringNotNull(), null, null, null, null),
+        IS_MANDATORY("is_mandatory", LPDatabase.booleanFld(true), null, null, null, null),
+        PREREQUISITE("prerequite",LPDatabase.string(), null, null, null, null),
+        VALUES_LIST("values_list",LPDatabase.string(), null, null, null, null),        
+        TIP_EN("tip_en",LPDatabase.string(), null, null, null, null),        
+        TIP_ES("tip_es",LPDatabase.string(), null, null, null, null)
+        ;
+        private ModuleBusinessRules(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules) {
+            this.fieldName = dbObjName;
+            this.fieldType = dbObjType;
+            this.fieldMask = fieldMask;
+            this.reference = refer;
+            this.fieldComment = comment;
+            this.fldBusinessRules = fldBusRules;
+        }
+        private final String fieldName;
+
+        @Override
+        public String getName() {
+            return this.fieldName;
+        }
+        private final String fieldType;
+
+        @Override
+        public String getFieldType() {
+            return this.fieldType;
+        }
+        private final String fieldMask;
+
+        @Override
+        public String getFieldMask() {
+            return this.fieldMask;
+        }
+        private final ReferenceFld reference;
+
+        @Override
+        public ReferenceFld getReferenceTable() {
+            return this.reference;
+        }
+        private final String fieldComment;
+
+        @Override
+        public String getFieldComment() {
+            return this.fieldComment;
+        }
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override
+        public FldBusinessRules[] getFldBusinessRules() {
+            return this.fldBusinessRules;
+        }
+    }
+
+    public enum ModuleSpecialViews implements EnumIntTableFields {
+        MODULE_NAME(FIELDS_NAMES_MODULE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
+        MODULE_VERSION(FIELDS_NAMES_MODULE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
+        ORDER_NUMBER("order_number", LPDatabase.real(), null, null, null, null),
+        VIEW_NAME("view_name", LPDatabase.stringNotNull(), null, null, null, null),
+        JSON_MODEL("json_model", LPDatabase.json(), null, null, null, null)
+        ;
+        private ModuleSpecialViews(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules) {
+            this.fieldName = dbObjName;
+            this.fieldType = dbObjType;
+            this.fieldMask = fieldMask;
+            this.reference = refer;
+            this.fieldComment = comment;
+            this.fldBusinessRules = fldBusRules;
+        }
+        private final String fieldName;
+
+        @Override
+        public String getName() {
+            return this.fieldName;
+        }
+        private final String fieldType;
+
+        @Override
+        public String getFieldType() {
+            return this.fieldType;
+        }
+        private final String fieldMask;
+
+        @Override
+        public String getFieldMask() {
+            return this.fieldMask;
+        }
+        private final ReferenceFld reference;
+
+        @Override
+        public ReferenceFld getReferenceTable() {
+            return this.reference;
+        }
+        private final String fieldComment;
+
+        @Override
+        public String getFieldComment() {
+            return this.fieldComment;
+        }
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override
+        public FldBusinessRules[] getFldBusinessRules() {
+            return this.fldBusinessRules;
+        }
+    }
+    
+    public enum ModuleErrorNotifications implements EnumIntTableFields {
+        MODULE_NAME(FIELDS_NAMES_MODULE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
+        MODULE_VERSION(FIELDS_NAMES_MODULE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
+        API_NAME("api_name", LPDatabase.stringNotNull(), null, null, null, null),
+        ERROR_CODE("error_code", LPDatabase.stringNotNull(), null, null, null, null),
+        ;
+        private ModuleErrorNotifications(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules) {
+            this.fieldName = dbObjName;
+            this.fieldType = dbObjType;
+            this.fieldMask = fieldMask;
+            this.reference = refer;
+            this.fieldComment = comment;
+            this.fldBusinessRules = fldBusRules;
+        }
+        private final String fieldName;
+
+        @Override
+        public String getName() {
+            return this.fieldName;
+        }
+        private final String fieldType;
+
+        @Override
+        public String getFieldType() {
+            return this.fieldType;
+        }
+        private final String fieldMask;
+
+        @Override
+        public String getFieldMask() {
+            return this.fieldMask;
+        }
+        private final ReferenceFld reference;
+
+        @Override
+        public ReferenceFld getReferenceTable() {
+            return this.reference;
+        }
+        private final String fieldComment;
+
+        @Override
+        public String getFieldComment() {
+            return this.fieldComment;
+        }
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override
+        public FldBusinessRules[] getFldBusinessRules() {
+            return this.fldBusinessRules;
+        }
+    }
+    
+    public enum ModuleManuals implements EnumIntTableFields {
+        MODULE_NAME(LPDatabase.FIELDS_NAMES_MODULE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
+        MODULE_VERSION(LPDatabase.FIELDS_NAMES_MODULE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
+        ORDER_NUMBER("order_number", LPDatabase.real(), null, null, null, null),
+        MANUAL_NAME("manual_name", LPDatabase.stringNotNull(), null, null, null, null),
+        MANUAL_VERSION("manual_version", LPDatabase.integerNotNull(), null, null, null, null),
+        DESCRIPTION("description", LPDatabase.string(), null, null, null, null),
+        FILE_LINK("file_link", LPDatabase.string(), null, null, null, null),
+        IS_VIDEO("is_video", LPDatabase.booleanFld(false), null, null, null, null),
+        ACTIVE("active", LPDatabase.booleanFld(true), null, null, null, null),
+        AREA("area", LPDatabase.string(), null, null, null, null),;
+
+        private ModuleManuals(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules) {
+            this.fieldName = dbObjName;
+            this.fieldType = dbObjType;
+            this.fieldMask = fieldMask;
+            this.reference = refer;
+            this.fieldComment = comment;
+            this.fldBusinessRules = fldBusRules;
+        }
+        private final String fieldName;
+
+        @Override
+        public String getName() {
+            return this.fieldName;
+        }
+        private final String fieldType;
+
+        @Override
+        public String getFieldType() {
+            return this.fieldType;
+        }
+        private final String fieldMask;
+
+        @Override
+        public String getFieldMask() {
+            return this.fieldMask;
+        }
+        private final ReferenceFld reference;
+
+        @Override
+        public ReferenceFld getReferenceTable() {
+            return this.reference;
+        }
+        private final String fieldComment;
+
+        @Override
+        public String getFieldComment() {
+            return this.fieldComment;
+        }
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override
+        public FldBusinessRules[] getFldBusinessRules() {
+            return this.fldBusinessRules;
+        }
+    }
+    
     public enum ProcedureInfo implements EnumIntTableFields {
         PROCEDURE_NAME(FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull(), null, null, null, null),
         PROCEDURE_VERSION("procedure_version", LPDatabase.integerNotNull(), null, null, null, null),
@@ -669,8 +913,8 @@ public class TblsReqs {
         HASTOBE_PART_OF_TESTING("has_to_be_part_of_testing", LPDatabase.booleanFld(false), null, null, null, null),
         EXPECTED_TESTS("EXPECTED_TESTS", LPDatabase.string(), null, null, null, null),
         OWNER("current_status", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
-        CREATION_DATE("created_date", LPDatabase.dateTime(), "to_char(" + "received_on" + ",'YYYY-MM-DD HH:MI')", null, null, null),
-        CREATED_BY("created_by", LPDatabase.booleanFld(false), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
+        CREATION_DATE("created_date", LPDatabase.dateTime(), "to_char(" + "created_date" + ",'YYYY-MM-DD HH:MI')", null, null, null),
+        CREATED_BY("created_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld(false), null, null, null, null),
         SIGNED("signed", LPDatabase.booleanFld(false), null, null, null, null),
         ;
@@ -1236,21 +1480,22 @@ public class TblsReqs {
             new EnumIntTablesJoin(TblsReqs.TablesReqs.MODULE_ACTIONS_N_QUERIES, "modAct", TblsReqs.TablesReqs.PROCEDURE_USER_REQS, "reqs", false,
                 new EnumIntTableFields[][]{{TblsReqs.ModuleActionsAndQueries.ENDPOINT_NAME, TblsReqs.ProcedureUserRequirements.WINDOW_ACTION}}, "", SqlStatementEnums.JOIN_TYPES.INNER),
      */
-    public enum ProcReqUserRequirementsActions implements EnumIntViewFields {
+    public enum viewProcReqSolutionActions implements EnumIntViewFields {
         MODULE_NAME("procInfo", ProcedureInfo.MODULE_NAME.getName(), "procInfo.module_name as module_name", ProcedureInfo.MODULE_NAME, null, null, null),
         PROC_INSTANCE_NAME("procInfo", ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), "procInfo.proc_instance_name as proc_instance_name", ProcedureUserRequirements.PROC_INSTANCE_NAME, null, null, null),
         WINDOW_NAME("reqs", ProcedureReqSolution.WINDOW_NAME.getName(), "reqs.window_name as window_name", ProcedureReqSolution.WINDOW_NAME, null, null, null),
         WINDOW_LABEL_EN("reqs", "window_label_en", "reqs.label_en as window_label_en", ProcedureReqSolution.LABEL_EN, null, null, null),
         WINDOW_LABEL_ES("reqs", "window_label_es", "reqs.label_es as window_label_es", ProcedureReqSolution.LABEL_ES, null, null, null),
         WINDOW_ACTION("reqs", ProcedureReqSolution.WINDOW_ACTION.getName(), "reqs.window_action as window_action", ProcedureReqSolution.WINDOW_ACTION, null, null, null),
-        ORDER_NUMBER("reqs", ProcedureUserRequirements.ORDER_NUMBER.getName(), "reqs.order_number as order_number", ProcedureUserRequirements.ORDER_NUMBER, null, null, null),
+        ORDER_NUMBER("reqs", ProcedureReqSolution.ORDER_NUMBER.getName(), "reqs.order_number as order_number", ProcedureUserRequirements.ORDER_NUMBER, null, null, null),
         ENDPOINT_NAME("modAct", ModuleActionsAndQueries.ENDPOINT_NAME.getName(), "modAct.endpoint_name as endpoint_name", ModuleActionsAndQueries.ENDPOINT_NAME, null, null, null),
         PRETTY_EN("modAct", ModuleActionsAndQueries.PRETTY_EN.getName(), "modAct.pretty_name_en as pretty_name_en", ModuleActionsAndQueries.PRETTY_EN, null, null, null),
         PRETTY_ES("modAct", ModuleActionsAndQueries.PRETTY_ES.getName(), "modAct.pretty_name_es as pretty_name_es", ModuleActionsAndQueries.PRETTY_ES, null, null, null),
         MOD_ORDER_NUMBER("modAct", "mod_order_number", "modAct.order_number as mod_order_number", ModuleActionsAndQueries.ORDER_NUMBER, null, null, null), 
         ENTITY("modAct", ModuleActionsAndQueries.ENTITY.getName(), "modAct.entity as entity", ModuleActionsAndQueries.ENTITY, null, null, null), 
         ROLES("reqs", ProcedureReqSolution.ROLES.getName(), "reqs.roles as roles", ProcedureReqSolution.ROLES, null, null, null),
-        WINDOW_ELEMENT_TYPE("reqs", ProcedureReqSolution.WINDOW_ELEMENT_TYPE.getName(), "reqs.window_element_type as window_element_type", ProcedureReqSolution.WINDOW_ELEMENT_TYPE, null, null, null)
+        WINDOW_ELEMENT_TYPE("reqs", ProcedureReqSolution.WINDOW_ELEMENT_TYPE.getName(), "reqs.window_element_type as window_element_type", ProcedureReqSolution.WINDOW_ELEMENT_TYPE, null, null, null),
+        SOP_NAME("reqs", "sop_name", "reqs.sop_name as sop_name", ProcedureReqSolution.SOP_NAME, null, null, null)
        
         /*        RAW_VALUE_NUM("raw_value_num", "CASE " +
 "            WHEN isnumeric(sar.raw_value::text) THEN to_number(sar.raw_value::text, '9999'::text) " +
@@ -1260,7 +1505,7 @@ public class TblsReqs {
         SAMPLE_ANALYSIS_STATUS("sample_analysis_status", "sa.status  AS sample_analysis_status", SampleAnalysis.STATUS, null, null, null),
          */;
 
-        private ProcReqUserRequirementsActions(String tblAliasInView, String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules) {
+        private viewProcReqSolutionActions(String tblAliasInView, String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules) {
 //            try{
 //            this.fldName="";
             this.fldName = name;
