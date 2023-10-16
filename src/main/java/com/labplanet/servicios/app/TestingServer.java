@@ -14,6 +14,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import databases.Rdbms;
 import static databases.Rdbms.dbTableExists;
+import static databases.Rdbms.insertRecordInTableFromTable;
 import databases.RdbmsObject;
 import databases.SqlStatement;
 import module.instrumentsmanagement.definition.TblsInstrumentsDataAudit;
@@ -89,6 +90,7 @@ import module.inventorytrack.logic.OperationMetricsConsumptionStock;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.json.simple.JSONArray;
+import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntViewFields;
 import static trazit.procedureinstance.definition.apis.ReqProcedureDefinitionQueries.getScriptWithSteps;
 import trazit.procedureinstance.definition.logic.ClassReqProcedUserAndActions;
@@ -119,7 +121,23 @@ public class TestingServer extends HttpServlet {
         request = LPHttp.requestPreparation(request);
         response = LPHttp.responsePreparation(response);
         try (PrintWriter out = response.getWriter()) {
-            
+        String moduleName="STOCKS";
+        Integer moduleVersion=1;
+        String procedureName="stock";
+        Integer procedureVersion=1;
+        String procInstanceName="stock";
+        Rdbms.stablishDBConection("demo_v0_9_2");
+                            Object[] insertRecordInTableFromTable = insertRecordInTableFromTable(true, 
+                                    getAllFieldNames(TblsReqs.TablesReqs.MODULE_MANUALS.getTableFields()),
+                                        GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.MODULE_MANUALS.getTableName(), 
+                                    new String[]{TblsReqs.ModuleManuals.MODULE_NAME.getName(), TblsReqs.ModuleManuals.MODULE_VERSION.getName()},
+                                    new Object[]{moduleName, moduleVersion},
+                                    GlobalVariables.Schemas.REQUIREMENTS.getName(), 
+                                        TblsReqs.TablesReqs.PROC_MANUALS.getTableName(), getAllFieldNames(TblsReqs.TablesReqs.PROC_MANUALS.getTableFields())
+                                ,new String[]{TblsReqs.ProcedureManuals.PROCEDURE_NAME.getName(), TblsReqs.ProcedureManuals.PROCEDURE_VERSION.getName(),
+                                    TblsReqs.ProcedureManuals.PROC_INSTANCE_NAME.getName()}, 
+                                new Object[]{procedureName, procedureVersion, procInstanceName});            
+if (1==1)return;            
         createCheckPlatformProcedure("hola");
         out.println(OperationMetricsConsumptionStock.main());
         List<OperationMetricsConsumptionEntry> consumptionData = new ArrayList<>();
@@ -155,7 +173,7 @@ Rdbms.stablishDBConection("labplanet");
           
 if (1==1)return;            
             Rdbms.stablishDBConection("labplanet");
-            String procInstanceName = "inv-draft";
+            procInstanceName = "inv-draft";
             String[] fldsArr = new String[]{TblsReqs.ProcedureRoles.ROLE_NAME.getName()};
             Object[][] procRoles = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_ROLES.getTableName(),
                     new String[]{TblsReqs.ProcedureRoles.PROC_INSTANCE_NAME.getName()},

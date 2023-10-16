@@ -1289,6 +1289,11 @@ public class Rdbms {
      */
     public static Object[] insertRecordInTableFromTable(Boolean includeFldsSameName, String[] fieldNamesFrom, String schemaNameFrom, String tableNameFrom, String[] whereFieldNamesFrom, Object[] whereFieldValuesFrom,
             String schemaNameTo, String tableNameTo, String[] fieldNamesTo) {
+        return insertRecordInTableFromTable(includeFldsSameName, fieldNamesFrom, schemaNameFrom, tableNameFrom, whereFieldNamesFrom,  whereFieldValuesFrom,
+            schemaNameTo, tableNameTo, fieldNamesTo, null, null);
+    }
+    public static Object[] insertRecordInTableFromTable(Boolean includeFldsSameName, String[] fieldNamesFrom, String schemaNameFrom, String tableNameFrom, String[] whereFieldNamesFrom, Object[] whereFieldValuesFrom,
+            String schemaNameTo, String tableNameTo, String[] fieldNamesTo, String[] extraFlds, Object[] extraFldValues) {
 
         DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
         dbLogSummary.addInsert();
@@ -1305,8 +1310,25 @@ public class Rdbms {
         Map<String, Object[]> hmQuery = sql.buildSqlStatement("SELECT", schemaNameFrom, tableNameFrom,
                 whereFieldNamesFrom, whereFieldValuesFrom, fldsInBoth, null, null,
                 null, null);
-        String query = hmQuery.keySet().iterator().next();
-        query = "insert into " + schemaNameTo + "." + tableNameTo + "(" + Arrays.toString(fldsInBoth).replace("[", "").replace("]", "") + ")" + "( " + query + " ) ";
+        String queryInFrom = hmQuery.keySet().iterator().next();
+        String query = "insert into " + schemaNameTo + "." + tableNameTo + "(" + Arrays.toString(fldsInBoth).replace("[", "").replace("]", "");
+        if (extraFlds!=null){
+           query=query +", "+Arrays.toString(extraFlds).replace("[", "").replace("]", "");
+           //queryInFrom=queryInFrom.replace("SELECT", "").replace("select", "");
+           String extraFldsforFrom="";
+           for (Object curVal: extraFldValues){               
+                if (curVal instanceof String) {
+                    extraFldsforFrom = extraFldsforFrom + "'" + curVal.toString() + "'"+", ";
+                } else {
+                    extraFldsforFrom = extraFldsforFrom + curVal.toString()+", ";
+                }
+           }
+           if (extraFldsforFrom.endsWith(", ")) {
+               extraFldsforFrom = extraFldsforFrom.substring(0, extraFldsforFrom.length() - 2);
+}
+           queryInFrom=queryInFrom.replace("from", ", "+extraFldsforFrom+" from ");
+        }
+        query=query+ ")" + "( " + queryInFrom + " ) ";
         //fieldValues = LPArray.encryptTableFieldArray(schemaNameFrom, tableNameFrom, fieldNamesFrom, fieldValues);
         String[] insertRecordDiagnosis = Rdbms.prepUpQueryCloneRecords(query, whereFieldValuesFrom);
 //        fieldValues = LPArray.decryptTableFieldArray(schemaNameFrom, tableNameFrom, fieldNames, (Object[]) whereFieldValuesFrom);
