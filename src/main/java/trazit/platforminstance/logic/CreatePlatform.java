@@ -58,7 +58,7 @@ public class CreatePlatform {
         executionLog = new JSONObject();
         errorsList = new JSONArray();        
         createBasicSchemasAndTablesStructure(platformName);
-        //createAppProcTables(platformName);
+        createAppProcTables(platformName);
         createModules(platformName);
     }
 
