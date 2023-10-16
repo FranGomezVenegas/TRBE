@@ -4,6 +4,7 @@ import trazit.procedureinstance.definition.definition.ReqProcedureEnums.Procedur
 import trazit.procedureinstance.definition.definition.ReqProcedureEnums.ReqProcedureDefinitionErrorTraping;
 import databases.Rdbms;
 import databases.Rdbms.RdbmsErrorTrapping;
+import static databases.Rdbms.insertRecordInTableFromTable;
 import databases.RdbmsObject;
 import databases.SqlWhere;
 import functionaljavaa.materialspec.DataSpec;
@@ -36,6 +37,7 @@ import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
+import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntTables;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.globalvariables.GlobalVariables.DEFAULTLANGUAGE;
@@ -44,6 +46,7 @@ import static trazit.procedureinstance.definition.definition.ReqProcedureEnums.P
 import static trazit.procedureinstance.definition.definition.ReqProcedureEnums.ProcedureDefinitionAPIActionsEndpoints.ADD_USER;
 import trazit.procedureinstance.definition.definition.TblsReqs.TablesReqs;
 import static trazit.procedureinstance.definition.logic.ReqProcedureFrontendMasterData.getActiveModules;
+import trazit.procedureinstance.deployment.apis.ProcDefinitionChecker;
 import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceUtility.procedureParentUserRequirementsList;
 import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceUtility.procedureRolesList;
 import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceUtility.procedureSops;
@@ -165,6 +168,19 @@ public class ClassReqProcedureActions {
                                 new Object[]{procedureName, procedureVersion, procInstanceName, moduleName, moduleVersion, lblEn, lblEs, 
                                     LPDate.getCurrentTimeStamp().hashCode(), modulesList[rowIndex][1].toString()});
                         if (Boolean.TRUE.equals(insertDiagn.getRunSuccess())) {
+
+                            Object[] insertRecordInTableFromTable = insertRecordInTableFromTable(true, 
+                                getAllFieldNames(TblsReqs.TablesReqs.MODULE_MANUALS.getTableFields()),
+                                GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.MODULE_MANUALS.getTableName(), 
+                                new String[]{TblsReqs.ModuleManuals.MODULE_NAME.getName(), TblsReqs.ModuleManuals.MODULE_VERSION.getName()},
+                                new Object[]{moduleName, moduleVersion},
+                                GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_MANUALS.getTableName(), 
+                                getAllFieldNames(TblsReqs.TablesReqs.PROC_MANUALS.getTableFields())
+                                ,new String[]{TblsReqs.ProcedureManuals.PROCEDURE_NAME.getName(), TblsReqs.ProcedureManuals.PROCEDURE_VERSION.getName(),
+                                    TblsReqs.ProcedureManuals.PROC_INSTANCE_NAME.getName()}, 
+                                new Object[]{procedureName, procedureVersion, procInstanceName});            
+
+
                             actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), new Object[]{moduleName});
                             this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), new Object[]{moduleName});
                             this.messageDynamicData = new Object[]{moduleName, procedureName, procedureVersion};
@@ -174,6 +190,7 @@ public class ClassReqProcedureActions {
                             this.diagnosticObjIntMsg = insertDiagn.getErrorMessageCode();
                             this.messageDynamicData = insertDiagn.getErrorMessageVariables();
                         }
+                        
                     }
                 }
                 break;
@@ -931,6 +948,16 @@ public class ClassReqProcedureActions {
                 }
                 actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Completed", null);
                 this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, new Object[]{});
+                break;
+            case DEFINITION_CHECKER:
+                procedureName = argValues[0].toString();
+                procedureVersion = (Integer) argValues[1];
+                procInstanceName = argValues[2].toString();
+                
+                ProcDefinitionChecker defChk=new ProcDefinitionChecker(procedureName, procedureVersion, procInstanceName);
+                
+                Rdbms.closeRdbms();
+                LPFrontEnd.servletReturnSuccess(request, response, defChk.publishReport());                
                 break;
             case DEPLOY_REQUIREMENTS_CLONE_SPRINT:
                 procedureName = argValues[0].toString();
