@@ -221,7 +221,7 @@ public class ActionsControl {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(tokn.getUserName())) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.INVALID_TOKEN, null);
         }
-        Object[] actionEnabled = procActionEnabled(procInstanceName, tokn, actionNm, procBusinessRules);
+        Object[] actionEnabled = procActionEnabled(procInstanceName, tokn, actionNm, procBusinessRules, isProcManagement);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) {
             return actionEnabled;
         }
@@ -278,11 +278,11 @@ public class ActionsControl {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.USRROLACTIONENABLED_ENABLED, new Object[]{procInstanceName, actionName});
         }
     }
-    public static Object[] procActionEnabled(String procInstanceName, Token token, String actionName, BusinessRules procBusinessRules) {
+    public static Object[] procActionEnabled(String procInstanceName, Token token, String actionName, BusinessRules procBusinessRules, Boolean isProcManagement) {
         Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
         return (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))? 
             procActionEnabledInBusRules(procInstanceName, token, actionName, procBusinessRules):
-            procActionEnabledInTable(procInstanceName, token, actionName, procBusinessRules);
+            procActionEnabledInTable(procInstanceName, token, actionName, procBusinessRules, isProcManagement);
     }
     private static Object[] procActionEnabledInBusRules(String procInstanceName, Token token, String actionName, BusinessRules procBusinessRules) {
         String userProceduresList = token.getUserProcedures();
@@ -310,12 +310,14 @@ public class ActionsControl {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.USRROLACTIONENABLED_ENABLED, new String[]{procInstanceName, actionName});
         }
     }
-    private static Object[] procActionEnabledInTable(String procInstanceName, Token token, String actionName, BusinessRules procBusinessRules) {
-        String userProceduresList = token.getUserProcedures();
-        userProceduresList = userProceduresList.replace("[", "");
-        userProceduresList = userProceduresList.replace("]", "");
-        if (Boolean.FALSE.equals(LPArray.valueInArray(userProceduresList.split(", "), procInstanceName))) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.LpPlatformErrorTrapping.USER_NOTASSIGNED_TOPROCEDURE, new String[]{token.getUserName(), procInstanceName, userProceduresList});
+    private static Object[] procActionEnabledInTable(String procInstanceName, Token token, String actionName, BusinessRules procBusinessRules, Boolean isProcManagement) {
+        if (Boolean.FALSE.equals(isProcManagement)) {
+            String userProceduresList = token.getUserProcedures();
+            userProceduresList = userProceduresList.replace("[", "");
+            userProceduresList = userProceduresList.replace("]", "");
+            if (Boolean.FALSE.equals(LPArray.valueInArray(userProceduresList.split(", "), procInstanceName))) {
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.LpPlatformErrorTrapping.USER_NOTASSIGNED_TOPROCEDURE, new String[]{token.getUserName(), procInstanceName, userProceduresList});
+            }
         }
         actionName = actionName.toUpperCase();
         

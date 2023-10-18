@@ -241,7 +241,7 @@ public class ProcedureRequestSession {
             if (Boolean.FALSE.equals(isForTesting) && Boolean.FALSE.equals(isForUAT) && Boolean.FALSE.equals(isQuery)
                     && Boolean.FALSE.equals(isPlatform) && Boolean.FALSE.equals(isForDocumentation)
                     &&Boolean.FALSE.equals(isForProcManagement)) {
-                Object[] actionEnabled = ActionsControl.procActionEnabled(procInstanceName, token, actionName, this.busRulesProcInstance);
+                Object[] actionEnabled = ActionsControl.procActionEnabled(procInstanceName, token, actionName, this.busRulesProcInstance, false);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) {
                     this.hasErrors = true;
                     this.errorMessage = actionEnabled[actionEnabled.length - 1].toString();

@@ -269,7 +269,7 @@ public class SavedQueriesAPI extends HttpServlet {
             return;
         }
         try (PrintWriter out = response.getWriter()) {
-            Object[] actionEnabled = ActionsControl.procActionEnabled(procInstanceName, token, actionName, bi);
+            Object[] actionEnabled = ActionsControl.procActionEnabled(procInstanceName, token, actionName, bi, false);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) {
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
                 return;
