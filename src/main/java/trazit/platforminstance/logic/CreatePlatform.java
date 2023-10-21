@@ -37,6 +37,7 @@ import static trazit.globalvariables.GlobalVariables.PROC_MANAGEMENT_SPECIAL_ROL
 import trazit.procedureinstance.definition.definition.TblsReqs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
+import static databases.DbObjects.createSchemas;
 import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
@@ -44,6 +45,7 @@ import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntViews;
+import trazit.globalvariables.GlobalVariables;
 /**
  *
  * @author User
@@ -165,6 +167,7 @@ public class CreatePlatform {
     
     private void createBasicSchemasAndTablesStructure(String platformName){
         String viewCreateScript="";
+        JSONObject mainBlockReport=new JSONObject();
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         
         String dbTrazitModules=prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());        
         EnumIntTables[] tablesToTransferData=new EnumIntTables[]{
@@ -176,7 +179,14 @@ public class CreatePlatform {
         enumArrays.add(TblsAppConfig.TablesAppConfig.values());
         enumArrays.add(TblsReqs.TablesReqs.values());        
         
-        JSONObject mainBlockReport=new JSONObject();
+        String[] schemaNames = new String[]{GlobalVariables.Schemas.APP_AUDIT.getName(),
+            GlobalVariables.Schemas.CONFIG.getName(), GlobalVariables.Schemas.REQUIREMENTS.getName(),
+            GlobalVariables.Schemas.APP.getName(),
+            //GlobalVariables.Schemas.APP_BUSINESS_RULES.getName(),
+            GlobalVariables.Schemas.APP_PROCEDURE.getName()};
+        JSONArray createSchemas = createSchemas(schemaNames, platformName);
+        mainBlockReport.put("base_platform_schemas", createSchemas);
+        
         
         JSONObject allSchemasObj=new JSONObject();
         TblsApp.TablesApp[] tblsApp = TblsApp.TablesApp.values();
