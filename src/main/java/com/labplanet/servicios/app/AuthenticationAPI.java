@@ -240,7 +240,7 @@ public class AuthenticationAPI extends HttpServlet {
                     if (sizeValueStr != null && sizeValueStr.length() > 0) {
                         sizeValue = Integer.valueOf(sizeValueStr);
                     }
-                    jsonObj.put("platform_settings", AppProcedureListAPI.procModel("platform-settings", sizeValue));
+                    jsonObj.put("platform_settings", AppProcedureListAPI.procModel("platform-settings", sizeValue, null));
                     Rdbms.closeRdbms();
                     LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
                     return;
