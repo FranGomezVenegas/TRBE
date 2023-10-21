@@ -127,6 +127,10 @@ public class TestingServer extends HttpServlet {
         Integer procedureVersion=1;
         String procInstanceName="stock";
         Rdbms.stablishDBConection("demo_v0_9_2");
+        
+        
+        
+        if (1==1)return;  
                             Object[] insertRecordInTableFromTable = insertRecordInTableFromTable(true, 
                                     getAllFieldNames(TblsReqs.TablesReqs.MODULE_MANUALS.getTableFields()),
                                         GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.MODULE_MANUALS.getTableName(), 
@@ -136,8 +140,8 @@ public class TestingServer extends HttpServlet {
                                         TblsReqs.TablesReqs.PROC_MANUALS.getTableName(), getAllFieldNames(TblsReqs.TablesReqs.PROC_MANUALS.getTableFields())
                                 ,new String[]{TblsReqs.ProcedureManuals.PROCEDURE_NAME.getName(), TblsReqs.ProcedureManuals.PROCEDURE_VERSION.getName(),
                                     TblsReqs.ProcedureManuals.PROC_INSTANCE_NAME.getName()}, 
-                                new Object[]{procedureName, procedureVersion, procInstanceName});            
-if (1==1)return;            
+                                new Object[]{procedureName, procedureVersion, procInstanceName}, null);
+          
         createCheckPlatformProcedure("hola");
         out.println(OperationMetricsConsumptionStock.main());
         List<OperationMetricsConsumptionEntry> consumptionData = new ArrayList<>();
