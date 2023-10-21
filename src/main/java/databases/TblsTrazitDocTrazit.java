@@ -17,13 +17,13 @@ public class TblsTrazitDocTrazit {
     private static final Boolean IS_PRODEDURE_INSTANCE = false;
     
     public enum TablesTrazitDocTrazit implements EnumIntTables{
-        ENDPOINTS_DECLARATION(null, "endpoints_declaration", SCHEMA_NAME_MODULE, true, EndpointsDeclaration.values(), EndpointsDeclaration.ID.getName(),
+        ENDPOINTS_DECLARATION(null, "endpoints_declaration", SCHEMA_NAME_TRAZIT, true, EndpointsDeclaration.values(), EndpointsDeclaration.ID.getName(),
             new String[]{EndpointsDeclaration.ID.getName()}, null, "EndpointsDeclaration"),
-        BUSINESS_RULES_DECLARATION(null, "business_rules_declaration", SCHEMA_NAME_MODULE, true, BusinessRulesDeclaration.values(), BusinessRulesDeclaration.ID.getName(),
+        BUSINESS_RULES_DECLARATION(null, "business_rules_declaration", SCHEMA_NAME_TRAZIT, true, BusinessRulesDeclaration.values(), BusinessRulesDeclaration.ID.getName(),
             new String[]{EndpointsDeclaration.ID.getName()}, null, "business_rules_declaration"),
-        MESSAGE_CODES_DECLARATION(null, "message_codes_declaration", SCHEMA_NAME_MODULE, true, MessageCodeDeclaration.values(), MessageCodeDeclaration.ID.getName(),
+        MESSAGE_CODES_DECLARATION(null, "message_codes_declaration", SCHEMA_NAME_TRAZIT, true, MessageCodeDeclaration.values(), MessageCodeDeclaration.ID.getName(),
             new String[]{EndpointsDeclaration.ID.getName()}, null, "message_codes_declaration"),
-        AUDIT_EVENTS_DECLARATION(null, "audit_events_declaration", SCHEMA_NAME_MODULE, true, AuditEventsDeclaration.values(), AuditEventsDeclaration.ID.getName(),
+        AUDIT_EVENTS_DECLARATION(null, "audit_events_declaration", SCHEMA_NAME_TRAZIT, true, AuditEventsDeclaration.values(), AuditEventsDeclaration.ID.getName(),
             new String[]{EndpointsDeclaration.ID.getName()}, null, "audit_events_declaration"),
 
         VIEW_APIS_PER_MODULE(null, "apis_per_module", SCHEMA_NAME_TRAZIT, true, viewApisPerModule.values(), AuditEventsDeclaration.ID.getName(),
