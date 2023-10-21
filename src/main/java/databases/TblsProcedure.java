@@ -484,7 +484,9 @@ public class TblsProcedure {
         DESCRIPTION("description", LPDatabase.string(), null, null, null, null),
         ENABLE_CHANGE_TRACKING("enable_change_tracking", LPDatabase.booleanFld(false), null, null, null, null),
         INCLUDE_CONFIG_CHANGES("include_config_changes", LPDatabase.booleanFld(true), null, null, null, null),
-        CREATE_PICT_ONGCHNGE("create_picture_on_change", LPDatabase.booleanFld(false), null, null, null, null),;
+        CREATE_PICT_ONGCHNGE("create_picture_on_change", LPDatabase.booleanFld(false), null, null, null, null),
+        MODULE_SETTINGS("module_settings", LPDatabase.json(), null, null, null, null)
+        ;
 
         private ProcedureInfo(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules) {
