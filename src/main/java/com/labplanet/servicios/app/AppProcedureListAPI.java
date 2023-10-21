@@ -180,7 +180,7 @@ public class AppProcedureListAPI extends HttpServlet {
                         procedure.put("audit_sign_mode", ActionsControl.auditSignMode(curProc.toString()));
                         String includeProcModelInfo = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_PROC_MODEL_INFO);
                         if (includeProcModelInfo != null && Boolean.valueOf(includeProcModelInfo)) {
-                            procedure.put("procModel", procModel(curProc.toString(), sizeValue));
+                            procedure.put("procModel", procModel(curProc.toString(), sizeValue, token.getUserRole()));
                         }
                         procedure.put("master_data", getMasterData(token, curProc.toString()));
                         procedures.add(procedure);
@@ -203,7 +203,7 @@ public class AppProcedureListAPI extends HttpServlet {
         }
     }
 
-    public static JsonObject procModel(String procInstanceName, Integer sizeValue) {
+    public static JsonObject xprocModel(String procInstanceName, Integer sizeValue) {
         try {
             JsonObject jArr = new JsonObject();
             Object[][] ruleValue = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_FE_MODEL.getTableName(),
@@ -217,6 +217,46 @@ public class AppProcedureListAPI extends HttpServlet {
                 return JsonParser.parseString(ruleValue[0][1].toString()).getAsJsonObject();
             }
             return JsonParser.parseString(ruleValue[0][0].toString()).getAsJsonObject();
+        } catch (JsonSyntaxException e) {
+            return new JsonObject();
+        }
+    }
+    public static JsonObject procModel(String procInstanceName, Integer sizeValue, String roleName) {
+        try {
+            
+            JsonObject jObj = new JsonObject();
+            if ("platform-settings".equalsIgnoreCase(procInstanceName)||"app".equalsIgnoreCase(procInstanceName)){
+                Object[][] ruleValue = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_FE_MODEL.getTableName(),
+                        new String[]{TblsReqs.ProcedureFEModel.PROCEDURE_NAME.getName(), SqlStatement.WHERECLAUSE_TYPES.OR.getSqlClause() + " " + TblsReqs.ProcedureFEModel.PROC_INSTANCE_NAME.getName()},
+                        new Object[]{procInstanceName, procInstanceName},
+                        new String[]{TblsReqs.ProcedureFEModel.MODEL_JSON.getName(), TblsReqs.ProcedureFEModel.MODEL_JSON_MOBILE.getName()});
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())) {
+                    return jObj;
+                }
+                if (sizeValue <= SIZE_WHEN_CONSIDERED_MOBILE && ruleValue[0][1] != null && ruleValue[0][1].toString().length() > 0) {
+                    return JsonParser.parseString(ruleValue[0][1].toString()).getAsJsonObject();
+                }
+                return JsonParser.parseString(ruleValue[0][0].toString()).getAsJsonObject();
+            }
+            Object[][] procInfoModSettings = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(),
+                    new String[]{TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName()},
+                    new Object[]{procInstanceName},
+                    new String[]{TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName(), TblsProcedure.ProcedureInfo.MODULE_SETTINGS.getName()});
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfoModSettings[0][0].toString())) {
+                return jObj;
+            }
+            jObj.add("ModuleSettings", JsonParser.parseString(procInfoModSettings[0][1].toString()).getAsJsonObject());
+            Object[][] procViewModel = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_VIEWS.getTableName(),
+                    new String[]{TblsProcedure.ProcedureViews.ROLE_NAME.getName()},
+                    new Object[]{roleName},
+                    new String[]{TblsProcedure.ProcedureViews.NAME.getName(), TblsProcedure.ProcedureViews.JSON_MODEL.getName()});
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfoModSettings[0][0].toString())) {
+                return jObj;
+            }
+            for (Object[] curRow: procViewModel){
+                jObj.add(curRow[0].toString(), JsonParser.parseString(curRow[1].toString()).getAsJsonObject());
+            }
+            return jObj;
         } catch (JsonSyntaxException e) {
             return new JsonObject();
         }
