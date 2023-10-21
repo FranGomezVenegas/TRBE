@@ -140,7 +140,7 @@ public class ClassReqProcedureActions {
                 Integer moduleVersion = (Integer) argValues[4];
                 String lblEn = argValues[5].toString();
                 String lblEs = argValues[6].toString();
-                Object[][] modulesList = getActiveModules(procInstanceName, new String[]{TblsReqs.Modules.MODULE_NAME.getName(), TblsReqs.Modules.PICTURE.getName()});
+                Object[][] modulesList = getActiveModules(procInstanceName, new String[]{TblsReqs.Modules.MODULE_NAME.getName(), TblsReqs.Modules.PICTURE.getName(), TblsReqs.Modules.MODULE_SETTINGS.getName()});
                 Integer rowIndex=LPArray.valuePosicInArray2D(modulesList, moduleName, 0);
                 if (rowIndex==-1) {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.MODULE_NOT_FOUND, new Object[]{moduleName, procedureName, procedureVersion});
@@ -164,9 +164,10 @@ public class ClassReqProcedureActions {
                                 new String[]{TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName(), TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName(),
                                     TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureInfo.MODULE_NAME.getName(), TblsReqs.ProcedureInfo.MODULE_VERSION.getName(),
                                     TblsReqs.ProcedureInfo.LABEL_EN.getName(), TblsReqs.ProcedureInfo.LABEL_ES.getName(), 
-                                    TblsReqs.ProcedureInfo.PROCEDURE_HASH_CODE.getName(), TblsReqs.ProcedureInfo.NAVIGATION_ICON_NAME.getName()},
+                                    TblsReqs.ProcedureInfo.PROCEDURE_HASH_CODE.getName(), TblsReqs.ProcedureInfo.NAVIGATION_ICON_NAME.getName(),
+                                    TblsReqs.ProcedureInfo.MODULE_SETTINGS.getName()},
                                 new Object[]{procedureName, procedureVersion, procInstanceName, moduleName, moduleVersion, lblEn, lblEs, 
-                                    LPDate.getCurrentTimeStamp().hashCode(), modulesList[rowIndex][1].toString()});
+                                    LPDate.getCurrentTimeStamp().hashCode(), modulesList[rowIndex][1].toString(), modulesList[rowIndex][2]});
                         if (Boolean.TRUE.equals(insertDiagn.getRunSuccess())) {
 
                             Object[] insertRecordInTableFromTable = insertRecordInTableFromTable(true, 
@@ -178,7 +179,7 @@ public class ClassReqProcedureActions {
                                 getAllFieldNames(TblsReqs.TablesReqs.PROC_MANUALS.getTableFields())
                                 ,new String[]{TblsReqs.ProcedureManuals.PROCEDURE_NAME.getName(), TblsReqs.ProcedureManuals.PROCEDURE_VERSION.getName(),
                                     TblsReqs.ProcedureManuals.PROC_INSTANCE_NAME.getName()}, 
-                                new Object[]{procedureName, procedureVersion, procInstanceName});            
+                                new Object[]{procedureName, procedureVersion, procInstanceName}, null);            
 
 
                             actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), new Object[]{moduleName});
