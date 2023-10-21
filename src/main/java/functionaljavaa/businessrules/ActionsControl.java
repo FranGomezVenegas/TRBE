@@ -325,6 +325,9 @@ public class ActionsControl {
         if (actionDefinition==null) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.LpPlatformErrorTrapping.ACTION_NOTFOUND, new String[]{procInstanceName, actionName});
         }
+        if (Boolean.TRUE.equals(isProcManagement)) {
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.USRROLACTIONENABLED_ENABLED, new String[]{procInstanceName, actionName});
+        }
         String procedureActionRoles = actionDefinition.getActionRoles();
         
         if (Boolean.TRUE.equals(ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting())) {
