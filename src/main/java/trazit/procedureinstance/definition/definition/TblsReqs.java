@@ -21,6 +21,7 @@ import trazit.enums.FldBusinessRules;
 import trazit.enums.ForeignkeyFld;
 import trazit.enums.ReferenceFld;
 import trazit.globalvariables.GlobalVariables;
+import trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.ReqSolutionTypes;
 
 /**
  *
@@ -238,9 +239,82 @@ public class TblsReqs {
     }
 
     public enum ViewsReqs implements EnumIntViews {
-        PROC_REQ_SOLUTION_ACTIONS(" ",
+        PROC_REQ_SOLUTION_ACTIONS("SELECT procinfo.module_name,\n" +
+"	procinfo.module_version,\n" +
+"    procinfo.procedure_name,\n" +
+"	procinfo.procedure_version,\n" +
+"	procinfo.proc_instance_name,\n" +
+"	urs.req_id,\n" +
+"	urs.parent_code,\n" +
+"	urs.code,\n" +
+"	urs.active,\n" +
+"	urs.in_system,\n" +
+"	urs.in_scope,	\n" +
+"	reqs.solution_id,\n" + 
+"    reqs.window_action,\n" +
+"    reqs.label_en AS window_label_en,\n" +
+"    reqs.label_es AS window_label_es,\n" +
+"    reqs.order_number,\n" +
+"    reqs.roles,\n" +
+"    reqs.type,\n" +
+"    reqs.sop_name,\n" +
+"    modact.endpoint_name,\n" +
+"    modact.pretty_name_en,\n" +
+"    modact.pretty_name_es,\n" +
+"    modact.order_number AS mod_order_number,\n" +
+"    modact.entity,\n" +
+"	modact.json_model\n" +
+"     FROM requirements. procedure_req_solution reqs\n" +
+"   	 JOIN requirements.procedure_user_requirements urs on urs.req_id=reqs.req_id\n" +
+"     JOIN requirements.procedure_info procinfo ON reqs.proc_instance_name::text = procinfo.proc_instance_name::text\n" +
+"     JOIN requirements.module_actions_and_queries modact ON reqs.window_action::text = modact.endpoint_name::text AND procinfo.module_name::text = modact.module_name::text\n" +
+"    where reqs.type='"+ReqSolutionTypes.WINDOW_ACTION.getTagValue()+"'; ",
                 null, "proc_req_solution_actions", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsReqs.viewProcReqSolutionActions.values(), "proc_req_user_requirements_actions",
                 new EnumIntTablesJoin[]{
+                    new EnumIntTablesJoin(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, "reqs", TblsReqs.TablesReqs.PROCEDURE_USER_REQS, "urs", false,
+                            new EnumIntTableFields[][]{{TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME, TblsReqs.ProcedureUserRequirements.PROC_INSTANCE_NAME}}, "", SqlStatementEnums.JOIN_TYPES.INNER),
+                    new EnumIntTablesJoin(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, "reqs", TblsReqs.TablesReqs.PROCEDURE_INFO, "procInfo", false,
+                            new EnumIntTableFields[][]{{TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME, TblsReqs.ProcedureUserRequirements.PROC_INSTANCE_NAME}}, "", SqlStatementEnums.JOIN_TYPES.INNER),
+                    new EnumIntTablesJoin(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, "reqs", TblsReqs.TablesReqs.MODULE_ACTIONS_N_QUERIES, "modAct", false,
+                            new EnumIntTableFields[][]{{TblsReqs.ProcedureReqSolution.WINDOW_ACTION, TblsReqs.ModuleActionsAndQueries.ENDPOINT_NAME}}, "", SqlStatementEnums.JOIN_TYPES.INNER), //            new EnumIntTablesJoin(TblsReqs.TablesReqs.PROCEDURE_INFO, "procInfo", TblsReqs.TablesReqs.MODULE_ACTIONS_N_QUERIES, "modAct", false,
+                //                new EnumIntTableFields[][]{{TblsReqs.ProcedureInfo.MODULE_NAME, TblsReqs.ModuleActionsAndQueries.MODULE_NAME}}, "", SqlStatementEnums.JOIN_TYPES.INNER),
+                }, " and procInfo.module_name = modAct.module_name", false),
+        PROC_REQ_SOLUTION_WINDOWS("SELECT procinfo.module_name,\n" +
+"    procinfo.module_version,\n" +
+"    procinfo.procedure_name,\n" +
+"    procinfo.procedure_version,\n" +
+"    procinfo.proc_instance_name,\n" +
+"    urs.req_id,\n" +
+"    urs.parent_code,\n" +
+"    urs.code,\n" +
+"    urs.active,\n" +
+"    urs.in_system,\n" +
+"    urs.in_scope,\n" +
+"    reqs.solution_id,\n" +
+"    reqs.window_name,\n" +
+"	reqs.window_type,\n" +
+"    reqs.window_query,\n" +
+"    reqs.label_en AS action_label_en,\n" +
+"    reqs.label_es AS action_label_es,\n" +
+"    reqs.order_number,\n" +
+"    reqs.roles,\n" +
+"    reqs.type,\n" +
+"    reqs.sop_name,\n" +
+"    modact.endpoint_name,\n" +
+"    modact.pretty_name_en,\n" +
+"    modact.pretty_name_es,\n" +
+"    modact.order_number AS mod_order_number,\n" +
+"    modact.entity,\n" +
+"    modact.json_model\n" +
+"   FROM requirements.procedure_req_solution reqs\n" +
+"     JOIN requirements.procedure_user_requirements urs ON urs.req_id = reqs.req_id\n" +
+"     JOIN requirements.procedure_info procinfo ON reqs.proc_instance_name::text = procinfo.proc_instance_name::text\n" +
+"     JOIN requirements.module_actions_and_queries modact ON reqs.window_query::text = modact.endpoint_name::text AND procinfo.module_name::text = modact.module_name::text\n" +
+"  WHERE reqs.type::text = '"+ReqSolutionTypes.WINDOW.getTagValue()+"'::text;",
+                null, "proc_req_solution_windows", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsReqs.viewProcReqSolutionViews.values(), "proc_req_user_requirements_actions",
+                new EnumIntTablesJoin[]{
+                    new EnumIntTablesJoin(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, "reqs", TblsReqs.TablesReqs.PROCEDURE_USER_REQS, "urs", false,
+                            new EnumIntTableFields[][]{{TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME, TblsReqs.ProcedureUserRequirements.PROC_INSTANCE_NAME}}, "", SqlStatementEnums.JOIN_TYPES.INNER),
                     new EnumIntTablesJoin(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, "reqs", TblsReqs.TablesReqs.PROCEDURE_INFO, "procInfo", false,
                             new EnumIntTableFields[][]{{TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME, TblsReqs.ProcedureUserRequirements.PROC_INSTANCE_NAME}}, "", SqlStatementEnums.JOIN_TYPES.INNER),
                     new EnumIntTablesJoin(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, "reqs", TblsReqs.TablesReqs.MODULE_ACTIONS_N_QUERIES, "modAct", false,
@@ -249,12 +323,13 @@ public class TblsReqs {
                 }, " and procInfo.module_name = modAct.module_name", false),
         BUSINESS_RULES_IN_SOLUTION("SELECT busRules.module_name, busRules.module_version, busRules.rule_name, busRules.is_mandatory,\n" +
                         " 		busRules.api_name,	busRules.area, busRules.prerequite,\n" +
+                	" busrules.values_list, busrules.tip_en, busrules.tip_es,\n" +
                         "    COALESCE(count(sol.business_rule), 0::bigint) AS present,\n" +
                         "    string_agg(sol.code::text, ', '::text) AS requirements_list\n" +
                         "   FROM requirements.module_business_rules busRules\n" +
                         "   LEFT JOIN (select reqsol.business_rule, usr.code \n" +
                         "          		from requirements.procedure_req_solution reqsol, requirements.procedure_user_requirements usr\n" +
-                        "			  where reqsol.req_id=usr.req_id AND upper(reqsol.window_element_type::text) like '%BUS%RUL%'::text)) sol\n" +
+                        "			  where reqsol.req_id=usr.req_id AND upper(reqsol.window_element_type::text) =upper("+ReqSolutionTypes.BUSINESS_RULE.getTagValue()+")) sol\n" +
                         "	  ON busRules.rule_name::text = sol.business_rule::text\n" +
                         "  GROUP BY busRules.module_name, busRules.module_version, busRules.rule_name, busRules.is_mandatory, busRules.api_name,	busRules.area, busRules.prerequite\n" +
                         "  ORDER BY (COALESCE(count(sol.business_rule), 0::bigint)), busRules.rule_name; ",
@@ -267,7 +342,7 @@ public class TblsReqs {
                         "   FROM requirements.module_actions_and_queries act\n" +
                         "   LEFT JOIN (select reqsol.window_action, usr.code \n" +
                         "          		from requirements.procedure_req_solution reqsol, requirements.procedure_user_requirements usr\n" +
-                        "			  where reqsol.req_id=usr.req_id and upper(window_element_type)='WINDOWACTION') sol\n" +
+                        "			  where reqsol.req_id=usr.req_id and upper(window_element_type)=upper("+ReqSolutionTypes.WINDOW_ACTION.getTagValue()+")) sol\n" +
                         "	  ON act.endpoint_name::text = sol.window_action::text\n" +
                         "	WHERE upper(act.api_name) like '%ACTION%'\n" +
                         "  GROUP BY act.module_name, act.module_version, act.entity, act.endpoint_name,\n" +
@@ -282,7 +357,7 @@ public class TblsReqs {
                         "   FROM requirements.module_actions_and_queries act\n" +
                         "   LEFT JOIN (select reqsol.window_query, usr.code \n" +
                         "          		from requirements.procedure_req_solution reqsol, requirements.procedure_user_requirements usr\n" +
-                        "			  where reqsol.req_id=usr.req_id and upper(window_element_type)='WINDOW') sol\n" +
+                        "			  where reqsol.req_id=usr.req_id and upper(window_element_type)=upper("+ReqSolutionTypes.WINDOW.getTagValue()+")) sol\n" +
                         "	  ON act.endpoint_name::text = sol.window_query::text\n" +
                         "	WHERE upper(act.api_name) like '%QUER%'\n" +
                         "  GROUP BY act.module_name, act.module_version, act.entity, act.endpoint_name,\n" +
@@ -459,7 +534,7 @@ public class TblsReqs {
         RULE_NAME("rule_name", LPDatabase.stringNotNull(), null, null, null, null),
         IS_MANDATORY("is_mandatory", LPDatabase.booleanFld(true), null, null, null, null),
         PREREQUISITE("prerequite",LPDatabase.string(), null, null, null, null),
-        VALUES_LIST("values_list",LPDatabase.string(), null, null, null, null),        
+        VALUES_LIST("values_list",LPDatabase.json(), null, null, null, null),        
         TIP_EN("tip_en",LPDatabase.string(), null, null, null, null),        
         TIP_ES("tip_es",LPDatabase.string(), null, null, null, null)
         ;
@@ -688,8 +763,9 @@ public class TblsReqs {
         LABEL_ES("label_es", LPDatabase.stringNotNull(), null, null, null, null),
         LOCKED_FOR_ACTIONS("locked_for_actions", LPDatabase.booleanFld(false), null, null, null, null),
         NAVIGATION_ICON_NAME("navigation_icon_name", LPDatabase.string(), null, null, null, null),
-        ACTIVE("active", LPDatabase.booleanFld(true), null, null, null, null),;
-
+        ACTIVE("active", LPDatabase.booleanFld(true), null, null, null, null),
+        MODULE_SETTINGS("module_settings", LPDatabase.json(), null, null, null, null)
+        ;
         private ProcedureInfo(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules) {
             this.fieldName = dbObjName;
@@ -1028,18 +1104,22 @@ public class TblsReqs {
         LABEL_EN("label_en", LPDatabase.string(), null, null, null, null),
         LABEL_ES("label_es", LPDatabase.string(), null, null, null, null),
         SOP("sop", LPDatabase.string(), null, null, null, null),
-        ESIGN_REQUIRED("esign_required", LPDatabase.booleanFld(), null, null, null, null),
-        USERCONFIRM_REQUIRED("userconfirm_required", LPDatabase.booleanFld(), null, null, null, null),
+        //ESIGN_REQUIRED("esign_required", LPDatabase.booleanFld(), null, null, null, null),
+        //USERCONFIRM_REQUIRED("userconfirm_required", LPDatabase.booleanFld(), null, null, null, null),
         ICON_NAME("icon_name", LPDatabase.string(), null, null, null, null),
         ICON_NAME_WHEN_NOT_CERTIFIED("icon_name_when_not_certified", LPDatabase.string(), null, null, null, null),
-        BRANCH_NEED("branch_need", LPDatabase.string(), null, null, null, null),        
+        //BRANCH_NEED("branch_need", LPDatabase.string(), null, null, null, null),        
         WINDOW_NAME("window_name", LPDatabase.string(), null, null, null, null),
+        WINDOW_TYPE("window_type", LPDatabase.string(), null, null, null, null),
+        WINDOW_MODE("window_mode", LPDatabase.string(), null, null, null, null),
+        WINDOW_QUERY("window_query", LPDatabase.string(), null, null, null, null),
+        ENTITY("entity", LPDatabase.string(), null, null, null, null),
         WINDOW_ACTION("window_action", LPDatabase.string(), null, null, null, null),
         BUSINESS_RULE("business_rule", LPDatabase.string(), null, null, null, null),
         BUSINESS_RULE_VALUE("business_rule_value", LPDatabase.string(), null, null, null, null),
         CONFIRM_DIALOG("confirmation_dialog", LPDatabase.string(), null, null, null, null),
         CONFIRM_DIALOG_DETAIL("confirmation_dialog_detail", LPDatabase.string(), null, null, null, null),
-        SOLUTION_TYPE("solution_type", LPDatabase.string(), null, null, null, null),
+        //SOLUTION_TYPE("solution_type", LPDatabase.string(), null, null, null, null),
         ROLES("roles", LPDatabase.string(), null, null, null, null),
         SOP_NAME("sop_name", LPDatabase.string(), null, null, null, null),
         TRAINING_REQ("training_req", LPDatabase.booleanFld(), null, null, null, null),
@@ -1047,9 +1127,9 @@ public class TblsReqs {
         UAT_REQ("uat_req", LPDatabase.booleanFld(), null, null, null, null),
         UAT_NAME("uat_name", LPDatabase.string(), null, null, null, null), 
         
-        ACTIVE("active", LPDatabase.booleanFld(), null, null, null, null),
-        IN_SCOPE("in_scope", LPDatabase.booleanFld(), null, null, null, null),
-        IN_SYSTEM("in_system", LPDatabase.booleanFld(), null, null, null, null),
+        ACTIVE("active", LPDatabase.booleanFld(true), null, null, null, null),
+        IN_SCOPE("in_scope", LPDatabase.booleanFld(true), null, null, null, null),
+        IN_SYSTEM("in_system", LPDatabase.booleanFld(true), null, null, null, null),
         
 
         ;
@@ -1524,20 +1604,32 @@ public class TblsReqs {
      */
     public enum viewProcReqSolutionActions implements EnumIntViewFields {
         MODULE_NAME("procInfo", ProcedureInfo.MODULE_NAME.getName(), "procInfo.module_name as module_name", ProcedureInfo.MODULE_NAME, null, null, null),
+        MODULE_VERSION("procInfo", ProcedureInfo.MODULE_VERSION.getName(), "procInfo.module_verion as module_version", ProcedureInfo.MODULE_VERSION, null, null, null),
+        PROCEDURE_NAME("procInfo", ProcedureReqSolution.PROCEDURE_NAME.getName(), "procInfo.procedure_name as procedure_name", ProcedureUserRequirements.PROCEDURE_NAME, null, null, null),
+        PROCEDURE_VERSION("procInfo", ProcedureReqSolution.PROCEDURE_VERSION.getName(), "procInfo.procedure_version as procedure_version", ProcedureUserRequirements.PROCEDURE_VERSION, null, null, null),
         PROC_INSTANCE_NAME("procInfo", ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), "procInfo.proc_instance_name as proc_instance_name", ProcedureUserRequirements.PROC_INSTANCE_NAME, null, null, null),
+        REQ_ID("urs", ProcedureUserRequirements.REQ_ID.getName(), "urs.req_id as req_id", ProcedureUserRequirements.REQ_ID, null, null, null),
+        PARENT_CODE("urs", ProcedureUserRequirements.PARENT_CODE.getName(), "urs.parent_code as parent_code", ProcedureUserRequirements.PARENT_CODE, null, null, null),
+        CODE("urs", ProcedureUserRequirements.CODE.getName(), "urs.code as code", ProcedureUserRequirements.CODE, null, null, null),
+        IN_SYSTEM("urs", ProcedureUserRequirements.IN_SYSTEM.getName(), "urs.in_system as in_system", ProcedureUserRequirements.IN_SYSTEM, null, null, null),
+        ACTIVE("urs", ProcedureUserRequirements.ACTIVE.getName(), "urs.active as active", ProcedureUserRequirements.ACTIVE, null, null, null),
+        IN_SCOPE("urs", ProcedureUserRequirements.IN_SCOPE.getName(), "urs.in_scope as in_scope", ProcedureUserRequirements.IN_SCOPE, null, null, null),
+        SOLUTION_ID("reqs", ProcedureReqSolution.SOLUTION_ID.getName(), "reqs.solution_id as solution_id", ProcedureReqSolution.SOLUTION_ID, null, null, null),
+        NAME("reqs", ProcedureReqSolution.NAME.getName(), "reqs.name as name", ProcedureReqSolution.NAME, null, null, null),
+        WINDOW_ACTION("reqs", ProcedureReqSolution.WINDOW_ACTION.getName(), "reqs.window_action as window_action", ProcedureReqSolution.WINDOW_ACTION, null, null, null),
         WINDOW_NAME("reqs", ProcedureReqSolution.WINDOW_NAME.getName(), "reqs.window_name as window_name", ProcedureReqSolution.WINDOW_NAME, null, null, null),
         WINDOW_LABEL_EN("reqs", "window_label_en", "reqs.label_en as window_label_en", ProcedureReqSolution.LABEL_EN, null, null, null),
         WINDOW_LABEL_ES("reqs", "window_label_es", "reqs.label_es as window_label_es", ProcedureReqSolution.LABEL_ES, null, null, null),
-        WINDOW_ACTION("reqs", ProcedureReqSolution.WINDOW_ACTION.getName(), "reqs.window_action as window_action", ProcedureReqSolution.WINDOW_ACTION, null, null, null),
         ORDER_NUMBER("reqs", ProcedureReqSolution.ORDER_NUMBER.getName(), "reqs.order_number as order_number", ProcedureUserRequirements.ORDER_NUMBER, null, null, null),
+        ROLES("reqs", ProcedureReqSolution.ROLES.getName(), "reqs.roles as roles", ProcedureReqSolution.ROLES, null, null, null),
+        TYPE("reqs", ProcedureReqSolution.TYPE.getName(), "reqs.type as type", ProcedureReqSolution.TYPE, null, null, null),
+        SOP_NAME("reqs", "sop_name", "reqs.sop_name as sop_name", ProcedureReqSolution.SOP_NAME, null, null, null),
         ENDPOINT_NAME("modAct", ModuleActionsAndQueries.ENDPOINT_NAME.getName(), "modAct.endpoint_name as endpoint_name", ModuleActionsAndQueries.ENDPOINT_NAME, null, null, null),
         PRETTY_EN("modAct", ModuleActionsAndQueries.PRETTY_EN.getName(), "modAct.pretty_name_en as pretty_name_en", ModuleActionsAndQueries.PRETTY_EN, null, null, null),
         PRETTY_ES("modAct", ModuleActionsAndQueries.PRETTY_ES.getName(), "modAct.pretty_name_es as pretty_name_es", ModuleActionsAndQueries.PRETTY_ES, null, null, null),
         MOD_ORDER_NUMBER("modAct", "mod_order_number", "modAct.order_number as mod_order_number", ModuleActionsAndQueries.ORDER_NUMBER, null, null, null), 
-        ENTITY("modAct", ModuleActionsAndQueries.ENTITY.getName(), "modAct.entity as entity", ModuleActionsAndQueries.ENTITY, null, null, null), 
-        ROLES("reqs", ProcedureReqSolution.ROLES.getName(), "reqs.roles as roles", ProcedureReqSolution.ROLES, null, null, null),
-        TYPE("reqs", ProcedureReqSolution.TYPE.getName(), "reqs.type as type", ProcedureReqSolution.TYPE, null, null, null),
-        SOP_NAME("reqs", "sop_name", "reqs.sop_name as sop_name", ProcedureReqSolution.SOP_NAME, null, null, null)
+        ENTITY("modAct", ModuleActionsAndQueries.ENTITY.getName(), "modAct.entity as entity", ModuleActionsAndQueries.ENTITY, null, null, null),
+        JSON_MODEL("modAct", ModuleActionsAndQueries.JSON_MODEL.getName(), "modAct.json_model as json_model", ModuleActionsAndQueries.JSON_MODEL, null, null, null)
        
         /*        RAW_VALUE_NUM("raw_value_num", "CASE " +
 "            WHEN isnumeric(sar.raw_value::text) THEN to_number(sar.raw_value::text, '9999'::text) " +
@@ -1601,6 +1693,99 @@ public class TblsReqs {
             return this.fldObj;
         }
     }
+    public enum viewProcReqSolutionViews implements EnumIntViewFields {
+        MODULE_NAME("procInfo", ProcedureInfo.MODULE_NAME.getName(), "procInfo.module_name as module_name", ProcedureInfo.MODULE_NAME, null, null, null),
+        MODULE_VERSION("procInfo", ProcedureInfo.MODULE_VERSION.getName(), "procInfo.module_verion as module_version", ProcedureInfo.MODULE_VERSION, null, null, null),
+        PROCEDURE_NAME("procInfo", ProcedureReqSolution.PROCEDURE_NAME.getName(), "procInfo.procedure_name as procedure_name", ProcedureUserRequirements.PROCEDURE_NAME, null, null, null),
+        PROCEDURE_VERSION("procInfo", ProcedureReqSolution.PROCEDURE_VERSION.getName(), "procInfo.procedure_version as procedure_version", ProcedureUserRequirements.PROCEDURE_VERSION, null, null, null),
+        PROC_INSTANCE_NAME("procInfo", ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), "procInfo.proc_instance_name as proc_instance_name", ProcedureUserRequirements.PROC_INSTANCE_NAME, null, null, null),
+        REQ_ID("urs", ProcedureUserRequirements.REQ_ID.getName(), "urs.req_id as req_id", ProcedureUserRequirements.REQ_ID, null, null, null),
+        PARENT_CODE("urs", ProcedureUserRequirements.PARENT_CODE.getName(), "urs.parent_code as parent_code", ProcedureUserRequirements.PARENT_CODE, null, null, null),
+        CODE("urs", ProcedureUserRequirements.CODE.getName(), "urs.code as code", ProcedureUserRequirements.CODE, null, null, null),
+        IN_SYSTEM("urs", ProcedureUserRequirements.IN_SYSTEM.getName(), "urs.in_system as in_system", ProcedureUserRequirements.IN_SYSTEM, null, null, null),
+        ACTIVE("urs", ProcedureUserRequirements.ACTIVE.getName(), "urs.active as active", ProcedureUserRequirements.ACTIVE, null, null, null),
+        IN_SCOPE("urs", ProcedureUserRequirements.IN_SCOPE.getName(), "urs.in_scope as in_scope", ProcedureUserRequirements.IN_SCOPE, null, null, null),
+        SOLUTION_ID("reqs", ProcedureReqSolution.SOLUTION_ID.getName(), "reqs.solution_id as solution_id", ProcedureReqSolution.SOLUTION_ID, null, null, null),
+        NAME("reqs", ProcedureReqSolution.NAME.getName(), "reqs.name as name", ProcedureReqSolution.NAME, null, null, null),
+        WINDOW_QUERY("reqs", ProcedureReqSolution.WINDOW_QUERY.getName(), "reqs.window_query as window_query", ProcedureReqSolution.WINDOW_QUERY, null, null, null),
+        WINDOW_NAME("reqs", ProcedureReqSolution.WINDOW_NAME.getName(), "reqs.window_name as window_name", ProcedureReqSolution.WINDOW_NAME, null, null, null),
+        WINDOW_TYPE("reqs", ProcedureReqSolution.WINDOW_TYPE.getName(), "reqs.window_type as window_type", ProcedureReqSolution.WINDOW_TYPE, null, null, null),
+        WINDOW_MODE("reqs", ProcedureReqSolution.WINDOW_MODE.getName(), "reqs.window_mode as window_mode", ProcedureReqSolution.WINDOW_MODE, null, null, null),
+        WINDOW_LABEL_EN("reqs", "window_label_en", "reqs.window_label_en as window_label_en", ProcedureReqSolution.LABEL_EN, null, null, null),
+        WINDOW_LABEL_ES("reqs", "window_label_es", "reqs.window_label_es as window_label_es", ProcedureReqSolution.LABEL_ES, null, null, null),
+        ORDER_NUMBER("reqs", ProcedureReqSolution.ORDER_NUMBER.getName(), "reqs.order_number as order_number", ProcedureUserRequirements.ORDER_NUMBER, null, null, null),
+        ROLES("reqs", ProcedureReqSolution.ROLES.getName(), "reqs.roles as roles", ProcedureReqSolution.ROLES, null, null, null),
+        TYPE("reqs", ProcedureReqSolution.TYPE.getName(), "reqs.type as type", ProcedureReqSolution.TYPE, null, null, null),
+        SOP_NAME("reqs", "sop_name", "reqs.sop_name as sop_name", ProcedureReqSolution.SOP_NAME, null, null, null),
+        ENDPOINT_NAME("modAct", ModuleActionsAndQueries.ENDPOINT_NAME.getName(), "modAct.endpoint_name as endpoint_name", ModuleActionsAndQueries.ENDPOINT_NAME, null, null, null),
+        PRETTY_EN("modAct", ModuleActionsAndQueries.PRETTY_EN.getName(), "modAct.pretty_name_en as pretty_name_en", ModuleActionsAndQueries.PRETTY_EN, null, null, null),
+        PRETTY_ES("modAct", ModuleActionsAndQueries.PRETTY_ES.getName(), "modAct.pretty_name_es as pretty_name_es", ModuleActionsAndQueries.PRETTY_ES, null, null, null),
+        MOD_ORDER_NUMBER("modAct", "mod_order_number", "modAct.order_number as mod_order_number", ModuleActionsAndQueries.ORDER_NUMBER, null, null, null), 
+        ENTITY("modAct", ModuleActionsAndQueries.ENTITY.getName(), "modAct.entity as entity", ModuleActionsAndQueries.ENTITY, null, null, null),
+        JSON_MODEL("modAct", ModuleActionsAndQueries.JSON_MODEL.getName(), "modAct.json_model as json_model", ModuleActionsAndQueries.JSON_MODEL, null, null, null)
+       
+        /*        RAW_VALUE_NUM("raw_value_num", "CASE " +
+"            WHEN isnumeric(sar.raw_value::text) THEN to_number(sar.raw_value::text, '9999'::text) " +
+"            ELSE NULL::numeric END AS raw_value_num"
+             , SampleAnalysisResult.REPLICA, null, null, null),
+        PRETTY_VALUE("pretty_value", "sar.pretty_value", SampleAnalysisResult.PRETTY_VALUE, null, null, null),
+        SAMPLE_ANALYSIS_STATUS("sample_analysis_status", "sa.status  AS sample_analysis_status", SampleAnalysis.STATUS, null, null, null),
+         */;
+
+        private viewProcReqSolutionViews(String tblAliasInView, String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules) {
+//            try{
+//            this.fldName="";
+            this.fldName = name;
+            this.fldAliasInView = vwAliasName;
+            this.fldMask = fldMask;
+            this.fldComment = comment;
+            this.fldBusinessRules = busRules;
+            this.fldObj = fldObj;
+            this.tblAliasInView=tblAliasInView;
+            /*            }catch(Exception e){
+                String s= e.getMessage();
+                //String s2=name;
+                this.fldName="";
+            }*/
+        }
+        private final String fldName;
+        private final String tblAliasInView;
+        private final String fldAliasInView;
+        private final EnumIntTableFields fldObj;
+        private final String fldMask;
+        private final String fldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+@Override public String getTblAliasInView() {return this.tblAliasInView;}
+        @Override
+        public String getName() {
+            return fldName;
+        }
+
+        @Override
+        public String getFldViewAliasName() {
+            return this.fldAliasInView;
+        }
+
+        @Override
+        public String getFieldMask() {
+            return this.fldMask;
+        }
+
+        @Override
+        public String getFieldComment() {
+            return this.fldComment;
+        }
+
+        @Override
+        public FldBusinessRules[] getFldBusinessRules() {
+            return this.fldBusinessRules;
+        }
+
+        @Override
+        public EnumIntTableFields getTableField() {
+            return this.fldObj;
+        }
+    }
     public enum viewBusinessRulesInSolution implements EnumIntViewFields {
         MODULE_NAME("busRules", ModuleBusinessRules.MODULE_NAME.getName(), "busRules.module_name as module_name", ModuleBusinessRules.MODULE_NAME, null, null, null),
         MODULE_VERSION("busRules", ModuleBusinessRules.MODULE_VERSION.getName(), "busRules.module_version as module_version", ModuleBusinessRules.MODULE_VERSION, null, null, null),
@@ -1609,6 +1794,9 @@ public class TblsReqs {
         API_NAME("busRules", ModuleBusinessRules.API_NAME.getName(), "busRules.api_name as api_name", ModuleBusinessRules.API_NAME, null, null, null),
         AREA("busRules", ModuleBusinessRules.AREA.getName(), "busRules.area as area", ModuleBusinessRules.AREA, null, null, null),
         PREREQUISITE("busRules", ModuleBusinessRules.PREREQUISITE.getName(), "busRules.prerequite as prerequite", ModuleBusinessRules.PREREQUISITE, null, null, null),
+        VALUES_LIST("busRules", ModuleBusinessRules.VALUES_LIST.getName(), "busRules.values_list as values_list", ModuleBusinessRules.VALUES_LIST, null, null, null),
+        TIP_EN("busRules", ModuleBusinessRules.TIP_EN.getName(), "busRules.tip_en as tip_en", ModuleBusinessRules.TIP_EN, null, null, null),
+        TIP_ES("busRules", ModuleBusinessRules.TIP_ES.getName(), "busRules.tip_es as tip_es", ModuleBusinessRules.TIP_ES, null, null, null),
         PRESENT("sol", "present", "sol.present as present", ModuleBusinessRules.MODULE_VERSION, null, null, null),
         REQUIREMENTS_LIST("sol", "requirements_list", "sol.requirements_list as requirements_list", ModuleBusinessRules.PREREQUISITE, null, null, null),
         ;
