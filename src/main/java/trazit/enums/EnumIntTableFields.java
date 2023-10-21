@@ -43,6 +43,15 @@ public interface EnumIntTableFields {
         }
         return flds;
     }
+    public static String[] getAllFieldNames(EnumIntTableFields[] tblFlds, String[] fieldsToExclude) {
+        String[] flds = new String[]{};
+        for (EnumIntTableFields curFld : tblFlds) {
+            if (Boolean.FALSE.equals(LPArray.valueInArray(fieldsToExclude, curFld.getName()))){
+                flds = LPArray.addValueToArray1D(flds, curFld.getName());
+            }
+        }
+        return flds;
+    }
 
     public static String[] getAllFieldNames(EnumIntTables tblObj) {
         return getAllFieldNames(tblObj, null);
