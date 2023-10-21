@@ -1290,10 +1290,10 @@ public class Rdbms {
     public static Object[] insertRecordInTableFromTable(Boolean includeFldsSameName, String[] fieldNamesFrom, String schemaNameFrom, String tableNameFrom, String[] whereFieldNamesFrom, Object[] whereFieldValuesFrom,
             String schemaNameTo, String tableNameTo, String[] fieldNamesTo) {
         return insertRecordInTableFromTable(includeFldsSameName, fieldNamesFrom, schemaNameFrom, tableNameFrom, whereFieldNamesFrom,  whereFieldValuesFrom,
-            schemaNameTo, tableNameTo, fieldNamesTo, null, null);
+            schemaNameTo, tableNameTo, fieldNamesTo, null, null, null);
     }
     public static Object[] insertRecordInTableFromTable(Boolean includeFldsSameName, String[] fieldNamesFrom, String schemaNameFrom, String tableNameFrom, String[] whereFieldNamesFrom, Object[] whereFieldValuesFrom,
-            String schemaNameTo, String tableNameTo, String[] fieldNamesTo, String[] extraFlds, Object[] extraFldValues) {
+            String schemaNameTo, String tableNameTo, String[] fieldNamesTo, String[] extraFlds, Object[] extraFldValues, String[][] fldDifferentNameFromAndTo) {
 
         DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
         dbLogSummary.addInsert();
@@ -1312,21 +1312,36 @@ public class Rdbms {
                 null, null);
         String queryInFrom = hmQuery.keySet().iterator().next();
         String query = "insert into " + schemaNameTo + "." + tableNameTo + "(" + Arrays.toString(fldsInBoth).replace("[", "").replace("]", "");
-        if (extraFlds!=null){
-           query=query +", "+Arrays.toString(extraFlds).replace("[", "").replace("]", "");
+        String extraFldsforFrom="";
+        if (extraFlds!=null||fldDifferentNameFromAndTo!=null){
+            if (extraFlds!=null){
+                query=query +", "+Arrays.toString(extraFlds).replace("[", "").replace("]", "");
            //queryInFrom=queryInFrom.replace("SELECT", "").replace("select", "");
-           String extraFldsforFrom="";
-           for (Object curVal: extraFldValues){               
-                if (curVal instanceof String) {
-                    extraFldsforFrom = extraFldsforFrom + "'" + curVal.toString() + "'"+", ";
-                } else {
-                    extraFldsforFrom = extraFldsforFrom + curVal.toString()+", ";
+                for (Object curVal: extraFldValues){               
+                     if (curVal instanceof String) {
+                         extraFldsforFrom = extraFldsforFrom + "'" + curVal.toString() + "'"+", ";
+                     } else {
+                         extraFldsforFrom = extraFldsforFrom + curVal.toString()+", ";
+                     }
                 }
+            }
+           if (fldDifferentNameFromAndTo!=null){
+                if (Boolean.FALSE.equals(query.endsWith(", "))) {
+                    query=query +", ";
+                }
+                Object[] columnFromArray2D = LPArray.getColumnFromArray2D(fldDifferentNameFromAndTo,1);
+                query=query +Arrays.toString(columnFromArray2D).replace("[", "").replace("]", "");
+                
+                if (Boolean.FALSE.equals(extraFldsforFrom.endsWith(", "))) {
+                    extraFldsforFrom=extraFldsforFrom+", ";
+                }
+                columnFromArray2D = LPArray.getColumnFromArray2D(fldDifferentNameFromAndTo,0);
+                extraFldsforFrom=extraFldsforFrom +Arrays.toString(columnFromArray2D).replace("[", "").replace("]", "");
            }
            if (extraFldsforFrom.endsWith(", ")) {
                extraFldsforFrom = extraFldsforFrom.substring(0, extraFldsforFrom.length() - 2);
 }
-           queryInFrom=queryInFrom.replace("from", ", "+extraFldsforFrom+" from ");
+           queryInFrom=queryInFrom.replace("from", extraFldsforFrom+" from ");
         }
         query=query+ ")" + "( " + queryInFrom + " ) ";
         //fieldValues = LPArray.encryptTableFieldArray(schemaNameFrom, tableNameFrom, fieldNamesFrom, fieldValues);
@@ -1760,7 +1775,7 @@ public class Rdbms {
                         case "class [Ljava.lang.String;":
                             Array array = conn.createArrayOf("VARCHAR", (Object[]) obj);
                             prepsta.setArray(indexval, array);
-                            break;
+                            break;                            
                         case "class com.google.gson.JsonObject":
                             prepsta.setString(indexval, obj.toString());
                             break;
@@ -2558,6 +2573,7 @@ private static final int CLIENT_CODE_STACK_INDEX;
     }
 
     public static Object[] updateRecordFieldsByFilter(EnumIntTables tblObj, EnumIntTableFields[] updateFieldNames, Object[] updateFieldValues, SqlWhere whereObj, String alternativeProcInstanceName) {
+    try{
         DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
 
         String schemaName = addSuffixIfItIsForTesting(alternativeProcInstanceName, tblObj.getRepositoryName(), tblObj.getTableName());
@@ -2582,8 +2598,10 @@ private static final int CLIENT_CODE_STACK_INDEX;
             dbLogSummary.setFailure(query, keyFieldValueNew);
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{tblObj.getTableName(), Arrays.toString(whereObj.getAllWhereEntriesFldValues()), schemaName});
         }
+    }catch(Exception e){
+        return new Object[]{};    
     }
-
+    }
     public static RdbmsObject removeRecordInTable(EnumIntTables tblObj, SqlWhere whereObj, String alternativeProcInstanceName) {
         DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
         String schemaName = addSuffixIfItIsForTesting(alternativeProcInstanceName, tblObj.getRepositoryName(), tblObj.getTableName());
