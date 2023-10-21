@@ -36,7 +36,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
     private static final Boolean  PROCDEPL_PROCEDURE_USER_ROLES=false;
     private static final Boolean  PROCDEPL_PROCEDURE_SOP_META_DATA=false;
     private static final Boolean  PROCDEPL_ASIGN_PROC_SOPS_TO_USERS=false;
-    private static final Boolean  PROCDEPL_PROCEDURE_EVENTS=false;
+    private static final Boolean  PROCDEPL_PROCEDURE_ACTIONS=false;
     private static final Boolean  PROCDEPL_BUSINESS_RULES_PROPTS_FILS=false;
     private static final Boolean  PROCDEPL_MODULE_TABLES_AND_FIELDS=false;
     private static final Boolean  PROCDEPL_MASTER_DATA=false;
@@ -82,7 +82,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             if (Boolean.TRUE.equals(Boolean.valueOf(runAsCheckerAttrValue.toString()))){
                 JSONObject createDBProcedureInfo = ProcDeployCheckerLogic.createModuleSchemasAndBaseTables(procInstanceName);
-                createDBProcedureInfo.put("section_name", "CREATE_REPOSITORIES_AND_PROC_TBLS");
+                createDBProcedureInfo.put("section_name", "Create Base repositories and tables");
                 createDBProcedureInfo.put("section_label_en", "Repositories and Base Procedure Tables creation");
                 createDBProcedureInfo.put("section_label_es", "Creación de Repositorios y Tablas Base del Proceso");
                 iSection++;
@@ -90,15 +90,15 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 sectionsDetailCheckerArr.add(createDBProcedureInfo);
             }else{
                 runSection=Boolean.valueOf(argValues[5].toString()) || CREATE_REPOSITORIES_AND_PROC_TBLS;
-                sectionsSettingJobj.put("1) CREATE_REPOSITORIES_AND_PROC_TBLS", runSection);
+                sectionsSettingJobj.put("1) Create Base repositories and tables", runSection);
                 if (Boolean.TRUE.equals(runSection)){
                     org.json.JSONObject createDBProcedureInfo = DbObjects.createModuleSchemasAndBaseTables(procInstanceName);
-                    sectionsDetailObj.put("CREATE_REPOSITORIES_AND_PROC_TBLS", createDBProcedureInfo);
+                    sectionsDetailObj.put("Create Base repositories and tables", createDBProcedureInfo);
                 }               
             }
             if (Boolean.TRUE.equals(Boolean.valueOf(runAsCheckerAttrValue.toString()))){
                 JSONObject createDBProcedureInfo = ProcDeployCheckerLogic.createDBProcedureInfo(procName, procVersion, procInstanceName);
-                createDBProcedureInfo.put("section_name", "PROCDEPL_PROCEDURE_INFO");
+                createDBProcedureInfo.put("section_name", "Procedure Info record");
                 createDBProcedureInfo.put("section_label_en", "Procedure Info section creation");
                 createDBProcedureInfo.put("section_label_es", "Creación de sección Procedure Info");
                 iSection++;
@@ -106,15 +106,15 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 sectionsDetailCheckerArr.add(createDBProcedureInfo);
             }else{                
                 runSection=Boolean.valueOf(argValues[6].toString()) || PROCDEPL_PROCEDURE_INFO;
-                sectionsSettingJobj.put("2) PROCDEPL_PROCEDURE_INFO", runSection);
+                sectionsSettingJobj.put("2) Procedure Info", runSection);
                 if (Boolean.TRUE.equals(runSection)){
                     JSONObject createDBProcedureInfo = trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createDBProcedureInfo(procName, procVersion, procInstanceName);
-                    sectionsDetailObj.put("PROCDEPL_PROCEDURE_INFO", createDBProcedureInfo);
+                    sectionsDetailObj.put("", createDBProcedureInfo);
                 }   
             }
             if (Boolean.TRUE.equals(Boolean.valueOf(runAsCheckerAttrValue.toString()))){
                 JSONObject createDBProcedureUserRoles = ProcDeployCheckerLogic.createDBPersonProfiles(procName, procVersion, procInstanceName);
-                createDBProcedureUserRoles.put("section_name", "PROCDEPL_PROCEDURE_USER_ROLES");
+                createDBProcedureUserRoles.put("section_name", "User Roles");
                 createDBProcedureUserRoles.put("section_label_en", "Procedure User and Roles section creation");
                 createDBProcedureUserRoles.put("section_label_es", "Creación de sección Usuarios y Roles");
                 iSection++;
@@ -122,15 +122,15 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 sectionsDetailCheckerArr.add(createDBProcedureUserRoles);
             }else{                
                 runSection=Boolean.valueOf(argValues[7].toString()) || PROCDEPL_PROCEDURE_USER_ROLES;
-                sectionsSettingJobj.put("3) PROCDEPL_PROCEDURE_USER_ROLES", runSection);
+                sectionsSettingJobj.put("3) ", runSection);
                 if (Boolean.TRUE.equals(runSection)){
                     JSONObject createDBProcedureUserRoles = trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createDBPersonProfiles(procName, procVersion, procInstanceName);
-                    sectionsDetailObj.put("PROCDEPL_PROCEDURE_USER_ROLES", createDBProcedureUserRoles);
+                    sectionsDetailObj.put("User Roles", createDBProcedureUserRoles);
                 } 
             }
             if (Boolean.TRUE.equals(Boolean.valueOf(runAsCheckerAttrValue.toString()))){
                 JSONObject createDBSopMetaDataAndUserSop = ProcDeployCheckerLogic.createDBSopMetaDataAndUserSop(procName, procVersion, procInstanceName);
-                createDBSopMetaDataAndUserSop.put("section_name", "PROCDEPL_PROCEDURE_SOP_META_DATA");
+                createDBSopMetaDataAndUserSop.put("section_name", "SOPs");
                 createDBSopMetaDataAndUserSop.put("section_label_en", "Procedure SOPs section");
                 createDBSopMetaDataAndUserSop.put("section_label_es", "Sección de PNTs");
                 iSection++;
@@ -138,15 +138,15 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 sectionsDetailCheckerArr.add(createDBSopMetaDataAndUserSop);
             }else{
                 runSection=Boolean.valueOf(argValues[8].toString()) || PROCDEPL_PROCEDURE_SOP_META_DATA;
-                sectionsSettingJobj.put("4) PROCDEPL_PROCEDURE_SOP_META_DATA", runSection);
+                sectionsSettingJobj.put("4) SOPs", runSection);
                 if (Boolean.TRUE.equals(runSection)){
                     JSONObject createDBSopMetaDataAndUserSop = trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createDBSopMetaDataAndUserSop(procName, procVersion, procInstanceName);
-                    sectionsDetailObj.put("PROCDEPL_PROCEDURE_SOP_META_DATA", createDBSopMetaDataAndUserSop);
+                    sectionsDetailObj.put("SOPs", createDBSopMetaDataAndUserSop);
                 } 
             }
             if (Boolean.TRUE.equals(Boolean.valueOf(runAsCheckerAttrValue.toString()))){
                 JSONObject createDBProcedureUserRoles = ProcDeployCheckerLogic.addProcedureSOPtoUsers(procName, procVersion, procInstanceName);
-                createDBProcedureUserRoles.put("section_name", "PROCDEPL_ASIGN_PROC_SOPS_TO_USERS");
+                createDBProcedureUserRoles.put("section_name", "");
                 createDBProcedureUserRoles.put("section_label_en", "Procedure assignment of SOPs to Users");
                 createDBProcedureUserRoles.put("section_label_es", "Sección de asignación de PNTs a Usuarios");
                 iSection++;
@@ -154,35 +154,32 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 sectionsDetailCheckerArr.add(createDBProcedureUserRoles);
             }else{
                 runSection=Boolean.valueOf(argValues[9].toString()) || PROCDEPL_ASIGN_PROC_SOPS_TO_USERS;
-                sectionsSettingJobj.put("5) PROCDEPL_ASIGN_PROC_SOPS_TO_USERS", runSection);
+                sectionsSettingJobj.put("5) Assign SOPs to Users", runSection);
                 if (Boolean.TRUE.equals(runSection)){
                     JSONObject createDBProcedureUserRoles = trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.addProcedureSOPtoUsers(procName, procVersion, procInstanceName);
-                    sectionsDetailObj.put("PROCDEPL_ASIGN_PROC_SOPS_TO_USERS", createDBProcedureUserRoles);
+                    sectionsDetailObj.put("Assign SOPs to Users", createDBProcedureUserRoles);
                 } 
             }
             if (Boolean.TRUE.equals(Boolean.valueOf(runAsCheckerAttrValue.toString()))){
                 JSONObject createDBProcedureEvents = ProcDeployCheckerLogic.createDBProcedureEvents(procName, procVersion, procInstanceName);
-                createDBProcedureEvents.put("section_name", "PROCDEPL_PROCEDURE_EVENTS");
+                createDBProcedureEvents.put("section_name", "Procedure Actions");
                 createDBProcedureEvents.put("section_label_en", "Procedure Events section creation");
                 createDBProcedureEvents.put("section_label_es", "Sección de Procedure Events");
                 iSection++;
                 createDBProcedureEvents.put("index", iSection);
                 sectionsDetailCheckerArr.add(createDBProcedureEvents);
             }else{
-                runSection=Boolean.valueOf(argValues[10].toString()) || PROCDEPL_PROCEDURE_EVENTS;
-                sectionsSettingJobj.put("6) PROCDEPL_PROCEDURE_EVENTS", runSection);
+                runSection=Boolean.valueOf(argValues[10].toString()) || PROCDEPL_PROCEDURE_ACTIONS;
+                sectionsSettingJobj.put("6) Procedure Actions", runSection);
                 if (Boolean.TRUE.equals(runSection)){
-                    JSONArray jArr=new JSONArray();
-                    JSONObject createDBProcedureEvents = trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createDBProcedureEvents(procName, procVersion, procInstanceName);
-                    jArr.add(createDBProcedureEvents);
-                    JSONObject createdDBProcedureActions = trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createdDBProcedureActions(procName,  procVersion, procInstanceName);
-                    jArr.add(createdDBProcedureActions);
-                    sectionsDetailObj.put("PROCDEPL_PROCEDURE_EVENTS", jArr);
+                    sectionsSettingJobj.put("Procedure Views",  trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createDBProcedureViews(procName, procVersion, procInstanceName));
+                    sectionsSettingJobj.put("Procedure Actions", trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createdDBProcedureActions(procName,  procVersion, procInstanceName));
+                    //sectionsSettingJobj.put("Procedure Views json", trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createDBProcedureViewsJson(procName, procVersion, procInstanceName));
                 }
             }
             if (Boolean.TRUE.equals(Boolean.valueOf(runAsCheckerAttrValue.toString()))){
                 JSONObject createPropBusinessRules = ProcDeployCheckerLogic.createBusinessRules(procName, procVersion, procInstanceName);
-                createPropBusinessRules.put("section_name", "PROCDEPL_BUSINESS_RULES");
+                createPropBusinessRules.put("section_name", "Business Rules");
                 createPropBusinessRules.put("section_label_en", "Procedure Business Rules section creation");
                 createPropBusinessRules.put("section_label_es", "Sección de Procedure Business Rules");
                 iSection++;
@@ -190,15 +187,15 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 sectionsDetailCheckerArr.add(createPropBusinessRules);
             }else{
                 runSection=Boolean.valueOf(argValues[11].toString()) || PROCDEPL_BUSINESS_RULES_PROPTS_FILS;
-                sectionsSettingJobj.put("7) PROCDEPL_BUSINESS_RULES_PROPTS_FILS", runSection);
+                sectionsSettingJobj.put("7) Business Rules", runSection);
                 if (Boolean.TRUE.equals(runSection)){
                     JSONArray createPropBusinessRules = trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createBusinessRules(procName, procVersion, procInstanceName);
-                    sectionsDetailObj.put("PROCDEPL_BUSINESS_RULES_PROPTS_FILS", createPropBusinessRules);
+                    sectionsDetailObj.put("Business Rules", createPropBusinessRules);
                 }
             }
             if (Boolean.TRUE.equals(Boolean.valueOf(runAsCheckerAttrValue.toString()))){
                 JSONObject createDBModuleTablesAndFields = ProcDeployCheckerLogic.createDBModuleTablesAndFields(procName, procVersion, procInstanceName, moduleName);
-                createDBModuleTablesAndFields.put("section_name", "PROCDEPL_MODULE_TABLES_AND_FIELDS");
+                createDBModuleTablesAndFields.put("section_name", "Master Data");
                 createDBModuleTablesAndFields.put("section_label_en", "Module Tables and Fields section creation");
                 createDBModuleTablesAndFields.put("section_label_es", "Sección de Creación de Tablas y Campos del módulo");
                 iSection++;
@@ -206,15 +203,15 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 sectionsDetailCheckerArr.add(createDBModuleTablesAndFields);
             }else{
                 runSection=Boolean.valueOf(argValues[12].toString()) || PROCDEPL_MODULE_TABLES_AND_FIELDS;
-                sectionsSettingJobj.put("8) PROCDEPL_MODULE_TABLES_AND_FIELDS", runSection);
+                sectionsSettingJobj.put("8) Module tables and fields", runSection);
                 if (Boolean.TRUE.equals(runSection)){
                     JSONObject createDBModuleTablesAndFields = trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createDBModuleTablesAndFields(procName, procVersion, procInstanceName, moduleName);
-                    sectionsDetailObj.put("PROCDEPL_MODULE_TABLES_AND_FIELDS", createDBModuleTablesAndFields);
+                    sectionsDetailObj.put("Module tables and fields", createDBModuleTablesAndFields);
                 }
             }
             if (Boolean.TRUE.equals(Boolean.valueOf(runAsCheckerAttrValue.toString()))){
                 JSONObject createDBModuleTablesAndFields = ProcDeployCheckerLogic.deployMasterData(procName, procVersion, procInstanceName, moduleName);
-                createDBModuleTablesAndFields.put("section_name", "PROCDEPL_MASTER_DATA");
+                createDBModuleTablesAndFields.put("section_name", "Master Data");
                 createDBModuleTablesAndFields.put("section_label_en", "Master Data section creation");
                 createDBModuleTablesAndFields.put("section_label_es", "Sección de Creación de Data Maestra");
                 iSection++;
@@ -222,10 +219,10 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 sectionsDetailCheckerArr.add(createDBModuleTablesAndFields);
             }else{
                 runSection=Boolean.valueOf(argValues[13].toString()) || PROCDEPL_MASTER_DATA;
-                sectionsSettingJobj.put("9) PROCDEPL_MASTER_DATA", runSection);
+                sectionsSettingJobj.put("9) Master Data", runSection);
                 if (Boolean.TRUE.equals(runSection)){
                     JSONObject createDBModuleTablesAndFields = trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.deployMasterData(procName, procVersion, procInstanceName, moduleName);
-                    sectionsDetailObj.put("PROCDEPL_MASTER_DATA", createDBModuleTablesAndFields);
+                    sectionsDetailObj.put("Master Data", createDBModuleTablesAndFields);
                 }
             }
             if (Boolean.TRUE.equals(Boolean.valueOf(runAsCheckerAttrValue.toString()))){
