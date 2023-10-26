@@ -101,6 +101,7 @@ public class TblsTrazitDocTrazit {
         NUM_ENDPOINTS_IN_API("num_endpoints_in_api", LPDatabase.integer(), null, null, null, null),
         SUCCESS_MESSAGE_CODE("success_message_code", LPDatabase.string(), null, null, null, null),
         DISABLED("disabled", LPDatabase.booleanFld(false), null, null, null, null),
+        JSON_MODEL("json_model", LPDatabase.json(), null, null, null, null),
         ;
         private EndpointsDeclaration(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
