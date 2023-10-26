@@ -1,0 +1,121 @@
+{
+    "name": "STOCKS",
+    "version": 1,
+    "releaseDate": "2023-09-01",
+	"viewName":"Config-Add References",
+    "requirementsInfo":{
+        "window_action":{
+            "name": "CONFIG_ADD_REFERENCE"
+        }
+    },
+    "jsonModel":{
+        "component": "TableWithButtons",
+        "langConfig": {
+          "title": {
+            "configReferences": {
+              "label_en": "Master of References",
+              "label_es": "Maestro de Referencias"
+            }
+          },
+          "gridHeader": {
+            "category": {
+              "label_en": "Category",
+              "label_es": "Categoría",
+              "width": "20%",
+              "sort": false,
+              "filter": true
+            },
+            "name": {
+              "label_en": "Name",
+              "label_es": "Nombre",
+              "width": "20%",
+              "sort": false,
+              "filter": true,
+              "align": "left"
+            },
+            "lot_requires_qualif": {
+              "label_en": "Requires Qualif?",
+              "label_es": "¿Necesita Cualif?",
+              "width": "20%",
+              "sort": true,
+              "filter": false
+            }
+          }
+        },
+        "viewQuery": {
+          "actionName": "ALL_INVENTORY_REFERENCES",
+          "addRefreshButton": true,
+          "button": {
+            "icon": "refresh",
+            "title": {
+              "label_en": "Refresh",
+              "label_es": "Recargar"
+            }
+          }
+        },
+        "actions": [
+          {
+            "actionName": "CONFIG_ADD_REFERENCE",
+            "requiresDialog": true,
+            "button": {
+              "icon": "create_new_folder",
+              "title": {
+                "label_en": "New",
+                "label_es": "Nuevo"
+              },
+              "requiresGridItemSelected": false
+            },
+            "dialogInfo": {
+              "name": "genericDialog",
+              "fields": [            
+                            {"text1": {"label_en": "New Reference Name","label_es": "Nombre nueva Referencia"}},
+                            {"list1": {"label_en": "Category", "label_es": "Categoría",
+                              "addBlankValueOnTop": true, "addBlankValueAtBottom": false,
+                              "valuesFromMasterData": {
+                                    "propertyNameContainer": "category_and_references",
+                                    "propertyNameContainerLevelPropertyKeyName": "name",
+                                    "propertyKeyName": "name", "propertyKeyValueEn": "name", "propertyKeyValueEs": "name"
+                              }			
+                            }},		  			  
+                            {"checkbox1": {"label_en": "Requires Qualification?","label_es": "¿Requiere Cualificación?", "defaultValue":false}},
+                            {"number1": {"label_en": "Min Stock","label_es": "Stock Mínimo", "optional":true}},
+                            {"text2": {"label_en": "UOM","label_es": "UDM", "optional":true}},
+                            {"text3": {"label_en": "Other Allowed UOMs","label_es": "Otras UDM aceptadas", "optional":true}},
+                            {"list2": {"label_en": "min Stock Type","label_es": "Tipo Stock Mínimo", "optional":true,
+                                    "addBlankValueOnTop": true,
+                                    "items": [
+                                            { "keyName": "QUANTITY", "keyValue_en": "Quantity", "keyValue_es": "Cantidad" },                
+                                            { "keyName": "PB ITEMS", "keyValue_en": "Items", "keyValue_es": "Items" }
+                                    ]
+                            }},
+                            {"checkbox2": {"label_en": "Requires control for Available for use","label_es": "¿Requiere control disponible para uso?", "optional":true}},
+                            {"number2": {"label_en": "Min Available for use","label_es": "Minimo en Disponible para uso", "optional":true}},
+                            {"list3": {"label_en": "Type","label_es": "Tipo", "optional":true,
+                                    "addBlankValueOnTop": true,
+                                    "items": [
+                                            { "keyName": "QUANTITY", "keyValue_en": "Quantity", "keyValue_es": "Cantidad" },                
+                                            { "keyName": "PB ITEMS", "keyValue_en": "Items", "keyValue_es": "Items" }
+                                    ]			  
+                            }},
+                            {"checkbox3": {"label_en": "Allow Some open at a time?","label_es": "¿Permitir abrir varios a la vez?", "optional":true}},
+                            {"text4": {"label_en": "Qualification Variables Set","label_es": "Conjunto Variables para Cualificación", "optional":true}}            
+              ]
+            },
+            "endPointParams": [
+              {"argumentName": "name",                "element": "text1"           },
+              {"argumentName": "category",            "element": "list1"          },
+              {"argumentName": "lotRequiresQualif",   "element": "checkbox1"      },
+              {"argumentName": "minStock",            "element": "number1"        },
+              {"argumentName": "minStockUom",         "element": "text2"          },
+              {"argumentName": "allowedUoms",         "element": "text3"          },
+              {"argumentName": "minStockType",        "element": "list2"          },
+              {"argumentName": "requiresAvailableForUse",   "element": "checkbox2"},
+              {"argumentName": "minAvailablesForUse",       "element": "number2"  },
+              {"argumentName": "minAvailablesForUseType",   "element": "list3"    },
+              {"argumentName": "allowedOpeningSomeAtaTime", "element": "checkbox3"},
+              {"argumentName": "qualificationVariablesSet", "element": "text4"    }
+            ]
+          }
+        ]
+    }
+}

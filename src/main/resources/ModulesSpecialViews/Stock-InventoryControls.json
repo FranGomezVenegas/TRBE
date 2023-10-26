@@ -1,0 +1,175 @@
+{
+    "name": "STOCKS",
+    "version": 1,
+    "releaseDate": "2023-09-01",
+	"viewName":"InventoryControls",
+    "requirementsInfo":{
+            "window_action":{
+                "action": "CONFIG_ADD_REFERENCE"
+            }
+    },
+    "jsonModel":{
+	"component": "DataMining",
+	"tabsListElement": {
+		"label_en": "Queries", 
+        "label_es": "Consultas"
+	},
+        "tabs": [
+      { "action": "EXPIRED_LOTS",
+        "label_en": "Expired Lots", 
+        "label_es": "Lotes Caducados", 
+        "endPoint": "/app/procs/InvTrackingAPIqueries",
+        "filter":{
+          "fixParams": {
+            "sampleGroups": "area, spec_code,sample_config_code*counter_by_area_spec_tmp|spec_eval*counter_range_eval|has_invest*counter_investigations|has_pre_invest, has_invest*counter_pre_and_invest"
+          },
+		  "filterFields":[
+            {"text1": { "label_en": "Lot Name", "label_es": "Lote", "default_value": "" }},
+            {"text2": { "label_en": "Reference", "label_es": "Referencia", "default_value": "REF1" }},
+            {"text3": { "label_en": "Category", "label_es": "Categoria", "default_value": "" }},
+            {"daterange1":
+              {
+              "dateStart":{ "label_en": "Expiry Start Date", "label_es": "Fecha Inicio Caducidad", "default_value": "" },
+              "dateEnd":{ "label_en": "Expiry End Date", "label_es": "Fecha Fin Caducidad", "default_value": "" }
+              }
+            }            
+		  ],
+          "filterFields2":[
+            {"daterange1":
+              {
+              "dateStart":{ "label_en": "Sampling Start Date", "label_es": "Fecha Inicio Muestreo", "default_value": "" },
+              "dateEnd":{ "label_en": "Sampling End Date", "label_es": "Fecha Fin Muestreo", "default_value": "" }
+              }
+            },
+            {"checkbox1": { "label_en": "Exclude Readings Not Entered Yet", "label_es": "Excluir Lecturas no entradas aún", "default_value": true }},
+            {"number1": { "label_en": "Only readings Equal to", "label_es": "Solo las lecturas igual a", "default_value": "" }},
+            {"number2": { "label_en": "Only readings Greater than", "label_es": "Solo las lecturas Mayores a", "default_value": "" }},
+            {"number3": { "label_en": "Only readings Less than", "label_es": "Solo las lecturas Menores a", "default_value": "" }},
+            {"checkbox4": { "label_en": "Include Microorganisms", "label_es": "Incluir Microorganismos", "default_value": false }},
+            {"text4": { "label_en": "Microorganisms to find", "label_es": "Microorganismos a encontrar", "default_value": "" }}
+          ],
+		  
+		  "endPointParams": [
+		    {"argumentName": "lotName", "element": "text1", "notAddWhenValueIsBlank": true},
+			{"argumentName": "reference", "element": "text2", "notAddWhenValueIsBlank": true},
+            {"argumentName": "category", "element": "text3", "notAddWhenValueIsBlank": true},
+            {"argumentName": "expiry_date_start", "element": "daterange1dateStart"},
+            {"argumentName": "expiry_date_end", "element": "daterange1dateEnd"}
+           
+		  ],		  
+		  "extraParams": [],
+          "extraParams2": [
+            {"argumentName": "programName", "element": "text1"},
+            {"argumentName": "locationName", "element": "text2"},
+            {"argumentName": "area", "element": "text3"},
+            {"argumentName": "excludeReadingNotEntered", "element": "checkbox1"},
+            {"argumentName": "samplingDayStart", "element": "daterange1dateStart"},
+            {"argumentName": "samplingDayEnd", "element": "daterange1dateEnd"},
+            {"argumentName": "readingEqual", "element": "number1"},
+            {"argumentName": "readingMin", "element": "number2"},
+            {"argumentName": "readingMax", "element": "number3"},
+            {"argumentName": "includeMicroorganisms", "element": "checkbox4"},
+            {"argumentName": "MicroorganismsToFind", "element": "text4"}
+          ]      
+        },
+        "printable": true,
+        "download":{
+          "active": true,
+          "elements":[
+            {"elementName": "datatable"}
+          ] 
+        },
+        "reportElements":[
+          [
+			{"type": "reportTitle", "title":{"label_en": "Expired Lots", "label_es": "Lotes Caducados"}}
+          ],
+          [
+          {"type": "grid", "title":{"label_en": "Info Matching Selection Criteria", "label_es": "Información cumpliendo el criterio de selección"}, 
+           "elementName": "datatable", "fieldsToDisplay":[
+              {"property": "lot_name", "header": "lot_name"}, 
+              {"property": "reference", "header": "reference"}, 
+              {"property": "category", "header": "category"}, 
+              {"property": "expiry_reason", "header": "expiry_reason"}			  
+           ] 
+          }          
+        ]
+        ]
+      },
+      { "action": "REFERENCES_UNDER_MIN_STOCK",
+		"label_en": "Reference which stock is upon min expected", 
+		"label_es": "Referencias cuyas existencias están por debajo de lo esperado",
+        "label_en2": "Stocks under min", 
+        "label_es2": "Stock bajo mínimos", 
+        "endPoint": "/app/procs/InvTrackingAPIqueries",
+        "filter":{
+			"filterFields":[
+            {"text1": { "label_en": "Reference", "label_es": "Referencia", "default_value": "REF1" }},
+            {"text2": { "label_en": "Category", "label_es": "Categoria", "default_value": "" }}
+			
+			],
+          "filterFields2":[
+            {"daterange1":
+              {
+              "dateStart":{ "label_en": "Sampling Start Date", "label_es": "Fecha Inicio Muestreo", "default_value": "" },
+              "dateEnd":{ "label_en": "Sampling End Date", "label_es": "Fecha Fin Muestreo", "default_value": "" }
+              }
+            },
+            {"text1": { "label_en": "Lot Name", "label_es": "Lote", "default_value": "20220202" }},
+            {"text2": { "label_en": "Program", "label_es": "Programa", "default_value": "" }},
+            {"text3": { "label_en": "Location", "label_es": "Ubicación", "default_value": "" }},
+            {"text4": { "label_en": "Area", "label_es": "Area", "default_value": "" }},
+            {"checkbox1": { "label_en": "Exclude Personal", "label_es": "Excluir Personal", "default_value": true }},
+            {"checkbox2": { "label_en": "Exclude Readings Not Entered Yet", "label_es": "Excluir Lecturas no entradas aún", "default_value": true }},
+            {"number1": { "label_en": "Only readings Equal to", "label_es": "Solo las lecturas igual a", "default_value": "" }},
+            {"number2": { "label_en": "Only readings Greater than", "label_es": "Solo las lecturas Mayores a", "default_value": "" }},
+            {"number3": { "label_en": "Only readings Less than", "label_es": "Solo las lecturas Menores a", "default_value": "" }},
+            {"checkbox3": { "label_en": "Include Microorganisms", "label_es": "Incluir Microorganismos", "default_value": false }},
+            {"text5": { "label_en": "Microorganisms to find", "label_es": "Microorganismos a encontrar", "default_value": "" }}
+          ],
+		  "endPointParams": [
+			{"argumentName": "reference", "element": "text1", "notAddWhenValueIsBlank": true},
+            {"argumentName": "category", "element": "text2", "notAddWhenValueIsBlank": true}
+		  ],
+          "endPointParams2": [
+            {"argumentName": "locationName", "element": "text3", "notAddWhenValueIsBlank": true},
+            {"argumentName": "area", "element": "text4", "notAddWhenValueIsBlank": true},
+            {"argumentName": "excludeSamplerSamples", "element": "checkbox1", "notAddWhenValueIsBlank": true},
+            {"argumentName": "excludeReadingNotEntered", "element": "checkbox2", "notAddWhenValueIsBlank": true},
+            {"argumentName": "samplingDayStart", "element": "daterange1dateStart", "notAddWhenValueIsBlank": true},
+            {"argumentName": "samplingDayEnd", "element": "daterange1dateEnd", "notAddWhenValueIsBlank": true},
+            {"argumentName": "readingEqual", "element": "number1", "notAddWhenValueIsBlank": true},
+            {"argumentName": "readingMin", "element": "number2", "notAddWhenValueIsBlank": true},
+            {"argumentName": "readingMax", "element": "number3", "notAddWhenValueIsBlank": true},
+            {"argumentName": "includeMicroorganisms", "element": "checkbox3", "notAddWhenValueIsBlank": true},
+            {"argumentName": "MicroorganismsToFind", "element": "text5", "notAddWhenValueIsBlank": true}
+          ]      
+        },
+        "printable": true,
+        "download":{
+          "active": true,
+          "elements":[
+            {"elementName": "datatable"}
+          ] 
+        },		
+        "reportElements":[
+          [
+            {"type": "reportTitle", "title":{"label_en": "Reference which stock is upon min expected", 
+				"label_es": "Referencias cuyas existencias están por debajo de lo esperado"},
+              "style":"color:blue"}
+          ],
+          [
+            {"type": "grid", "title":{"label_en": " ", "label_es": " "}, 
+             "elementName": "datatable", "fieldsToDisplay":[
+                {"property": "name", "header": "Name"}, 
+                {"property": "category", "header": "Category"}, 
+                {"property": "min_stock_type", "header": "Control Type"}, 
+                {"property": "min_stock", "header": "Min Expected"}, 
+                {"property": "current_stock", "header": "Current Stock"}
+             ] 
+            }          
+          ]          
+        ]
+      }
+    ]
+  }
+}

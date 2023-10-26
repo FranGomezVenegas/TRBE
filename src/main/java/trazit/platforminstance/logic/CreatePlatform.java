@@ -307,12 +307,12 @@ public class CreatePlatform {
 
         ClassLoader classLoader = DbObjects.class.getClassLoader();
         String[][] platfModels= new String[][]{
-            {procNameInReqs, "PlatformModels/model_platform-settings.txt", "JSONObject"},
-            {"app", "PlatformModels/model_app.txt", "JSONObject"},
-            {"proc_management", "PlatformModels/model_proc_management.txt", "JSONArray"}
+            {procNameInReqs, "PlatformModels/model_platform-settings.json", "JSONObject"},
+            {"app", "PlatformModels/model_app.json", "JSONObject"},
+            {"proc_management", "PlatformModels/model_proc_management.json", "JSONArray"}
         };
         for (String[] curModel: platfModels){
-            String filePath = curModel[1]; //"JavaScript/model_platform-settings.txt";
+            String filePath = curModel[1]; //"JavaScript/model_platform-settings.json";
             StringBuilder jsonDataModel = new StringBuilder();    
             try (InputStream inputStream = classLoader.getResourceAsStream(filePath)) {
                 if (inputStream != null) {
@@ -517,7 +517,7 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
                     String moduleName="Still not specified";
                     JSONObject jFileContentObjModel = new JSONObject(); 
                     try{
-                        if (file.isFile() && file.getName().endsWith(".txt")) {
+                        if (file.isFile() && file.getName().endsWith(".json")) {
                             // Read the content of each text file
                             StringBuilder jsonDataModel = new StringBuilder();
 
