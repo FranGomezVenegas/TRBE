@@ -40,7 +40,7 @@ public class TblsTrazitDocModules {
             new String[]{ProcedureModuleTablesAndFields.PROCEDURE_NAME.getName(), ProcedureModuleTablesAndFields.PROCEDURE_VERSION.getName(), ProcedureModuleTablesAndFields.SCHEMA_NAME.getName(), ProcedureModuleTablesAndFields.TABLE_NAME.getName()}, null, ""),
         ENDPOINTS_DECLARATION(null, "endpoints_declaration", SCHEMA_NAME, true, EndpointsDeclaration.values(), EndpointsDeclaration.ID.getName(),
             new String[]{EndpointsDeclaration.ID.getName()}, null, ""),
-        ;
+        ;        
         private TablesTrazitDocModules(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){
             this.getTblBusinessRules=fldBusRules;
@@ -464,6 +464,4 @@ public class TblsTrazitDocModules {
         @Override        public String getFieldComment(){return this.fieldComment;}
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }
-
-    
 }
