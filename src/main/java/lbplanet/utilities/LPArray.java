@@ -980,7 +980,12 @@ public class LPArray {
             return "";
         }
     }
-
+    /**
+     * The criteria argument is a peer of [0] column to check and [1] value to find
+     *
+     * @author Fran Gomez
+     * @version 0.1
+     */    
     public static int[] valuePosicArray2D(Object[][] data, Object[][] criteria) {
         List<Integer> matchingRows = new ArrayList<>();
 
@@ -1003,7 +1008,7 @@ public class LPArray {
         }
 
         if (matchingRows.isEmpty()) {
-            return new int[]{-1919191919};
+            return new int[]{};
         } else {
             return matchingRows.stream().mapToInt(Integer::intValue).toArray();
         }
