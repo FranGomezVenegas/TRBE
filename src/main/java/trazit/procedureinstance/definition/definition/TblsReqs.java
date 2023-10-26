@@ -321,46 +321,48 @@ public class TblsReqs {
                             new EnumIntTableFields[][]{{TblsReqs.ProcedureReqSolution.WINDOW_ACTION, TblsReqs.ModuleActionsAndQueries.ENDPOINT_NAME}}, "", SqlStatementEnums.JOIN_TYPES.INNER), //            new EnumIntTablesJoin(TblsReqs.TablesReqs.PROCEDURE_INFO, "procInfo", TblsReqs.TablesReqs.MODULE_ACTIONS_N_QUERIES, "modAct", false,
                 //                new EnumIntTableFields[][]{{TblsReqs.ProcedureInfo.MODULE_NAME, TblsReqs.ModuleActionsAndQueries.MODULE_NAME}}, "", SqlStatementEnums.JOIN_TYPES.INNER),
                 }, " and procInfo.module_name = modAct.module_name", false),
-        BUSINESS_RULES_IN_SOLUTION("SELECT busRules.module_name, busRules.module_version, busRules.rule_name, busRules.is_mandatory,\n" +
+        BUSINESS_RULES_IN_SOLUTION("SELECT busRules.module_name, busRules.module_version, procinfo.procedure_name, procinfo.procedure_version, procinfo.proc_instance_name, busRules.rule_name, busRules.is_mandatory,\n" +
                         " 		busRules.api_name,	busRules.area, busRules.prerequite,\n" +
                 	" busrules.values_list, busrules.tip_en, busrules.tip_es,\n" +
                         "    COALESCE(count(sol.business_rule), 0::bigint) AS present,\n" +
                         "    string_agg(sol.code::text, ', '::text) AS requirements_list\n" +
                         "   FROM requirements.module_business_rules busRules\n" +
-                        "   LEFT JOIN (select reqsol.business_rule, usr.code \n" +
+                        "   JOIN requirements.procedure_info procinfo ON busrules.module_name::text = procinfo.module_name::text "+
+                        "   LEFT JOIN (select reqsol.business_rule, usr.procedure_name, usr.procedure_version, usr.proc_instance_name, usr.code \n" +
                         "          		from requirements.procedure_req_solution reqsol, requirements.procedure_user_requirements usr\n" +
                         "			  where reqsol.req_id=usr.req_id AND upper(reqsol.window_element_type::text) =upper("+ReqSolutionTypes.BUSINESS_RULE.getTagValue()+")) sol\n" +
                         "	  ON busRules.rule_name::text = sol.business_rule::text\n" +
-                        "  GROUP BY busRules.module_name, busRules.module_version, busRules.rule_name, busRules.is_mandatory, busRules.api_name,	busRules.area, busRules.prerequite\n" +
+                        "  GROUP BY busRules.module_name, busRules.module_version, sol.procedure_name, sol.procedure_version, sol.proc_instance_name, busRules.rule_name, busRules.is_mandatory, busRules.api_name,	busRules.area, busRules.prerequite\n" +
                         "  ORDER BY (COALESCE(count(sol.business_rule), 0::bigint)), busRules.rule_name; ",
                 null, "business_rules_in_solution", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsReqs.viewBusinessRulesInSolution.values(), "viewBusinessRulesInSolution",
                 null, " and procInfo.module_name = modAct.module_name", false),
-        ACTIONS_IN_SOLUTION("SELECT act.module_name, act.module_version, act.entity, act.endpoint_name,\n" +
+        ACTIONS_IN_SOLUTION("SELECT act.module_name, act.module_version, procinfo.procedure_name, procinfo.procedure_version, procinfo.proc_instance_name, act.entity, act.endpoint_name,\n" +
                         " 		act.api_name,	act.pretty_name_en, act.pretty_name_es,		\n" +
                         "    COALESCE(count(sol.window_action), 0::bigint) AS present,\n" +
                         "    string_agg(sol.code::text, ', '::text) AS requirements_list\n" +
                         "   FROM requirements.module_actions_and_queries act\n" +
-                        "   LEFT JOIN (select reqsol.window_action, usr.code \n" +
+                        "   JOIN requirements.procedure_info procinfo ON act.module_name::text = procinfo.module_name::text"+
+                        "   LEFT JOIN (select reqsol.window_action, usr.code, usr.procedure_name, usr.procedure_version, usr.proc_instance_name \n" +
                         "          		from requirements.procedure_req_solution reqsol, requirements.procedure_user_requirements usr\n" +
                         "			  where reqsol.req_id=usr.req_id and upper(window_element_type)=upper("+ReqSolutionTypes.WINDOW_ACTION.getTagValue()+")) sol\n" +
                         "	  ON act.endpoint_name::text = sol.window_action::text\n" +
                         "	WHERE upper(act.api_name) like '%ACTION%'\n" +
-                        "  GROUP BY act.module_name, act.module_version, act.entity, act.endpoint_name,\n" +
+                        "  GROUP BY act.module_name, act.module_version, act.entity, act.endpoint_name, sol.procedure_name, sol.procedure_version, sol.proc_instance_name,\n" +
                         " 		act.api_name,	act.pretty_name_en, act.pretty_name_es\n" +
                         "   ORDER BY act.entity, act.api_name, (COALESCE(count(sol.window_action), 0::bigint)); ",
-                null, "actions_in_solution", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsReqs.viewActionsInSolution.values(), "viewBusinessRulesInSolution",
+                null, "actions_in_solution", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsReqs.viewActionsInSolution.values(), "viewactionsInSolution",
                 null, " and procInfo.module_name = modAct.module_name", false),
-        QUERIES_IN_SOLUTION("SELECT act.module_name, act.module_version, act.entity, act.endpoint_name,\n" +
+        QUERIES_IN_SOLUTION("SELECT act.module_name, act.module_version, procinfo.procedure_name, procinfo.procedure_version, procinfo.proc_instance_name, act.entity, act.endpoint_name,\n" +
                         " 		act.api_name,	act.pretty_name_en, act.pretty_name_es,		\n" +
                         "    COALESCE(count(sol.window_query), 0::bigint) AS present,\n" +
                         "    string_agg(sol.code::text, ', '::text) AS requirements_list\n" +
                         "   FROM requirements.module_actions_and_queries act\n" +
-                        "   LEFT JOIN (select reqsol.window_query, usr.code \n" +
+                        "   LEFT JOIN (select reqsol.window_query, usr.procedure_name, usr.procedure_version, usr.proc_instance_name, usr.code \n" +
                         "          		from requirements.procedure_req_solution reqsol, requirements.procedure_user_requirements usr\n" +
                         "			  where reqsol.req_id=usr.req_id and upper(window_element_type)=upper("+ReqSolutionTypes.WINDOW.getTagValue()+")) sol\n" +
                         "	  ON act.endpoint_name::text = sol.window_query::text\n" +
                         "	WHERE upper(act.api_name) like '%QUER%'\n" +
-                        "  GROUP BY act.module_name, act.module_version, act.entity, act.endpoint_name,\n" +
+                        "  GROUP BY act.module_name, act.module_version, sol.procedure_name, sol.procedure_version, sol.proc_instance_name, act.entity, act.endpoint_name,\n" +
                         " 		act.api_name,	act.pretty_name_en, act.pretty_name_es\n" +
                         "   ORDER BY (COALESCE(count(sol.window_query), 0::bigint)) desc, act.entity, act.api_name;",
                 null, "queries_in_solution", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsReqs.viewQueriesInSolution.values(), "viewBusinessRulesInSolution",
@@ -590,7 +592,8 @@ public class TblsReqs {
         MODULE_VERSION(FIELDS_NAMES_MODULE_VERSION, LPDatabase.integerNotNull(), null, null, null, null),
         ORDER_NUMBER("order_number", LPDatabase.real(), null, null, null, null),
         VIEW_NAME("view_name", LPDatabase.stringNotNull(), null, null, null, null),
-        JSON_MODEL("json_model", LPDatabase.json(), null, null, null, null)
+        JSON_MODEL("json_model", LPDatabase.json(), null, null, null, null),
+        JSON_REQUIREMENTS("json_requirements", LPDatabase.json(), null, null, null, null)        
         ;
         private ModuleSpecialViews(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules) {
@@ -1117,6 +1120,7 @@ public class TblsReqs {
         WINDOW_ACTION("window_action", LPDatabase.string(), null, null, null, null),
         BUSINESS_RULE("business_rule", LPDatabase.string(), null, null, null, null),
         BUSINESS_RULE_VALUE("business_rule_value", LPDatabase.string(), null, null, null, null),
+        BUSINESS_RULE_AREA("business_rule_area", LPDatabase.string(), null, null, null, null),
         CONFIRM_DIALOG("confirmation_dialog", LPDatabase.string(), null, null, null, null),
         CONFIRM_DIALOG_DETAIL("confirmation_dialog_detail", LPDatabase.string(), null, null, null, null),
         //SOLUTION_TYPE("solution_type", LPDatabase.string(), null, null, null, null),
@@ -1130,8 +1134,9 @@ public class TblsReqs {
         ACTIVE("active", LPDatabase.booleanFld(true), null, null, null, null),
         IN_SCOPE("in_scope", LPDatabase.booleanFld(true), null, null, null, null),
         IN_SYSTEM("in_system", LPDatabase.booleanFld(true), null, null, null, null),
-        
-
+        JSON_MODEL("json_model", LPDatabase.json(), null, null, null, null),
+        SPECIAL_VIEW_JSON_MODEL("special_view_json_model", LPDatabase.json(), null, null, null, null),
+        SPECIAL_VIEW_NAME("special_view__name", LPDatabase.string(), null, null, null, null), 
         ;
         private ProcedureReqSolution(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules) {
@@ -1789,6 +1794,9 @@ public class TblsReqs {
     public enum viewBusinessRulesInSolution implements EnumIntViewFields {
         MODULE_NAME("busRules", ModuleBusinessRules.MODULE_NAME.getName(), "busRules.module_name as module_name", ModuleBusinessRules.MODULE_NAME, null, null, null),
         MODULE_VERSION("busRules", ModuleBusinessRules.MODULE_VERSION.getName(), "busRules.module_version as module_version", ModuleBusinessRules.MODULE_VERSION, null, null, null),
+        PROCEDURE_NAME("procInfo", ProcedureReqSolution.PROCEDURE_NAME.getName(), "procInfo.procedure_name as procedure_name", ProcedureUserRequirements.PROCEDURE_NAME, null, null, null),
+        PROCEDURE_VERSION("procInfo", ProcedureReqSolution.PROCEDURE_VERSION.getName(), "procInfo.procedure_version as procedure_version", ProcedureUserRequirements.PROCEDURE_VERSION, null, null, null),
+        PROC_INSTANCE_NAME("procInfo", ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), "procInfo.proc_instance_name as proc_instance_name", ProcedureUserRequirements.PROC_INSTANCE_NAME, null, null, null),
         RULE_NAME("busRules", ModuleBusinessRules.RULE_NAME.getName(), "busRules.rule_name as rule_name", ModuleBusinessRules.RULE_NAME, null, null, null),
         IS_MANDATORY("busRules", ModuleBusinessRules.IS_MANDATORY.getName(), "busRules.is_mandatory as is_mandatory", ModuleBusinessRules.IS_MANDATORY, null, null, null),
         API_NAME("busRules", ModuleBusinessRules.API_NAME.getName(), "busRules.api_name as api_name", ModuleBusinessRules.API_NAME, null, null, null),
@@ -1851,6 +1859,9 @@ public class TblsReqs {
     public enum viewActionsInSolution implements EnumIntViewFields {
         MODULE_NAME("act", ModuleActionsAndQueries.MODULE_NAME.getName(), "act.module_name as module_name", ModuleActionsAndQueries.MODULE_NAME, null, null, null),
         MODULE_VERSION("act", ModuleActionsAndQueries.MODULE_VERSION.getName(), "act.module_version as module_version", ModuleActionsAndQueries.MODULE_VERSION, null, null, null),
+        PROCEDURE_NAME("procinfo", ProcedureReqSolution.PROCEDURE_NAME.getName(), "procinfo.procedure_name as procedure_name", ProcedureUserRequirements.PROCEDURE_NAME, null, null, null),
+        PROCEDURE_VERSION("procinfo", ProcedureReqSolution.PROCEDURE_VERSION.getName(), "procinfo.procedure_version as procedure_version", ProcedureUserRequirements.PROCEDURE_VERSION, null, null, null),
+        PROC_INSTANCE_NAME("procinfo", ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), "procinfo.proc_instance_name as proc_instance_name", ProcedureUserRequirements.PROC_INSTANCE_NAME, null, null, null),
         ENTITY("act",TblsReqs.ModuleActionsAndQueries.ENTITY.getName(), "act.entity as entity", ModuleActionsAndQueries.ENTITY, null, null, null),
         API_NAME("act", ModuleActionsAndQueries.API_NAME.getName(), "act.api_name as api_name", ModuleActionsAndQueries.API_NAME, null, null, null),
         ENDPOINT_NAME("act", ModuleActionsAndQueries.ENDPOINT_NAME.getName(), "act.endpoint_name as endpoint_name", ModuleActionsAndQueries.ENDPOINT_NAME, null, null, null),
@@ -1909,6 +1920,9 @@ public class TblsReqs {
     public enum viewQueriesInSolution implements EnumIntViewFields {
         MODULE_NAME("act", ModuleActionsAndQueries.MODULE_NAME.getName(), "act.module_name as module_name", ModuleActionsAndQueries.MODULE_NAME, null, null, null),
         MODULE_VERSION("act", ModuleActionsAndQueries.MODULE_VERSION.getName(), "act.module_version as module_version", ModuleActionsAndQueries.MODULE_VERSION, null, null, null),
+        PROCEDURE_NAME("procinfo", ProcedureReqSolution.PROCEDURE_NAME.getName(), "procinfo.procedure_name as procedure_name", ProcedureUserRequirements.PROCEDURE_NAME, null, null, null),
+        PROCEDURE_VERSION("procinfo", ProcedureReqSolution.PROCEDURE_VERSION.getName(), "procinfo.procedure_version as procedure_version", ProcedureUserRequirements.PROCEDURE_VERSION, null, null, null),
+        PROC_INSTANCE_NAME("procinfo", ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), "procinfo.proc_instance_name as proc_instance_name", ProcedureUserRequirements.PROC_INSTANCE_NAME, null, null, null),
         ENTITY("act",TblsReqs.ModuleActionsAndQueries.ENTITY.getName(), "act.entity as entity", ModuleActionsAndQueries.ENTITY, null, null, null),
         API_NAME("act", ModuleActionsAndQueries.API_NAME.getName(), "act.api_name as api_name", ModuleActionsAndQueries.API_NAME, null, null, null),
         ENDPOINT_NAME("act", ModuleActionsAndQueries.ENDPOINT_NAME.getName(), "act.endpoint_name as endpoint_name", ModuleActionsAndQueries.ENDPOINT_NAME, null, null, null),
