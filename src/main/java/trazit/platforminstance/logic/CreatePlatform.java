@@ -36,11 +36,17 @@ import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import static trazit.globalvariables.GlobalVariables.PROC_MANAGEMENT_SPECIAL_ROLE;
 import trazit.procedureinstance.definition.definition.TblsReqs;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import static databases.DbObjects.createSchemas;
+import databases.SqlStatement;
+import databases.SqlWhere;
+import databases.TblsTrazitDocTrazit;
 import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
+import static lbplanet.utilities.LPArray.valuePosicArray2D;
+import lbplanet.utilities.LPJson;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
@@ -54,16 +60,33 @@ public class CreatePlatform {
     private String diagnSummary="";
     private JSONObject executionLog = new JSONObject();
     private JSONArray errorsList = new JSONArray();
+    private Object[][] modulesTrazitEndpoints=null;
+    private String[] modulesTrazitEndpointsFields=null;
+    private Integer modulesTrazitEndpointsJsonModelFldPosic=null;
+    private Integer modulesTrazitEndpointsApiNameFldPosic=null;
+    private Integer modulesTrazitEndpointsEndpointNameFldPosic=null;
     
     public CreatePlatform(String platformName){
         diagnSummary="";
         executionLog = new JSONObject();
-        errorsList = new JSONArray();        
+        errorsList = new JSONArray();    
+        getDataFromDictionary();
         createBasicSchemasAndTablesStructure(platformName);
         createAppProcTables(platformName);
         createModules(platformName);
     }
 
+    public void getDataFromDictionary(){
+        Rdbms.stablishDBConection("modules_trazit");
+        modulesTrazitEndpointsFields = EnumIntTableFields.getAllFieldNames(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION.getTableFields());
+        modulesTrazitEndpointsJsonModelFldPosic=LPArray.valuePosicInArray(modulesTrazitEndpointsFields, TblsTrazitDocTrazit.EndpointsDeclaration.JSON_MODEL.getName());
+        modulesTrazitEndpointsApiNameFldPosic=LPArray.valuePosicInArray(modulesTrazitEndpointsFields, TblsTrazitDocTrazit.EndpointsDeclaration.API_NAME.getName());
+        modulesTrazitEndpointsEndpointNameFldPosic=LPArray.valuePosicInArray(modulesTrazitEndpointsFields, TblsTrazitDocTrazit.EndpointsDeclaration.ENDPOINT_NAME.getName());
+        modulesTrazitEndpoints = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION.getTableName(),
+                new String[]{TblsTrazitDocTrazit.EndpointsDeclaration.API_NAME.getName() + SqlStatement.WHERECLAUSE_TYPES.NOT_EQUAL.getSqlClause()},
+                new Object[]{"zzz"}, modulesTrazitEndpointsFields);
+        Rdbms.closeRdbms();
+    }
     public JSONObject publishReport(){
         JSONObject summary = new JSONObject();
         String conclusionStr="";
@@ -460,7 +483,8 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
     }
 
     private void createModules(String platformName){
-        String directoryPath = "ModulesInfo"; // Update with the actual path
+        String directoryPathModulesInfo = "ModulesInfo"; 
+        String directoryPathModulesSpecialViews = "ModulesSpecialViews"; 
         JSONArray allModuleFilesInfo=new JSONArray();
         ClassInfoList classesImplementingEndPoints = null;
         ClassInfoList classesImplementingBusinessRules = null;
@@ -469,91 +493,161 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
             classesImplementingEndPoints = scanResult.getClassesImplementing("trazit.enums.EnumIntEndpoints"); 
             classesImplementingBusinessRules = scanResult.getClassesImplementing("trazit.enums.EnumIntBusinessRules"); 
             classesImplementingErrorMessages = scanResult.getClassesImplementing("trazit.enums.EnumIntMessages"); 
-        // Initialize the JSON object
-        JSONObject prcReqsSectionLog = new JSONObject();
-        JSONObject jsonObject = new JSONObject();
+            // Initialize the JSON object
+            JSONObject prcReqsSectionLog = new JSONObject();
+            JSONObject jsonObject = new JSONObject();
         
-        ClassLoader classLoader = CreatePlatform.class.getClassLoader();
-        URL directoryUrl = classLoader.getResource(directoryPath);
-        if (directoryUrl != null) {
-            // Get the file path from the URL
-            String directoryFilePath = directoryUrl.getPath();
+            ClassLoader classLoader = CreatePlatform.class.getClassLoader();
+            URL directoryUrl = classLoader.getResource(directoryPathModulesInfo);            
+            if (directoryUrl != null) {
+                // Get the file path from the URL
+                String directoryFilePath = directoryUrl.getPath();
 
-            // Create a File object representing the directory
-            File directory = new File(directoryFilePath);
+                // Create a File object representing the directory
+                File directory = new File(directoryFilePath);
 
-            // List files in the directory
-            File[] files = directory.listFiles();
-            if (files == null) {
-                addToLogSummary("requirement_modules", "no modules in directory to load");
-                return;
-            }
-            for (File file : files) {
-                org.json.JSONObject curSchemaObj=new org.json.JSONObject();
-                String moduleName="Still not specified";
-                JSONObject jFileContentObjModel = new JSONObject(); 
-                try{
-                    if (file.isFile() && file.getName().endsWith(".txt")) {
-                        // Read the content of each text file
-                        StringBuilder jsonDataModel = new StringBuilder();
-
-                        //try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-                        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
-                            String line;
-                            while ((line = reader.readLine()) != null) {
-                                jsonDataModel.append(line).append("\n");
-                            }
-                            jFileContentObjModel = new JSONObject(jsonDataModel.toString());   
-                            // Wrap the JSON data in a new JSON object under the file name
-                            JSONObject fileJsonObject = new JSONObject();
-                            fileJsonObject.put("information", new JSONObject(jsonDataModel.toString()));
-
-                            // Add the file's JSON object to the main JSON object
-                            jsonObject.put(file.getName(), fileJsonObject);
-                            moduleName=jFileContentObjModel.getString("name");
-                            Integer moduleVersion=jFileContentObjModel.getInt("version");
-                            String releaseDate=jFileContentObjModel.getString("releaseDate");
-                            JSONObject moduleSettings=jFileContentObjModel.getJSONObject("ModuleSettings");                            
-                            String descEn=jFileContentObjModel.getString("description_en");
-                            String descEs=jFileContentObjModel.getString("description_es");
-                            String picture=jFileContentObjModel.getString("picture");
-                            jFileContentObjModel = new JSONObject(jsonDataModel.toString());       
-                            String[] fieldNames = new String[]{TblsReqs.Modules.MODULE_NAME.getName(), TblsReqs.Modules.MODULE_VERSION.getName(),
-                                TblsReqs.Modules.DESCRIPTION_EN.getName(), TblsReqs.Modules.DESCRIPTION_ES.getName(),
-                                TblsReqs.Modules.INFO_JSON.getName(), TblsReqs.Modules.ACTIVE.getName(), TblsReqs.Modules.MODULE_SETTINGS.getName(),
-                                TblsReqs.Modules.PICTURE.getName()};
-                            Object[] fieldValues = new Object[]{moduleName, moduleVersion, descEn, descEs, jFileContentObjModel, true, moduleSettings, picture};
-                            RdbmsObject insertRecord = Rdbms.insertRecord(TblsReqs.TablesReqs.MODULES, fieldNames, fieldValues, TblsReqs.TablesReqs.MODULES.getRepositoryName());
-                            Boolean errorForInsertRecord = isErrorForInsertRecord(TblsReqs.TablesReqs.MODULES, insertRecord, moduleName);
-                            prcReqsSectionLog.put(TblsReqs.TablesReqs.MODULES.getTableName(), 
-                            infoToReportForInsertRecord(TblsReqs.TablesReqs.MODULES, insertRecord, moduleName, errorForInsertRecord));
-                            JSONObject curModuleInfo = new JSONObject();
-                            curModuleInfo.put("moduleName", moduleName);
-                            curModuleInfo.put("file_content", jFileContentObjModel);
-                            curModuleInfo.put("detail", infoToReportForInsertRecord(TblsReqs.TablesReqs.MODULES, insertRecord, moduleName, errorForInsertRecord));
-                            curModuleInfo.put("create_module_actions_and_queries", createModuleActionsAndQueries(moduleName, moduleVersion, jFileContentObjModel, classesImplementingEndPoints));
-                            org.json.JSONArray busRules=jFileContentObjModel.getJSONArray("business_rules");
-                            org.json.JSONArray manuals=jFileContentObjModel.getJSONArray("manuals");
-                            org.json.JSONArray specialViews=jFileContentObjModel.getJSONArray("special_views");
-                            org.json.JSONArray errorNotif=jFileContentObjModel.getJSONArray("error_notifications");
-                            curModuleInfo.put("create_business_rules",createBusinessRules(moduleName, moduleVersion, busRules, classesImplementingBusinessRules));
-                            curModuleInfo.put("create_special_views",createSpecialViews(moduleName, moduleVersion, specialViews));
-                            curModuleInfo.put("create_error_notifications",createErrorNotifications(moduleName, moduleVersion, errorNotif, classesImplementingErrorMessages));
-                            curModuleInfo.put("manuals",createManuals(moduleName, moduleVersion, manuals));
-                            allModuleFilesInfo.add(curModuleInfo);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }catch(Exception e){
-                    JSONObject curModuleInfo = new JSONObject();
-                    curModuleInfo.put("moduleName", moduleName);
-                    curModuleInfo.put("file_content", jFileContentObjModel);
-                    curModuleInfo.put("error", e.getMessage());
-                    allModuleFilesInfo.add(curModuleInfo);
+                // List files in the directory
+                File[] files = directory.listFiles();
+                if (files == null) {
+                    addToLogSummary("requirement_modules", "no modules in directory to load");
+                    return;
                 }
-            }                            
-        }
+                for (File file : files) {
+                    org.json.JSONObject curSchemaObj=new org.json.JSONObject();
+                    String moduleName="Still not specified";
+                    JSONObject jFileContentObjModel = new JSONObject(); 
+                    try{
+                        if (file.isFile() && file.getName().endsWith(".txt")) {
+                            // Read the content of each text file
+                            StringBuilder jsonDataModel = new StringBuilder();
+
+                            //try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                            try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
+                                String line;
+                                while ((line = reader.readLine()) != null) {
+                                    jsonDataModel.append(line).append("\n");
+                                }
+                                jFileContentObjModel = new JSONObject(jsonDataModel.toString());   
+                                // Wrap the JSON data in a new JSON object under the file name
+                                JSONObject fileJsonObject = new JSONObject();
+                                fileJsonObject.put("information", new JSONObject(jsonDataModel.toString()));
+
+                                // Add the file's JSON object to the main JSON object
+                                jsonObject.put(file.getName(), fileJsonObject);
+                                moduleName=jFileContentObjModel.getString("name");
+                                Integer moduleVersion=jFileContentObjModel.getInt("version");
+                                String releaseDate=jFileContentObjModel.getString("releaseDate");
+                                JSONObject moduleSettings=jFileContentObjModel.getJSONObject("ModuleSettings");                            
+                                String descEn=jFileContentObjModel.getString("description_en");
+                                String descEs=jFileContentObjModel.getString("description_es");
+                                String picture=jFileContentObjModel.getString("picture");
+                                jFileContentObjModel = new JSONObject(jsonDataModel.toString());       
+                                String[] fieldNames = new String[]{TblsReqs.Modules.MODULE_NAME.getName(), TblsReqs.Modules.MODULE_VERSION.getName(),
+                                    TblsReqs.Modules.DESCRIPTION_EN.getName(), TblsReqs.Modules.DESCRIPTION_ES.getName(),
+                                    TblsReqs.Modules.INFO_JSON.getName(), TblsReqs.Modules.ACTIVE.getName(), TblsReqs.Modules.MODULE_SETTINGS.getName(),
+                                    TblsReqs.Modules.PICTURE.getName()};
+                                Object[] fieldValues = new Object[]{moduleName, moduleVersion, descEn, descEs, jFileContentObjModel, true, moduleSettings, picture};
+                                RdbmsObject insertRecord = Rdbms.insertRecord(TblsReqs.TablesReqs.MODULES, fieldNames, fieldValues, TblsReqs.TablesReqs.MODULES.getRepositoryName());
+                                Boolean errorForInsertRecord = isErrorForInsertRecord(TblsReqs.TablesReqs.MODULES, insertRecord, moduleName);
+                                prcReqsSectionLog.put(TblsReqs.TablesReqs.MODULES.getTableName(), 
+                                infoToReportForInsertRecord(TblsReqs.TablesReqs.MODULES, insertRecord, moduleName, errorForInsertRecord));
+                                JSONObject curModuleInfo = new JSONObject();
+                                curModuleInfo.put("moduleName", moduleName);
+                                curModuleInfo.put("file_content", jFileContentObjModel);
+                                curModuleInfo.put("detail", infoToReportForInsertRecord(TblsReqs.TablesReqs.MODULES, insertRecord, moduleName, errorForInsertRecord));
+                                curModuleInfo.put("create_module_actions_and_queries", createModuleActionsAndQueries(moduleName, moduleVersion, jFileContentObjModel, classesImplementingEndPoints));
+                                org.json.JSONArray busRules=jFileContentObjModel.getJSONArray("business_rules");
+                                org.json.JSONArray manuals=jFileContentObjModel.getJSONArray("manuals");
+                                org.json.JSONArray specialViews=jFileContentObjModel.getJSONArray("special_views");
+                                org.json.JSONArray errorNotif=jFileContentObjModel.getJSONArray("error_notifications");
+                                curModuleInfo.put("create_business_rules",createBusinessRules(moduleName, moduleVersion, busRules, classesImplementingBusinessRules));
+                                curModuleInfo.put("create_special_views",createSpecialViews(moduleName, moduleVersion, specialViews));
+                                curModuleInfo.put("create_error_notifications",createErrorNotifications(moduleName, moduleVersion, errorNotif, classesImplementingErrorMessages));
+                                curModuleInfo.put("manuals",createManuals(moduleName, moduleVersion, manuals));
+                                allModuleFilesInfo.add(curModuleInfo);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }catch(Exception e){
+                        JSONObject curModuleInfo = new JSONObject();
+                        curModuleInfo.put("moduleName", moduleName);
+                        curModuleInfo.put("file_content", jFileContentObjModel);
+                        curModuleInfo.put("error", e.getMessage());
+                        allModuleFilesInfo.add(curModuleInfo);
+                    }
+                }                            
+            }
+            directoryUrl = classLoader.getResource(directoryPathModulesSpecialViews);
+            if (directoryUrl != null) {
+                // Get the file path from the URL
+                String directoryFilePath = directoryUrl.getPath();
+
+                // Create a File object representing the directory
+                File directory = new File(directoryFilePath);
+
+                // List files in the directory
+                File[] files = directory.listFiles();
+                if (files == null) {
+                    addToLogSummary("requirement_modules_special_views", "no modules special views in directory to load");
+                    return;
+                }
+                SqlWhere sw = new SqlWhere();
+                sw.addConstraint(TblsReqs.ModuleSpecialViews.MODULE_NAME, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, "");
+                Rdbms.removeRecordInTable(TblsReqs.TablesReqs.MODULE_SPECIAL_VIEWS, sw, "");                
+                for (File file : files) {
+                    org.json.JSONObject curSchemaObj=new org.json.JSONObject();
+                    String moduleName="Still not specified";
+                    JSONObject jFileContentObjModel = new JSONObject(); 
+                    try{
+                        if (file.isFile() && file.getName().endsWith(".json")) {
+                            // Read the content of each text file
+                            StringBuilder jsonDataModel = new StringBuilder();
+
+                            //try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
+                            try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8))) {
+                                String line;
+                                while ((line = reader.readLine()) != null) {
+                                    jsonDataModel.append(line).append("\n");
+                                }
+                                jFileContentObjModel = new JSONObject(jsonDataModel.toString());   
+                                // Wrap the JSON data in a new JSON object under the file name
+                                JSONObject fileJsonObject = new JSONObject();
+                                fileJsonObject.put("information", new JSONObject(jsonDataModel.toString()));
+
+                                // Add the file's JSON object to the main JSON object
+                                jsonObject.put(file.getName(), fileJsonObject);
+                                moduleName=jFileContentObjModel.getString("name");
+                                Integer moduleVersion=jFileContentObjModel.getInt("version");
+                                String releaseDate=jFileContentObjModel.getString("releaseDate");
+                                String viewName=jFileContentObjModel.getString("viewName");
+                                JSONObject requirementsInfo=jFileContentObjModel.getJSONObject("requirementsInfo");                            
+                                JSONObject jsonModel=jFileContentObjModel.getJSONObject("jsonModel");                            
+                                jFileContentObjModel = new JSONObject(jsonDataModel.toString());       
+                                String[] fieldNames = new String[]{TblsReqs.ModuleSpecialViews.MODULE_NAME.getName(), TblsReqs.ModuleSpecialViews.MODULE_VERSION.getName(),                                    
+                                    TblsReqs.ModuleSpecialViews.VIEW_NAME.getName(), TblsReqs.ModuleSpecialViews.JSON_MODEL.getName(), TblsReqs.ModuleSpecialViews.JSON_REQUIREMENTS.getName()};
+                                Object[] fieldValues = new Object[]{moduleName, moduleVersion, viewName, requirementsInfo, jsonModel};
+                                RdbmsObject insertRecord = Rdbms.insertRecord(TblsReqs.TablesReqs.MODULE_SPECIAL_VIEWS, fieldNames, fieldValues, TblsReqs.TablesReqs.MODULE_SPECIAL_VIEWS.getRepositoryName());
+                                Boolean errorForInsertRecord = isErrorForInsertRecord(TblsReqs.TablesReqs.MODULES, insertRecord, moduleName);
+                                prcReqsSectionLog.put(TblsReqs.TablesReqs.MODULE_SPECIAL_VIEWS.getTableName(), 
+                                infoToReportForInsertRecord(TblsReqs.TablesReqs.MODULES, insertRecord, moduleName, errorForInsertRecord));
+                                JSONObject curModuleInfo = new JSONObject();
+                                curModuleInfo.put("moduleName", moduleName);
+                                curModuleInfo.put("file_content", jFileContentObjModel);
+                                allModuleFilesInfo.add(curModuleInfo);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }catch(Exception e){
+                        JSONObject curModuleInfo = new JSONObject();
+                        curModuleInfo.put("moduleName", moduleName);
+                        curModuleInfo.put("file_content", jFileContentObjModel);
+                        curModuleInfo.put("error", e.getMessage());
+                        allModuleFilesInfo.add(curModuleInfo);
+                    }
+                }                            
+            }            
         }
         addToLogSummary("requirement_modules", allModuleFilesInfo);
     }                
@@ -685,9 +779,14 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
     }
     
     public JSONArray createModuleActionsAndQueries(String moduleName, Integer moduleVersion, JSONObject jFileContentObjModel, ClassInfoList classesImplementingEndPoints){
-        JSONObject jMainObj=new JSONObject();
+        SqlWhere sw = new SqlWhere();
+        sw.addConstraint(TblsReqs.ModuleActionsAndQueries.MODULE_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{moduleName}, "");
+        sw.addConstraint(TblsReqs.ModuleActionsAndQueries.MODULE_VERSION, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{moduleVersion}, "");
+        Rdbms.removeRecordInTable(TblsReqs.TablesReqs.MODULE_ACTIONS_N_QUERIES, sw, "");                
         
+        JSONObject jMainObj=new JSONObject();        
         JSONArray allApisArr=new JSONArray();
+        Object[][] demo=this.modulesTrazitEndpoints;
         org.json.JSONArray moduleApis=jFileContentObjModel.getJSONArray("apis");
         for (int i = 0; i < moduleApis.length(); i++) {
             // Get the current element as a JSONObject
@@ -695,8 +794,8 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
             String curApi=get.toString();
             JSONObject curApiObj=new JSONObject();
             curApiObj.put("api_name", curApi);
-            ClassInfo getMine = null; // classesImplementingEndPoints.get(curApi);
-            List<Object> enumConstantObjects = null; // getMine.getEnumConstantObjects();
+            ClassInfo getMine = null; 
+            List<Object> enumConstantObjects = null; 
             ClassInfo selectedEnum=null;
             for (int j = 0; j < classesImplementingEndPoints.size(); j++) {
                 ClassInfo enumObject = classesImplementingEndPoints.get(j);
@@ -728,6 +827,19 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
                     values=LPArray.array1dTo2d(LPArray.addValueToArray1D(LPArray.array2dTo1d(values),values1D), fields.length); 
                 }                
                 for (Object[]  curRow: values){
+                    fields=new String[]{TblsReqs.ModuleActionsAndQueries.MODULE_NAME.getName(), TblsReqs.ModuleActionsAndQueries.MODULE_VERSION.getName(), TblsReqs.ModuleActionsAndQueries.API_NAME.getName(),
+                        TblsReqs.ModuleActionsAndQueries.ENDPOINT_NAME.getName(), TblsReqs.ModuleActionsAndQueries.ENTITY.getName(), TblsReqs.ModuleActionsAndQueries.ACTIVE.getName()};
+                    int[] valuePosicArray2D = valuePosicArray2D(this.modulesTrazitEndpoints, new Object[][]{{this.modulesTrazitEndpointsApiNameFldPosic, curRow[2].toString()},{this.modulesTrazitEndpointsEndpointNameFldPosic, curRow[3].toString()}});  
+                    if (valuePosicArray2D.length>0){
+                        Object jsonModelValue = this.modulesTrazitEndpoints[valuePosicArray2D[0]][this.modulesTrazitEndpointsJsonModelFldPosic];
+                        if (jsonModelValue.toString().length()>0){
+                            JsonObject convertToJsonObjectStringedValue = LPJson.convertToJsonObjectStringedValue(jsonModelValue.toString());
+                            if (Boolean.FALSE.equals(convertToJsonObjectStringedValue.has(GlobalAPIsParams.LBL_ERROR))){
+                                fields=LPArray.addValueToArray1D(fields, TblsReqs.ModuleActionsAndQueries.JSON_MODEL.getName());
+                                curRow=LPArray.addValueToArray1D(curRow, this.modulesTrazitEndpoints[valuePosicArray2D[0]][this.modulesTrazitEndpointsJsonModelFldPosic]);
+                            }
+                        }
+                    }
                     RdbmsObject insertRecord = Rdbms.insertRecord(TblsReqs.TablesReqs.MODULE_ACTIONS_N_QUERIES, fields, curRow, 
                             TblsReqs.TablesReqs.PROC_MODULE_TABLES.getRepositoryName());
                     Boolean errorForInsertRecord = isErrorForInsertRecord(TblsReqs.TablesReqs.MODULE_ACTIONS_N_QUERIES, insertRecord, apiNameArr[1]+"."+curRow[3]);
