@@ -242,7 +242,6 @@ public final class EndPointsToRequirements {
 
     private void getEndPointsFromDatabase() {
         this.fldNames = EnumIntTableFields.getAllFieldNames(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION.getTableFields());
-
         Object[][] reqEndpointInfo = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION.getTableName(),
                 new String[]{EndpointsDeclaration.API_NAME.getName() + SqlStatement.WHERECLAUSE_TYPES.NOT_EQUAL.getSqlClause()},
                 new Object[]{"zzz"}, fldNames);
