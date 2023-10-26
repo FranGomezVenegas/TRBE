@@ -72,7 +72,7 @@ public class ProcedureDefinitionToInstance {
     }
 
     public enum ReqSolutionTypes {
-        WINDOW("Window"), WINDOW_ACTION("Window Action"), BUSINESS_RULE("Business Rule")
+        WINDOW("Window"), WINDOW_ACTION("Window Action"), BUSINESS_RULE("Business Rule"), SPECIAL_VIEW("Special View")
         ;
         private ReqSolutionTypes(String tgVal) {
             this.tagValue = tgVal;
