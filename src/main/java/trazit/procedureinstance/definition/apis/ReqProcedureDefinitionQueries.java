@@ -756,6 +756,11 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                     curRow.put("relevant_info_1", wAction);
                     curRow.put("relevant_info_2", "");
                     break;
+                case SPECIAL_VIEW:
+                    String specialViewName=LPNulls.replaceNull(curRow.get("special_view_name")).toString();
+                    curRow.put("relevant_info_1", specialViewName);
+                    curRow.put("relevant_info_2", "");
+                    break;
                 default:
                     break;
             }
