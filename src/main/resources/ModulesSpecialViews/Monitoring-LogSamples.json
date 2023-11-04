@@ -1,0 +1,110 @@
+{
+    "moduleName": "MONITORING",
+    "moduleVersion": 1,
+    "releaseDate": "2023-09-01",
+    "viewName":"LogSamples",
+    "windowType": "simple",
+	"entity": "sample",
+    "requirementsInfo":{
+            "window_actions":[
+                {"actionName": "LOGSAMPLE"}
+            ]
+    },
+    "jsonModel":{
+    "component": "TableWithButtons",
+    "langConfig": {
+      "title": {
+        "SampleLogin" : {
+          "label_en": "Program Sampling Points", 
+          "label_es": "Puntos de muestro del programa"
+        }
+      },
+      "fieldText": {
+        "logBtn": { "label_en": "Log Sample", "label_es": "Registrar Muestra" },
+        "shift": {
+          "items": [
+            { "keyName": "M1", "keyValue_en": "Morning 1", "keyValue_es": "Mañana 1" },
+            { "keyName": "M2", "keyValue_en": "Morning 2", "keyValue_es": "Mañana 2" },
+            { "keyName": "N", "keyValue_en": "Night", "keyValue_es": "Noche" }
+          ],
+          "label_en": "Shift", "label_es": "Turno"
+        },
+        "lot": {
+          "items": [],
+          "label_en": "Lot", "label_es": "Lote"
+        }
+      },
+      "gridHeader": {
+        "area": {"label_en": "Area", "label_es": "Area", "sort": false, "filter": true, "is_icon": false, "width": "10%"},
+        "location_name": {"label_en": "Location", "label_es": "Ubicación", "sort": false, "filter": true, "width": "20%"},
+        "spec_code": {"label_en": "Spec", "label_es": "Especificación", "sort": false, "filter": true, "width": "20%"},
+        "spec_variation_name": {"label_en": "Variation", "label_es": "Variación", "sort": false, "filter": true, "width": "20%"},
+        "spec_analysis_variation": {"label_en": "Analysis Variation", "label_es": "Análisis de Variación", "sort": false, "filter": true, "width": "20%"},
+        "person_ana_definition": {"label_en": "Person Sampling Areas", "label_es": "Areas a analizar de Personal", "sort": false, "filter": true, "width": "40%"},
+        "requires_tracking_sampling_end": {"label_en": "Sampling Static?", "label_es": "Muestreo Estático?", "sort": false, "filter": true, "width": "40%"}
+      },
+	  "gridActionOnClick":{"actionName": "LOGSAMPLE",
+		"endPoint": "/moduleenvmon/EnvMonSampleAPIactions",
+		"requiresDialog": true,
+		"clientMethod": "logSampleDialog",
+		"dialogQueries":[
+			{	"actionName": "GET_ACTIVE_PRODUCTION_LOTS",				
+				"endPoint": "/moduleenvmon/EnvMonAPIqueries",
+				"variableForData": "prodLotList"		  
+			}
+		],
+
+		"dialogInfo":{
+			"name" : "pointDialog",
+			"action": { "actionName": "LOGSAMPLE",
+				"endPointUrl": "Samples",
+				"requiresDialog": false,
+				"endPoint": "/moduleenvmon/EnvMonSampleAPIactions",
+				"clientMethod": "logSample",
+				"endPointParams": [
+				  { "argumentName": "programName", "selObjectPropertyName": "program_name" },
+				  { "argumentName": "locationName", "selObjectPropertyName": "location_name" },
+				  { "argumentName": "sampleTemplate", "defaultValue": "program_smp_template" },
+				  { "argumentName": "sampleTemplateVersion", "defaultValue": 1 },
+				  { "argumentName": "fieldName", "defaultValue": "shift|production_lot" },
+				  { "argumentName": "fieldValue", "targetValue": true },
+				  { "argumentName": "numSamplesToLog", "defaultValue": 1 }
+				]
+			}
+		}
+	  }
+    },
+    "viewQuery":
+    { "actionName": "PROGRAMS_LIST",
+      "endPoint": "/moduleenvmon/EnvMonAPIqueries",
+      "clientMethod": "getProgramList",
+      "addRefreshButton": false,
+      "button": {
+        "icon": "refresh",
+        "title": {
+          "label_en": "Reload", "label_es": "Recargar"
+        },
+        "requiresGridItemSelected": true
+      },
+      "subAction": {
+        "actionName": "GET_ACTIVE_PRODUCTION_LOTS",
+		"endPoint": "/moduleenvmon/EnvMonAPIqueries",
+        "clientMethod": "getLots"
+      }
+    },
+    "actions": [
+    ],
+    "topCompositions": [
+      {
+        "templateName": "specCode",
+        "buttons": [{
+          "icon": "refresh",
+          "title": {
+            "label_en": "Reload", "label_es": "Recargar"
+          },
+          "calledActionIdx": 0
+        }]
+      }
+    ]
+  } 
+}

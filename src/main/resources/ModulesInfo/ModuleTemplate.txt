@@ -1,0 +1,34 @@
+{
+    "name": "",
+    "version": 1,
+    "releaseDate": "2023-09-01",
+    "description_en": "",
+    "description_es": "",
+    "tables_and_views":[
+    ],
+    "zModuleSettings":{
+            "actionsEndpoints":[
+                  { "name": "Instruments" , "url" : "/app/procs/InstrumentsAPIactions"}
+            ],
+            "queriesEndpoints":[
+                  { "name": "Instruments" , "url" : "/app/procs/InstrumentsAPIqueries"}
+            ]
+    },
+    "zpicture": "/images/procedures_pictures/instruments.jpg",
+    "zapis":[ "InstrumentsAPIactionsEndpoints", "InstrumentsAPIqueriesEndpoints", "InvestigationAPIactionsEndpoints", "InvestigationAPIqueriesEndpoints"],
+    "business_rules":[
+        {"type": "one_business_rule", "api_name": "DataProgramCorrectiveActionBusinessRules", "name": "correctiveActionMode", "mandatory": true},
+        {"type": "one_business_rule", "api_name": "DataProgramCorrectiveActionBusinessRules", "name": "correctiveActionNotifModeStillInProgress", "mandatory": false},
+        {"type": "one_business_rule", "api_name": "UserSopBusinessRules", "name": "userSopMode", "mandatory": true},
+        {"type": "one_business_rule", "api_name": "UserSopBusinessRules", "name": "windowOpenableWhenNotSopCertifiedUserSopCertification", "mandatory": true}
+
+    ],
+    "zerror_notifications":[
+        {"api_name":"InventoryTrackingErrorTrapping"}, {"api_name":"InvestigationErrorTrapping"}, {"api_name":"InvTrackingEventsErrorTrapping"}, 
+        {"api_name":"UomErrorTrapping"}, {"api_name":"UserSopErrorTrapping"}
+    ], 
+    "manuals":[
+        {"manual_name":"Auditoría", "manual_version": 1, "description":"La auditorí­a en Trazit", "file_link":"https://onedrive.live.com/embed?cid=FC113EC81E46401D&resid=FC113EC81E46401D%2125255&authkey=AL-4PNfH61-f-Pw&em=2", "is_video":false, "active":true, "area": "Usuario"},
+
+    ]    	
+}
