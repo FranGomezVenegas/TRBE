@@ -293,13 +293,13 @@ public class Parameter {
             return "";
         }
     }
-    public RdbmsObject addProcBusinessRule(String area, String ruleName, String ruleValue){
+    public RdbmsObject addProcBusinessRule(String area, String ruleName, String ruleValue, String instanceName){
         Rdbms.removeRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, 
-            new SqlWhere(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, new String[]{TblsProcedure.ProcedureBusinessRules.AREA.getName(), TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()}, new Object[]{area, ruleName}), null);        
+            new SqlWhere(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, new String[]{TblsProcedure.ProcedureBusinessRules.AREA.getName(), TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName()}, new Object[]{area, ruleName}), instanceName);        
         
-        return Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, 
+        return Rdbms.insertRecord(TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE, 
             new String[]{TblsProcedure.ProcedureBusinessRules.AREA.getName(), TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()},
-            new Object[]{area, ruleName, ruleValue});
+            new Object[]{area, ruleName, ruleValue}, instanceName);
     }
     public String addTagInPropertiesFile(String type, String fileName, String entryName, String entryValue){
         StringBuilder newEntryBuilder = new StringBuilder(0);
