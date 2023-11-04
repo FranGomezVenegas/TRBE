@@ -397,9 +397,10 @@ public class ReqProcedureEnums {
                 new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROC_INSTANCENAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
-                    new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.SOLUTION_ID.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
-                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 12),
-                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 13)
+                    new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.REQUIREMENT_ID.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
+                    new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.SOLUTION_ID.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 10),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 11),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 12)
                 }, EndPointsToRequirements.endpointWithNoOutputObjects,                null, null),
 
         GET_UOM("GET_UOM", "addRoleToUser_success",
