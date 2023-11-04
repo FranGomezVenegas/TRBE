@@ -988,13 +988,16 @@ public class LPArray {
      */    
     public static int[] valuePosicArray2D(Object[][] data, Object[][] criteria) {
         List<Integer> matchingRows = new ArrayList<>();
-
+        if (data==null||data.length==0||data[0].length==0){return new int[]{};}
+        Integer dataNumCols=data[0].length;
         for (int i = 0; i < data.length; i++) {
             boolean allMatched = true;
             for (int j = 0; j < criteria.length; j++) {
                 int column = (int) criteria[j][0];
                 Object value = criteria[j][1];
-
+                
+                if (column>dataNumCols){return new int[]{};}
+                
                 Object dataValue = data[i][column];
                 if (!dataValue.equals(value)) {
                     allMatched = false;

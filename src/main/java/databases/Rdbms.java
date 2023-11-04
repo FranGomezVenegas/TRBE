@@ -48,6 +48,8 @@ import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntTables;
+import trazit.enums.EnumIntViewFields;
+import trazit.enums.EnumIntViews;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.globalvariables.GlobalVariables.VALIDATION_MODE_REPO;
@@ -987,11 +989,6 @@ public class Rdbms {
         Map<String, Object[]> hmQuery = sql.buildSqlStatementTable(SQLSELECT, tblObj,
                 sWhere, fieldsToRetrieve, null, null, orderBy, null, inforceDistinct,alternativeProcedure);
         
-//public Map<String, Object[]> buildSqlStatementTable(String operation, EnumIntTables tblObj, SqlWhere whereObj,
-//            EnumIntTableFields[] fieldsToRetrieve, EnumIntTableFields[] setFieldNames, Object[] setFieldValues, String[] fieldsToOrder, String[] fieldsToGroup, Boolean forceDistinct, String alternativeProcInstanceName) {
-//        Map<String, Object[]> hmQuery = sql.buildSqlStatementCounter(schemaName, tableName,
-//                sWhere, //whereFieldNames, whereFieldValues                
-//                fieldsToGroup, orderBy, caseSensitive);        
         String query = hmQuery.keySet().iterator().next();
         Object[] keyFieldValueNew = hmQuery.get(query);
 
@@ -1030,6 +1027,53 @@ public class Rdbms {
         }
     }
 
+    public static Object[][] getRecordFieldsByFilterForViews(String alternativeProcedure, String schemaName, EnumIntViews vwObj, SqlWhere sWhere, EnumIntViewFields[] fieldsToRetrieve, String[] orderBy, Boolean inforceDistinct) {
+        schemaName = addSuffixIfItIsForTesting(alternativeProcedure, schemaName, vwObj.getViewName());
+        if (sWhere.getAllWhereEntries().isEmpty()) {
+            Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{vwObj.getViewName(), vwObj.getRepositoryName()});
+            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
+        }
+        SqlStatementEnums sql = new SqlStatementEnums();
+        Map<String, Object[]> hmQuery = sql.buildSqlStatementView(vwObj,
+                sWhere, fieldsToRetrieve, orderBy, null, inforceDistinct,alternativeProcedure);
+        
+        String query = hmQuery.keySet().iterator().next();
+        Object[] keyFieldValueNew = hmQuery.get(query);
+
+        try {
+            ResultSet res = Rdbms.prepRdQuery(query, keyFieldValueNew);
+            if (res == null) {
+                Object[] errorLog = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL, query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES + Arrays.toString(sWhere.getAllWhereEntriesFldValues())});
+                return LPArray.array1dTo2d(errorLog, errorLog.length);
+            }
+            res.last();
+
+            if (res.getRow() > 0) {
+                Integer totalLines = res.getRow();
+                res.first();
+                Integer icurrLine = 0;
+
+                Object[][] diagnoses2 = new Object[totalLines][fieldsToRetrieve.length];
+                while (icurrLine <= totalLines - 1) {
+                    for (Integer icurrCol = 0; icurrCol < fieldsToRetrieve.length; icurrCol++) {
+                        Object currValue = res.getObject(icurrCol + 1);
+                        diagnoses2[icurrLine][icurrCol] = LPNulls.replaceNull(currValue);
+                    }
+                    res.next();
+                    icurrLine++;
+                }
+                //diagnoses2 = DbEncryption.decryptTableFieldArray(schemaName, tableName, fieldsToRetrieve, diagnoses2);
+                return diagnoses2;
+            } else {
+                Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{query, Arrays.toString(sWhere.getAllWhereEntriesFldValues()), schemaName});
+                return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
+            }
+        } catch (SQLException er) {
+            Logger.getLogger(query).log(Level.SEVERE, null, er);
+            Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{er.getLocalizedMessage() + er.getCause(), query});
+            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
+        }
+    }
     public static Object[][] getGrouper(String procInstanceName, String schemaName, String tableName, String[] fieldsToGroup, String[] whereFieldNames, Object[] whereFieldValues, String[] orderBy) {
         schemaName = addSuffixIfItIsForTesting(procInstanceName, schemaName, tableName);
         if (whereFieldNames.length == 0) {
@@ -1341,7 +1385,7 @@ public class Rdbms {
            if (extraFldsforFrom.endsWith(", ")) {
                extraFldsforFrom = extraFldsforFrom.substring(0, extraFldsforFrom.length() - 2);
 }
-           queryInFrom=queryInFrom.replace("from", extraFldsforFrom+" from ");
+           queryInFrom=queryInFrom.replace("from", ", "+extraFldsforFrom+" from ");
         }
         query=query+ ")" + "( " + queryInFrom + " ) ";
         //fieldValues = LPArray.encryptTableFieldArray(schemaNameFrom, tableNameFrom, fieldNamesFrom, fieldValues);
