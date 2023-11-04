@@ -1,0 +1,471 @@
+{
+    "moduleName": "MONITORING",
+    "moduleVersion": 1,
+    "releaseDate": "2023-09-01",
+    "viewName":"SampleIncubation",
+    "windowType": "simple",
+	"entity": "sample",
+    "requirementsInfo":{
+            "window_actions":[
+                {"actionName": "EM_BATCH_INCUB_CREATE"},
+				{"actionName": "EM_BATCH_INCUB_REMOVE"},
+				{"actionName": "EM_BATCH_ASSIGN_INCUB"},
+				{"actionName": "EM_BATCH_INCUB_START"},
+				{"actionName": "EM_BATCH_INCUB_END"},
+				{"actionName": "SAMPLESTAGE_MOVETONEXT"},
+				{"actionName": "SAMPLESTAGE_MOVETOPREVIOUS"},
+				{"actionName": "GET_SAMPLE_AUDIT"},
+				{"actionName": "EM_BATCH_INCUB_ADD_SMP"},
+				{"actionName": "EM_BATCH_INCUB_REMOVE_SMP"}
+            ]
+    },
+    "jsonModel":{
+	"component":"ModuleEnvMonitSampleIncubation", 	  
+    "abstract": true,
+	"langConfig": {
+		"title": {		
+		"label_en": "Samples Incubation", 
+		"label_es": "Incubación de Muestras"
+		}
+	},
+    "viewQuery":{ "actionName": "GET_PENDING_INCUBATION_SAMPLES_AND_ACTIVE_BATCHES",
+	  "endPoint": "/moduleenvmon/EnvMonSampleAPIqueries",
+      "endPointParams": [
+        { "argumentName": "incub1_whereFieldsName", "value": "current_stage|incubation_passed" },
+        { "argumentName": "incub1_whereFieldsValue", "value": "Incubation|false" },
+        { "argumentName": "incub1_sortFieldsName", "value": "sample_id desc" },
+        { "argumentName": "incub2_whereFieldsName", "value": "current_stage|incubation_passed" },
+        { "argumentName": "incub2_whereFieldsValue", "value": "Incubation|true" },
+        { "argumentName": "incub2_sortFieldsName", "value": "sample_id desc" },
+        { "argumentName": "includeAllWithAnyPendingIncubation", "value": true },
+        { "argumentName": "samplesWithAnyPendingIncubation", "value": true}
+      ]
+    },
+	"actions": [],
+    "stuckSamplesDialog":{
+		"gridHeader": {
+			"current_stage": { "label_en": "Current Stage", "label_es": "Etapa Actual" },
+            "incubation_passed": { "label_en": "Passed", "label_es": "Aprobado" },
+            "sample_id": { "label_en": "Sample Id", "label_es": "Muestra Id" }
+		},
+		"fields": {
+		"topLabel": { "label_en": "Samples Incubation Stage", "label_es": "Etapa de incubación de muestras" },
+		"next": { "label_en": "Next", "label_es": "Próxima" }
+		}		
+	},
+	"active_batches":
+      { "elementName": "envmonit-batch-sampleincubation",
+        "filter": "active_batches",
+        "langConfig": {
+			"title":{
+				"Incubation": {
+					"label_en": "Batches", 
+					"label_es": "Tandas"
+				}
+          },
+          "fieldText": {
+            "newBatch" : { "label_en": "New Batch Name", "label_es": "Nombre para la nueva tanda" }
+          },
+          "gridHeader": {
+            "batchState": {
+              "label_en": "", "label_es": "", "is_icon": true, "width": "10%"
+            },
+            "incubState": {
+              "label_en": "incubState", "label_es": "EstadoIncub", "is_icon": true, "width": "10%"
+            },
+            "name": {
+              "label_en": "Name", "label_es": "Nombre", "sort": true, "filter": false, "width": "15%"
+            },
+			"incubation_incubator": {
+				"label_en": "Incubator", "label_es": "Incubadora", "sort": true, "filter": false, "width": "15%"
+			},
+            "incubator_info_temperature": {
+              "label_en": "Temperature", "label_es": "Temperatura", "sort": false, "filter": false, "width": "10%"
+            },
+            "incubator_info_created_on": {
+              "label_en": "T.Date", "label_es": "Fecha T.", "sort": false, "filter": false, "width": "20%"
+            },
+            "NUM_SAMPLES": {
+              "label_en": "Num Samples", "label_es": "Nº Muestras", "sort": false, "filter": false, "width": "10%"
+            },
+            "incubation_start": {
+              "label_en": "Start Date", "label_es": "Fecha Inicio", "sort": false, "filter": false, "width": "10%"
+            }
+          },
+          "assignHeader": {
+            "stage": { "label_en": "Incub", "label_es": "Incub" },
+            "name": { "label_en": "Name", "label_es": "Nombre" },
+            "description": { "label_en": "description", "label_es": "descripción" }
+          }
+        },
+		"alternativeItemPropertyName": "selectedBatches",
+		"viewQuery":{ "addRefreshButton": true,
+		  "button": {
+			"icon": "refresh",
+			"title": {
+			  "label_en": "Reload", "label_es": "Recargar"
+			},
+			"requiresGridItemSelected": true
+		  }
+		},        
+		"actions": [
+          { "actionName": "EM_BATCH_INCUB_CREATE",
+			"requiresDialog": true,
+			"endPointUrl": "Programs",
+            "xxxclientMethod": "setIncubator",
+            "button": {
+              "title": {
+                "label_en": "New Batch", "label_es": "Nuevo Lote"
+              },
+              "requiresGridItemSelected": false
+            },
+            "dialogInfo": {               
+				"name": "genericDialog",
+				"fields": [
+					{"text1": { "label_en": "New Batch Name", "label_es": "Nombre para nueva Tanda" }}
+				]	
+            },
+            "endPointParams": [
+              { "argumentName": "batchName", "element": "text1", "defaultValue": "" },
+              { "argumentName": "batchTemplateId", "defaultValue": 1 },
+              { "argumentName": "batchTemplateVersion", "defaultValue": 1 }
+            ]
+          },
+          { "actionName": "EM_BATCH_INCUB_REMOVE",
+			"requiresDialog": false,
+			"endPointUrl": "Programs",
+            "button": {
+              "title": {
+                "label_en": "Delete Batch", "label_es": "Eliminar Lote"
+              },
+              "requiresGridItemSelected": true,
+			  "axxxlternativeItemPropertyName": "selectedBatches"
+            },
+            "endPointParams": [
+              { "argumentName": "batchName", "internalVariableObjName": "selectedBatches", "internalVariableObjProperty": "name" }
+            ]
+          },
+          { "actionName": "EM_BATCH_ASSIGN_INCUB",
+			"requiresDialog": true,
+			"endPointUrl": "Programs",
+            "clientMethod": "getAssign",
+            "button": {
+				"title": {
+					"label_en": "Assign Incubator", "label_es": "Asignar Incubadora"
+				},
+				"requiresGridItemSelected": true,
+				"alternativeItemPropertyName": "selectedBatches",
+              "disabledBEState": "incubation_start"
+            },
+			"dialogQueries":[
+				{	"actionName": "GET_INCUBATORS_LIST",				
+					"endPoint": "/moduleenvmon/EnvMonIncubatorAPIqueries",
+					"variableForData": "incubatorsList"		  
+				}
+			],
+			
+            "dialogInfo": { 
+				"name": "assignDialog",
+				"automatic": true,
+              "action": { "actionName": "EM_BATCH_ASSIGN_INCUB",
+                  "xxclientMethod": "setIncubator",
+				  "endPointUrl": "Batches",
+                  "endPointParams": [
+                    { "argumentName": "batchName", "internalVariableObjName": "selectedBatches", "internalVariableObjProperty": "name" },
+                    { "argumentName": "incubatorName", "targetValue": true },
+                    { "argumentName": "incubStage", "targetValue": true }
+                  ]
+                }
+              
+            }
+          },
+          { "actionName": "EM_BATCH_INCUB_START",
+			"endPointUrl": "Programs",
+			"requiresDialog": false,
+            "button": {
+              "title": {
+                "label_en": "Start Incubator", "label_es": "Iniciar Incubadora"
+              },
+			  "requiresGridItemSelected": true,
+			  "alternativeItemPropertyName": "selectedBatches",
+              "disabledBEState": "incubation_start"
+            },
+            "endPointParams": [
+              { "argumentName": "batchName", "internalVariableObjName": "selectedBatches", "internalVariableObjProperty": "name" },
+              { "argumentName": "batchTemplateId", "defaultValue": 1 },
+              { "argumentName": "batchTemplateVersion", "defaultValue": 1 }
+            ]
+          },
+          { "actionName": "EM_BATCH_INCUB_END",
+			"endPointUrl": "Programs",
+		    "requiresDialog": false,
+            "xxxclientMethod": "setIncubator",
+            "button": {
+              "title": {
+                "label_en": "End Incubator", "label_es": "Termina incubadora"
+              },
+			  "requiresGridItemSelected": true,
+			  "alternativeItemPropertyName": "selectedBatches"
+
+            },
+            "endPointParams": [
+              { "argumentName": "batchName", "internalVariableObjName": "selectedBatches", "internalVariableObjProperty": "name" },
+              { "argumentName": "batchTemplateId", "defaultValue": 1 },
+              { "argumentName": "batchTemplateVersion", "defaultValue": 1 }
+            ]
+          }
+        ]
+      },
+    "samples_pending_incubation":  
+	  { "elementName": "envmonit-batch-sampleincubation",
+        "filter": "samplesWithAnyPendingIncubation",
+		"langConfig": {
+			"title":{
+				"Incubation": {
+					"label_en": "All Samples Pending Incubation", 
+					"label_es": "Todas las muestras pendientes de incubación"
+				}
+          },
+			"gridHeader": {
+            "sampleType": {
+              "label_en": "", "label_es": "", "is_icon": true, "width": "3%"
+            },
+            "incubState": {
+              "label_en": "", "label_es": "", "is_icon": true, "width": "3%"
+            },
+            "samplesState": {
+              "label_en": "", "label_es": "", "is_icon": true, "width": "3%"
+            },
+            "sample_id": {
+              "label_en": "Sample ID", "label_es": "ID Muestra", "sort": false, "filter": true, "width": "9%"
+            },
+            "incubation_batch": {
+              "label_en": "Batch 1", "label_es": "Tanda", "sort": false, "filter": true, "width": "9%"
+            },
+            "incubation2_batch": {
+              "label_en": "Batch 2", "label_es": "Tanda", "sort": false, "filter": true, "width": "9%"
+            },
+            "incubation_start": {
+              "label_en": "incubation 1 start", "label_es": "Inicio 1a Incubacion", "sort": false, "filter": true, "width": "15%"
+            },
+            "incubation_end": {
+              "label_en": "incubation 1 end", "label_es": "Fin 1a Incubacion", "sort": false, "filter": true, "width": "15%"
+            },
+            "incubation2_start": {
+              "label_en": "Incubation 2 Start", "label_es": "Inicio 2a Incubacion", "sort": false, "filter": true, "width": "15%"
+            },
+            "sampling_date": {
+              "label_en": "Sampling Date", "label_es": "ID Fecha de Muestreo", "sort": false, "filter": true, "width": "9%"
+            },
+            "sampling_comment": {
+              "label_en": "Sampling Commment", "label_es": "Comentario Muestreo", "sort": false, "filter": true, "width": "9%"
+            }
+          }
+        },
+		"alternativeItemPropertyName": "selectedSamples",
+		"viewQuery":{ "addRefreshButton": true,
+		  "button": {
+			"icon": "refresh",
+			"title": {
+			  "label_en": "Reload", "label_es": "Recargar"
+			},
+			"requiresGridItemSelected": true
+		  }
+		},        
+        "actions": [
+          { "actionName": "SAMPLESTAGE_MOVETONEXT",
+			"endPointUrl": "Samples",
+			"requiresDialog": false,	
+            "button": {
+              "icon": "skip_next",
+              "color": "red",
+              "title": {
+                "label_en": "Sample Stuck", "label_es": "Muestra Atascada", "extra": "stuckNum"
+              },
+              "requiresGridItemSelected": true,
+			  "alternativeItemPropertyName": "selectedSamples",
+              "whenHidden": "stucksList"
+            },
+            "dialogInfo": { 
+              "requiresDialog": true,
+              "name": "sampleStuckDialog"
+            },
+            "endPointParams": [
+			{ "argumentName": "sampleId", "internalVariableObjName": "selectedSamples", "internalVariableObjProperty": "sample_id" }
+            ]            
+          },
+          { "actionName": "SAMPLESTAGE_MOVETOPREVIOUS",
+			"requiresDialog": false,
+			"endPointUrl": "Samples",
+            "button": {
+              "class": "reverse",
+              "icon": "skip_previous",
+              "title": {
+                "label_en": "Previous", "label_es": "Previo"
+              },
+			  "requiresGridItemSelected": true,
+			  "xxxalternativeItemPropertyName": "selectedSamples"
+            },
+            "endPointParams": [
+              { "argumentName": "sampleId", "internalVariableObjName": "selectedSamples", "internalVariableObjProperty": "sample_id" }
+            ]    
+          },
+		  { "actionName": "GET_SAMPLE_AUDIT",	  
+			"buttonForQuery" : true,
+			"requiresDialog": true,
+			"endPoint": "/modulesample/SampleAPIqueries",
+			"button": {
+			  "icon": "rule",
+			  "title": {
+				"label_en": "Sample Audit", "label_es": "Auditoría de Muestra"
+			  },
+			  "requiresGridItemSelected": true		
+			},
+			"clientMethod": "getObjectAuditInfo",
+			"endPointParams": [
+			  { "argumentName": "sampleId", "internalVariableObjName": "selectedSamples", "internalVariableObjProperty": "sample_id" }
+			],        
+			"dialogInfo": { 
+			  "name": "auditDialog",
+			  "automatic": true,
+			  "action": [
+				{
+				  "actionName": "SAMPLEAUDIT_SET_AUDIT_ID_REVIEWED",
+				  "requiresDialog": false,
+				  "notGetViewData": true,
+				  "endPointUrl": "Samples",
+				  "clientMethod": "signAudit",
+				  "endPointParams": [
+					{ "argumentName": "auditId", "targetValue": true }
+				  ]
+				}
+			  ]
+			}
+		  },
+          { "actionName": "EM_BATCH_INCUB_ADD_SMP",
+			"endPointUrl": "Samples",
+			"requiresDialog": false,
+            "clientMethod": "addRemoveBatch",
+            "alternativeItemPropertyName": "selectedSamples",
+            "button": {
+              "title": {
+                "label_en": "Add to Batch", "label_es": "Añadir a Tanda"
+              },
+              "requiresGridItemSelected": true,
+			  "xalternativeItemPropertyName": "selectedSamples"
+            },
+            "endPointParams": [
+              { "argumentName": "sampleId", "selObjectPropertyName": "sample_id" },
+              { "argumentName": "batchTemplateId", "defaultValue": 1 },
+              { "argumentName": "batchTemplateVersion", "defaultValue": 1 },
+			  { "argumentName": "batchName", "internalVariableObjName": "selectedBatches", "internalVariableObjProperty": "name" }			  
+            ]
+          },
+          { "actionName": "EM_BATCH_INCUB_REMOVE_SMP",
+			"endPointUrl": "Samples",
+			"requiresDialog": false,
+            "clientMethod": "addRemoveBatch",
+            "alternativeItemPropertyName": "selectedSamples",
+            "button": {
+              "title": {
+                "label_en": "Remove from Batch", "label_es": "Quitar de Tanda"
+              },
+              "requiresGridItemSelected": true			  
+            },
+            "endPointParams": [
+              { "argumentName": "sampleId", "selObjectPropertyName": "sample_id" },
+			  { "argumentName": "batchName", "internalVariableObjName": "selectedBatches", "internalVariableObjProperty": "name" }			  
+            ]            
+          },
+          { "clientMethod": "filterSamples",
+			"requiresDialog": false,
+            "filterState": "not_in_batch",
+            "button": {
+              "icon": "radio_button_checked",
+			  "style":"color: Orange;",
+              "color": "Orange",
+              "title": {
+                "label_en": "Incubation1, Not in Batch", "label_es": "Incubación1, Pendiente Asignar Tanda"
+              },
+              "requiresGridItemSelected": true
+            }
+          },
+          { "clientMethod": "filterSamples",
+			"requiresDialog": false,
+            "filterState": "in_batch_1",
+            "button": {
+              "icon": "radio_button_checked",
+			  "style":"color: Tomato;",
+              "color": "Tomato",
+              "title": {
+                "label_en": "Incubation1, In Batch", "label_es": "Incubación1, En Tanda"
+              },
+              "requiresGridItemSelected": true
+            }
+          },
+          { "clientMethod": "filterSamples",
+			"requiresDialog": false,
+            "filterState": "progress_1",
+            "button": {
+              "img": "incubators/IncubInProgress.gif",
+              "title": {
+                "label_en": "Incubation1 In-Progress", "label_es": "Incubación1 en curso"
+              },
+              "requiresGridItemSelected": true
+            }
+          },
+          { "clientMethod": "filterSamples",
+			"requiresDialog": false,
+            "filterState": "done",
+            "button": {
+              "icon": "radio_button_checked",
+			  "style":"color: MediumSeaGreen;",
+              "color": "MediumSeaGreen",
+              "title": {
+                "label_en": "Incubation2, Not in Batch", "label_es": "Incubación2, Pendiente Asignar Tanda"
+              },
+              "requiresGridItemSelected": true
+            }
+          },
+          { "clientMethod": "filterSamples",
+			"requiresDialog": false,
+            "filterState": "in_batch_2",
+            "button": {
+              "icon": "radio_button_checked",
+			  "style":"color: SlateBlue;",
+              "color": "SlateBlue",
+              "title": {
+                "label_en": "Incubation2, In Batch", "label_es": "Incubación2, En Tanda"
+              },
+              "requiresGridItemSelected": true
+            }
+          },
+          { "clientMethod": "filterSamples",
+			"requiresDialog": false,
+            "filterState": "progress_2",
+            "button": {
+              "img": "incubators/IncubInProgress.gif",
+              "title": {
+                "label_en": "Incubation2 In-Progress", "label_es": "Incubación2 en curso"
+              },
+              "requiresGridItemSelected": true
+            }
+          },
+          { "clientMethod": "filterSamples",
+			"requiresDialog": false,
+            "filterState": "all",
+            "button": {
+              "icon": "restart_alt",
+			  "style":"color: black;",
+              "color": "black",
+              "title": {
+                "label_en": "Reset", "label_es": "Reiniciar"
+              },
+              "requiresGridItemSelected": true
+            }
+          }
+        ]
+      }
+  }
+
+}

@@ -1,18 +1,18 @@
 {
-    "moduleName": "STOCKS",
+    "moduleName": "MONITORING",
     "moduleVersion": 1,
     "releaseDate": "2023-09-01",
-    "viewName":"Deviations",
-	"entity": "investigation",
+    "viewName":"Deviation",
     "windowType": "simple",
+	"entity": "investigation",
     "requirementsInfo":{
             "window_actions":[
-                {"actionName": "NEW_INVESTIGATION"},
-				{"actionName": "OPEN_INVESTIGATIONS"},
+				{"actionName": "NEW_INVESTIGATION"},
+				{"actionName": "ADD_INVEST_OBJECTS"},
 				{"actionName": "INVESTIGATION_CAPA_DECISION"},
-				{"actionName": "CLOSE_INVESTIGATION"}
+                {"actionName": "CLOSE_INVESTIGATION"}   
             ]
-    },    
+    },
     "jsonModel":{
 	"component":"Tabs",  
     "abstract": true,
@@ -31,25 +31,33 @@
             }
           },
           "gridHeader": {
-            "qualif_id": {
-              "label_en": "qualif Id", "label_es": "Id qualif", "sort": false, "filter": true, "width": "10%"
+            "result_id": {
+              "label_en": "Result", "label_es": "Resultado", "sort": false, "filter": true, "width": "10%"
             },
-            "lot_name": {
-              "label_en": "Lot Name", "label_es": "Nombre del lote", "sort": false, "filter": true, "width": "10%"
+            "sample_id": {
+              "label_en": "Sample", "label_es": "Muestra", "sort": false, "filter": true, "width": "10%"
             },
-            "reference": {
-              "label_en": "Reference", "label_es": "Referencia", "sort": true, "filter": false, "width": "15%"
+            "created_on": {
+              "label_en": "Creation", "label_es": "Creada", "sort": true, "filter": false, "width": "15%"
             },
-            "category": {
-              "label_en": "Category", "label_es": "Categoria", "sort": false, "filter": true, "width": "15%"
+            "location_name": {
+              "label_en": "Location", "label_es": "Ubicación", "sort": false, "filter": true, "width": "15%"
             },
-            "object_type": {
-              "label_en": "Object Type", "label_es": "Tipo de objeto", "sort": false, "filter": true, "width": "10%"
+            "method_name": {
+              "label_en": "Method", "label_es": "Método", "sort": false, "filter": true, "width": "10%"
+            },
+            "spec_eval_detail": {
+              "label_en": "Problem Detail", "label_es": "Detalle del Problema", "sort": false, "filter": true, "width": "30%"
+            },
+            "spec_rule_with_detail": {
+              "label_en": "Spec Rule", "label_es": "Especificación", "sort": false, "filter": true, "width": "10%"
             }
           }
         },
         "viewQuery":{
-            "actionName": "INVESTIGATION_QUALIFICATIONS_PENDING_DECISION",
+            "actionName": "INVESTIGATION_RESULTS_PENDING_DECISION",
+            "ssclientMethod": "getSamples",
+            "endPoint": "/app/InvestigationAPIqueries",
             "button": {
               "icon": "refresh",
               "title": {
@@ -60,6 +68,8 @@
 		},
 		"actions": [
           {"actionName": "NEW_INVESTIGATION", 
+            "alternativeAPIActionMethod": "newInvestigationAction",
+            "endPoint": "/app/InvestigationAPIactions",
 			"requiresDialog": false,
             "button": {
               "title": {
@@ -68,11 +78,13 @@
               "requiresGridItemSelected": true
             },
             "endPointParams": [
-				{ "argumentName": "objectToAddObjectName", "selObjectPropertyName": "qualif_id" },
-				{ "argumentName": "objectToAddObjectType", "selObjectPropertyName": "object_type"}						
+				{ "argumentName": "fieldName", "value": "description" },
+				{ "argumentName": "fieldValue", "targetValue": true },
+				{ "argumentName": "objectsToAdd", "targetValue": true }			
             ]
           },
-          {"actionName": "OPEN_INVESTIGATIONS",     
+          {"actionName": "OPEN_INVESTIGATIONS",          
+            "endPoint": "/app/InvestigationAPIqueries",
 			"requiresDialog": true,
             "button": {
               "title": {
@@ -88,6 +100,7 @@
                 {
                   "actionName": "ADD_INVEST_OBJECTS",
                   "clientMethod": "addInvestObjects",
+                  "endPoint": "/app/InvestigationAPIactions",
                   "endPointParams": [
                     { "argumentName": "investigationId", "targetValue": true },
                     { "argumentName": "objectsToAdd", "targetValue": true }
@@ -147,6 +160,8 @@
         },
         "viewQuery":{
             "actionName": "OPEN_INVESTIGATIONS",
+            "sssclientMethod": "getSamples",
+            "endPoint": "/app/InvestigationAPIqueries",
             "button": {
               "icon": "refresh",
               "title": {
@@ -157,6 +172,7 @@
 		},
 		"actions": [
           {"actionName": "INVESTIGATION_CAPA_DECISION",			
+            "endPoint": "/app/InvestigationAPIactions",
 			"requiresDialog": true,
             "button": {
               "title": {
@@ -177,6 +193,7 @@
           },
           {"actionName": "CLOSE_INVESTIGATION",
             "clientMethod": "closeInvestigation",
+            "endPoint": "/app/InvestigationAPIactions",
 			"requiresDialog": false,
             "button": {
               "title": {

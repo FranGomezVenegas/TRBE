@@ -1,12 +1,15 @@
 {
-    "name": "STOCKS",
-    "version": 1,
+    "moduleName": "STOCKS",
+    "moduleVersion": 1,
     "releaseDate": "2023-09-01",
-	"viewName":"InventoryControls",
+    "viewName":"InventoryControls",
+	"entity": "many tabs",
+    "windowType": "simple",
     "requirementsInfo":{
-            "window_action":{
-                "action": "CONFIG_ADD_REFERENCE"
-            }
+            "window_actions":[
+                {"actionName": "EXPIRED_LOTS"},
+				{"actionName": "REFERENCES_UNDER_MIN_STOCK"}
+            ]
     },
     "jsonModel":{
 	"component": "DataMining",

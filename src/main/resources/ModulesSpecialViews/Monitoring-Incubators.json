@@ -1,0 +1,186 @@
+{
+    "moduleName": "MONITORING",
+    "moduleVersion": 1,
+    "releaseDate": "2023-09-01",
+    "viewName":"Incubators",
+    "windowType": "simple",
+	"entity": "sample",
+	"entity2": "incub_batch",
+    "requirementsInfo":{
+            "window_actions":[
+                {"actionName": "EM_INCUBATOR_NEW"},
+				{"actionName": "EM_INCUBATOR_ACTIVATE"},
+				{"actionName": "EM_INCUBATOR_DEACTIVATE"},
+				{"actionName": "EM_INCUBATOR_ADD_TEMP_READING"}
+            ]
+    },
+    "jsonModel":{
+	"component": "TableWithButtons",
+    "langConfig": {
+      "title": {
+        "Incubators": {
+          "label_en": "Incubators List",
+          "label_es": "Lista de incubadoras"
+        }
+      },
+      "gridHeader": {
+        "name": {
+          "label_en": "Name", "label_es": "Nombre", "width": "30%", "sort": false, "filter": true, "align": "left"
+        },
+        "description": {
+          "label_en": "Description", "label_es": "Descripción", "width": "40%", "sort": true, "filter": false
+        },
+        "stage": {
+          "label_en": "Incubation", "label_es": "Incubación", "width": "10%", "sort": true, "filter": false
+        },
+        "min": {
+          "label_en": "Min T.", "label_es": "T. Mín", "width": "10%", "sort": true, "filter": false
+        },
+        "max": {
+          "label_en": "Max T.", "label_es": "T. Máx", "width": "10%", "sort": true, "filter": false
+        }
+      }
+    },
+    "viewQuery":{ "actionName": "GET_INCUBATORS_LIST",
+        "endPoint": "/moduleenvmon/EnvMonIncubatorAPIqueries",
+        "endPointParams": [
+        ],
+        "addRefreshButton": true,
+        "button": {
+          "icon": "refresh",
+          "title": {
+            "label_en": "Refresh", "label_es": "Recargar"
+          },
+          "requiresGridItemSelected": true
+      }
+    },
+    "bottomCompositions": [
+    {
+      "elementName": "chart",
+      "chartTitle":{
+        "label_en": "Last Temperature Readings", 
+        "label_es": "Últimas lecturas de temperatura"
+      },      
+      "data":{
+        "chartType": "line",
+        "objectArrayValuesName": "LAST_READINGS",
+        "valuesFirstPropertyName": "created_on",
+        "valuesSecondPropertyName": "temperature",
+        "chartValuesHeader":{
+          "en":["Moment", "Temperature"],
+          "es":["Momento", "Temperatura"]
+        }
+      }
+    }
+    ],
+    "actions": [
+      { "actionName": "EM_INCUBATOR_NEW",
+        "endPointUrl": "Incubators",
+		"requiresDialog": true,
+        "button": {
+          "icon": "create_new_folder",
+          "title": {
+            "label_en": "New", "label_es": "Nuevo"
+          },
+          "requiresGridItemSelected": false
+        },
+        "dialogInfo": {          
+          "name": "genericDialog",
+		  "fields": [
+			{"text1": { "label_en": "New Incub Name", "label_es": "Nombre para nueva Incubadora" }},
+			{"list1": { 
+				"items": [
+					{ "keyName": "1", "keyValue_en": "1st Incub", "keyValue_es": "1ª Incub" },
+					{ "keyName": "2", "keyValue_en": "2nd Incub", "keyValue_es": "2ª Incub" }
+				],    
+				"label_en": "Incub Stage", "label_es": "Incubación"
+			}},
+			{"number1": { "label_en": "Min Temp", "label_es": "Temp Mín", "default_value":20}},
+			{"number2": { "label_en": "Max Temp", "label_es": "Temp Máx", "default_value":30}}
+          ]
+        },
+        "endPointParams": [
+          { "argumentName": "newIncubator", "element": "text1" },
+          { "argumentName": "incubStage", "element": "list1" },
+          { "argumentName": "minTemp", "element": "number1" },
+          { "argumentName": "maxTemp", "element": "number2" }
+        ]
+      },
+      { "actionName": "EM_INCUBATOR_ACTIVATE",
+        "endPointUrl": "Incubators", 
+		"requiresDialog": true,		
+        "endPointParams": [
+          { "argumentName": "incubatorName", "selObjectPropertyName": "name" }
+        ],
+        "clientMethod": "openReactivateObjectDialog",
+        "button": {
+          "icon": "alarm_add",
+          "title": {
+            "label_en": "Activate", "label_es": "Activar"
+          },
+          "requiresGridItemSelected": false
+        },
+        "dialogInfo": {
+          "requiresDialog": true,
+          "name": "reactivateObjectDialog",
+          "fieldsObject": {
+            "queryNumDays": { "label_en": "Number of Days", "label_es": "Número de Días" },
+            "objectName": { "label_en": "Incubator Name to reactivate", "label_es": "Nombre de Incubadora a Reactivar" }
+          },  
+          "listDefinition":{
+            "keyFldName":"name",
+            "eachEntryTextGenerator":[
+              {"value": "description", "type":"field"}, {"value": " (", "type":"fix"}, 
+              {"value": "name", "type":"field"}, {"value": ")", "type":"fix"}
+              ]
+          },
+		  "viewQuery": {
+			  "actionName": "GET_INCUBATORS_DEACTIVATED_LAST_N_DAYS",
+			  "clientMethod": "getDeactivatedObjects",
+			  "endPoint": "/moduleenvmon/EnvMonIncubatorAPIqueries",
+			  "endPointParams": [
+				{ "argumentName": "numDays", "element": "queryNumDays", "fixValue": 7 }
+			  ]
+		  },
+          "action": [            
+          ]	  
+        }
+      },
+      { "actionName": "EM_INCUBATOR_DEACTIVATE",
+		"requiresDialog": false,
+        "endPointUrl": "Incubators",     
+        "endPointParams": [
+          { "argumentName": "incubatorName", "selObjectPropertyName": "name" }
+        ],
+        "button": {
+          "icon": "alarm_off",
+          "title": {
+            "label_en": "Deactivate", "label_es": "Desactivar"
+          },
+          "requiresGridItemSelected": true
+        }
+      },
+      { "actionName": "EM_INCUBATOR_ADD_TEMP_READING",
+        "endPointUrl": "Incubators",     
+		"requiresDialog": true,
+        "endPointParams": [
+          { "argumentName": "incubatorName", "selObjectPropertyName": "name" },
+          { "argumentName": "temperature", "element": "number1" }
+        ],
+        "button": {
+          "icon": "add",
+          "title": {
+            "label_en": "Add Temperature Reading", "label_es": "Añadir Registro Temperatura"
+          },
+          "requiresGridItemSelected": true
+        },
+        "dialogInfo": {                    
+          "name": "genericDialog",
+		  "fields": [
+			{"number1": { "label_en": "Temperature", "label_es": "Temperatura" }}
+          ]
+        }
+      }
+    ]
+  }
+}

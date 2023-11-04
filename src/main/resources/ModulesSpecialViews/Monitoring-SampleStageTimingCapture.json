@@ -1,0 +1,293 @@
+{
+    "moduleName": "MONITORING",
+    "moduleVersion": 1,
+    "releaseDate": "2023-09-01",
+    "viewName":"SampleStageTimingCapture",
+    "windowType": "simple",
+	"entity": "sample",
+    "requirementsInfo":{
+            "window_actions":[                
+            ]
+    },
+    "jsonModel":{
+    "component": "ObjectByTabs",
+    "hasOwnComponent": true,
+    "showTitleOnTop": true,
+    "title": {
+      "fix_text_en": "Sample stages timing monitoring",
+      "fix_text_es": "Monitoreo de tiempos en etapas de muestras"      
+    },
+    "viewQuery": {
+      "actionName": "GET_STAGES_TIMING_CAPTURE_DATA",
+	  "endPoint": "/moduleenvmon/EnvMonAPIqueries",
+	  "notUseGrid": true,
+      "button": {
+        "icon": "refresh",
+        "title": {
+          "label_en": "Reload",
+          "label_es": "Recargar"
+        },
+        "requiresGridItemSelected": false
+      },
+      "endPointParams": [
+        {		
+          "argumentName": "loginDayStart",
+		  "internalVariableSimpleObjName": "filterCurrentData",
+          "internalVariableSimpleObjProperty": "filterdaterange1dateStart"          
+        },
+        {		
+          "argumentName": "loginDayEnd",
+		  "internalVariableSimpleObjName": "filterCurrentData",
+          "internalVariableSimpleObjProperty": "filterdaterange1dateEnd"          
+        }
+      ]
+    },
+    "filter_button": {
+      "label_en": "Search",
+      "label_es": "Buscar"
+    },
+    "filter": [
+		{"filterdaterange1":
+		  {
+		  "dateStart":{ "label_en": "Sampling Start Date", "label_es": "Fecha Inicio Muestreo", "default_value": "2022-08-29" },
+		  "dateEnd":{ "label_en": "Sampling End Date", "label_es": "Fecha Fin Muestreo", "default_value": "2023-08-29" }
+		  }
+		}
+    ],
+	"xxxfilterResultDetail":{
+		"type":"list",
+		"detail":[
+			{"field": "date"}
+      ]  		
+	},
+	"printable": {
+		"active": false,
+		"report_info":{
+			"provisional_copy_en": "Provisional Copy", "provisional_copy_es": "Copia Provisional"
+		}
+	},
+	"download":{
+	  "active": false,
+	  "filename":{"label_en": "sched_samples", "label_es": "muestras_programadas"},
+	  "elements":[
+		{"endPointPropertyArray": ["datatable"]}
+	  ], 
+	  "fileHeader":{
+		  "traceabilityInfoTitle":{"label_en": "Traceability Info: ", "label_es":"Informacion de Trazabilidad:"},
+		  "filterTitle":{"label_en": "Filter Criteria:", "label_es":"Criterio del filtro:"},
+		  "dataTitle":{"label_en": "Data:", "label_es":"Datos:"},
+		  "system":{"label_en": "Platform", "label_es":"Plataforma"},
+		  "procedure":{"label_en": "Procedure", "label_es":"Proceso"},
+		  "reportName":{"label_en": "Report Name", "label_es":"Nombre del Informe"},
+		  "userRun1":{"label_en": "This file was created on ", "label_es":"Informe creado el "},
+		  "userRun2":{"label_en": " by ", "label_es":" por "}
+	  }
+	},	
+    "actions": [],
+    "tabs": [
+      { "tabLabel_en": "Summary", "tabLabel_es": "Inicio", "view": "summary",
+        "view_definition": [
+		  {"type": "reportTitle",
+			  "title": {
+				"label_en": "Predictive for the end-to-end process",
+				"label_es": "Predicción para el proceso entero"
+			  },
+			"elements": [
+			{
+			  "type": "cardSomeElementsSingleObject",
+			  "endPointResponseObject": "statistics_per_end_to_end_sample_process",			  
+			  "num_columns": 2,
+			  "fieldsToDisplay": [
+				{
+				  "name": "values_in",
+				  "label_en": "Values expressed in",
+				  "label_es": "Valores expresados en"
+				},
+				{
+				  "name": "estimated_range",
+				  "label_en": "Estimated range",
+				  "label_es": "Rango estimado"
+				},
+				{
+				  "name": "mean",
+				  "label_en": "Mean",
+				  "label_es": "Media"
+				},
+				{
+				  "name": "median",
+				  "label_en": "Median",
+				  "label_es": "Mediana"
+				},
+				{
+				  "name": "mad_variabilty",
+				  "label_en": "MAD (Median Absolute Deviation)",
+				  "label_es": "MAD (Desviación Absoluta Mediana)"
+				},
+				{
+				  "name": "outlier_threshold",
+				  "label_en": "Outlier Threshold",
+				  "label_es": "Umbral de Valores Atípicos"
+				},
+				{
+				  "name": "upperBound",
+				  "label_en": "Upper Bound",
+				  "label_es": " Límite Superior"
+				},
+				{
+				  "name": "lowerBound",
+				  "label_en": "Lower Bound",
+				  "label_es": " Límite Inferior"
+				}
+			  ]
+			}
+			]
+		  },
+		  {"type": "reportTitle",
+			  "title": {
+				"label_en": "Predictive per Stage",
+				"label_es": "Predicción por Etapa"
+			  },
+			"elements": [
+			{
+			  "type": "cardSomeElementsRepititiveObjects",
+			  "endPointResponseObject": "statistics_per_stage",	
+				"add_border": true,			  
+			  "num_columns": 3,
+			  "fieldsToDisplay": [
+				{
+				  "name": "stage",
+				  "label_en": "Stage",
+				  "label_es": "Etapa"
+				},
+				{
+				  "name": "values_in",
+				  "label_en": "Values expressed in",
+				  "label_es": "Valores expresados en"
+				},
+				{
+				  "name": "estimated_range",
+				  "label_en": "Estimated range",
+				  "label_es": "Rango estimado"
+				},
+				{
+				  "name": "mean",
+				  "label_en": "Mean",
+				  "label_es": "Media"
+				},
+				{
+				  "name": "median",
+				  "label_en": "Median",
+				  "label_es": "Mediana"
+				},
+				{
+				  "name": "mad_variabilty",
+				  "label_en": "MAD (Median Absolute Deviation)",
+				  "label_es": "MAD (Desviación Absoluta Mediana)"
+				},
+				{
+				  "name": "outlier_threshold",
+				  "label_en": "Outlier Threshold",
+				  "label_es": "Umbral de Valores Atípicos"
+				},
+				{
+				  "name": "upperBound",
+				  "label_en": "Upper Bound",
+				  "label_es": " Límite Superior"
+				},
+				{
+				  "name": "lowerBound",
+				  "label_en": "Lower Bound",
+				  "label_es": " Límite Inferior"
+				}
+			  ]
+			}
+			]
+		  },
+		
+		  {   
+            "actions": [
+            ]
+          },
+          { "type": "readOnlyTable", "endPointResponseObject": "stage_timing_interval",
+            "columns": [
+              {
+                "name": "stage",
+                "label_en": "Stage",
+                "label_es": "Etapa"
+              },
+              {
+                "name": "sample_config_code",
+                "label_en": "Sample Template",
+                "label_es": "Plantilla de muestras"
+              },
+              {
+                "name": "interval_seconds",
+                "label_en": "Interval (sec)",
+                "label_es": "Intervalo (seg)"
+              },
+			  {
+				"name": "enabled",
+				"label_en": "Enabled?",
+				"label_es": "¿Activo?"
+			  }
+            ]
+          },
+          { "type": "readOnlyTable", "endPointResponseObject": "violations_percentage",
+            "columns": [
+              {
+                "name": "stage",
+                "label_en": "Stage",
+                "label_es": "Etapa"
+              },
+              {
+                "name": "percentage",
+				"is_icon": true, "as_progress": true,
+                "label_en": "Percentage",
+                "label_es": "Porcentaje"
+              },
+              {
+                "name": "total_sample_stages",
+                "label_en": "Total Samples",
+                "label_es": "Total muestras"
+              },
+			  {
+				"name": "violated_sample_stages",
+				"label_en": "Deviation samples",
+				"label_es": "Muestras desviadas"
+			  }
+            ]
+          },
+          {"type": "chart", "elementName": "violations_percentage",
+            "display_chart": true,
+            "chart_type":"column",
+            "chart_name":"violations_percentage",
+            "chart_title":{"label_en": "Violations frequency", "label_es":"Frecuencia de desviaciones"},
+            "counter_field_name":["percentage"],
+            "counterLimits":{
+              "xmin_allowed": 3,
+              "xmin_allowed_included":3,
+              "xmax_allowed":100,
+              "xmax_allowed_included":100,
+              "xvalue":0
+            },
+            "chartStyle": {
+              "backgroundColor": "transparent",
+              "is3D": true,
+              "colors": ["#24C0EB", "#d33737", "#bf120f"]              
+            },
+            "grouper_field_name":"stage",
+            "label_values_replacement":{
+              "IN":{"label_es": "In Range", "label_en": "Dentro de Range"},
+              "inAlertMax": {"label_es": "Por Encima del límite de alerta", "label_en": "Over the Alert limit"},
+              "outOfSpecMax": {"label_es": "Fuera de Rango", "label_en": "Over the Range"},
+              "outOfSpecMaxStrict": {"label_es": "Fuera de Rango", "label_en": "Over the Range"}
+            },
+            "grouper_exclude_items":["xxxxoutOfSpecMax", "Samplingzz","Incubationzz","PlateReadingzz","MicroorganismIdentificationzz","zz","END"],
+            "label_item":{"label_en":"Statussss", "label_es":"Estado"},
+            "label_value":{"label_en":"#", "label_es":"#"}   
+          }
+        ]
+      }
+    ]
+  }
+}

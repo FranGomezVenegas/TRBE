@@ -1,0 +1,119 @@
+{
+    "name": "INSPECTION_LOTS",
+    "version": 1,
+    "releaseDate": "2023-09-01",
+    "description_en": "Inspection lots",
+    "description_es": "Inspección de lotes",
+    "tables_and_views":[
+        {"schema_name":"config", "table_name":"analysis", "is_view":false, "order_number":2, "definition_en":"Analysis master list", "definition_es":"Lista maestra de análisis"},
+        {"schema_name":"config", "table_name":"analysis_method", "is_view":false, "order_number":3, "definition_en":"Analysis methods master list", "definition_es":"Lista maestra de métodos de análisis"},
+        {"schema_name":"config", "table_name":"analysis_method_params", "is_view":false, "order_number":4, "definition_en":"Parameters for analysis methods", "definition_es":"Parámetros para métodos de análisis"},
+        {"schema_name":"config", "table_name":"analysis_methods_view", "is_view":true, "order_number":3, "definition_en":"Analysis methods master list", "definition_es":"Lista maestra de métodos de análisis"},
+        {"schema_name":"config", "table_name":"coa_definition", "is_view":false, "order_number":1, "definition_en":"coa definition, set up for the Certificate of Analysis", "definition_es":"Configuración del Certificado de Análisis"},
+        {"schema_name":"config", "table_name":"coa_header_columns", "is_view":false, "order_number":2, "definition_en":"coa definition, fields to display in the header", "definition_es":"Campos a aí±adir en la Cabecera"},
+        {"schema_name":"config", "table_name":"coa_results_columns", "is_view":false, "order_number":3, "definition_en":"coa definition, set up for the results table", "definition_es":"Campos a aí±adir en la tabla de resultados"},
+        {"schema_name":"config", "table_name":"coa_signatures", "is_view":false, "order_number":5, "definition_en":"coa definition, set up for each signature box", "definition_es":"Configuración de cada caja de firmas"},
+        {"schema_name":"config", "table_name":"coa_usage_decision", "is_view":false, "order_number":4, "definition_en":"coa definition, set up for the Usage Decision Area", "definition_es":"Configuración del área de decisión de uso"},
+        {"schema_name":"config", "table_name":"lot", "is_view":false, "order_number":3, "definition_en":"Analysis methods master list", "definition_es":"Lista maestra de métodos de análisis"},
+        {"schema_name":"config", "table_name":"lot_decision_rules", "is_view":false, "order_number":3, "definition_en":"Analysis methods master list", "definition_es":"Lista maestra de métodos de análisis"},
+        {"schema_name":"config", "table_name":"lot_rules", "is_view":false, "order_number":3, "definition_en":"Analysis methods master list", "definition_es":"Lista maestra de métodos de análisis"},
+        {"schema_name":"config", "table_name":"material", "is_view":false, "order_number":2, "definition_en":"Analysis master list", "definition_es":"Lista maestra de análisis"},
+        {"schema_name":"config", "table_name":"material_certificate", "is_view":false, "order_number":2, "definition_en":"Analysis master list", "definition_es":"Lista maestra de análisis"},
+        {"schema_name":"config", "table_name":"material_inventory_plan", "is_view":false, "order_number":2, "definition_en":"Analysis master list", "definition_es":"Lista maestra de análisis"},
+        {"schema_name":"config", "table_name":"material_sampling_plan", "is_view":false, "order_number":2, "definition_en":"Analysis master list", "definition_es":"Lista maestra de análisis"},
+        {"schema_name":"config", "table_name":"methods", "is_view":false, "order_number":1, "definition_en":"Methods master list", "definition_es":"Lista maestra de métodos"},
+        {"schema_name":"config", "table_name":"sample", "is_view":false, "order_number":3, "definition_en":"Analysis methods master list", "definition_es":"Lista maestra de métodos de análisis"},
+        {"schema_name":"config", "table_name":"sample_rules", "is_view":false, "order_number":3, "definition_en":"Analysis methods master list", "definition_es":"Lista maestra de métodos de análisis"},
+        {"schema_name":"config", "table_name":"sop_meta_data", "is_view":false, "order_number":16, "definition_en":"SOPs master list", "definition_es":"lista maestra de PNTs"},
+        {"schema_name":"config", "table_name":"spec", "is_view":false, "order_number":17, "definition_en":"Specs master list", "definition_es":"lista maestra de Especificaciones"},
+        {"schema_name":"config", "table_name":"spec_limits", "is_view":false, "order_number":18, "definition_en":"Spec limits", "definition_es":"Lí­mites de Especificaciones"},
+        {"schema_name":"config", "table_name":"spec_rules", "is_view":false, "order_number":19, "definition_en":"Spec Rules for specs", "definition_es":"Reglas de Especificaciones"},
+        {"schema_name":"config", "table_name":"uom", "is_view":false, "order_number":20, "definition_en":"Units of measurement", "definition_es":"Unidades de medida"},
+        {"schema_name":"config-audit", "table_name":"analysis", "is_view":false, "order_number":21, "definition_en":"Analysis definition audit history", "definition_es":"Historial de auditorí­a de definición de análisis"},
+        {"schema_name":"config-audit", "table_name":"spec", "is_view":false, "order_number":22, "definition_en":"Spec limits definition audit history", "definition_es":"Historial de auditorí­a de definición de lí­mites de especificación"},
+        {"schema_name":"data", "table_name":"certif_user_analysis_method", "is_view":false, "order_number":23, "definition_en":"User certifications for analysis methods", "definition_es":"Certificaciones de usuario para métodos de análisis"},
+        {"schema_name":"data", "table_name":"inventory_retain", "is_view":false, "order_number":7, "definition_en":"coa definition, set up for each signature box", "definition_es":"Configuración de cada caja de firmas"},
+        {"schema_name":"data", "table_name":"lot", "is_view":false, "order_number":5, "definition_en":"coa definition, set up for each signature box", "definition_es":"Configuración de cada caja de firmas"},
+        {"schema_name":"data", "table_name":"lot_bulk", "is_view":false, "order_number":6, "definition_en":"coa definition, set up for each signature box", "definition_es":"Configuración de cada caja de firmas"},
+        {"schema_name":"data", "table_name":"lot_certificate", "is_view":false, "order_number":6, "definition_en":"coa definition, set up for each signature box", "definition_es":"Configuración de cada caja de firmas"},
+        {"schema_name":"data", "table_name":"lot_certificate_track", "is_view":false, "order_number":6, "definition_en":"coa definition, set up for each signature box", "definition_es":"Configuración de cada caja de firmas"},
+        {"schema_name":"data", "table_name":"lot_decision", "is_view":false, "order_number":6, "definition_en":"coa definition, set up for each signature box", "definition_es":"Configuración de cada caja de firmas"},
+        {"schema_name":"data", "table_name":"lot_not_analyzed_result", "is_view":false, "order_number":6, "definition_en":"coa definition, set up for each signature box", "definition_es":"Configuración de cada caja de firmas"},
+        {"schema_name":"data", "table_name":"sample", "is_view":false, "order_number":8, "definition_en":"coa definition, set up for each signature box", "definition_es":"Configuración de cada caja de firmas"},
+        {"schema_name":"data", "table_name":"sample_analysis", "is_view":false, "order_number":9, "definition_en":"coa definition, set up for each signature box", "definition_es":"Configuración de cada caja de firmas"},
+        {"schema_name":"data", "table_name":"sample_analysis_result", "is_view":false, "order_number":10, "definition_en":"coa definition, set up for each signature box", "definition_es":"Configuración de cada caja de firmas"},
+        {"schema_name":"data", "table_name":"SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW", "is_view":true, "order_number":11, "definition_en":"coa definition, set up for each signature box", "definition_es":"Configuración de cada caja de firmas"},
+        {"schema_name":"data", "table_name":"sample_revision_testing_group", "is_view":false, "order_number":12, "definition_en":"coa definition, set up for each signature box", "definition_es":"Configuración de cada caja de firmas"},
+        {"schema_name":"data", "table_name":"sample_testing_group_view", "is_view":true, "order_number":13, "definition_en":"coa definition, set up for each signature box", "definition_es":"Configuración de cada caja de firmas"},
+        {"schema_name":"data", "table_name":"user_analysis_method", "is_view":false, "order_number":36, "definition_en":"user sop certification", "definition_es":"PNTs de usuario"},
+        {"schema_name":"data", "table_name":"USER_AND_ANALYSISMETHOD_CERTIF_VIEW", "is_view":true, "order_number":28, "definition_en":"user and analysis method certification view", "definition_es":"vista de certificación de usuario por método analí­tico"},
+        {"schema_name":"data", "table_name":"USER_AND_META_DATA_SOP_VIEW", "is_view":true, "order_number":29, "definition_en":"user and sop certification view", "definition_es":"vista de certificación de usuario por PNT"},
+        {"schema_name":"data", "table_name":"user_sop", "is_view":false, "order_number":36, "definition_en":"user sop certification", "definition_es":"PNTs de usuario"},
+        {"schema_name":"data-audit", "table_name":"certif_user_analysis_method", "is_view":false, "order_number":31, "definition_en":"samples audit history", "definition_es":"historial de auditorí­a de muestras"},
+        {"schema_name":"data-audit", "table_name":"lot", "is_view":false, "order_number":31, "definition_en":"samples audit history", "definition_es":"historial de auditorí­a de muestras"},
+        {"schema_name":"data-audit", "table_name":"sample", "is_view":false, "order_number":31, "definition_en":"samples audit history", "definition_es":"historial de auditorí­a de muestras"},
+        {"schema_name":"procedure", "table_name":"investigation", "is_view":false, "order_number":33, "definition_en":"investigation", "definition_es":"investigación"},
+        {"schema_name":"procedure", "table_name":"invest_objects", "is_view":false, "order_number":34, "definition_en":"investigation objects", "definition_es":"objetos de investigación"},
+        {"schema_name":"procedure", "table_name":"lot_corrective_action", "is_view":false, "order_number":36, "definition_en":"program corrective action", "definition_es":"acción correctiva del programa"},
+        {"schema_name":"procedure-audit", "table_name":"investigation", "is_view":false, "order_number":33, "definition_en":"investigation", "definition_es":"investigación"}
+    ],
+    "ModuleSettings":{
+        "actionsEndpoints": [
+          {
+            "name": "Lots",
+            "url": "/moduleinsplotrm/InspLotRMAPIactions"
+          }
+        ],
+        "queriesEndpoints": [
+          {
+            "name": "Lots",
+            "url": "/moduleinsplotrm/InspLotRMAPIqueries"
+          }
+        ]
+    },
+    "picture": "/images/procedures_pictures/insp-lot-raw-material.jpg",
+    "apis":[ "InspLotRMAPIactionsEndpoints", "InspLotRMQueriesAPIEndpoints", "InvestigationAPIactionsEndpoints", "InvestigationAPIqueriesEndpoints",
+         "SampleAPIactionsEndpoints", "SampleAPIqueriesEndpoints", "SopUserAPIactionsEndpoints", "SopUserAPIqueriesEndpoints"],
+    "error_notifications":[
+        {"api_name":"DataInspLotErrorTrapping"}, 
+        {"api_name":"DataInvRetErrorTrapping"}, 
+        {"api_name":"DataSampleAnalysisErrorTrapping"}, 
+        {"api_name":"DataSampleAnalysisResultErrorTrapping"}, 
+        {"api_name":"DataSampleErrorTrapping"}, 
+        {"api_name":"DataSampleRevisionTestingGroupErrorTrapping"}, 
+        {"api_name":"DataSampleStructureRevisionErrorTrapping"},
+        {"api_name":"DataSampleStructureSuccess"}, 
+        {"api_name":"InvestigationErrorTrapping"}, 
+        {"api_name":"LotAuditErrorTrapping"}, 
+        {"api_name":"SampleAuditErrorTrapping"}, 
+        {"api_name":"SampleStageErrorTrapping"},
+        {"api_name":"UomErrorTrapping"}, 
+        {"api_name":"UserSopErrorTrapping"}, 
+        {"api_name":"CertificationAnalysisMethodErrorTrapping"}, 
+        {"api_name":"ConfigAnalysisErrorTrapping"}, 
+        {"api_name":"ConfigSpecErrorTrapping"}
+    ], 
+    "business_rules":[
+        {"type": "all_business_rules", "api_name": "CertificationAnalysisMethodBusinessRules", "name": "N/A", "mandatory": true},
+        {"type": "all_business_rules", "api_name": "correctiveActionMode", "name": "N/A", "mandatory": true},
+        {"type": "all_business_rules", "api_name": "DataInspectionLotBusinessRules", "name": "N/A", "mandatory": true},
+        {"type": "all_business_rules", "api_name": "DataSampleAnalysisBusinessRules", "name": "N/A", "mandatory": true},
+        {"type": "all_business_rules", "api_name": "DataSampleAnalysisResultBusinessRules", "name": "N/A", "mandatory": true},
+        {"type": "all_business_rules", "api_name": "DataSampleAnalysisResultStrategyBusinessRules", "name": "N/A", "mandatory": true},
+        {"type": "all_business_rules", "api_name": "DataSampleBusinessRules", "name": "N/A", "mandatory": true},
+        {"type": "all_business_rules", "api_name": "DataSampleRevisionTestingGroupBusinessRules", "name": "N/A", "mandatory": true},
+        {"type": "all_business_rules", "api_name": "DataSampleStructureRevisionRls", "name": "N/A", "mandatory": true},
+        {"type": "all_business_rules", "api_name": "InspLotRMBusinessRules", "name": "N/A", "mandatory": true},
+        {"type": "all_business_rules", "api_name": "SampleAuditBusinessRules", "name": "N/A", "mandatory": true},
+        {"type": "all_business_rules", "api_name": "SampleStageBusinessRules", "name": "N/A", "mandatory": true},
+        
+        {"type": "one_business_rule", "api_name": "DataProgramCorrectiveActionBusinessRules", "name": "correctiveActionMode", "mandatory": true},
+        {"type": "one_business_rule", "api_name": "DataProgramCorrectiveActionBusinessRules", "name": "correctiveActionNotifModeStillInProgress", "mandatory": false},
+        {"type": "one_business_rule", "api_name": "UserSopBusinessRules", "name": "userSopMode", "mandatory": true},
+        {"type": "one_business_rule", "api_name": "UserSopBusinessRules", "name": "windowOpenableWhenNotSopCertifiedUserSopCertification", "mandatory": true}
+    ],
+    "manuals":[
+        
+
+    ]    	
+}

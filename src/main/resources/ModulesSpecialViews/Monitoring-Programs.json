@@ -1,0 +1,41 @@
+{
+    "moduleName": "MONITORING",
+    "moduleVersion": 1,
+    "releaseDate": "2023-09-01",
+    "viewName":"Programs",
+    "windowType": "simple",
+	"entity": "program",
+    "requirementsInfo":{
+            "window_actions":[
+                {"actionName": "LOGSAMPLE"}
+            ]
+    },
+    "jsonModel":{
+    "component": "ModuleEnvMonitProgramProc",   
+    "hasOwnComponent": true,
+    "viewQuery": {  "actionName": "PROGRAMS_LIST",
+					"endPoint": "/moduleenvmon/EnvMonAPIqueries",
+					"clientMethod": "getProgramList",
+					"button": {
+					  "icon": "refresh",
+					  "title": {
+						"label_en": "Reload", "label_es": "Recargar"
+					  },
+					  "requiresGridItemSelected": true
+					},
+					"subAction": {
+					  "actionName": "GET_ACTIVE_PRODUCTION_LOTS",
+					  "endPoint": "/moduleenvmon/EnvMonAPIqueries",
+					  "clientMethod": "getLots"
+					}
+	},    
+	"actions": [],
+	"tabs": [
+		{"tabLabel_en": "Summary", "tabLabel_es": "Inicio", "view": "summary"},
+		{"tabLabel_en": "Parameter Limits", "tabLabel_es": "Límites", "view": "parameter-limits"},
+		{"tabLabel_en": "Config Calendar", "tabLabel_es": "Calendario Config", "view": "config-calendar"},
+		{"tabLabel_en": "Sampling Points", "tabLabel_es": "Puntos de Muestreo", "view": "sampling-points"},
+		{"tabLabel_en": "Sampling Points Map", "tabLabel_es": "Puntos de Muestreo Mapa", "view": "sampling-points-map"}
+	  ]
+  }
+}

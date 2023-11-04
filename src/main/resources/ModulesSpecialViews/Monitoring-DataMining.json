@@ -1,0 +1,628 @@
+{
+    "moduleName": "MONITORING",
+    "moduleVersion": 1,
+    "releaseDate": "2023-09-01",
+    "viewName":"DataMining",
+    "windowType": "simple",
+	"entity": "many queries",
+    "requirementsInfo":{
+            "window_tabs":[
+                {"actionName": "QUERY_READING_OUT_OF_RANGE"},
+				{"actionName": "KPI_PRODUCTION_LOT_SAMPLES"},
+				{"actionName": "RECOVERY_RATE"},
+				{"actionName": "QUERY_SAMPLING_HISTORY"},
+				{"actionName": "QUERY_SAMPLER_SAMPLING_HISTORY"},
+				{"actionName": "QUERY_INVESTIGATION"}
+            ]
+    },
+    "jsonModel":{
+	"component": "DataMining",
+    "tabs": [
+      { "action": "QUERY_READING_OUT_OF_RANGE",
+        "label_en": "Readings out of range", 
+        "label_es": "Lecturas fuera de rango", 
+        "endPoint": "/moduleenvmon/EnvMonAPIstats",
+        "filter":{
+          "fixParams": {
+            "sampleGroups": "area, spec_code,sample_config_code*counter_by_area_spec_tmp|spec_eval*counter_range_eval|has_invest*counter_investigations|has_pre_invest, has_invest*counter_pre_and_invest"
+          },
+          "filterFields":[
+            {"text1": { "label_en": "Program", "label_es": "Programa", "default_value": "" }},
+            {"text2": { "label_en": "Location", "label_es": "Ubicación", "default_value": "" }},
+            {"text3": { "label_en": "Area", "label_es": "Area", "default_value": "" }},
+            {"daterange1":
+              {
+              "dateStart":{ "label_en": "Sampling Start Date", "label_es": "Fecha Inicio Muestreo", "default_value": "" },
+              "dateEnd":{ "label_en": "Sampling End Date", "label_es": "Fecha Fin Muestreo", "default_value": "" }
+              }
+            },
+            {"checkbox1": { "label_en": "Exclude Readings Not Entered Yet", "label_es": "Excluir Lecturas no entradas aún", "default_value": true }},
+            {"number1": { "label_en": "Only readings Equal to", "label_es": "Solo las lecturas igual a", "default_value": "" }},
+            {"number2": { "label_en": "Only readings Greater than", "label_es": "Solo las lecturas Mayores a", "default_value": "" }},
+            {"number3": { "label_en": "Only readings Less than", "label_es": "Solo las lecturas Menores a", "default_value": "" }},
+            {"checkbox4": { "label_en": "Include Microorganisms", "label_es": "Incluir Microorganismos", "default_value": false }},
+            {"text4": { "label_en": "Microorganisms to find", "label_es": "Microorganismos a encontrar", "default_value": "" }}
+          ],
+          "extraParams": [
+            {"argumentName": "programName", "element": "text1"},
+            {"argumentName": "locationName", "element": "text2"},
+            {"argumentName": "area", "element": "text3"},
+            {"argumentName": "excludeReadingNotEntered", "element": "checkbox1"},
+            {"argumentName": "samplingDayStart", "element": "daterange1dateStart"},
+            {"argumentName": "samplingDayEnd", "element": "daterange1dateEnd"},
+            {"argumentName": "readingEqual", "element": "number1"},
+            {"argumentName": "readingMin", "element": "number2"},
+            {"argumentName": "readingMax", "element": "number3"},
+            {"argumentName": "includeMicroorganisms", "element": "checkbox4"},
+            {"argumentName": "MicroorganismsToFind", "element": "text4"}
+          ]      
+        },
+        "printable": true,
+        "download":{
+          "active": true,
+          "elements":[
+            {"elementName": "datatable"}
+          ] 
+        },
+
+        "reportElements":[
+          [
+          {"type": "reportTitle", "title":{"label_en": "Readings Out of Range", "label_es": "Lecturas Fuera de Rango Permitido"}}
+          ],
+          [
+          {"type": "card", "title":{"label_en": "Information", "label_es": "Información"}, 
+            "elementName":"production_lot", "subheadingObj": "text1"}
+          ],
+          [
+          {"type": "chart", "elementName": "counter_range_eval",
+
+            "display_chart": true,
+            "chart_type":"pie",
+            "chart_name":"counter_range_eval",
+            "chart_title":{"label_en": "Per out of range type", "label_es":"Por tipo de fuera de rango"},
+            "counter_field_name":"count",
+            "counterLimits":{
+              "xmin_allowed": 3,
+              "xmin_allowed_included":3,
+              "xmax_allowed":100,
+              "xmax_allowed_included":100,
+              "xvalue":0
+            },
+            "chartStyle": {
+              "backgroundColor": "transparent",
+              "is3D": true,
+              "colors": ["#dfa942", "#d33737", "#bf120f"]              
+            },
+            "grouper_field_name":"spec_eval",
+            "label_values_replacement":{
+              "inAlertMax": {"label_es": "Por Encima del límite de alerta", "label_en": "Over the Alert limit"},
+              "outOfSpecMax": {"label_es": "Fuera de Rango", "label_en": "Over the Range"},
+              "outOfSpecMaxStrict": {"label_es": "Fuera de Rango", "label_en": "Over the Range"}
+            },
+            "grouper_exclude_items":["xxxxoutOfSpecMax", "Samplingzz","Incubationzz","PlateReadingzz","MicroorganismIdentificationzz","zz","END"],
+            "label_item":{"label_en":"Statussss", "label_es":"Estado"},
+            "label_value":{"label_en":"#", "label_es":"#"}   
+          },
+          {"type": "chart", "elementName": "counter_by_area_spec_tmp",
+
+            "display_chart": true,
+            "chart_type":"pie",
+            "chart_name":"counter_by_area_spec_tmp",
+            "chart_title":{"label_en": "Per Area and Spec", "label_es":"Por Area y Especificación"},
+            "counter_field_name":"count",
+            "counterLimits":{
+              "xmin_allowed": 3,
+              "xmin_allowed_included":3,
+              "xmax_allowed":100,
+              "xmax_allowed_included":100,
+              "xvalue":0
+            },
+            "chartStyle": {
+              "backgroundColor": "transparent",
+              "is3D": true,
+              "colors": ["#1b7fcc", "#5fbd5f", "#bf120f"]              
+            },
+            "grouper_field_name":"sample_config_code",
+            "label_values_replacement":{
+              "prog_pers_template": {"label_es": "Personal", "label_en": "Personnel"},
+              "program_smp_template": {"label_es": "Muestras", "label_en": "Samples"},
+              "outOfSpecMaxStrict": {"label_es": "Fuera de Rango", "label_en": "Over the Range"}
+            },
+            "grouper_exclude_items":["xxxxoutOfSpecMax", "Samplingzz","Incubationzz","PlateReadingzz","MicroorganismIdentificationzz","zz","END"],
+            "label_item":{"label_en":"Statussss", "label_es":"Estado"},
+            "label_value":{"label_en":"#", "label_es":"#"}   
+          }
+        ],
+        [
+          {"type": "grid", "title":{"label_en": "Info Matching Selection Criteria", "label_es": "Información cumpliendo el criterio de selección"}, 
+           "elementName": "datatable", "fieldsToDisplay":[
+              {"property": "program_name", "header": "Program"}, 
+              {"property": "location_name", "header": "Location"}, 
+              {"property": "area", "header": "Area"}, 
+              {"property": "shift", "header": "shift"}, 
+              {"property": "sampling_date", "header": "Sampling Date"}, 
+              {"property": "raw_value_num", "header": "Value"}, 
+              {"property": "spec_eval_detail", "header": "Spec Eval"}
+           ] 
+          }          
+        ]
+        ]
+      },
+      { "action": "KPI_PRODUCTION_LOT_SAMPLES",
+        "label_en": "Production Lot Samples", 
+        "label_es": "Muestras por Lote de Producción", 
+        "endPoint": "/moduleenvmon/EnvMonAPIstats",
+        "filter":{
+          "filterFields":[
+            {"daterange1":
+              {
+              "dateStart":{ "label_en": "Sampling Start Date", "label_es": "Fecha Inicio Muestreo", "default_value": "" },
+              "dateEnd":{ "label_en": "Sampling End Date", "label_es": "Fecha Fin Muestreo", "default_value": "" }
+              }
+            },
+            {"text1": { "label_en": "Lot Name", "label_es": "Lote", "default_value": "20220202" }},
+            {"text2": { "label_en": "Program", "label_es": "Programa", "default_value": "" }},
+            {"text3": { "label_en": "Location", "label_es": "Ubicación", "default_value": "" }},
+            {"text4": { "label_en": "Area", "label_es": "Area", "default_value": "" }},
+            {"checkbox1": { "label_en": "Exclude Personal", "label_es": "Excluir Personal", "default_value": true }},
+            {"checkbox2": { "label_en": "Exclude Readings Not Entered Yet", "label_es": "Excluir Lecturas no entradas aún", "default_value": true }},
+            {"number1": { "label_en": "Only readings Equal to", "label_es": "Solo las lecturas igual a", "default_value": "" }},
+            {"number2": { "label_en": "Only readings Greater than", "label_es": "Solo las lecturas Mayores a", "default_value": "" }},
+            {"number3": { "label_en": "Only readings Less than", "label_es": "Solo las lecturas Menores a", "default_value": "" }},
+            {"checkbox3": { "label_en": "Include Microorganisms", "label_es": "Incluir Microorganismos", "default_value": false }},
+            {"text5": { "label_en": "Microorganisms to find", "label_es": "Microorganismos a encontrar", "default_value": "" }}
+          ],
+          "endPointParams": [
+            {"argumentName": "lotName", "element": "text1", "notAddWhenValueIsBlank": true},
+            {"argumentName": "programName", "element": "text2", "notAddWhenValueIsBlank": true},
+            {"argumentName": "locationName", "element": "text3", "notAddWhenValueIsBlank": true},
+            {"argumentName": "area", "element": "text4", "notAddWhenValueIsBlank": true},
+            {"argumentName": "excludeSamplerSamples", "element": "checkbox1", "notAddWhenValueIsBlank": true},
+            {"argumentName": "excludeReadingNotEntered", "element": "checkbox2", "notAddWhenValueIsBlank": true},
+            {"argumentName": "samplingDayStart", "element": "daterange1dateStart", "notAddWhenValueIsBlank": true},
+            {"argumentName": "samplingDayEnd", "element": "daterange1dateEnd", "notAddWhenValueIsBlank": true},
+            {"argumentName": "readingEqual", "element": "number1", "notAddWhenValueIsBlank": true},
+            {"argumentName": "readingMin", "element": "number2", "notAddWhenValueIsBlank": true},
+            {"argumentName": "readingMax", "element": "number3", "notAddWhenValueIsBlank": true},
+            {"argumentName": "includeMicroorganisms", "element": "checkbox3", "notAddWhenValueIsBlank": true},
+            {"argumentName": "MicroorganismsToFind", "element": "text5", "notAddWhenValueIsBlank": true}
+          ]      
+        },
+        "reportElements":[
+          [
+            {"type": "reportTitle", "title":{"label_en": "Production Lot", "label_es": "Lote de Producción"},
+              "style":"color:blue"}
+          ],
+          [
+            {"type": "card", "title":{"label_en": "Information", "label_es": "Información"}, 
+              "elementName":"production_lot", "subheadingObj": "text1"}
+          ],
+          [
+            {"type": "recovery_rate"}
+          ],
+          [
+            {"type": "grid", "title":{"label_en": "Info Matching Selection Criteria", "label_es": "Información cumpliendo el criterio de selección"}, 
+             "elementName": "datatable", "fieldsToDisplay":[
+                {"property": "program_name", "header": "Program"}, 
+                {"property": "location_name", "header": "Location"}, 
+                {"property": "area", "header": "Area"}, 
+                {"property": "shift", "header": "shift"}, 
+                {"property": "sampling_date", "header": "Sampling Date"}, 
+                {"property": "raw_value_num", "header": "Value"}, 
+                {"property": "spec_eval_detail", "header": "Spec Eval"}
+             ] 
+            }          
+          ]          
+        ]
+      },
+      { "action": "RECOVERY_RATE",
+        "label_en": "Recovery Rate", 
+        "label_es": "Recovery Rate", 
+        "endPoint": "/moduleenvmon/EnvMonAPIstats",
+        "filter":{
+          "filterFields":[
+            {"checkbox1": { "label_en": "Show Row Totals", "label_es": "Mostrar Totales", "default_value": true }},
+            {"checkbox2": { "label_en": "Show Absences", "label_es": "Mostrar Ausencias", "default_value": true }},
+            {"checkbox3": { "label_en": "Show Presences", "label_es": "Mostrar Presencias", "default_value": true }},
+            {"checkbox4": { "label_en": "Show INs", "label_es": "Mostrar INs", "default_value": true }},
+            {"checkbox5": { "label_en": "Show OUTs", "label_es": "Mostrar OUTs", "default_value": true }},
+            {"number1": { "label_en": "Perc Num Decs", "label_es": "Num Decimales Perc", "default_value": 2 }}
+          ],
+          "endPointParams": [
+			{"argumentName": "fieldsToRetrieveOrGrouping", "fixValue": "program_name|location_name"},
+			{"argumentName": "whereFieldsName", "fixValue": "sample_config_code|program_name"},
+			{"argumentName": "whereFieldsValue", "fixValue": "program_smp_template*STRING|LlenadoVialesFA2018*STRING"},
+			
+            {"argumentName": "showRowTotal", "element": "checkbox1"},
+            {"argumentName": "showAbsence", "element": "checkbox2"},
+            {"argumentName": "showPresence", "element": "checkbox3"},
+            {"argumentName": "showIN", "element": "checkbox4"},
+            {"argumentName": "showOUT", "element": "checkbox5"},
+            {"argumentName": "percNumDecimals", "element": "number1"}
+          ]      
+        },
+        "printable": true,
+        "download":{
+          "active": true,
+          "elements":[
+            {"elementName": "recovery_rate", "header": "columns_data", "values":"data"}
+          ] 
+        },        
+        "reportElements":[
+          [
+            {"type": "reportTitle", "title":{"label_en": "Recovery Rate", "label_es": "Recovery Rate"},
+            "style":"color:blue"}
+          ],
+          [
+            {"type": "recovery_rate"}
+          ]
+        ]
+      },
+      { "action": "QUERY_SAMPLING_HISTORY",
+        "label_en": "Sampling History", 
+        "label_es": "Histórico de muestreos", 
+        "endPoint": "/moduleenvmon/EnvMonAPIstats",
+        "filter":{
+          "fixParams": {
+            "sampleGroups": "area, spec_code,sample_config_code*counter_by_area_spec_tmp|area*counter_by_area|has_pre_invest*counter_out|spec_eval*counter_range_eval|has_invest*counter_investigations|has_pre_invest, has_invest*counter_pre_and_invest"
+          },
+          "filterFields":[
+            {"text1": { "label_en": "Lot Name", "label_es": "Lote", "default_value": "20220202" }},
+            {"text2": { "label_en": "Program", "label_es": "Programa", "default_value": "" }},
+            {"text3": { "label_en": "Location", "label_es": "Ubicación", "default_value": "" }},
+            {"text4": { "label_en": "Area", "label_es": "Area", "default_value": "" }},
+            {"checkbox1": { "label_en": "Include Samples", "label_es": "Incluir Muestreo Ubicaciones", "default_value": true }},
+            {"checkbox2": { "label_en": "Include Sampler Samples", "label_es": "Incluir Muestreos de Personal", "default_value": false }},
+            {"daterange1":
+              {
+              "dateStart":{ "label_en": "Sampling Start Date", "label_es": "Fecha Inicio Muestreo", "default_value": "" },
+              "dateEnd":{ "label_en": "Sampling End Date", "label_es": "Fecha Fin Muestreo", "default_value": "" }
+              }
+            },
+            {"daterange2":
+              {
+              "dateStart":{ "label_en": "Login Start Date", "label_es": "Fecha Inicio Creación Muestra", "default_value": "" },
+              "dateEnd":{ "label_en": "Login End Date", "label_es": "Fecha Fin Creación Muestra", "default_value": "" }
+              }
+            },
+            {"checkbox3": { "label_en": "Exclude Readings Not Entered Yet", "label_es": "Excluir Lecturas no entradas aún", "default_value": true }},
+            {"number1": { "label_en": "Only readings Equal to", "label_es": "Solo las lecturas igual a", "default_value": "" }},
+            {"number2": { "label_en": "Only readings Greater than", "label_es": "Solo las lecturas Mayores a", "default_value": "" }},
+            {"number3": { "label_en": "Only readings Less than", "label_es": "Solo las lecturas Menores a", "default_value": "" }},
+            {"checkbox4": { "label_en": "Include Microorganisms", "label_es": "Incluir Microorganismos", "default_value": false }},
+            {"text5": { "label_en": "Microorganisms to find", "label_es": "Microorganismos a encontrar", "default_value": "" }}
+
+          ],
+          "extraParams": [
+            {"argumentName": "lotName", "element": "text1"},
+            {"argumentName": "programName", "element": "text2"},
+            {"argumentName": "locationName", "element": "text3"},
+            {"argumentName": "area", "element": "text4"},
+            {"argumentName": "includeSamples", "element": "checkbox1"},
+            {"argumentName": "includeSamplerSamples", "element": "checkbox2"},
+            {"argumentName": "excludeReadingNotEntered", "element": "checkbox3"},
+            {"argumentName": "samplingDayStart", "element": "daterange1dateStart"},
+            {"argumentName": "samplingDayEnd", "element": "daterange1dateEnd"},
+            {"argumentName": "loginDayStart", "element": "daterange2dateStart"},
+            {"argumentName": "loginDayEnd", "element": "daterange2dateEnd"},
+            {"argumentName": "readingEqual", "element": "number1"},
+            {"argumentName": "readingMin", "element": "number2"},
+            {"argumentName": "readingMax", "element": "number3"},
+            {"argumentName": "includeMicroorganisms", "element": "checkbox4"},
+            {"argumentName": "MicroorganismsToFind", "element": "text5"}
+          ]      
+        },
+        "reportElements":[
+          [
+          {"type": "reportTitle", "title":{"label_en": "Sampling History", "label_es": "Histórico de muestreos"}}
+          ],
+          [
+          {"type": "card", "title":{"label_en": "Information", "label_es": "Información"}, 
+            "elementName":"production_lot", "subheadingObj": "text1"}
+          ],
+          [
+          {"type": "chart", "elementName": "counter_range_eval",
+
+            "display_chart": true,
+            "chart_type":"pie",
+            "chart_name":"counter_range_eval",
+            "chart_title":{"label_en": "Per out of range type", "label_es":"Por tipo de fuera de rango"},
+            "counter_field_name":"count",
+            "counterLimits":{
+              "xmin_allowed": 3,
+              "xmin_allowed_included":3,
+              "xmax_allowed":100,
+              "xmax_allowed_included":100,
+              "xvalue":0
+            },
+            "chartStyle": {
+              "backgroundColor": "transparent",
+              "is3D": true,
+              "colors": ["#dfa942", "#d33737", "#bf120f"]              
+            },
+            "grouper_field_name":"spec_eval",
+            "label_values_replacement":{
+              "IN":{"label_es": "In Range", "label_en": "Dentro de Range"},
+              "inAlertMax": {"label_es": "Por Encima del límite de alerta", "label_en": "Over the Alert limit"},
+              "outOfSpecMax": {"label_es": "Fuera de Rango", "label_en": "Over the Range"},
+              "outOfSpecMaxStrict": {"label_es": "Fuera de Rango", "label_en": "Over the Range"}
+            },
+            "grouper_exclude_items":["xxxxoutOfSpecMax", "Samplingzz","Incubationzz","PlateReadingzz","MicroorganismIdentificationzz","zz","END"],
+            "label_item":{"label_en":"Statussss", "label_es":"Estado"},
+            "label_value":{"label_en":"#", "label_es":"#"}   
+          },
+          {"type": "chart", "elementName": "counter_by_area_spec_tmp",
+
+            "display_chart": true,
+            "chart_type":"pie",
+            "chart_name":"counter_by_area_spec_tmp",
+            "chart_title":{"label_en": "Per Area and Spec", "label_es":"Por Area y Especificación"},
+            "counter_field_name":"count",
+            "counterLimits":{
+              "xmin_allowed": 3,
+              "xmin_allowed_included":3,
+              "xmax_allowed":100,
+              "xmax_allowed_included":100,
+              "xvalue":0
+            },
+            "chartStyle": {
+              "backgroundColor": "transparent",
+              "is3D": true,
+              "colors": ["#1b7fcc", "#5fbd5f", "#bf120f"]              
+            },
+            "grouper_field_name":"sample_config_code",
+            "label_values_replacement":{
+              "prog_pers_template": {"label_es": "Personal", "label_en": "Personnel"},
+              "program_smp_template": {"label_es": "Muestras", "label_en": "Samples"},
+              "outOfSpecMaxStrict": {"label_es": "Fuera de Rango", "label_en": "Over the Range"}
+            },
+            "grouper_exclude_items":["xxxxoutOfSpecMax", "Samplingzz","Incubationzz","PlateReadingzz","MicroorganismIdentificationzz","zz","END"],
+            "label_item":{"label_en":"Statussss", "label_es":"Estado"},
+            "label_value":{"label_en":"#", "label_es":"#"}   
+          }
+        ],
+        [
+          {"type": "grid", "title":{"label_en": "Info Matching Selection Criteria", "label_es": "Información cumpliendo el criterio de selección"}, 
+           "elementName": "datatable", "fieldsToDisplay":[
+              {"property": "program_name", "header": "Program"}, 
+              {"property": "location_name", "header": "Location"}, 
+              {"property": "area", "header": "Area"}, 
+              {"property": "shift", "header": "shift"}, 
+              {"property": "sampling_date", "header": "Sampling Date"}, 
+              {"property": "raw_value_num", "header": "Value"}, 
+              {"property": "spec_eval_detail", "header": "Spec Eval"}
+           ] 
+          }          
+        ]
+        ]
+      },
+      { "action": "QUERY_SAMPLER_SAMPLING_HISTORY",
+        "label_en": "Personal Sampling History", 
+        "label_es": "Histórico de muestreos de personal", 
+        "endPoint": "/moduleenvmon/EnvMonAPIstats",
+        "filter":{
+          "filterFields":[
+            {"text1": { "label_en": "Sampler Name", "label_es": "Muestreador", "default_value": "" }},
+            {"listMDSamplerPersonalAreas": { "label_en": "Sampler Area", "label_es": "Area Muestreada", "default_value": "" }},
+            {"text3": { "label_en": "Program", "label_es": "Programa", "default_value": "" }},
+            {"text4": { "label_en": "Location", "label_es": "Ubicación", "default_value": "" }},
+            {"text5": { "label_en": "Location Area", "label_es": "Area de la ubicacion", "default_value": "" }},
+            {"checkbox1": { "label_en": "Include Samples", "label_es": "Incluir Muestreo Ubicaciones", "default_value": true }},
+            {"checkbox2": { "label_en": "Include Sampler Samples", "label_es": "Incluir Muestreos de Personal", "default_value": false }},
+            {"daterange1":
+              {
+              "dateStart":{ "label_en": "Sampling Start Date", "label_es": "Fecha Inicio Muestreo", "default_value": "" },
+              "dateEnd":{ "label_en": "Sampling End Date", "label_es": "Fecha Fin Muestreo", "default_value": "" }
+              }
+            },
+            {"checkbox3": { "label_en": "Exclude Readings Not Entered Yet", "label_es": "Excluir Lecturas no entradas aún", "default_value": true }},
+            {"number1": { "label_en": "Only readings Equal to", "label_es": "Solo las lecturas igual a", "default_value": "" }},
+            {"number2": { "label_en": "Only readings Greater than", "label_es": "Solo las lecturas Mayores a", "default_value": "" }},
+            {"number3": { "label_en": "Only readings Less than", "label_es": "Solo las lecturas Menores a", "default_value": "" }},
+            {"checkbox4": { "label_en": "Include Microorganisms", "label_es": "Incluir Microorganismos", "default_value": false }},
+            {"text6": { "label_en": "Microorganisms to find", "label_es": "Microorganismos a encontrar", "default_value": "" }}
+          ],
+          "endPointParams": [
+		  {"argumentName": "sampleGroups", "fixValue": "area, spec_code,sample_config_code*counter_by_area_spec_tmp|area*counter_by_area|has_pre_invest*counter_out|spec_eval*counter_range_eval|has_invest*counter_investigations|has_pre_invest, has_invest*counter_pre_and_invest"},
+		  {"argumentName": "includeSamplerSamples", "fixValue": "true"},
+		  {"argumentName": "includeSamples", "fixValue": "false"},
+		  
+            {"argumentName": "samplerName", "element": "text1"},
+            {"argumentName": "samplerArea", "element": "listMDSamplerPersonalAreas"},
+            {"argumentName": "programName", "element": "text3"},
+            {"argumentName": "locationName", "element": "text4"},
+            {"argumentName": "area", "element": "text5"},
+            {"argumentName": "includeSamplerSamples", "element": "checkbox1"},
+            {"argumentName": "includeSamplerSamples", "element": "checkbox2"},
+            {"argumentName": "excludeReadingNotEntered", "element": "checkbox3"},
+            {"argumentName": "samplingDayStart", "element": "daterange1dateStart"},
+            {"argumentName": "samplingDayEnd", "element": "daterange1dateEnd"},
+            {"argumentName": "readingEqual", "element": "number1"},
+            {"argumentName": "readingMin", "element": "number2"},
+            {"argumentName": "readingMax", "element": "number3"},
+            {"argumentName": "includeMicroorganisms", "element": "checkbox4"},
+            {"argumentName": "MicroorganismsToFind", "element": "text6"}
+          ]      
+        },
+        "printable": true,
+        "download":{
+          "active": true,
+          "elements":[
+            {"elementName": "datatable"}
+          ] 
+        },
+        "reportElements":[
+          [
+            {"type": "reportTitle", "title":{"label_en": "Personal Sampling History", "label_es": "Histórico de muestreos de personal"}}
+          ],
+          [
+            {"type": "card", "title":{"label_en": "Information", "label_es": "Información"}, 
+              "elementName":"production_lot", "subheadingObj": "text1"}
+          ],
+          [
+            {"type": "chart", "elementName": "counter_range_eval",
+              "display_chart": true,
+              "chart_type":"pie",
+              "chart_name":"counter_range_eval",
+              "chart_title":{"label_en": "Per out of range type", "label_es":"Por tipo de fuera de rango"},
+              "counter_field_name":"count",
+              "counterLimits":{
+                "xmin_allowed": 3,
+                "xmin_allowed_included":3,
+                "xmax_allowed":100,
+                "xmax_allowed_included":100,
+                "xvalue":0
+              },
+              "chartStyle": {
+                "backgroundColor": "transparent",
+                "is3D": true,
+                "colors": ["#dfa942", "#d33737", "#bf120f"]              
+              },
+              "grouper_field_name":"spec_eval",
+              "label_values_replacement":{
+                "IN":{"label_es": "In Range", "label_en": "Dentro de Range"},
+                "inAlertMax": {"label_es": "Por Encima del límite de alerta", "label_en": "Over the Alert limit"},
+                "outOfSpecMax": {"label_es": "Fuera de Rango", "label_en": "Over the Range"},
+                "outOfSpecMaxStrict": {"label_es": "Fuera de Rango", "label_en": "Over the Range"}
+              },
+              "grouper_exclude_items":["xxxxoutOfSpecMax", "Samplingzz","Incubationzz","PlateReadingzz","MicroorganismIdentificationzz","zz","END"],
+              "label_item":{"label_en":"Statussss", "label_es":"Estado"},
+              "label_value":{"label_en":"#", "label_es":"#"}   
+            },
+            {"type": "chart", "elementName": "counter_by_area_spec_tmp",
+
+              "display_chart": true,
+              "chart_type":"pie",
+              "chart_name":"counter_by_area_spec_tmp",
+              "chart_title":{"label_en": "Per Area and Spec", "label_es":"Por Area y Especificación"},
+              "counter_field_name":"count",
+              "counterLimits":{
+                "xmin_allowed": 3,
+                "xmin_allowed_included":3,
+                "xmax_allowed":100,
+                "xmax_allowed_included":100,
+                "xvalue":0
+              },
+              "chartStyle": {
+                "backgroundColor": "transparent",
+                "is3D": true,
+                "colors": ["#1b7fcc", "#5fbd5f", "#bf120f"]              
+              },
+              "grouper_field_name":"sample_config_code",
+              "label_values_replacement":{
+                "prog_pers_template": {"label_es": "Personal", "label_en": "Personnel"},
+                "program_smp_template": {"label_es": "Muestras", "label_en": "Samples"},
+                "outOfSpecMaxStrict": {"label_es": "Fuera de Rango", "label_en": "Over the Range"}
+              },
+              "grouper_exclude_items":["xxxxoutOfSpecMax", "Samplingzz","Incubationzz","PlateReadingzz","MicroorganismIdentificationzz","zz","END"],
+              "label_item":{"label_en":"Statussss", "label_es":"Estado"},
+              "label_value":{"label_en":"#", "label_es":"#"}   
+            }
+        ],
+        [
+          {"type": "grid", "title":{"label_en": "Info Matching Selection Criteria", "label_es": "Información cumpliendo el criterio de selección"}, 
+           "elementName": "datatable", "fieldsToDisplay":[
+              {"property": "sampler", "header": "Sampler"},
+              {"property": "sampler_area", "header": "Sampler Area"},
+              {"property": "program_name", "header": "Program"}, 
+              {"property": "location_name", "header": "Location"}, 
+              {"property": "area", "header": "Area"}, 
+              {"property": "shift", "header": "shift"}, 
+              {"property": "sampling_date", "header": "Sampling Date"}, 
+              {"property": "raw_value_num", "header": "Value"}, 
+              {"property": "spec_eval_detail", "header": "Spec Eval"}
+           ] 
+          }          
+        ]
+        ]
+      },
+      { "action": "QUERY_INVESTIGATION",
+        "label_en": "Investigations History", 
+        "label_es": "Histórico Investigaciones", 
+        "endPoint": "/moduleenvmon/EnvMonAPIstats",
+        "filter":{
+          "fixParams": {
+            "investigationGroups": "capa_required*capa_or_not"
+          },
+          "filterFields":[
+            {"checkbox1": { "label_en": "Exclude In Progress ones", "label_es": "Excluir En Curso"}, "default_value": true },
+            {"daterange1":
+              {
+              "dateStart":{ "label_en": "Creation Start Date", "label_es": "Inicio Rango Creación", "default_value": "" },
+              "dateEnd":{ "label_en": "Creation End Date", "label_es": "Fin Rango Creación", "default_value": "" }
+              }
+            },
+            {"daterange2":
+              {
+              "dateStart":{ "label_en": "Closure Start Date", "label_es": "Inicio Rango Cierre", "default_value": "" },
+              "dateEnd":{ "label_en": "Closure End Date", "label_es": "Fin Rango Cierre", "default_value": "" }
+              }
+            }
+          ],
+          "endPointParams": [
+            {"argumentName": "excludeNotClosedYet", "element": "checkbox1"},
+            {"argumentName": "creationDayStart", "element": "daterange1dateStart"},
+            {"argumentName": "creationDayEnd", "element": "daterange1dateEnd"},
+            {"argumentName": "closureDayStart", "element": "daterange2dateStart"},
+            {"argumentName": "closureDayEnd", "element": "daterange2dateEnd"}
+          ]      
+        },
+        "reportElements":[
+          [
+            {"type": "grid", "title":{"label_en": "Info Matching Selection Criteria", "label_es": "Información cumpliendo el criterio de selección"}, 
+             "elementName": "datatable", "fieldsToDisplay":[
+                {"property": "id", "header": "Id"}, 
+                {"property": "created_on", "header": "Creation", "label_es":"Creación"}, 
+                {"property": "created_by", "header": "By"}, 
+                {"property": "closed_on", "header": "Closed"}, 
+                {"property": "closed_by", "header": "By"}, 
+                {"property": "external_system_name", "header": "External System Name"},
+                {"property": "external_system_id", "header": "Id"}, 
+                {"property": "capa_required", "header": "Capa Required"}, 
+                {"property": "capa_decision_by", "header": "Capa Decision By"},
+                {"property": "capa_decision_on", "header": "On"},
+                {"property": "capa_external_system_id", "header": "External CAPA Systema Name"}, 
+                {"property": "capa_external_system_name", "header": "Id"}
+             ] 
+            }          
+          ],
+  
+          [
+          {"type": "reportTitle", "title":{"label_en": "Investigations History", "label_es": "Histórico Investigaciones"}}
+          ],
+          [
+          {"type": "chart", "elementName": "capa_or_not",
+
+            "display_chart": true,
+            "chart_type":"pie",
+            "chart_name":"capa_or_not",
+            "chart_title":{"label_en": "Per CAPA Required", "label_es":"Por CAPA necesario"},
+            "counter_field_name":"count",
+            "counterLimits":{
+              "xmin_allowed": 3,
+              "xmin_allowed_included":3,
+              "xmax_allowed":100,
+              "xmax_allowed_included":100,
+              "xvalue":0
+            },
+            "chartStyle": {
+              "backgroundColor": "transparent",
+              "is3D": true,
+              "colors": ["#dfa942", "#d33737", "#bf120f"]              
+            },
+            "grouper_field_name":"capa_required",
+            "label_values_replacement":{
+              "inAlertMax": {"label_es": "Por Encima del límite de alerta", "label_en": "Over the Alert limit"},
+              "outOfSpecMax": {"label_es": "Fuera de Rango", "label_en": "Over the Range"},
+              "outOfSpecMaxStrict": {"label_es": "Fuera de Rango", "label_en": "Over the Range"}
+            },
+            "grouper_exclude_items":["xxxxoutOfSpecMax", "Samplingzz","Incubationzz","PlateReadingzz","MicroorganismIdentificationzz","zz","END"],
+            "label_item":{"label_en":"Statussss", "label_es":"Estado"},
+            "label_value":{"label_en":"#", "label_es":"#"}   
+          }
+        ]
+        ]
+      }
+    ]
+  }
+}

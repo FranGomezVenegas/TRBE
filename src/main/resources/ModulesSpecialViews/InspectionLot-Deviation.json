@@ -1,10 +1,10 @@
 {
-    "moduleName": "STOCKS",
+    "moduleName": "INSPECTION_LOTS",
     "moduleVersion": 1,
-    "releaseDate": "2023-09-01",
-    "viewName":"Deviations",
-	"entity": "investigation",
+    "releaseDate": "2023-11-01",
+    "viewName":"Deviation",
     "windowType": "simple",
+	"entity": "investigation",
     "requirementsInfo":{
             "window_actions":[
                 {"actionName": "NEW_INVESTIGATION"},
@@ -31,17 +31,17 @@
             }
           },
           "gridHeader": {
-            "qualif_id": {
-              "label_en": "qualif Id", "label_es": "Id qualif", "sort": false, "filter": true, "width": "10%"
+            "bulk_id": {
+              "label_en": "Bulk Id", "label_es": "Id bulto", "sort": false, "filter": true, "width": "10%"
             },
             "lot_name": {
-              "label_en": "Lot Name", "label_es": "Nombre del lote", "sort": false, "filter": true, "width": "10%"
+              "label_en": "Lot Name", "label_es": "¨Nombre lote", "sort": false, "filter": true, "width": "10%"
             },
-            "reference": {
-              "label_en": "Reference", "label_es": "Referencia", "sort": true, "filter": false, "width": "15%"
+            "crated_by": {
+              "label_en": "Created By", "label_es": "Creado por", "sort": true, "filter": false, "width": "15%"
             },
-            "category": {
-              "label_en": "Category", "label_es": "Categoria", "sort": false, "filter": true, "width": "15%"
+            "created_on": {
+              "label_en": "Created on", "label_es": "Fecha de creación", "sort": false, "filter": true, "width": "15%"
             },
             "object_type": {
               "label_en": "Object Type", "label_es": "Tipo de objeto", "sort": false, "filter": true, "width": "10%"
@@ -49,7 +49,7 @@
           }
         },
         "viewQuery":{
-            "actionName": "INVESTIGATION_QUALIFICATIONS_PENDING_DECISION",
+            "actionName": "INVESTIGATION_DEVIATION_PENDING_DECISION",
             "button": {
               "icon": "refresh",
               "title": {
@@ -65,20 +65,28 @@
               "title": {
                 "label_en": "Create Investigation", "label_es": "Crear Investigación"
               },
-              "requiresGridItemSelected": true
+              "requiresGridItemSelected": true,
+			  "showWhenSelectedItem": {
+					"column": "object_type",
+					"value": "lot_bulk"
+			  }
             },
             "endPointParams": [
-				{ "argumentName": "objectToAddObjectName", "selObjectPropertyName": "qualif_id" },
-				{ "argumentName": "objectToAddObjectType", "selObjectPropertyName": "object_type"}						
+				{ "argumentName": "objectToAddObjectType", "selObjectPropertyName": "object_type" },	
+				{ "argumentName": "objectToAddObjectName", "selObjectPropertyName": "bulk_id" }
             ]
           },
-          {"actionName": "OPEN_INVESTIGATIONS",     
+          {"actionName": "OPEN_INVESTIGATIONS",          
 			"requiresDialog": true,
             "button": {
               "title": {
                 "label_en": "Add to Investigation", "label_es": "Añadir a Investigación"
               },
-              "requiresGridItemSelected": true
+              "requiresGridItemSelected": true,
+			  "showWhenSelectedItem": {
+					"column": "object_type",
+					"value": "lot_bulk"
+			  }			  
             },
             "dialogInfo": {
 			"name": "investigationDialog",
@@ -87,10 +95,11 @@
               "action": [
                 {
                   "actionName": "ADD_INVEST_OBJECTS",
-                  "clientMethod": "addInvestObjects",
+                  "XclientMethod": "addInvestObjects",
                   "endPointParams": [
-                    { "argumentName": "investigationId", "targetValue": true },
-                    { "argumentName": "objectsToAdd", "targetValue": true }
+                    {"argumentName": "investigationId", "getFromGrid": true, "selObjectPropertyName": "id"},
+					{ "argumentName": "objectToAddObjectType", "selObjectPropertyName": "object_type" },
+					{ "argumentName": "objectToAddObjectName", "selObjectPropertyName": "bulk_id" }
                   ]
                 }
               ]

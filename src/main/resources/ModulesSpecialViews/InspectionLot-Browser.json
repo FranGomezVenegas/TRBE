@@ -1,0 +1,349 @@
+{
+    "moduleName": "INSPECTION_LOTS",
+    "moduleVersion": 1,
+    "releaseDate": "2023-11-01",
+    "viewName":"Browser",
+    "windowType": "simple",
+	"entity": "many tabs",
+    "requirementsInfo":{
+            "window_actions":[
+                {"actionName": "GET_SAMPLE_STAGES_SUMMARY_REPORT"},
+				{"actionName": "GET_INCUBATOR_REPORT"},
+				{"actionName": "GET_BATCH_REPORT"},
+				{"actionName": "GET_PRODLOT_REPORT"}
+            ]
+    },    
+    "jsonModel":{
+    "component": "DataMining",
+    "tabs": [
+      { "action": "GET_SAMPLE_STAGES_SUMMARY_REPORT",
+        "label_en": "Sample",
+        "label_es": "Muestras",
+        "endPoint": "/moduleenvmon/EnvMonSampleAPIqueries",
+        "filter": {
+          "fixParams": {
+            "sampleGroups": "area, spec_code,sample_config_code*counter_by_area_spec_tmp|spec_eval*counter_range_eval|has_invest*counter_investigations|has_pre_invest, has_invest*counter_pre_and_invest"
+          },
+          "filterFields": [
+            {
+              "text1": {
+                "label_en": "Sample",
+                "label_es": "Muestra",
+                "default_value": "2029"
+              }
+            }
+          ],
+          "endPointParams": [
+            {
+              "argumentName": "sampleId",
+              "element": "text1"
+            },
+            {
+              "argumentName": "sampleFieldToRetrieve",
+              "fixValue": "ALL"
+            },
+            {
+              "argumentName": "sampleFieldsToDisplay",
+              "fixValue": "current_stage|program_name|location_name|product_lot|shift"
+            }
+          ]
+        },
+        "printable": {
+          "active": true,
+          "reportTitle": {
+            "label_en": "Report for sample",
+            "label_es": "Informe de muestra"
+          },
+          "printableTitleContent": "EnvMonAirSampleReportTitle",
+          "printableContent": "EnvMonAirSampleReportContent"
+        },
+        "download": {
+          "active": false,
+          "elements": [
+            {
+              "elementName": "datatable"
+            }
+          ]
+        },
+        "reportElements": [
+          [
+            {
+              "type": "Report",
+              "reportModel": "EnvMonAirSampleBrowser"
+            }
+          ]
+        ]
+      },
+      { "action": "GET_INCUBATOR_REPORT",
+        "label_en": "Incubator",
+        "label_es": "Incubadora",
+        "endPoint": "/moduleenvmon/EnvMonSampleAPIqueries",
+        "filter": {
+          "fixParams": {
+            "sampleGroups": "area, spec_code,sample_config_code*counter_by_area_spec_tmp|spec_eval*counter_range_eval|has_invest*counter_investigations|has_pre_invest, has_invest*counter_pre_and_invest"
+          },
+          "filterFields": [
+            {
+              "text1": {
+                "label_en": "Incubator",
+                "label_es": "Incubadora",
+                "default_value": "INC_1"
+              }
+            },
+            {
+              "daterange1": {
+                "dateStart": {
+                  "label_en": "Sampling Start Date",
+                  "label_es": "Fecha Inicio Muestreo",
+                  "default_value": ""
+                },
+                "dateEnd": {
+                  "label_en": "Sampling End Date",
+                  "label_es": "Fecha Fin Muestreo",
+                  "default_value": ""
+                }
+              }
+            }
+          ],
+          "endPointParams": [
+            {
+              "argumentName": "incubatorName",
+              "element": "text1"
+            },
+            {
+              "argumentName": "startDate",
+              "element": "daterange1dateStart"
+            },
+            {
+              "argumentName": "endDate",
+              "element": "daterange1dateEnd"
+            },
+            {
+              "argumentName": "incubatorFieldsToDisplay",
+              "fixValue": "ALL"
+            }
+          ]
+        },
+        "printable": {
+          "active": true,
+          "reportTitle": {
+            "label_en": "Report for sample",
+            "label_es": "Informe de muestra"
+          },
+          "printableTitleContent": "incubatorContentTitle",
+          "printableContent": "EnvMonAirIncubatorReportContent"
+        },
+        "download": {
+          "active": false,
+          "elements": [
+            {
+              "elementName": "datatable"
+            }
+          ]
+        },
+        "reportElements": [
+          [
+            {
+              "type": "Report",
+              "reportModel": "EnvMonAirIncubatorBrowser"
+            }
+          ],
+          [
+            {
+              "type": "chart",
+              "elementName": "lastTemperatureReadings",
+              "display_chart": true,
+              "chart_type": "line",
+              "chart_name": "lastTemperatureReadings",
+              "chart_title": {
+                "label_en": "Per out of range type",
+                "label_es": "Por tipo de fuera de rango"
+              },
+              "counter_field_name": "count",
+              "counterLimits": {
+                "xmin_allowed": 3,
+                "xmin_allowed_included": 3,
+                "xmax_allowed": 100,
+                "xmax_allowed_included": 100,
+                "xvalue": 0
+              },
+              "chartStyle": {
+                "backgroundColor": "transparent",
+                "is3D": true,
+                "colors": [
+                  "#dfa942",
+                  "#d33737",
+                  "#bf120f"
+                ]
+              },
+              "grouper_field_name": "spec_eval",
+              "label_values_replacement": {
+                "IN": {
+                  "label_es": "In Range",
+                  "label_en": "Dentro de Range"
+                },
+                "inAlertMax": {
+                  "label_es": "Por Encima del límite de alerta",
+                  "label_en": "Over the Alert limit"
+                },
+                "outOfSpecMax": {
+                  "label_es": "Fuera de Rango",
+                  "label_en": "Over the Range"
+                },
+                "outOfSpecMaxStrict": {
+                  "label_es": "Fuera de Rango",
+                  "label_en": "Over the Range"
+                }
+              },
+              "grouper_exclude_items": [
+                "xxxxoutOfSpecMax",
+                "Samplingzz",
+                "Incubationzz",
+                "PlateReadingzz",
+                "MicroorganismIdentificationzz",
+                "zz",
+                "END"
+              ],
+              "label_item": {
+                "label_en": "Statussss",
+                "label_es": "Estado"
+              },
+              "label_value": {
+                "label_en": "#",
+                "label_es": "#"
+              }
+            }
+          ]
+        ]
+      },
+      { "action": "GET_BATCH_REPORT",
+        "label_en": "Batch",
+        "label_es": "Tanda",
+        "endPoint": "/moduleenvmon/EnvMonSampleAPIqueries",
+        "filter": {
+          "fixParams": {
+            "sampleGroups": "area, spec_code,sample_config_code*counter_by_area_spec_tmp|spec_eval*counter_range_eval|has_invest*counter_investigations|has_pre_invest, has_invest*counter_pre_and_invest"
+          },
+          "filterFields": [
+            {
+              "text1": {
+                "label_en": "Sample",
+                "label_es": "Muestra",
+                "default_value": ""
+              }
+            }
+          ],
+          "endPointParams": [
+            {
+              "argumentName": "batchName",
+              "element": "text1"
+            },
+            {
+              "argumentName": "sampleFieldToRetrieve",
+              "fixValue": "ALL"
+            },
+            {
+              "argumentName": "sampleFieldsToDisplay",
+              "fixValue": "current_stage|program_name|location_name|product_lot|shift"
+            }
+          ]
+        },
+        "printable": {
+          "active": true,
+          "reportTitle": {
+            "label_en": "Report for sample",
+            "label_es": "Informe de muestra"
+          },
+          "printableTitleContent": "EnvMonAirSampleReportTitle",
+          "printableContent": "EnvMonAirBatchReportContent"
+        },
+        "download": {
+          "active": false,
+          "elements": [
+            {
+              "elementName": "datatable"
+            }
+          ]
+        },
+        "reportElements": [
+          [
+            {
+              "type": "Report",
+              "reportModel": "EnvMonAirBatchBrowser"
+            }
+          ]
+        ]
+      },
+      { "action": "GET_PRODLOT_REPORT",
+        "label_en": "Production Lot",
+        "label_es": "Lote Producido",
+        "endPoint": "/moduleenvmon/EnvMonSampleAPIqueries",
+        "filter": {
+          "fixParams": {
+            "sampleGroups": "area, spec_code,sample_config_code*counter_by_area_spec_tmp|spec_eval*counter_range_eval|has_invest*counter_investigations|has_pre_invest, has_invest*counter_pre_and_invest"
+          },
+          "filterFields": [
+            {
+              "text1": {
+                "label_en": "Lot",
+                "label_es": "Lote",
+                "default_value": "demo"
+              }
+            }
+          ],
+          "endPointParams": [
+            {
+              "argumentName": "lotName",
+              "element": "text1"
+            },
+            {
+              "argumentName": "prodLotFieldToRetrieve",
+              "fixValue": "ALL"
+            },
+            {
+              "argumentName": "prodLotFieldsToDisplay",
+              "fixValue": "ALL"
+            },
+            {
+              "argumentName": "sampleFieldToRetrieve",
+              "fixValue": "ALL"
+            },
+            {
+              "argumentName": "sampleFieldsToDisplay",
+              "fixValue": "ALL"
+            },
+            {
+              "argumentName": "sampleGroups",
+              "fixValue": "area, spec_code,sample_config_code*counter_by_area_spec_tmp|area*counter_by_status"
+            }
+          ]
+        },
+        "printable": {
+          "active": true,
+          "reportTitle": {
+            "label_en": "Report for sample",
+            "label_es": "Informe de muestra"
+          },
+          "printableTitleContent": "EnvMonProductionLotReportTitle",
+          "printableContent": "EnvMonProductionLotReportContent"
+        },
+        "download": {
+          "active": false,
+          "elements": [
+            {
+              "elementName": "datatable" 
+            }
+          ]
+        },
+        "reportElements": [
+          [
+            {
+              "type": "Report",
+              "reportModel": "EnvMonProductionLotBrowser"
+            }
+          ]
+        ]
+      }
+    ]
+  }
+}

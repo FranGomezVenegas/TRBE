@@ -1,7 +1,7 @@
 {
-    "moduleName": "STOCKS",
+    "moduleName": "INSTRUMENTS",
     "moduleVersion": 1,
-    "releaseDate": "2023-09-01",
+    "releaseDate": "2023-11-01",
     "viewName":"Deviations",
 	"entity": "investigation",
     "windowType": "simple",

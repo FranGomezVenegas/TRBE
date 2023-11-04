@@ -1,12 +1,14 @@
 {
-    "name": "STOCKS",
-    "version": 1,
+    "moduleName": "STOCKS",
+    "moduleVersion": 1,
     "releaseDate": "2023-09-01",
-	"viewName":"Config-Add References",
+    "viewName":"Config-Add References",
+	"entity": "inv_reference",
+    "windowType": "simple",
     "requirementsInfo":{
-        "window_action":{
-            "name": "CONFIG_ADD_REFERENCE"
-        }
+            "window_actions":[
+                {"actionName": "CONFIG_ADD_REFERENCE"}
+            ]
     },
     "jsonModel":{
         "component": "TableWithButtons",

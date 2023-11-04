@@ -4,6 +4,30 @@
     "releaseDate": "2023-09-01",
     "description_en": "Instruments Manager",
     "description_es": "Gestión Instrumental",
+    "tables_and_views":[
+        {"schema_name":"config", "table_name":"instruments_family", "is_view":false, "order_number":1, "definition_en":"Instrument Families master list", "definition_es":"Lista maestra de familias de instrumentos"},
+        {"schema_name":"config", "table_name":"methods", "is_view":false, "order_number":2, "definition_en":"Methods master list", "definition_es":"Lista maestra de métodos"},
+        {"schema_name":"config", "table_name":"sop_meta_data", "is_view":false, "order_number":3, "definition_en":"SOPs master list", "definition_es":"lista maestra de PNTs"},
+        {"schema_name":"config", "table_name":"variables", "is_view":false, "order_number":4, "definition_en":"Variables master definition", "definition_es":"Maestro definición de variables"},
+        {"schema_name":"config", "table_name":"variables_set", "is_view":false, "order_number":5, "definition_en":"Variables Set master list", "definition_es":"Maestro de conjuntos de variables"},
+        {"schema_name":"config-audit", "table_name":"instruments_family", "is_view":false, "order_number":1, "definition_en":"Instrument Families master list", "definition_es":"Lista maestra de familias de instrumentos"},
+        {"schema_name":"data", "table_name":"CALIB_PM_EXPIRED_OR_EXPIRING", "is_view":true, "order_number":12, "definition_en":"instruments", "definition_es":"instrumentos"},
+        {"schema_name":"data", "table_name":"certif_user_analysis_method", "is_view":false, "order_number":6, "definition_en":"User certifications for analysis methods", "definition_es":"Certificaciones de usuario para métodos de análisis"},
+        {"schema_name":"data", "table_name":"instr_attachment", "is_view":false, "order_number":34, "definition_en":"Attachments for both, instruments and events", "definition_es":"Adjuntos para ambos, instrumentos y eventos"},
+        {"schema_name":"data", "table_name":"instr_event_variable_values", "is_view":false, "order_number":7, "definition_en":"instrument events variable values", "definition_es":"valores de variables de eventos de instrumentos"},
+        {"schema_name":"data", "table_name":"instrument_event", "is_view":false, "order_number":12, "definition_en":"instruments", "definition_es":"instrumentos"},
+        {"schema_name":"data", "table_name":"instruments", "is_view":false, "order_number":12, "definition_en":"instruments", "definition_es":"instrumentos"},
+        {"schema_name":"data", "table_name":"NOT_DECOM_INSTR_EVENT_DATA_VW", "is_view":true, "order_number":13, "definition_en":"not decommissioned instrument events view", "definition_es":"vista de eventos de instrumentos no retirados"},
+        {"schema_name":"data", "table_name":"USER_AND_ANALYSISMETHOD_CERTIF_VIEW", "is_view":true, "order_number":14, "definition_en":"user and analysis method certification view", "definition_es":"vista de certificación de usuario por método analí­tico"},
+        {"schema_name":"data", "table_name":"USER_AND_META_DATA_SOP_VIEW", "is_view":true, "order_number":12, "definition_en":"instruments", "definition_es":"instrumentos"},
+        {"schema_name":"data", "table_name":"user_sop", "is_view":false, "order_number":36, "definition_en":"user sop certification", "definition_es":"PNTs de usuario"},{"schema_name":"data", "table_name":"variables_set", "is_view":false, "order_number":8, "definition_en":"variables set", "definition_es":"Conjunto de variables"},
+        {"schema_name":"data-audit", "table_name":"instruments", "is_view":false, "order_number":12, "definition_en":"instruments", "definition_es":"instrumentos"},
+        {"schema_name":"procedure", "table_name":"instrument_corrective_action", "is_view":false, "order_number":36, "definition_en":"instrument corrective actions", "definition_es":"acciones correctivas del instrumento"},
+        {"schema_name":"procedure", "table_name":"investigation", "is_view":false, "order_number":33, "definition_en":"investigation", "definition_es":"investigación"},
+        {"schema_name":"procedure", "table_name":"invest_objects", "is_view":false, "order_number":34, "definition_en":"investigation objects", "definition_es":"objetos de investigación"},
+        {"schema_name":"procedure-audit", "table_name":"investigation", "is_view":false, "order_number":37, "definition_en":"investigation audit history", "definition_es":"historial de auditorí­a de investigación"},
+        {"schema_name":"procedure-audit", "table_name":"proc_hashcodes_history", "is_view":false, "order_number":38, "definition_en":"procedure instance hashcodes audit history", "definition_es":"historial de auditorí­a de códigos hash de instancia de procedimiento"}
+    ],
     "ModuleSettings":{
             "actionsEndpoints":[
                   { "name": "Instruments" , "url" : "/app/procs/InstrumentsAPIactions"}
@@ -13,5 +37,24 @@
             ]
     },
     "picture": "/images/procedures_pictures/instruments.jpg",
-    "apis":[ "InstrumentsAPIactionsEndpoints", "InstrumentsAPIqueriesEndpoints", "InvestigationAPIactionsEndpoints", "InvestigationAPIqueriesEndpoints"]	
+    "apis":[ "InstrumentsAPIactionsEndpoints", "InstrumentsAPIqueriesEndpoints", "InvestigationAPIactionsEndpoints", 
+        "InvestigationAPIqueriesEndpoints"
+    ],
+    "error_notifications":[
+        {"api_name":"InstrEventsErrorTrapping"}, {"api_name":"InstrumentsErrorTrapping"}, {"api_name":"InvestigationErrorTrapping"}, 
+        {"api_name":"UomErrorTrapping"}, {"api_name":"UserSopErrorTrapping"}, {"api_name":"CertificationAnalysisMethodErrorTrapping"}, 
+        {"api_name":"ConfigAnalysisErrorTrapping"}, {"api_name":"ConfigSpecErrorTrapping"}
+
+    ], 
+    "business_rules":[
+        {"type": "all_business_rules", "api_name": "InstrumentsBusinessRules", "name": "N/A", "mandatory": true},
+        {"type": "all_business_rules", "api_name": "correctiveActionMode", "name": "N/A", "mandatory": true},
+        {"type": "one_business_rule", "api_name": "UserSopBusinessRules", "name": "userSopMode", "mandatory": true},
+        {"type": "one_business_rule", "api_name": "UserSopBusinessRules", "name": "windowOpenableWhenNotSopCertifiedUserSopCertification", "mandatory": true}
+    ],    
+    "manuals":[
+        {"manual_name":"Ciclo de vida", "manual_version": 1, "description":"Instrumentos y su ciclo de vida", "file_link":"https://onedrive.live.com/embed?cid=FC113EC81E46401D&resid=FC113EC81E46401D%2125205&authkey=AO7DN4hvc18MCh8&em=2", "is_video":false, "active":true, "area": "Master Data"},
+        {"manual_name":"Eventos de instrumento", "manual_version": 1, "description":"Calibraciones, Mantenimientos, cÃ³mo se configura y quÃ© posibilidades tengo", "file_link":"https://onedrive.live.com/embed?cid=FC113EC81E46401D&resid=FC113EC81E46401D%2125255&authkey=AL-4PNfH61-f-Pw&em=2", "is_video":false, "active":true, "area": "Master Data"},
+        {"manual_name":"Auditoría", "manual_version": 1, "description":"La auditorí­a en Trazit", "file_link":"https://onedrive.live.com/embed?cid=FC113EC81E46401D&resid=FC113EC81E46401D%2123325&authkey=AMri9b15iosfWWU&em=2", "is_video":false, "active":true, "area": "Master Data"}
+    ]       
 }

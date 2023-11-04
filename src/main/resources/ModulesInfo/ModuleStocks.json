@@ -13,7 +13,40 @@
             ]
     },
     "picture": "/images/procedures_pictures/inventory.jpg",
-    "apis":[ "InventoryTrackAPIactionsEndpoints", "InventoryTrackAPIqueriesEndpoints", "InvestigationAPIactionsEndpoints", "InvestigationAPIqueriesEndpoints"],
+    "apis":[ "InventoryTrackAPIactionsEndpoints", "InventoryTrackAPIqueriesEndpoints", "InvestigationAPIactionsEndpoints", 
+        "InvestigationAPIqueriesEndpoints"
+    ],
+    "error_notifications":[
+        {"api_name":"InventoryTrackingErrorTrapping"}, {"api_name":"InvestigationErrorTrapping"}, {"api_name":"InvTrackingEventsErrorTrapping"}, 
+        {"api_name":"UomErrorTrapping"}, {"api_name":"UserSopErrorTrapping"}, {"api_name":"CertificationAnalysisMethodErrorTrapping"}, 
+        {"api_name":"ConfigAnalysisErrorTrapping"}, {"api_name":"ConfigSpecErrorTrapping"}
+    ],
+    "tables_and_views":[
+        {"schema_name":"config", "table_name":"inv_category", "is_view":false, "order_number":1, "definition_en":"Categories master list", "definition_es":"Lista maestra de categorí­as"},
+        {"schema_name":"config", "table_name":"inv_reference", "is_view":false, "order_number":3, "definition_en":"References master list", "definition_es":"Lista maestra de referencias"},
+        {"schema_name":"config", "table_name":"methods", "is_view":false, "order_number":4, "definition_en":"Methods master list", "definition_es":"Lista maestra de métodos"},
+        {"schema_name":"config", "table_name":"uom", "is_view":false, "order_number":2, "definition_en":"Units of measurement", "definition_es":"Unidades de medida"},
+        {"schema_name":"config", "table_name":"variables", "is_view":false, "order_number":1, "definition_en":"Categories master list", "definition_es":"Lista maestra de categorí­as"},
+        {"schema_name":"config", "table_name":"variables_set", "is_view":false, "order_number":1, "definition_en":"Categories master list", "definition_es":"Lista maestra de categorí­as"},
+        {"schema_name":"data", "table_name":"AVAILABLE_LOTS_PER_REFERENCE", "is_view":true, "order_number":28, "definition_en":"user and analysis method certification view", "definition_es":"vista de certificación de usuario por método analí­tico"},
+        {"schema_name":"data", "table_name":"certif_user_analysis_method", "is_view":false, "order_number":23, "definition_en":"User certifications for analysis methods", "definition_es":"Certificaciones de usuario para métodos de análisis"},
+        {"schema_name":"data", "table_name":"lot", "is_view":false, "order_number":4, "definition_en":"Inventory lots", "definition_es":"Lotes de inventario"},
+        {"schema_name":"data", "table_name":"lot_qualification", "is_view":false, "order_number":6, "definition_en":"Inventory lot qualifications", "definition_es":"Cualificaciones de lotes de inventario"},
+        {"schema_name":"data", "table_name":"lot_qualification_variable_values", "is_view":false, "order_number":7, "definition_en":"Inventory lot qualifications variable values", "definition_es":"Valores a las variables de las cualificaciones de lotes de inventario"},
+        {"schema_name":"data", "table_name":"LOTS_EXPIRED", "is_view":true, "order_number":28, "definition_en":"user and analysis method certification view", "definition_es":"vista de certificación de usuario por método analí­tico"},
+        {"schema_name":"data", "table_name":"REFERENCES_AVAILABLE_FOR_USE_UNDER_MIN", "is_view":true, "order_number":28, "definition_en":"user and analysis method certification view", "definition_es":"vista de certificación de usuario por método analí­tico"},
+        {"schema_name":"data", "table_name":"REFERENCES_STOCK_UNDER_MIN", "is_view":true, "order_number":28, "definition_en":"user and analysis method certification view", "definition_es":"vista de certificación de usuario por método analí­tico"},
+        {"schema_name":"data", "table_name":"USER_AND_ANALYSISMETHOD_CERTIF_VIEW", "is_view":true, "order_number":28, "definition_en":"user and analysis method certification view", "definition_es":"vista de certificación de usuario por método analí­tico"},
+        {"schema_name":"data", "table_name":"USER_AND_META_DATA_SOP_VIEW", "is_view":true, "order_number":29, "definition_en":"user and sop certification view", "definition_es":"vista de certificación de usuario por PNT"},
+        {"schema_name":"data", "table_name":"user_sop", "is_view":false, "order_number":30, "definition_en":"user sop certification", "definition_es":"PNTs de usuario"},
+        {"schema_name":"data-audit", "table_name":"lot", "is_view":false, "order_number":5, "definition_en":"inventory lot audit history", "definition_es":"historial de auditorí­a de lotes de inventario"},
+        {"schema_name":"procedure", "table_name":"inventory_corrective_action", "is_view":false, "order_number":36, "definition_en":"inventory corrective actions", "definition_es":"acciones correctivas de inventario"},
+        {"schema_name":"procedure", "table_name":"investigation", "is_view":false, "order_number":33, "definition_en":"investigation", "definition_es":"investigación"},
+        {"schema_name":"procedure", "table_name":"invest_objects", "is_view":false, "order_number":34, "definition_en":"investigation objects", "definition_es":"objetos de investigación"},
+        {"schema_name":"procedure", "table_name":"proc_user_and_roles", "is_view":true, "order_number":35, "definition_en":"procedure user and roles", "definition_es":"usuarios y perfiles del proceso"},
+        {"schema_name":"procedure-audit", "table_name":"investigation", "is_view":false, "order_number":37, "definition_en":"investigation audit history", "definition_es":"historial de auditorí­a de investigación"},
+        {"schema_name":"procedure-audit", "table_name":"proc_hashcodes_history", "is_view":false, "order_number":38, "definition_en":"procedure instance hashcodes audit history", "definition_es":"historial de auditorí­a de códigos hash de instancia de procedimiento"}
+    ],    
     "business_rules":[
         {"type": "one_business_rule", "api_name": "DataProgramCorrectiveActionBusinessRules", "name": "correctiveActionMode", "mandatory": true},
         {"type": "one_business_rule", "api_name": "DataProgramCorrectiveActionBusinessRules", "name": "correctiveActionNotifModeStillInProgress", "mandatory": false},
@@ -21,18 +54,8 @@
         {"type": "one_business_rule", "api_name": "UserSopBusinessRules", "name": "windowOpenableWhenNotSopCertifiedUserSopCertification", "mandatory": true}
 
     ],
-    "error_notifications":[
-        {"api_name":"InventoryTrackingErrorTrapping"}, {"api_name":"InvestigationErrorTrapping"}, {"api_name":"InvTrackingEventsErrorTrapping"}, 
-        {"api_name":"UomErrorTrapping"}, {"api_name":"UserSopErrorTrapping"}
-    ],
     "manuals":[
         {"manual_name":"Auditoría", "manual_version": 1, "description":"La auditorí­a en Trazit", "file_link":"https://onedrive.live.com/embed?cid=FC113EC81E46401D&resid=FC113EC81E46401D%2125255&authkey=AL-4PNfH61-f-Pw&em=2", "is_video":false, "active":true, "area": "Usuario"},
         {"manual_name":"Configurar Inventario", "manual_version": 1, "description":"Configurando mi inventario y qué posibilidades tengo", "file_link":"https://onedrive.live.com/embed?cid=FC113EC81E46401D&resid=FC113EC81E46401D%2125150&authkey=AAlXMEcfuVZ4dDI&em=2", "is_video":false, "active":true, "area": "Admin"}
-    ],
-    "special_views":[
-        {"actions":[{}],
-         "json_model":""
-        }
-    ]
-    
+    ]    
 }

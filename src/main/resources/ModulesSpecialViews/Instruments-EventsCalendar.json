@@ -1,0 +1,208 @@
+{
+    "moduleName": "INSTRUMENTS",
+    "moduleVersion": 1,
+    "releaseDate": "2023-11-01",
+    "viewName":"EventsCalendar",
+    "windowType": "simple",
+	"entity": "instrument_event",
+    "requirementsInfo":{
+            "window_actions":[
+            ]
+    },    
+    "jsonModel":{
+		"component": "CalendarData",
+		"hasOwnComponent": true,
+		"showTitleOnTop": true,
+		"title": {
+		  "fix_text_en": "Events Calendar",
+		  "fix_text_es": "Calendario de Eventos",
+		  "name": "name --- puede que sea instrument_name o instrument" 
+		},
+		"viewQuery": {
+		  "actionName": "INSTRUMENT_EVENTS_CALENDAR",
+		  "notUseGrid": true,
+		  "button": {
+			"icon": "refresh",
+			"title": {
+			  "label_en": "Reload",
+			  "label_es": "Recargar"
+			},
+			"requiresGridItemSelected": false
+		  },
+		  "endPointParams": [
+			{ "argumentName": "instrumentName", "element": "text1"},
+			{ "argumentName": "familyName", "element": "text2"},
+			{"argumentName": "startDate", "element": "daterange1dateStart"},
+			{"argumentName": "endDate", "element": "daterange1dateEnd"},
+			{"argumentName": "includeOnlyScheduledOne", "element": "checkbox1"}
+		  ]
+		},
+		"filter_button": {
+		  "label_en": "Search",
+		  "label_es": "Buscar"
+		},
+		"filter": [
+			{"daterange1":{
+				"dateStart":{ "label_en": "Sampling Start Date", "label_es": "Fecha Inicio Muestreo", "default_value": "" },
+				"dateEnd":{ "label_en": "Sampling End Date", "label_es": "Fecha Fin Muestreo", "default_value": "" }}
+			},
+			{"text1": {
+				"label_en": "Instrument to get", "label_es": "Instrumento a cargar","fixValue": ""}
+			},
+			{"text2": {
+			  "label_en": "Families to get", "label_es": "Familias a cargar", "fixValue": ""}
+			},
+			{"checkbox1": {
+			  "label_en": "Include only the planned ones", "label_es": "Incluir sólo los planificados", "fixValue": false}
+			}
+
+		],
+		"filter_results": {
+		  "type": "readOnlyTable",
+		  "title": "3.4) Menu Definition",
+		  "endPointResponseObject": "user_requirements_events",
+		  "columns": [
+			{
+			  "name": "id",
+			  "label_en": "Id",
+			  "label_es": "Id"
+			}
+		  ]
+		},
+		"actions": [],
+		"tabs": [
+		  { "tabLabel_en": "Table",
+			"tabLabel_es": "Tabla",
+			"view": "summary",
+			"view_definition": [
+			  { "type": "readOnlyTable",
+				"endPointResponseObject": "raw_data",
+				"xtitle": {
+				  "label_en": "Instrument Info",
+				  "label_es": "Información del Instrumento"
+				},
+				"subtitle": {
+				  "label_en": "Instrument Info",
+				  "label_es": "Información del Instrumento"
+				},
+				"columns": [
+				  {"name": "type",
+					"label_en": "Type",
+					"label_es": "Tipo"
+				  },
+				  {"name": "name",
+					"label_en": "Instrument",
+					"label_es": "Instrumento"
+				  },
+				  {"name": "family",
+					"label_en": "Instrument Family",
+					"label_es": "Familia del instrumento"
+				  },
+				  {"name": "responsible",
+					"label_en": "Responsible",
+					"label_es": "Responsable"
+				  },
+				  { "name": "responsible_backup",   
+					"label_en": "Responsible backup",
+					"label_es": "Segundo responsable"
+				  },
+				  { "name": "next_calibration",   
+					"label_en": "Next Calibration",
+					"label_es": "Próxima Calibración"
+				  },
+				  { "name": "last_calibration",   
+					"label_en": "Last Calibration",
+					"label_es": "Última Calibración"
+				  }
+				],
+				"actions": []
+			  }
+			]
+		  },
+		  { "tabLabel_en": "Calendar",
+			"tabLabel_es": "Calendario",
+			"view": "Calendar",
+			"view_definition": [
+			  { "type": "Calendar",
+				"endPointResponseObject": "dates_grouped",
+				"title": {
+				  "label_en": "Instrument Events",
+				  "label_es": "Eventos del Instrumento"
+				},
+				"subtitle": {
+				  "label_en": "Instrument Events",
+				  "label_es": "Eventos del Instrumento"
+				},
+				"fieldsToDisplay": [
+				  {"name": "id",
+					"label_en": "Instrument Id",
+					"label_es": "Id del instrumento"
+				  },
+				  {"name": "event_type",
+					"label_en": "Event Type",
+					"label_es": "Tipo de evento"
+				  },
+				  {"name": "decision",
+					"label_en": "Decision",
+					"label_es": "Decisión"
+				  },
+				  { "name": "completed_on",   
+					"label_en": "Completed On",
+					"label_es": "Completado en"
+				  }
+				],
+				"actions": []
+			  }
+			],
+			"day_clicked_detail":[
+				{ "type": "readOnlyTable",
+				"endPointResponseObject": "ROOT",
+				"xtitle": {
+				  "label_en": "Instrument Info",
+				  "label_es": "Información del Instrumento"
+				},
+				"subtitle": {
+				  "label_en": "Instrument Info",
+				  "label_es": "Información del Instrumento"
+				},
+				"columns": [
+				  {"name": "type",
+				  "label_en": "Type",
+				  "label_es": "Tipo"
+				  },
+				  {"name": "calendar_date",
+				  "label_en": "Date",
+				  "label_es": "Fecha"
+				  },
+				  {"name": "name",
+				  "label_en": "Instrument",
+				  "label_es": "Instrumento"
+				  },
+				  {"name": "family",
+				  "label_en": "Instrument Family",
+				  "label_es": "Familia del instrumento"
+				  },
+				  {"name": "responsible",
+				  "label_en": "Responsible",
+				  "label_es": "Responsable"
+				  },
+				  { "name": "responsible_backup",   
+				  "label_en": "Responsible backup",
+				  "label_es": "Segundo responsable"
+				  },
+				  { "name": "next_calibration",   
+				  "label_en": "Next Calibration",
+				  "label_es": "Próxima Calibración"
+				  },
+				  { "name": "last_calibration",   
+				  "label_en": "Last Calibration",
+				  "label_es": "Última Calibración"
+				  }
+			],
+			"actions": []
+			}
+		  ]
+	  }
+	]
+  }
+}

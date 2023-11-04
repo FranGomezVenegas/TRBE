@@ -1,0 +1,670 @@
+{
+    "moduleName": "INSPECTION_LOTS",
+    "moduleVersion": 1,
+    "releaseDate": "2023-11-01",
+    "viewName":"SpecDesign",
+    "windowType": "simple",
+	"entity": "spec_limits",
+    "requirementsInfo":{
+            "window_actions":[
+                {"actionName": "SUGGEST_SPEC_LIMITS_TESTING"},
+				{"actionName": "TestingRegressionUAT"}
+            ]
+    },    
+    "jsonModel":{
+    "component": "ObjectByTabs",
+    "hasOwnComponent": true,
+    "showTitleOnTop": true,
+    "title": {
+      "fix_text_en": "Spec Designer",
+      "fix_text_es": "Diseño de especificaciones",
+      "name": "lot_name"
+    },
+    "viewQuery": {
+      "actionName": "GET_SPECS",
+	  "notUseGrid": true,
+      "button": {
+        "icon": "refresh",
+        "title": {
+          "label_en": "Reload",
+          "label_es": "Recargar"
+        },
+        "requiresGridItemSelected": false
+      },
+      "endPointParams": [
+        {
+          "argumentName": "specCode",
+		  "internalVariableSimpleObjName": "filterCurrentData",
+          "internalVariableSimpleObjProperty": "filtertext1"          
+        }
+      ]
+    },
+    "filter_button": {
+      "label_en": "Search",
+      "label_es": "Buscar"
+    },
+    "filter": [
+      {
+        "filtertext1": {
+          "label_en": "Spec Name",
+          "label_es": "Especificacion",
+          "fixValue": "Calcium Carbonate"
+        }
+      }
+    ],
+	"filterResultDetail":{
+		"type":"list",
+		"detail":[
+			{"field": "code"}
+      ]  		
+	},
+    "actions": [],
+    "tabs": [
+      { "tabLabel_en": "Summary", "tabLabel_es": "Inicio", "view": "summary",
+        "view_definition": [
+		  {   
+            "actions": [
+            ]
+          },
+          { "type": "readOnlyTable", "endPointResponseObject": "spec_limits",
+            "columns": [
+              {
+                "name": "variation_name",
+                "label_en": "Variation",
+                "label_es": "Variación"
+              },
+              {
+                "name": "testing_group",
+                "label_en": "Testing Group",
+                "label_es": "Grupo Analítico"
+              },
+              {
+                "name": "analysis",
+                "label_en": "Analysis",
+                "label_es": "Análisis"
+              },
+              {
+                "name": "method_name",
+                "fix_value2_prefix": "v",
+                "name2": "method_version",
+                "label_en": "Method & Version",
+                "label_es": "Método y Versión"
+              },
+              {
+                "name": "parameter",
+                "label_en": "Parameter",
+                "label_es": "Parámetro"
+              },
+			  {
+				"name": "rule_representation",
+				"label_en": "Rule",
+				"label_es": "Regla"
+			  },
+              {
+                "name": "pretty_spec",
+                "label_en": "Specification",
+                "label_es": "Especificación"
+              }
+            ]
+          }
+        ]
+      },
+	  { "tabLabel_en": "Testing", "tabLabel_es": "Pruebas", "view": "summary",
+        "view_definition": [
+              {
+                "type": "readOnlyTable",				
+                "endPointResponseObject": "scripts_detail",
+				"actions": [
+					{ "actionName": "SUGGEST_SPEC_LIMITS_TESTING",
+						"requiresDialog": false,
+						"endPoint": "/appProcMgr/RequirementsProcedureDefinitionAPIActions",
+						"variableToSetResponse": "selectedItemInView",
+						"button": {
+						  "icon": "event",
+						  "title": {
+							"label_en": "Build Testing",
+							"label_es": "Construye una prueba"
+						  },
+						  "requiresGridItemSelected": false
+						},
+						"endPointParams": [
+						  {
+							"argumentName": "spec",
+							"internalVariableSimpleObjName": "selectedItem",
+							"internalVariableSimpleObjProperty": "code"
+						  },
+						  {
+							"argumentName": "specVersion",
+							"internalVariableSimpleObjName": "selectedItem",
+							"internalVariableSimpleObjProperty": "config_version"
+						  }
+						]
+					},
+					{ "actionName": "SUGGEST_SPEC_LIMITS_TESTING",
+						"requiresDialog": false,
+						"endPoint": "/appProcMgr/RequirementsProcedureDefinitionAPIActions",
+						"variableToSetResponse": "selectedItemInView",
+						"button": {
+						  "icon": "event",
+						  "title": {
+							"label_en": "Build Testing & Save",
+							"label_es": "Construye una prueba y guardar"
+						  },
+						  "requiresGridItemSelected": false
+						},
+						"endPointParams": [
+						  {
+							"argumentName": "spec",
+							"internalVariableSimpleObjName": "selectedItem",
+							"internalVariableSimpleObjProperty": "code"
+						  },
+						  {
+							"argumentName": "specVersion",
+							"internalVariableSimpleObjName": "selectedItem",
+							"internalVariableSimpleObjProperty": "config_version"
+						  },
+						  { 
+							"argumentName": "saveScript", "fixValue": "true"
+						  }
+						]
+					}
+				],
+                "columns": [
+                  {
+                    "name": "script_id",
+                    "label_en": "Id",
+                    "label_es": "Id"
+                  },
+                  {
+                    "name": "run_summary",
+                    "label_en": "Summary",
+                    "label_es": "Resumen"
+                  },
+                  {
+                    "name": "date_execution",
+                    "label_en": "Run on",
+                    "label_es": "Ejecutado en"
+                  },
+                  {
+                    "name": "eval_total_tests",
+                    "label_en": "Number of Steps",
+                    "label_es": "Número de Pasos"
+                  },
+                  {
+                    "label_en": "Sintaxis",
+                    "label_es": "Sintáxis",
+                    "fix_value_prefix": "Match: ",
+                    "name": "eval_syntaxis_match",
+                    "fix_value2_prefix": "UNmtch: ",
+                    "name2": "eval_syntaxis_unmatch",
+                    "fix_value3_prefix": "N/A:",
+                    "name3": "eval_syntaxis_undefined"
+                  },
+                  {
+                    "label_en": "Notification",
+                    "label_es": "Notificación",
+                    "fix_value_prefix": "Match: ",
+                    "name": "eval_code_match",
+                    "fix_value2_prefix": "UNmtch: ",
+                    "name2": "eval_code_unmatch",
+                    "fix_value3_prefix": "N/A:",
+                    "name3": "eval_code_undefined"
+                  },
+                  {
+                    "label_en": "Duration",
+                    "label_es": "Duración",
+                    "fix_value_prefix": "",
+                    "name": "time_consume",
+                    "fix_value2_prefix": " (",
+                    " (name2": "time_started",
+                    "fix_value3_prefix": " - ",
+                    "name3": "time_completed",
+                    "fix_value3_suffix": ") "
+                  }
+                ],
+                "row_buttons": [
+                    { "actionName": "TestingRegressionUAT",
+                      "endPoint": "/testing/platform/TestingRegressionUAT",
+                      "requiresDialog": false,
+                      "secondaryActionToPerform": {"name": "testScriptPerformed"},
+                      "certificationException": true,
+                      "button": {
+                        "icon": "date_range",
+                        "title": {
+                          "label_en": "Run Testing",
+                          "label_es": "Ejecutar Prueba"
+                        },
+                        "requiresGridItemSelected": false
+                      },
+                      "endPointParams": [
+                        {
+                          "argumentName": "scriptId",
+                          "selObjectPropertyName": "script_id"
+                        },
+                        {
+                          "argumentName": "procInstanceName",
+                          "contextVariableName": "procInstanceName"
+                        },
+                        {
+                          "argumentName": "procManagement",
+                          "fixValue": "true"
+                        },
+                        {
+                          "argumentName": "outputFormat",
+                          "fixValue": "JSON"
+                        }                    
+                      ]
+                    }
+                  ]				
+              },
+          {
+            "type": "reportTitle",
+            "title": {
+              "label_en": "Steps",
+              "label_es": "Pasos"
+            },
+            "elements": [
+              {
+                "type": "readOnlyTable",
+				"contextVariableName": "selectedItemInView",
+				"mantadoryPropertiesInVariableName":["suggested_value"],
+				"endPointPropertyArray": ["steps"],				
+                "columns": [
+                  {
+                    "name": "variation_name",
+                    "label_en": "Variation",
+                    "label_es": "Variación"
+                  },
+                  {
+                    "name": "method_name",
+                    "label_en": "Method",
+                    "label_es": "Método"
+                  },
+                  {
+                    "name": "analysis",
+                    "label_en": "Analysis",
+                    "label_es": "Análisis"
+                  },
+                  {
+                    "name": "rule_representation",
+                    "label_en": "Rule",
+                    "label_es": "Regla"
+                  },
+                  {
+                    "name": "suggested_value",
+                    "label_en": "Suggested Value",
+                    "label_es": "Valor sugerido"
+                  },
+                  {
+                    "name": "evaluation_pretty_es",
+                    "label_en": "Evaluation",
+                    "label_es": "Evaluación"
+                  },
+                  {
+                    "name": "reason",
+                    "label_en": "Explanation",
+                    "label_es": "Explicación"
+                  }
+                ]
+              },
+              {
+                "type": "readOnlyTable",
+				"contextVariableName": "selectedItemInView",
+				"mantadoryPropertiesInVariableName":["script_id", "step_id"],
+				"endPointPropertyArray": ["steps"],				
+                "columns": [
+                  {
+                    "name": "step_id",
+                    "label_en": "Id",
+                    "label_es": "Id"
+                  },
+                  {
+                    "name": "action_name",
+                    "label_en": "Action",
+                    "label_es": "Acción"
+                  },
+                  {
+                    "name": "date_execution",
+                    "label_en": "Run on",
+                    "label_es": "Ejecutado en"
+                  },
+                  {
+                    "name": "eval_total_tests",
+                    "label_en": "Number of Steps",
+                    "label_es": "Número de Pasos"
+                  },
+                  {
+                    "label_en": "Sintaxis",
+                    "label_es": "Sintáxis",
+                    "is_icon": true,
+                    "icon_name": "eval_syntaxis_icon",
+                    "icon_class": "eval_syntaxis_class",
+                    "fix_value2_prefix": "(Expected: ",
+                    "name2": "expected_syntaxis",
+                    "fix_value2_suffix": ")",
+                    "fix_value3_prefix": " (Trazit:",
+                    "name3": "function_syntaxis",
+                    "fix_value3_suffix": ")"
+                  },
+                  {
+                    "label_en": "Notification",
+                    "label_es": "Notificación",
+                    "is_icon": true,
+                    "icon_name": "eval_code_icon",
+                    "icon_class": "eval_code_class",
+                    "fix_value2_prefix": "(Expected: ",
+                    "name2": "expected_code",
+                    "fix_value2_suffix": ")",
+                    "fix_value3_prefix": " (Trazit:",
+                    "name3": "function_code",
+                    "fix_value3_suffix": ")"
+                  },                  
+                  {
+                    "label_en": "Duration",
+                    "label_es": "Duración",
+                    "fix_value_prefix": "",
+                    "name": "time_consume",
+                    "fix_value2_prefix": " (",
+                    " (name2": "time_started",
+                    "fix_value3_prefix": " - ",
+                    "name3": "time_completed",
+                    "fix_value3_suffix": ") "
+                  }
+                ]
+              }
+            ]
+          }
+			  
+		]
+	  }	  
+    ],
+    "zzzztabs": [
+      {
+        "tabLabel_en": "Summary",
+        "tabLabel_es": "Inicio",
+        "view": "summary",
+        "view_definition": [
+          {
+            "type": "cardSomeElementsRepititiveObjects",
+            "endPointResponseObject": "lot_info",
+            "title": {
+              "label_en": "Lot Info",
+              "label_es": "Información del Lote"
+            },
+            "subtitle": {
+              "label_en": "Lot Info",
+              "label_es": "Información del Lote"
+            },
+            "fieldsToDisplay": [
+              {
+                "name": "name",
+                "label_en": "Name",
+                "label_es": "Nombre"
+              },
+              {
+                "name": "created_on",
+                "label_en": "Creation D.",
+                "label_es": "F. Creación"
+              },
+              {
+                "name": "material_name",
+                "label_en": "Material",
+                "label_es": "Material"
+              },
+              {
+                "name": "quantity",
+                "name2": "quantity_uom",
+                "label_en": "Quantity",
+                "label_es": "Cantidad"
+              },
+              {
+                "name": "num_containers",
+                "label_en": "Num. Containers",
+                "label_es": "Núm. Contenedores"
+              },
+              {
+                "name": "bulk_decision",
+                "name2": "bulk_decision_by",
+                "name3": "bulk_decision_by",
+                "label_en": "Quantity",
+                "label_es": "Cantidad"
+              },
+              {
+                "name": "sampling_plan",
+                "label_en": "sampling_plan",
+                "label_es": "sampling_plan"
+              },
+              {
+                "name": "analysis_status",
+                "label_en": "analysis_status",
+                "label_es": "analysis_status"
+              }
+            ],
+            "actions": [
+              {
+                "actionName": "GET_SAMPLE_AUDIT",
+                "requiresDialog": true,
+                "endPoint": "/modulesample/SampleAPIqueries",
+                "button": {
+                  "icon": "rule",
+                  "title": {
+                    "label_en": "Sample Audit",
+                    "label_es": "Auditoría de Muestra"
+                  },
+                  "requiresGridItemSelected": false
+                },
+                "clientMethod": "getObjectAuditInfo",
+                "endPointParams": [
+                  {
+                    "argumentName": "sampleId",
+                    "selObjectPropertyName": "sample_id"
+                  }
+                ],
+                "dialogInfo": {
+                  "name": "auditDialog",
+                  "automatic": true,
+                  "action": [
+                    {
+                      "actionName": "SAMPLEAUDIT_SET_AUDIT_ID_REVIEWED",
+                      "requiresDialog": false,
+                      "notGetViewData": true,
+                      "endPointUrl": "Samples",
+                      "clientMethod": "signAudit",
+                      "endPointParams": [
+                        {
+                          "argumentName": "auditId",
+                          "targetValue": true
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          {
+            "type": "zzzjsonViewer",
+            "endPointResponseObject": "lot_info"
+          },
+          {
+            "type": "zzjsonViewer",
+            "endPointResponseObject": "spec_definition"
+          }
+        ]
+      },
+      {
+        "tabLabel_en": "Bulks",
+        "tabLabel_es": "Bultos",
+        "view": "lot-bulks",
+        "view_definition": [
+          {
+            "type": "cardSomeElementsRepititiveObjects",
+            "endPointResponseObject": "lot_bulk",
+            "title": {
+              "label_en": "Lot Info",
+              "label_es": "Información del Lote"
+            },
+            "subtitle": {
+              "label_en": "Lot Info",
+              "label_es": "Información del Lote"
+            },
+            "fieldsToDisplay": [
+              {
+                "name": "id",
+                "label_en": "Id",
+                "label_es": "Id"
+              },
+              {
+                "name": "quantity",
+                "name2": "quantity_uom",
+                "label_en": "Quantity",
+                "label_es": "Cantidad"
+              },
+              {
+                "name": "sample_quantity",
+                "name2": "sample_quantity_uom",
+                "label_en": "Sample Quantity",
+                "label_es": "Cantidad de Muestra"
+              },
+              {
+                "name": "decision",
+                "label_en": "Decision",
+                "label_es": "Decisión"
+              }
+            ],
+            "actions": [
+              {
+                "actionName": "SETSAMPLINGDATE",
+                "endPointUrl": "Samples",
+                "requiresDialog": false,
+                "button": {
+                  "icon": "date_range",
+                  "title": {
+                    "label_en": "Set Sample Date",
+                    "label_es": "Establecer Fecha Muestra"
+                  },
+                  "requiresGridItemSelected": false
+                },
+                "endPointParams": [
+                  {
+                    "argumentName": "sampleId",
+                    "selObjectPropertyName": "sample_id"
+                  }
+                ]
+              },
+              {
+                "actionName": "CHANGESAMPLINGDATE",
+                "requiresDialog": true,
+                "endPointUrl": "Samples",
+                "button": {
+                  "icon": "event",
+                  "title": {
+                    "label_en": "Change Sample Date",
+                    "label_es": "Cambiar Fecha Muestra"
+                  },
+                  "requiresGridItemSelected": false
+                },
+                "dialogInfo": {
+                  "name": "genericDialog",
+                  "fields": [
+                    {
+                      "datetime1": {
+                        "label_en": "new Date",
+                        "label_es": "Nueva Fecha"
+                      }
+                    }
+                  ]
+                },
+                "endPointParams": [
+                  {
+                    "argumentName": "sampleId",
+                    "selObjectPropertyName": "sample_id"
+                  },
+                  {
+                    "argumentName": "newDateTime",
+                    "element": "datetime1",
+                    "selObjectPropertyName": "sampling_date"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "tabLabel_en": "Samples",
+        "tabLabel_es": "Muestras",
+        "view": "lot-samples"
+      },
+      {
+        "tabLabel_en": "CoA Preview",
+        "Previa CdA": "Muestras",
+        "view": "lot-coa"
+      },
+      {
+        "tabLabel_en": "Parameter Limits",
+        "tabLabel_es": "Límites",
+        "view": "parameter-limits",
+        "view_definition": [
+          {
+            "type": "readOnlyTable",
+            "endPointResponseObject": "spec_definition",
+            "endPointResponseObject2": "spec_limits",
+            "columns": [
+              {
+                "name": "rule",
+                "label_en": "Rule",
+                "label_es": "Regla"
+              },
+              {
+                "name": "method_and_version",
+                "label_en": "Method & Version",
+                "label_es": "Método y Versión"
+              },
+              {
+                "name": "analysis",
+                "label_en": "Analysis",
+                "label_es": "Análisis"
+              },
+              {
+                "name": "parameter",
+                "label_en": "Parameter",
+                "label_es": "Parámetro"
+              },
+              {
+                "name": "variation",
+                "label_en": "Variation",
+                "label_es": "Variación"
+              },
+              {
+                "name": "testing_group",
+                "label_en": "Testing Group",
+                "label_es": "Grupo Analítico"
+              }
+            ]
+          },
+          {
+            "type": "zzzjsonViewer",
+            "endPointResponseObject": "spec_definition"
+          },
+          {
+            "type": "zzzgrid",
+            "title": {
+              "label_en": "Info Matching Selection Criteria",
+              "label_es": "Información cumpliendo el criterio de selección"
+            },
+            "elementName": "spec_limits",
+            "endPointResponseObject": "spec_definition",
+            "endPointResponseObject2": "spec_limits",
+            "fieldsToDisplay": [
+              {
+                "property": "method_name",
+                "header": "Method"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  } 
+}
