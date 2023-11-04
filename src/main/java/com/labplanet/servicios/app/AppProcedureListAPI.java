@@ -302,7 +302,7 @@ public class AppProcedureListAPI extends HttpServlet {
             } else if (GlobalVariables.TrazitModules.STOCKS.name().equalsIgnoreCase(moduleNameFromProcInstance)) {
                 InvTrackingFrontendMasterData mdObj = new InvTrackingFrontendMasterData();
                 jObj = mdObj.getMasterDataJsonObject(procInstanceName);
-            } else if (GlobalVariables.TrazitModules.INSPECTION_LOT.name().equalsIgnoreCase(moduleNameFromProcInstance)) {
+            } else if (GlobalVariables.TrazitModules.INSPECTION_LOTS.name().equalsIgnoreCase(moduleNameFromProcInstance)) {
                 InspLotRawMaterialMasterData mdObj = new InspLotRawMaterialMasterData();
                 jObj = mdObj.getMasterDataJsonObject(procInstanceName);
             } else {

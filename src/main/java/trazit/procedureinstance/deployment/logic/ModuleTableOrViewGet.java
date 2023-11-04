@@ -127,7 +127,7 @@ public class ModuleTableOrViewGet {
             case MONITORING:
             case SAMPLES_MANAGEMENT:
                 return;
-            case INSPECTION_LOT:
+            case INSPECTION_LOTS:
                 if (curSchemaName.toLowerCase().contains(GlobalVariables.Schemas.CONFIG.getName())) {
                     try {
                         this.tableObj = TblsInspLotRMConfig.TablesInspLotRMConfig.valueOf(tblName.toUpperCase());
@@ -329,7 +329,7 @@ public class ModuleTableOrViewGet {
             case MONITORING:
             case SAMPLES_MANAGEMENT:
                 return;
-            case INSPECTION_LOT:
+            case INSPECTION_LOTS:
                 if (curSchemaName.toLowerCase().contains(GlobalVariables.Schemas.CONFIG.getName())) {
                     try {
                         //this.viewObj = TblsInspLotRMConfig.TablesInspLotRMConfig.valueOf(tblName.toUpperCase());

@@ -241,7 +241,7 @@ public final class Investigation {
                     case STOCKS:
                         diagnostic = DataInventoryCorrectiveAction.markAsAddedToInvestigation(investId, curObjDetail[0], curObjDetail[1]);
                         break;
-                    case INSPECTION_LOT:
+                    case INSPECTION_LOTS:
                         diagnostic = DataInsLotsCorrectiveAction.markAsAddedToInvestigation(investId, curObjDetail[0], curObjDetail[1]);
                         break;
                     default:
