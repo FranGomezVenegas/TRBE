@@ -7,8 +7,8 @@ package trazit.procedureinstance.definition.logic;
 
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import static trazit.procedureinstance.definition.logic.ClassReqProcedUserAndActions.actionsByRoles;
-import static trazit.procedureinstance.definition.logic.ClassReqProcedUserAndActions.viewsByRoles;
+import static trazit.procedureinstance.definition.logic.ClassReqProcedUserAndActionsForQueries.actionsByRoles;
+import static trazit.procedureinstance.definition.logic.ClassReqProcedUserAndActionsForQueries.viewsByRoles;
 import databases.Rdbms;
 import databases.SqlWhere;
 import trazit.procedureinstance.definition.definition.TblsReqs;
@@ -21,7 +21,7 @@ import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.globalvariables.GlobalVariables;
-import static trazit.procedureinstance.definition.logic.ClassReqProcedUserAndActions.usersByRoles;
+import static trazit.procedureinstance.definition.logic.ClassReqProcedUserAndActionsForQueries.usersByRoles;
 
 /**
  *
@@ -35,20 +35,24 @@ public class ClassReqProcedureQueries {
 
     static final String NO_DATA = "No Data";
 
-    public static JSONObject procAccessBlockInRequirements(String procInstanceName) {
+    public static Object[][] procAccessBlockInRequirements(String procInstanceName) {
+        Integer iObjsInArray=0;
         String[] fldsArr = new String[]{TblsReqs.ProcedureUsers.USER_NAME.getName()};
         Object[][] procUsers = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USERS.getTableName(),
                 new String[]{TblsReqs.ProcedureUsers.PROC_INSTANCE_NAME.getName()},
                 new Object[]{procInstanceName}, fldsArr,
                 new String[]{TblsReqs.ProcedureUserRoles.USER_NAME.getName()});
-        JSONObject jBlockObj = new JSONObject();
+        Object[] allContentArr1D = new Object[]{};
+        
         JSONArray jBlockArr = new JSONArray();
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procUsers[0][0].toString()))) {
             for (Object[] curRow : procUsers) {
                 jBlockArr.add(LPJson.convertArrayRowToJSONObject(fldsArr, curRow));
             }
         }
-        jBlockObj.put("users", jBlockArr);
+        allContentArr1D=LPArray.addValueToArray1D(allContentArr1D, TblsReqs.TablesReqs.PROC_USERS.getTableName());
+        allContentArr1D=LPArray.addValueToArray1D(allContentArr1D, jBlockArr);
+        //jBlockArr.put("users", jBlockArr);
 
         fldsArr = new String[]{TblsReqs.ProcedureRoles.ROLE_NAME.getName()};
         Object[][] procRoles = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_ROLES.getTableName(),
@@ -62,7 +66,9 @@ public class ClassReqProcedureQueries {
                 jBlockArr.add(LPJson.convertArrayRowToJSONObject(fldsArr, curRow));
             }
         }
-        jBlockObj.put("roles", jBlockArr);
+        allContentArr1D=LPArray.addValueToArray1D(allContentArr1D, TblsReqs.TablesReqs.PROCEDURE_ROLES.getTableName());
+        allContentArr1D=LPArray.addValueToArray1D(allContentArr1D, jBlockArr);
+//        jBlockArr.put("roles", jBlockArr);
 
         fldsArr = new String[]{TblsReqs.ProcedureUserRoles.USER_NAME.getName(), TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()};
         Object[][] procUserRoles = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USER_ROLES.getTableName(),
@@ -75,12 +81,19 @@ public class ClassReqProcedureQueries {
                 jBlockArr.add(LPJson.convertArrayRowToJSONObject(fldsArr, curRow));
             }
         }
-        jBlockObj.put("user_role", jBlockArr);
+        allContentArr1D=LPArray.addValueToArray1D(allContentArr1D, TblsReqs.TablesReqs.PROC_USER_ROLES.getTableName());
+        allContentArr1D=LPArray.addValueToArray1D(allContentArr1D, jBlockArr);
+//        jBlockArr.put("user_role", jBlockArr);
 
-        jBlockObj.put("roles_actions", actionsByRoles(procInstanceName, procRoles));
-        jBlockObj.put("users_per_roles", usersByRoles(procInstanceName, procRoles));
+        allContentArr1D=LPArray.addValueToArray1D(allContentArr1D, "access_roles_actions");
+        allContentArr1D=LPArray.addValueToArray1D(allContentArr1D, actionsByRoles(procInstanceName, procRoles));
+//        jBlockArr.put("roles_actions", actionsByRoles(procInstanceName, procRoles));
+        allContentArr1D=LPArray.addValueToArray1D(allContentArr1D, "access_users_per_roles");
+        allContentArr1D=LPArray.addValueToArray1D(allContentArr1D, usersByRoles(procInstanceName, procRoles));
+//        jBlockArr.put("users_per_roles", usersByRoles(procInstanceName, procRoles));
         
-        return jBlockObj;
+        return LPArray.array1dTo2d(allContentArr1D, 2);
+        //return jBlockArr;
     }
 
     public static org.json.JSONArray procViewsBlockInRequirements(String procInstanceName) {
@@ -156,9 +169,9 @@ public class ClassReqProcedureQueries {
                 wObj, fldsToGet, sortFlds, false);
         return convertArray2DtoJArr(procTblRows, EnumIntTableFields.getAllFieldNames(fldsToGet), fldsToExclude, emptyWhenNoData);
     }
-    public static JSONArray dbRowsToJsonArr(String procInstanceName, String schemaName, String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue, String[] sortFlds, String[] fldsToExclude, Boolean emptyWhenNoData) {
+    public static JSONArray dbRowsToJsonArr(String procInstanceName, String schemaName, String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue, String[] sortFlds, String[] fldsToExclude, Boolean emptyWhenNoData, Boolean inforceDistinct) {
         Object[][] procTblRows = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, tblName,
-                whereFldName, whereFldValue, fldsToGet, sortFlds);
+                whereFldName, whereFldValue, fldsToGet, sortFlds, inforceDistinct);
         return convertArray2DtoJArr(procTblRows, fldsToGet, fldsToExclude, emptyWhenNoData);
     }
     

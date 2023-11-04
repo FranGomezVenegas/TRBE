@@ -110,7 +110,7 @@ public class ProcedureDefinitionToInstance {
     public static final String FLDSTORETR_PROCEDURE_USR_ROLE_SRC = "user_name|role_name";
     public static final String FLDSTORETR_PROCEDURE_USR_ROLE_SRT = "user_name";
     public static final String FIELDS_TO_INSERT_APP_USER_PROCESS = TblsApp.UserProcess.USER_NAME.getName() + "|" + TblsApp.UserProcess.PROC_NAME.getName() + "|" + TblsApp.UserProcess.ACTIVE.getName();
-    public static final String FLDSTO_INSERT_PROC_USR_ROLE_DEST = "person_name" + " " + SqlStatement.WHERECLAUSE_TYPES.LIKE.getSqlClause() + "|role_name" + " " + SqlStatement.WHERECLAUSE_TYPES.LIKE.getSqlClause() + "|active";
+    public static final String FLDSTO_INSERT_PROC_USR_ROLE_DEST = "person_name|role_name|active";
     public static final String FLDSTO_RETRIEVE_PROC_SOPMTDATA_SRC = "sop_id|sop_name|sop_version|sop_revision|current_status|expires|has_child|file_link|brief_summary";
     public static final String FLDSTO_RETRIEVE_PROC_SOPMTDATA_SRT = "sop_id";
     public static final String FLDSTO_INSERT_PROC_SOPMTDATA_DEST = "person_name|role_name|active";
@@ -290,36 +290,78 @@ public class ProcedureDefinitionToInstance {
         
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procViewsArr[0][0].toString())){
             JSONObject curViewLog=new JSONObject();
-            curViewLog.put("error", "cannot get the data");
+            curViewLog.put("error", "cannot get the window data");
             curViewLog.put("error_detail", Arrays.toString(procViewsArr[0]));
-            return mainLog;
-        }
-        for (Object[] curView: procViewsArr){  
-            String currentParentCode=LPNulls.replaceNull(curView[2]).toString();
-            String currentCode=LPNulls.replaceNull(curView[3]).toString();
-            JsonObject jObjModel = JsonParser.parseString(curView[5].toString()).getAsJsonObject();
-            
-            Object[][] procActionsArr = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_ACTIONS.getViewName(),
-                new String[]{TblsReqs.viewProcReqSolutionActions.PROCEDURE_NAME.getName(), TblsReqs.viewProcReqSolutionActions.PROCEDURE_VERSION.getName(), TblsReqs.viewProcReqSolutionActions.PROC_INSTANCE_NAME.getName(), 
-                    TblsReqs.viewProcReqSolutionActions.ACTIVE.getName(), TblsReqs.viewProcReqSolutionActions.TYPE.getName(), TblsReqs.viewProcReqSolutionActions.PARENT_CODE.getName()},
-                new Object[]{procedure, procVersion, procInstanceName, true, ProcedureDefinitionToInstance.ReqSolutionTypes.WINDOW_ACTION.getTagValue(), currentParentCode},
-                new String[]{TblsReqs.viewProcReqSolutionActions.MODULE_NAME.getName(), TblsReqs.viewProcReqSolutionActions.JSON_MODEL.getName()});
-            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procActionsArr[0][0].toString()))){
-                JSONArray allViewActions=new JSONArray();
-                for (Object[] curAction: procActionsArr){
-                    allViewActions.add(curAction[1]);
-                }
-                
-                jObjModel.add("actions", JsonParser.parseString(allViewActions.toString()));
-            }
-            RdbmsObject updateTableRecordFieldsByFilter=Rdbms.insertRecord(TblsProcedure.TablesProcedure.PROCEDURE_VIEWS, 
-                new String[]{TblsProcedure.ProcedureViews.NAME.getName(), TblsProcedure.ProcedureViews.ROLE_NAME.getName(), TblsProcedure.ProcedureViews.JSON_MODEL.getName(),
-                TblsProcedure.ProcedureViews.MODE.getName(), TblsProcedure.ProcedureViews.TYPE.getName(),
-                TblsProcedure.ProcedureViews.LABEL_EN.getName(), TblsProcedure.ProcedureViews.LABEL_ES.getName(),
-                TblsProcedure.ProcedureViews.LP_FRONTEND_PAGE_NAME.getName()}, 
-                new Object[]{curView[0], curView[1], jObjModel, curView[6], curView[7], curView[8], curView[9], curView[0]
-                }, procInstanceName);
+            mainLog.put("windows_error", curViewLog);
+            //return mainLog;
+        }else{
+            for (Object[] curView: procViewsArr){  
+                String currentParentCode=LPNulls.replaceNull(curView[2]).toString();
+                String currentCode=LPNulls.replaceNull(curView[3]).toString();
+                JsonObject jObjModel = null;
+                try{
+                    jObjModel = JsonParser.parseString(curView[5].toString()).getAsJsonObject();
+                    Object[][] procActionsArr = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_ACTIONS.getViewName(),
+                        new String[]{TblsReqs.viewProcReqSolutionActions.PROCEDURE_NAME.getName(), TblsReqs.viewProcReqSolutionActions.PROCEDURE_VERSION.getName(), TblsReqs.viewProcReqSolutionActions.PROC_INSTANCE_NAME.getName(), 
+                            TblsReqs.viewProcReqSolutionActions.ACTIVE.getName(), TblsReqs.viewProcReqSolutionActions.TYPE.getName(), TblsReqs.viewProcReqSolutionActions.PARENT_CODE.getName()},
+                        new Object[]{procedure, procVersion, procInstanceName, true, ProcedureDefinitionToInstance.ReqSolutionTypes.WINDOW_ACTION.getTagValue(), currentParentCode},
+                        new String[]{TblsReqs.viewProcReqSolutionActions.MODULE_NAME.getName(), TblsReqs.viewProcReqSolutionActions.JSON_MODEL.getName()});
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procActionsArr[0][0].toString()))){
+                        JSONArray allViewActions=new JSONArray();
+                        for (Object[] curAction: procActionsArr){
+                            allViewActions.add(curAction[1]);
+                        }
 
+                        jObjModel.add("actions", JsonParser.parseString(allViewActions.toString()));
+                    }                
+                }catch(Exception e){
+                    
+                }
+
+                RdbmsObject updateTableRecordFieldsByFilter=Rdbms.insertRecord(TblsProcedure.TablesProcedure.PROCEDURE_VIEWS, 
+                    new String[]{TblsProcedure.ProcedureViews.NAME.getName(), TblsProcedure.ProcedureViews.ROLE_NAME.getName(), TblsProcedure.ProcedureViews.JSON_MODEL.getName(),
+                    TblsProcedure.ProcedureViews.MODE.getName(), TblsProcedure.ProcedureViews.TYPE.getName(),
+                    TblsProcedure.ProcedureViews.LABEL_EN.getName(), TblsProcedure.ProcedureViews.LABEL_ES.getName(),
+                    TblsProcedure.ProcedureViews.LP_FRONTEND_PAGE_NAME.getName()}, 
+                    new Object[]{curView[0], curView[1], jObjModel, curView[6], curView[7], curView[8], curView[9], curView[0]
+                    }, procInstanceName);
+
+            }
+        }
+        Object[][] procSpecialViewsArr = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_SPECIAL_VIEWS.getViewName(),
+            new String[]{TblsReqs.viewProcReqSolutionViews.PROCEDURE_NAME.getName(), TblsReqs.viewProcReqSolutionSpecialViews.PROCEDURE_VERSION.getName(), TblsReqs.viewProcReqSolutionSpecialViews.PROC_INSTANCE_NAME.getName(), 
+                TblsReqs.viewProcReqSolutionSpecialViews.ACTIVE.getName(), TblsReqs.viewProcReqSolutionSpecialViews.TYPE.getName()},
+            new Object[]{procedure, procVersion, procInstanceName, true, ProcedureDefinitionToInstance.ReqSolutionTypes.SPECIAL_VIEW.getTagValue()},
+            new String[]{TblsReqs.viewProcReqSolutionSpecialViews.WINDOW_NAME.getName(), TblsReqs.viewProcReqSolutionSpecialViews.ROLES.getName(), 
+                TblsReqs.viewProcReqSolutionSpecialViews.PARENT_CODE.getName(), TblsReqs.viewProcReqSolutionSpecialViews.CODE.getName(),
+                TblsReqs.viewProcReqSolutionSpecialViews.WINDOW_QUERY.getName(), TblsReqs.viewProcReqSolutionSpecialViews.JSON_MODEL.getName(), 
+                TblsReqs.viewProcReqSolutionSpecialViews.WINDOW_MODE.getName(),TblsReqs.viewProcReqSolutionSpecialViews.WINDOW_TYPE.getName(), 
+                TblsReqs.viewProcReqSolutionSpecialViews.WINDOW_LABEL_EN.getName(), TblsReqs.viewProcReqSolutionSpecialViews.WINDOW_LABEL_ES.getName()
+                });
+        
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procSpecialViewsArr[0][0].toString())){
+            JSONObject curViewLog=new JSONObject();
+            curViewLog.put("error", "cannot get the special view data");
+            curViewLog.put("error_detail", Arrays.toString(procSpecialViewsArr[0]));
+            mainLog.put("special_views_error", curViewLog);
+        }else{
+            for (Object[] curView: procSpecialViewsArr){  
+                RdbmsObject updateTableRecordFieldsByFilter=Rdbms.insertRecord(TblsProcedure.TablesProcedure.PROCEDURE_VIEWS, 
+                    new String[]{TblsProcedure.ProcedureViews.NAME.getName(), TblsProcedure.ProcedureViews.ROLE_NAME.getName(), TblsProcedure.ProcedureViews.JSON_MODEL.getName(),
+                    TblsProcedure.ProcedureViews.MODE.getName(), TblsProcedure.ProcedureViews.TYPE.getName(),
+                    TblsProcedure.ProcedureViews.LABEL_EN.getName(), TblsProcedure.ProcedureViews.LABEL_ES.getName(),
+                    TblsProcedure.ProcedureViews.LP_FRONTEND_PAGE_NAME.getName()}, 
+                    new Object[]{curView[0], curView[1], curView[5], curView[6], curView[7], curView[8], curView[9], curView[0]
+                    }, procInstanceName);            
+                JSONObject curViewLog=new JSONObject();
+                curViewLog.put("error", "cannot get the special view data");
+                if (updateTableRecordFieldsByFilter.getRunSuccess()){
+                    curViewLog.put("created", "yes");
+                }else{
+                    curViewLog.put("error_detail", Arrays.toString(updateTableRecordFieldsByFilter.getErrorMessageVariables() ));
+                }
+                mainLog.put(curView[0], curViewLog);
+            }
         }
         return mainLog;
     }
@@ -731,7 +773,7 @@ public class ProcedureDefinitionToInstance {
             Object[][] existsAppUser = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(),
                     new String[]{TblsApp.Users.USER_NAME.getName()}, new Object[]{curUserName.toString()}, new String[]{TblsApp.Users.PERSON_NAME.getName()});
             String diagnosesForLog = (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsAppUser[0][0].toString())) ? JsonTags.NO.getTagValue() : JsonTags.YES.getTagValue();
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsAppUser[0][0].toString())) {                
+            //if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsAppUser[0][0].toString())) {                
 
                 RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsAppConfig.TablesAppConfig.PERSON,
                         new String[]{TblsAppConfig.Person.PERSON_ID.getName(), TblsAppConfig.Person.FIRST_NAME.getName(),
@@ -749,14 +791,14 @@ public class ProcedureDefinitionToInstance {
 
                 // Place to create the user
                 existsAppUser[0][0]=persEncrypted;
-            }
+            //}
             jsUserRoleObj.put("User exists in the app after running this logic?", LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesForLog));
             if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(existsAppUser[0])))) {
                 Object[] existsAppUserProcess = Rdbms.existsRecord("", GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USER_PROCESS.getTableName(),
                         new String[]{TblsApp.UserProcess.USER_NAME.getName(), TblsApp.UserProcess.PROC_NAME.getName()}, new Object[]{curUserName.toString(), procInstanceName});
                 jsonObj.put("User was added to the Process at the App level?", LPPlatform.LAB_TRUE.equalsIgnoreCase(existsAppUserProcess[0].toString()));
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsAppUserProcess[0].toString())) {
-                    RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsApp.TablesApp.USER_PROCESS,
+                    insertRecordInTable = Rdbms.insertRecordInTable(TblsApp.TablesApp.USER_PROCESS,
                             FIELDS_TO_INSERT_APP_USER_PROCESS.split("\\|"), new Object[]{curUserName.toString(), procInstanceName, true});
                     jsonObj.put("Added the User to the Process at the App level by running this utility?", insertRecordInTable.getApiMessage()[0].toString());
                 }
@@ -830,7 +872,6 @@ public class ProcedureDefinitionToInstance {
     public static final JSONObject createDBModuleTablesAndFields(String procedure, Integer procVersion, String procInstanceName, String moduleName) {
         JSONObject jsonObj = new JSONObject();
         try {
-
             Object[][] procModuleTablesAndFieldsSource = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableName(),
                     new String[]{TblsReqs.ProcedureModuleTables.ACTIVE.getName(), TblsReqs.ProcedureModuleTables.PROCEDURE_NAME.getName(), TblsReqs.ProcedureModuleTables.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureModuleTables.PROC_INSTANCE_NAME.getName()},
                     new Object[]{true, procedure, procVersion, procInstanceName},
@@ -1316,7 +1357,7 @@ public class ProcedureDefinitionToInstance {
                               break; */
                         case GENOMICS:
                             break;
-                        case INSPECTION_LOT:
+                        case INSPECTION_LOTS:
                         case STOCKS:
                             ModuleTableOrViewGet tblDiagn = new ModuleTableOrViewGet(Boolean.valueOf(curIsView), moduleName, curSchemaName, curTableName.toUpperCase(), procInstanceName);
                             if (curIsView == null || !Boolean.valueOf(curIsView)) {

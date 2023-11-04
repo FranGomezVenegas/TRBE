@@ -49,7 +49,7 @@ public class ProcedureDefinitionToInstanceUtility {
             new String[]{TblsReqs.viewBusinessRulesInSolution.PRESENT.getName(), TblsReqs.viewBusinessRulesInSolution.VALUES_LIST.getName()}, new String[]{});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(moduleBusinessRules[0][0].toString()))
             return new Object[]{LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.MODULE_BUSINESS_RULE_NOT_FOUND, new Object[]{busRuleArea, busRuleName}};
-        if ("0".equalsIgnoreCase(moduleBusinessRules[0][0].toString()))
+        if (Boolean.FALSE.equals("0".equalsIgnoreCase(moduleBusinessRules[0][0].toString())))
             return new Object[]{LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.MODULE_BUSINESS_ALREADY_PRESENT, new Object[]{busRuleArea, busRuleName}};
         
         if (LPNulls.replaceNull(moduleBusinessRules[0][1]).toString().length()>0){
@@ -95,22 +95,22 @@ public class ProcedureDefinitionToInstanceUtility {
         
         return new Object[]{LPPlatform.LAB_TRUE};
     }    
-    public static final Object[] isSpecialModuleWindowAvailable(String procInstanceName, String viewQuery){
+    public static final Object[] isModuleSpecialWindowAvailable(String procInstanceName, String viewQuery){
         JSONObject dbSingleRowToJsonObj = ClassReqProcedureQueries.dbSingleRowToJsonObj(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName(),
                 getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableFields()), new String[]{TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procInstanceName});
         String moduleName=dbSingleRowToJsonObj.get("module_name").toString();
         Integer moduleVersion=dbSingleRowToJsonObj.get("module_version").toString().length()>0?Integer.valueOf(dbSingleRowToJsonObj.get("module_version").toString()):-1;        
 
-        Object[][] moduleViewQuery = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.MODULE_ACTIONS_N_QUERIES.getTableName(), 
-            new String[]{TblsReqs.ModuleActionsAndQueries.MODULE_NAME.getName(), TblsReqs.ModuleActionsAndQueries.MODULE_VERSION.getName(),
-                TblsReqs.ModuleActionsAndQueries.ENDPOINT_NAME.getName()}, 
+        Object[][] moduleSpecialViewQuery = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.MODULE_SPECIAL_VIEWS.getTableName(), 
+            new String[]{TblsReqs.ModuleSpecialViews.MODULE_NAME.getName(), TblsReqs.ModuleSpecialViews.MODULE_VERSION.getName(),
+                TblsReqs.ModuleSpecialViews.VIEW_NAME.getName()}, 
             new Object[]{moduleName, moduleVersion, viewQuery}, 
-            new String[]{TblsReqs.ModuleActionsAndQueries.API_NAME.getName(), TblsReqs.ModuleActionsAndQueries.ENDPOINT_NAME.getName()}, new String[]{});
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(moduleViewQuery[0][0].toString())||
-           (Boolean.FALSE.equals(moduleViewQuery[0][0].toString().toUpperCase().contains("QUER"))&&Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(moduleViewQuery[0][0].toString()))) )
+            new String[]{TblsReqs.ModuleSpecialViews.VIEW_NAME.getName(), TblsReqs.ModuleSpecialViews.JSON_MODEL.getName(),
+                TblsReqs.ModuleSpecialViews.JSON_REQUIREMENTS.getName(), TblsReqs.ModuleSpecialViews.WINDOW_TYPE.getName()}, new String[]{});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(moduleSpecialViewQuery[0][0].toString()))
             return new Object[]{LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.MODULE_VIEW_QUERY_NOT_FOUND, new Object[]{viewQuery, moduleName}};
         
-        return new Object[]{LPPlatform.LAB_TRUE};
+        return moduleSpecialViewQuery[0];
     }
     public static final Object[] procedureUsersList(String procInstanceName, Integer procVersion){
         Object[][] procedureRolesListArr = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USERS.getTableName(), 

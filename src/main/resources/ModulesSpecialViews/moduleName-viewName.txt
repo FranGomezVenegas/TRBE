@@ -1,0 +1,16 @@
+{
+    "moduleName": "",
+    "moduleVersion": 1,
+    "releaseDate": "2023-09-01",
+    "viewName":"",
+    "entity": "",
+    "windowType": "simple",
+    "requirementsInfo":{
+            "window_actions":[
+                {"actionName": ""}
+            ]
+    },
+    "jsonModel":{
+       
+    }
+}

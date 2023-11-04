@@ -62,6 +62,7 @@ public class ReqProcedureDefinitionAPIActions extends HttpServlet {
         try{
             endPoint = ProcedureDefinitionAPIActionsEndpoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
+            procReqInstance.killIt();
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
             return;                   
         }
@@ -84,8 +85,10 @@ public class ReqProcedureDefinitionAPIActions extends HttpServlet {
                 return;
             }
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
+                procReqInstance.killIt();
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clss.getMessageDynamicData());   
             }else{
+                procReqInstance.killIt();
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
             }   
@@ -112,7 +115,9 @@ public class ReqProcedureDefinitionAPIActions extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response){
          try {
         processRequest(request, response);
-         }catch(ServletException|IOException e){Logger.getLogger(e.getMessage());}
+         }catch(ServletException|IOException e){
+             Logger.getLogger(e.getMessage());
+         }
     }
 }
 
