@@ -592,6 +592,7 @@ public class ClassMasterData {
                     String curFldName = "";
                     String firstStage = "";
                     Parameter parm = new Parameter();
+                    RdbmsObject addProcBusinessRule = null;
                     for (JsonElement jO : asJsonArray) {
                         curFldName = "NAME";
                         if (jO.getAsJsonObject().has(curFldName)) {
@@ -610,26 +611,33 @@ public class ClassMasterData {
                                 firstStage = curStage;
                             }
                             if (jO.getAsJsonObject().has(curFldName) && Boolean.FALSE.equals(start.equalsIgnoreCase(jO.getAsJsonObject().get(curFldName).getAsString()))) {
-                                parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(),
-                                        "sampleStage" + curStage + "Previous", jO.getAsJsonObject().get(curFldName).getAsString());
+                                addProcBusinessRule = parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(),
+                                        "sampleStage" + curStage + "Previous", jO.getAsJsonObject().get(curFldName).getAsString(), instanceName);
+                                if (Boolean.FALSE.equals(addProcBusinessRule.getRunSuccess())){
+                                    this.diagnostic = new InternalMessage(LPPlatform.LAB_FALSE, "Error inserting " + "sampleStage" + curStage + "Previous", addProcBusinessRule.getErrorMessageVariables(), null);
+                                }
                             }
+                            
                             curFldName = "NEXT STAGES";
                             if (jO.getAsJsonObject().has(curFldName) && Boolean.FALSE.equals(start.equalsIgnoreCase(jO.getAsJsonObject().get(curFldName).getAsString()))) {
-                                parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(),
-                                        "sampleStage" + curStage + "Next", jO.getAsJsonObject().get(curFldName).getAsString());
+                                addProcBusinessRule = parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(),
+                                        "sampleStage" + curStage + "Next", jO.getAsJsonObject().get(curFldName).getAsString(), instanceName);
+                                if (Boolean.FALSE.equals(addProcBusinessRule.getRunSuccess())){
+                                    this.diagnostic = new InternalMessage(LPPlatform.LAB_FALSE, "Error inserting " + "sampleStage" + curStage + "Next", addProcBusinessRule.getErrorMessageVariables(), null);
+                                }
                             }
                         }
                         this.diagnostic = new InternalMessage(LPPlatform.LAB_TRUE, "Inserted " + asJsonArray.size() + " new stages", null, null);
                     }
-                    parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(), "sampleStagesList_en", allStages + "|END");
-                    parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(), "sampleStagesList_es", allStages + "|FIN");
-                    parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(), "sampleStagesFirst", firstStage);
-                    parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(), "sampleStagesFirst_en", firstStage);
-                    parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(), "sampleStagesFirst_es", firstStage);
-                    parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(), "sampleStagesFirst_es", firstStage);
-                    parm.addProcBusinessRule(GlobalVariables.Schemas.PROCEDURE.getName(), "sampleStagesTimingCaptureStages", stageWithTimingCapture.toString());
-                    parm.addProcBusinessRule(GlobalVariables.Schemas.PROCEDURE.getName(), "sampleStagesActionAutoMoveToNext", stageWithAutoMoveToNext.toString());
-                    parm.addProcBusinessRule(GlobalVariables.Schemas.PROCEDURE.getName(), "sampleStagesMode", "ENABLED");
+                    parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(), "sampleStagesList_en", allStages + "|END", instanceName);
+                    parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(), "sampleStagesList_es", allStages + "|FIN", instanceName);
+                    parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(), "sampleStagesFirst", firstStage, instanceName);
+                    parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(), "sampleStagesFirst_en", firstStage, instanceName);
+                    parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(), "sampleStagesFirst_es", firstStage, instanceName);
+                    parm.addProcBusinessRule(GlobalVariables.Schemas.DATA.getName(), "sampleStagesFirst_es", firstStage, instanceName);
+                    parm.addProcBusinessRule(GlobalVariables.Schemas.PROCEDURE.getName(), "sampleStagesTimingCaptureStages", stageWithTimingCapture.toString(), instanceName);
+                    parm.addProcBusinessRule(GlobalVariables.Schemas.PROCEDURE.getName(), "sampleStagesActionAutoMoveToNext", stageWithAutoMoveToNext.toString(), instanceName);
+                    parm.addProcBusinessRule(GlobalVariables.Schemas.PROCEDURE.getName(), "sampleStagesMode", "ENABLED", instanceName);
 
                     break;
                 case MD_STAGES_TIMING_INTERVAL:
