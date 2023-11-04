@@ -35,6 +35,8 @@ public class InvTrackingFrontendMasterData implements FrontendMasterData{
                 new String[]{TblsInvTrackingConfig.Category.NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
                 new Object[]{},
                 new String[]{TblsInvTrackingConfig.Category.NAME.getName()}, alternativeProcInstanceName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(categoryInfo[0][0].toString()))
+            return jSummaryObj;
         JSONArray jSummaryArr = new JSONArray();
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(categoryInfo[0][0].toString()))){
             for (Object[] currCategory: categoryInfo){
