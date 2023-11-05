@@ -205,7 +205,7 @@ public class DataInstruments {
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_EXISTS, new Object[]{name}, null);
         }
 
-        RdbmsObject instCreationDiagn = Rdbms.insertRecordInTable(TablesInstrumentsData.INSTRUMENTS, fldNames, fldValues);
+        RdbmsObject instCreationDiagn = Rdbms.insertRecord(TablesInstrumentsData.INSTRUMENTS, fldNames, fldValues, procReqSession.getProcedureInstance());
         if (Boolean.FALSE.equals(instCreationDiagn.getRunSuccess())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn.getErrorMessageCode(), new Object[]{name}, null);
         }
@@ -236,6 +236,7 @@ public class DataInstruments {
     }
 
     public InternalMessage updateInstrument(String[] fldNames, Object[] fldValues, String actionName, AppInstrumentsAuditEvents eventObj) {
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         if (Boolean.TRUE.equals(this.isDecommissioned)) {
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.getName()}, null);
         }
@@ -259,7 +260,7 @@ public class DataInstruments {
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsInstrumentsData.Instruments.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{getName()}, "");
         Object[] instUpdateDiagn = Rdbms.updateRecordFieldsByFilter(TablesInstrumentsData.INSTRUMENTS,
-                EnumIntTableFields.getTableFieldsFromString(TablesInstrumentsData.INSTRUMENTS, fldNames), fldValues, sqlWhere, null);
+                EnumIntTableFields.getTableFieldsFromString(TablesInstrumentsData.INSTRUMENTS, fldNames), fldValues, sqlWhere, procReqSession.getProcedureInstance());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instUpdateDiagn[0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, instUpdateDiagn[instUpdateDiagn.length - 1].toString(), new Object[]{getName()}, null);
         }
@@ -384,7 +385,7 @@ public class DataInstruments {
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsInstrumentsData.Instruments.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{getName()}, "");
         Object[] instUpdateDiagn = Rdbms.updateRecordFieldsByFilter(TablesInstrumentsData.INSTRUMENTS,
-                EnumIntTableFields.getTableFieldsFromString(TablesInstrumentsData.INSTRUMENTS, fldNames), fldValues, sqlWhere, null);
+                EnumIntTableFields.getTableFieldsFromString(TablesInstrumentsData.INSTRUMENTS, fldNames), fldValues, sqlWhere, procedureInstance);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instUpdateDiagn[0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, instUpdateDiagn[instUpdateDiagn.length - 1].toString(), new Object[]{getName()}, null);
         }
@@ -395,6 +396,7 @@ public class DataInstruments {
     }
 
     public InternalMessage turnOffLine(String[] fldNames, Object[] fldValues) {
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         if (Boolean.TRUE.equals(this.isDecommissioned)) {
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{this.getName()}, null);
         }
@@ -412,7 +414,7 @@ public class DataInstruments {
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsInstrumentsData.Instruments.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{getName()}, "");
         Object[] instUpdateDiagn = Rdbms.updateRecordFieldsByFilter(TablesInstrumentsData.INSTRUMENTS,
-                EnumIntTableFields.getTableFieldsFromString(TablesInstrumentsData.INSTRUMENTS, fldNames), fldValues, sqlWhere, null);
+                EnumIntTableFields.getTableFieldsFromString(TablesInstrumentsData.INSTRUMENTS, fldNames), fldValues, sqlWhere, procReqSession.getProcedureInstance());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instUpdateDiagn[0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, instUpdateDiagn[instUpdateDiagn.length - 1].toString(), new Object[]{getName()}, null);
         }
@@ -442,7 +444,7 @@ public class DataInstruments {
         String[] fldNames = new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName(), TblsInstrumentsData.InstrumentEvent.EVENT_TYPE.getName(),
             TblsInstrumentsData.InstrumentEvent.CREATED_ON.getName(), TblsInstrumentsData.InstrumentEvent.CREATED_BY.getName()};
         Object[] fldValues = new Object[]{this.getName(), AppInstrumentsAuditEvents.CALIBRATION.toString(), LPDate.getCurrentTimeStamp(), (Boolean.TRUE.equals(isScheduled)) ? GlobalVariables.TRAZIT_SCHEDULER : token.getPersonName()};
-        RdbmsObject instCreationDiagn = Rdbms.insertRecordInTable(TablesInstrumentsData.INSTRUMENT_EVENT, fldNames, fldValues);
+        RdbmsObject instCreationDiagn = Rdbms.insertRecord(TablesInstrumentsData.INSTRUMENT_EVENT, fldNames, fldValues, procReqSession.getProcedureInstance());
         if (Boolean.FALSE.equals(instCreationDiagn.getRunSuccess())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn.getErrorMessageCode(), new Object[]{getName()}, null);
         }
@@ -508,7 +510,7 @@ public class DataInstruments {
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsInstrumentsData.InstrumentEvent.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{eventId}, "");
         Object[] instCreationDiagn = Rdbms.updateRecordFieldsByFilter(TablesInstrumentsData.INSTRUMENT_EVENT,
-                EnumIntTableFields.getTableFieldsFromString(TablesInstrumentsData.INSTRUMENT_EVENT, fldNames), fldValues, sqlWhere, null);
+                EnumIntTableFields.getTableFieldsFromString(TablesInstrumentsData.INSTRUMENT_EVENT, fldNames), fldValues, sqlWhere, procReqSession.getProcedureInstance());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length - 1].toString(), new Object[]{getName()}, null);
         }
@@ -567,7 +569,7 @@ public class DataInstruments {
         String[] fldNames = new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName(), TblsInstrumentsData.InstrumentEvent.EVENT_TYPE.getName(),
             TblsInstrumentsData.InstrumentEvent.CREATED_ON.getName(), TblsInstrumentsData.InstrumentEvent.CREATED_BY.getName()};
         Object[] fldValues = new Object[]{this.getName(), AppInstrumentsAuditEvents.PREVENTIVE_MAINTENANCE.toString(), LPDate.getCurrentTimeStamp(), (Boolean.TRUE.equals(isScheduled)) ? GlobalVariables.TRAZIT_SCHEDULER : token.getPersonName()};
-        RdbmsObject instCreationDiagn = Rdbms.insertRecordInTable(TablesInstrumentsData.INSTRUMENT_EVENT, fldNames, fldValues);
+        RdbmsObject instCreationDiagn = Rdbms.insertRecord(TablesInstrumentsData.INSTRUMENT_EVENT, fldNames, fldValues, procReqSession.getProcedureInstance());
         String insEventIdCreated = instCreationDiagn.getNewRowId().toString();
         if (Boolean.FALSE.equals(instCreationDiagn.getRunSuccess())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn.getErrorMessageCode(), new Object[]{getName()}, null);
@@ -633,7 +635,7 @@ public class DataInstruments {
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsInstrumentsData.InstrumentEvent.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{eventId}, "");
         Object[] instCreationDiagn = Rdbms.updateRecordFieldsByFilter(TablesInstrumentsData.INSTRUMENT_EVENT,
-                EnumIntTableFields.getTableFieldsFromString(TablesInstrumentsData.INSTRUMENT_EVENT, fldNames), fldValues, sqlWhere, null);
+                EnumIntTableFields.getTableFieldsFromString(TablesInstrumentsData.INSTRUMENT_EVENT, fldNames), fldValues, sqlWhere, procReqSession.getProcedureInstance());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length - 1].toString(), new Object[]{getName()}, null);
         }
@@ -680,8 +682,8 @@ public class DataInstruments {
         String[] fldNames = new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName(), TblsInstrumentsData.InstrumentEvent.EVENT_TYPE.getName(),
             TblsInstrumentsData.InstrumentEvent.CREATED_ON.getName(), TblsInstrumentsData.InstrumentEvent.CREATED_BY.getName()};
         Object[] fldValues = new Object[]{this.getName(), AppInstrumentsAuditEvents.VERIFICATION.toString(), LPDate.getCurrentTimeStamp(), token.getPersonName()};
-        RdbmsObject instCreationDiagn = Rdbms.insertRecordInTable(TablesInstrumentsData.INSTRUMENT_EVENT,
-                fldNames, fldValues);
+        RdbmsObject instCreationDiagn = Rdbms.insertRecord(TablesInstrumentsData.INSTRUMENT_EVENT,
+                fldNames, fldValues, procReqSession.getProcedureInstance());
         if (Boolean.FALSE.equals(instCreationDiagn.getRunSuccess())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn.getErrorMessageCode(), new Object[]{getName()}, null);
         }
@@ -747,7 +749,7 @@ public class DataInstruments {
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsInstrumentsData.InstrumentEvent.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{eventId}, "");
         Object[] instCreationDiagn = Rdbms.updateRecordFieldsByFilter(TablesInstrumentsData.INSTRUMENT_EVENT,
-                EnumIntTableFields.getTableFieldsFromString(TablesInstrumentsData.INSTRUMENT_EVENT, fldNames), fldValues, sqlWhere, null);
+                EnumIntTableFields.getTableFieldsFromString(TablesInstrumentsData.INSTRUMENT_EVENT, fldNames), fldValues, sqlWhere, procReqSession.getProcedureInstance());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length - 1].toString(), new Object[]{getName()}, null);
         }
@@ -787,7 +789,7 @@ public class DataInstruments {
         String[] fldNames = new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName(), TblsInstrumentsData.InstrumentEvent.EVENT_TYPE.getName(),
             TblsInstrumentsData.InstrumentEvent.CREATED_ON.getName(), TblsInstrumentsData.InstrumentEvent.CREATED_BY.getName()};
         Object[] fldValues = new Object[]{this.getName(), AppInstrumentsAuditEvents.SERVICE.toString(), LPDate.getCurrentTimeStamp(), token.getPersonName()};
-        RdbmsObject instCreationDiagn = Rdbms.insertRecordInTable(TablesInstrumentsData.INSTRUMENT_EVENT, fldNames, fldValues);
+        RdbmsObject instCreationDiagn = Rdbms.insertRecord(TablesInstrumentsData.INSTRUMENT_EVENT, fldNames, fldValues, procReqSession.getProcedureInstance());
         if (Boolean.FALSE.equals(instCreationDiagn.getRunSuccess())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn.getErrorMessageCode(), new Object[]{getName()}, null);
         }
@@ -853,7 +855,7 @@ public class DataInstruments {
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsInstrumentsData.InstrumentEvent.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{eventId}, "");
         Object[] instCreationDiagn = Rdbms.updateRecordFieldsByFilter(TablesInstrumentsData.INSTRUMENT_EVENT,
-                EnumIntTableFields.getTableFieldsFromString(TablesInstrumentsData.INSTRUMENT_EVENT, fldNames), fldValues, sqlWhere, null);
+                EnumIntTableFields.getTableFieldsFromString(TablesInstrumentsData.INSTRUMENT_EVENT, fldNames), fldValues, sqlWhere, procReqSession.getProcedureInstance());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length - 1].toString(), new Object[]{getName()}, null);
         }
@@ -903,7 +905,7 @@ public class DataInstruments {
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsInstrumentsData.InstrumentEvent.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{instrEventId}, "");
         Object[] instCreationDiagn = Rdbms.updateRecordFieldsByFilter(TablesInstrumentsData.INSTRUMENT_EVENT,
-                EnumIntTableFields.getTableFieldsFromString(TablesInstrumentsData.INSTRUMENT_EVENT, fldNames), fldValues, sqlWhere, null);
+                EnumIntTableFields.getTableFieldsFromString(TablesInstrumentsData.INSTRUMENT_EVENT, fldNames), fldValues, sqlWhere, procReqSession.getProcedureInstance());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length - 1].toString(), new Object[]{getName()}, null);
         }
@@ -953,8 +955,8 @@ public class DataInstruments {
             fldNames=LPArray.addValueToArray1D(fldNames, TblsInstrumentsData.InstrAttachments.BRIEF_SUMMARY.getName());
             fldValues=LPArray.addValueToArray1D(fldValues, briefSummary);
         }
-        RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInstrumentsData.TablesInstrumentsData.INSTR_ATTACHMENT, 
-                fldNames, fldValues);
+        RdbmsObject insertRecordInTable = Rdbms.insertRecord(TblsInstrumentsData.TablesInstrumentsData.INSTR_ATTACHMENT, 
+                fldNames, fldValues, procReqSession.getProcedureInstance());
         if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), null);
         }
