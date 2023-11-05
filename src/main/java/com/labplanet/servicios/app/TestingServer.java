@@ -17,6 +17,7 @@ import static databases.Rdbms.dbTableExists;
 import static databases.Rdbms.insertRecordInTableFromTable;
 import databases.RdbmsObject;
 import databases.SqlStatement;
+import databases.SqlWhere;
 import module.instrumentsmanagement.definition.TblsInstrumentsDataAudit;
 import databases.TblsCnfg;
 import databases.TblsData;
@@ -93,14 +94,14 @@ import org.json.simple.JSONArray;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntViewFields;
 import static trazit.procedureinstance.definition.apis.ReqProcedureDefinitionQueries.getScriptWithSteps;
-import trazit.procedureinstance.definition.logic.ClassReqProcedUserAndActions;
+import trazit.procedureinstance.definition.logic.ClassReqProcedUserAndActionsForQueries;
 import static trazit.platforminstance.logic.PlatformNewInstance.createCheckPlatformProcedure;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 import trazit.thirdparties.sap.ExcelExporter;
 import trazit.thirdparties.sap.Mosquitto;
 import trazit.thirdparties.sap.PDFDataExtractor;
-
+import java.util.Set;
 /**
  *
  * @author Administrator
@@ -126,9 +127,125 @@ public class TestingServer extends HttpServlet {
         String procedureName="stock";
         Integer procedureVersion=1;
         String procInstanceName="stock";
+
+//        String procInstanceSource="lots_raw";
+//        String procInstanceDestination="inspection lot";
+        String procInstanceSource="mon_water";
+        String procInstanceDestination="mon_water";
+
+        
+        EnumIntTables[] tblsArr= new EnumIntTables[]{TblsCnfg.TablesConfig.SPEC, TblsCnfg.TablesConfig.SPEC_RULES, TblsCnfg.TablesConfig.SPEC_LIMITS};
+        //TblsCnfg.TablesConfig.values(); //
+//        TblsInspLotRMConfig.TablesInspLotRMConfig.values(); //
+String curTblName="";      
+    out.println("Source: "+procInstanceSource);
+    out.println("Destination: "+procInstanceDestination);
+
+
+for (EnumIntTables curTbl: tblsArr){  
+    try{ 
+    curTblName=curTbl.getTableName();
+    procInstanceName="demo_v0_9_1";
+    Rdbms.stablishDBConection(procInstanceName);
+    SqlWhere sWhere=new SqlWhere();
+    sWhere.addConstraint(curTbl.getTableFields()[0], SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, null, "");    
+    Object[][] recordFieldsByFilter = Rdbms.getRecordFieldsByFilter(procInstanceSource, LPPlatform.buildSchemaName(procInstanceSource, "config"), curTbl, 
+        sWhere, curTbl.getTableFields(), null, Boolean.TRUE);
+    Rdbms.closeRdbms();
+    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsByFilter[0][0].toString()))){
+        procInstanceName="demo_v0_9_2";  
+        Rdbms.stablishDBConection(procInstanceName);
+        
+        for (Object[] curRow: recordFieldsByFilter){
+            String[] fldN=new String[]{};
+            Object[] fldV=new Object[]{};
+            for (int iFlds=0;iFlds<curRow.length;iFlds++){
+                if (curRow[iFlds].toString().length()>0){
+                    fldN=LPArray.addValueToArray1D(fldN, curTbl.getTableFields()[iFlds].getName());
+                    fldV=LPArray.addValueToArray1D(fldV, curRow[iFlds]);                    
+                }
+            }
+            RdbmsObject insertRecord = Rdbms.insertRecord(curTbl, fldN, fldV, procInstanceDestination);
+            out.println(curTbl.getTableName()+": "+insertRecord.getRunSuccess()+"-"+insertRecord.getErrorMessageVariables()==null?"":Arrays.toString(insertRecord.getErrorMessageVariables()));
+        }
+        Rdbms.closeRdbms();
+    }
+    }catch(Exception e){
+        out.println(curTblName+": "+e.getMessage());
+    }
+
+}   
+if (1==1)return;         
+
+        
+for (int scriptId=1;scriptId<6;scriptId++){ 
+    out.println("Source: "+procInstanceSource);
+    out.println("Destination: "+procInstanceDestination);
+    out.println("scriptId: "+scriptId);
+        Rdbms.stablishDBConection("demo_v0_9_1");
+            JSONObject myData=getScriptWithSteps(scriptId, procInstanceSource, null, null);
+            Set<String> keys = myData.keySet();
+
+            String[] fldN=new String[]{};
+            Object[] fldV=new Object[]{};
+            JSONArray stepsArr=new JSONArray();
+            for(String key : keys) {
+               Object value = myData.get(key);
+              // out.println("Key: " + key + ", Value: " + value.toString());
+               if ("steps".equalsIgnoreCase(key)){
+                   stepsArr = (JSONArray) value;
+               }else{
+                   if (value.toString().length()>0){
+                       if (TblsTesting.Script.DATE_CREATION.getName().equalsIgnoreCase(key)||
+                           TblsTesting.Script.DATE_EXECUTION.getName().equalsIgnoreCase(key)||
+                            TblsTesting.Script.TIME_STARTED.getName().equalsIgnoreCase(key)||
+                            TblsTesting.Script.TIME_COMPLETED.getName().equalsIgnoreCase(key) )
+                           value=LPDate.stringFormatToLocalDateTime(value.toString());
+                           
+                        fldN=LPArray.addValueToArray1D(fldN, key);
+                        fldV=LPArray.addValueToArray1D(fldV, value);
+                   }
+               }
+           }
+        Rdbms.closeRdbms();
+        
         Rdbms.stablishDBConection("demo_v0_9_2");
-        
-        
+            RdbmsObject insertRecord = Rdbms.insertRecord(TblsTesting.TablesTesting.SCRIPT, fldN, fldV, 
+                    procInstanceDestination);
+            out.println(TblsTesting.TablesTesting.SCRIPT.getTableName()+": "+insertRecord.getRunSuccess());
+            RdbmsObject insertRecord2 = null;
+            for (Object element : stepsArr) {
+                JSONObject jsonObject = (JSONObject) element;
+                keys = jsonObject.keySet();
+                fldN=new String[]{};
+                fldV=new Object[]{};
+                // Iterate over each key-value pair in the JSONObject
+                for (String key : keys) {
+                    Object value = jsonObject.get(key);
+                    System.out.println("Key: " + key + ", Value: " + value);
+                    if (Boolean.FALSE.equals("eval_syntaxis_class".equalsIgnoreCase(key)||"eval_code_class".equalsIgnoreCase(key)||
+                    "eval_code_icon".equalsIgnoreCase(key)||"eval_syntaxis_icon".equalsIgnoreCase(key) )){
+                        if (value.toString().length()>0){
+                           if (TblsTesting.ScriptSteps.DATE_EXECUTION.getName().equalsIgnoreCase(key)||
+                                TblsTesting.ScriptSteps.TIME_STARTED.getName().equalsIgnoreCase(key)||
+                                TblsTesting.ScriptSteps.TIME_COMPLETED.getName().equalsIgnoreCase(key) )
+                               value=LPDate.stringFormatToLocalDateTime(value.toString());
+
+                           fldN=LPArray.addValueToArray1D(fldN, key);
+                           fldV=LPArray.addValueToArray1D(fldV, value);                        
+                        }
+                    }
+                }
+                insertRecord2 = Rdbms.insertRecord(TblsTesting.TablesTesting.SCRIPT_STEPS, fldN, fldV, 
+                    procInstanceDestination);
+                out.println(TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName()+": "+insertRecord.getRunSuccess());
+                
+            }   
+        Rdbms.closeRdbms();
+}        
+        if (1==1)return;  
+
+
         
         if (1==1)return;  
                             Object[] insertRecordInTableFromTable = insertRecordInTableFromTable(true, 
@@ -171,7 +288,7 @@ public class TestingServer extends HttpServlet {
 if (1==1)return;            
 
 Rdbms.stablishDBConection("labplanet");
-            JSONObject myData=getScriptWithSteps(11, "em-demo-a", null, null);
+            JSONObject myData = getScriptWithSteps(11, "em-demo-a", null, null);
             out.println("automated upload ...");
           out.println(Mosquitto.sendMosquitto());
           
@@ -183,7 +300,7 @@ if (1==1)return;
                     new String[]{TblsReqs.ProcedureRoles.PROC_INSTANCE_NAME.getName()},
                     new Object[]{procInstanceName}, fldsArr,
                     new String[]{TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()});
-            out.println(ClassReqProcedUserAndActions.actionsByRoles(procInstanceName, procRoles));
+            out.println(ClassReqProcedUserAndActionsForQueries.actionsByRoles(procInstanceName, procRoles));
 if (1==1)return;
             String[] fieldsToRetrieve = EnumIntViewFields.getAllFieldNames(TblsData.ViewUserAndAnalysisMethodCertificationView.values());
             fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, FIELDS_NAMES_PROCEDURE_NAME);
