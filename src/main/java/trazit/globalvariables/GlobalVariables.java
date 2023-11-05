@@ -33,7 +33,7 @@ public class GlobalVariables {
     public static final String DEFAULTLANGUAGE="en";
     public static final String TRAZIT_SCHEDULER="TRAZIT_SCHEDULER";
     public static final String PROC_MANAGEMENT_SPECIAL_ROLE="proc_management";
-    public static final String VALIDATION_MODE_REPO="valid_";
+    public static final String VALIDATION_MODE_REPO="valid-";
     
     public static final String LANGUAGE_ALL_LANGUAGES="ALL";
     public enum Languages{EN("en"), ES("es")
