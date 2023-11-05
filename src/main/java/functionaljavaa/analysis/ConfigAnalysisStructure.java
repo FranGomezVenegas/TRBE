@@ -271,7 +271,7 @@ public class ConfigAnalysisStructure {
      * @param fieldValue
      * @return
      */
-    public InternalMessage analysisNew(String code, Integer configVersion, String[] fieldName, Object[] fieldValue) {
+    public InternalMessage analysisNew(String code, Integer configVersion, String[] fieldName, Object[] fieldValue, String instanceName) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] mandatoryFieldValue = new String[0];
         StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
@@ -349,7 +349,7 @@ public class ConfigAnalysisStructure {
                 }
             }
         }
-        Object[] diagnoses = Rdbms.existsRecord(procInstanceName, schemaConfigName, TblsCnfg.TablesConfig.ANALYSIS.getTableName(),
+        Object[] diagnoses = Rdbms.existsRecord(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, schemaConfigName), TblsCnfg.TablesConfig.ANALYSIS.getTableName(),
                 new String[]{TblsCnfg.Analysis.CODE.getName(), TblsCnfg.Analysis.CONFIG_VERSION.getName()},
                 new Object[]{code, configVersion});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
@@ -363,7 +363,7 @@ public class ConfigAnalysisStructure {
             fieldValue = LPArray.addValueToArray1D(fieldValue, code);
             fieldName = LPArray.addValueToArray1D(fieldName, TblsCnfg.Analysis.CONFIG_VERSION.getName());
             fieldValue = LPArray.addValueToArray1D(fieldValue, configVersion);
-            RdbmsObject diagnObj = Rdbms.insertRecordInTable(TblsCnfg.TablesConfig.ANALYSIS, fieldName, fieldValue);//, schemaConfigName);
+            RdbmsObject diagnObj = Rdbms.insertRecord(TblsCnfg.TablesConfig.ANALYSIS, fieldName, fieldValue, instanceName);
             if (Boolean.TRUE.equals(diagnObj.getRunSuccess())) {
                 ConfigTablesAudit.analysisAuditAdd(ConfigAnalysisAuditEvents.ANALYSIS_NEW.toString(), TblsCnfg.TablesConfig.ANALYSIS, code,
                         code, configVersion, LPArray.joinTwo1DArraysInOneOf1DString(fieldName, fieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
@@ -418,7 +418,7 @@ public class ConfigAnalysisStructure {
      * @param analysisCodeVersion
      * @return
      */
-    public InternalMessage analysisMethodParamsNew(String analysisCode, Integer analysisCodeVersion, String methodName, String[] fieldName, Object[] fieldValue) {
+    public InternalMessage analysisMethodParamsNew(String analysisCode, Integer analysisCodeVersion, String methodName, String[] fieldName, Object[] fieldValue, String instanceName) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] mandatoryFieldValue = new String[0];
         StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
@@ -513,7 +513,7 @@ public class ConfigAnalysisStructure {
             String[] anaMethFldName = new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName(), TblsCnfg.AnalysisMethod.METHOD_NAME.getName(), TblsCnfg.AnalysisMethod.METHOD_VERSION.getName(),
                 TblsCnfg.AnalysisMethod.CREATED_BY.getName(), TblsCnfg.AnalysisMethod.CREATED_ON.getName()};
             Object[] anaMethFldValue = new Object[]{analysisCode, methodName, methodVersion, fieldValue[LPArray.valuePosicInArray(fieldName, TblsCnfg.AnalysisMethod.CREATED_BY.getName())], LPDate.getCurrentTimeStamp()};
-            RdbmsObject diagnObj = Rdbms.insertRecordInTable(TblsCnfg.TablesConfig.ANALYSIS_METHOD, anaMethFldName, anaMethFldValue); // , schemaName);
+            RdbmsObject diagnObj = Rdbms.insertRecord(TblsCnfg.TablesConfig.ANALYSIS_METHOD, anaMethFldName, anaMethFldValue, instanceName); 
             if (Boolean.TRUE.equals(diagnObj.getRunSuccess())) {
                 ConfigTablesAudit.analysisAuditAdd(ConfigAnalysisAuditEvents.ANALYSIS_METHOD_NEW.toString(), TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS, analysisCode,
                         analysisCode, analysisCodeVersion, LPArray.joinTwo1DArraysInOneOf1DString(anaMethFldName, anaMethFldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
@@ -526,7 +526,7 @@ public class ConfigAnalysisStructure {
             fieldValue = LPArray.addValueToArray1D(fieldValue, methodName);
             fieldName = LPArray.addValueToArray1D(fieldName, TblsCnfg.AnalysisMethodParams.METHOD_VERSION.getName());
             fieldValue = LPArray.addValueToArray1D(fieldValue, methodVersion);
-            RdbmsObject diagnObj = Rdbms.insertRecordInTable(TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS, fieldName, fieldValue); //, schemaName); 
+            RdbmsObject diagnObj = Rdbms.insertRecord(TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS, fieldName, fieldValue, instanceName);
             if (Boolean.TRUE.equals(diagnObj.getRunSuccess())) {
                 ConfigTablesAudit.analysisAuditAdd(ConfigAnalysisAuditEvents.ANALYSIS_METHOD_PARAM_NEW.toString(), TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS, analysisCode,
                         analysisCode, analysisCodeVersion, LPArray.joinTwo1DArraysInOneOf1DString(fieldName, fieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);

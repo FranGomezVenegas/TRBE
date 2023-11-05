@@ -95,7 +95,7 @@ public class ClassMasterData {
             return;
         }
         JsonObject jsonObject = (JsonObject) objToJsonObj[1];
-
+        try{
         JSONArray jLogArr = new JSONArray();
         if (jsonObject.has("parsing_type") && "SIMPLE_TABLE".equalsIgnoreCase(jsonObject.get("parsing_type").getAsString())) {
             JsonArray asJsonArray = jsonObject.get(GlobalAPIsParams.LBL_VALUES).getAsJsonArray();
@@ -242,7 +242,7 @@ public class ClassMasterData {
                         fldValues = new Object[]{true, LPDate.getCurrentTimeStamp(), userCreator};
                         Object[] existAnalysis = Rdbms.existsRecord(TblsCnfg.TablesConfig.ANALYSIS, new String[]{TblsCnfg.Analysis.CODE.getName()}, new Object[]{jO.getAsJsonObject().get(TblsCnfg.Analysis.CODE.getName()).getAsString()}, instanceName);
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existAnalysis[0].toString())) {
-                            this.diagnostic = cAna.analysisNew(jO.getAsJsonObject().get(TblsCnfg.Analysis.CODE.getName()).getAsString(), 1, fldNames, fldValues);
+                            this.diagnostic = cAna.analysisNew(jO.getAsJsonObject().get(TblsCnfg.Analysis.CODE.getName()).getAsString(), 1, fldNames, fldValues, instanceName);
                             //if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
                         }
 
@@ -258,7 +258,7 @@ public class ClassMasterData {
                             fldValues = LPArray.addValueToArray1D(fldValues, jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.UOM.getName()).getAsString());
                         }
 
-                        this.diagnostic = cAna.analysisMethodParamsNew(jO.getAsJsonObject().get(TblsCnfg.Analysis.CODE.getName()).getAsString(), 1, jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.METHOD_NAME.getName()).getAsString(), fldNames, fldValues);
+                        this.diagnostic = cAna.analysisMethodParamsNew(jO.getAsJsonObject().get(TblsCnfg.Analysis.CODE.getName()).getAsString(), 1, jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.METHOD_NAME.getName()).getAsString(), fldNames, fldValues, instanceName);
                         //if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
                         if (jO.getAsJsonObject().has(TblsCnfg.AnalysisMethodParams.UOM.getName())) {
                             String uom = jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.UOM.getName()).getAsString();
@@ -716,6 +716,9 @@ public class ClassMasterData {
                     this.diagnostic = new InternalMessage(LPPlatform.LAB_FALSE, "mdParserNotFound", new Object[]{endPoint.name()}, null);
                     break;
             }
+        }
+        }catch(Exception e){
+            String log = e.getMessage();
         }
     }
 

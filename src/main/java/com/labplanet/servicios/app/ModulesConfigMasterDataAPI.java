@@ -261,7 +261,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                         Object[] diagn = specFieldValueArr;
                         diagnostic=new InternalMessage(diagn[0].toString(), diagn[diagn.length-1].toString(), null, null);
                     } else {
-                        diagnostic = anaStr.analysisNew(specCode, specCodeVersion, specFieldNameArr, specFieldValueArr);
+                        diagnostic = anaStr.analysisNew(specCode, specCodeVersion, specFieldNameArr, specFieldValueArr, procReqInstance.getProcedureInstance());
                     }
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic.getDiagnostic())) {
                         messageDynamicData = new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
