@@ -6,13 +6,8 @@ import com.google.gson.JsonParser;
 import com.labplanet.servicios.app.AppProcedureListAPI.elementType;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.app.TestingRegressionUAT;
-import module.monitoring.definition.TblsEnvMonitConfig.TablesEnvMonitConfig;
-import module.monitoring.definition.TblsEnvMonitConfigAudit.TablesEnvMonitConfigAudit;
-import module.monitoring.definition.TblsEnvMonitData;
 import module.monitoring.definition.TblsEnvMonitData.TablesEnvMonitData;
 import module.monitoring.definition.TblsEnvMonitData.ViewsEnvMonData;
-import module.monitoring.definition.TblsEnvMonitDataAudit.TablesEnvMonitDataAudit;
-import module.monitoring.definition.TblsEnvMonitProcedure.TablesEnvMonitProcedure;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
@@ -35,7 +30,6 @@ import databases.TblsProcedure.TablesProcedure;
 import databases.TblsProcedure.ViewsProcedure;
 import databases.TblsProcedureAudit;
 import databases.TblsProcedureAudit.TablesProcedureAudit;
-import databases.TblsProcedureConfig.TablesProcedureConfig;
 import trazit.procedureinstance.definition.definition.TblsReqs;
 import databases.features.DbEncryption;
 import functionaljavaa.requirement.masterdata.ClassMasterData;
@@ -47,7 +41,6 @@ import module.instrumentsmanagement.definition.TblsInstrumentsData.TablesInstrum
 import module.instrumentsmanagement.definition.TblsInstrumentsData.ViewsInstrumentsData;
 import module.instrumentsmanagement.definition.TblsInstrumentsDataAudit.TablesInstrumentsDataAudit;
 import module.instrumentsmanagement.definition.TblsInstrumentsProcedure.TablesInstrumentsProcedure;
-import module.monitoring.definition.TblsEnvMonitConfig;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
@@ -912,22 +905,23 @@ public class ProcedureDefinitionToInstance {
                     String tblCreateScriptTesting = null;
                     GlobalVariables.TrazitModules moduleObj = GlobalVariables.TrazitModules.valueOf(moduleName);
                     switch (moduleObj) {
-                        case MONITORING:
+/*                        case MONITORING:
                             Boolean cont = true;
                             try {
                                 switch (curSchemaName.toLowerCase()) {
                                     case "config":
+                                        cont=false;
                                         if (curIsView == null || Boolean.FALSE.equals(Boolean.valueOf(curIsView))) {
                                             try {
-                                                tblCreateScript = createTableScript(TablesEnvMonitConfig.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true, fieldsToExclude);
+                                                tblCreateScript = createTableScript(TablesEnvMonitConfig.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), true, true, fieldsToExclude);
                                             } catch (Exception e) {
-                                                tblCreateScript = createTableScript(TablesConfig.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), false, true, fieldsToExclude);
+                                                tblCreateScript = createTableScript(TablesConfig.valueOf(curTableName.toUpperCase()), LPPlatform.buildSchemaName(procInstanceName, curSchemaName), true, true, fieldsToExclude);
                                             }
                                         } else {
                                             try {
-                                                tblCreateScript = EnumIntViews.getViewScriptCreation(TblsEnvMonitConfig.ViewsEnvMonConfig.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, false, fieldsToExclude);
+                                                tblCreateScript = EnumIntViews.getViewScriptCreation(TblsEnvMonitConfig.ViewsEnvMonConfig.valueOf(curTableName.toUpperCase()), procInstanceName, true, true, false, fieldsToExclude);
                                             } catch (Exception e) {
-                                                tblCreateScript = EnumIntViews.getViewScriptCreation(TblsCnfg.ViewsConfig.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, false, fieldsToExclude);
+                                                tblCreateScript = EnumIntViews.getViewScriptCreation(TblsCnfg.ViewsConfig.valueOf(curTableName.toUpperCase()), procInstanceName, true, true, false, fieldsToExclude);
                                             }
 
                                         }
@@ -956,17 +950,6 @@ public class ProcedureDefinitionToInstance {
                                                 tblCreateScript = EnumIntViews.getViewScriptCreation(ViewsData.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, false, fieldsToExclude);
                                                 tblCreateScriptTesting = EnumIntViews.getViewScriptCreation(ViewsData.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, true, fieldsToExclude);
                                             }
-
-                                            /*                                        try{
-                                            tblCreateScript=EnumIntViews.getViewScriptCreation(ViewsData.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, false);
-                                            tblCreateScriptTesting=EnumIntViews.getViewScriptCreation(ViewsData.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, true);
-                                            if (tblCreateScript.length()==0){
-                                                tblCreateScript = ViewsEnvMonData.valueOf(curTableName.toUpperCase()).getViewCreatecript();
-                                                tblCreateScriptTesting = createTableScript(TablesEnvMonitData.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
-                                            }
-                                        }catch(Exception e){
-                                            tblCreateScript = ViewsData.valueOf(curTableName.toUpperCase()).getViewCreatecript();
-                                        }    */
                                         }
                                         break;
                                     case "data-audit":
@@ -1012,16 +995,6 @@ public class ProcedureDefinitionToInstance {
                                             }
                                         } else {
                                             //Commented out due to it does not exist any view yet.
-/*                                        try{
-                                            tblCreateScript=EnumIntViews.getViewScriptCreation(ViewsProcedureConfig.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, false);
-                                            tblCreateScriptTesting=EnumIntViews.getViewScriptCreation(ViewsProcedure.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, true);
-                                            if (tblCreateScript.length()==0){
-                                                tblCreateScript = ViewsEnvMonData.valueOf(curTableName.toUpperCase()).getViewCreatecript();
-                                                tblCreateScriptTesting = createTableScript(TablesEnvMonitData.valueOf(curTableName.toUpperCase()), schemaForTesting, false, true);
-                                            }
-                                        }catch(Exception e){
-                                            tblCreateScript = ViewsData.valueOf(curTableName.toUpperCase()).getViewCreatecript();
-                                        }                                        */
                                         }
                                         break;
                                     case "procedure-audit":
@@ -1075,6 +1048,7 @@ public class ProcedureDefinitionToInstance {
                                 }
                                 curTblJsonObj.put("scripts_detail", scriptLog);
                             }
+*/                            
                             /*                    if (GlobalVariables.Schemas.CONFIG.getName().equalsIgnoreCase(curSchemaName.toString()))
                             tableCreationScriptTable = TblsEnvMonitConfig.getTableCreationScriptFromConfigTableEnvMonit(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
                         if (GlobalVariables.Schemas.CONFIG_AUDIT.getName().equalsIgnoreCase(curSchemaName.toString()))
@@ -1085,9 +1059,10 @@ public class ProcedureDefinitionToInstance {
                             tableCreationScriptTable = TblsEnvMonitDataAudit.getTableCreationScriptFromDataAuditTableEnvMonit(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
                         if (GlobalVariables.Schemas.PROCEDURE.getName().equalsIgnoreCase(curSchemaName.toString()))
                             tableCreationScriptTable = TblsEnvMonitProcedure.getTableCreationScriptFromDataProcedureTableEnvMonit(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
-                             */ break;
+                             */ 
+                            //break;
                         case INSTRUMENTS:
-                            cont = true;
+                        boolean cont = true;
                             try {
                                 switch (curSchemaName.toLowerCase()) {
                                     case "config":
@@ -1225,6 +1200,7 @@ public class ProcedureDefinitionToInstance {
                         if (GlobalVariables.Schemas.PROCEDURE.getName().equalsIgnoreCase(curSchemaName.toString()))
                             tableCreationScriptTable = TblsEnvMonitProcedure.getTableCreationScriptFromDataProcedureTableEnvMonit(curTableName.toString(), procInstanceName, curFieldName.toString().split("\\|"));
                              */ break;
+
                         case SAMPLES_MANAGEMENT:
                             cont = true;
                             try {
@@ -1357,6 +1333,7 @@ public class ProcedureDefinitionToInstance {
                               break; */
                         case GENOMICS:
                             break;
+                        case MONITORING:
                         case INSPECTION_LOTS:
                         case STOCKS:
                             ModuleTableOrViewGet tblDiagn = new ModuleTableOrViewGet(Boolean.valueOf(curIsView), moduleName, curSchemaName, curTableName.toUpperCase(), procInstanceName);
