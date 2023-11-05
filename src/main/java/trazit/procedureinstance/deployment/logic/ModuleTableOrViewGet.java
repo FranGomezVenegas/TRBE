@@ -23,6 +23,10 @@ import module.inventorytrack.definition.TblsInvTrackingConfig;
 import module.inventorytrack.definition.TblsInvTrackingData;
 import module.inventorytrack.definition.TblsInvTrackingDataAudit;
 import module.inventorytrack.definition.TblsInvTrackingProcedure;
+import module.monitoring.definition.TblsEnvMonitConfig;
+import module.monitoring.definition.TblsEnvMonitData;
+import module.monitoring.definition.TblsEnvMonitDataAudit;
+import module.monitoring.definition.TblsEnvMonitProcedure;
 import trazit.enums.EnumIntTables;
 import trazit.enums.EnumIntViews;
 import trazit.globalvariables.GlobalVariables;
@@ -125,6 +129,98 @@ public class ModuleTableOrViewGet {
         TrazitModules moduleObj = TrazitModules.valueOf(moduleName);
         switch (moduleObj) {
             case MONITORING:
+                if (curSchemaName.toLowerCase().contains(GlobalVariables.Schemas.CONFIG.getName())) {
+                    try {
+                        this.tableObj = TblsEnvMonitConfig.TablesEnvMonitConfig.valueOf(tblName.toUpperCase());
+                        this.found = true;
+                        return;
+                    } catch (Exception e1) {
+                        try {
+                            this.tableObj = TblsCnfg.TablesConfig.valueOf(tblName.toUpperCase());
+                            this.found = true;
+                        } catch (Exception e2) {
+                            this.found = false;
+                            this.errorMsg = "table not found";
+                            this.tableObj = null;
+                        }
+                    }
+                }
+                if (curSchemaName.toLowerCase().contains(GlobalVariables.Schemas.DATA_AUDIT.getName())) {
+                    this.mirrorForTesting = true;
+                    try {
+                        this.tableObj = TblsEnvMonitDataAudit.TablesEnvMonitDataAudit.valueOf(tblName.toUpperCase());
+                        this.found = true;
+                    } catch (Exception e1) {
+                        try {
+                            this.tableObj = TblsDataAudit.TablesDataAudit.valueOf(tblName.toUpperCase());
+                            this.found = true;
+                        } catch (Exception e2) {
+                            this.found = false;
+                            this.errorMsg = "table not found";
+                            this.tableObj = null;
+                        }
+                    }
+                    return;
+                }
+                if (curSchemaName.toLowerCase().contains(GlobalVariables.Schemas.DATA.getName())) {
+                    this.mirrorForTesting = true;
+                    try {
+                        this.tableObj = TblsEnvMonitData.TablesEnvMonitData.valueOf(tblName.toUpperCase());
+                        this.found = true;
+                    } catch (Exception e1) {
+                        try {
+                            this.tableObj = TblsData.TablesData.valueOf(tblName.toUpperCase());
+                            this.found = true;
+                        } catch (Exception e2) {
+                            this.found = false;
+                            this.errorMsg = "table not found";
+                            this.tableObj = null;
+                        }
+                    }
+                }
+                if (curSchemaName.toLowerCase().contains(GlobalVariables.Schemas.PROCEDURE_AUDIT.getName())) {
+                    this.mirrorForTesting = true;
+                    try {
+                        this.tableObj = TblsProcedureAudit.TablesProcedureAudit.valueOf(tblName.toUpperCase());
+                        this.found = true;
+                        return;
+                    } catch (Exception e1) {
+                        try {
+//                            this.tableObj=TblsProcedureAudit.TablesProcedure.valueOf(tblName.toUpperCase());                        
+                            this.found = false;
+                        } catch (Exception e2) {
+                            this.found = false;
+                            this.errorMsg = "table not found";
+                            this.tableObj = null;
+                        }
+                    }
+                }
+                if (curSchemaName.toLowerCase().contains(GlobalVariables.Schemas.PROCEDURE.getName())) {
+                    try {
+                        this.tableObj = TblsEnvMonitProcedure.TablesEnvMonitProcedure.valueOf(tblName.toUpperCase());
+                        this.found = true;
+                        String schemaForTesting = Rdbms.suffixForTesting(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, curSchemaName), tblName);
+                        if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName))) {
+                            this.mirrorForTesting = true;
+                        }
+                        return;
+                    } catch (Exception e1) {
+                        try {
+                            this.tableObj = TblsProcedure.TablesProcedure.valueOf(tblName.toUpperCase());
+                            this.found = true;
+                            String schemaForTesting = Rdbms.suffixForTesting(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, curSchemaName), tblName);
+                            if (!schemaForTesting.equalsIgnoreCase(LPPlatform.buildSchemaName(procInstanceName, curSchemaName))) {
+                                this.mirrorForTesting = true;
+                            }
+
+                        } catch (Exception e2) {
+                            this.found = false;
+                            this.errorMsg = "table not found";
+                            this.tableObj = null;
+                        }
+                    }
+                }
+                break;                
             case SAMPLES_MANAGEMENT:
                 return;
             case INSPECTION_LOTS:
