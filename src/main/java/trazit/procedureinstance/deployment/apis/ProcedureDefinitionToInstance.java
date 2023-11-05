@@ -24,6 +24,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -77,6 +78,14 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
         procInstanceInfo.put("Instance Name", procInstanceName);        
         procInstanceInfo.put("dbName", dbName);        
         mainObj.put("Procedure Instance Info", procInstanceInfo);
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForProcManagement(request, response, false);
+        if (Boolean.TRUE.equals(procReqInstance.getHasErrors())){
+            procReqInstance.killIt();
+            LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
+            return;
+        }        
+        procReqInstance.setProcInstanceName(procInstanceName);
+        
         Boolean runSection=false;
         Integer iSection=0;
         try (PrintWriter out = response.getWriter()) {
