@@ -102,6 +102,7 @@ import trazit.thirdparties.sap.ExcelExporter;
 import trazit.thirdparties.sap.Mosquitto;
 import trazit.thirdparties.sap.PDFDataExtractor;
 import java.util.Set;
+import module.inventorytrack.definition.TblsInvTrackingConfig;
 /**
  *
  * @author Administrator
@@ -130,12 +131,14 @@ public class TestingServer extends HttpServlet {
 
 //        String procInstanceSource="lots_raw";
 //        String procInstanceDestination="inspection lot";
-        String procInstanceSource="mon_water";
-        String procInstanceDestination="mon_water";
+        String procInstanceSource="stock";//"instruments";//"mon_water";
+        String procInstanceDestination="stock";//"instruments";//"mon_water";
 
         
-        EnumIntTables[] tblsArr= new EnumIntTables[]{TblsCnfg.TablesConfig.SPEC, TblsCnfg.TablesConfig.SPEC_RULES, TblsCnfg.TablesConfig.SPEC_LIMITS};
-        //TblsCnfg.TablesConfig.values(); //
+        //EnumIntTables[] tblsArr= new EnumIntTables[]{TblsCnfg.TablesConfig.SPEC, TblsCnfg.TablesConfig.SPEC_RULES, TblsCnfg.TablesConfig.SPEC_LIMITS};
+        //EnumIntTables[] tblsArr= new EnumIntTables[]{TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES, TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES_SET};
+        EnumIntTables[] tblsArr= new EnumIntTables[]{TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE};
+//TblsCnfg.TablesConfig.values(); //
 //        TblsInspLotRMConfig.TablesInspLotRMConfig.values(); //
 String curTblName="";      
     out.println("Source: "+procInstanceSource);
@@ -145,6 +148,7 @@ String curTblName="";
 for (EnumIntTables curTbl: tblsArr){  
     try{ 
     curTblName=curTbl.getTableName();
+    out.println("Table Name: "+curTblName);
     procInstanceName="demo_v0_9_1";
     Rdbms.stablishDBConection(procInstanceName);
     SqlWhere sWhere=new SqlWhere();
