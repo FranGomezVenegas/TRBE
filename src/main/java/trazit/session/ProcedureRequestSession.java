@@ -229,7 +229,7 @@ public class ProcedureRequestSession {
                 this.procedureHashCode = this.token.getProcedureInstanceHashCode(procInstanceName);
             }
             if (Boolean.FALSE.equals(isForTesting) && Boolean.FALSE.equals(isForUAT) && Boolean.FALSE.equals(isQuery)
-                    && Boolean.FALSE.equals(isPlatform) && Boolean.FALSE.equals(isForDocumentation)) {
+                    && Boolean.FALSE.equals(isPlatform) && Boolean.FALSE.equals(isForDocumentation) && Boolean.FALSE.equals(this.isForProcManagement)) {
                 Object[] theProcActionEnabled = ActionsControl.isTheProcActionEnabled(tokn, procInstanceName, actionName, this.busRulesProcInstance);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(theProcActionEnabled[0].toString())) {
                     this.hasErrors = true;
