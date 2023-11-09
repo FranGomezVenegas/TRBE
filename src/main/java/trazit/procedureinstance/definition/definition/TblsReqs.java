@@ -393,7 +393,7 @@ public class TblsReqs {
                         "          		from requirements.procedure_req_solution reqsol, requirements.procedure_user_requirements usr\n" +
                         "			  where reqsol.req_id=usr.req_id and upper(window_element_type)=upper("+ReqSolutionTypes.WINDOW_ACTION.getTagValue()+")) sol\n" +
                         "	  ON act.endpoint_name::text = sol.window_action::text and procinfo.proc_instance_name=sol.proc_instance_name\n" +
-                        "	WHERE upper(act.api_name) like '%ACTION%'\n" +
+                        "	WHERE upper(act.api_name::text) ~~ '%ACTION%'::text OR upper(act.api_name::text) ~~ '%QUER%'::text AND act.query_for_button = true" +
                         "  GROUP BY act.module_name, act.module_version, act.entity, act.endpoint_name, sol.procedure_name, sol.procedure_version, sol.proc_instance_name,\n" +
                         " 		act.api_name,	act.pretty_name_en, act.pretty_name_es\n" +
                         "   ORDER BY act.entity, act.api_name, (COALESCE(count(sol.window_action), 0::bigint)); ",
@@ -550,7 +550,9 @@ public class TblsReqs {
         PRETTY_ES("pretty_name_es", LPDatabase.string(), null, null, null, null),
         DESCRIPTION(FIELDS_NAMES_DESCRIPTION, LPDatabase.string(), null, null, null, null),
         ACTIVE("active", LPDatabase.booleanFld(true), null, null, null, null),
-        JSON_MODEL("json_model", LPDatabase.json(), null, null, null, null)
+        JSON_MODEL("json_model", LPDatabase.json(), null, null, null, null),
+        QUERY_FOR_BUTTON("query_for_button", LPDatabase.booleanFld(false), null, null, null, null),
+        EXTRA_ACTIONS("extra_actions", LPDatabase.stringNotNull(), null, null, null, null)
         ;
         private ModuleActionsAndQueries(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules) {
@@ -1273,6 +1275,8 @@ public class TblsReqs {
         JSON_MODEL("json_model", LPDatabase.json(), null, null, null, null, true),
         SPECIAL_VIEW_JSON_MODEL("special_view_json_model", LPDatabase.json(), null, null, null, null, true),
         SPECIAL_VIEW_NAME("special_view_name", LPDatabase.string(), null, null, null, null, false), 
+        QUERY_FOR_BUTTON("query_for_button", LPDatabase.booleanFld(false), null, null, null, null, true),
+        EXTRA_ACTIONS("extra_actions", LPDatabase.stringNotNull(), null, null, null, null, true)
         ;
         private ProcedureReqSolution(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules, Boolean isSystFld) {
