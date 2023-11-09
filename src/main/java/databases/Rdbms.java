@@ -2417,10 +2417,14 @@ public class Rdbms {
     }
 
     public static String suffixForTesting(String procInstanceName, String schemaName, String tableName) {
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
         if (procInstanceName==null){procInstanceName="";}
         if (LPNulls.replaceNull(procInstanceName).length()>0){
             schemaName=schemaName.replace(procInstanceName+"-", "");
             procInstanceName=procInstanceName+"-";
+        }else{
+            schemaName=schemaName.replace(instanceForActions.getProcedureInstance()+"-", "");
+            procInstanceName=instanceForActions.getProcedureInstance()+"-";
         }
         if (schemaName.contains(GlobalVariables.Schemas.DATA.getName())) {
             if (schemaName.startsWith("\"")) {
@@ -2561,12 +2565,14 @@ private static final int CLIENT_CODE_STACK_INDEX;
         CLIENT_CODE_STACK_INDEX = i;
     }
      */
-    public static RdbmsObject insertRecordInTable(EnumIntTables tblObj, String[] fieldNames, Object[] fieldValues) {
-        return insertRecord(tblObj, fieldNames, fieldValues, null, false);
+    public static RdbmsObject insertRecordInTable(EnumIntTables tblObj, String[] fieldNames, Object[] fieldValues) {        
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        return insertRecord(tblObj, fieldNames, fieldValues, procReqSession.getProcedureInstance(), false);
     }
 
     public static RdbmsObject insertRecordInTable(EnumIntTables tblObj, String[] fieldNames, Object[] fieldValues, Boolean encryptAllFlds) {
-        return insertRecord(tblObj, fieldNames, fieldValues, null, encryptAllFlds);
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        return insertRecord(tblObj, fieldNames, fieldValues, procReqSession.getProcedureInstance(), encryptAllFlds);
     }
 
     public static RdbmsObject insertRecord(EnumIntTables tblObj, String[] fieldNames, Object[] fieldValues, String alternativeProcInstanceName) {
