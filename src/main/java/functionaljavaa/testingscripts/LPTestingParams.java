@@ -55,7 +55,7 @@ public class LPTestingParams {
         SAMPLES("/testing/moduleSamples/TestingSamples", "DBSchema_data_Samples.txt", 1, "Action Name;Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided", true),
         GENOMICS("/testing/moduleGenoma/TestingGenoma", "DBSchema_data_genoma.txt", 1, "Action Name;Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided", true),        
         INSPECTION_LOT("/testing/moduleInspLotRM/TestingInspLotRM", "DBSchema_data_inspLotRM.txt", 1, "Action Name;Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided", true),        
-        STOCKS("/testing/app/TestingPlatformInvTracking", "DBSchema_data_inspLotRM.txt", 1, "Action Name;Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided", true),
+        STOCKS("/testing/app/TestingPlatformInvTracking", "DBSchema_data_inspLotRM.txt", 1, "Action Name;Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; Arg11; Arg12; Arg13; Arg14; Arg15; esign Provided; confirmUser provided; confirmUser PWD provided", true),
         INSTRUMENTS("/testing/app/TestingPlatformInstruments", "DBSchema_platform_instruments.txt", 1, "Action Name;Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided", false),
         ;
         private TestingServletsConfig(String url, String fileName, Integer numTables, String tablesHeaders, Boolean forProcedure){
