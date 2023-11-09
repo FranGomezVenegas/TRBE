@@ -63,7 +63,7 @@ public class TestingPlatformInvTracking extends HttpServlet {
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
 
         String testerFileName=LPTestingParams.TestingServletsConfig.INSTRUMENTS.getTesterFileName();                         
-        LPTestingOutFormat tstOut=new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.INSTRUMENTS.name(), testerFileName);
+        LPTestingOutFormat tstOut=new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.STOCKS.name(), testerFileName);
         Map<String, Object> csvHeaderTags=tstOut.getCsvHeaderTags();
         
         StringBuilder fileContentBuilder = new StringBuilder(0);        
