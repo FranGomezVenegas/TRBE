@@ -197,9 +197,8 @@ public class DataInventoryQualif {
 
     public static Object[][] getVariableSetVariablesProperties(String variableSetName) {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        String appProcInstance = LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName());
 
-        Object[][] variableSetInfo = Rdbms.getRecordFieldsByFilter(appProcInstance, LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.CONFIG.getName()), TblsInvTrackingConfig.TablesInvTrackingConfig.VARIABLES_SET.getTableName(),
+        Object[][] variableSetInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsInvTrackingConfig.TablesInvTrackingConfig.VARIABLES_SET.getTableName(),
                 new String[]{TblsInvTrackingConfig.VariablesSet.NAME.getName()}, new Object[]{variableSetName},
                 new String[]{TblsInvTrackingConfig.VariablesSet.VARIABLES_LIST.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(variableSetInfo[0][0].toString())) {
@@ -208,7 +207,7 @@ public class DataInventoryQualif {
         String variableSetContent = LPNulls.replaceNull(variableSetInfo[0][0]).toString();
         String[] fieldsToRetrieve = new String[]{TblsInvTrackingConfig.Variables.PARAM_NAME.getName(), TblsInvTrackingConfig.Variables.PARAM_TYPE.getName(), TblsInvTrackingConfig.Variables.REQUIRED.getName(),
             TblsInvTrackingConfig.Variables.ALLOWED_VALUES.getName()};
-        Object[][] variablesProperties2D = Rdbms.getRecordFieldsByFilter(appProcInstance, LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.CONFIG.getName()), TblsInvTrackingConfig.TablesInvTrackingConfig.VARIABLES.getTableName(),
+        Object[][] variablesProperties2D = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsInvTrackingConfig.TablesInvTrackingConfig.VARIABLES.getTableName(),
                 new String[]{TblsInvTrackingConfig.Variables.PARAM_NAME.getName() + " IN"}, new Object[]{variableSetContent},
                 fieldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(variablesProperties2D[0][0].toString())) {
@@ -230,16 +229,16 @@ public class DataInventoryQualif {
             wFldName = new String[]{TblsInvTrackingData.LotQualification.LOT_NAME.getName(), TblsInvTrackingData.LotQualification.CATEGORY.getName(), TblsInvTrackingData.LotQualification.REFERENCE.getName()};
             wFldValue = new Object[]{lotName, category, ref};
         }
-        String appProcInstance = LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName());
-        Object[][] eventInfo = Rdbms.getRecordFieldsByFilter(appProcInstance, LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION.getTableName(),
-                wFldName, wFldValue, new String[]{TblsInvTrackingData.LotQualification.COMPLETED_BY.getName()});
+        Object[][] eventInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), 
+            TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION.getTableName(),
+            wFldName, wFldValue, new String[]{TblsInvTrackingData.LotQualification.COMPLETED_BY.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(eventInfo[0][0].toString())) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.NOT_FOUND, new Object[]{lotQualifId, appProcInstance});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.NOT_FOUND, new Object[]{lotQualifId, procReqSession.getProcedureInstance()});
         }
         if (LPNulls.replaceNull(eventInfo[0][0]).toString().length() > 0) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.NO_PENDING_QUALIFICATION, new Object[]{lotQualifId, appProcInstance});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.NO_PENDING_QUALIFICATION, new Object[]{lotQualifId, procReqSession.getProcedureInstance()});
         }
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "<*1*> is open to changes in procedure <*2*>", new Object[]{lotQualifId, appProcInstance});
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "<*1*> is open to changes in procedure <*2*>", new Object[]{lotQualifId, procReqSession.getProcedureInstance()});
     }
 
     public static Object[] addVariableSetToObject(String lotName, Integer lotQualifId, String variableSetName, String ownerId) {
@@ -290,7 +289,6 @@ public class DataInventoryQualif {
 
     public static InternalMessage objectVariableSetValue(String lotName, String category, String reference, Integer lotQualifId, String variableName, String newValue) {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        String appProcInstance = LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName());
 
         if (lotQualifId == null) {
             DataInventory invLot = new DataInventory(lotName, reference, category, null);
@@ -316,10 +314,10 @@ public class DataInventoryQualif {
         String[] fieldsName = new String[]{TblsInvTrackingData.LotQualificationVariableValues.QUALIF_ID.getName(),
             TblsInvTrackingData.LotQualificationVariableValues.PARAM_NAME.getName()};
         Object[] fieldsValue = new Object[]{lotQualifId, variableName};
-        Object[][] objectVariablePropInfo = Rdbms.getRecordFieldsByFilter(appProcInstance, LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION_VARIABLE_VALUES.getTableName(),
+        Object[][] objectVariablePropInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION_VARIABLE_VALUES.getTableName(),
                 fieldsName, fieldsValue, fieldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objectVariablePropInfo[0][0].toString())) {
-            Object[][] instEvVariables = Rdbms.getRecordFieldsByFilter(appProcInstance, LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION_VARIABLE_VALUES.getTableName(),
+            Object[][] instEvVariables = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION_VARIABLE_VALUES.getTableName(),
                     new String[]{TblsInvTrackingData.LotQualificationVariableValues.QUALIF_ID.getName()}, new Object[]{lotQualifId}, fieldsToRetrieve);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instEvVariables[0][0].toString())) {
                 return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.VARIABLE_NOT_EXISTS_EVENT_WITHNOVARIABLES, null);
@@ -331,7 +329,7 @@ public class DataInventoryQualif {
         }
         if (objectVariablePropInfo.length != 1) {
             return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.MORE_THAN_ONE_VARIABLE,
-                    new Object[]{objectVariablePropInfo.length, Arrays.toString(fieldsName), appProcInstance});
+                    new Object[]{objectVariablePropInfo.length, Arrays.toString(fieldsName), procReqSession.getProcedureInstance()});
         }
         String currentValue = LPNulls.replaceNull(objectVariablePropInfo[0][5]).toString();
         if (currentValue.length() > 0) {
@@ -344,7 +342,7 @@ public class DataInventoryQualif {
                 String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
                 if (Boolean.FALSE.equals(LPArray.valueInArray(allowedValuesArr, newValue))) {
                     return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.VARIABLE_VALUE_NOTONEOFTHEEXPECTED,
-                            new Object[]{newValue, Arrays.toString(allowedValuesArr), variableName, appProcInstance});
+                            new Object[]{newValue, Arrays.toString(allowedValuesArr), variableName, procReqSession.getProcedureInstance()});
                 }
                 break;
             case REAL:
@@ -374,7 +372,6 @@ public class DataInventoryQualif {
 
     public static InternalMessage objectVariableChangeValue(String lotName, String category, String reference, Integer lotQualifId, String variableName, String newValue) {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        String appProcInstance = LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName());
         Object[] isStudyOpenToChanges = isQualificationOpenToChanges(lotQualifId, lotName, category, reference);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES, null, null);
@@ -386,10 +383,10 @@ public class DataInventoryQualif {
         String[] fieldsName = new String[]{TblsInvTrackingData.LotQualificationVariableValues.QUALIF_ID.getName(),
             TblsInvTrackingData.LotQualificationVariableValues.PARAM_NAME.getName()};
         Object[] fieldsValue = new Object[]{lotQualifId, variableName};
-        Object[][] objectVariablePropInfo = Rdbms.getRecordFieldsByFilter(appProcInstance, LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION_VARIABLE_VALUES.getTableName(),
+        Object[][] objectVariablePropInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION_VARIABLE_VALUES.getTableName(),
                 fieldsName, fieldsValue, fieldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objectVariablePropInfo[0][0].toString())) {
-            Object[][] instEvVariables = Rdbms.getRecordFieldsByFilter(appProcInstance, LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION_VARIABLE_VALUES.getTableName(),
+            Object[][] instEvVariables = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION_VARIABLE_VALUES.getTableName(),
                     new String[]{TblsInvTrackingData.LotQualificationVariableValues.QUALIF_ID.getName()}, new Object[]{lotQualifId}, fieldsToRetrieve);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instEvVariables[0][0].toString())) {
                 return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.VARIABLE_NOT_EXISTS_EVENT_WITHNOVARIABLES, null);
@@ -400,7 +397,7 @@ public class DataInventoryQualif {
         }
         if (objectVariablePropInfo.length != 1) {
             return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.MORE_THAN_ONE_VARIABLE,
-                    new Object[]{objectVariablePropInfo.length, Arrays.toString(fieldsName), appProcInstance});
+                    new Object[]{objectVariablePropInfo.length, Arrays.toString(fieldsName), procReqSession.getProcedureInstance()});
         }
         String currentValue = LPNulls.replaceNull(objectVariablePropInfo[0][5]).toString();
         if (currentValue.length() == 0) {
@@ -409,7 +406,7 @@ public class DataInventoryQualif {
         }
         if (currentValue.equalsIgnoreCase(newValue)) {
             return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InvTrackingEventsErrorTrapping.SAME_RESULT_VALUE,
-                    new Object[]{variableName, appProcInstance, newValue});
+                    new Object[]{variableName, procReqSession.getProcedureInstance(), newValue});
         }
         String fieldType = objectVariablePropInfo[0][2].toString().toUpperCase();
         switch (DataStudyObjectsVariableValues.VariableTypes.valueOf(fieldType)) {
@@ -417,7 +414,7 @@ public class DataInventoryQualif {
                 String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
                 if (Boolean.FALSE.equals(LPArray.valueInArray(allowedValuesArr, newValue))) {
                     return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.MORE_THAN_ONE_VARIABLE,
-                            new Object[]{newValue, Arrays.toString(allowedValuesArr), variableName, appProcInstance});
+                            new Object[]{newValue, Arrays.toString(allowedValuesArr), variableName, procReqSession.getProcedureInstance()});
                 }
                 break;
             case REAL:
@@ -447,7 +444,6 @@ public class DataInventoryQualif {
 
     public static InternalMessage eventHasNotEnteredVariables(String lotName, Integer lotQualifId) {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        String appProcInstance = LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName());
         Object[] isStudyOpenToChanges = isQualificationOpenToChanges(lotQualifId, null, null, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())) {
             ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();
@@ -455,7 +451,7 @@ public class DataInventoryQualif {
             return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES, new Object[]{lotQualifId}, null);
         }
 
-        Object[][] diagn = Rdbms.getRecordFieldsByFilter(appProcInstance, LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION_VARIABLE_VALUES.getTableName(),
+        Object[][] diagn = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION_VARIABLE_VALUES.getTableName(),
                 new String[]{TblsInvTrackingData.LotQualificationVariableValues.LOT_NAME.getName(),
                     TblsInvTrackingData.LotQualificationVariableValues.QUALIF_ID.getName(), TblsInvTrackingData.LotQualificationVariableValues.REQUIRED.getName(), TblsInvTrackingData.LotQualificationVariableValues.VALUE.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()},
                 new Object[]{lotName, lotQualifId, "Y"}, new String[]{TblsInvTrackingData.LotQualificationVariableValues.ID.getName()});
@@ -469,14 +465,14 @@ public class DataInventoryQualif {
     }
 
     public static InternalMessage invTrackingAuditSetAuditRecordAsReviewed(Integer auditId, String personName) {
-        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();
-        String appProcInstance = GlobalVariables.Schemas.APP_PROC_DATA_AUDIT.getName();        
-        String auditReviewMode = Parameter.getBusinessRuleProcedureFile(appProcInstance, InvTrackingEnums.InventoryTrackBusinessRules.REVISION_MODE.getAreaName(), InvTrackingEnums.InventoryTrackBusinessRules.REVISION_MODE.getTagName());
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        ResponseMessages messages = procReqSession.getMessages();
+        String auditReviewMode = Parameter.getBusinessRuleProcedureFile(procReqSession.getProcedureInstance(), InvTrackingEnums.InventoryTrackBusinessRules.REVISION_MODE.getAreaName(), InvTrackingEnums.InventoryTrackBusinessRules.REVISION_MODE.getTagName());
         if (Boolean.FALSE.equals(isTagValueOneOfEnableOnes(auditReviewMode))) {
             messages.addMainForError(InvTrackingEnums.InventoryTrackingErrorTrapping.DISABLED, new Object[]{});
             return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.DISABLED, new Object[]{});
         }
-        String auditAuthorCanBeReviewerMode = Parameter.getBusinessRuleProcedureFile(appProcInstance, InvTrackingEnums.InventoryTrackBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getAreaName(), InvTrackingEnums.InventoryTrackBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName());
+        String auditAuthorCanBeReviewerMode = Parameter.getBusinessRuleProcedureFile(procReqSession.getProcedureInstance(), InvTrackingEnums.InventoryTrackBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getAreaName(), InvTrackingEnums.InventoryTrackBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName());
         Object[][] auditInfo = QueryUtilitiesEnums.getTableData(TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT,
                 EnumIntTableFields.getTableFieldsFromString(TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT, new String[]{TblsInvTrackingDataAudit.Lot.PERSON.getName(), TblsInvTrackingDataAudit.Lot.REVIEWED.getName()}),
                 new String[]{TblsInvTrackingDataAudit.Lot.AUDIT_ID.getName()}, new Object[]{auditId},

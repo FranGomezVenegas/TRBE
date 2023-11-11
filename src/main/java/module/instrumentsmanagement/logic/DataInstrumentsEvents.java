@@ -49,9 +49,8 @@ public class DataInstrumentsEvents {
 
     public static Object[][] getVariableSetVariablesProperties(String variableSetName) {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        String appProcInstance = LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName());
 
-        Object[][] variableSetInfo = Rdbms.getRecordFieldsByFilter(appProcInstance, LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.CONFIG.getName()), TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES_SET.getTableName(),
+        Object[][] variableSetInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES_SET.getTableName(),
                 new String[]{TblsInstrumentsConfig.VariablesSet.NAME.getName()}, new Object[]{variableSetName},
                 new String[]{TblsInstrumentsConfig.VariablesSet.VARIABLES_LIST.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(variableSetInfo[0][0].toString())) {
@@ -60,7 +59,7 @@ public class DataInstrumentsEvents {
         String variableSetContent = LPNulls.replaceNull(variableSetInfo[0][0]).toString();
         String[] fieldsToRetrieve = new String[]{TblsInstrumentsConfig.Variables.PARAM_NAME.getName(), TblsInstrumentsConfig.Variables.PARAM_TYPE.getName(), TblsInstrumentsConfig.Variables.REQUIRED.getName(),
             TblsInstrumentsConfig.Variables.ALLOWED_VALUES.getName()};
-        Object[][] variablesProperties2D = Rdbms.getRecordFieldsByFilter(appProcInstance, LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.CONFIG.getName()), TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES.getTableName(),
+        Object[][] variablesProperties2D = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES.getTableName(),
                 new String[]{TblsInstrumentsConfig.Variables.PARAM_NAME.getName() + " IN"}, new Object[]{variableSetContent},
                 fieldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(variablesProperties2D[0][0].toString())) {
@@ -73,18 +72,17 @@ public class DataInstrumentsEvents {
 
     public static Object[] isEventOpenToChanges(Integer insEventId) {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        String appProcInstance = LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName());
-        Object[][] eventInfo = Rdbms.getRecordFieldsByFilter(appProcInstance, LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
+        Object[][] eventInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENT_EVENT.getTableName(),
                 new String[]{TblsInstrumentsData.InstrumentEvent.ID.getName()},
                 new Object[]{insEventId},
                 new String[]{TblsInstrumentsData.InstrumentEvent.COMPLETED_BY.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(eventInfo[0][0].toString())) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.NOT_FOUND, new Object[]{insEventId, appProcInstance});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.NOT_FOUND, new Object[]{insEventId, procReqSession.getProcedureInstance()});
         }
         if (LPNulls.replaceNull(eventInfo[0][0]).toString().length() > 0) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES, new Object[]{insEventId, appProcInstance});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES, new Object[]{insEventId, procReqSession.getProcedureInstance()});
         }
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "<*1*> is open to changes in procedure <*2*>", new Object[]{insEventId, appProcInstance});
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "<*1*> is open to changes in procedure <*2*>", new Object[]{insEventId, procReqSession.getProcedureInstance()});
     }
 
     public static Object[] addVariableSetToObject(String instrName, Integer instrEventId, String variableSetName, String ownerId) {
@@ -130,7 +128,6 @@ public class DataInstrumentsEvents {
 
     public static InternalMessage objectVariableSetValue(String instrName, Integer instrEventId, String variableName, String newValue, byte[] attachment) {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        String appProcInstance = LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName());
         Object[] isStudyOpenToChanges = isEventOpenToChanges(instrEventId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES, null, null);
@@ -144,10 +141,10 @@ public class DataInstrumentsEvents {
         String[] fieldsName = new String[]{TblsInstrumentsData.InstrEventVariableValues.EVENT_ID.getName(),
             TblsInstrumentsData.InstrEventVariableValues.PARAM_NAME.getName()};
         Object[] fieldsValue = new Object[]{instrEventId, variableName};
-        Object[][] objectVariablePropInfo = Rdbms.getRecordFieldsByFilter(appProcInstance, LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES.getTableName(),
+        Object[][] objectVariablePropInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES.getTableName(),
                 fieldsName, fieldsValue, fieldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objectVariablePropInfo[0][0].toString())) {
-            Object[][] instEvVariables = Rdbms.getRecordFieldsByFilter(appProcInstance, LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES.getTableName(),
+            Object[][] instEvVariables = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES.getTableName(),
                     new String[]{TblsInstrumentsData.InstrEventVariableValues.EVENT_ID.getName()}, new Object[]{instrEventId}, fieldsToRetrieve);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instEvVariables[0][0].toString())) {
                 return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.VARIABLE_NOT_EXISTS_EVENT_WITHNOVARIABLES, null);
@@ -158,7 +155,7 @@ public class DataInstrumentsEvents {
         }
         if (objectVariablePropInfo.length != 1) {
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.MORE_THAN_ONE_VARIABLE,
-                    new Object[]{objectVariablePropInfo.length, Arrays.toString(fieldsName), appProcInstance});
+                    new Object[]{objectVariablePropInfo.length, Arrays.toString(fieldsName), procReqSession.getProcedureInstance()});
         }
         String currentValue = LPNulls.replaceNull(objectVariablePropInfo[0][5]).toString();
         if (currentValue.length() > 0) {
@@ -175,7 +172,7 @@ public class DataInstrumentsEvents {
                 String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
                 if (Boolean.FALSE.equals(LPArray.valueInArray(allowedValuesArr, newValue))) {
                     return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.MORE_THAN_ONE_VARIABLE,
-                            new Object[]{newValue, Arrays.toString(allowedValuesArr), variableName, appProcInstance});
+                            new Object[]{newValue, Arrays.toString(allowedValuesArr), variableName, procReqSession.getProcedureInstance()});
                 }
                 break;
             case REAL:
@@ -210,7 +207,6 @@ public class DataInstrumentsEvents {
 
     public static InternalMessage objectVariableChangeValue(String instrName, Integer instrEventId, String variableName, String newValue) {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        String appProcInstance = LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName());
         Object[] isStudyOpenToChanges = isEventOpenToChanges(instrEventId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES, null, null);
@@ -222,10 +218,10 @@ public class DataInstrumentsEvents {
         String[] fieldsName = new String[]{TblsInstrumentsData.InstrEventVariableValues.EVENT_ID.getName(),
             TblsInstrumentsData.InstrEventVariableValues.PARAM_NAME.getName()};
         Object[] fieldsValue = new Object[]{instrEventId, variableName};
-        Object[][] objectVariablePropInfo = Rdbms.getRecordFieldsByFilter(appProcInstance, LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES.getTableName(),
+        Object[][] objectVariablePropInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES.getTableName(),
                 fieldsName, fieldsValue, fieldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objectVariablePropInfo[0][0].toString())) {
-            Object[][] instEvVariables = Rdbms.getRecordFieldsByFilter(appProcInstance, LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES.getTableName(),
+            Object[][] instEvVariables = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES.getTableName(),
                     new String[]{TblsInstrumentsData.InstrEventVariableValues.EVENT_ID.getName()}, new Object[]{instrEventId}, fieldsToRetrieve);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instEvVariables[0][0].toString())) {
                 return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.VARIABLE_NOT_EXISTS_EVENT_WITHNOVARIABLES, null);
@@ -236,7 +232,7 @@ public class DataInstrumentsEvents {
         }
         if (objectVariablePropInfo.length != 1) {
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.MORE_THAN_ONE_VARIABLE,
-                    new Object[]{objectVariablePropInfo.length, Arrays.toString(fieldsName), appProcInstance});
+                    new Object[]{objectVariablePropInfo.length, Arrays.toString(fieldsName), procReqSession.getProcedureInstance()});
         }
         String currentValue = LPNulls.replaceNull(objectVariablePropInfo[0][5]).toString();
         if (currentValue.length() == 0) {
@@ -245,7 +241,7 @@ public class DataInstrumentsEvents {
         }
         if (currentValue.equalsIgnoreCase(newValue)) {
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.SAME_RESULT_VALUE,
-                    new Object[]{variableName, appProcInstance, newValue});
+                    new Object[]{variableName, procReqSession.getProcedureInstance(), newValue});
         }
         String fieldType = objectVariablePropInfo[0][2].toString().toUpperCase();
         switch (DataStudyObjectsVariableValues.VariableTypes.valueOf(fieldType)) {
@@ -253,7 +249,7 @@ public class DataInstrumentsEvents {
                 String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
                 if (Boolean.FALSE.equals(LPArray.valueInArray(allowedValuesArr, newValue))) {
                     return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.MORE_THAN_ONE_VARIABLE,
-                            new Object[]{newValue, Arrays.toString(allowedValuesArr), variableName, appProcInstance});
+                            new Object[]{newValue, Arrays.toString(allowedValuesArr), variableName, procReqSession.getProcedureInstance()});
                 }
                 break;
             case REAL:
@@ -283,7 +279,6 @@ public class DataInstrumentsEvents {
 
     public static InternalMessage eventHasNotEnteredVariables(String instrName, Integer instrEventId) {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        String appProcInstance = LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName());
         Object[] isStudyOpenToChanges = isEventOpenToChanges(instrEventId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())) {
             ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();
@@ -291,7 +286,7 @@ public class DataInstrumentsEvents {
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.EVENT_NOT_OPEN_FOR_CHANGES, new Object[]{instrEventId}, null);
         }
 
-        Object[][] diagn = Rdbms.getRecordFieldsByFilter(appProcInstance, LPPlatform.buildSchemaName(appProcInstance, GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES.getTableName(),
+        Object[][] diagn = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES.getTableName(),
                 new String[]{TblsInstrumentsData.InstrEventVariableValues.INSTRUMENT.getName(),
                     TblsInstrumentsData.InstrEventVariableValues.EVENT_ID.getName(), TblsInstrumentsData.InstrEventVariableValues.REQUIRED.getName(), TblsInstrumentsData.InstrEventVariableValues.VALUE.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()},
                 new Object[]{instrName, instrEventId, "Y"}, new String[]{TblsInstrumentsData.InstrEventVariableValues.ID.getName()});
@@ -305,14 +300,14 @@ public class DataInstrumentsEvents {
     }
 
     public static InternalMessage instrumentAuditSetAuditRecordAsReviewed(Integer auditId, String personName) {
-        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, Boolean.FALSE, Boolean.TRUE).getMessages();
-        String appProcInstance = GlobalVariables.Schemas.APP_PROC_DATA_AUDIT.getName();
-        String auditReviewMode = Parameter.getBusinessRuleProcedureFile(appProcInstance, InstrumentsBusinessRules.REVISION_MODE.getAreaName(), InstrumentsBusinessRules.REVISION_MODE.getTagName());
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        ResponseMessages messages = procReqSession.getMessages();
+        String auditReviewMode = Parameter.getBusinessRuleProcedureFile(procReqSession.getProcedureInstance(), InstrumentsBusinessRules.REVISION_MODE.getAreaName(), InstrumentsBusinessRules.REVISION_MODE.getTagName());
         if (Boolean.FALSE.equals(isTagValueOneOfEnableOnes(auditReviewMode))) {
             messages.addMainForError(InstrumentsErrorTrapping.DISABLED, new Object[]{});
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.DISABLED, new Object[]{});
         }
-        String auditAuthorCanBeReviewerMode = Parameter.getBusinessRuleProcedureFile(appProcInstance, InstrumentsBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getAreaName(), InstrumentsBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName());
+        String auditAuthorCanBeReviewerMode = Parameter.getBusinessRuleProcedureFile(procReqSession.getProcedureInstance(), InstrumentsBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getAreaName(), InstrumentsBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName());
         Object[][] auditInfo = QueryUtilitiesEnums.getTableData(TblsInstrumentsDataAudit.TablesInstrumentsDataAudit.INSTRUMENTS,
                 EnumIntTableFields.getTableFieldsFromString(TblsInstrumentsDataAudit.TablesInstrumentsDataAudit.INSTRUMENTS, new String[]{TblsInstrumentsDataAudit.Instruments.PERSON.getName(), TblsInstrumentsDataAudit.Instruments.REVIEWED.getName()}),
                 new String[]{TblsInstrumentsDataAudit.Instruments.AUDIT_ID.getName()}, new Object[]{auditId},
