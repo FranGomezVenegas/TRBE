@@ -1148,7 +1148,7 @@ public class ClassReqProcedureActions {
                         fieldValues=LPArray.addValueToArray1D(fieldValues,new Object[]{confirmDialog, confirmDialogDetail});
                     }
                     fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{TblsReqs.ProcedureReqSolution.QUERY_FOR_BUTTON.getName(), TblsReqs.ProcedureReqSolution.EXTRA_ACTIONS.getName()});
-                    fieldValues=LPArray.addValueToArray1D(fieldValues,new Object[]{isModuleWindowActionAvailableDiagn[2], isModuleWindowActionAvailableDiagn[3]});
+                    fieldValues=LPArray.addValueToArray1D(fieldValues,new Object[]{Boolean.valueOf(LPNulls.replaceNull(isModuleWindowActionAvailableDiagn[2]).toString()), isModuleWindowActionAvailableDiagn[3]});
                     removeDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, fieldNames, fieldValues);
                     if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
                         actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{reqId});
