@@ -324,7 +324,7 @@ public class DataSample {
      */
     public static Object[] isReadyForRevision(Integer sampleId) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), TblsData.Sample.READY_FOR_REVISION.getName());
+        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), TblsData.Sample.READY_FOR_REVISION.getName());
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())) {
             String[] sampleAnalysisFieldName = new String[]{TblsData.Sample.READY_FOR_REVISION.getName()};
             Object[][] sampleAnalysisInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(),
@@ -344,7 +344,7 @@ public class DataSample {
     public static Object[] setReadyForRevision(Integer sampleId) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
-        Object[] diagnoses = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), TblsData.Sample.READY_FOR_REVISION.getName());
+        Object[] diagnoses = Rdbms.dbTableExists(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), TblsData.Sample.READY_FOR_REVISION.getName());
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
             String[] sampleFieldName = new String[]{TblsData.Sample.READY_FOR_REVISION.getName()};
             Object[] sampleFieldValue = new Object[]{true};
@@ -1020,7 +1020,13 @@ public class DataSample {
             String sarFieldToRetrieve, String sarFieldToSort, String sampleAuditFieldToRetrieve, String sampleAuditResultFieldToSort) {
         String schemaData = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
         schemaData = Rdbms.addSuffixIfItIsForTesting(procInstanceName, schemaData, TblsData.TablesData.SAMPLE.getTableName());
+        if (Boolean.FALSE.equals(schemaData.startsWith("\"", 0))){
+            schemaData="\""+schemaData+"\"";
+        }
         String schemaDataAudit = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName());
+        if (Boolean.FALSE.equals(schemaDataAudit.startsWith("\"", 0))){
+            schemaDataAudit="\""+schemaDataAudit+"\"";
+        }
         schemaDataAudit = Rdbms.addSuffixIfItIsForTesting(procInstanceName, schemaDataAudit, TblsDataAudit.TablesDataAudit.SAMPLE.getTableName());
         String[] sampleFieldToRetrieveArr = new String[0];
         if (SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS.equalsIgnoreCase(sampleFieldToRetrieve)) {
