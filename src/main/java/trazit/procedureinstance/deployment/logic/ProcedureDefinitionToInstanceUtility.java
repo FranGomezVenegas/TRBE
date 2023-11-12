@@ -84,16 +84,15 @@ public class ProcedureDefinitionToInstanceUtility {
         String moduleName=dbSingleRowToJsonObj.get("module_name").toString();
         Integer moduleVersion=dbSingleRowToJsonObj.get("module_version").toString().length()>0?Integer.valueOf(dbSingleRowToJsonObj.get("module_version").toString()):-1;        
 
-        Object[][] moduleWindowActions = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.MODULE_ACTIONS_N_QUERIES.getTableName(), 
-            new String[]{TblsReqs.ModuleActionsAndQueries.MODULE_NAME.getName(), TblsReqs.ModuleActionsAndQueries.MODULE_VERSION.getName(),
-                TblsReqs.ModuleActionsAndQueries.ENDPOINT_NAME.getName()}, 
+        Object[][] moduleWindowActions = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.ACTIONS_IN_SOLUTION.getViewName(), 
+            new String[]{TblsReqs.viewActionsInSolution.MODULE_NAME.getName(), TblsReqs.viewActionsInSolution.MODULE_VERSION.getName(),
+                TblsReqs.viewActionsInSolution.ENDPOINT_NAME.getName()}, 
             new Object[]{moduleName, moduleVersion, wAction}, 
-            new String[]{TblsReqs.ModuleActionsAndQueries.API_NAME.getName(), TblsReqs.ModuleActionsAndQueries.ENDPOINT_NAME.getName()}, new String[]{});
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(moduleWindowActions[0][0].toString())||
-           (Boolean.FALSE.equals(moduleWindowActions[0][0].toString().toUpperCase().contains("ACTIO"))&&Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(moduleWindowActions[0][0].toString()))) )
+            new String[]{TblsReqs.viewActionsInSolution.API_NAME.getName(), TblsReqs.viewActionsInSolution.ENDPOINT_NAME.getName(), TblsReqs.viewActionsInSolution.QUERY_FOR_BUTTON.getName(), TblsReqs.viewActionsInSolution.EXTRA_ACTIONS.getName()}, new String[]{});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(moduleWindowActions[0][0].toString()) )
             return new Object[]{LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.MODULE_WINDOW_ACTION_NOT_FOUND, new Object[]{wAction, moduleName}};
         
-        return new Object[]{LPPlatform.LAB_TRUE};
+        return moduleWindowActions[0];
     }    
     public static final Object[] isModuleSpecialWindowAvailable(String procInstanceName, String viewQuery){
         JSONObject dbSingleRowToJsonObj = ClassReqProcedureQueries.dbSingleRowToJsonObj(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName(),
