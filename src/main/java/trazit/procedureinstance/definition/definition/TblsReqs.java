@@ -384,7 +384,7 @@ public class TblsReqs {
                 null, "business_rules_in_solution", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsReqs.viewBusinessRulesInSolution.values(), "viewBusinessRulesInSolution",
                 null, " and procInfo.module_name = modAct.module_name", false),
         ACTIONS_IN_SOLUTION("SELECT act.module_name, act.module_version, procinfo.procedure_name, procinfo.procedure_version, procinfo.proc_instance_name, act.entity, act.endpoint_name,\n" +
-                        " 		act.api_name,	act.pretty_name_en, act.pretty_name_es,		\n" +
+                        " 		act.api_name,	act.pretty_name_en, act.pretty_name_es,	act.query_for_button, act.extra_actions, \n" +
                         "    COALESCE(count(sol.window_action), 0::bigint) AS present,\n" +
                         "    string_agg(sol.code::text, ', '::text) AS requirements_list\n" +
                         "   FROM requirements.module_actions_and_queries act\n" +
@@ -2097,6 +2097,8 @@ public class TblsReqs {
         ENDPOINT_NAME("act", ModuleActionsAndQueries.ENDPOINT_NAME.getName(), "act.endpoint_name as endpoint_name", ModuleActionsAndQueries.ENDPOINT_NAME, null, null, null),
         PRETTY_EN("act", ModuleActionsAndQueries.PRETTY_EN.getName(), "act.pretty_name_en as pretty_name_en", ModuleActionsAndQueries.PRETTY_EN, null, null, null),
         PRETTY_ES("act", ModuleActionsAndQueries.PRETTY_ES.getName(), "act.pretty_name_eS as pretty_name_eS", ModuleActionsAndQueries.PRETTY_ES, null, null, null),
+        QUERY_FOR_BUTTON("act", ModuleActionsAndQueries.QUERY_FOR_BUTTON.getName(), "act.query_for_button as query_for_button", ModuleActionsAndQueries.QUERY_FOR_BUTTON, null, null, null),
+        EXTRA_ACTIONS("act", ModuleActionsAndQueries.EXTRA_ACTIONS.getName(), "act.extra_actions as extra_actions", ModuleActionsAndQueries.EXTRA_ACTIONS, null, null, null),
         PRESENT("sol", "present", "sol.present as present", ModuleBusinessRules.MODULE_VERSION, null, null, null),
         REQUIREMENTS_LIST("sol", "requirements_list", "sol.requirements_list as requirements_list", ModuleBusinessRules.PREREQUISITE, null, null, null),
         ;
