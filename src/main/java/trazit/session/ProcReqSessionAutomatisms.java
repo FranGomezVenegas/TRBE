@@ -33,7 +33,7 @@ private ProcReqSessionAutomatisms() {throw new IllegalStateException("Utility cl
             if (curEntityInfo.length != 4) {
                 return;
             }
-            Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, curEntityInfo[0]), curEntityInfo[1], TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName());
+            Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, curEntityInfo[0]), curEntityInfo[1], TblsData.CertifUserAnalysisMethod.CERTIF_EXPIRY_DATE.getName());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())) {
                 return;
             }

@@ -1355,7 +1355,7 @@ public class DataSampleAnalysisResult {
 
     public static Object[] checkIfSampleIsReadyForRevision(Integer sampleId) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Object[] sampleReadyForRevisionFldExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(),
+        Object[] sampleReadyForRevisionFldExists = Rdbms.dbTableExists(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(),
                 TblsData.Sample.READY_FOR_REVISION.getName());
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(sampleReadyForRevisionFldExists[0].toString())) {
             Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(),
@@ -1423,7 +1423,7 @@ public class DataSampleAnalysisResult {
                     } else {
                         updFieldValue = LPArray.addValueToArray1D(updFieldValue, reviewer);
                     }
-                    Object[] fieldExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), TblsData.Sample.READY_FOR_REVISION.getName());
+                    Object[] fieldExists = Rdbms.dbTableExists(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), TblsData.Sample.READY_FOR_REVISION.getName());
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldExists[0].toString())) {
                         updFieldName = LPArray.addValueToArray1D(updFieldName, TblsData.Sample.READY_FOR_REVISION.getName());
                         updFieldValue = LPArray.addValueToArray1D(updFieldValue, false);

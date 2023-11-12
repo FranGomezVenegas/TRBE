@@ -99,7 +99,7 @@ public class GenericAuditFields {
         String fileName=auditEventObj.getClass().getSimpleName(); //actionObj.toString(); //"AppInstrumentsAuditEvents";
         SessionAuditActions auditActions = ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditActions();
         for (GlobalVariables.Languages curLang: GlobalVariables.Languages.values()){            
-            Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), 
+            Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName()), 
                    tblObj.getTableName(), TblsInstrumentsDataAudit.Instruments.ACTION_PRETTY_EN.getName().replace(DEFAULTLANGUAGE, curLang.getName()));
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())){                
                 String propValue = "";

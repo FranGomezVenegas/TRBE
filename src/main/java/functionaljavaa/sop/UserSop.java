@@ -380,7 +380,7 @@ public class UserSop {
         StringBuilder query = new StringBuilder(0);
         for (String currProcInstanceName : procInstanceName) {
             Object[] viewExistInSchema = Rdbms.dbViewExists("",  currProcInstanceName, GlobalVariables.Schemas.DATA.getName(), viewName);
-            Object[] dbViewFieldExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(currProcInstanceName, TblsData.TablesData.USER_SOP.getRepositoryName()),
+            Object[] dbViewFieldExists = Rdbms.dbTableExists(currProcInstanceName, LPPlatform.buildSchemaName(currProcInstanceName, TblsData.TablesData.USER_SOP.getRepositoryName()),
                     TblsData.TablesData.USER_SOP.getTableName(), filterFieldName[0]);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(viewExistInSchema[0].toString()) && LPPlatform.LAB_TRUE.equalsIgnoreCase(dbViewFieldExists[0].toString())) {
                 correctProcess++;

@@ -80,7 +80,7 @@ public class DataProgramSample{
             }else
                 fieldValue[programLocationPosic] = programLocation;
             String[] specFldNames=new String[]{TblsEnvMonitConfig.ProgramLocation.SPEC_CODE.getName(), TblsEnvMonitConfig.ProgramLocation.SPEC_CODE_VERSION.getName(), TblsEnvMonitConfig.ProgramLocation.SPEC_ANALYSIS_VARIATION.getName(), TblsEnvMonitConfig.ProgramLocation.AREA.getName(), TblsEnvMonitConfig.ProgramLocation.SPEC_VARIATION_NAME.getName()};
-            Object[] dbTableExists = dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_LOCATION.getTableName(),TblsEnvMonitConfig.ProgramLocation.REQ_SAMPLING_END.getName());
+            Object[] dbTableExists = dbTableExists(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_LOCATION.getTableName(),TblsEnvMonitConfig.ProgramLocation.REQ_SAMPLING_END.getName());
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString()))
                 specFldNames=LPArray.addValueToArray1D(specFldNames, TblsEnvMonitConfig.ProgramLocation.REQ_SAMPLING_END.getName());
 
