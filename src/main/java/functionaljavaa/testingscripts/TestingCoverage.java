@@ -39,6 +39,7 @@ import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
+import trazit.procedureinstance.definition.definition.TblsReqs;
 
 /**
  *
@@ -47,6 +48,7 @@ import trazit.globalvariables.GlobalVariables;
 public final class TestingCoverage {
 
     private String moduleName;
+    private Integer moduleVersion;
     private final String procInstanceName;
     private final Integer coverageId;
     private final Object[] scriptIds;
@@ -88,6 +90,15 @@ public final class TestingCoverage {
     public TestingCoverage(String procInstanceName, Integer coverageId) {
         this.msgCodeVisited = new JSONArray();
         this.procInstanceName = procInstanceName;
+
+        Object[][] moduleInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(),
+                new String[]{TblsProcedure.ProcedureInfo.PROC_INSTANCE_NAME.getName()},
+                new Object[]{procInstanceName}, new String[]{TblsProcedure.ProcedureInfo.MODULE_NAME.getName(), TblsProcedure.ProcedureInfo.VERSION.getName()});
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(moduleInfo[0][0].toString()))){
+            this.moduleName=moduleInfo[0][0].toString();
+            this.moduleVersion=Integer.valueOf(moduleInfo[0][1].toString());
+        }
+        
         this.coverageId = coverageId;
         this.busRuleExcludedByExcludeEndpoint = new String[]{};
         String[] covFldNameArr = getAllFieldNames(TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableFields());
@@ -442,14 +453,26 @@ public final class TestingCoverage {
         String percExplPatternStr = "The <*1*> is <*2*> div <*3*> ";
         String[] msgClasses = new String[]{};
         JSONArray msgClassAllMessagesJArr = new JSONArray();
+        int totalNotifications=0;
+        int totalVisitedNotif=0;
+        int totalNotVisitedNotif=0;        
         try {
+            
+            Object[][] moduleAllNotifications = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.MODULE_ERROR_NOTIFICATIONS,
+                new SqlWhere(TblsReqs.TablesReqs.MODULE_ERROR_NOTIFICATIONS, new String[]{TblsReqs.ModuleErrorNotifications.MODULE_NAME.getName(), TblsReqs.ModuleErrorNotifications.MODULE_VERSION.getName()},
+                new Object[]{this.moduleName, this.moduleVersion}),
+                new EnumIntTableFields[]{TblsReqs.ModuleErrorNotifications.API_NAME, TblsReqs.ModuleErrorNotifications.ERROR_CODE}, null, false);        
+            Object[] moduleAllAPIs=LPArray.getColumnFromArray2D(moduleAllNotifications, 0);
+            
             for (int iMsgs = 0; iMsgs < this.msgCodeVisitedObj.size(); iMsgs++) {
                 JsonObject curVisited = (JsonObject) this.msgCodeVisitedObj.get(iMsgs);
-                if (Boolean.FALSE.equals(LPArray.valueInArray(msgClasses, curVisited.get("className")))) {
+                if (Boolean.TRUE.equals(LPArray.valueInArray(moduleAllAPIs, curVisited.get("className")))&&
+                        Boolean.FALSE.equals(LPArray.valueInArray(msgClasses, curVisited.get("className")))) {
                     msgClasses = LPArray.addValueToArray1D(msgClasses, curVisited.get("className").toString());
                 }
             }
             msgClasses = LPArray.getUniquesArray(msgClasses);
+
             try (io.github.classgraph.ScanResult scanResult = new ClassGraph().enableAllInfo()//.acceptPackages("com.xyz")
                     .scan()) {
                 ClassInfoList classesImplementing = scanResult.getClassesImplementing("trazit.enums.EnumIntMessages");
@@ -458,7 +481,13 @@ public final class TestingCoverage {
                     JSONObject jObj = new JSONObject();
                     String curClassName = msgClasses[iClss].replace("\"", "");
                     jObj.put("className", curClassName);
+                    int totalClassNotifications=0;
+                    int totalClassVisitedNotif=0;
+                    int totalClassNotVisitedNotif=0;                        
+
                     for (int i = 0; i < classesImplementing.size(); i++) {
+                        totalNotifications++;
+                        totalClassNotifications++;
                         ClassInfo getMine = classesImplementing.get(i);
                         clssObjName = getMine.getSimpleName();
                         if (clssObjName.equalsIgnoreCase(curClassName)) {
@@ -469,9 +498,18 @@ public final class TestingCoverage {
                                 String evName = curBusRul.getErrorCode();
                                 if (this.msgCodeVisited.contains(evName)) {
                                     evName = evName + " visited";
-                                }
+                                    totalVisitedNotif++;
+                                    totalClassVisitedNotif++;
+                                }else{
+                                    totalNotVisitedNotif++;
+                                    totalClassNotVisitedNotif++;
+                                }                                
                                 enumsIncomplete.add(evName);
                             }
+                            jObj.put("total_notifications", totalClassNotifications);
+                            jObj.put("visited_notifications", totalClassVisitedNotif);
+                            jObj.put("not_visited_notifications", totalClassNotVisitedNotif);
+                            jObj.put("percentage", (totalClassVisitedNotif/totalClassNotifications)*100);
                             jObj.put("messages", enumsIncomplete);
                         }
                     }
@@ -483,7 +521,7 @@ public final class TestingCoverage {
         }
 
         JSONObject msgCodesSummaryJObj = new JSONObject();
-        this.msgCodeCovPerc = new BigDecimal(this.msgCodeVisited.size());
+/*        this.msgCodeCovPerc = new BigDecimal(this.msgCodeVisited.size());
         String msgCodesPercExplStr = percExplPatternStr.replace("<*1*>", this.msgCodeCovPerc.setScale(DECIMAL_PLACES, RoundingMode.UP).toString())
                 .replace("<*2*>", String.valueOf(this.msgCodeVisited.size()))
                 .replace("<*3*>", String.valueOf("divisor (replace string by variable when so)"));
@@ -491,8 +529,26 @@ public final class TestingCoverage {
             msgCodesPercExplStr = msgCodesPercExplStr + " take care that the exclusions are " + this.coverageMsgCodeExcludeList.length
                     + " what means that the divider is the total (" + "this.procActionsArr.length!!!!!" + ") minus the excluded (" + this.coverageMsgCodeExcludeList.length + ")";
         }
+*/        
+/*        
+        jObj.put("total_notifications", totalClassNotifications);
+        jObj.put("visited_notifications", totalClassVisitedNotif);
+        jObj.put("not_visited_notifications", totalClassNotVisitedNotif);
+        jObj.put("percentage", (totalClassVisitedNotif/totalClassNotifications)*100);
+*/
+        double divisor = totalNotifications;
+        double operatorVal = divisor==0? 0:(totalVisitedNotif / divisor) * 100;
+        this.msgCodeCovPerc = new BigDecimal(String.valueOf(operatorVal));
+        String msgCodesPercExplStr = percExplPatternStr.replace("<*1*>", this.msgCodeCovPerc.setScale(DECIMAL_PLACES, RoundingMode.UP).toString())
+                .replace("<*2*>",  String.valueOf(totalVisitedNotif))
+                .replace("<*3*>", String.valueOf(divisor));
+        if (this.coverageMsgCodeExcludeList.length > 0) {
+            msgCodesPercExplStr = msgCodesPercExplStr + " take care that the exclusions are " + this.coverageMsgCodeExcludeList.length
+                    + " what means that the divider is the total (" + totalNotifications + ") minus the excluded (" + this.coverageMsgCodeExcludeList.length + ")";
+        }
+        
         msgCodesSummaryJObj.put("percentage_explanation", msgCodesPercExplStr);
-        msgCodesSummaryJObj.put("visited_total", this.msgCodeVisited.size());
+        msgCodesSummaryJObj.put("visited_total", totalVisitedNotif);
         msgCodesSummaryJObj.put("message_collections_visited", msgClassAllMessagesJArr);
         this.msgCodeCoverageDetail.put("summary", msgCodesSummaryJObj);
 
