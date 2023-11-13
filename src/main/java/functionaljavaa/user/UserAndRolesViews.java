@@ -80,8 +80,10 @@ public class UserAndRolesViews {
         if (Boolean.FALSE.equals(Boolean.valueOf(userIsCaseSensitive))) {
             person = person.toLowerCase();
         }
-        Object[][] userByPerson = Rdbms.getRecordFieldsByFilter(GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(),
-                new String[]{Users.PERSON_NAME.getName()}, new String[]{person}, new String[]{TblsApp.Users.USER_NAME.getName()}, new String[]{TblsApp.Users.USER_NAME.getName()});
+        
+        Object[][] userByPerson = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS,
+            new SqlWhere(TblsApp.TablesApp.USERS, new String[]{Users.PERSON_NAME.getName()}, new String[]{person}), 
+            new EnumIntTableFields[]{TblsApp.Users.USER_NAME}, new String[]{TblsApp.Users.USER_NAME.getName()}, true);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userByPerson[0][0].toString())) {
             return LPPlatform.LAB_FALSE;
         }
@@ -101,8 +103,9 @@ public class UserAndRolesViews {
         if (Boolean.FALSE.equals(Boolean.valueOf(userIsCaseSensitive))) {
             userName = userName.toLowerCase();
         }
-        Object[][] personByUser = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(),
-                new String[]{TblsApp.Users.USER_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.LIKE.getSqlClause()}, new String[]{userName}, new String[]{Users.PERSON_NAME.getName()}, new String[]{Users.PERSON_NAME.getName()});
+        Object[][] personByUser = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS,
+                new SqlWhere(TblsApp.TablesApp.USERS, new String[]{TblsApp.Users.USER_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.LIKE.getSqlClause()}, 
+                        new Object[]{userName}), new EnumIntTableFields[]{Users.PERSON_NAME}, new String[]{Users.PERSON_NAME.getName()}, true);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUser[0][0].toString())) {
             ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, UserAndRolesErrorTrapping.USER_NOT_EXISTS.getErrorCode(), new Object[]{userName});
         }
