@@ -881,12 +881,15 @@ public class LPPlatform {
      * @param callerInfo
      * @param msgCode
      * @param msgVariables
-     */
+//     */
     public static void saveMessageInDbErrorLog(String query, Object[] queryParams, Object[] callerInfo, String msgCode, Object[] msgVariables) {
         saveMessageInDbErrorLog(query, queryParams, callerInfo, msgCode, msgVariables, null);
     }
 
     public static void saveMessageInDbErrorLog(String query, Object[] queryParams, Object[] callerInfo, String msgCode, Object[] msgVariables, String procName) {
+        
+        if (query.toLowerCase().contains("insert") && query.toLowerCase().contains("zzz_db_error_log")) return;
+        
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         if (procInstanceName == null) {
             procInstanceName = procName;
