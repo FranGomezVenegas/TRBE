@@ -980,7 +980,7 @@ public class Rdbms {
     }
 
     public static Object[][] getRecordFieldsByFilter(String alternativeProcedure, String schemaName, EnumIntTables tblObj, SqlWhere sWhere, EnumIntTableFields[] fieldsToRetrieve, String[] orderBy, Boolean inforceDistinct) {
-        schemaName = addSuffixIfItIsForTesting(alternativeProcedure, schemaName, tblObj.getTableName());
+       // schemaName = addSuffixIfItIsForTesting(alternativeProcedure, schemaName, tblObj);
         if (sWhere.getAllWhereEntries().isEmpty()) {
             Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tblObj.getTableName(), tblObj.getRepositoryName()});
             return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
@@ -2416,6 +2416,56 @@ public class Rdbms {
         return schemaName;
     }
 
+    public static String addSuffixIfItIsForTesting(String procInstanceName, String schemaName, EnumIntTables tblObj) {
+        if (Boolean.TRUE.equals(ProcedureRequestSession.getInstanceForActions(null, null, null).getIsForTesting())) {
+            return suffixForTestingTblObj(procInstanceName, schemaName, tblObj);
+        }
+        return schemaName;
+    }
+
+    public static String suffixForTestingTblObj(String procInstanceName, String schemaName, EnumIntTables tblObj) {
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        if (procInstanceName==null){procInstanceName="";}
+        if (LPNulls.replaceNull(procInstanceName).length()>0){
+            schemaName=schemaName.replace(procInstanceName+"-", "");
+            procInstanceName=procInstanceName+"-";
+        }else{
+            schemaName=schemaName.replace(instanceForActions.getProcedureInstance()+"-", "");
+            procInstanceName=instanceForActions.getProcedureInstance()+"-";
+        }
+        if (schemaName.contains(GlobalVariables.Schemas.DATA.getName())) {
+            if (schemaName.startsWith("\"")) {
+                schemaName=VALIDATION_MODE_REPO+schemaName.substring(1, schemaName.length() - 1);
+            } else {
+                schemaName = VALIDATION_MODE_REPO + schemaName;
+            }
+        }
+        if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE_CONFIG.getName())) {
+            return tblObj.getIsProcedureInstance()?"\""+procInstanceName+schemaName+"\"":schemaName;
+        }
+        if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE_AUDIT.getName())) {
+            if (!LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureAuditSchema_TablesWithNoTestingClone, tblObj.getTableName())) {
+                if (schemaName.startsWith("\"")) {
+                    schemaName= VALIDATION_MODE_REPO+schemaName.substring(1, schemaName.length() - 1);
+                } else {
+                    schemaName = VALIDATION_MODE_REPO + schemaName;
+                }
+                return tblObj.getIsProcedureInstance()?"\""+procInstanceName+schemaName+"\"":schemaName;
+            }
+        }
+        if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE.getName())) {
+            if (!LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone, tblObj.getTableName())) {
+                if (schemaName.startsWith("\"")) {
+                    schemaName=VALIDATION_MODE_REPO+schemaName.substring(1, schemaName.length() - 1);
+                } else {
+                    schemaName = VALIDATION_MODE_REPO +schemaName;
+                }
+            }
+            return tblObj.getIsProcedureInstance()?"\""+procInstanceName+schemaName+"\"":schemaName;
+        }
+        return tblObj.getIsProcedureInstance()?"\""+procInstanceName+schemaName+"\"":schemaName;
+    }
+    
     public static String suffixForTesting(String procInstanceName, String schemaName, String tableName) {
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
         if (procInstanceName==null){procInstanceName="";}
