@@ -221,8 +221,8 @@ public final class Investigation {
             updFieldName = LPArray.addValueToArray1D(updFieldName, baseFieldName);
             updFieldValue = LPArray.addValueToArray1D(updFieldValue, baseFieldValue);
 
-            RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.INVEST_OBJECTS,
-                    updFieldName, updFieldValue);
+            RdbmsObject insertRecordInTable = Rdbms.insertRecord(TblsProcedure.TablesProcedure.INVEST_OBJECTS,
+                    updFieldName, updFieldValue, procReqSession.getProcedureInstance());
             diagnostic = insertRecordInTable.getApiMessage();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
                 return new InternalMessage(insertRecordInTable.getApiMessage()[0].toString(), insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), insertRecordInTable.getNewRowId());
