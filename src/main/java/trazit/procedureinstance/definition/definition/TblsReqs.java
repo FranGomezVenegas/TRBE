@@ -372,10 +372,10 @@ public class TblsReqs {
                         " 		busRules.api_name,	busRules.area, busRules.prerequite,\n" +
                 	" busrules.values_list, busrules.tip_en, busrules.tip_es,\n" +
                         "    COALESCE(count(sol.business_rule), 0::bigint) AS present,\n" +
-                        "    string_agg(sol.code::text, ', '::text) AS requirements_list\n" +
+                        "    sstring_agg(COALESCE(sol.code::text, sol.parent_code::text), ', ') AS requirements_list \n" +
                         "   FROM requirements.module_business_rules busRules\n" +
                         "   JOIN requirements.procedure_info procinfo ON busrules.module_name::text = procinfo.module_name::text "+
-                        "   LEFT JOIN (select reqsol.business_rule, usr.procedure_name, usr.procedure_version, usr.proc_instance_name, usr.code \n" +
+                        "   LEFT JOIN (select reqsol.business_rule, usr.procedure_name, usr.procedure_version, usr.proc_instance_name, usr.parent_code, usr.code \n" +
                         "          		from requirements.procedure_req_solution reqsol, requirements.procedure_user_requirements usr\n" +
                         "			  where reqsol.req_id=usr.req_id AND upper(reqsol.window_element_type::text) =upper("+ReqSolutionTypes.BUSINESS_RULE.getTagValue()+")) sol\n" +
                         "	  ON busRules.rule_name::text = sol.business_rule::text and procinfo.proc_instance_name=sol.proc_instance_name\n" +
@@ -386,10 +386,10 @@ public class TblsReqs {
         ACTIONS_IN_SOLUTION("SELECT act.module_name, act.module_version, procinfo.procedure_name, procinfo.procedure_version, procinfo.proc_instance_name, act.entity, act.endpoint_name,\n" +
                         " 		act.api_name,	act.pretty_name_en, act.pretty_name_es,	act.query_for_button, act.extra_actions, \n" +
                         "    COALESCE(count(sol.window_action), 0::bigint) AS present,\n" +
-                        "    string_agg(sol.code::text, ', '::text) AS requirements_list\n" +
+                        "   string_agg(COALESCE(sol.code::text, sol.parent_code::text), ', ') AS requirements_list \n" +
                         "   FROM requirements.module_actions_and_queries act\n" +
                         "   JOIN requirements.procedure_info procinfo ON act.module_name::text = procinfo.module_name::text"+
-                        "   LEFT JOIN (select reqsol.window_action, usr.code, usr.procedure_name, usr.procedure_version, usr.proc_instance_name \n" +
+                        "   LEFT JOIN (select reqsol.window_action, usr.code, usr.parent_code, usr.procedure_name, usr.procedure_version, usr.proc_instance_name \n" +
                         "          		from requirements.procedure_req_solution reqsol, requirements.procedure_user_requirements usr\n" +
                         "			  where reqsol.req_id=usr.req_id and upper(window_element_type)=upper("+ReqSolutionTypes.WINDOW_ACTION.getTagValue()+")) sol\n" +
                         "	  ON act.endpoint_name::text = sol.window_action::text and procinfo.proc_instance_name=sol.proc_instance_name\n" +
@@ -402,9 +402,9 @@ public class TblsReqs {
         QUERIES_IN_SOLUTION("SELECT act.module_name, act.module_version, procinfo.procedure_name, procinfo.procedure_version, procinfo.proc_instance_name, act.entity, act.endpoint_name,\n" +
                         " 		act.api_name,	act.pretty_name_en, act.pretty_name_es,		\n" +
                         "    COALESCE(count(sol.window_query), 0::bigint) AS present,\n" +
-                        "    string_agg(sol.code::text, ', '::text) AS requirements_list\n" +
+                        "    string_agg(COALESCE(sol.code::text, sol.parent_code::text), ', ') AS requirements_list \n" +
                         "   FROM requirements.module_actions_and_queries act\n" +
-                        "   LEFT JOIN (select reqsol.window_query, usr.procedure_name, usr.procedure_version, usr.proc_instance_name, usr.code \n" +
+                        "   LEFT JOIN (select reqsol.window_query, usr.procedure_name, usr.procedure_version, usr.proc_instance_name, usr.parent_code, usr.code \n" +
                         "          		from requirements.procedure_req_solution reqsol, requirements.procedure_user_requirements usr\n" +
                         "			  where reqsol.req_id=usr.req_id and upper(window_element_type)=upper("+ReqSolutionTypes.WINDOW.getTagValue()+")) sol\n" +
                         "	  ON act.endpoint_name::text = sol.window_query::text and procinfo.proc_instance_name=sol.proc_instance_name\n" +
@@ -424,11 +424,11 @@ public class TblsReqs {
                         "    spvw.pretty_name_en,\n" +
                         "    spvw.pretty_name_es,\n" +
                         "    COALESCE(count(sol.parent_code), 0::bigint) AS present,\n" +
-                        "    string_agg(sol.parent_code::text, ', '::text) AS requirements_list\n" +
+                        "    string_agg(COALESCE(sol.code::text, sol.parent_code::text), ', ') AS requirements_list \n" +
                         "   FROM requirements.module_special_views spvw\n" +
                         "     JOIN requirements.procedure_info procinfo ON spvw.module_name::text = procinfo.module_name::text\n" +
                         "     LEFT JOIN ( SELECT reqsol.special_view_name,\n" +
-                        "            usr.parent_code,\n" +
+                        "            usr.parent_code, usr.code,\n" +
                         "            usr.procedure_name,\n" +
                         "            usr.procedure_version,\n" +
                         "            usr.proc_instance_name\n" +
