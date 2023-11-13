@@ -158,12 +158,13 @@ public class SqlStatementEnums {
         DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
 
         String queryWhere = "";
-        Object[] schemaDiag = getTableSchema(tblObj, alternativeProcInstanceName);
+/*        Object[] schemaDiag = getTableSchema(tblObj, alternativeProcInstanceName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(schemaDiag[0].toString())) {
             return hm;
         }
         String schemaName = schemaDiag[0].toString();
-        schemaName = LPPlatform.buildSchemaName(schemaName, "");
+        schemaName = LPPlatform.buildSchemaName(schemaName, "");*/
+        String schemaName = addSuffixIfItIsForTesting(alternativeProcInstanceName, tblObj.getRepositoryName(), tblObj);
         String tableName = tblObj.getTableName();
 
         Object[] whereFieldValuesNew = new Object[0];
