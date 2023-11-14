@@ -47,19 +47,19 @@ public class ReqProcDefTestingCoverageSummary {
         for (int j = 0; j < dbRowsToJsonArr.size(); j++) {
             JSONObject jsonObject = (JSONObject) dbRowsToJsonArr.get(j);
             String coverageDetail = LPNulls.replaceNull(jsonObject.get("endpoints_coverage_detail")).toString();
-
-            jsonObject.put("endpoints_summary_json", covSectionDetailEndpoints(coverageDetail));
+            Integer coverageId=Integer.valueOf(jsonObject.get("coverage_id").toString());
+            jsonObject.put("endpoints_summary_json", covSectionDetailEndpoints(coverageId, coverageDetail));
             coverageDetail = LPNulls.replaceNull(jsonObject.get("bus_rule_coverage_detail")).toString();
-            jsonObject.put("business_rules_summary_json", covSectionDetailBusinessRules(coverageDetail));
+            jsonObject.put("business_rules_summary_json", covSectionDetailBusinessRules(coverageId, coverageDetail));
             coverageDetail = LPNulls.replaceNull(jsonObject.get("msg_coverage_detail")).toString();
-            jsonObject.put("notifications_summary_json", covSectionDetailNotifications(coverageDetail));
+            jsonObject.put("notifications_summary_json", covSectionDetailNotifications(coverageId, coverageDetail));
             dbRowsToJsonArr2.add(jsonObject);
         }
         jMainObj.put("coverage", dbRowsToJsonArr2);
         return jMainObj;
     }
 
-    static JsonObject covSectionDetailEndpoints(String coverageDetail) {
+    static JsonObject covSectionDetailEndpoints(Integer coverageId, String coverageDetail) {
         String procedureArrInfo = null;
         JsonArray procedureObjects = null;
         JsonObject endpCovDetObj = null;
@@ -108,6 +108,7 @@ public class ReqProcDefTestingCoverageSummary {
                     endpointsUncoveredDiagnostic.add(curEndDiagn);
                 }
                 curEndDiagn.addProperty("evaluation", evaluation.toString());
+                curEndDiagn.addProperty("coverage_id", coverageId);
                 endpointsDiagnostic.add(curEndDiagn);
             }
         }
@@ -144,7 +145,7 @@ public class ReqProcDefTestingCoverageSummary {
         return true;
     }
 
-    static JsonObject covSectionDetailBusinessRules(String coverageDetail) {
+    static JsonObject covSectionDetailBusinessRules(Integer coverageId, String coverageDetail) {
 
         String procedureArrInfo = null;
         JsonObject procedureObjects = null;
@@ -179,6 +180,7 @@ public class ReqProcDefTestingCoverageSummary {
                 }
                 curEndDiagn.addProperty("name", rName);
                 curEndDiagn.addProperty("evaluation", "not visited / not covered");
+                curEndDiagn.addProperty("coverage_id", coverageId);
                 if (addBusinessRule(rName)) {
                     endpointsDiagnostic.add(curEndDiagn);
                 }
@@ -259,7 +261,7 @@ public class ReqProcDefTestingCoverageSummary {
         return endpCovDetObj;
     }
 
-    static JsonObject covSectionDetailNotifications(String coverageDetail) {
+    static JsonObject covSectionDetailNotifications(Integer coverageId, String coverageDetail) {
         String[] internalTrazitClasses = new String[]{"LpPlatformSuccess", "RdbmsErrorTrapping", "RdbmsSuccess",
             "LpPlatformErrorTrapping"};
         String procedureArrInfo = null;
@@ -314,6 +316,7 @@ public class ReqProcDefTestingCoverageSummary {
                                 curEndDiagn.addProperty("collection_name", clName);
                                 curEndDiagn.addProperty("notification_name", curMsg);
                                 curEndDiagn.addProperty("evaluation", eval.toString());
+                                curEndDiagn.addProperty("coverage_id", coverageId);
                                 endpointsDiagnostic.add(curEndDiagn);
                             } catch (Exception e) {
                                 String logErr = e.getMessage();
