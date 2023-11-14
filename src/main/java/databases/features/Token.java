@@ -223,7 +223,7 @@ public final class Token {
         Object[][] appBusRulesInfo = QueryUtilitiesEnums.getTableData(TblsApp.TablesApp.APP_BUSINESS_RULES,
                 EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.APP_BUSINESS_RULES,
                         new String[]{TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()}),
-                sql, null, TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
+                sql, null, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(appBusRulesInfo[0][0].toString())) {
             myParams.put(TKNPRM_DATETIME_FORMT_AT_PLATFM_LVL, "DISABLED");
             this.datetimeFormatAtPlatformLvl = "DISABLED";
