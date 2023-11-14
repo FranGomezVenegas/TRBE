@@ -5,19 +5,25 @@
  */
 package trazit.queries;
 
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import databases.SqlStatement;
+import databases.SqlWhere;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPKPIs;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
+import trazit.globalvariables.GlobalVariables;
+import trazit.procedureinstance.definition.definition.TblsReqs;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -25,6 +31,161 @@ import trazit.session.ProcedureRequestSession;
  * @author User
  */
 public final class QueryUtilities {
+    static final String NO_DATA = "No Data";
+    private static org.json.JSONArray convertArray2DtoJArrNEXT(Object[][] procTblRows, String[] fldsToGet, String[] jsonFlds, Boolean emptyWhenNoData) {
+        org.json.JSONArray jBlockArr = new org.json.JSONArray();
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procTblRows[0][0].toString())) {
+            if (Boolean.TRUE.equals(emptyWhenNoData)) {
+                return jBlockArr;
+            }
+            JSONObject jObj = new JSONObject();
+            jObj.put(NO_DATA, NO_DATA);
+            jBlockArr.put(jObj);
+        } else {
+            try {
+                for (Object[] curRow : procTblRows) {
+                    if (jsonFlds == null) {
+                        jBlockArr.put(LPJson.convertArrayRowToJSONObject(fldsToGet, curRow));
+                    } else {
+                        JSONObject jObj = LPJson.convertArrayRowToJSONObject(fldsToGet, curRow, jsonFlds);
+                        for (String curJsonFld : jsonFlds) {
+                            jObj.put(TblsReqs.ProcedureMasterData.JSON_OBJ.getName(), JsonParser.parseString(curRow[LPArray.valuePosicInArray(fldsToGet, curJsonFld)].toString()).getAsJsonObject());
+                        }
+                        jBlockArr.put(jObj);
+                    }
+                }
+            } catch (JsonSyntaxException e) {
+                jBlockArr.put("Errors trying to get the master data records info. " + e.getMessage());
+                return jBlockArr;
+            }
+        }
+        return jBlockArr;
+    }
+
+    public static JSONArray dbSingleRowToJsonFldNameAndValueArr(String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue) {
+        Object[][] procTblRows = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), tblName, whereFldName, whereFldValue, fldsToGet);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procTblRows[0][0].toString())) {
+            JSONObject jObj = new JSONObject();
+            jObj.put(NO_DATA, NO_DATA);
+            JSONArray jArr = new JSONArray();
+            jArr.add(jObj);
+            return jArr;
+        } else {
+            return LPJson.convertArrayRowToJSONFieldNameAndValueObject(fldsToGet, procTblRows[0], null);
+        }
+    }
+
+    public static JSONArray dbRowsToJsonArr(String procInstanceName, String schemaName, EnumIntTables tblObj, EnumIntTableFields[] fldsToGet, SqlWhere wObj, String[] sortFlds, String[] fldsToExclude, Boolean emptyWhenNoData) {
+        Object[][] procTblRows = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, tblObj, wObj, fldsToGet, sortFlds, false);
+        return convertArray2DtoJArr(procTblRows, EnumIntTableFields.getAllFieldNames(fldsToGet), fldsToExclude, emptyWhenNoData);
+    }
+
+    public static JSONArray dbRowsToJsonArr(String procInstanceName, String schemaName, String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue, String[] sortFlds, String[] fldsToExclude, Boolean emptyWhenNoData, Boolean inforceDistinct) {
+        Object[][] procTblRows = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, tblName, whereFldName, whereFldValue, fldsToGet, sortFlds, inforceDistinct);
+        return convertArray2DtoJArr(procTblRows, fldsToGet, fldsToExclude, emptyWhenNoData);
+    }
+
+    private static JSONArray convertArray2DtoJArr(Object[][] procTblRows, String[] fldsToGet, String[] jsonFlds, Boolean emptyWhenNoData) {
+        JSONArray jBlockArr = new JSONArray();
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procTblRows[0][0].toString())) {
+            if (Boolean.TRUE.equals(emptyWhenNoData)) {
+                return jBlockArr;
+            }
+            JSONObject jObj = new JSONObject();
+            jObj.put(NO_DATA, NO_DATA);
+            jBlockArr.add(jObj);
+        } else {
+            try {
+                for (Object[] curRow : procTblRows) {
+                    if (jsonFlds == null) {
+                        jBlockArr.add(LPJson.convertArrayRowToJSONObject(fldsToGet, curRow));
+                    } else {
+                        JSONObject jObj = LPJson.convertArrayRowToJSONObject(fldsToGet, curRow, jsonFlds);
+                        for (String curJsonFld : jsonFlds) {
+                            jObj.put(TblsReqs.ProcedureMasterData.JSON_OBJ.getName(), JsonParser.parseString(curRow[LPArray.valuePosicInArray(fldsToGet, curJsonFld)].toString()).getAsJsonObject());
+                        }
+                        jBlockArr.add(jObj);
+                    }
+                }
+            } catch (JsonSyntaxException e) {
+                jBlockArr.add("Errors trying to get the master data records info. " + e.getMessage());
+                return jBlockArr;
+            }
+        }
+        return jBlockArr;
+    }
+
+    public static org.json.JSONArray dbRowsToJsonArrNEXT(String procInstanceName, String schemaName, String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue, String[] sortFlds, String[] fldsToExclude, Boolean emptyWhenNoData, Boolean inforceDistinct) {
+        Object[][] procTblRows = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, tblName, whereFldName, whereFldValue, fldsToGet, sortFlds, inforceDistinct);
+        return convertArray2DtoJArrNEXT(procTblRows, fldsToGet, fldsToExclude, emptyWhenNoData);
+    }
+
+    public static JSONObject dbRowsGroupedToJsonArr(String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue, String[] sortFlds) {
+        Object[][] procTblRows = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), tblName, whereFldName, whereFldValue, fldsToGet, sortFlds);
+        JSONObject jBlockObj = new JSONObject();
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procTblRows[0][0].toString())) {
+            jBlockObj.put(NO_DATA, NO_DATA);
+            return jBlockObj;
+        } else {
+            String curSchema = "";
+            JSONArray jSchemaArr = new JSONArray();
+            for (Object[] curRow : procTblRows) {
+                if (Boolean.FALSE.equals(curSchema.equalsIgnoreCase(LPNulls.replaceNull(curRow[0]).toString()))) {
+                    if (Boolean.FALSE.equals(jSchemaArr.isEmpty())) {
+                        if (curSchema.length() == 0) {
+                            curSchema = "-";
+                        }
+                        jBlockObj.put(curSchema, jSchemaArr);
+                    }
+                    jSchemaArr = new JSONArray();
+                    if (fldsToGet.length == 2) {
+                        jSchemaArr.add(LPNulls.replaceNull(curRow[1]).toString());
+                    } else {
+                        JSONObject jObj = new JSONObject();
+                        for (int i = 1; i < fldsToGet.length; i++) {
+                            jObj.put(fldsToGet[i], curRow[i]);
+                        }
+                        jSchemaArr.add(jObj);
+                    }
+                    curSchema = curRow[0].toString();
+                } else {
+                    if (fldsToGet.length == 2) {
+                        jSchemaArr.add(LPNulls.replaceNull(curRow[1]).toString());
+                    } else {
+                        JSONObject jObj = new JSONObject();
+                        for (int i = 1; i < fldsToGet.length; i++) {
+                            jObj.put(fldsToGet[i], curRow[i]);
+                        }
+                        jSchemaArr.add(jObj);
+                    }
+                }
+            }
+            if (Boolean.FALSE.equals(jSchemaArr.isEmpty())) {
+                if (curSchema.length() == 0) {
+                    curSchema = "-";
+                }
+                jBlockObj.put(curSchema, jSchemaArr);
+            }
+        }
+        return jBlockObj;
+    }
+    /*
+    public static JSONObject riskAssessmentBlockInRequirements(String procInstanceName) {
+    String[] fldsArr = new String[]{TblsReqs.ProcedureUsers.USER_NAME.getName()};
+    Object[][] procUsers = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_USERS.getTableName(),
+    new String[]{TblsReqs.ProcedureUsers.PROC_INSTANCE_NAME.getName()},
+    new Object[]{procInstanceName}, fldsArr,
+    new String[]{TblsReqs.ProcedureUserRoles.USER_NAME.getName()});
+    JSONObject jBlockObj = new JSONObject();
+    JSONArray jBlockArr = new JSONArray();
+    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procUsers[0][0].toString()))) {
+    for (Object[] curRow : procUsers) {
+    jBlockArr.add(LPJson.convertArrayRowToJSONObject(fldsArr, curRow));
+    }
+    }
+    jBlockObj.put("users", jBlockArr);
+    return jBlockObj;
+    }*/
 
     private QueryUtilities() {
         throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");

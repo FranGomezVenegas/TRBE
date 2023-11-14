@@ -17,6 +17,7 @@ import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.procedureinstance.definition.definition.ReqProcedureEnums.ReqProcedureDefinitionErrorTraping;
 import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceUtility.riskIsActionUponRisk;
+import trazit.queries.QueryUtilities;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 
@@ -33,7 +34,7 @@ public class CoverageTestingAnalysis {
     private Integer coverageId;
     
     public CoverageTestingAnalysis(String procInstanceName, Integer coverageId){
-        JSONArray coverageInfoArr=ClassReqProcedureQueries.dbRowsToJsonArrNEXT(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getRepositoryName()), 
+        JSONArray coverageInfoArr=QueryUtilities.dbRowsToJsonArrNEXT(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getRepositoryName()), 
             TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableName(), getAllFieldNames(TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableFields()), 
             new String[]{TblsTesting.ScriptsCoverage.COVERAGE_ID.getName()}, new Object[]{coverageId}, null, new String[]{}, true, true);
         this.isCoverageLocked=false;

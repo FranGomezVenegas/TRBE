@@ -20,6 +20,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import static trazit.procedureinstance.definition.apis.ReqProcedureDefinitionQueries.getScriptWithSteps;
+import trazit.queries.QueryUtilities;
 
 public class ReqProcDefTestingCoverageSummary {
 
@@ -31,7 +32,7 @@ public class ReqProcDefTestingCoverageSummary {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(schemaExists[0].toString())){
             return jMainObj;
         }
-        JSONArray dbRowsToJsonArr = ClassReqProcedureQueries.dbRowsToJsonArr(procInstanceName, repositoryName, TblsTesting.TablesTesting.SCRIPT.getTableName(), getAllFieldNames(TblsTesting.TablesTesting.SCRIPT.getTableFields()), new String[]{TblsTesting.Script.ACTIVE.getName()}, new Object[]{true}, null, new String[]{}, true, true);
+        JSONArray dbRowsToJsonArr = QueryUtilities.dbRowsToJsonArr(procInstanceName, repositoryName, TblsTesting.TablesTesting.SCRIPT.getTableName(), getAllFieldNames(TblsTesting.TablesTesting.SCRIPT.getTableFields()), new String[]{TblsTesting.Script.ACTIVE.getName()}, new Object[]{true}, null, new String[]{}, true, true);
 
         for (int i = 0; i < dbRowsToJsonArr.size(); i++) {
             JSONObject jsonObject = (JSONObject) dbRowsToJsonArr.get(i);
@@ -43,7 +44,7 @@ public class ReqProcDefTestingCoverageSummary {
         }
         jMainObj.put("scripts", dbRowsToJsonArr2);
         dbRowsToJsonArr2 = new JSONArray();
-        dbRowsToJsonArr = ClassReqProcedureQueries.dbRowsToJsonArr(procInstanceName,LPPlatform.buildSchemaName(procInstanceName, TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getRepositoryName()), TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableName(), getAllFieldNames(TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableFields()), new String[]{TblsTesting.ScriptsCoverage.ACTIVE.getName()}, new Object[]{true}, null, new String[]{}, true, true);
+        dbRowsToJsonArr = QueryUtilities.dbRowsToJsonArr(procInstanceName,LPPlatform.buildSchemaName(procInstanceName, TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getRepositoryName()), TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableName(), getAllFieldNames(TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableFields()), new String[]{TblsTesting.ScriptsCoverage.ACTIVE.getName()}, new Object[]{true}, null, new String[]{}, true, true);
         for (int j = 0; j < dbRowsToJsonArr.size(); j++) {
             JSONObject jsonObject = (JSONObject) dbRowsToJsonArr.get(j);
             String coverageDetail = LPNulls.replaceNull(jsonObject.get("endpoints_coverage_detail")).toString();
