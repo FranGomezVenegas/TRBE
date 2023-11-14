@@ -310,17 +310,21 @@ public class AppProcedureListAPI extends HttpServlet {
                 return jObj;
             }
             JSONArray usArr = new JSONArray();
-            for (Object[] curRow : getProcedureUsersAndRolesList(procInstanceName, null)) {
-                JSONObject convertArrayRowToJSONObject = LPJson.convertArrayRowToJSONObject(new String[]{"user_name", TblsProcedure.PersonProfile.ROLE_NAME.getName()}, curRow);
-                usArr.add(convertArrayRowToJSONObject);
+            if (Boolean.FALSE.equals(GlobalVariables.PROC_MANAGEMENT_SPECIAL_ROLE.equalsIgnoreCase(token.getUserRole()))){
+                for (Object[] curRow : getProcedureUsersAndRolesList(procInstanceName, null)) {
+                    JSONObject convertArrayRowToJSONObject = LPJson.convertArrayRowToJSONObject(new String[]{"user_name", TblsProcedure.PersonProfile.ROLE_NAME.getName()}, curRow);
+                    usArr.add(convertArrayRowToJSONObject);
+                }
             }
             jObj.put("users_and_roles", usArr);
 
             usArr = new JSONArray();
-            for (Object curRow : getProcedureUsers(procInstanceName, null)) {
-                JSONObject newRow = new JSONObject();
-                newRow.put("user", curRow);
-                usArr.add(newRow);
+            if (Boolean.FALSE.equals(GlobalVariables.PROC_MANAGEMENT_SPECIAL_ROLE.equalsIgnoreCase(token.getUserRole()))){
+                for (Object curRow : getProcedureUsers(procInstanceName, null)) {
+                    JSONObject newRow = new JSONObject();
+                    newRow.put("user", curRow);
+                    usArr.add(newRow);
+                }
             }
             jObj.put("users", usArr);
             return jObj;
