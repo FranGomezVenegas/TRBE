@@ -250,5 +250,27 @@ public class ProcedureDefinitionToInstanceUtility {
             }
         }
     }         
+
+    public static final Object[] riskIsActionUponRisk(String procInstanceName, String action){
+        Object[][] procedureRisks = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_RISK_ASSESSMENT.getTableName(), 
+            new String[]{TblsReqs.ProcedureRiskAssessment.PROC_INSTANCE_NAME.getName()}, 
+            new Object[]{procInstanceName}, 
+            new String[]{TblsReqs.ProcedureRiskAssessment.REQ_ID.getName()}, new String[]{});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureRisks[0][0].toString()))
+            return new Object[]{LPPlatform.LAB_FALSE};
+
+        Object[][] procedureReqSolutions = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableName(), 
+            new String[]{TblsReqs.ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureReqSolution.WINDOW_ACTION.getName()}, 
+            new Object[]{procInstanceName, action}, 
+            new String[]{TblsReqs.ProcedureReqSolution.REQ_ID.getName()}, new String[]{});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureReqSolutions[0][0].toString()))
+            return new Object[]{LPPlatform.LAB_FALSE};
+        for (Object curReqId:procedureReqSolutions[0]){
+            if (LPArray.valueInArray(procedureRisks[0], curReqId))
+                return new Object[]{LPPlatform.LAB_TRUE};
+        }
+        return new Object[]{LPPlatform.LAB_FALSE};
+    }
+    
     
 }

@@ -29,6 +29,7 @@ public class ReqProcedureEnums {
         MODULE_NAME("moduleName"), MODULE_VERSION("moduleVersion"), USER_NAME("userName"), ROLE_NAME("roleName"),
         REQ_PARENT_CODE("requirementParentCode"), REQ_CODE("requirementCode"),
         REQUIREMENT_ID("requirementId"), RISK_ID("riskId"), SOLUTION_ID("solutionId"),
+        COVERAGE_ID("coverageId"), 
         UOM_NAME("uomName"), UOM_IMPORT_TYPE("importType"),
         CREATE_DATABASE("createDatabase"), CREATE_FILES("createFiles"), MAIN_PATH("mainPath"),
         NEW_FILE_CAMEL_LOWER("newFileCamelLower"), NEW_FILE_CAMEL("newFileCamel"),
@@ -402,7 +403,13 @@ public class ReqProcedureEnums {
                     new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 11),
                     new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 12)
                 }, EndPointsToRequirements.endpointWithNoOutputObjects,                null, null),
-
+        COVERAGE_EXCLUDE_ACTION("COVERAGE_EXCLUDE_ACTION", "coverageExcludeAction_success",
+                new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
+                    new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROC_INSTANCENAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
+                    new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.COVERAGE_ID.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
+                    new LPAPIArguments("action", LPAPIArguments.ArgumentType.STRING.toString(), true, 10)
+                }, EndPointsToRequirements.endpointWithNoOutputObjects,                null, null),        
         GET_UOM("GET_UOM", "addRoleToUser_success",
                 new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
@@ -580,6 +587,11 @@ public class ReqProcedureEnums {
         BUSINESS_RULE_ALREADY_PART_OF_PROCEDURE("procDefinition_businessRuleAlreadyPartOfProcedure", "", ""),
         MODULE_VIEW_QUERY_NOT_FOUND("procDefinition_moduleViewQueryNotFound", "", ""),
         MODULE_WINDOW_ACTION_NOT_FOUND("procDefinition_moduleWindowActionNotFound", "", ""),
+        COVERAGE_NOT_FOUND("procDefinition_coverageNotFound", "", ""),
+        COVERAGE_NOT_ACTIVE("procDefinition_coverageNotActive", "", ""),
+        COVERAGE_ACTION_ALREADY_PRESENT_IN_EXCLUDED_LIST("procDefinition_coverageActionAlreadyPresentInExcludedList", "", ""),
+        COVERAGE_ACTION_ALREADY_ACTION_UPON_RISK_ASSESSMENT("procDefinition_coverageActionUponRiskAsessment", "", ""),
+
         ;
         private ReqProcedureDefinitionErrorTraping(String errCode, String defaultTextEn, String defaultTextEs) {
             this.errorCode = errCode;

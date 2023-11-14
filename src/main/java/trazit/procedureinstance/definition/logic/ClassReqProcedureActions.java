@@ -1461,7 +1461,12 @@ public class ClassReqProcedureActions {
                 }
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
                 break;
-
+            case COVERAGE_EXCLUDE_ACTION:
+                String coverageId = argValues[3].toString();
+                String action = argValues[4].toString();
+                CoverageTestingAnalysis cov=new CoverageTestingAnalysis(procInstanceName, Integer.valueOf(coverageId));
+                this.diagnosticObj = cov.excludeCoverageAction(action);
+                break;
         }
         this.diagnostic = actionDiagnoses;        
         this.relatedObj = rObj;
