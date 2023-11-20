@@ -69,7 +69,7 @@ public class CoverageTestingAnalysis {
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(riskIsActionUponRisk(procInstanceName, action)[0].toString()))
             return new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.COVERAGE_ACTION_ALREADY_PRESENT_IN_EXCLUDED_LIST, new Object[]{action, this.coverageId});
         if (LPNulls.replaceNull(excludeList).length()>0)
-            excludeList=excludeList+"\\|";
+            excludeList=excludeList+"|";
         excludeList=excludeList+action;
         EnumIntTableFields[] updateFieldNames=new EnumIntTableFields[]{TblsTesting.ScriptsCoverage.ENDPOINTS_EXCLUDE_LIST};
         Object[] updateFieldValues=new Object[]{excludeList};
@@ -79,5 +79,73 @@ public class CoverageTestingAnalysis {
         
         return new InternalMessage(updateTableRecordFieldsByFilter.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, updateTableRecordFieldsByFilter.getErrorMessageCode(), updateTableRecordFieldsByFilter.getErrorMessageVariables());
     }
+
+    public InternalMessage unExcludeCoverageAction(String action){
+        if (this.isCoverageLocked)
+            return lockedReason;
+        String excludeList=this.coverageInfo.getString(TblsTesting.ScriptsCoverage.ENDPOINTS_EXCLUDE_LIST.getName());
+        if (Boolean.FALSE.equals(LPArray.valueInArray(excludeList.split("\\|"), action))){
+            return new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.COVERAGE_ACTION_NOT_PRESENT_IN_EXCLUDED_LIST, new Object[]{action, this.coverageId});
+        }
+        
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(riskIsActionUponRisk(procInstanceName, action)[0].toString()))
+            return new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.COVERAGE_ACTION_ALREADY_PRESENT_IN_EXCLUDED_LIST, new Object[]{action, this.coverageId});
+        if (LPNulls.replaceNull(excludeList).length()==1)
+            excludeList="";
+        else{
+            excludeList= LPArray.removeValueFromStringedArray(excludeList, action);
+/*            if (excludeList.endsWith(action)){
+                excludeList=excludeList.replace("|"+action, "");
+            }else{
+                excludeList=excludeList.replace(action+"|", "");
+            }*/
+        }
+            
+        excludeList=excludeList+action;
+        EnumIntTableFields[] updateFieldNames=new EnumIntTableFields[]{TblsTesting.ScriptsCoverage.ENDPOINTS_EXCLUDE_LIST};
+        Object[] updateFieldValues=new Object[]{excludeList};
+        SqlWhere whereObj=new SqlWhere(TblsTesting.TablesTesting.SCRIPTS_COVERAGE,  new String[]{TblsTesting.ScriptsCoverage.COVERAGE_ID.getName()}, new Object[]{coverageId});        
+        RdbmsObject updateTableRecordFieldsByFilter = Rdbms.updateTableRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPTS_COVERAGE, updateFieldNames, updateFieldValues, 
+                whereObj, null);
+        
+        return new InternalMessage(updateTableRecordFieldsByFilter.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, updateTableRecordFieldsByFilter.getErrorMessageCode(), updateTableRecordFieldsByFilter.getErrorMessageVariables());
+    }
+
+    public static InternalMessage newCoverageTest(String purpose, String scriptIdsList){
+        RdbmsObject insertRecord = Rdbms.insertRecord(TblsTesting.TablesTesting.SCRIPTS_COVERAGE, 
+                new String[]{TblsTesting.ScriptsCoverage.PURPOSE.getName(), TblsTesting.ScriptsCoverage.SCRIPT_IDS_LIST.getName()},
+                new Object[]{purpose, scriptIdsList}, null);
+        return new InternalMessage(insertRecord.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, insertRecord.getErrorMessageCode(), insertRecord.getErrorMessageVariables());
+    }
+
+    public InternalMessage coverageTestAddScript(Integer scriptId){
+        String scripts = this.coverageInfo.get(TblsTesting.ScriptsCoverage.SCRIPT_IDS_LIST.getName()).toString();
+        if (scripts.length()>0)
+            scripts=scripts+"|";
+        scripts=scripts+scriptId.toString();
+        SqlWhere whereObj=new SqlWhere(TblsTesting.TablesTesting.SCRIPTS_COVERAGE,  new String[]{TblsTesting.ScriptsCoverage.COVERAGE_ID.getName()}, new Object[]{coverageId});        
+        RdbmsObject insertRecord = Rdbms.updateTableRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPTS_COVERAGE, 
+                new EnumIntTableFields[]{TblsTesting.ScriptsCoverage.SCRIPT_IDS_LIST},
+                new Object[]{scripts}, whereObj, null);
+        return new InternalMessage(insertRecord.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, insertRecord.getErrorMessageCode(), insertRecord.getErrorMessageVariables());
+    }
+    public InternalMessage coverageTestRemoveScript(Integer scriptId){
+        String scripts = this.coverageInfo.get(TblsTesting.ScriptsCoverage.SCRIPT_IDS_LIST.getName()).toString();
+        scripts=LPArray.removeValueFromStringedArray(scripts, scriptId.toString());
+        SqlWhere whereObj=new SqlWhere(TblsTesting.TablesTesting.SCRIPTS_COVERAGE,  new String[]{TblsTesting.ScriptsCoverage.COVERAGE_ID.getName()}, new Object[]{coverageId});        
+        RdbmsObject insertRecord = Rdbms.updateTableRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPTS_COVERAGE, 
+                new EnumIntTableFields[]{TblsTesting.ScriptsCoverage.SCRIPT_IDS_LIST},
+                new Object[]{scripts}, whereObj, null);
+        return new InternalMessage(insertRecord.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, insertRecord.getErrorMessageCode(), insertRecord.getErrorMessageVariables());
+    }
     
+    public InternalMessage deleteCoverageTest(){
+        if (this.isCoverageLocked)
+            return lockedReason;
+        SqlWhere whereObj=new SqlWhere(TblsTesting.TablesTesting.SCRIPTS_COVERAGE,  new String[]{TblsTesting.ScriptsCoverage.COVERAGE_ID.getName()}, new Object[]{coverageId});        
+        RdbmsObject removeRecord = Rdbms.removeRecordInTable(TblsTesting.TablesTesting.SCRIPTS_COVERAGE, 
+                whereObj, null);
+        return new InternalMessage(removeRecord.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, removeRecord.getErrorMessageCode(), removeRecord.getErrorMessageVariables());
+    }
+
 }
