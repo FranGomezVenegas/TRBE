@@ -90,7 +90,7 @@ public class ProcedureDefinitionToInstanceUtility {
             new Object[]{moduleName, moduleVersion, wAction}, 
             new String[]{TblsReqs.viewActionsInSolution.API_NAME.getName(), TblsReqs.viewActionsInSolution.ENDPOINT_NAME.getName(), TblsReqs.viewActionsInSolution.QUERY_FOR_BUTTON.getName(), TblsReqs.viewActionsInSolution.EXTRA_ACTIONS.getName()}, new String[]{});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(moduleWindowActions[0][0].toString()) )
-            return new Object[]{LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.MODULE_WINDOW_ACTION_NOT_FOUND, new Object[]{wAction, moduleName}};
+            return new Object[]{LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.MODULE_WINDOW_BUTTON_NOT_FOUND, new Object[]{wAction, moduleName}};
         
         return moduleWindowActions[0];
     }    
@@ -251,11 +251,15 @@ public class ProcedureDefinitionToInstanceUtility {
         }
     }         
 
-    public static final Object[] riskIsActionUponRisk(String procInstanceName, String action){
-        Object[][] procedureRisks = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_RISK_ASSESSMENT.getTableName(), 
+    public static final Object[][] procedureRisksList(String procInstanceName){
+        return Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_RISK_ASSESSMENT.getTableName(), 
             new String[]{TblsReqs.ProcedureRiskAssessment.PROC_INSTANCE_NAME.getName()}, 
             new Object[]{procInstanceName}, 
             new String[]{TblsReqs.ProcedureRiskAssessment.REQ_ID.getName()}, new String[]{});
+    }
+    
+    public static final Object[] riskIsActionUponRisk(String procInstanceName, String action){
+        Object[][] procedureRisks = procedureRisksList(procInstanceName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureRisks[0][0].toString()))
             return new Object[]{LPPlatform.LAB_FALSE};
 
