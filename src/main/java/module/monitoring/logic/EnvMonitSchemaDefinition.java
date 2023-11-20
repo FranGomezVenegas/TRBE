@@ -7,8 +7,8 @@ package module.monitoring.logic;
 
 import databases.TblsProcedure;
 import databases.Rdbms;
-import trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.JsonTags;
-import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.SCHEMA_AUTHORIZATION_ROLE;
+import trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.JsonTags;
+import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.SCHEMA_AUTHORIZATION_ROLE;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static trazit.enums.deployrepository.DeployTables.createTableScript;
