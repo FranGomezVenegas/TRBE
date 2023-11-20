@@ -14,8 +14,7 @@ import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsCnfg;
 import databases.TblsProcedure;
 import trazit.procedureinstance.deployment.logic.Requirement;
-import trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance;
-import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createDBProcessTables;
+import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.createDBProcessTables;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.user.UserAndRolesViews;
 import java.io.IOException;
@@ -28,6 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import trazit.globalvariables.GlobalVariables;
+import trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections;
 /**
  *
  * @author Administrator
@@ -166,7 +166,7 @@ public class ProcedureDeployment extends HttpServlet {
                         new String[][]{{"PROC_CHECKER_INSTANCE_REQ_SOPS_IN_SOP_TABLE", matching}});
             }
             fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(dataIntegrityInstanceTable);
-            if (Boolean.TRUE.equals(PROC_DEPLOYMENT_DB_CREATE_SCHEMAS)) ProcedureDefinitionToInstance.createDBProcessSchemas(procInstanceName);            
+            if (Boolean.TRUE.equals(PROC_DEPLOYMENT_DB_CREATE_SCHEMAS)) ProcedureDefinitionToInstanceSections.createDBProcessSchemas(procInstanceName);            
             if (Boolean.TRUE.equals(PROCDEPLOYT_DB_CREATE_SCHEMA_TABLES)) createDBProcessTables(procInstanceName, "", new String[]{});
             //if (PROC_DEPLOYMENT_ENTIRE_PROCEDURE){reqDep.procedureDeployment(procName, procVersion);}
             //if (PROC_DEPLOYMENT_ASSIGN_USER_SOPS){reqDep.procedureDeployment(procName, procVersion);}
