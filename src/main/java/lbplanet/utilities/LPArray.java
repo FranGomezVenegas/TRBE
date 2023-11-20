@@ -1039,4 +1039,18 @@ public class LPArray {
         }
         return true;  // All values are the same
     }
+    
+    public static String removeValueFromStringedArray(String theArr, String theValue){
+        if (LPNulls.replaceNull(theArr).length()==1)
+            theArr="";
+        else{
+            if (theArr.endsWith(theValue)){
+                theArr=theArr.replace("|"+theValue, "");
+            }else{
+                theArr=theArr.replace(theValue+"|", "");
+            }
+        }
+        return theArr;        
+    }
+
 }
