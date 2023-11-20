@@ -38,7 +38,6 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import static lbplanet.utilities.LPPlatform.LAB_FALSE;
 import static lbplanet.utilities.LPPlatform.LAB_TRUE;
-import lbplanet.utilities.LPPlatform.LpPlatformBusinessRules;
 import lbplanet.utilities.LPPlatform.LpPlatformErrorTrapping;
 import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
 import org.json.simple.JSONArray;
@@ -235,9 +234,9 @@ public class TestingRegressionUAT extends HttpServlet {
                                     Logger.getLogger("In the script " + scriptId + " and step " + LPNulls.replaceNull(curStep[0]).toString() + "the action" + LPNulls.replaceNull(curStep[1]).toString() + " is not enabled");
                                 } else {
                                     TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
-                                    if (testingBusinessRulesVisitedObj != null) {
+/*                                    if (testingBusinessRulesVisitedObj != null) {
                                         testingBusinessRulesVisitedObj.addObject(procInstanceName, "procedure", "ND", LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName() + LPNulls.replaceNull(curStep[1]).toString(), "ND");
-                                    }
+                                    }*/
                                 }
                             }
                             if (actionsList != null) {
