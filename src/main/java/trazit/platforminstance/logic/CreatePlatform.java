@@ -410,8 +410,9 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
         String fakeEsingnEncrypted = encryptValue[encryptValue.length-1].toString();
         Object[] encryptPa=DbEncryption.encryptValue("trazit4ever");        
         String paEncrypted = encryptPa[encryptPa.length-1].toString();
-        Object[] encryptPers=DbEncryption.encryptValue("adminz");        
-        String persEncrypted = encryptPers[encryptPers.length-1].toString();
+//        Object[] encryptPers=DbEncryption.encryptValue("adminz");        
+        String persEncrypted = String.valueOf("adminz".hashCode());//encryptPers[encryptPers.length-1].toString();
+        
         insertRecord2 = Rdbms.insertRecord(TblsApp.TablesApp.USERS, 
                 new String[]{TblsApp.Users.USER_NAME.getName(), TblsApp.Users.EMAIL.getName(), TblsApp.Users.ESIGN.getName(),
                     TblsApp.Users.PASSWORD.getName(), TblsApp.Users.PERSON_NAME.getName()},

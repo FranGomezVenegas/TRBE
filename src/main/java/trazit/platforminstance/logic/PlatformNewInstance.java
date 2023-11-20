@@ -68,8 +68,8 @@ public class PlatformNewInstance {
         }
         String fakeProcName = "check-platform";
         String fakeProcUserName = "demo";
-        Object[] encryptPers=DbEncryption.encryptValue("demoz");        
-        String persEncrypted = encryptPers[encryptPers.length-1].toString();        
+        //Object[] encryptPers=DbEncryption.encryptValue("demoz");        
+        String persEncrypted = String.valueOf("demoz".hashCode()); //encryptPers[encryptPers.length-1].toString();        
         String fakeEsingn="firmademo";
         String defaultMail="info@trazit.net";
         Object[] encryptValue=DbEncryption.encryptValue(fakeEsingn);        
