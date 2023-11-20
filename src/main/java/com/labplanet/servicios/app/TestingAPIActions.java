@@ -253,9 +253,10 @@ public class TestingAPIActions extends HttpServlet {
         updFldValue = LPArray.addValueToArray1D(updFldValue, LPDate.getCurrentTimeStamp());
 
         String[] scriptFldsForRecord = new String[]{TblsTesting.ScriptSavePoint.DATE_CREATION.getName(),
-            TblsTesting.ScriptSavePoint.PURPOSE.getName(), TblsTesting.ScriptSavePoint.TESTER_NAME.getName(),
+            TblsTesting.ScriptSavePoint.PURPOSE.getName(), TblsTesting.ScriptSavePoint.TESTER.getName(), TblsTesting.ScriptSavePoint.REVIEWER.getName(),
             TblsTesting.ScriptSavePoint.TIME_STARTED.getName(), TblsTesting.ScriptSavePoint.TIME_COMPLETED.getName(),
-            TblsTesting.ScriptSavePoint.TIME_CONSUME.getName(), TblsTesting.ScriptSavePoint.RUN_SUMMARY.getName()};
+            TblsTesting.ScriptSavePoint.TIME_CONSUME.getName(), TblsTesting.ScriptSavePoint.RUN_SUMMARY.getName(),
+            TblsTesting.ScriptSavePoint.CONCLUSION.getName(), TblsTesting.ScriptSavePoint.SIGNED.getName()};
         for (String curFld : scriptFldsForRecord) {
             Integer fldPosicInArray = LPArray.valuePosicInArray(scriptFldToRetrieve, curFld);
             if (fldPosicInArray > -1) {
