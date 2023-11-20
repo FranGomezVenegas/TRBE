@@ -13,7 +13,7 @@ import databases.SqlStatement.WHERECLAUSE_TYPES;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
 import functionaljavaa.parameter.Parameter;
 import java.net.MalformedURLException;
-import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.SCHEMA_AUTHORIZATION_ROLE;
+import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.SCHEMA_AUTHORIZATION_ROLE;
 import java.util.Arrays;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
@@ -437,6 +437,7 @@ public class DbObjects {
         schemasObj.put("create_schemas", createSchemas);
         EnumIntTables[] moduleBaseTables = ProcDeployEnums.moduleBaseTables();
         jsonObj=new JSONObject();
+    try{
         for (EnumIntTables curTbl: moduleBaseTables){
             tblCreateScript = createTableScript(curTbl, procInstanceName, false, true, null);
             
@@ -461,6 +462,11 @@ public class DbObjects {
         else
             jsonObj.put("summary_run_with_errors", errorsOnlyObj);
         return jsonObj;
+    }catch(Exception e){
+        errorsOnlyObj.put("error_exception", e.getMessage());
+        jsonObj.put("summary_run_with_errors", errorsOnlyObj);
+        return jsonObj;        
+    }
     }    
     public static JSONArray createSchemas(String[] schemasNames, String dbName){
         return schemasActions(schemasNames, dbName, SchemaActions.CREATE.name());
