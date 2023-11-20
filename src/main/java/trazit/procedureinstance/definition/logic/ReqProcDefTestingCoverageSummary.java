@@ -5,7 +5,6 @@
  */
 package trazit.procedureinstance.definition.logic;
 
-import trazit.procedureinstance.definition.logic.ClassReqProcedureQueries;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -44,12 +43,15 @@ public class ReqProcDefTestingCoverageSummary {
         }
         jMainObj.put("scripts", dbRowsToJsonArr2);
         dbRowsToJsonArr2 = new JSONArray();
-        dbRowsToJsonArr = QueryUtilities.dbRowsToJsonArr(procInstanceName,LPPlatform.buildSchemaName(procInstanceName, TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getRepositoryName()), TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableName(), getAllFieldNames(TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableFields()), new String[]{TblsTesting.ScriptsCoverage.ACTIVE.getName()}, new Object[]{true}, null, new String[]{}, true, true);
+        dbRowsToJsonArr = QueryUtilities.dbRowsToJsonArr(procInstanceName,LPPlatform.buildSchemaName(procInstanceName, TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getRepositoryName()), 
+                TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableName(), getAllFieldNames(TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableFields()), 
+                new String[]{TblsTesting.ScriptsCoverage.ACTIVE.getName()}, new Object[]{true}, null, new String[]{}, true, true);
         for (int j = 0; j < dbRowsToJsonArr.size(); j++) {
             JSONObject jsonObject = (JSONObject) dbRowsToJsonArr.get(j);
             String coverageDetail = LPNulls.replaceNull(jsonObject.get("endpoints_coverage_detail")).toString();
+            String endpointsExcludeList = LPNulls.replaceNull(jsonObject.get("endpoints_exclude_list")).toString();
             Integer coverageId=Integer.valueOf(jsonObject.get("coverage_id").toString());
-            jsonObject.put("endpoints_summary_json", covSectionDetailEndpoints(coverageId, coverageDetail));
+            jsonObject.put("endpoints_summary_json", covSectionDetailEndpoints(coverageId, coverageDetail, endpointsExcludeList));
             coverageDetail = LPNulls.replaceNull(jsonObject.get("bus_rule_coverage_detail")).toString();
             jsonObject.put("business_rules_summary_json", covSectionDetailBusinessRules(coverageId, coverageDetail));
             coverageDetail = LPNulls.replaceNull(jsonObject.get("msg_coverage_detail")).toString();
@@ -60,7 +62,7 @@ public class ReqProcDefTestingCoverageSummary {
         return jMainObj;
     }
 
-    static JsonObject covSectionDetailEndpoints(Integer coverageId, String coverageDetail) {
+    static JsonObject covSectionDetailEndpoints(Integer coverageId, String coverageDetail, String endpointsExcludeList) {
         String procedureArrInfo = null;
         JsonArray procedureObjects = null;
         JsonObject endpCovDetObj = null;
@@ -83,8 +85,6 @@ public class ReqProcDefTestingCoverageSummary {
             summary = endpCovDetObj.get("summary").toString();
             JsonArray visitedOnes = LPJson.convertToJsonArrayStringedObject(LPNulls.replaceNull(
                     endpCovDetObj.get("visited")).toString());
-            JsonArray excludedOnes = LPJson.convertToJsonArrayStringedObject(LPNulls.replaceNull(
-                    endpCovDetObj.getAsJsonObject("uncoverage_summary").get("excluded_list")).toString());
             JsonArray uncoverageOnes = LPJson.convertToJsonArrayStringedObject(LPNulls.replaceNull(
                     endpCovDetObj.getAsJsonObject("uncoverage_summary").get("uncoverage_list")).toString());
             if (procedureObjects == null) {
@@ -99,18 +99,27 @@ public class ReqProcDefTestingCoverageSummary {
                 if (LPJson.ValueInJsonArray(visitedOnes, val)) {
                     evaluation.append("visited");
                     endpointsVisitedDiagnostic.add(curEndDiagn);
+                    curEndDiagn.addProperty("evaluation", evaluation.toString());
+                    curEndDiagn.addProperty("coverage_id", coverageId);
+                    endpointsDiagnostic.add(curEndDiagn);
+                    continue;
                 }
-                if (LPJson.ValueInJsonArray(excludedOnes, val)) {
+                if (LPArray.valueInArray(LPNulls.replaceNull(endpointsExcludeList).toString().split("\\|"), val)) {
                     evaluation.append("excluded");
                     endpointsExcludedDiagnostic.add(curEndDiagn);
+                    curEndDiagn.addProperty("evaluation", evaluation.toString());
+                    curEndDiagn.addProperty("coverage_id", coverageId);
+                    endpointsDiagnostic.add(curEndDiagn);
+                    continue;
                 }
                 if (LPJson.ValueInJsonArray(uncoverageOnes, val)) {
                     evaluation.append("uncoverage");
                     endpointsUncoveredDiagnostic.add(curEndDiagn);
+                    curEndDiagn.addProperty("evaluation", evaluation.toString());
+                    curEndDiagn.addProperty("coverage_id", coverageId);
+                    endpointsDiagnostic.add(curEndDiagn);
+                    continue;                
                 }
-                curEndDiagn.addProperty("evaluation", evaluation.toString());
-                curEndDiagn.addProperty("coverage_id", coverageId);
-                endpointsDiagnostic.add(curEndDiagn);
             }
         }
         endpCovDetObj.add("evaluation_uncovered_only", endpointsUncoveredDiagnostic);
@@ -121,7 +130,7 @@ public class ReqProcDefTestingCoverageSummary {
         return endpCovDetObj;
     }
 
-    static Boolean addBusinessRule(String name) {
+    static Boolean XaddBusinessRule(String name) {
         if (name.toUpperCase().contains(LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName().toUpperCase())) {
             return false;
         }
@@ -182,9 +191,9 @@ public class ReqProcDefTestingCoverageSummary {
                 curEndDiagn.addProperty("name", rName);
                 curEndDiagn.addProperty("evaluation", "not visited / not covered");
                 curEndDiagn.addProperty("coverage_id", coverageId);
-                if (addBusinessRule(rName)) {
+/*                if (addBusinessRule(rName)) {
                     endpointsDiagnostic.add(curEndDiagn);
-                }
+                }*/
                 endpointsDiagnosticSectionOnly.add(curEndDiagn);
             }
             endpCovDetObj.add("evaluation_uncovered_only", endpointsDiagnosticSectionOnly);
@@ -207,13 +216,13 @@ public class ReqProcDefTestingCoverageSummary {
                 }
                 curEndDiagn.addProperty("name", rName);
                 curEndDiagn.addProperty("evaluation", "excluded");
-                if (addBusinessRule(rName)) {
+/*                if (addBusinessRule(rName)) {
                     endpointsDiagnostic.add(curEndDiagn);
                     endpointsDiagnosticSectionOnly.add(curEndDiagn);
-                }
+                }*/
             }
             endpCovDetObj.add("evaluation_excluded_only", endpointsDiagnosticSectionOnly);
-
+/*
             JsonArray excludedByExclEndpoint = LPJson.convertToJsonArrayStringedObject(LPNulls.replaceNull(
                     endpCovDetObj.getAsJsonObject("uncoverage_summary").get("business_rules_excluded_by_exclude_the_endpoint")).toString());
             endpointsDiagnosticSectionOnly = new JsonArray();
@@ -233,13 +242,13 @@ public class ReqProcDefTestingCoverageSummary {
                 }
                 curEndDiagn.addProperty("name", rName);
                 curEndDiagn.addProperty("evaluation", "excluded due to the endpoint was excluded");
-                if (addBusinessRule(rName)) {
-                    endpointsDiagnostic.add(curEndDiagn);
-                    endpointsDiagnosticSectionOnly.add(curEndDiagn);
-                }
+//                if (addBusinessRule(rName)) {
+//                    endpointsDiagnostic.add(curEndDiagn);
+//                    endpointsDiagnosticSectionOnly.add(curEndDiagn);
+//                } 
             }
             endpCovDetObj.add("evaluation_excluded_by_exclude_endpoint_only", endpointsDiagnosticSectionOnly);
-
+*/
             JsonArray visitedOnes = LPJson.convertToJsonArrayStringedObject(LPNulls.replaceNull(
                     endpCovDetObj.get("visited")).toString());
             for (int i = 0; i < visitedOnes.size(); i++) {
@@ -252,9 +261,9 @@ public class ReqProcDefTestingCoverageSummary {
                 curEndDiagn.addProperty("area", area.replace("\"", ""));
                 curEndDiagn.addProperty("name", ruleN.replace("\"", ""));
                 curEndDiagn.addProperty("evaluation", "Visited / Covered");
-                if (addBusinessRule(ruleN.replace("\"", ""))) {
+/*                if (addBusinessRule(ruleN.replace("\"", ""))) {
                     endpointsDiagnostic.add(curEndDiagn);
-                }
+                }*/
             }
             endpCovDetObj.add("evaluation_visited_only", endpointsDiagnosticSectionOnly);
         }
