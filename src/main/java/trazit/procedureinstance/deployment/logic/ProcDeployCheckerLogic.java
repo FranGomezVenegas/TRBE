@@ -13,8 +13,8 @@ import databases.SqlStatement;
 import databases.TblsCnfg;
 import databases.TblsProcedure;
 import trazit.procedureinstance.definition.definition.TblsReqs;
-import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.FLDSTORETR_PROCEDURE_INFO_SOURCE;
-import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.FLDSTORETR_REQS_PROCINFOSRC;
+import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.FLDSTORETR_PROCEDURE_INFO_SOURCE;
+import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.FLDSTORETR_REQS_PROCINFOSRC;
 import functionaljavaa.requirement.masterdata.ClassMasterData;
 import functionaljavaa.user.UserAndRolesViews;
 import java.util.Map;
@@ -453,7 +453,7 @@ public class ProcDeployCheckerLogic {
                 new String[]{TblsReqs.ProcedureMasterData.ORDER_NUMBER.getName()});
             JSONArray jsonRowArr=new JSONArray();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procMasterDataObjs[0][0].toString())){
-              jsonObj.put(trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procMasterDataObjs[0]));
+              jsonObj.put(trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procMasterDataObjs[0]));
               jsonArr.add(jsonObj);
             }else{
                 jsonArr.add(jsonObj);
