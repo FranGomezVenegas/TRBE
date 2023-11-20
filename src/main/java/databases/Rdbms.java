@@ -14,7 +14,6 @@ import javax.sql.rowset.*;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import functionaljavaa.parameter.Parameter;
-import trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance;
 import trazit.session.ResponseMessages;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.sql.Array;
@@ -53,6 +52,7 @@ import trazit.enums.EnumIntViews;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.globalvariables.GlobalVariables.VALIDATION_MODE_REPO;
+import trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections;
 import trazit.session.ApiMessageReturn;
 import trazit.session.DbLogSummary;
 
@@ -2116,25 +2116,25 @@ public class Rdbms {
         query.append(" SELECT distinct table_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_schema in (?)");
         if (GlobalVariables.Schemas.PROCEDURE.getName().equalsIgnoreCase(schemaName1)) {
             query.append(" and table_name not in(");
-            for (int i = 0; i < ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone.length; i++) {
+            for (int i = 0; i < ProcedureDefinitionToInstanceSections.ProcedureSchema_TablesWithNoTestingClone.length; i++) {
                 if (i > 0) {
                     query.append(",");
                 }
                 query.append("?");
             }
             query.append(")");
-            filter = LPArray.addValueToArray1D(filter, ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone);
+            filter = LPArray.addValueToArray1D(filter, ProcedureDefinitionToInstanceSections.ProcedureSchema_TablesWithNoTestingClone);
         }
         if (GlobalVariables.Schemas.PROCEDURE_AUDIT.getName().equalsIgnoreCase(schemaName1)) {
             query.append(" and table_name not in(");
-            for (int i = 0; i < ProcedureDefinitionToInstance.ProcedureAuditSchema_TablesWithNoTestingClone.length; i++) {
+            for (int i = 0; i < ProcedureDefinitionToInstanceSections.ProcedureAuditSchema_TablesWithNoTestingClone.length; i++) {
                 if (i > 0) {
                     query.append(",");
                 }
                 query.append("?");
             }
             query.append(")");
-            filter = LPArray.addValueToArray1D(filter, ProcedureDefinitionToInstance.ProcedureAuditSchema_TablesWithNoTestingClone);
+            filter = LPArray.addValueToArray1D(filter, ProcedureDefinitionToInstanceSections.ProcedureAuditSchema_TablesWithNoTestingClone);
         }
         try {
             ResultSet res = Rdbms.prepRdQuery(query.toString(), filter);
@@ -2420,7 +2420,15 @@ public class Rdbms {
         if (Boolean.TRUE.equals(ProcedureRequestSession.getInstanceForActions(null, null, null).getIsForTesting())) {
             return suffixForTestingTblObj(procInstanceName, schemaName, tblObj);
         }
-        return schemaName;
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        if (procInstanceName==null){
+            if (tblObj.getIsProcedureInstance())
+                procInstanceName=instanceForActions.getProcedureInstance();
+            else
+                return "\""+schemaName+"\"";
+        }
+            
+        return tblObj.getIsProcedureInstance()?LPPlatform.buildSchemaName(procInstanceName, schemaName):schemaName;
     }
 
     public static String suffixForTestingTblObj(String procInstanceName, String schemaName, EnumIntTables tblObj) {
@@ -2444,7 +2452,7 @@ public class Rdbms {
             return tblObj.getIsProcedureInstance()?"\""+procInstanceName+schemaName+"\"":schemaName;
         }
         if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE_AUDIT.getName())) {
-            if (!LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureAuditSchema_TablesWithNoTestingClone, tblObj.getTableName())) {
+            if (!LPArray.valueInArray(ProcedureDefinitionToInstanceSections.ProcedureAuditSchema_TablesWithNoTestingClone, tblObj.getTableName())) {
                 if (schemaName.startsWith("\"")) {
                     schemaName= VALIDATION_MODE_REPO+schemaName.substring(1, schemaName.length() - 1);
                 } else {
@@ -2454,7 +2462,7 @@ public class Rdbms {
             }
         }
         if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE.getName())) {
-            if (!LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone, tblObj.getTableName())) {
+            if (!LPArray.valueInArray(ProcedureDefinitionToInstanceSections.ProcedureSchema_TablesWithNoTestingClone, tblObj.getTableName())) {
                 if (schemaName.startsWith("\"")) {
                     schemaName=VALIDATION_MODE_REPO+schemaName.substring(1, schemaName.length() - 1);
                 } else {
@@ -2487,7 +2495,7 @@ public class Rdbms {
             return procInstanceName+schemaName;
         }
         if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE_AUDIT.getName())) {
-            if (!LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureAuditSchema_TablesWithNoTestingClone, tableName)) {
+            if (!LPArray.valueInArray(ProcedureDefinitionToInstanceSections.ProcedureAuditSchema_TablesWithNoTestingClone, tableName)) {
                 if (schemaName.startsWith("\"")) {
                     schemaName= VALIDATION_MODE_REPO+schemaName.substring(1, schemaName.length() - 1);
                 } else {
@@ -2497,7 +2505,7 @@ public class Rdbms {
             }
         }
         if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE.getName())) {
-            if (!LPArray.valueInArray(ProcedureDefinitionToInstance.ProcedureSchema_TablesWithNoTestingClone, tableName)) {
+            if (!LPArray.valueInArray(ProcedureDefinitionToInstanceSections.ProcedureSchema_TablesWithNoTestingClone, tableName)) {
                 if (schemaName.startsWith("\"")) {
                     schemaName=VALIDATION_MODE_REPO+schemaName.substring(1, schemaName.length() - 1);
                 } else {
@@ -2728,7 +2736,7 @@ private static final int CLIENT_CODE_STACK_INDEX;
     public static RdbmsObject updateTableRecordFieldsByFilter(EnumIntTables tblObj, EnumIntTableFields[] updateFieldNames, Object[] updateFieldValues, SqlWhere whereObj, String alternativeProcInstanceName) {
         DbLogSummary dbLogSummary = ProcedureRequestSession.getInstanceForQueries(null, null, null).getDbLogSummary();
 
-        String schemaName = addSuffixIfItIsForTesting(alternativeProcInstanceName, tblObj.getRepositoryName(), tblObj.getTableName());
+        String schemaName = addSuffixIfItIsForTesting(alternativeProcInstanceName, tblObj.getRepositoryName(), tblObj);
         updateFieldValues = DbEncryptionObject.decryptTableFieldArray(tblObj, updateFieldNames, updateFieldValues, false);
         if (whereObj.getAllWhereEntries().isEmpty()) {
             return new RdbmsObject(false, "no sql yet", RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED,
