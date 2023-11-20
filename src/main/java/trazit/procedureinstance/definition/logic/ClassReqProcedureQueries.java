@@ -6,20 +6,15 @@
 package trazit.procedureinstance.definition.logic;
 
 import com.google.gson.JsonParser;
-import com.google.gson.JsonSyntaxException;
 import static trazit.procedureinstance.definition.logic.ClassReqProcedUserAndActionsForQueries.actionsByRoles;
 import static trazit.procedureinstance.definition.logic.ClassReqProcedUserAndActionsForQueries.viewsByRoles;
 import databases.Rdbms;
-import databases.SqlWhere;
 import trazit.procedureinstance.definition.definition.TblsReqs;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
-import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import trazit.enums.EnumIntTableFields;
-import trazit.enums.EnumIntTables;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.procedureinstance.definition.logic.ClassReqProcedUserAndActionsForQueries.usersByRoles;
 
@@ -33,7 +28,7 @@ public class ClassReqProcedureQueries {
         throw new IllegalStateException("Utility class");
     }
 
-    static final String NO_DATA = "No Data";
+    public static final String NO_DATA = "No Data";
 
     public static Object[][] procAccessBlockInRequirements(String procInstanceName) {
         Integer iObjsInArray=0;

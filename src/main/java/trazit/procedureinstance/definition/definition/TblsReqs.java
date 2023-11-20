@@ -21,7 +21,7 @@ import trazit.enums.FldBusinessRules;
 import trazit.enums.ForeignkeyFld;
 import trazit.enums.ReferenceFld;
 import trazit.globalvariables.GlobalVariables;
-import trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.ReqSolutionTypes;
+import trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.ReqSolutionTypes;
 
 /**
  *
@@ -273,7 +273,7 @@ public class TblsReqs {
 "   	 JOIN requirements.procedure_user_requirements urs on urs.req_id=reqs.req_id\n" +
 "     JOIN requirements.procedure_info procinfo ON reqs.proc_instance_name::text = procinfo.proc_instance_name::text\n" +
 "     JOIN requirements.module_actions_and_queries modact ON reqs.window_action::text = modact.endpoint_name::text AND procinfo.module_name::text = modact.module_name::text\n" +
-"    where reqs.type='"+ReqSolutionTypes.WINDOW_ACTION.getTagValue()+"'; ",
+"    where reqs.type='"+ReqSolutionTypes.WINDOW_BUTTON.getTagValue()+"'; ",
                 null, "proc_req_solution_actions", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsReqs.viewProcReqSolutionActions.values(), "proc_req_user_requirements_actions",
                 new EnumIntTablesJoin[]{
                     new EnumIntTablesJoin(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, "reqs", TblsReqs.TablesReqs.PROCEDURE_USER_REQS, "urs", false,
@@ -391,7 +391,7 @@ public class TblsReqs {
                         "   JOIN requirements.procedure_info procinfo ON act.module_name::text = procinfo.module_name::text"+
                         "   LEFT JOIN (select reqsol.window_action, usr.code, usr.parent_code, usr.procedure_name, usr.procedure_version, usr.proc_instance_name \n" +
                         "          		from requirements.procedure_req_solution reqsol, requirements.procedure_user_requirements usr\n" +
-                        "			  where reqsol.req_id=usr.req_id and upper(window_element_type)=upper("+ReqSolutionTypes.WINDOW_ACTION.getTagValue()+")) sol\n" +
+                        "			  where reqsol.req_id=usr.req_id and upper(window_element_type)=upper("+ReqSolutionTypes.WINDOW_BUTTON.getTagValue()+")) sol\n" +
                         "	  ON act.endpoint_name::text = sol.window_action::text and procinfo.proc_instance_name=sol.proc_instance_name\n" +
                         "	WHERE upper(act.api_name::text) ~~ '%ACTION%'::text OR upper(act.api_name::text) ~~ '%QUER%'::text AND act.query_for_button = true" +
                         "  GROUP BY act.module_name, act.module_version, act.entity, act.endpoint_name, sol.procedure_name, sol.procedure_version, sol.proc_instance_name,\n" +
@@ -1240,7 +1240,6 @@ public class TblsReqs {
         LP_FRONTEND_PAGE_FILTER("lp_frontend_page_filter", LPDatabase.string(), null, null, null, null, false),
         //PARENT_NAME("parent_name", LPDatabase.string(), null, null, null, null),
         POSITION("position", LPDatabase.string(), null, null, null, null, false),
-        ROLE_NAME("role_name", LPDatabase.string(), null, null, null, null, false),
         MODE("mode", LPDatabase.string(), null, null, null, null, false),
         TYPE("type", LPDatabase.string(), null, null, null, null, false),
         LABEL_EN("label_en", LPDatabase.string(), null, null, null, null, false),
