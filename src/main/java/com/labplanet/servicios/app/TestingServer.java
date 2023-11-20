@@ -102,6 +102,7 @@ import trazit.thirdparties.sap.ExcelExporter;
 import trazit.thirdparties.sap.Mosquitto;
 import trazit.thirdparties.sap.PDFDataExtractor;
 import java.util.Set;
+import static trazit.procedureinstance.definition.logic.ReqProcDefTestingCoverageSummary.procInstanceTestingInfo;
 /**
  *
  * @author Administrator
@@ -122,11 +123,17 @@ public class TestingServer extends HttpServlet {
         request = LPHttp.requestPreparation(request);
         response = LPHttp.responsePreparation(response);
         try (PrintWriter out = response.getWriter()) {
+            
         String moduleName="STOCKS";
         Integer moduleVersion=1;
         String procedureName="stock";
         Integer procedureVersion=1;
         String procInstanceName="stock";
+
+    String dbName="demo_v0_9_2";
+    Rdbms.stablishDBConection(dbName);
+    procInstanceTestingInfo( procInstanceName);
+if (1==1)return;            
 
 //        String procInstanceSource="lots_raw";
 //        String procInstanceDestination="inspection lot";
