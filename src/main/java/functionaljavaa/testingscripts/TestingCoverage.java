@@ -115,10 +115,14 @@ public final class TestingCoverage {
         this.coverageEndpointsExcludeList = LPNulls.replaceNull(coverageInfoArr[0][LPArray.valuePosicInArray(getAllFieldNames(TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableFields()), TblsTesting.ScriptsCoverage.ENDPOINTS_EXCLUDE_LIST.getName())]).toString().split("\\|");
         if (this.coverageEndpointsExcludeList != null && this.coverageEndpointsExcludeList[0].length() == 0) {
             this.coverageEndpointsExcludeList = new String[]{};
+        }else{
+            this.coverageEndpointsExcludeList=LPArray.getUniquesArray(this.coverageEndpointsExcludeList);
         }
         this.coverageBusRulesExcludeList = LPNulls.replaceNull(coverageInfoArr[0][LPArray.valuePosicInArray(getAllFieldNames(TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableFields()), TblsTesting.ScriptsCoverage.BUS_RULES_EXCLUDE_LIST.getName())]).toString().split("\\|");
         if (this.coverageBusRulesExcludeList != null && this.coverageBusRulesExcludeList[0].length() == 0) {
             this.coverageBusRulesExcludeList = new String[]{};
+        }else{
+            this.coverageBusRulesExcludeList=LPArray.getUniquesArray(this.coverageBusRulesExcludeList);
         }
 
         this.coverageMsgCodeExcludeList = LPNulls.replaceNull(coverageInfoArr[0][LPArray.valuePosicInArray(getAllFieldNames(TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableFields()), TblsTesting.ScriptsCoverage.MSG_CODE_EXCLUDE_LIST.getName())]).toString().split("\\|");
@@ -234,7 +238,7 @@ public final class TestingCoverage {
         }
         for (int i = 0; i < this.scriptsBusRules.getProcedureBusinessRules().size(); i++) {
             String curScriptProcedureRule = this.scriptsBusRules.getProcedureBusinessRules().get(i).getRuleName();
-            if ((calcProcedure == null || calcProcedure.isEmpty() || !calcProcedure.contains(curScriptProcedureRule))
+/*            if ((calcProcedure == null || calcProcedure.isEmpty() || !calcProcedure.contains(curScriptProcedureRule))
                     && Boolean.FALSE.equals(curScriptProcedureRule.contains("AuditReasonPhrase"))) {
                 if (curScriptProcedureRule != null) {
                     calcProcedure.add(curScriptProcedureRule);
@@ -252,6 +256,7 @@ public final class TestingCoverage {
                     }
                 }
             }
+*/            
         }
         JSONArray accVisited = (JSONArray) this.busRuleCoverageDetail.get("visited");
         if (accVisited == null) {
@@ -302,16 +307,11 @@ public final class TestingCoverage {
     }
 
     void generateSummaryForBusinessRules() {
-        removeProcBusRulesByEndpointExclusion();
+//        removeProcBusRulesByEndpointExclusion();
         final int DECIMAL_PLACES = 2;
         String percExplPatternStr = "The <*1*> is <*2*> div <*3*> ";
 
         double procBusRulesTotal = this.procBusRules.getTotalBusinessRules();
-        for (RuleInfo curRule : this.procBusRules.getProcedureBusinessRules()) {
-            if (curRule.getRuleName().contains("AuditReasonPhrase")) {
-                procBusRulesTotal = procBusRulesTotal - 1;
-            }
-        }
         double divisor = procBusRulesTotal - this.coverageBusRulesExcludeList.length;
         double divident = (double) this.busRuleVisitedTotal + (double) this.busRuleVisitedMissingInProcTotal;
         double operatedVal = (divident / divisor) * 100;
@@ -629,7 +629,7 @@ public final class TestingCoverage {
         return mainObj;
     }
 
-    void removeProcBusRulesByEndpointExclusion() {
+/*    void removeProcBusRulesByEndpointExclusion() {
         List<RuleInfo> procedureBusinessRules = this.procBusRules.getProcedureBusinessRules();
         if (this.coverageEndpointsExcludeList == null) {
             return;
@@ -656,7 +656,7 @@ public final class TestingCoverage {
             this.busRuleExcludedByExcludeEndpoint = LPArray.addValueToArray1D(this.busRuleExcludedByExcludeEndpoint, "eSignRequired");
         }
     }
-
+*/
     private static Boolean procedureRulesNotToPutInPlace(String curRuleStr) {
         if (curRuleStr.contains("AuditReasonPhrase")) {
             return true;
