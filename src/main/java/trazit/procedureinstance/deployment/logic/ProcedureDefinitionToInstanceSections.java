@@ -49,7 +49,7 @@ import trazit.enums.EnumIntViews;
 import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import trazit.globalvariables.GlobalVariables;
 
-public class ProcedureDefinitionToInstance {
+public class ProcedureDefinitionToInstanceSections {
 
     public static EnumIntViews[] getModuleViewObj(String getModuleViewObj, String tblName) {
         return null;
@@ -60,12 +60,12 @@ public class ProcedureDefinitionToInstance {
         TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName(), TblsProcedure.TablesProcedure.PROCEDURE_INFO.getTableName(), TblsProcedure.ViewProcUserAndRoles.TBL.getName(), 
         TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), TblsProcedure.TablesProcedure.PROCEDURE_EVENTS_HELP_CONTENT.getTableName()};
 
-    private ProcedureDefinitionToInstance() {
+    private ProcedureDefinitionToInstanceSections() {
         throw new IllegalStateException("Utility class");
     }
 
     public enum ReqSolutionTypes {
-        WINDOW("Window"), WINDOW_ACTION("Window Action"), BUSINESS_RULE("Business Rule"), SPECIAL_VIEW("Special View")
+        WINDOW("Window"), WINDOW_BUTTON("Window Button"), BUSINESS_RULE("Business Rule"), SPECIAL_VIEW("Special View")
         ;
         private ReqSolutionTypes(String tgVal) {
             this.tagValue = tgVal;
@@ -273,7 +273,7 @@ public class ProcedureDefinitionToInstance {
         Object[][] procViewsArr = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_WINDOWS.getViewName(),
             new String[]{TblsReqs.viewProcReqSolutionViews.PROCEDURE_NAME.getName(), TblsReqs.viewProcReqSolutionViews.PROCEDURE_VERSION.getName(), TblsReqs.viewProcReqSolutionViews.PROC_INSTANCE_NAME.getName(), 
                 TblsReqs.viewProcReqSolutionViews.ACTIVE.getName(), TblsReqs.viewProcReqSolutionViews.TYPE.getName()},
-            new Object[]{procedure, procVersion, procInstanceName, true, ProcedureDefinitionToInstance.ReqSolutionTypes.WINDOW.getTagValue()},
+            new Object[]{procedure, procVersion, procInstanceName, true, ProcedureDefinitionToInstanceSections.ReqSolutionTypes.WINDOW.getTagValue()},
             new String[]{TblsReqs.viewProcReqSolutionViews.WINDOW_NAME.getName(), TblsReqs.viewProcReqSolutionViews.ROLES.getName(), 
                 TblsReqs.viewProcReqSolutionViews.PARENT_CODE.getName(), TblsReqs.viewProcReqSolutionViews.CODE.getName(),
                 TblsReqs.viewProcReqSolutionViews.WINDOW_QUERY.getName(), TblsReqs.viewProcReqSolutionViews.JSON_MODEL.getName(), 
@@ -297,20 +297,19 @@ public class ProcedureDefinitionToInstance {
                     Object[][] procActionsArr = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_ACTIONS.getViewName(),
                         new String[]{TblsReqs.viewProcReqSolutionActions.PROCEDURE_NAME.getName(), TblsReqs.viewProcReqSolutionActions.PROCEDURE_VERSION.getName(), TblsReqs.viewProcReqSolutionActions.PROC_INSTANCE_NAME.getName(), 
                             TblsReqs.viewProcReqSolutionActions.ACTIVE.getName(), TblsReqs.viewProcReqSolutionActions.TYPE.getName(), TblsReqs.viewProcReqSolutionActions.PARENT_CODE.getName()},
-                        new Object[]{procedure, procVersion, procInstanceName, true, ProcedureDefinitionToInstance.ReqSolutionTypes.WINDOW_ACTION.getTagValue(), currentParentCode},
-                        new String[]{TblsReqs.viewProcReqSolutionActions.MODULE_NAME.getName(), TblsReqs.viewProcReqSolutionActions.JSON_MODEL.getName()});
+                        new Object[]{procedure, procVersion, procInstanceName, true, ProcedureDefinitionToInstanceSections.ReqSolutionTypes.WINDOW_BUTTON.getTagValue(), currentParentCode},
+                        new String[]{TblsReqs.viewProcReqSolutionActions.MODULE_NAME.getName(), TblsReqs.viewProcReqSolutionActions.JSON_MODEL.getName()},
+                        new String[]{TblsReqs.viewProcReqSolutionActions.ORDER_NUMBER.getName(), TblsReqs.viewProcReqSolutionActions.SOLUTION_ID.getName()});
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procActionsArr[0][0].toString()))){
                         JSONArray allViewActions=new JSONArray();
                         for (Object[] curAction: procActionsArr){
                             allViewActions.add(curAction[1]);
                         }
-
                         jObjModel.add("actions", JsonParser.parseString(allViewActions.toString()));
                     }                
                 }catch(Exception e){
                     
                 }
-
                 RdbmsObject updateTableRecordFieldsByFilter=Rdbms.insertRecord(TblsProcedure.TablesProcedure.PROCEDURE_VIEWS, 
                     new String[]{TblsProcedure.ProcedureViews.NAME.getName(), TblsProcedure.ProcedureViews.ROLE_NAME.getName(), TblsProcedure.ProcedureViews.JSON_MODEL.getName(),
                     TblsProcedure.ProcedureViews.MODE.getName(), TblsProcedure.ProcedureViews.TYPE.getName(),
@@ -318,13 +317,12 @@ public class ProcedureDefinitionToInstance {
                     TblsProcedure.ProcedureViews.LP_FRONTEND_PAGE_NAME.getName()}, 
                     new Object[]{curView[0], curView[1], jObjModel, curView[6], curView[7], curView[8], curView[9], curView[0]
                     }, procInstanceName);
-
             }
         }
         Object[][] procSpecialViewsArr = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_SPECIAL_VIEWS.getViewName(),
             new String[]{TblsReqs.viewProcReqSolutionViews.PROCEDURE_NAME.getName(), TblsReqs.viewProcReqSolutionSpecialViews.PROCEDURE_VERSION.getName(), TblsReqs.viewProcReqSolutionSpecialViews.PROC_INSTANCE_NAME.getName(), 
                 TblsReqs.viewProcReqSolutionSpecialViews.ACTIVE.getName(), TblsReqs.viewProcReqSolutionSpecialViews.TYPE.getName()},
-            new Object[]{procedure, procVersion, procInstanceName, true, ProcedureDefinitionToInstance.ReqSolutionTypes.SPECIAL_VIEW.getTagValue()},
+            new Object[]{procedure, procVersion, procInstanceName, true, ProcedureDefinitionToInstanceSections.ReqSolutionTypes.SPECIAL_VIEW.getTagValue()},
             new String[]{TblsReqs.viewProcReqSolutionSpecialViews.WINDOW_NAME.getName(), TblsReqs.viewProcReqSolutionSpecialViews.ROLES.getName(), 
                 TblsReqs.viewProcReqSolutionSpecialViews.PARENT_CODE.getName(), TblsReqs.viewProcReqSolutionSpecialViews.CODE.getName(),
                 TblsReqs.viewProcReqSolutionSpecialViews.WINDOW_QUERY.getName(), TblsReqs.viewProcReqSolutionSpecialViews.JSON_MODEL.getName(), 
@@ -548,7 +546,7 @@ public class ProcedureDefinitionToInstance {
         Object[][] procUsrReqs = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableName(),
                 new String[]{TblsReqs.ProcedureReqSolution.PROCEDURE_NAME.getName(), TblsReqs.ProcedureReqSolution.PROCEDURE_VERSION.getName(), TblsReqs.ProcedureReqSolution.PROC_INSTANCE_NAME.getName()
                         , TblsReqs.ProcedureReqSolution.TYPE.getName(), TblsReqs.ProcedureReqSolution.ACTIVE.getName(), TblsReqs.ProcedureReqSolution.IN_SYSTEM.getName(), TblsReqs.ProcedureReqSolution.IN_SCOPE.getName(), TblsReqs.ProcedureReqSolution.QUERY_FOR_BUTTON.getName()},
-                new Object[]{procedure, procVersion, procInstanceName, ReqSolutionTypes.WINDOW_ACTION.getTagValue(), true, true, true, false},
+                new Object[]{procedure, procVersion, procInstanceName, ReqSolutionTypes.WINDOW_BUTTON.getTagValue(), true, true, true, false},
                 fldsToGet);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procUsrReqs[0][0].toString())) {
             JSONObject jObj = new JSONObject();
@@ -656,8 +654,8 @@ public class ProcedureDefinitionToInstance {
             JSONObject jsUserRoleObj = new JSONObject();
             jsUserRoleObj.put("User", curUserName);
             jsUserRoleObj.put("Role", curRoleName);
-            Object[] encryptPers=DbEncryption.encryptValue(curUserName + "z");        
-            String persEncrypted = encryptPers[encryptPers.length-1].toString();
+            //Object[] encryptPers=DbEncryption.encryptValue(curUserName + "z");        
+            String persEncrypted = String.valueOf(curUserName.hashCode());//encryptPers[encryptPers.length-1].toString();
 
             Object[][] existsAppUser = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(),
                     new String[]{TblsApp.Users.USER_NAME.getName()}, new Object[]{curUserName.toString()}, new String[]{TblsApp.Users.PERSON_NAME.getName()});
@@ -669,7 +667,7 @@ public class ProcedureDefinitionToInstance {
                             TblsAppConfig.Person.LAST_NAME.getName(), TblsAppConfig.Person.PHOTO.getName()},
                         new Object[]{persEncrypted, "I'm " + curUserName, "for " + curRoleName, "https://hasta-pronto.ru/wp-content/uploads/2014/09/chibcha.jpg"});
                 insertRecordInTable = Rdbms.insertRecordInTable(TblsApp.TablesApp.USERS,
-                        new String[]{TblsApp.Users.USER_NAME.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.LIKE.getSqlClause(), TblsApp.Users.EMAIL.getName(), TblsApp.Users.ESIGN.getName(),
+                        new String[]{TblsApp.Users.USER_NAME.getName(), TblsApp.Users.EMAIL.getName(), TblsApp.Users.ESIGN.getName(),
                             TblsApp.Users.PASSWORD.getName(), TblsApp.Users.PERSON_NAME.getName()},
                         new Object[]{curUserName.toString().toLowerCase(), defaultMail, fakeEsingnEncrypted, pasEncrypted, persEncrypted});
                 existsAppUser = LPArray.array1dTo2d(insertRecordInTable.getApiMessage(), 1);
@@ -1527,7 +1525,7 @@ public class ProcedureDefinitionToInstance {
         Object[][] procViewsArr = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_WINDOWS.getViewName(),
             new String[]{TblsReqs.viewProcReqSolutionViews.PROCEDURE_NAME.getName(), TblsReqs.viewProcReqSolutionViews.PROCEDURE_VERSION.getName(), TblsReqs.viewProcReqSolutionViews.PROC_INSTANCE_NAME.getName(), 
                 TblsReqs.viewProcReqSolutionViews.ACTIVE.getName(), TblsReqs.viewProcReqSolutionViews.TYPE.getName()},
-            new Object[]{procedure, procVersion, procInstanceName, true, ProcedureDefinitionToInstance.ReqSolutionTypes.WINDOW.getTagValue()},
+            new Object[]{procedure, procVersion, procInstanceName, true, ProcedureDefinitionToInstanceSections.ReqSolutionTypes.WINDOW.getTagValue()},
             new String[]{TblsReqs.viewProcReqSolutionViews.WINDOW_NAME.getName(), TblsReqs.viewProcReqSolutionViews.PARENT_CODE.getName(), TblsReqs.viewProcReqSolutionViews.WINDOW_QUERY.getName(),
             TblsReqs.viewProcReqSolutionViews.JSON_MODEL.getName()});
         
