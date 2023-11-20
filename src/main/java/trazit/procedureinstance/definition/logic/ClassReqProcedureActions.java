@@ -8,6 +8,7 @@ import static databases.Rdbms.insertRecordInTableFromTable;
 import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.SqlWhere;
+import databases.TblsTesting;
 import functionaljavaa.materialspec.DataSpec;
 import trazit.procedureinstance.definition.definition.TblsReqs;
 import functionaljavaa.parameter.Parameter;
@@ -48,9 +49,10 @@ import static trazit.procedureinstance.definition.definition.ReqProcedureEnums.P
 import static trazit.procedureinstance.definition.definition.ReqProcedureEnums.ProcedureDefinitionAPIActionsEndpoints.ADD_ROLE_TO_USER;
 import static trazit.procedureinstance.definition.definition.ReqProcedureEnums.ProcedureDefinitionAPIActionsEndpoints.ADD_USER;
 import trazit.procedureinstance.definition.definition.TblsReqs.TablesReqs;
+import static trazit.procedureinstance.definition.logic.CoverageTestingAnalysis.newCoverageTest;
 import static trazit.procedureinstance.definition.logic.ReqProcedureFrontendMasterData.getActiveModules;
 import trazit.procedureinstance.deployment.apis.ProcDefinitionChecker;
-import trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance;
+import trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections;
 import trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceUtility;
 import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceUtility.procedureParentAndUserRequirementsList;
 import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceUtility.procedureRolesList;
@@ -271,7 +273,7 @@ public class ClassReqProcedureActions {
                     this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
                     this.messageDynamicData = removeDiagn.getErrorMessageVariables();
                 }
-                trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
+                trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
                 break;
             case ADD_ROLE_TO_USER:
                 userName = argValues[3].toString();
@@ -364,7 +366,7 @@ public class ClassReqProcedureActions {
                     this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
                     this.messageDynamicData = removeDiagn.getErrorMessageVariables();
                 }
-                trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
+                trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
                 break;
             case REMOVE_ROLE_TO_USER:
                 userName = argValues[3].toString();
@@ -453,6 +455,11 @@ public class ClassReqProcedureActions {
                     new SqlWhere(TblsReqs.TablesReqs.PROCEDURE_ROLES, new String[]{TblsReqs.ProcedureRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureRoles.PROCEDURE_VERSION.getName(),
                         TblsReqs.ProcedureRoles.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureRoles.ROLE_NAME.getName()},
                     new Object[]{procedureName, procedureVersion, procInstanceName, roleName}), null);
+                removeDiagn = Rdbms.updateTableRecordFieldsByFilter(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION,
+                    new EnumIntTableFields[]{TblsReqs.ProcedureReqSolution.ROLES}, new Object[]{newroleName},
+                    new SqlWhere(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, new String[]{TblsReqs.ProcedureReqSolution.PROCEDURE_NAME.getName(), TblsReqs.ProcedureReqSolution.PROCEDURE_VERSION.getName(),
+                        TblsReqs.ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureReqSolution.ROLES.getName()},
+                    new Object[]{procedureName, procedureVersion, procInstanceName, roleName}), null);
                 if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
                     this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
@@ -463,7 +470,7 @@ public class ClassReqProcedureActions {
                     this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
                     this.messageDynamicData = removeDiagn.getErrorMessageVariables();
                 }
-                trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
+                trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
                 break;
             case CLONE_ROLE:
                 roleName = argValues[3].toString();
@@ -476,17 +483,21 @@ public class ClassReqProcedureActions {
                     this.messageDynamicData = new Object[]{roleName, procedureName, procedureVersion};
                     break;
                 }
-                removeDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_ROLES,
-                        new String[]{TblsReqs.ProcedureRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureRoles.PROCEDURE_VERSION.getName(),
-                            TblsReqs.ProcedureRoles.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureRoles.ROLE_NAME.getName()},
-                        new Object[]{procedureName, procedureVersion, procInstanceName, roleName});
+                String[] wFldN=new String[]{TblsReqs.ProcedureRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureRoles.PROCEDURE_VERSION.getName(),
+                            TblsReqs.ProcedureRoles.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureRoles.ROLE_NAME.getName()};
+                Object[] wFldV=new Object[]{procedureName, procedureVersion, procInstanceName, roleName};
+                removeDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_ROLES,wFldN, wFldV);
 
-                
-/*                removeDiagn = Rdbms.updateTableRecordFieldsByFilter(TblsReqs.TablesReqs.PROCEDURE_ROLES,
-                    new EnumIntTableFields[]{TblsReqs.ProcedureRoles.ROLE_NAME}, new Object[]{newroleName},
-                    new SqlWhere(TblsReqs.TablesReqs.PROCEDURE_ROLES, new String[]{TblsReqs.ProcedureRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureRoles.PROCEDURE_VERSION.getName(),
-                        TblsReqs.ProcedureRoles.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureRoles.ROLE_NAME.getName()},
-                    new Object[]{procedureName, procedureVersion, procInstanceName, roleName}), null);*/
+                String[] fldsToGet=EnumIntTableFields.getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, null);
+                Integer roleNameFldPosic=LPArray.valuePosicInArray(fldsToGet, TblsReqs.ProcedureReqSolution.ROLES.getName());
+                Object[][] recordFieldsByFilter = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableName(),
+                wFldN, wFldV, fldsToGet);
+                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsByFilter[0][0].toString()))){
+                    for (Object[] curRow: recordFieldsByFilter){
+                        curRow[roleNameFldPosic]=newroleName;
+                        removeDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_ROLES,fldsToGet, curRow);
+                    }
+                }
                 if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
                     this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
@@ -497,7 +508,7 @@ public class ClassReqProcedureActions {
                     this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
                     this.messageDynamicData = removeDiagn.getErrorMessageVariables();
                 }
-                trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
+                trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
                 break;                
             case ADD_SOP:
                 String sopName = argValues[3].toString();
@@ -593,7 +604,7 @@ public class ClassReqProcedureActions {
                     this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
                     this.messageDynamicData = removeDiagn.getErrorMessageVariables();
                 }
-                trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstance.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
+                trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
                 break;
             case UPDATE_INFO_USER_REQUIREMENT:
             case UPDATE_INFO_PARENT_USER_REQUIREMENT:
@@ -742,7 +753,7 @@ public class ClassReqProcedureActions {
                 }else{
                     rmvFldN=LPArray.addValueToArray1D(rmvFldN, TblsReqs.ProcedureUserRequirements.CODE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause());
                     rmvFldV=LPArray.addValueToArray1D(rmvFldV, "");
-                    Object[][] recordFieldsByFilter = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS.getTableName(),
+                    recordFieldsByFilter = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS.getTableName(),
                     rmvFldN, rmvFldV, new String[]{TblsReqs.ProcedureUserRequirements.CODE.getName()});
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsByFilter[0][0].toString()))){
                         this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.PARENT_USER_REQUIREMENT_HAS_CHILD, new Object[]{parentCode, recordFieldsByFilter.length});
@@ -914,6 +925,38 @@ public class ClassReqProcedureActions {
                 }
 //                }
                 break;
+            case SET_RISK_READY_FOR_REVISION:
+            case SIGN_RISK:
+                reqId = argValues[i].toString();
+                i++;                
+                riskId = argValues[i].toString();
+                String[] updfieldNames= new String[]{};
+                Object[] updfieldValues= new Object[]{};
+                if ("SET_RISK_READY_FOR_REVISION".equalsIgnoreCase(endPoint.getName())){
+                    updfieldNames=LPArray.addValueToArray1D(updfieldNames, TblsReqs.ProcedureRiskAssessment.READY_FOR_REVISION.getName());
+                    updfieldValues=LPArray.addValueToArray1D(updfieldValues, new Object[]{true});
+                }else{
+                    updfieldNames=LPArray.addValueToArray1D(updfieldNames, TblsReqs.ProcedureRiskAssessment.READY_FOR_REVISION.getName());
+                    updfieldNames=LPArray.addValueToArray1D(updfieldNames, TblsReqs.ProcedureRiskAssessment.SIGNED.getName());
+                    updfieldValues=LPArray.addValueToArray1D(updfieldValues, new Object[]{false, true});
+                }
+                RdbmsObject updateDiagn = Rdbms.updateTableRecordFieldsByFilter(TblsReqs.TablesReqs.PROCEDURE_RISK_ASSESSMENT,
+                    EnumIntTableFields.getTableFieldsFromString(TblsReqs.TablesReqs.PROCEDURE_RISK_ASSESSMENT, updfieldNames), 
+                    updfieldValues,
+                    new SqlWhere(TblsReqs.TablesReqs.PROCEDURE_RISK_ASSESSMENT,new String[]{TblsReqs.ProcedureRiskAssessment.PROCEDURE_NAME.getName(), TblsReqs.ProcedureRiskAssessment.PROCEDURE_VERSION.getName(),
+                        TblsReqs.ProcedureRiskAssessment.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureRiskAssessment.REQ_ID.getName(), TblsReqs.ProcedureRiskAssessment.RISK_ID.getName()},
+                            new Object[]{procedureName, procedureVersion, procInstanceName, Integer.valueOf(reqId), Integer.valueOf(riskId)}), null);
+                if (Boolean.TRUE.equals(updateDiagn.getRunSuccess())) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, updateDiagn.getErrorMessageCode(), new Object[]{reqId});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, updateDiagn.getErrorMessageCode(), new Object[]{reqId});
+                    this.messageDynamicData = new Object[]{reqId, procedureName, procedureVersion};
+                } else {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, updateDiagn.getErrorMessageCode(), updateDiagn.getErrorMessageVariables());
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, updateDiagn.getErrorMessageCode(), updateDiagn.getErrorMessageVariables());
+                    this.diagnosticObjIntMsg = updateDiagn.getErrorMessageCode();
+                    this.messageDynamicData = updateDiagn.getErrorMessageVariables();
+                }
+                break;
             case REMOVE_RISK:
                 reqId = argValues[3].toString();
                 riskId = argValues[4].toString();
@@ -991,7 +1034,7 @@ public class ClassReqProcedureActions {
                     });                        
                     
                     fieldValues=LPArray.addValueToArray1D(fieldValues,new Object[]{procedureName, procedureVersion, procInstanceName, 
-                        Integer.valueOf(reqId), ProcedureDefinitionToInstance.ReqSolutionTypes.BUSINESS_RULE.getTagValue(), bRuleArea, bRuleName, bRuleValue});
+                        Integer.valueOf(reqId), ProcedureDefinitionToInstanceSections.ReqSolutionTypes.BUSINESS_RULE.getTagValue(), bRuleArea, bRuleName, bRuleValue});
                     removeDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION,
                         fieldNames, fieldValues);
                     if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
@@ -1068,7 +1111,7 @@ public class ClassReqProcedureActions {
                         TblsReqs.ProcedureReqSolution.WINDOW_MODE.getName(), });                        
                     
                     fieldValues=LPArray.addValueToArray1D(fieldValues,new Object[]{procedureName, procedureVersion, procInstanceName, 
-                        Integer.valueOf(reqId), ProcedureDefinitionToInstance.ReqSolutionTypes.WINDOW.getTagValue(), windowName, roleName,
+                        Integer.valueOf(reqId), ProcedureDefinitionToInstanceSections.ReqSolutionTypes.WINDOW.getTagValue(), windowName, roleName,
                         windowQuery, windowType, windowMode});
                     removeDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION,
                         fieldNames, fieldValues);
@@ -1084,7 +1127,7 @@ public class ClassReqProcedureActions {
                     }
                 }
                 break;
-            case ADD_WINDOW_ACTION_REQ_SOLUTION:
+            case ADD_WINDOW_BUTTON_REQ_SOLUTION:
                 reqId = argValues[i].toString();
                 i++;
                 String windowActionName = argValues[i].toString();
@@ -1142,7 +1185,7 @@ public class ClassReqProcedureActions {
                         TblsReqs.ProcedureReqSolution.WINDOW_ACTION.getName(), TblsReqs.ProcedureReqSolution.ROLES.getName()});                        
                     
                     fieldValues=LPArray.addValueToArray1D(fieldValues,new Object[]{procedureName, procedureVersion, procInstanceName, 
-                        Integer.valueOf(reqId), ProcedureDefinitionToInstance.ReqSolutionTypes.WINDOW_ACTION.getTagValue(), windowActionName, roleName});
+                        Integer.valueOf(reqId), ProcedureDefinitionToInstanceSections.ReqSolutionTypes.WINDOW_BUTTON.getTagValue(), windowActionName, roleName});
                     if (confirmDialog.length()>0){
                         fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{TblsReqs.ProcedureReqSolution.CONFIRM_DIALOG.getName(), TblsReqs.ProcedureReqSolution.CONFIRM_DIALOG_DETAIL.getName()});
                         fieldValues=LPArray.addValueToArray1D(fieldValues,new Object[]{confirmDialog, confirmDialogDetail});
@@ -1219,7 +1262,7 @@ public class ClassReqProcedureActions {
                         TblsReqs.ProcedureReqSolution.WINDOW_TYPE.getName(), TblsReqs.ProcedureReqSolution.WINDOW_MODE.getName(), TblsReqs.ProcedureReqSolution.SPECIAL_VIEW_JSON_MODEL.getName()});                        
                     
                     fieldValues=LPArray.addValueToArray1D(fieldValues,new Object[]{procedureName, procedureVersion, procInstanceName, 
-                        Integer.valueOf(reqId), ProcedureDefinitionToInstance.ReqSolutionTypes.SPECIAL_VIEW.getTagValue(), specialWindowName, specialWindowName, roleName,
+                        Integer.valueOf(reqId), ProcedureDefinitionToInstanceSections.ReqSolutionTypes.SPECIAL_VIEW.getTagValue(), specialWindowName, specialWindowName, roleName,
                         isModuleSpecialWindowAvailableDiagn[3].toString(), windowMode, isModuleSpecialWindowAvailableDiagn[1]});
                     removeDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION,
                         fieldNames, fieldValues);
@@ -1239,7 +1282,7 @@ public class ClassReqProcedureActions {
                                     TblsReqs.ProcedureReqSolution.WINDOW_ACTION.getName(), TblsReqs.ProcedureReqSolution.ROLES.getName()};                        
 
                                 fieldValues=new Object[]{procedureName, procedureVersion, procInstanceName, 
-                                    Integer.valueOf(reqId), ProcedureDefinitionToInstance.ReqSolutionTypes.WINDOW_ACTION.getTagValue(), windowActionName, roleName};
+                                    Integer.valueOf(reqId), ProcedureDefinitionToInstanceSections.ReqSolutionTypes.WINDOW_BUTTON.getTagValue(), windowActionName, roleName};
                                 /*if (confirmDialog.length()>0){
                                     fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{TblsReqs.ProcedureReqSolution.CONFIRM_DIALOG.getName(), TblsReqs.ProcedureReqSolution.CONFIRM_DIALOG_DETAIL.getName()});
                                     fieldValues=LPArray.addValueToArray1D(fieldValues,new Object[]{confirmDialog, confirmDialogDetail});
@@ -1461,11 +1504,152 @@ public class ClassReqProcedureActions {
                 }
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
                 break;
-            case COVERAGE_EXCLUDE_ACTION:
-                String coverageId = argValues[3].toString();
+            case NEW_SCRIPT_TESTING:
+                String purpose = argValues[3].toString();                
+                this.diagnosticObj = TestingScriptRecords.newScriptRecord(procInstanceName, purpose);
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())){
+                    this.messageDynamicData=new Object[]{this.diagnosticObj.getNewObjectId(), procInstanceName};
+                }
+                break;
+            case DELETE_SCRIPT_TESTING:
+                String scriptId = argValues[3].toString();
+                TestingScriptRecords tstScript=new TestingScriptRecords(procInstanceName, Integer.valueOf(scriptId));
+                this.diagnosticObj = tstScript.deleteScriptRecord();
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())){
+                    this.messageDynamicData=new Object[]{scriptId};
+                }
+                break;
+            case SCRIPT_SAVE_POINT:
+                scriptId = argValues[3].toString();
+                fieldNames=new String[0];
+                fieldValues=new Object[0];
+                String tester = argValues[4].toString();
+                if (argValues[4].toString().length()>0){
+                    fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTesting.ScriptSavePoint.TESTER.getName());
+                    fieldValues=LPArray.addValueToArray1D(fieldNames, argValues[4].toString());
+                }
+                if (argValues[5].toString().length()>0){
+                    fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTesting.ScriptSavePoint.PURPOSE.getName());
+                    fieldValues=LPArray.addValueToArray1D(fieldNames, argValues[5].toString());
+                }
+                if (argValues[6].toString().length()>0){
+                    fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTesting.ScriptSavePoint.REVIEWER.getName());
+                    fieldValues=LPArray.addValueToArray1D(fieldNames, argValues[6].toString());
+                }
+                if (argValues[7].toString().length()>0){
+                    fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTesting.ScriptSavePoint.CONCLUSION.getName());
+                    fieldValues=LPArray.addValueToArray1D(fieldNames, argValues[7].toString());
+                }
+                if (argValues[8].toString().length()>0){
+                    fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTesting.ScriptSavePoint.SIGNED.getName());
+                    fieldValues=LPArray.addValueToArray1D(fieldNames, Boolean.valueOf(argValues[8].toString()));
+                }
+                tstScript=new TestingScriptRecords(procInstanceName, Integer.valueOf(scriptId));
+                this.diagnosticObj = tstScript.scriptTestSavePoint(Integer.valueOf(scriptId), fieldNames, fieldValues);
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())){
+                    this.messageDynamicData=new Object[]{scriptId};
+                }
+                break;
+            case SCRIPT_ADD_STEP:
+                scriptId = argValues[3].toString();
                 String action = argValues[4].toString();
+
+                fieldName = argValues[5].toString();
+                fieldValue = argValues[6].toString();
+                fieldNames=new String[0];
+                fieldValues=new Object[0];
+                if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            
+                if (fieldValue!=null && fieldValue.length()>0) fieldValues = convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"), TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, fieldName.split("\\|"));
+                if (fieldValues!=null && fieldValues.length>0 && fieldValues[0].toString().length()>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
+                    InternalMessage errMsg=(InternalMessage)fieldValues[1];
+                    actionDiagnoses=null;                         
+                    this.diagnosticObj=new InternalMessage(LPPlatform.LAB_FALSE, errMsg.getMessageCodeObj(), errMsg.getMessageCodeVariables());
+                    this.diagnosticObjIntMsg=errMsg.getMessageCodeObj();
+                    break;
+                }                                
+                fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTesting.ScriptSteps.ACTION_NAME.getName());
+                fieldValues=LPArray.addValueToArray1D(fieldNames, action);
+                String expectedSyntaxis = argValues[7].toString();
+                if (expectedSyntaxis.length()>0){
+                    fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTesting.ScriptSteps.EXPECTED_SYNTAXIS.getName());
+                    fieldValues=LPArray.addValueToArray1D(fieldNames, expectedSyntaxis);
+                }
+                String expectedNotification = argValues[8].toString();
+                if (expectedSyntaxis.length()>0){
+                    fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTesting.ScriptSteps.EXPECTED_CODE.getName());
+                    fieldValues=LPArray.addValueToArray1D(fieldNames, expectedNotification);
+                }
+                String alternativeToken = argValues[9].toString();
+                if (expectedSyntaxis.length()>0){
+                    fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTesting.ScriptSteps.ALTERNATIVE_TOKEN.getName());
+                    fieldValues=LPArray.addValueToArray1D(fieldNames, alternativeToken);
+                }
+                tstScript=new TestingScriptRecords(procInstanceName, Integer.valueOf(scriptId));
+                this.diagnosticObj = tstScript.scriptTestAddStep(Integer.valueOf(scriptId), fieldNames, fieldValues);
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())){
+                    this.messageDynamicData=new Object[]{scriptId, scriptId};
+                }
+                break;
+            case SCRIPT_REMOVE_STEP:
+                scriptId = argValues[3].toString();
+                String stepId = argValues[4].toString();
+                tstScript=new TestingScriptRecords(procInstanceName, Integer.valueOf(scriptId));
+                this.diagnosticObj = tstScript.scriptTestRemoveStep(Integer.valueOf(scriptId), Integer.valueOf(stepId));
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())){
+                    this.messageDynamicData=new Object[]{stepId, scriptId};
+                }
+                break;
+            case NEW_COVERAGE_TESTING:
+                String scriptIdsList = argValues[3].toString();
+                purpose = argValues[4].toString();                
+                this.diagnosticObj = newCoverageTest(scriptIdsList, purpose);
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())){
+                    this.messageDynamicData=new Object[]{this.diagnosticObj.getNewObjectId(), scriptIdsList};
+                }
+                break;
+            case DELETE_COVERAGE_TESTING:
+                String coverageId = argValues[3].toString();
                 CoverageTestingAnalysis cov=new CoverageTestingAnalysis(procInstanceName, Integer.valueOf(coverageId));
+                this.diagnosticObj = cov.deleteCoverageTest();
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())){
+                    this.messageDynamicData=new Object[]{coverageId};
+                }
+                break;
+            case COVERAGE_ADD_SCRIPT:
+                coverageId = argValues[3].toString();
+                scriptId = argValues[4].toString();
+                cov=new CoverageTestingAnalysis(procInstanceName, Integer.valueOf(coverageId));
+                this.diagnosticObj = cov.coverageTestAddScript(Integer.valueOf(scriptId));
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())){
+                    this.messageDynamicData=new Object[]{scriptId, coverageId};
+                }
+                break;
+            case COVERAGE_REMOVE_SCRIPT:
+                coverageId = argValues[3].toString();
+                scriptId = argValues[4].toString();
+                cov=new CoverageTestingAnalysis(procInstanceName, Integer.valueOf(coverageId));
+                this.diagnosticObj = cov.coverageTestRemoveScript(Integer.valueOf(scriptId));
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())){
+                    this.messageDynamicData=new Object[]{scriptId, coverageId};
+                }
+                break;
+            case COVERAGE_EXCLUDE_ACTION:
+                coverageId = argValues[3].toString();
+                action = argValues[4].toString();
+                cov=new CoverageTestingAnalysis(procInstanceName, Integer.valueOf(coverageId));
                 this.diagnosticObj = cov.excludeCoverageAction(action);
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())){
+                    this.messageDynamicData=new Object[]{action, coverageId};
+                }
+                break;
+            case COVERAGE_UNEXCLUDE_ACTION:
+                coverageId = argValues[3].toString();
+                action = argValues[4].toString();
+                cov=new CoverageTestingAnalysis(procInstanceName, Integer.valueOf(coverageId));
+                this.diagnosticObj = cov.unExcludeCoverageAction(action);
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())){
+                    this.messageDynamicData=new Object[]{action, coverageId};
+                }
                 break;
         }
         this.diagnostic = actionDiagnoses;        
