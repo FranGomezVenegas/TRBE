@@ -11,7 +11,15 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.SqlWhere;
+import databases.TblsData;
+import databases.TblsDataAudit;
+import functionaljavaa.samplestructure.DataSample;
+import static functionaljavaa.samplestructure.DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
+import javax.sql.rowset.CachedRowSet;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPJson;
@@ -24,6 +32,7 @@ import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.globalvariables.GlobalVariables;
 import trazit.procedureinstance.definition.definition.TblsReqs;
+import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -280,4 +289,127 @@ public final class QueryUtilities {
         return jArr;
     }
 
+    private static String SampleStructureByQuery(String procInstanceName, Integer sampleId, String sampleFieldToRetrieve, String sampleAnalysisFieldToRetrieve, String sampleAnalysisFieldToSort,
+            String sarFieldToRetrieve, String sarFieldToSort, String sampleAuditFieldToRetrieve, String sampleAuditResultFieldToSort) {
+        String schemaData = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
+        schemaData = Rdbms.addSuffixIfItIsForTesting(procInstanceName, schemaData, TblsData.TablesData.SAMPLE.getTableName());
+        if (Boolean.FALSE.equals(schemaData.startsWith("\"", 0))){
+            schemaData="\""+schemaData+"\"";
+        }
+        String schemaDataAudit = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA_AUDIT.getName());
+        if (Boolean.FALSE.equals(schemaDataAudit.startsWith("\"", 0))){
+            schemaDataAudit="\""+schemaDataAudit+"\"";
+        }
+        schemaDataAudit = Rdbms.addSuffixIfItIsForTesting(procInstanceName, schemaDataAudit, TblsDataAudit.TablesDataAudit.SAMPLE.getTableName());
+        String[] sampleFieldToRetrieveArr = new String[0];
+        if (SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS.equalsIgnoreCase(sampleFieldToRetrieve)) {
+            sampleFieldToRetrieve = "*";
+        } else {
+            if (sampleFieldToRetrieve != null) {
+                sampleFieldToRetrieveArr = sampleFieldToRetrieve.split("\\|");
+            } else {
+                sampleFieldToRetrieveArr = new String[0];
+            }
+            sampleFieldToRetrieveArr = LPArray.addValueToArray1D(sampleFieldToRetrieveArr, new String[]{TblsData.Sample.SAMPLE_ID.getName(), TblsData.Sample.STATUS.getName()});
+            sampleFieldToRetrieve = LPArray.convertArrayToString(sampleFieldToRetrieveArr, ", ", "");
+        }
+        String[] sampleAnalysisFieldToRetrieveArr = new String[0];
+        if (SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS.equalsIgnoreCase(sampleAnalysisFieldToRetrieve)) {
+            sampleAnalysisFieldToRetrieve = "*";
+        } /*                {                
+                for (TblsData.SampleAnalysis obj: TblsData.SampleAnalysis.values()){
+                    if (Boolean.FALSE.equals("TBL".equalsIgnoreCase(obj.name())))
+                    sampleAnalysisFieldToRetrieveArr=LPArray.addValueToArray1D(sampleAnalysisFieldToRetrieveArr, obj.getName());
+                }               } */ else {
+            if (sampleAnalysisFieldToRetrieve != null) {
+                sampleAnalysisFieldToRetrieveArr = sampleAnalysisFieldToRetrieve.split("\\|");
+            } else {
+                sampleAnalysisFieldToRetrieveArr = new String[0];
+            }
+            sampleAnalysisFieldToRetrieveArr = LPArray.addValueToArray1D(sampleAnalysisFieldToRetrieveArr, new String[]{TblsData.SampleAnalysis.TEST_ID.getName(), TblsData.SampleAnalysis.STATUS.getName()});
+            sampleAnalysisFieldToRetrieve = LPArray.convertArrayToString(sampleAnalysisFieldToRetrieveArr, ", ", "");
+        }
+        if (sampleAnalysisFieldToSort == null) {
+            sampleAnalysisFieldToSort = TblsData.SampleAnalysis.TEST_ID.getName();
+        }
+        String[] sarFieldToRetrieveArr = new String[0];
+        if (SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS.equalsIgnoreCase(sarFieldToRetrieve)) {
+            sarFieldToRetrieve = "*";
+        } /*{                
+                for (TblsData.SampleAnalysisResult obj: TblsData.SampleAnalysisResult.values()){
+                    if (Boolean.FALSE.equals("TBL".equalsIgnoreCase(obj.name())))
+                    sarFieldToRetrieveArr=LPArray.addValueToArray1D(sarFieldToRetrieveArr, obj.getName());
+                }                
+            }*/ else {
+            if (sarFieldToRetrieve != null) {
+                sarFieldToRetrieveArr = sarFieldToRetrieve.split("\\|");
+            } else {
+                sarFieldToRetrieveArr = new String[0];
+            }
+            sarFieldToRetrieveArr = LPArray.addValueToArray1D(sarFieldToRetrieveArr, new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName(), TblsData.SampleAnalysisResult.STATUS.getName()});
+            sarFieldToRetrieve = LPArray.convertArrayToString(sarFieldToRetrieveArr, ", ", "");
+        }
+        if (sarFieldToSort == null) {
+            sarFieldToSort = TblsData.SampleAnalysisResult.RESULT_ID.getName();
+        }
+        String[] sampleAuditFieldToRetrieveArr = new String[0];
+        if (sampleAuditFieldToRetrieve != null && SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS.equalsIgnoreCase(sampleAuditFieldToRetrieve)) {
+            sampleAuditFieldToRetrieve = "*";
+        } /*{                
+                for (TblsDataAudit.Sample obj: TblsDataAudit.Sample.values()){
+                    if (Boolean.FALSE.equals("TBL".equalsIgnoreCase(obj.name())))
+                    sampleAuditFieldToRetrieveArr=LPArray.addValueToArray1D(sampleAuditFieldToRetrieveArr, obj.getName());
+                }                
+            }*/ else {
+            if (sampleAuditFieldToRetrieve != null) {
+                sampleAuditFieldToRetrieveArr = sampleAuditFieldToRetrieve.split("\\|");
+                sampleAuditFieldToRetrieveArr = LPArray.addValueToArray1D(sampleAuditFieldToRetrieveArr,
+                        new String[]{TblsDataAudit.Sample.AUDIT_ID.getName(), TblsDataAudit.Sample.TRANSACTION_ID.getName(),
+                            TblsDataAudit.Sample.ACTION_NAME.getName(), TblsDataAudit.Sample.PERSON.getName(), TblsDataAudit.Sample.USER_ROLE.getName()});
+                sampleAuditFieldToRetrieve = LPArray.convertArrayToString(sampleAuditFieldToRetrieveArr, ", ", "");
+            }
+        }
+        if (sampleAuditResultFieldToSort == null) {
+            sampleAuditResultFieldToSort = TblsDataAudit.Sample.AUDIT_ID.getName();
+        }
+        try {
+            String sqlSelect = " select ";
+            String sqlFrom = " from ";
+            String sqlOrderBy = " order by ";
+            String qry = "";
+            qry = qry + "select row_to_json(sQry)from "
+                    + " ( " + sqlSelect + " " + sampleFieldToRetrieve + ", "
+                    + " ( " + sqlSelect + " COALESCE(array_to_json(array_agg(row_to_json(saQry))),'[]') from  "
+                    + "( " + sqlSelect + " " + sampleAnalysisFieldToRetrieve + ", "
+                    + "( " + sqlSelect + " COALESCE(array_to_json(array_agg(row_to_json(sarQry))),'[]') from "
+                    + "( " + sqlSelect + " " + sarFieldToRetrieve + " from " + schemaData + ".sample_analysis_result_with_spec_limits sar where sar.test_id=sa.test_id "
+                    + sqlOrderBy + sarFieldToSort + "     ) sarQry    ) as sample_analysis_result "
+                    + sqlFrom + schemaData + ".sample_analysis sa where sa.sample_id=s.sample_id "
+                    + sqlOrderBy + sampleAnalysisFieldToSort + "      ) saQry    ) as sample_analysis "
+                    + "<audit>"
+                    + sqlFrom + schemaData + ".sample s where s.sample_id in (" + "?" + " ) ) sQry   ";
+            if (sampleAuditFieldToRetrieve == null) {
+                qry = qry.replace("<audit>", "");
+            } else {
+                qry = qry.replace("<audit>",
+                        ", ( " + sqlSelect + " COALESCE(array_to_json(array_agg(row_to_json(sauditQry))),'[]') from  "
+                        + "( " + sqlSelect + " " + sampleAuditFieldToRetrieve
+                        + sqlFrom + schemaDataAudit + ".sample saudit where saudit.sample_id=s.sample_id "
+                        + sqlOrderBy + sampleAuditResultFieldToSort + "      ) sauditQry    ) as sample_audit ");
+            }
+
+            CachedRowSet prepRdQuery = Rdbms.prepRdQuery(qry, new Object[]{sampleId});
+            prepRdQuery.last();
+            if (prepRdQuery.getRow() > 0) {
+                return prepRdQuery.getString(1);
+            } else {
+                ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{"sample", "", procInstanceName});
+                return null;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(DataSample.class.getName()).log(Level.SEVERE, null, ex);
+            return LPPlatform.LAB_FALSE;
+        }
+    }
+    
 }
