@@ -341,8 +341,8 @@ public class TblsInstrumentsData {
         LAST_PREV_MAINT("i", "last_prev_maint", "i.last_prev_maint", Instruments.LAST_PM, null, null, null),
         NEXT_PREV_MAINT("i", "next_prev_maint", "i.next_prev_maint", Instruments.NEXT_PM, null, null, null),
         LAST_VERIFICATION("i", "last_verification", "i.last_verification", Instruments.LAST_VERIF, null, null, null),
-        TOTAL_PARAMS("ie", "total_params", "(select count(*) from #PROC_INSTANCE_NAME-#SCHEMA_DATA.instr_event_variable_values eparam where  eparam.event_id=ie.id) as total_params", null, null, null, null),
-        PENDING_PARAMS("ie", "pending_params", "(select count(*) from #PROC_INSTANCE_NAME-#SCHEMA_DATA.instr_event_variable_values eparam where  eparam.event_id=ie.id and eparam.value is null) as pending_params", null, null, null, null),
+        TOTAL_PARAMS("ie", "total_params", "(select count(*) from #SCHEMA_DATA.instr_event_variable_values eparam where  eparam.event_id=ie.id) as total_params", null, null, null, null),
+        PENDING_PARAMS("ie", "pending_params", "(select count(*) from #SCHEMA_DATA.instr_event_variable_values eparam where  eparam.event_id=ie.id and eparam.value is null) as pending_params", null, null, null, null),
         
         ;
         private ViewNotDecommInstrumentAndEventData(String tblAliasInView, String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){

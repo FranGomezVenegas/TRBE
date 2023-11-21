@@ -96,17 +96,20 @@ public interface EnumIntViews {
             if (vwDef.getExtraFilters() != null) {
                 vwScript.append(" ").append(vwDef.getExtraFilters());
             }
-            vwScript = new StringBuilder(" SELECT ").append(getViewFldsList(vwDef, procInstanceName, tblAliases, fieldsToExclude).toString()).append(" from ").append(vwScript);
+            vwScript = new StringBuilder(" SELECT ").append(getViewFldsList(vwDef, procInstanceName, tblAliases, fieldsToExclude, isForTesting).toString()).append(" from ").append(vwScript);
         }
         vwScript = new StringBuilder(vwScript.toString().replace("#SCHEMA_CONFIG", LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), "config", isForTesting, "")));
         vwScript = new StringBuilder(vwScript.toString().replace("#SCHEMA_DATA", LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), "data", isForTesting, "")));
+        vwScript = new StringBuilder(vwScript.toString().replace("#SCHEMA_DATA_AUDIT", LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), "data-audit", isForTesting, "")));
+        vwScript = new StringBuilder(vwScript.toString().replace("#SCHEMA_PROCEDURE", LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), "procedure", isForTesting, "")));
+        vwScript = new StringBuilder(vwScript.toString().replace("#SCHEMA_PROCEDURE_AUDIT", LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), "procedure-audit", isForTesting, "")));
 
         vwScript = new StringBuilder("create view ").append(LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), vwDef.getRepositoryName(), isForTesting, vwDef.getViewName())).append(".").append(vwDef.getViewName()).append(" AS ").append(vwScript);
 
         return vwScript.toString();
     }
 
-    static StringBuilder getViewFldsList(EnumIntViews vwDef, String procInstanceName, String[] tblAliases, String fieldsToExclude) {
+    static StringBuilder getViewFldsList(EnumIntViews vwDef, String procInstanceName, String[] tblAliases, String fieldsToExclude, Boolean isForTesting) {
         StringBuilder fldsStr = new StringBuilder(0);
         String[] fieldsToExcludeArr = new String[]{};
         if (fieldsToExclude != null) {
@@ -123,7 +126,10 @@ public interface EnumIntViews {
                         }
                         String vwFldMask = curFld.getFldViewAliasName();
                         vwFldMask = vwFldMask.replace("#PROC_INSTANCE_NAME", "\"" + procInstanceName);
-                        vwFldMask = vwFldMask.replace("#SCHEMA_DATA", GlobalVariables.Schemas.DATA.getName() + "\"");
+                        vwFldMask = vwFldMask.replace("#SCHEMA_DATA", LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), "data", isForTesting, ""));
+                        vwFldMask = vwFldMask.replace("#SCHEMA_DATA_AUDIT", LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), "data-audit", isForTesting, ""));
+                        vwFldMask = vwFldMask.replace("#SCHEMA_PROCEDURE", LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), "procedure", isForTesting, ""));
+                        vwFldMask = vwFldMask.replace("#SCHEMA_PROCEDURE_AUDIT", LPPlatform.buildSchemaName(LPNulls.replaceNull(procInstanceName), "procedure-audit", isForTesting, ""));
                         fldsStr = fldsStr.append(vwFldMask).append(" ");
                     }
                 } else if (LPArray.valueInArray(tblAliases, curFld.getTblAliasInView())) {
