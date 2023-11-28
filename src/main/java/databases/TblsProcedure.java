@@ -299,7 +299,7 @@ public class TblsProcedure {
         TYPE("type", LPDatabase.string(), null, null, null, null),
         LABEL_EN("label_en", LPDatabase.string(), null, null, null, null),
         LABEL_ES("label_es", LPDatabase.string(), null, null, null, null),
-        ORDER_NUMBER("order_number", LPDatabase.integer(), null, null, null, null),
+        ORDER_NUMBER("order_number", LPDatabase.real(), null, null, null, null),
         LP_FRONTEND_PAGE_NAME("lp_frontend_page_name", LPDatabase.string(), null, null, null, null),
         LP_FRONTEND_PAGE_FILTER("lp_frontend_page_filter", LPDatabase.string(), null, null, null, null),
         //PARENT_NAME("parent_name", LPDatabase.string(), null, null, null, null),        

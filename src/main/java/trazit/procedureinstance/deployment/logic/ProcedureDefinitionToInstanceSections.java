@@ -65,7 +65,7 @@ public class ProcedureDefinitionToInstanceSections {
     }
 
     public enum ReqSolutionTypes {
-        WINDOW("Window"), WINDOW_BUTTON("Window Button"), BUSINESS_RULE("Business Rule"), SPECIAL_VIEW("Special View")
+        WINDOW("Window"), WINDOW_BUTTON("Window Button"), TABLE_ROW_BUTTON("Table Row Button"), BUSINESS_RULE("Business Rule"), SPECIAL_VIEW("Special View")
         ;
         private ReqSolutionTypes(String tgVal) {
             this.tagValue = tgVal;
@@ -278,8 +278,8 @@ public class ProcedureDefinitionToInstanceSections {
                 TblsReqs.viewProcReqSolutionViews.PARENT_CODE.getName(), TblsReqs.viewProcReqSolutionViews.CODE.getName(),
                 TblsReqs.viewProcReqSolutionViews.WINDOW_QUERY.getName(), TblsReqs.viewProcReqSolutionViews.JSON_MODEL.getName(), 
                 TblsReqs.viewProcReqSolutionViews.WINDOW_MODE.getName(),TblsReqs.viewProcReqSolutionViews.WINDOW_TYPE.getName(), 
-                TblsReqs.viewProcReqSolutionViews.WINDOW_LABEL_EN.getName(), TblsReqs.viewProcReqSolutionViews.WINDOW_LABEL_ES.getName()
-                });
+                TblsReqs.viewProcReqSolutionViews.WINDOW_LABEL_EN.getName(), TblsReqs.viewProcReqSolutionViews.WINDOW_LABEL_ES.getName(),
+                TblsReqs.viewProcReqSolutionViews.ORDER_NUMBER.getName(), TblsReqs.viewProcReqSolutionViews.SOLUTION_ID.getName()});
         
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procViewsArr[0][0].toString())){
             JSONObject curViewLog=new JSONObject();
@@ -305,18 +305,43 @@ public class ProcedureDefinitionToInstanceSections {
                         for (Object[] curAction: procActionsArr){
                             allViewActions.add(curAction[1]);
                         }
+                        jObjModel.remove("actions");
                         jObjModel.add("actions", JsonParser.parseString(allViewActions.toString()));
+                    }                
+                    Object[][] procTableRowButtonsArr = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_ACTIONS.getViewName(),
+                        new String[]{TblsReqs.viewProcReqSolutionActions.PROCEDURE_NAME.getName(), TblsReqs.viewProcReqSolutionActions.PROCEDURE_VERSION.getName(), TblsReqs.viewProcReqSolutionActions.PROC_INSTANCE_NAME.getName(), 
+                            TblsReqs.viewProcReqSolutionActions.ACTIVE.getName(), TblsReqs.viewProcReqSolutionActions.TYPE.getName(), TblsReqs.viewProcReqSolutionActions.PARENT_CODE.getName()},
+                        new Object[]{procedure, procVersion, procInstanceName, true, ProcedureDefinitionToInstanceSections.ReqSolutionTypes.TABLE_ROW_BUTTON.getTagValue(), currentParentCode},
+                        new String[]{TblsReqs.viewProcReqSolutionActions.MODULE_NAME.getName(), TblsReqs.viewProcReqSolutionActions.JSON_MODEL.getName()},
+                        new String[]{TblsReqs.viewProcReqSolutionActions.ORDER_NUMBER.getName(), TblsReqs.viewProcReqSolutionActions.SOLUTION_ID.getName()});
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procTableRowButtonsArr[0][0].toString()))){
+                        JSONArray allTableRowButtons=new JSONArray();
+                        for (Object[] curAction: procTableRowButtonsArr){
+                            allTableRowButtons.add(curAction[1]);
+                        }
+                        jObjModel.remove("row_buttons");
+                        jObjModel.add("row_buttons", JsonParser.parseString(allTableRowButtons.toString()));
                     }                
                 }catch(Exception e){
                     
                 }
+                String[] updFldN=new String[]{TblsProcedure.ProcedureViews.NAME.getName(), TblsProcedure.ProcedureViews.ROLE_NAME.getName(), 
+                    TblsProcedure.ProcedureViews.MODE.getName(), 
+                    TblsProcedure.ProcedureViews.TYPE.getName(),TblsProcedure.ProcedureViews.LP_FRONTEND_PAGE_NAME.getName(),
+                    TblsProcedure.ProcedureViews.LABEL_EN.getName(), TblsProcedure.ProcedureViews.LABEL_ES.getName()}; 
+                Object[] updFldV=new Object[]{curView[0], curView[1], curView[6], curView[7], curView[0], curView[8], curView[9]};
+                if (jObjModel!=null){
+                    updFldN=LPArray.addValueToArray1D(updFldN, TblsProcedure.ProcedureViews.JSON_MODEL.getName());
+                    updFldV=LPArray.addValueToArray1D(updFldV, jObjModel);
+                }
+                if ( (LPNulls.replaceNull(curView[10]).toString().length()==0) && (LPNulls.replaceNull(curView[11]).toString().length()>0) )
+                    curView[11]=curView[10];
+                if (curView[10]!=null&&curView[10].toString().length()>0){
+                    updFldN=LPArray.addValueToArray1D(updFldN, TblsProcedure.ProcedureViews.ORDER_NUMBER.getName());
+                    updFldV=LPArray.addValueToArray1D(updFldV, Double.valueOf(curView[10].toString()));
+                }
                 RdbmsObject updateTableRecordFieldsByFilter=Rdbms.insertRecord(TblsProcedure.TablesProcedure.PROCEDURE_VIEWS, 
-                    new String[]{TblsProcedure.ProcedureViews.NAME.getName(), TblsProcedure.ProcedureViews.ROLE_NAME.getName(), TblsProcedure.ProcedureViews.JSON_MODEL.getName(),
-                    TblsProcedure.ProcedureViews.MODE.getName(), TblsProcedure.ProcedureViews.TYPE.getName(),
-                    TblsProcedure.ProcedureViews.LABEL_EN.getName(), TblsProcedure.ProcedureViews.LABEL_ES.getName(),
-                    TblsProcedure.ProcedureViews.LP_FRONTEND_PAGE_NAME.getName()}, 
-                    new Object[]{curView[0], curView[1], jObjModel, curView[6], curView[7], curView[8], curView[9], curView[0]
-                    }, procInstanceName);
+                    updFldN, updFldV, procInstanceName);
             }
         }
         Object[][] procSpecialViewsArr = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_SPECIAL_VIEWS.getViewName(),
@@ -618,8 +643,14 @@ public class ProcedureDefinitionToInstanceSections {
             fldNames=LPArray.addValueToArray1D(fldNames, TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName());
             fldValues=LPArray.addValueToArray1D(fldValues, confirmDialogPhrase);
         }                
-        RdbmsObject insertRecordInTable = Rdbms.insertRecord(TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS, fldNames, fldValues, procInstanceName);
+        Object[] existsRecord = Rdbms.existsRecord(TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS, 
+                new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName()}, new Object[]{actionName}, procInstanceName);
         JSONObject jObj = new JSONObject();
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())){
+            jObj.put("detail", "Action already present");
+            return jObj;
+        }
+        RdbmsObject insertRecordInTable = Rdbms.insertRecord(TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS, fldNames, fldValues, procInstanceName);
         if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
             jObj.put(TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName()+"_"+ curAction[windowActionFldPosic].toString(), curAction[windowActionFldPosic].toString()+" Added");
         } else {
