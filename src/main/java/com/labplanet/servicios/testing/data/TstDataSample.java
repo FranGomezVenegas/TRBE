@@ -132,7 +132,7 @@ public class TstDataSample extends HttpServlet {
           
             for (Integer iLines=numHeaderLines;iLines<csvFileContent.length;iLines++){
                 tstAssertSummary.increaseTotalTests();
-                TestingAssert tstAssert = new TestingAssert(csvFileContent[iLines], numEvaluationArguments);
+                TestingAssert tstAssert = new TestingAssert(csvFileContent[iLines], numEvaluationArguments, false);
 
                 Integer lineNumCols = csvFileContent[0].length-1;                                
                 String procInstanceName = null;
