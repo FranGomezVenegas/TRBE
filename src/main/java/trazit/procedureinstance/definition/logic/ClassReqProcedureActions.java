@@ -89,6 +89,7 @@ public class ClassReqProcedureActions {
     }
 
     public ClassReqProcedureActions(HttpServletRequest request, HttpServletResponse response, ProcedureDefinitionAPIActionsEndpoints endPoint) {
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForProcManagement(request, response, false);
         RelatedObjects rObj = RelatedObjects.getInstanceForActions();
         String[] mandatArgs = new String[]{};
         for (LPAPIArguments curArg : endPoint.getArguments()) {
@@ -99,7 +100,6 @@ public class ClassReqProcedureActions {
         if (mandatArgs.length > 0) {
             Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, mandatArgs);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())) {
-                ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForProcManagement(request, response, false);
                 procReqInstance.killIt();
                 LPFrontEnd.servletReturnResponseError(request, response,
                         LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, DEFAULTLANGUAGE, LPPlatform.ApiErrorTraping.class.getSimpleName());
@@ -117,26 +117,27 @@ public class ClassReqProcedureActions {
         String procedureName = null;
         Integer procedureVersion = null;
         String procInstanceName = null;
+        int i=0;
+
         if (Boolean.FALSE.equals("SUGGEST_SPEC_LIMITS_TESTING".equalsIgnoreCase(endPoint.getName()))&&
             Boolean.FALSE.equals("NEW_PROCEDURE".equalsIgnoreCase(endPoint.getName()))){
             procedureName = argValues[0].toString();
             procedureVersion = (Integer) argValues[1];
             procInstanceName = argValues[2].toString();
             if (Boolean.TRUE.equals(isProcInstLocked(procedureName, procedureVersion, procInstanceName))) {
-                ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForProcManagement(request, response, false);
                 procReqInstance.killIt();
                 LPFrontEnd.servletReturnResponseError(request, response,
                         ReqProcedureDefinitionErrorTraping.INSTANCE_LOCKED_FOR_ACTIONS.getErrorCode(), new Object[]{procedureName, procedureVersion, procInstanceName}, DEFAULTLANGUAGE, LPPlatform.ApiErrorTraping.class.getSimpleName());
                 return;
-            }
+            }     
+            procReqInstance.setProcInstanceName(procInstanceName);
+            procedureName = argValues[i].toString();
+            i++;
+            procedureVersion = (Integer) argValues[i];
+            i++;
+            procInstanceName = argValues[i].toString();
+            i++;            
         }
-        int i=0;
-        procedureName = argValues[i].toString();
-        i++;
-        procedureVersion = (Integer) argValues[i];
-        i++;
-        procInstanceName = argValues[i].toString();
-        i++;            
         this.functionFound = true;
         switch (endPoint) {
             case SET_PROCEDURE_BUSINESS_RULES:
@@ -485,7 +486,7 @@ public class ClassReqProcedureActions {
                 }
                 String[] wFldN=new String[]{TblsReqs.ProcedureRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureRoles.PROCEDURE_VERSION.getName(),
                             TblsReqs.ProcedureRoles.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureRoles.ROLE_NAME.getName()};
-                Object[] wFldV=new Object[]{procedureName, procedureVersion, procInstanceName, roleName};
+                Object[] wFldV=new Object[]{procedureName, procedureVersion, procInstanceName, newroleName};
                 removeDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_ROLES,wFldN, wFldV);
 
                 String[] fldsToGet=EnumIntTableFields.getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, null);
@@ -495,13 +496,13 @@ public class ClassReqProcedureActions {
                 if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsByFilter[0][0].toString()))){
                     for (Object[] curRow: recordFieldsByFilter){
                         curRow[roleNameFldPosic]=newroleName;
-                        removeDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_ROLES,fldsToGet, curRow);
+                        removeDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION,fldsToGet, curRow);
                     }
                 }
                 if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
                     this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
-                    this.messageDynamicData = new Object[]{roleName};
+                    this.messageDynamicData = new Object[]{newroleName, roleName};
                 } else {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
                     this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
@@ -1130,6 +1131,8 @@ public class ClassReqProcedureActions {
             case ADD_WINDOW_BUTTON_REQ_SOLUTION:
                 reqId = argValues[i].toString();
                 i++;
+                String actionType = argValues[i].toString();
+                i++;
                 String windowActionName = argValues[i].toString();
                 i++;
                 String confirmDialog = argValues[i].toString();
@@ -1168,7 +1171,15 @@ public class ClassReqProcedureActions {
                     this.messageDynamicData = (Object[])isModuleWindowActionAvailableDiagn[2];
                     break;
                 }
-
+                if (Boolean.FALSE.equals((ProcedureDefinitionToInstanceSections.ReqSolutionTypes.WINDOW_BUTTON.getTagValue().equalsIgnoreCase(actionType))
+                    || (ProcedureDefinitionToInstanceSections.ReqSolutionTypes.TABLE_ROW_BUTTON.getTagValue().equalsIgnoreCase(actionType))) ){
+                        actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.MODULE_WINDOW_BUTTON_NOT_FOUND, new Object[]{actionType, ProcedureDefinitionToInstanceSections.ReqSolutionTypes.WINDOW_BUTTON.getTagValue()+", "+ProcedureDefinitionToInstanceSections.ReqSolutionTypes.TABLE_ROW_BUTTON.getTagValue()});
+                        this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.MODULE_WINDOW_BUTTON_NOT_FOUND, new Object[]{actionType, ProcedureDefinitionToInstanceSections.ReqSolutionTypes.WINDOW_BUTTON.getTagValue()+", "+ProcedureDefinitionToInstanceSections.ReqSolutionTypes.TABLE_ROW_BUTTON.getTagValue()});
+                        this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.MODULE_WINDOW_BUTTON_NOT_FOUND;
+                        this.messageDynamicData =new Object[]{actionType, ProcedureDefinitionToInstanceSections.ReqSolutionTypes.WINDOW_BUTTON.getTagValue()+", "+ProcedureDefinitionToInstanceSections.ReqSolutionTypes.TABLE_ROW_BUTTON.getTagValue()};
+                        break;
+                }
+                            
                 fieldNames=new String[0];
                 fieldValues=new Object[0];
                 if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            
@@ -1185,7 +1196,7 @@ public class ClassReqProcedureActions {
                         TblsReqs.ProcedureReqSolution.WINDOW_ACTION.getName(), TblsReqs.ProcedureReqSolution.ROLES.getName()});                        
                     
                     fieldValues=LPArray.addValueToArray1D(fieldValues,new Object[]{procedureName, procedureVersion, procInstanceName, 
-                        Integer.valueOf(reqId), ProcedureDefinitionToInstanceSections.ReqSolutionTypes.WINDOW_BUTTON.getTagValue(), windowActionName, roleName});
+                        Integer.valueOf(reqId), actionType, windowActionName, roleName});
                     if (confirmDialog.length()>0){
                         fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{TblsReqs.ProcedureReqSolution.CONFIRM_DIALOG.getName(), TblsReqs.ProcedureReqSolution.CONFIRM_DIALOG_DETAIL.getName()});
                         fieldValues=LPArray.addValueToArray1D(fieldValues,new Object[]{confirmDialog, confirmDialogDetail});
@@ -1486,6 +1497,10 @@ public class ClassReqProcedureActions {
                 }
                 break;
             case SUGGEST_SPEC_LIMITS_TESTING:
+                procInstanceName = argValues[2].toString();
+                ProcedureRequestSession reqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+                reqSession.setProcInstanceName(procInstanceName);
+                
                 String spec = argValues[3].toString();
                 Integer specVersion = null;
                 if (LPNulls.replaceNull(argValues[4]).toString().length() > 0) {
@@ -1496,7 +1511,8 @@ public class ClassReqProcedureActions {
                 Object[][] testingData=(Object[][]) testing[1];
                 
                 if (saveScript && testingData.length>0){
-                    TestingScript.newScript(LPTestingParams.TestingServletsConfig.DB_SCHEMACONFIG_SPEC_RESULTCHECK.name(), true, (String[]) testing[0], (Object[][]) testing[1]);
+                    TestingScript.newSpecScript(LPTestingParams.TestingServletsConfig.DB_SCHEMACONFIG_SPEC_RESULTCHECK.name(), true, 
+                            spec, specVersion, (String[]) testing[0], (Object[][]) testing[1]);
                 }
                 JSONArray jArr = new JSONArray();
                 for (Object[] curRow : testingData) {
