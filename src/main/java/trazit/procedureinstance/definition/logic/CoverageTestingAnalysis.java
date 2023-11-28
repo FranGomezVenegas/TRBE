@@ -113,8 +113,8 @@ public class CoverageTestingAnalysis {
 
     public static InternalMessage newCoverageTest(String purpose, String scriptIdsList){
         RdbmsObject insertRecord = Rdbms.insertRecord(TblsTesting.TablesTesting.SCRIPTS_COVERAGE, 
-                new String[]{TblsTesting.ScriptsCoverage.PURPOSE.getName(), TblsTesting.ScriptsCoverage.SCRIPT_IDS_LIST.getName()},
-                new Object[]{purpose, scriptIdsList}, null);
+                new String[]{TblsTesting.ScriptsCoverage.PURPOSE.getName(), TblsTesting.ScriptsCoverage.SCRIPT_IDS_LIST.getName(), TblsTesting.ScriptsCoverage.ACTIVE.getName()},
+                new Object[]{purpose, scriptIdsList, true}, null);
         return new InternalMessage(insertRecord.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, insertRecord.getErrorMessageCode(), insertRecord.getErrorMessageVariables());
     }
 
