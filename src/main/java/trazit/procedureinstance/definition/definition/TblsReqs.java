@@ -384,7 +384,7 @@ public class TblsReqs {
                 null, "business_rules_in_solution", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsReqs.viewBusinessRulesInSolution.values(), "viewBusinessRulesInSolution",
                 null, " and procInfo.module_name = modAct.module_name", false),
         ACTIONS_IN_SOLUTION("SELECT act.module_name, act.module_version, procinfo.procedure_name, procinfo.procedure_version, procinfo.proc_instance_name, act.entity, act.endpoint_name,\n" +
-                        " 		act.api_name,	act.pretty_name_en, act.pretty_name_es,	act.query_for_button, act.extra_actions, \n" +
+                        " 		act.api_name,	act.pretty_name_en, act.pretty_name_es,	act.query_for_button, act.extra_actions, act.arguments_array,\n" +
                         "    COALESCE(count(sol.window_action), 0::bigint) AS present,\n" +
                         "   string_agg(COALESCE(sol.code::text, sol.parent_code::text), ', ') AS requirements_list \n" +
                         "   FROM requirements.module_actions_and_queries act\n" +
@@ -400,7 +400,7 @@ public class TblsReqs {
                 null, "actions_in_solution", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsReqs.viewActionsInSolution.values(), "viewactionsInSolution",
                 null, " and procInfo.module_name = modAct.module_name", false),
         QUERIES_IN_SOLUTION("SELECT act.module_name, act.module_version, procinfo.procedure_name, procinfo.procedure_version, procinfo.proc_instance_name, act.entity, act.endpoint_name,\n" +
-                        " 		act.api_name,	act.pretty_name_en, act.pretty_name_es,		\n" +
+                        " 		act.api_name,	act.pretty_name_en, act.pretty_name_es,	act.arguments_array,	\n" +
                         "    COALESCE(count(sol.window_query), 0::bigint) AS present,\n" +
                         "    string_agg(COALESCE(sol.code::text, sol.parent_code::text), ', ') AS requirements_list \n" +
                         "   FROM requirements.module_actions_and_queries act\n" +
@@ -552,7 +552,8 @@ public class TblsReqs {
         ACTIVE("active", LPDatabase.booleanFld(true), null, null, null, null),
         JSON_MODEL("json_model", LPDatabase.json(), null, null, null, null),
         QUERY_FOR_BUTTON("query_for_button", LPDatabase.booleanFld(false), null, null, null, null),
-        EXTRA_ACTIONS("extra_actions", LPDatabase.stringNotNull(), null, null, null, null)
+        EXTRA_ACTIONS("extra_actions", LPDatabase.stringNotNull(), null, null, null, null),
+        ARGUMENTS_ARRAY("arguments_array", LPDatabase.string(), null, null, null, null)        
         ;
         private ModuleActionsAndQueries(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules) {
@@ -2100,6 +2101,7 @@ public class TblsReqs {
         EXTRA_ACTIONS("act", ModuleActionsAndQueries.EXTRA_ACTIONS.getName(), "act.extra_actions as extra_actions", ModuleActionsAndQueries.EXTRA_ACTIONS, null, null, null),
         PRESENT("sol", "present", "sol.present as present", ModuleBusinessRules.MODULE_VERSION, null, null, null),
         REQUIREMENTS_LIST("sol", "requirements_list", "sol.requirements_list as requirements_list", ModuleBusinessRules.PREREQUISITE, null, null, null),
+        ARGUMENTS_ARRAY("act", ModuleActionsAndQueries.ARGUMENTS_ARRAY.getName(), "act.arguments_array as arguments_array", ModuleActionsAndQueries.ARGUMENTS_ARRAY, null, null, null)
         ;
         private viewActionsInSolution(String tblAliasInView, String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules) {
             this.fldName = name;
@@ -2161,6 +2163,7 @@ public class TblsReqs {
         PRETTY_ES("act", ModuleActionsAndQueries.PRETTY_ES.getName(), "act.pretty_name_eS as pretty_name_eS", ModuleActionsAndQueries.PRETTY_ES, null, null, null),
         PRESENT("sol", "present", "sol.present as present", ModuleBusinessRules.MODULE_VERSION, null, null, null),
         REQUIREMENTS_LIST("sol", "requirements_list", "sol.requirements_list as requirements_list", ModuleBusinessRules.PREREQUISITE, null, null, null),
+        ARGUMENTS_ARRAY("act", ModuleActionsAndQueries.ARGUMENTS_ARRAY.getName(), "act.arguments_array as arguments_array", ModuleActionsAndQueries.ARGUMENTS_ARRAY, null, null, null)
         ;
         private viewQueriesInSolution(String tblAliasInView, String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules) {
             this.fldName = name;
