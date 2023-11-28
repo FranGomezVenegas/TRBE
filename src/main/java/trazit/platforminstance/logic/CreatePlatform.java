@@ -41,6 +41,7 @@ import static databases.DbObjects.createSchemas;
 import databases.SqlStatement;
 import databases.SqlWhere;
 import databases.TblsTrazitDocTrazit;
+import functionaljavaa.platform.doc.EndPointsToRequirements;
 import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
@@ -899,16 +900,19 @@ if (curBusRuleObj.getTagName().contains("certificationUserSOPMode")){
                 String[] apiNameArr=selectedEnum.getName().split("\\$");
                 
                 String[] fields=new String[]{TblsReqs.ModuleActionsAndQueries.MODULE_NAME.getName(), TblsReqs.ModuleActionsAndQueries.MODULE_VERSION.getName(), TblsReqs.ModuleActionsAndQueries.API_NAME.getName(),
-                    TblsReqs.ModuleActionsAndQueries.ENDPOINT_NAME.getName(), TblsReqs.ModuleActionsAndQueries.ENTITY.getName(), TblsReqs.ModuleActionsAndQueries.ACTIVE.getName()};
+                    TblsReqs.ModuleActionsAndQueries.ENDPOINT_NAME.getName(), TblsReqs.ModuleActionsAndQueries.ENTITY.getName(), TblsReqs.ModuleActionsAndQueries.ACTIVE.getName(),
+                    TblsReqs.ModuleActionsAndQueries.ARGUMENTS_ARRAY.getName()};
                 for (int j = 0; j < enumConstantObjects.size(); j++) {
                     EnumIntEndpoints curEndpoint = (EnumIntEndpoints) enumConstantObjects.get(j);
                     apiEndpointsArr.add(curEndpoint.getName());
-                    Object[] values1D=new Object[]{moduleName, moduleVersion, apiNameArr[1], curEndpoint.getName(), curEndpoint.getEntity(), true};
+                
+                    Object[] values1D=new Object[]{moduleName, moduleVersion, apiNameArr[1], curEndpoint.getName(), curEndpoint.getEntity(), true, EndPointsToRequirements.getEndPointArguments(curEndpoint.getArguments())};
                     values=LPArray.array1dTo2d(LPArray.addValueToArray1D(LPArray.array2dTo1d(values),values1D), fields.length); 
                 }                
                 for (Object[]  curRow: values){
                     fields=new String[]{TblsReqs.ModuleActionsAndQueries.MODULE_NAME.getName(), TblsReqs.ModuleActionsAndQueries.MODULE_VERSION.getName(), TblsReqs.ModuleActionsAndQueries.API_NAME.getName(),
-                        TblsReqs.ModuleActionsAndQueries.ENDPOINT_NAME.getName(), TblsReqs.ModuleActionsAndQueries.ENTITY.getName(), TblsReqs.ModuleActionsAndQueries.ACTIVE.getName()};
+                        TblsReqs.ModuleActionsAndQueries.ENDPOINT_NAME.getName(), TblsReqs.ModuleActionsAndQueries.ENTITY.getName(), 
+                        TblsReqs.ModuleActionsAndQueries.ACTIVE.getName(), TblsReqs.ModuleActionsAndQueries.ARGUMENTS_ARRAY.getName()};
                     int[] valuePosicArray2D = LPArray.valuePosicArray2D(this.modulesTrazitEndpoints, new Object[][]{{this.modulesTrazitEndpointsApiNameFldPosic, curRow[2].toString()},{this.modulesTrazitEndpointsEndpointNameFldPosic, curRow[3].toString()}});  
                     if (valuePosicArray2D.length>0){
                         Object jsonModelValue = this.modulesTrazitEndpoints[valuePosicArray2D[0]][this.modulesTrazitEndpointsJsonModelFldPosic];
