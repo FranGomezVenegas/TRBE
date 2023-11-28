@@ -7,6 +7,7 @@ package com.labplanet.servicios.doc.functionality;
 
 import databases.Rdbms;
 import databases.SqlStatement;
+import databases.SqlWhere;
 import databases.TblsTrazitDocTrazit;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
@@ -84,7 +85,7 @@ public class EndpointsDocAPIqueries extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request = LPHttp.requestPreparation(request);
         response = LPHttp.responsePreparation(response);
-        String[] endpointDeclarationAllFieldNames = EnumIntTableFields.getAllFieldNames(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION.getTableFields());
+        EnumIntTableFields[] endpointDeclarationAllFieldNames = TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION.getTableFields();
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForDocumentation(request, response);
         if (Boolean.TRUE.equals(procReqInstance.getHasErrors())) {
             procReqInstance.killIt();
@@ -129,9 +130,9 @@ public class EndpointsDocAPIqueries extends HttpServlet {
             ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
             String dbTrazitModules = prop.getString(Rdbms.DbConnectionParams.DBMODULES.getParamValue());
             Rdbms.getRdbms().startRdbms(dbTrazitModules);
-            Object[][] reqEndpointInfo = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION.getTableName(),
-                    whereFldName, whereFldValue, endpointDeclarationAllFieldNames,
-                    new String[]{TblsTrazitDocTrazit.EndpointsDeclaration.API_NAME.getName()});
+            Object[][] reqEndpointInfo = Rdbms.getRecordFieldsByFilter(null, GlobalVariables.Schemas.MODULES_TRAZIT_TRAZIT.getName(), TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION,
+                    new SqlWhere(TblsTrazitDocTrazit.TablesTrazitDocTrazit.ENDPOINTS_DECLARATION, whereFldName, whereFldValue), endpointDeclarationAllFieldNames,
+                    new String[]{TblsTrazitDocTrazit.EndpointsDeclaration.API_NAME.getName()}, false);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(reqEndpointInfo[0][0].toString())) {
                 out.println(Arrays.toString(reqEndpointInfo[0]));
                 return;
@@ -142,8 +143,8 @@ public class EndpointsDocAPIqueries extends HttpServlet {
             if (Boolean.TRUE.equals(groupedByAPI)) {
                 String curApiName = "";
                 for (Object[] currEndpoint : reqEndpointInfo) {
-                    if (Boolean.FALSE.equals(curApiName.equalsIgnoreCase(LPNulls.replaceNull(currEndpoint[LPArray.valuePosicInArray(endpointDeclarationAllFieldNames, TblsTrazitDocTrazit.EndpointsDeclaration.API_NAME.getName())]).toString()))) {
-                        curApiName = LPNulls.replaceNull(currEndpoint[LPArray.valuePosicInArray(endpointDeclarationAllFieldNames, TblsTrazitDocTrazit.EndpointsDeclaration.API_NAME.getName())]).toString();
+                    if (Boolean.FALSE.equals(curApiName.equalsIgnoreCase(LPNulls.replaceNull(currEndpoint[EnumIntTableFields.getFldPosicInArray(endpointDeclarationAllFieldNames, TblsTrazitDocTrazit.EndpointsDeclaration.API_NAME.getName())]).toString()))) {
+                        curApiName = LPNulls.replaceNull(currEndpoint[EnumIntTableFields.getFldPosicInArray(endpointDeclarationAllFieldNames, TblsTrazitDocTrazit.EndpointsDeclaration.API_NAME.getName())]).toString();
                         if (Boolean.FALSE.equals(jApiArr.isEmpty())) {
                             jApiObj.put("endpoints", jApiArr);
                             jMainArr.add(jApiObj);
@@ -153,13 +154,13 @@ public class EndpointsDocAPIqueries extends HttpServlet {
                         jApiObj.put("apiName", curApiName);
                     }
 
-                    JSONObject jObj = LPJson.convertArrayRowToJSONObject(endpointDeclarationAllFieldNames,
+                    JSONObject jObj = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(endpointDeclarationAllFieldNames),
                             currEndpoint, new String[]{TblsTrazitDocTrazit.EndpointsDeclaration.ARGUMENTS_ARRAY.getName(), TblsTrazitDocTrazit.EndpointsDeclaration.OUTPUT_OBJECT_TYPES.getName()});
                     com.google.gson.JsonArray argArrayToJson = LPJson.convertToJsonArrayStringedObject(
-                            currEndpoint[LPArray.valuePosicInArray(endpointDeclarationAllFieldNames, TblsTrazitDocTrazit.EndpointsDeclaration.ARGUMENTS_ARRAY.getName())].toString());
+                            currEndpoint[EnumIntTableFields.getFldPosicInArray(endpointDeclarationAllFieldNames, TblsTrazitDocTrazit.EndpointsDeclaration.ARGUMENTS_ARRAY.getName())].toString());
                     jObj.put(TblsTrazitDocTrazit.EndpointsDeclaration.ARGUMENTS_ARRAY.getName(), argArrayToJson);
                     com.google.gson.JsonArray argOutputToJson = LPJson.convertToJsonArrayStringedObject(
-                            currEndpoint[LPArray.valuePosicInArray(endpointDeclarationAllFieldNames, TblsTrazitDocTrazit.EndpointsDeclaration.OUTPUT_OBJECT_TYPES.getName())].toString());
+                            currEndpoint[EnumIntTableFields.getFldPosicInArray(endpointDeclarationAllFieldNames, TblsTrazitDocTrazit.EndpointsDeclaration.OUTPUT_OBJECT_TYPES.getName())].toString());
                     jObj.put(TblsTrazitDocTrazit.EndpointsDeclaration.OUTPUT_OBJECT_TYPES.getName(), argOutputToJson);
                     jApiArr.add(jObj);
                 }
@@ -170,13 +171,13 @@ public class EndpointsDocAPIqueries extends HttpServlet {
 
             } else {
                 for (Object[] currEndpoint : reqEndpointInfo) {
-                    JSONObject jObj = LPJson.convertArrayRowToJSONObject(endpointDeclarationAllFieldNames,
+                    JSONObject jObj = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(endpointDeclarationAllFieldNames),
                             currEndpoint, new String[]{TblsTrazitDocTrazit.EndpointsDeclaration.ARGUMENTS_ARRAY.getName(), TblsTrazitDocTrazit.EndpointsDeclaration.OUTPUT_OBJECT_TYPES.getName()});
                     com.google.gson.JsonArray argArrayToJson = LPJson.convertToJsonArrayStringedObject(
-                            currEndpoint[LPArray.valuePosicInArray(endpointDeclarationAllFieldNames, TblsTrazitDocTrazit.EndpointsDeclaration.ARGUMENTS_ARRAY.getName())].toString());
+                            currEndpoint[EnumIntTableFields.getFldPosicInArray(endpointDeclarationAllFieldNames, TblsTrazitDocTrazit.EndpointsDeclaration.ARGUMENTS_ARRAY.getName())].toString());
                     jObj.put(TblsTrazitDocTrazit.EndpointsDeclaration.ARGUMENTS_ARRAY.getName(), argArrayToJson);
                     com.google.gson.JsonArray argOutputToJson = LPJson.convertToJsonArrayStringedObject(
-                            currEndpoint[LPArray.valuePosicInArray(endpointDeclarationAllFieldNames, TblsTrazitDocTrazit.EndpointsDeclaration.OUTPUT_OBJECT_TYPES.getName())].toString());
+                            currEndpoint[EnumIntTableFields.getFldPosicInArray(endpointDeclarationAllFieldNames, TblsTrazitDocTrazit.EndpointsDeclaration.OUTPUT_OBJECT_TYPES.getName())].toString());
                     jObj.put(TblsTrazitDocTrazit.EndpointsDeclaration.OUTPUT_OBJECT_TYPES.getName(), argOutputToJson);
                     jMainArr.add(jObj);
                 }

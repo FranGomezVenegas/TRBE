@@ -100,6 +100,10 @@ public class ProcedureRequestSession {
             if (paramIsTesting != null && Boolean.valueOf(paramIsTesting)) {
                 this.isForTesting = true;
             }
+            // By now anything that is for Platform has no isForTesting mode.
+            if (isPlatform||isForDocumentation||isForProcManagement){
+                this.isForTesting=false;
+            }
             if (Boolean.TRUE.equals(this.isForTesting)) {
                 this.testingOutputFormat = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_TESTING_OUTPUT_FORMAT);
                 if (LPNulls.replaceNull(this.testingOutputFormat).length() == 0) {
