@@ -92,22 +92,39 @@ public class LPTestingOutFormat {
         StringBuilder htmlStyleHdr = new StringBuilder(0);
         Map<String, Object> headerTags = new HashMap<>();
         Integer actionNmePosic = numEvalArgs + 1;
-        String[] fieldsName = new String[]{TblsTesting.ScriptSteps.EXPECTED_SYNTAXIS.getName(), TblsTesting.ScriptSteps.EXPECTED_CODE.getName(), TblsTesting.ScriptSteps.ESIGN_TO_CHECK.getName(),
-            TblsTesting.ScriptSteps.CONFIRMUSER_USER_TO_CHECK.getName(), TblsTesting.ScriptSteps.CONFIRMUSER_PW_TO_CHECK.getName(),
-            TblsTesting.ScriptSteps.ACTION_NAME.getName(),
-            TblsTesting.ScriptSteps.ARGUMENT_01.getName(), TblsTesting.ScriptSteps.ARGUMENT_02.getName(),
-            TblsTesting.ScriptSteps.ARGUMENT_03.getName(), TblsTesting.ScriptSteps.ARGUMENT_04.getName(),
-            TblsTesting.ScriptSteps.ARGUMENT_05.getName(), TblsTesting.ScriptSteps.ARGUMENT_06.getName(),
-            TblsTesting.ScriptSteps.ARGUMENT_07.getName(), TblsTesting.ScriptSteps.ARGUMENT_08.getName(),
-            TblsTesting.ScriptSteps.ARGUMENT_09.getName(), TblsTesting.ScriptSteps.ARGUMENT_10.getName(),
-            TblsTesting.ScriptSteps.ARGUMENT_11.getName(), TblsTesting.ScriptSteps.ARGUMENT_12.getName(),
-            TblsTesting.ScriptSteps.ARGUMENT_13.getName(), TblsTesting.ScriptSteps.ARGUMENT_14.getName(),
-            TblsTesting.ScriptSteps.ARGUMENT_15.getName(),
-            TblsTesting.ScriptSteps.STEP_ID.getName(),
-            TblsTesting.ScriptSteps.AUDIT_REASON.getName(),
-            TblsTesting.ScriptSteps.STOP_WHEN_SYNTAXIS_UNMATCH.getName(), TblsTesting.ScriptSteps.STOP_WHEN_SYNTAXIS_FALSE.getName(),
-            TblsTesting.ScriptSteps.ALTERNATIVE_TOKEN.getName()
-        };
+        String[] fieldsName=null;
+        String tableName;
+        if (LPTestingParams.TestingServletsConfig.DB_SCHEMACONFIG_SPEC_RESULTCHECK.toString().equalsIgnoreCase(testerName)){
+            fieldsName = new String[]{TblsTesting.SpecScriptSteps.EXPECTED_SYNTAXIS.getName(), TblsTesting.SpecScriptSteps.EXPECTED_CODE.getName(), TblsTesting.SpecScriptSteps.ESIGN_TO_CHECK.getName(),
+                TblsTesting.SpecScriptSteps.CONFIRMUSER_USER_TO_CHECK.getName(), TblsTesting.SpecScriptSteps.CONFIRMUSER_PW_TO_CHECK.getName(),
+                TblsTesting.SpecScriptSteps.VARIATION_NAME.getName(), TblsTesting.SpecScriptSteps.ANALYSIS.getName(),
+                TblsTesting.SpecScriptSteps.METHOD_NAME.getName(), TblsTesting.SpecScriptSteps.METHOD_VERSION.getName(),
+                TblsTesting.SpecScriptSteps.PARAMETER.getName(), TblsTesting.SpecScriptSteps.VALUE.getName(), TblsTesting.SpecScriptSteps.UOM.getName(),
+                TblsTesting.SpecScriptSteps.STEP_ID.getName(),
+                TblsTesting.SpecScriptSteps.AUDIT_REASON.getName(),
+                TblsTesting.SpecScriptSteps.STOP_WHEN_SYNTAXIS_UNMATCH.getName(), TblsTesting.SpecScriptSteps.STOP_WHEN_SYNTAXIS_FALSE.getName(),
+                TblsTesting.SpecScriptSteps.ALTERNATIVE_TOKEN.getName()};            
+            tableName=TblsTesting.TablesTesting.SPEC_SCRIPT_STEPS.getTableName();
+            actionNmePosic = 5;
+        }else{
+            fieldsName = new String[]{TblsTesting.ScriptSteps.EXPECTED_SYNTAXIS.getName(), TblsTesting.ScriptSteps.EXPECTED_CODE.getName(), TblsTesting.ScriptSteps.ESIGN_TO_CHECK.getName(),
+                TblsTesting.ScriptSteps.CONFIRMUSER_USER_TO_CHECK.getName(), TblsTesting.ScriptSteps.CONFIRMUSER_PW_TO_CHECK.getName(),
+                TblsTesting.ScriptSteps.ACTION_NAME.getName(),
+                TblsTesting.ScriptSteps.ARGUMENT_01.getName(), TblsTesting.ScriptSteps.ARGUMENT_02.getName(),
+                TblsTesting.ScriptSteps.ARGUMENT_03.getName(), TblsTesting.ScriptSteps.ARGUMENT_04.getName(),
+                TblsTesting.ScriptSteps.ARGUMENT_05.getName(), TblsTesting.ScriptSteps.ARGUMENT_06.getName(),
+                TblsTesting.ScriptSteps.ARGUMENT_07.getName(), TblsTesting.ScriptSteps.ARGUMENT_08.getName(),
+                TblsTesting.ScriptSteps.ARGUMENT_09.getName(), TblsTesting.ScriptSteps.ARGUMENT_10.getName(),
+                TblsTesting.ScriptSteps.ARGUMENT_11.getName(), TblsTesting.ScriptSteps.ARGUMENT_12.getName(),
+                TblsTesting.ScriptSteps.ARGUMENT_13.getName(), TblsTesting.ScriptSteps.ARGUMENT_14.getName(),
+                TblsTesting.ScriptSteps.ARGUMENT_15.getName(),
+                TblsTesting.ScriptSteps.STEP_ID.getName(),
+                TblsTesting.ScriptSteps.AUDIT_REASON.getName(),
+                TblsTesting.ScriptSteps.STOP_WHEN_SYNTAXIS_UNMATCH.getName(), TblsTesting.ScriptSteps.STOP_WHEN_SYNTAXIS_FALSE.getName(),
+                TblsTesting.ScriptSteps.ALTERNATIVE_TOKEN.getName()};
+            tableName=TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName();
+            actionNmePosic = 5;
+        }
         Integer scriptId = null;
         String procInstanceName = null;
         if (testingSource != null && testingSource == "DB") {
@@ -123,14 +140,14 @@ public class LPTestingOutFormat {
                 repositoryName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName());
             }
 
-            csvFileContent = Rdbms.getRecordFieldsByFilter(procInstanceName, repositoryName, TblsTesting.TablesTesting.SCRIPT_STEPS.getTableName(),
+            csvFileContent = Rdbms.getRecordFieldsByFilter(procInstanceName, repositoryName, tableName,
                     new String[]{TblsTesting.ScriptSteps.SCRIPT_ID.getName(), TblsTesting.ScriptSteps.ACTIVE.getName()}, new Object[]{scriptId, true},
                     fieldsName,
                     new String[]{TblsTesting.ScriptSteps.STEP_ID.getName()});
             headerTags.put(FileHeaderTags.NUM_HEADER_LINES.getTagValue().toString(), 0);
             headerTags.put(FileHeaderTags.NUM_TABLES.getTagValue().toString(), "-");
             headerTags.put(FileHeaderTags.NUM_EVALUATION_ARGUMENTS.getTagValue().toString(), numEvalArgs);
-            actionNmePosic = 5;
+            
         } else {
             csvPathName = (String) request.getAttribute(LPTestingParams.UPLOAD_FILE_PARAM_FILE_PATH);
             csvFileName = (String) request.getAttribute(LPTestingParams.UPLOAD_FILE_PARAM_FILE_NAME);
@@ -205,7 +222,7 @@ public class LPTestingOutFormat {
             SqlWhere sqlWhere = new SqlWhere();
             sqlWhere.addConstraint(TblsTesting.ScriptSteps.SCRIPT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{scriptId}, "");
             sqlWhere.addConstraint(TblsTesting.ScriptSteps.STEP_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{stepId}, "");
-            Rdbms.updateRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPT_STEPS,
+            Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPT_STEPS,
                     EnumIntTableFields.getTableFieldsFromString(TblsTesting.TablesTesting.SCRIPT_STEPS, updFldNames), updFldValues, sqlWhere, null);
         }
         return fileContentBuilder;
