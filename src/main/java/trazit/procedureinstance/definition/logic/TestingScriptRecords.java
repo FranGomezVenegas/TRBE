@@ -77,9 +77,9 @@ public class TestingScriptRecords {
         return new InternalMessage(insertRecord.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, insertRecord.getErrorMessageCode(), insertRecord.getErrorMessageVariables());
     }
     public InternalMessage scriptTestRemoveStep(Integer scriptId, Integer stepId){
-        RdbmsObject insertRecord = Rdbms.insertRecord(TblsTesting.TablesTesting.SCRIPT_STEPS, 
-                new String[]{TblsTesting.ScriptSteps.SCRIPT_ID.getName(), TblsTesting.ScriptSteps.STEP_ID.getName()},
-                new Object[]{scriptId, stepId},  null);
+        RdbmsObject insertRecord = Rdbms.removeRecordInTable(TblsTesting.TablesTesting.SCRIPT_STEPS, 
+                new SqlWhere(TblsTesting.TablesTesting.SCRIPT_STEPS, new String[]{TblsTesting.ScriptSteps.SCRIPT_ID.getName(), TblsTesting.ScriptSteps.STEP_ID.getName()},
+                new Object[]{scriptId, stepId}),  null);
         return new InternalMessage(insertRecord.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, insertRecord.getErrorMessageCode(), insertRecord.getErrorMessageVariables());
     }
     public InternalMessage scriptTestSavePoint(Integer scriptId, String[] fldNames, Object[] fldValues){

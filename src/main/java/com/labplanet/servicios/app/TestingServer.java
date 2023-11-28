@@ -102,6 +102,7 @@ import trazit.thirdparties.sap.ExcelExporter;
 import trazit.thirdparties.sap.Mosquitto;
 import trazit.thirdparties.sap.PDFDataExtractor;
 import java.util.Set;
+import trazit.platforminstance.logic.CreatePlatform;
 import static trazit.procedureinstance.definition.logic.ReqProcDefTestingCoverageSummary.procInstanceTestingInfo;
 /**
  *
@@ -132,6 +133,24 @@ public class TestingServer extends HttpServlet {
 
     String dbName="demo_v0_9_2";
     Rdbms.stablishDBConection(dbName);
+                Rdbms.stablishDBConection(dbName);                
+                CreatePlatform nwPlatf= new CreatePlatform(dbName);
+
+    //createModuleActionsAndQueries(moduleName, Integer , jFileContentObjModel, classesImplementingEndPoints);    
+if (1==1)return;    
+              //out.println(Mosquitto.sendMosquitto());
+              out.println(Mosquitto.getFromMosquitto());
+
+            procInstanceName="instruments";
+            out.println("************ ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VWtesting. Begin");
+            out.println(EnumIntViews.getViewScriptCreation(ViewsInstrumentsData.NOT_DECOM_INSTR_EVENT_DATA_VW, procInstanceName, false, false, true, null));
+            out.println("************ ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VW testing. End");
+            out.println("************ ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VW NO testing. Begin");
+            out.println(EnumIntViews.getViewScriptCreation(ViewsInstrumentsData.NOT_DECOM_INSTR_EVENT_DATA_VW, procInstanceName, false, false, false, null));
+            out.println("************ ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VW NO testing. End");
+    
+if (1==1)return;            
+    
     procInstanceTestingInfo( procInstanceName);
 if (1==1)return;            
 

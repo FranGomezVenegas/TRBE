@@ -131,7 +131,7 @@ public class TestingResultCheckSpecQuantitative extends HttpServlet {
             for (Integer iLines=numHeaderLines;iLines<testingContent.length;iLines++){
                 tstAssertSummary.increaseTotalTests();
                 LocalDateTime timeStartedStep=LPDate.getCurrentTimeStamp();
-                TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);
+                TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments, false);
                 
                 Integer lineNumCols = testingContent[0].length-1;
                 BigDecimal result = null;

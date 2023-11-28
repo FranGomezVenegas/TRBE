@@ -79,7 +79,7 @@ public class TestingConfigSpecQualitativeRuleFormat extends HttpServlet {
                 LocalDateTime timeStartedStep = LPDate.getCurrentTimeStamp();
                 tstAssertSummary.increaseTotalTests();
 
-                TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);
+                TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments, false);
 
                 if (testingContent[iLines][0] == null) {
                     tstAssertSummary.increasetotalLabPlanetBooleanUndefined();

@@ -6,6 +6,7 @@
 package functionaljavaa.testingscripts;
 
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPPlatform;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_CODE_POSIC;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_EVALUATION_POSIC;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_MESSAGE_POSIC;
@@ -16,9 +17,10 @@ import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_MESSAGE_POSIC;
  */
 public class TestingAssert {
     
+    private Boolean evalSyntaxisB=null;
     private String evalSyntaxis="";
-    private String evalCode="";    
     private String evalSyntaxisDiagnostic="";  
+    private String evalCode="";    
     private String evalCodeDiagnostic="";  
     
     public enum EvalCodes{MATCH, UNMATCH, UNDEFINED, WITH_NO_DIAGNOSTIC}
@@ -27,13 +29,19 @@ public class TestingAssert {
      * @param line
      * @param numArgs
      */
-    public TestingAssert(Object[] line, Integer numArgs){
+    public TestingAssert(Object[] line, Integer numArgs, Boolean isBoolean){
         switch (numArgs.toString()){                    
             case "1":
-                this.evalSyntaxis=(String) line[0];
+                if (isBoolean!=null&&Boolean.TRUE.equals(isBoolean))
+                    this.evalSyntaxisB=Boolean.valueOf(line[0].toString());
+                else
+                    this.evalSyntaxis=line[0].toString();
                 break;
             case "2":
-                this.evalSyntaxis=(String) line[0];
+                if (isBoolean!=null&&Boolean.TRUE.equals(isBoolean))
+                    this.evalSyntaxisB=Boolean.valueOf(line[0].toString());
+                else
+                    this.evalSyntaxis=line[0].toString();
                 this.evalCode=(String) line[1];
                 break;
             default:                
@@ -55,26 +63,42 @@ public class TestingAssert {
             this.evalCodeDiagnostic=EvalCodes.WITH_NO_DIAGNOSTIC.toString();
         }else{
             if (numEvaluationArguments>=1){
-                if ( (this.getEvalSyntaxis()==null) || (this.getEvalSyntaxis().length()==0) ||("".equals(this.getEvalSyntaxis())) ){
+                if ( ((this.getEvalSyntaxis()==null) || (this.getEvalSyntaxis().length()==0) ||("".equals(this.getEvalSyntaxis())))
+                    &&   (this.getEvalSyntaxisB()==null) ){
                     tstAssertSummary.increasetotalLabPlanetBooleanUndefined();
                     sintaxisIcon=LPTestingOutFormat.TST_BOOLEANUNDEFINED;
                     this.evalSyntaxisDiagnostic=EvalCodes.UNDEFINED.toString();
                 }else{
-                    if (this.getEvalSyntaxis().equalsIgnoreCase(diagnoses[0].toString())){
-                        tstAssertSummary.increasetotalLabPlanetBooleanMatch(); 
-                        sintaxisIcon=LPTestingOutFormat.TST_BOOLEANMATCH;
-                        this.evalSyntaxisDiagnostic=EvalCodes.MATCH.toString();
+                    if ((this.getEvalSyntaxisB()==null)){
+                        if (this.getEvalSyntaxis().equalsIgnoreCase(diagnoses[0].toString())){
+                            tstAssertSummary.increasetotalLabPlanetBooleanMatch(); 
+                            sintaxisIcon=LPTestingOutFormat.TST_BOOLEANMATCH;
+                            this.evalSyntaxisDiagnostic=EvalCodes.MATCH.toString();
+                        }else{
+                            tstAssertSummary.increasetotalLabPlanetBooleanUnMatch(); 
+                            sintaxisIcon=LPTestingOutFormat.TST_BOOLEANUNMATCH;
+                            this.evalSyntaxisDiagnostic=EvalCodes.UNMATCH.toString();
+                        }
                     }else{
-                        tstAssertSummary.increasetotalLabPlanetBooleanUnMatch(); 
-                        sintaxisIcon=LPTestingOutFormat.TST_BOOLEANUNMATCH;
-                        this.evalSyntaxisDiagnostic=EvalCodes.UNMATCH.toString();
+                        Boolean diagB=diagnoses[0].toString()==LPPlatform.LAB_TRUE?true:false;
+                        diagnoses[TRAP_MESSAGE_EVALUATION_POSIC]=diagB;
+                        if (this.getEvalSyntaxisB().equals(diagB)){
+                            tstAssertSummary.increasetotalLabPlanetBooleanMatch(); 
+                            sintaxisIcon=LPTestingOutFormat.TST_BOOLEANMATCH;
+                            this.evalSyntaxisDiagnostic=EvalCodes.MATCH.toString();
+                        }else{
+                            tstAssertSummary.increasetotalLabPlanetBooleanUnMatch(); 
+                            sintaxisIcon=LPTestingOutFormat.TST_BOOLEANUNMATCH;
+                            this.evalSyntaxisDiagnostic=EvalCodes.UNMATCH.toString();
+                        }                        
                     }
                 }
             }else{
                 tstAssertSummary.increasetotalLabPlanetBooleanUndefined();sintaxisIcon=LPTestingOutFormat.TST_BOOLEANUNDEFINED;            
             }
             if (numEvaluationArguments>=2){
-                if ( (this.getEvalCode()==null) || (this.getEvalCode().length()==0) ||("".equals(this.getEvalCode())) ){
+                if ( ((this.getEvalSyntaxis()==null) || (this.getEvalSyntaxis().length()==0) ||("".equals(this.getEvalSyntaxis())))
+                ||   (this.getEvalSyntaxisB()==null) ){
                     tstAssertSummary.increasetotalLabPlanetErrorCodeUndefined();
                     codeIcon=LPTestingOutFormat.TST_ERRORCODEUNDEFINED;
                     this.evalCodeDiagnostic=EvalCodes.UNDEFINED.toString();
@@ -98,9 +122,9 @@ public class TestingAssert {
                 codeIcon=LPTestingOutFormat.TST_ERRORCODEUNDEFINED;            
             }
         }
-        Object[] diagnostic=new Object[] {sintaxisIcon + " ("+this.getEvalSyntaxis()+") "};
+        Object[] diagnostic=new Object[] {sintaxisIcon + " ("+this.getEvalSyntaxisB()!=null?this.getEvalSyntaxisB():this.getEvalSyntaxis()+") "};
         String message="";
-        if (diagnoses.length>TRAP_MESSAGE_EVALUATION_POSIC) message=message+"Syntaxis:"+diagnoses[TRAP_MESSAGE_EVALUATION_POSIC]+". ";
+        if (diagnoses.length>TRAP_MESSAGE_EVALUATION_POSIC) message=message+"Syntaxis:"+diagnoses[TRAP_MESSAGE_EVALUATION_POSIC].toString()+". ";
         if (numEvaluationArguments>=2){
             if (diagnoses.length>TRAP_MESSAGE_CODE_POSIC) message=message+"Code:"+diagnoses[TRAP_MESSAGE_CODE_POSIC]+". ";
             diagnostic=LPArray.addValueToArray1D(diagnostic, codeIcon + "<h8>("+this.getEvalCode()+")</h8> ");
@@ -115,6 +139,9 @@ public class TestingAssert {
      */
     public String getEvalSyntaxis() {
         return evalSyntaxis;
+    }
+    public Boolean getEvalSyntaxisB() {
+        return evalSyntaxisB;
     }
 
     /**

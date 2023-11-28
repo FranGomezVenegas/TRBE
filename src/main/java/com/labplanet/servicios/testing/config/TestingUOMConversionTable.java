@@ -71,7 +71,7 @@ public class TestingUOMConversionTable extends HttpServlet {
             for (Integer iLines=numHeaderLines;iLines<csvFileContent.length;iLines++){
                 
                 tstAssertSummary.increaseTotalTests();
-                TestingAssert tstAssert = new TestingAssert(csvFileContent[iLines], numEvaluationArguments);
+                TestingAssert tstAssert = new TestingAssert(csvFileContent[iLines], numEvaluationArguments, false);
 
                 String procInstanceName = null;
                 String familyName = null;

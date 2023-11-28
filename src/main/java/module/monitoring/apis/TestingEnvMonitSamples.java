@@ -105,7 +105,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
                 LPTestingParams.handleAlternativeToken(tstOut, iLines);
                 
                 tstAssertSummary.increaseTotalTests();                    
-                TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);                
+                TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments, false);                
 
                 Object actionName = LPNulls.replaceNull(testingContent[iLines][5]).toString();
                 request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, actionName);
