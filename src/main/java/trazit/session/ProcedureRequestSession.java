@@ -221,7 +221,7 @@ public class ProcedureRequestSession {
                 }
                 this.procedureInstance = procInstanceName;
             }
-            if (Boolean.FALSE.equals(this.isForDocumentation)&&(procInstanceName==null||procInstanceName.length()==0||"undefined".equalsIgnoreCase(procInstanceName))){
+            if (Boolean.FALSE.equals(this.isPlatform)&&Boolean.FALSE.equals(this.isForDocumentation)&&(procInstanceName==null||procInstanceName.length()==0||"undefined".equalsIgnoreCase(procInstanceName))){
                 if (Boolean.FALSE.equals((this.isForProcManagement&&"NEW_PROCEDURE".equalsIgnoreCase(this.actionName)))){
                     this.hasErrors = true;
                     this.errorMessage = "procInstanceName argument not found and is mandatory";
