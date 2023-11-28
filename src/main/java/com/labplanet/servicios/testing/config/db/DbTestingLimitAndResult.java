@@ -9,6 +9,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import databases.Rdbms;
 import databases.TblsCnfg;
+import databases.TblsTesting;
 import functionaljavaa.inventory.InventoryGlobalVariables.DataInvRetErrorTrapping;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.materialspec.ConfigSpecRule.qualitativeRulesErrors;
@@ -51,16 +52,13 @@ public class DbTestingLimitAndResult extends HttpServlet {
 
     public enum TestingLimitAndResult implements EnumIntEndpoints {
         DB_CONFIG_SPEC_TESTING_LIMIT_AND_RESULT("DB_CONFIG_SPEC_TESTING_LIMIT_AND_RESULT", "productionLot_newLotCreated_success",
-                new LPAPIArguments[]{new LPAPIArguments("schemaName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                    new LPAPIArguments("specCode", LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
-                    new LPAPIArguments("specCodeVersion", LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
-                    new LPAPIArguments("variation", LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
+                new LPAPIArguments[]{new LPAPIArguments("variation", LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
                     new LPAPIArguments("analysis", LPAPIArguments.ArgumentType.STRING.toString(), true, 10),
                     new LPAPIArguments("methodName", LPAPIArguments.ArgumentType.STRING.toString(), true, 11),
                     new LPAPIArguments("methodVersion", LPAPIArguments.ArgumentType.STRING.toString(), true, 12),
                     new LPAPIArguments("parameterName", LPAPIArguments.ArgumentType.STRING.toString(), true, 13),
                     new LPAPIArguments("resultValue", LPAPIArguments.ArgumentType.STRING.toString(), true, 14),
-                    new LPAPIArguments("resultUomName", LPAPIArguments.ArgumentType.STRING.toString(), false, 15),}, EndPointsToRequirements.endpointWithNoOutputObjects,
+                    new LPAPIArguments("resultUomName", LPAPIArguments.ArgumentType.STRING.toString(), false, 15)}, EndPointsToRequirements.endpointWithNoOutputObjects,
                  null, null);
 
         private TestingLimitAndResult(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
@@ -135,6 +133,16 @@ public class DbTestingLimitAndResult extends HttpServlet {
             LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);
             return;
         }
+        Integer scriptId = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_ID).toString()));
+        String procInstanceName = LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
+        String repositoryName = LPPlatform.buildSchemaName(GlobalVariables.Schemas.APP_TESTING.getName(), "");
+        if (procInstanceName != null && procInstanceName.length() > 0) {
+            repositoryName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName());
+        }
+
+        Object[][] scriptInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, repositoryName, TblsTesting.TablesTesting.SPEC_SCRIPT.getTableName(),
+                new String[]{TblsTesting.SpecScript.SCRIPT_ID.getName()}, new Object[]{scriptId},
+                new String[]{TblsTesting.SpecScript.SPEC_CODE.getName(), TblsTesting.SpecScript.SPEC_VERSION.getName()},new String[]{});
 
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
 
@@ -161,19 +169,15 @@ public class DbTestingLimitAndResult extends HttpServlet {
             for (Integer iLines = numHeaderLines; iLines < testingContent.length; iLines++) {
                 LocalDateTime timeStartedStep = LPDate.getCurrentTimeStamp();
                 currentLine = iLines;
-                out.println(iLines);
-                if (currentLine == 23) {
-                    out.println("parate aqui");
-                }
                 tstAssertSummary.increaseTotalTests();
-                TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);
+                TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments, true);
 
                 Integer lineNumCols = testingContent[0].length - 1;
                 String resultValue = null;
 
                 String schemaName = "";
-                String specCode = "";
-                Integer specCodeVersion = null;
+                String specCode = scriptInfo[0][0].toString();
+                Integer specCodeVersion = Integer.valueOf(scriptInfo[0][1].toString());
                 String variation = "";
                 String analysis = "";
                 String methodName = "";
@@ -185,46 +189,35 @@ public class DbTestingLimitAndResult extends HttpServlet {
                 String specCodeVersionStr = null;
                 String methodVersionStr = null;
 
+                argIndex++;
+                Integer dateStartPosic=tstOut.getActionNamePosic()-1;
                 if (lineNumCols >= numEvaluationArguments + argIndex) {
-                    schemaName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()]);
+                    variation = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][dateStartPosic + 1]);
                 }
                 argIndex++;
                 if (lineNumCols >= numEvaluationArguments + argIndex) {
-                    specCode = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic() + argIndex]);
+                    analysis = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][dateStartPosic + 2]);
                 }
                 argIndex++;
                 if (lineNumCols >= numEvaluationArguments + argIndex) {
-                    specCodeVersion = LPTestingOutFormat.csvExtractFieldValueInteger(testingContent[iLines][tstOut.getActionNamePosic() + 2]);
-                    specCodeVersionStr = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic() + 2]);
+                    methodName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][dateStartPosic + 3]);
                 }
                 argIndex++;
                 if (lineNumCols >= numEvaluationArguments + argIndex) {
-                    variation = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic() + 3]);
+                    methodVersion = LPTestingOutFormat.csvExtractFieldValueInteger(testingContent[iLines][dateStartPosic + 4]);
+                    methodVersionStr = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][dateStartPosic + 4]);
                 }
                 argIndex++;
                 if (lineNumCols >= numEvaluationArguments + argIndex) {
-                    analysis = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic() + 4]);
+                    parameterName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][dateStartPosic + 5]);
                 }
                 argIndex++;
                 if (lineNumCols >= numEvaluationArguments + argIndex) {
-                    methodName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic() + 5]);
+                    resultValue = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][dateStartPosic + 6]);
                 }
                 argIndex++;
                 if (lineNumCols >= numEvaluationArguments + argIndex) {
-                    methodVersion = LPTestingOutFormat.csvExtractFieldValueInteger(testingContent[iLines][tstOut.getActionNamePosic() + 6]);
-                    methodVersionStr = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic() + 6]);
-                }
-                argIndex++;
-                if (lineNumCols >= numEvaluationArguments + argIndex) {
-                    parameterName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic() + 7]);
-                }
-                argIndex++;
-                if (lineNumCols >= numEvaluationArguments + argIndex) {
-                    resultValue = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic() + 8]);
-                }
-                argIndex++;
-                if (lineNumCols >= numEvaluationArguments + argIndex) {
-                    resultUomName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic() + 9]);
+                    resultUomName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][dateStartPosic + 7]);
                 }
                 argIndex++;
 
