@@ -7,7 +7,6 @@ package functionaljavaa.testingscripts;
 
 import databases.Rdbms;
 import databases.RdbmsObject;
-import databases.SqlStatement;
 import databases.SqlWhere;
 import databases.TblsCnfg;
 import databases.TblsTesting;
@@ -132,46 +131,29 @@ public class TestingScript {
         return testingSource;
     }
     
-    public static InternalMessage newScript(String testerName, Boolean suggestedByTrazit, String[] fields, Object[][] rows){
-        String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+    public static InternalMessage newSpecScript(String testerName, Boolean suggestedByTrazit, String specCode, Integer specVersion, String[] fields, Object[][] rows){
+        //String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String scriptPurpose = "Script created by TRAZIT";
+        Integer codeFldPosic=LPArray.valuePosicInArray(fields, "evaluation_pretty_en");
+        if (codeFldPosic==-1)
+            codeFldPosic=LPArray.valuePosicInArray(fields, TblsCnfg.SpecLimits.CODE.getName());
         
-        Integer codeFldPosic=LPArray.valuePosicInArray(fields, TblsCnfg.SpecLimits.CODE.getName());
         Integer codeVersionFldPosic=LPArray.valuePosicInArray(fields, TblsCnfg.SpecLimits.CONFIG_VERSION.getName());
         
         if (codeFldPosic==-1||codeVersionFldPosic==-1){
             return new InternalMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{});
         }                
-        Object[][] scriptsArr = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT.getTableName(),
-            new String[]{TblsTesting.Script.TESTER_NAME.getName(), TblsTesting.Script.PURPOSE.getName()}, new Object[]{testerName, scriptPurpose},
-            new String[]{TblsTesting.Script.SCRIPT_ID.getName()});
-        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptsArr[0][0].toString()))){
-            SqlWhere sWhere=new SqlWhere();
-            String scriptIdArrStr=LPArray.convertArrayToString(LPArray.getColumnFromArray2D(scriptsArr, 0), "-", "", true);
-            sWhere.addConstraint(TblsTesting.ScriptSteps.ARGUMENT_01, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{rows[0][codeFldPosic].toString()}, null);
-            sWhere.addConstraint(TblsTesting.ScriptSteps.ARGUMENT_02, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{rows[0][codeVersionFldPosic].toString()}, null);
-            sWhere.addConstraint(TblsTesting.ScriptSteps.SCRIPT_ID, SqlStatement.WHERECLAUSE_TYPES.IN, 
-                    new Object[]{"INTEGER*" +LPArray.convertArrayToString(LPArray.getColumnFromArray2D(scriptsArr, 0), "-", "")}, "-");
-            Object[][] existsRecord = Rdbms.getRecordFieldsByFilter(procInstanceName, 
-                    LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName()), 
-                    TblsTesting.TablesTesting.SCRIPT_STEPS, 
-                    sWhere, new EnumIntTableFields[]{TblsTesting.ScriptSteps.SCRIPT_ID, TblsTesting.ScriptSteps.SCRIPT_ID}, null, false);
-            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(existsRecord[0][0].toString()))){
-               return null;
-            }            
-        }
-        
-        RdbmsObject insertRecord = Rdbms.insertRecord(TblsTesting.TablesTesting.SCRIPT, 
-            new String[]{TblsTesting.Script.TESTER_NAME.getName(), TblsTesting.Script.PURPOSE.getName(),
-                TblsTesting.Script.EVAL_TOTAL_TESTS.getName(), TblsTesting.Script.EVAL_SYNTAXIS_MATCH.getName(), TblsTesting.Script.EVAL_CODE_MATCH.getName(),
-                TblsTesting.Script.EVAL_SYNTAXIS_UNMATCH.getName(), TblsTesting.Script.EVAL_CODE_UNMATCH.getName(), TblsTesting.Script.EVAL_SYNTAXIS_UNDEFINED.getName(), TblsTesting.Script.EVAL_CODE_UNDEFINED.getName(),
-                TblsTesting.Script.EVAL_NUM_ARGS.getName(), TblsTesting.Script.RUN_SUMMARY.getName(), 
-                TblsTesting.Script.ACTIVE.getName(), TblsTesting.Script.DATE_EXECUTION.getName()},
-            new Object[]{testerName, scriptPurpose, rows.length, rows.length, rows.length, 0, 0, 0, 0, 2, "COMPLETED SUCCESSFULLY", 
-                true, LPDate.getCurrentTimeStamp()},
-            null);
+        RdbmsObject insertRecord = Rdbms.insertRecord(TblsTesting.TablesTesting.SPEC_SCRIPT, 
+            new String[]{TblsTesting.SpecScript.SPEC_CODE.getName(), TblsTesting.SpecScript.SPEC_VERSION.getName(),
+                TblsTesting.SpecScript.TESTER_NAME.getName(), TblsTesting.SpecScript.PURPOSE.getName(),
+                TblsTesting.SpecScript.EVAL_TOTAL_TESTS.getName(), TblsTesting.SpecScript.EVAL_SYNTAXIS_MATCH.getName(), TblsTesting.SpecScript.EVAL_CODE_MATCH.getName(),
+                TblsTesting.SpecScript.EVAL_SYNTAXIS_UNMATCH.getName(), TblsTesting.SpecScript.EVAL_CODE_UNMATCH.getName(), TblsTesting.SpecScript.EVAL_SYNTAXIS_UNDEFINED.getName(), TblsTesting.SpecScript.EVAL_CODE_UNDEFINED.getName(),
+                TblsTesting.SpecScript.EVAL_NUM_ARGS.getName(), TblsTesting.SpecScript.RUN_SUMMARY.getName(), 
+                TblsTesting.SpecScript.ACTIVE.getName(), TblsTesting.SpecScript.DATE_EXECUTION.getName()},
+            new Object[]{specCode, specVersion, testerName, scriptPurpose, rows.length, rows.length, rows.length, 0, 0, 0, 0, 2, "COMPLETED SUCCESSFULLY", 
+                true, LPDate.getCurrentTimeStamp()}, null);
         if (insertRecord.getRunSuccess()){            
-            InternalMessage newScriptForUAT = newScriptForUAT(Integer.valueOf(insertRecord.getNewRowId().toString()), fields, rows);
+            InternalMessage newScriptForUAT = newSpecScriptForUAT(Integer.valueOf(insertRecord.getNewRowId().toString()), fields, rows);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(newScriptForUAT.getDiagnostic())){
                 assignScriptToSpec(Integer.valueOf(insertRecord.getNewRowId().toString()), fields, rows);
             }
@@ -181,19 +163,20 @@ public class TestingScript {
         }
         
     }
-    public static InternalMessage newScriptForUAT(Integer scriptId, String[] fields, Object[][] rows){
-        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        String procInstanceName = instanceForActions.getProcedureInstance();        
+    public static InternalMessage newSpecScriptForUAT(Integer scriptId, String[] fields, Object[][] rows){
+        //ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        //String procInstanceName = instanceForActions.getProcedureInstance();        
         int stepId=1;
         RdbmsObject insertRecord = null;
         for (Object[] curRow: rows){
-            insertRecord = Rdbms.insertRecord(TblsTesting.TablesTesting.SCRIPT_STEPS, 
-                new String[]{TblsTesting.ScriptSteps.SCRIPT_ID.getName(), TblsTesting.ScriptSteps.STEP_ID.getName(), TblsTesting.ScriptSteps.EXPECTED_SYNTAXIS.getName(), 
-                    TblsTesting.ScriptSteps.EXPECTED_CODE.getName(), TblsTesting.ScriptSteps.ACTION_NAME.getName(), TblsTesting.ScriptSteps.TESTER_NOTES.getName(),
-                    TblsTesting.ScriptSteps.ARGUMENT_01.getName(), TblsTesting.ScriptSteps.ARGUMENT_02.getName(), TblsTesting.ScriptSteps.ARGUMENT_03.getName(), TblsTesting.ScriptSteps.ARGUMENT_04.getName(),
-                    TblsTesting.ScriptSteps.ARGUMENT_05.getName(), TblsTesting.ScriptSteps.ARGUMENT_06.getName(), TblsTesting.ScriptSteps.ARGUMENT_07.getName(), TblsTesting.ScriptSteps.ARGUMENT_08.getName()},
-                new Object[]{scriptId, stepId, LPPlatform.LAB_TRUE, curRow[LPArray.valuePosicInArray(fields,"evaluation")], procInstanceName, curRow[LPArray.valuePosicInArray(fields,"reason")],
-                    curRow[LPArray.valuePosicInArray(fields, TblsCnfg.SpecLimits.CODE.getName())], curRow[LPArray.valuePosicInArray(fields, TblsCnfg.SpecLimits.CONFIG_VERSION.getName())], 
+            insertRecord = Rdbms.insertRecord(TblsTesting.TablesTesting.SPEC_SCRIPT_STEPS, 
+                new String[]{TblsTesting.SpecScriptSteps.SCRIPT_ID.getName(), TblsTesting.SpecScriptSteps.STEP_ID.getName(), 
+                    TblsTesting.SpecScriptSteps.EXPECTED_SYNTAXIS.getName(), TblsTesting.SpecScriptSteps.FUNCTION_SYNTAXIS.getName(), 
+                    TblsTesting.SpecScriptSteps.EXPECTED_CODE.getName(), TblsTesting.SpecScriptSteps.FUNCTION_CODE.getName(), TblsTesting.SpecScriptSteps.TESTER_NOTES.getName(),
+                    TblsTesting.SpecScriptSteps.VARIATION_NAME.getName(), TblsTesting.SpecScriptSteps.ANALYSIS.getName(),
+                    TblsTesting.SpecScriptSteps.METHOD_NAME.getName(), TblsTesting.SpecScriptSteps.METHOD_VERSION.getName(), TblsTesting.SpecScriptSteps.PARAMETER.getName(), TblsTesting.SpecScriptSteps.VALUE.getName()},
+                new Object[]{scriptId, stepId, true, true, curRow[LPArray.valuePosicInArray(fields,"evaluation")], 
+                    curRow[LPArray.valuePosicInArray(fields,"evaluation")], curRow[LPArray.valuePosicInArray(fields,"reason")],                    
                     curRow[LPArray.valuePosicInArray(fields, TblsCnfg.SpecLimits.VARIATION_NAME.getName())], curRow[LPArray.valuePosicInArray(fields, TblsCnfg.SpecLimits.ANALYSIS.getName())],
                     curRow[LPArray.valuePosicInArray(fields, TblsCnfg.SpecLimits.METHOD_NAME.getName())], curRow[LPArray.valuePosicInArray(fields, TblsCnfg.SpecLimits.METHOD_VERSION.getName())],
                     curRow[LPArray.valuePosicInArray(fields, TblsCnfg.SpecLimits.PARAMETER.getName())], curRow[LPArray.valuePosicInArray(fields,"suggested_value")]

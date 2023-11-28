@@ -33,6 +33,10 @@ public class TblsTesting {
             new String[]{ScriptsCoverage.COVERAGE_ID.getName()}, null, "Testing coverage table"),
         SCRIPT_SAVE_POINT(null, "script_save_point", SCHEMA_NAME, true, ScriptSavePoint.values(), ScriptSavePoint.ID.getName(),
             new String[]{ScriptSavePoint.ID.getName()}, null, "Testing scripts Save Point table"),
+        SPEC_SCRIPT(null, "spec_script", SCHEMA_NAME, true, SpecScript.values(), Script.SCRIPT_ID.getName(),
+            new String[]{Script.SCRIPT_ID.getName()}, null, "Testing scripts table"),
+        SPEC_SCRIPT_STEPS(null, "spec_script_steps", SCHEMA_NAME, true, SpecScriptSteps.values(), ScriptSteps.SCRIPT_ID.getName()+"_"+ScriptSteps.STEP_ID.getName(),
+            new String[]{ScriptSteps.SCRIPT_ID.getName(), ScriptSteps.STEP_ID.getName()}, null, "Script steps"),
         ;
         private TablesTesting(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){
@@ -249,9 +253,12 @@ public class TblsTesting {
         TIME_STARTED("time_started", LPDatabase.dateTime(),null, null, "", null),
         TIME_COMPLETED("time_completed", LPDatabase.dateTime(),null, null, "", null),
         TIME_CONSUME("time_consume", LPDatabase.real(),null, null, "", null),
-        PURPOSE("purpose", LPDatabase.string(),null, null, "", null),
-        TESTER_NAME("tester_name", LPDatabase.string(),null, null, "", null),
         RUN_SUMMARY("run_summary", LPDatabase.string(),null, null, "", null),
+        PURPOSE("purpose", LPDatabase.string(),null, null, "", null),
+        TESTER("tester", LPDatabase.string(),null, null, "", null),
+        REVIEWER("reviewer", LPDatabase.string(),null, null, "", null),
+        CONCLUSION("conclusion", LPDatabase.string(),null, null, "", null),
+        SIGNED("signed", LPDatabase.booleanFld(), null, null, null, null),
         ;
         private ScriptSavePoint(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
@@ -270,6 +277,111 @@ public class TblsTesting {
         private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }
     
+    public enum SpecScript implements EnumIntTableFields{
+        SCRIPT_ID("script_id", LPDatabase.integerNotNull(), null, null, null, null),
+        SPEC_CODE("spec_code", LPDatabase.stringNotNull(), null, null, null, null),
+        SPEC_VERSION("spec_version", LPDatabase.integerNotNull(), null, null, null, null),
+        ACTIVE("active", LPDatabase.booleanFld(), null, null, null, null),
+        DATE_CREATION("date_creation", LPDatabase.dateTimeWithDefaultNow(), null, null, null, null),
+        SAVE_EXEC_EVID_ON_SUCCESS("save_execution_evidence_on_success", LPDatabase.booleanFld(false), null, null, null, null),        
+        DATE_EXECUTION("date_execution", LPDatabase.dateTime(), null, null, null, null),
+        TIME_STARTED("time_started", LPDatabase.dateTime(), null, null, null, null),
+        TIME_COMPLETED("time_completed", LPDatabase.dateTime(), null, null, null, null),
+        TIME_CONSUME("time_consume", LPDatabase.real(), null, null, null, null),
+        PURPOSE("purpose", LPDatabase.string(), null, null, null, null),
+        TESTER_PROGRESS_PERCENTAGE("tester_progress_percentage", LPDatabase.integer(), null, null, null, null),
+        INCLUDE_IN_SCHED("include_in_run_scheduled", LPDatabase.booleanFld(), null, null, null, null),
+        TESTER_NAME("tester_name", LPDatabase.string(), null, null, null, null),
+        EVAL_NUM_ARGS("num_eval_args", LPDatabase.integer(), null, null, null, null),
+        EVAL_TOTAL_TESTS("eval_total_tests", LPDatabase.integer(), null, null, null, null),
+        EVAL_SYNTAXIS_MATCH("eval_syntaxis_match", LPDatabase.integer(), null, null, null, null),
+        EVAL_SYNTAXIS_UNMATCH("eval_syntaxis_unmatch", LPDatabase.integer(), null, null, null, null),
+        EVAL_SYNTAXIS_UNDEFINED("eval_syntaxis_undefined", LPDatabase.integer(), null, null, null, null),
+        EVAL_CODE_MATCH("eval_code_match", LPDatabase.integer(), null, null, null, null),
+        EVAL_CODE_UNMATCH("eval_code_unmatch", LPDatabase.integer(), null, null, null, null),
+        EVAL_CODE_UNDEFINED("eval_code_undefined", LPDatabase.integer(), null, null, null, null),
+        AUDIT_IDS_TO_GET("audit_ids_to_get", LPDatabase.string(), null, null, null, null),
+        AUDIT_IDS_VALUES("audit_ids_values", LPDatabase.string(), null, null, null, null),
+        RUN_SUMMARY("run_summary", LPDatabase.string(), null, null, null, null),
+        GET_DB_ERRORS("get_db_errors", LPDatabase.booleanFld(), null, null, null, null),
+        DB_ERRORS_IDS_VALUES("db_error_ids_values", LPDatabase.string(), null, null, null, null),
+        GET_MSG_ERRORS("get_msg_errors", LPDatabase.booleanFld(), null, null, null, null),
+        MSG_ERRORS_IDS_VALUES("msg_error_ids_values", LPDatabase.string(), null, null, null, null),
+        BUSINESS_RULES_VISITED("business_rules_visited", LPDatabase.string(), null, null, null, null),
+        MESSAGES_VISITED("messages_visited", LPDatabase.string(), null, null, null, null),
+        AUDIT_ID_START("audit_id_start", LPDatabase.integer(), null, null, null, null),
+        AUDIT_ID_END("audit_id_end", LPDatabase.integer(), null, null, null, null),
+        DB_ERROR_START("db_error_start", LPDatabase.integer(), null, null, null, null),
+        DB_ERROR_END("db_error_end", LPDatabase.integer(), null, null, null, null),
+        PROPERTY_ERROR_START("property_error_start", LPDatabase.integer(), null, null, null, null),
+        PROPERTY_ERROR_END("property_error_end", LPDatabase.integer(), null, null, null, null),
+        
+        ;
+        private SpecScript(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName; @Override        public String getName(){return this.fieldName;}
+        private final String fieldType; @Override        public String getFieldType() {return this.fieldType;}
+        private final String fieldMask; @Override        public String getFieldMask() {return this.fieldMask;}
+        private final ReferenceFld reference; @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
+        private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }
+
+    public enum SpecScriptSteps implements EnumIntTableFields{
+        SCRIPT_ID("script_id", LPDatabase.integerNotNull(), null, null, null, null),
+        STEP_ID("step_id", LPDatabase.integerNotNull(), null, null, null, null),
+        ACTIVE("active", LPDatabase.booleanFld(true), null, null, null, null),
+        TESTER_NOTES("tester_notes", LPDatabase.string(), null, null, null, null),
+        EXPECTED_SYNTAXIS("expected_syntaxis", LPDatabase.string(), null, null, null, null),
+        EXPECTED_CODE("expected_code", LPDatabase.string(), null, null, null, null),
+        TIME_STARTED("time_started", LPDatabase.dateTime(), null, null, null, null),
+        TIME_COMPLETED("time_completed", LPDatabase.dateTime(), null, null, null, null),
+        TIME_CONSUME("time_consume", LPDatabase.real(), null, null, null, null),
+        VARIATION_NAME("variation_name", LPDatabase.string(), null, null, null, null),
+        ANALYSIS("analysis", LPDatabase.string(), null, null, null, null),
+        METHOD_NAME("method_name", LPDatabase.string(), null, null, null, null),
+        METHOD_VERSION("method_version", LPDatabase.string(), null, null, null, null),
+        PARAMETER("parameter", LPDatabase.string(), null, null, null, null),
+        VALUE("value", LPDatabase.string(), null, null, null, null),
+        UOM("uom", LPDatabase.string(), null, null, null, null),        
+        EVAL_SYNTAXIS("eval_syntaxis", LPDatabase.string(), null, null, null, null),
+        EVAL_CODE("eval_code", LPDatabase.string(), null, null, null, null),
+        FUNCTION_RETURN("function_return", LPDatabase.string(), null, null, null, null),
+        FUNCTION_SYNTAXIS("function_syntaxis", LPDatabase.string(), null, null, null, null),
+        FUNCTION_CODE("function_code", LPDatabase.string(), null, null, null, null),
+        DYNAMIC_DATA("dynamic_data", LPDatabase.string(), null, null, null, null),
+        DATE_EXECUTION("date_execution", LPDatabase.dateTime(), null, null, null, null),
+        ESIGN_TO_CHECK("esign_to_check", LPDatabase.string(), null, null, null, null),
+        CONFIRMUSER_USER_TO_CHECK("confirmuser_user_to_check", LPDatabase.string(), null, null, null, null), 
+        CONFIRMUSER_PW_TO_CHECK("confirmuser_pw_to_check", LPDatabase.string(), null, null, null, null),
+        AUDIT_REASON("audit_reason", LPDatabase.string(), null, null, null, null),
+        STOP_WHEN_SYNTAXIS_UNMATCH("stop_when_syntaxis_unmatch", LPDatabase.booleanFld(), null, null, null, null),
+        STOP_WHEN_SYNTAXIS_FALSE("stop_when_function_syntaxis_returns_false", LPDatabase.booleanFld(), null, null, null, null),
+        ALTERNATIVE_TOKEN("alternative_token", LPDatabase.string(), null, null, null, null),
+        ;
+        private SpecScriptSteps(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName; @Override        public String getName(){return this.fieldName;}
+        private final String fieldType; @Override        public String getFieldType() {return this.fieldType;}
+        private final String fieldMask; @Override        public String getFieldMask() {return this.fieldMask;}
+        private final ReferenceFld reference; @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
+        private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }
    
     
     
@@ -289,5 +401,8 @@ public class TblsTesting {
                 newTableFlds=LPArray.addValueToArray1D(newTableFlds, curFld);
         }
         return newTableFlds;
-    } 
+    }
+    
+
+    
 }

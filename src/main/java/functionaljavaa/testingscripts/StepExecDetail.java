@@ -58,7 +58,7 @@ public class StepExecDetail {
         stepId = stpId;
         contentIndex = contentI;
         originalSteps = origStps;
-        tstAssert = new TestingAssert(origStps, numEvalArgs);
+        tstAssert = new TestingAssert(origStps, numEvalArgs, false);
         numEvaluationArguments = numEvalArgs;
         scriptId = scrId;
         actionName = actName;
