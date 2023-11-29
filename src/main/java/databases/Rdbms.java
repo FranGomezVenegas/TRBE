@@ -1028,7 +1028,7 @@ public class Rdbms {
     }
 
     public static Object[][] getRecordFieldsByFilterForViews(String alternativeProcedure, String schemaName, EnumIntViews vwObj, SqlWhere sWhere, EnumIntViewFields[] fieldsToRetrieve, String[] orderBy, Boolean inforceDistinct) {
-        schemaName = addSuffixIfItIsForTesting(alternativeProcedure, schemaName, vwObj.getViewName());
+        //schemaName = addSuffixIfItIsForTesting(alternativeProcedure, schemaName, vwObj.getViewName());
         if (sWhere.getAllWhereEntries().isEmpty()) {
             Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{vwObj.getViewName(), vwObj.getRepositoryName()});
             return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
@@ -2473,6 +2473,65 @@ public class Rdbms {
         }
         return tblObj.getIsProcedureInstance()?"\""+procInstanceName+schemaName+"\"":schemaName;
     }
+ 
+    public static String addSuffixIfItIsForTesting(String procInstanceName, String schemaName, EnumIntViews vwObj) {
+        if (Boolean.TRUE.equals(ProcedureRequestSession.getInstanceForActions(null, null, null).getIsForTesting())) {
+            return suffixForTestingViewObj(procInstanceName, schemaName, vwObj);
+        }
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        if (procInstanceName==null){
+            if (vwObj.getIsProcedureInstance())
+                procInstanceName=instanceForActions.getProcedureInstance();
+            else
+                return "\""+schemaName+"\"";
+        }
+            
+        return vwObj.getIsProcedureInstance()?LPPlatform.buildSchemaName(procInstanceName, schemaName):schemaName;
+    }
+
+    public static String suffixForTestingViewObj(String procInstanceName, String schemaName, EnumIntViews vwObj) {
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        if (procInstanceName==null){procInstanceName="";}
+        if (LPNulls.replaceNull(procInstanceName).length()>0){
+            schemaName=schemaName.replace(procInstanceName+"-", "");
+            procInstanceName=procInstanceName+"-";
+        }else{
+            schemaName=schemaName.replace(instanceForActions.getProcedureInstance()+"-", "");
+            procInstanceName=instanceForActions.getProcedureInstance()+"-";
+        }
+        if (schemaName.contains(GlobalVariables.Schemas.DATA.getName())) {
+            if (schemaName.startsWith("\"")) {
+                schemaName=VALIDATION_MODE_REPO+schemaName.substring(1, schemaName.length() - 1);
+            } else {
+                schemaName = VALIDATION_MODE_REPO + schemaName;
+            }
+        }
+        if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE_CONFIG.getName())) {
+            return vwObj.getIsProcedureInstance()?"\""+procInstanceName+schemaName+"\"":schemaName;
+        }
+        if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE_AUDIT.getName())) {
+            if (!LPArray.valueInArray(ProcedureDefinitionToInstanceSections.ProcedureAuditSchema_TablesWithNoTestingClone, vwObj.getViewName())) {
+                if (schemaName.startsWith("\"")) {
+                    schemaName= VALIDATION_MODE_REPO+schemaName.substring(1, schemaName.length() - 1);
+                } else {
+                    schemaName = VALIDATION_MODE_REPO + schemaName;
+                }
+                return vwObj.getIsProcedureInstance()?"\""+procInstanceName+schemaName+"\"":schemaName;
+            }
+        }
+        if (schemaName.contains(GlobalVariables.Schemas.PROCEDURE.getName())) {
+            if (!LPArray.valueInArray(ProcedureDefinitionToInstanceSections.ProcedureSchema_TablesWithNoTestingClone, vwObj.getViewName())) {
+                if (schemaName.startsWith("\"")) {
+                    schemaName=VALIDATION_MODE_REPO+schemaName.substring(1, schemaName.length() - 1);
+                } else {
+                    schemaName = VALIDATION_MODE_REPO +schemaName;
+                }
+            }
+            return vwObj.getIsProcedureInstance()?"\""+procInstanceName+schemaName+"\"":schemaName;
+        }
+        return vwObj.getIsProcedureInstance()?"\""+procInstanceName+schemaName+"\"":schemaName;
+    }
+    
     
     public static String suffixForTesting(String procInstanceName, String schemaName, String tableName) {
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
