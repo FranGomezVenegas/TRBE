@@ -254,7 +254,8 @@ public class AppProcedureListAPI extends HttpServlet {
                 return jObj;
             }
             for (Object[] curRow: procViewModel){
-                jObj.add(curRow[0].toString(), JsonParser.parseString(curRow[1].toString()).getAsJsonObject());
+                if (LPNulls.replaceNull(curRow[1]).toString().length()>0)
+                    jObj.add(curRow[0].toString(), JsonParser.parseString(curRow[1].toString()).getAsJsonObject());
             }
             return jObj;
         } catch (JsonSyntaxException e) {
