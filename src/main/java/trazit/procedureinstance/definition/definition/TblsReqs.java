@@ -268,12 +268,12 @@ public class TblsReqs {
 "    modact.pretty_name_es,\n" +
 "    modact.order_number AS mod_order_number,\n" +
 "    modact.entity,\n" +
-"	modact.json_model\n" +
+"	reqs.json_model\n" +
 "     FROM requirements. procedure_req_solution reqs\n" +
 "   	 JOIN requirements.procedure_user_requirements urs on urs.req_id=reqs.req_id\n" +
 "     JOIN requirements.procedure_info procinfo ON reqs.proc_instance_name::text = procinfo.proc_instance_name::text\n" +
 "     JOIN requirements.module_actions_and_queries modact ON reqs.window_action::text = modact.endpoint_name::text AND procinfo.module_name::text = modact.module_name::text\n" +
-"    where reqs.type='"+ReqSolutionTypes.WINDOW_BUTTON.getTagValue()+"'; ",
+"    where (reqs.type='"+ReqSolutionTypes.WINDOW_BUTTON.getTagValue()+"' or reqs.type='"+ReqSolutionTypes.TABLE_ROW_BUTTON.getTagValue()+"' ); ",
                 null, "proc_req_solution_actions", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsReqs.viewProcReqSolutionActions.values(), "proc_req_user_requirements_actions",
                 new EnumIntTablesJoin[]{
                     new EnumIntTablesJoin(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, "reqs", TblsReqs.TablesReqs.PROCEDURE_USER_REQS, "urs", false,
@@ -310,7 +310,7 @@ public class TblsReqs {
 "    modact.pretty_name_es,\n" +
 "    modact.order_number AS mod_order_number,\n" +
 "    modact.entity,\n" +
-"    modact.json_model\n" +
+"    reqs.json_model\n" +
 "   FROM requirements.procedure_req_solution reqs\n" +
 "     JOIN requirements.procedure_user_requirements urs ON urs.req_id = reqs.req_id\n" +
 "     JOIN requirements.procedure_info procinfo ON reqs.proc_instance_name::text = procinfo.proc_instance_name::text\n" +
@@ -1771,7 +1771,7 @@ public class TblsReqs {
         PRETTY_ES("modAct", ModuleActionsAndQueries.PRETTY_ES.getName(), "modAct.pretty_name_es as pretty_name_es", ModuleActionsAndQueries.PRETTY_ES, null, null, null),
         MOD_ORDER_NUMBER("modAct", "mod_order_number", "modAct.order_number as mod_order_number", ModuleActionsAndQueries.ORDER_NUMBER, null, null, null), 
         ENTITY("modAct", ModuleActionsAndQueries.ENTITY.getName(), "modAct.entity as entity", ModuleActionsAndQueries.ENTITY, null, null, null),
-        JSON_MODEL("modAct", ModuleActionsAndQueries.JSON_MODEL.getName(), "modAct.json_model as json_model", ModuleActionsAndQueries.JSON_MODEL, null, null, null)
+        JSON_MODEL("reqs", ModuleActionsAndQueries.JSON_MODEL.getName(), "reqs.json_model as json_model", ModuleActionsAndQueries.JSON_MODEL, null, null, null)
        
         /*        RAW_VALUE_NUM("raw_value_num", "CASE " +
 "            WHEN isnumeric(sar.raw_value::text) THEN to_number(sar.raw_value::text, '9999'::text) " +
@@ -1864,7 +1864,7 @@ public class TblsReqs {
         PRETTY_ES("modAct", ModuleActionsAndQueries.PRETTY_ES.getName(), "modAct.pretty_name_es as pretty_name_es", ModuleActionsAndQueries.PRETTY_ES, null, null, null),
         MOD_ORDER_NUMBER("modAct", "mod_order_number", "modAct.order_number as mod_order_number", ModuleActionsAndQueries.ORDER_NUMBER, null, null, null), 
         ENTITY("modAct", ModuleActionsAndQueries.ENTITY.getName(), "modAct.entity as entity", ModuleActionsAndQueries.ENTITY, null, null, null),
-        JSON_MODEL("modAct", ModuleActionsAndQueries.JSON_MODEL.getName(), "modAct.json_model as json_model", ModuleActionsAndQueries.JSON_MODEL, null, null, null)
+        JSON_MODEL("reqs", ModuleActionsAndQueries.JSON_MODEL.getName(), "reqs.json_model as json_model", ModuleActionsAndQueries.JSON_MODEL, null, null, null)
        
         /*        RAW_VALUE_NUM("raw_value_num", "CASE " +
 "            WHEN isnumeric(sar.raw_value::text) THEN to_number(sar.raw_value::text, '9999'::text) " +
@@ -1956,7 +1956,7 @@ public class TblsReqs {
         VIEW_NAME("modAct", ModuleSpecialViews.VIEW_NAME.getName(), "modAct.endpoint_name as endpoint_name", ModuleSpecialViews.VIEW_NAME, null, null, null),
         MOD_ORDER_NUMBER("modAct", "mod_order_number", "modAct.order_number as mod_order_number", ModuleActionsAndQueries.ORDER_NUMBER, null, null, null), 
         ENTITY("modAct", ModuleActionsAndQueries.ENTITY.getName(), "modAct.entity as entity", ModuleActionsAndQueries.ENTITY, null, null, null),
-        JSON_MODEL("modAct", ModuleActionsAndQueries.JSON_MODEL.getName(), "modAct.json_model as json_model", ModuleActionsAndQueries.JSON_MODEL, null, null, null)
+        JSON_MODEL("modact", ModuleActionsAndQueries.JSON_MODEL.getName(), "modact.json_model as json_model", ModuleActionsAndQueries.JSON_MODEL, null, null, null)
        
         /*        RAW_VALUE_NUM("raw_value_num", "CASE " +
 "            WHEN isnumeric(sar.raw_value::text) THEN to_number(sar.raw_value::text, '9999'::text) " +
