@@ -648,7 +648,7 @@ public class ProcedureDefinitionToInstanceSections {
                 new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName()}, new Object[]{actionName}, procInstanceName);
         JSONObject jObj = new JSONObject();
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())){
-            jObj.put("detail", "Action already present");
+            jObj.put("detail", actionName+". Action already present");
             return jObj;
         }
         RdbmsObject insertRecordInTable = Rdbms.insertRecord(TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS, fldNames, fldValues, procInstanceName);
