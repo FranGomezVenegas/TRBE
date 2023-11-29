@@ -681,12 +681,13 @@ public class SqlStatementEnums {
         HashMap<String, Object[]> hm = new HashMap<>();
 
         String queryWhere = "";
-        Object[] schemaDiag = getViewSchema(viewObj, alternativeProcInstanceName);
+/*        Object[] schemaDiag = getViewSchema(viewObj, alternativeProcInstanceName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(schemaDiag[0].toString())) {
             return hm;
         }
         String schemaName = schemaDiag[0].toString();
-        schemaName = LPPlatform.buildSchemaName(schemaName, "");
+        schemaName = LPPlatform.buildSchemaName(schemaName, "");*/
+        String schemaName = addSuffixIfItIsForTesting(alternativeProcInstanceName, viewObj.getRepositoryName(), viewObj);
         String viewName = viewObj.getViewName();
 
         if (whereObj.getAllWhereEntries().isEmpty()) {
