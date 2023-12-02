@@ -69,7 +69,8 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
         if (Boolean.FALSE.equals(Boolean.valueOf(runAsCheckerAttrValue.toString())))
             moduleName=argValues[4].toString();
         
-        JSONObject mainObj=new JSONObject();
+        //JSONObject mainObj=new JSONObject();
+        JSONObject mainObj=LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, new Object[]{}, null);
         JSONObject sectionsSettingJobj=new JSONObject();
         JSONObject sectionsDetailObj=new JSONObject();
         JSONArray sectionsDetailCheckerArr=new JSONArray();
@@ -250,7 +251,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 mainObj.put("sections_log", sectionsDetailCheckerArr);
             else
                 mainObj.put("sections_log", sectionsDetailObj);
-            Rdbms.closeRdbms();
+            Rdbms.closeRdbms();            
             LPFrontEnd.servletReturnSuccess(request, response, mainObj);
         }catch(Exception e){
             Logger.getLogger(ResponseSuccess.class.getName()).log(Level.SEVERE, null, e.getMessage());
