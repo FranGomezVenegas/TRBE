@@ -592,7 +592,6 @@ public final class TestingCoverage {
     }
 
     public JSONObject getJsonSummary() {
-        //JSONObject mainObj = new JSONObject();
         JSONObject mainObj=LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(ProcedureDefinitionAPIActionsEndpoints.TESTING_COVERAGE_RUN, new Object[]{this.coverageId}, null);
         JSONObject coverageObj = new JSONObject();
         coverageObj.put("coverageId", this.coverageId);
