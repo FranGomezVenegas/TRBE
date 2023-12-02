@@ -68,8 +68,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
         
         if (Boolean.FALSE.equals(Boolean.valueOf(runAsCheckerAttrValue.toString())))
             moduleName=argValues[4].toString();
-        
-        //JSONObject mainObj=new JSONObject();
+                
         JSONObject mainObj=LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, new Object[]{}, null);
         JSONObject sectionsSettingJobj=new JSONObject();
         JSONObject sectionsDetailObj=new JSONObject();
