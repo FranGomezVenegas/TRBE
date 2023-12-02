@@ -52,6 +52,7 @@ public class ReqProcedureEnums {
     }
 
     public enum ProcedureDefinitionAPIActionsEndpoints implements EnumIntEndpoints {
+        TESTING_COVERAGE_RUN("DEPLOY_REQUIREMENTS", "coverageAnalysisRun_success",null, EndPointsToRequirements.endpointWithNoOutputObjects,null, null),                
         DEPLOY_REQUIREMENTS("DEPLOY_REQUIREMENTS", "deployRequirements_success",
                 new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),

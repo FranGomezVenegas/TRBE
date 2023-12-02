@@ -30,6 +30,7 @@ import java.util.logging.Logger;
 import lbplanet.utilities.LPArray;
 import static lbplanet.utilities.LPArray.convertStringedPipedNumbersInArray;
 import lbplanet.utilities.LPDate;
+import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
@@ -39,6 +40,7 @@ import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
+import trazit.procedureinstance.definition.definition.ReqProcedureEnums.ProcedureDefinitionAPIActionsEndpoints;
 import trazit.procedureinstance.definition.definition.TblsReqs;
 
 /**
@@ -590,8 +592,8 @@ public final class TestingCoverage {
     }
 
     public JSONObject getJsonSummary() {
-        JSONObject mainObj = new JSONObject();
-
+        //JSONObject mainObj = new JSONObject();
+        JSONObject mainObj=LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(ProcedureDefinitionAPIActionsEndpoints.TESTING_COVERAGE_RUN, new Object[]{this.coverageId}, null);
         JSONObject coverageObj = new JSONObject();
         coverageObj.put("coverageId", this.coverageId);
         coverageObj.put("ScriptsIncluded", Arrays.toString(this.scriptIds));
