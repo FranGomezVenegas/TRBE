@@ -333,6 +333,7 @@ public class TblsCnfg {
         AUTO_ADD_SAMPLE_ANALYSIS_LEVEL("auto_add_sample_analysis_lvl", LPDatabase.string(), null, null, null, null),
         CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
         CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date(), null, null, null, null),
+        ALLOW_SAMPLE_ANALYSIS_MORE_THAN_ONE("allow_sample_analysis_more_than_one", LPDatabase.booleanFld(true), null, null, null, null),        
         ;
         private SampleRules(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){

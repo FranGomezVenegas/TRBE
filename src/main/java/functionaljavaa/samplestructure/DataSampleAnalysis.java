@@ -544,10 +544,28 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         // set first status. End
         // Spec Business Rule. Allow other analyses. Begin
         Object[][] sampleData = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaDataName, TblsData.TablesData.SAMPLE.getTableName(), new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId},
-                new String[]{TblsData.Sample.SAMPLE_ID.getName(), TblsData.Sample.STATUS.getName()});
+                new String[]{TblsData.Sample.SAMPLE_ID.getName(), TblsData.Sample.STATUS.getName(), TblsData.Sample.CONFIG_CODE.getName(), TblsData.Sample.CONFIG_CODE_VERSION.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleData[0][0].toString())) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_NOT_FOUND, new Object[]{sampleId, schemaDataName});
         }
+        String sampleCode=LPNulls.replaceNull(sampleData[0][2]).toString();
+        Integer sampleCodeVersion=Integer.valueOf(LPNulls.replaceNull(sampleData[0][3]).toString());        
+        Object[][] sampleRules = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaConfigName, TblsCnfg.TablesConfig.SAMPLE_RULES.getTableName(),
+            new String[]{TblsCnfg.SampleRules.CODE.getName(), TblsCnfg.SampleRules.CODE_VERSION.getName()},
+            new Object[]{sampleCode, sampleCodeVersion}, new String[]{TblsCnfg.SampleRules.ALLOW_SAMPLE_ANALYSIS_MORE_THAN_ONE.getName(), 
+                TblsCnfg.SampleRules.CODE.getName(), TblsCnfg.SampleRules.CODE_VERSION.getName()});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleRules[0][0].toString())) {
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SPECRULE_NOTFOUND, new Object[]{sampleCode, sampleCodeVersion, schemaDataName});
+        }
+        String analysisName=LPNulls.replaceNull(fieldValue[LPArray.valuePosicInArray(fieldName, "analysis")]).toString(); 
+        if (Boolean.FALSE.equals(sampleRules[0][0])){
+            Object[] existsRecord = Rdbms.existsRecord(TblsData.TablesData.SAMPLE_ANALYSIS, 
+                new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName(), TblsData.SampleAnalysis.ANALYSIS.getName()},
+                new Object[]{sampleId, analysisName}, null);
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())){
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLE_ANALYSIS_ALREADY_PRESENT, new Object[]{sampleId, analysisName, schemaDataName});                 
+            }
+        }        
         String sampleSpecCode = "";
         Integer sampleSpecCodeVersion = null;
         String sampleSpecVariationName = "";
