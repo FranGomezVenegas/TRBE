@@ -143,7 +143,7 @@ public class TestingConfigSpecQuantitativeRuleFormat extends HttpServlet {
                     }
                 }
                 if (numEvaluationArguments > 0) {
-                    Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, resSpecEvaluation);
+                    Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, resSpecEvaluation, 4);
                     if (minControl == null && maxControl == null) {
                         fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(String.valueOf(secondsInDateRange)));
                         fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate));

@@ -142,7 +142,7 @@ public class TestingResultCheckSpecQualitative extends HttpServlet {
                 if (numEvaluationArguments<=0){                    
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(Arrays.toString(resSpecEvaluation)));
                 }else{
-                    Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, resSpecEvaluation);
+                    Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, resSpecEvaluation, 4);
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate));
                 }                
                 fileContentTable1Builder.append(LPTestingOutFormat.ROW_END);

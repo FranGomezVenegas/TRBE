@@ -167,7 +167,7 @@ public class TestingPlatformInvTracking extends HttpServlet {
                     fileContentTable1Builder.append(LPTestingOutFormat.createLogsTable(scriptId));
                 }                                
                 if (numEvaluationArguments>0){                    
-                    Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, functionEvaluation);   
+                    Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, functionEvaluation, 4);   
                         
                     Integer stepId=Integer.valueOf(testingContent[iLines][tstOut.getStepIdPosic()].toString());
                     fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, functionEvaluation, functionRelatedObjects, tstAssert, timeStartedStep));                    

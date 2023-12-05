@@ -467,7 +467,7 @@ public class TstDataSample extends HttpServlet {
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(Arrays.toString(dataSample)));                     
                 }
                 if (numEvaluationArguments>0){                    
-                    Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, dataSample);
+                    Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, dataSample, 4);
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate));                    
                 }
                 fileContentTable1Builder.append(LPTestingOutFormat.ROW_END);                    

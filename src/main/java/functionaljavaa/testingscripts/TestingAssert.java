@@ -55,7 +55,7 @@ public class TestingAssert {
      * @param diagnoses
      * @return
      */
-    public Object[] evaluate(Integer numEvaluationArguments, TestingAssertSummary tstAssertSummary, Object[] diagnoses){
+    public Object[] evaluate(Integer numEvaluationArguments, TestingAssertSummary tstAssertSummary, Object[] diagnoses, Integer codeEvalPosic){
         String sintaxisIcon = ""; 
         String codeIcon = "";
         if (diagnoses==null || diagnoses.length==0){
@@ -81,7 +81,7 @@ public class TestingAssert {
                         }
                     }else{
                         Boolean diagB=diagnoses[0].toString()==LPPlatform.LAB_TRUE?true:false;
-                        diagnoses[TRAP_MESSAGE_EVALUATION_POSIC]=diagB;
+                        
                         if (this.getEvalSyntaxisB().equals(diagB)){
                             tstAssertSummary.increasetotalLabPlanetBooleanMatch(); 
                             sintaxisIcon=LPTestingOutFormat.TST_BOOLEANMATCH;
@@ -97,8 +97,7 @@ public class TestingAssert {
                 tstAssertSummary.increasetotalLabPlanetBooleanUndefined();sintaxisIcon=LPTestingOutFormat.TST_BOOLEANUNDEFINED;            
             }
             if (numEvaluationArguments>=2){
-                if ( ((this.getEvalSyntaxis()==null) || (this.getEvalSyntaxis().length()==0) ||("".equals(this.getEvalSyntaxis())))
-                ||   (this.getEvalSyntaxisB()==null) ){
+                if ( (this.getEvalCode()==null) || (this.getEvalCode().length()==0) ||("".equals(this.getEvalCode())) ){
                     tstAssertSummary.increasetotalLabPlanetErrorCodeUndefined();
                     codeIcon=LPTestingOutFormat.TST_ERRORCODEUNDEFINED;
                     this.evalCodeDiagnostic=EvalCodes.UNDEFINED.toString();
@@ -107,7 +106,7 @@ public class TestingAssert {
                         tstAssertSummary.increasetotalLabPlanetErrorCodeUndefined();
                         codeIcon=LPTestingOutFormat.TST_ERRORCODEUNDEFINED;
                     }
-                    else if (this.getEvalCode().equalsIgnoreCase(diagnoses[4].toString())){
+                    else if (this.getEvalCode().equalsIgnoreCase(diagnoses[codeEvalPosic].toString())){
                         tstAssertSummary.increasetotalLabPlanetErrorCodeMatch(); 
                         codeIcon=LPTestingOutFormat.TST_ERRORCODEMATCH;
                         this.evalCodeDiagnostic=EvalCodes.MATCH.toString();
@@ -122,11 +121,22 @@ public class TestingAssert {
                 codeIcon=LPTestingOutFormat.TST_ERRORCODEUNDEFINED;            
             }
         }
-        Object[] diagnostic=new Object[] {sintaxisIcon + " ("+this.getEvalSyntaxisB()!=null?this.getEvalSyntaxisB():this.getEvalSyntaxis()+") "};
+        Object[] diagnostic=new Object[]{};//{sintaxisIcon + " ("+this.getEvalSyntaxisB()!=null?this.getEvalSyntaxisB().toString():this.getEvalSyntaxis().toString()+") "};
         String message="";
-        if (diagnoses.length>TRAP_MESSAGE_EVALUATION_POSIC) message=message+"Syntaxis:"+diagnoses[TRAP_MESSAGE_EVALUATION_POSIC].toString()+". ";
+        if (diagnoses.length>TRAP_MESSAGE_EVALUATION_POSIC){
+            message=message+"Syntaxis:";
+            if (this.getEvalSyntaxisB()!=null){
+                diagnostic=LPArray.addValueToArray1D(diagnostic, sintaxisIcon+ " ("+this.getEvalSyntaxisB().toString()+") ");
+                message=message+LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[TRAP_MESSAGE_EVALUATION_POSIC].toString());
+            }else{
+                diagnostic=LPArray.addValueToArray1D(diagnostic, sintaxisIcon+ " ("+this.getEvalSyntaxis().toString()+") ");
+                message=message+diagnoses[TRAP_MESSAGE_EVALUATION_POSIC].toString()+". ";
+            }
+            diagnoses[TRAP_MESSAGE_EVALUATION_POSIC]=message;
+            //diagnostic=LPArray.addValueToArray1D(diagnostic, sintaxisIcon + "<h8>("+this.getEvalCode()+")</h8> ");
+        }
         if (numEvaluationArguments>=2){
-            if (diagnoses.length>TRAP_MESSAGE_CODE_POSIC) message=message+"Code:"+diagnoses[TRAP_MESSAGE_CODE_POSIC]+". ";
+            if (diagnoses.length>TRAP_MESSAGE_CODE_POSIC) message=message+" Code:"+diagnoses[TRAP_MESSAGE_CODE_POSIC]+". ";
             diagnostic=LPArray.addValueToArray1D(diagnostic, codeIcon + "<h8>("+this.getEvalCode()+")</h8> ");
         }
         if (diagnoses.length>TRAP_MESSAGE_MESSAGE_POSIC) message=message+"Message:"+diagnoses[TRAP_MESSAGE_MESSAGE_POSIC]+". ";  

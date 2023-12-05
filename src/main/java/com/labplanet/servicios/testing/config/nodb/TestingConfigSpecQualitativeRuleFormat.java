@@ -113,7 +113,7 @@ public class TestingConfigSpecQualitativeRuleFormat extends HttpServlet {
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(Arrays.toString(functionEvaluation)));
                 }
                 if (numEvaluationArguments > 0) {
-                    Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, functionEvaluation);
+                    Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, functionEvaluation, 4);
                     Integer stepId = Integer.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStepIdPosic()]).toString());
                     fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, functionEvaluation, new JSONArray(), tstAssert, timeStartedStep));
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate));

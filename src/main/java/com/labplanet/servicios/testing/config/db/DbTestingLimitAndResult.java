@@ -126,7 +126,7 @@ public class DbTestingLimitAndResult extends HttpServlet {
         response = LPTestingOutFormat.responsePreparation(response);
         DataSpec resChkSpec = new DataSpec();
         Object[] resSpecEvaluation = null;
-
+        LocalDateTime timeStarted=LPDate.getCurrentTimeStamp();
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForUAT(request, response, true, "");
         if (Boolean.TRUE.equals(procReqInstance.getHasErrors())) {
             procReqInstance.killIt();
@@ -149,7 +149,7 @@ public class DbTestingLimitAndResult extends HttpServlet {
         String testerFileName = LPTestingParams.TestingServletsConfig.DB_SCHEMACONFIG_SPEC_RESULTCHECK.getTesterFileName();
         LPTestingOutFormat tstOut = new LPTestingOutFormat(request, LPTestingParams.TestingServletsConfig.DB_SCHEMACONFIG_SPEC_RESULTCHECK.name(), testerFileName);
         Map<String, Object> csvHeaderTags = tstOut.getCsvHeaderTags();
-
+        String stopPhrase=null;
         StringBuilder fileContentBuilder = new StringBuilder(0);
         fileContentBuilder.append(tstOut.getHtmlStyleHeader());
         Object[][] testingContent = tstOut.getTestingContent();
@@ -167,6 +167,7 @@ public class DbTestingLimitAndResult extends HttpServlet {
             fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
             LPAPIArguments[] arguments = TestingLimitAndResult.DB_CONFIG_SPEC_TESTING_LIMIT_AND_RESULT.getArguments();
             for (Integer iLines = numHeaderLines; iLines < testingContent.length; iLines++) {
+                stopPhrase=null;
                 LocalDateTime timeStartedStep = LPDate.getCurrentTimeStamp();
                 currentLine = iLines;
                 tstAssertSummary.increaseTotalTests();
@@ -308,16 +309,31 @@ public class DbTestingLimitAndResult extends HttpServlet {
                         }
                     }
                 }
-                fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines - numHeaderLines + 1, schemaName, specCode, specCodeVersionStr, variation, analysis, methodName, methodVersionStr, parameterName, resultValue, resultUomName}));
+                fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines - numHeaderLines + 1, specCode, specCodeVersion, variation, analysis, methodName, methodVersionStr, parameterName, resultValue, resultUomName}));
+                BigDecimal secondsInDateRange = LPDate.secondsInDateRange(timeStartedStep, LPDate.getCurrentTimeStamp(), true);
+                fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(String.valueOf(secondsInDateRange)));
                 if (numEvaluationArguments > 0) {
-                    Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, resSpecEvaluation);
+                    Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, resSpecEvaluation, 7);
                     Integer stepId = Integer.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStepIdPosic()]).toString());
                     fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, resSpecEvaluation, new JSONArray(), tstAssert, timeStartedStep));
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate)).append(LPTestingOutFormat.ROW_END);
+                    if ( tstOut.getStopSyntaxisUnmatchPosic()>-1 && Boolean.TRUE.equals(Boolean.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStopSyntaxisUnmatchPosic()]).toString())) &&
+                            Boolean.FALSE.equals(TestingAssert.EvalCodes.MATCH.toString().equalsIgnoreCase(tstAssert.getEvalSyntaxisDiagnostic())) ){
+                        out.println(fileContentBuilder.toString()); 
+                        stopPhrase="Interrupted by evaluation not matching in step "+(iLines+1)+" of "+testingContent.length;
+                        break;      
+                    }                    
                 }
+                if (tstOut.getStopSyntaxisFalsePosic()>-1 && Boolean.TRUE.equals(Boolean.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStopSyntaxisFalsePosic()]).toString()))
+                    && LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluation[0].toString())){
+                        out.println(fileContentBuilder.toString()); 
+                        stopPhrase="Interrupted by evaluation returning false in step "+(iLines+1)+" of "+testingContent.length;
+                    break;
+                }                
             }
             fileContentTable1Builder.append(LPTestingOutFormat.TABLE_END);
-            fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary));
+//            fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary));
+            fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary, stopPhrase, timeStarted)).append("<br>");
 
             fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.BODY_END).append(LPTestingOutFormat.HTML_END);
             out.println(fileContentBuilder.toString());

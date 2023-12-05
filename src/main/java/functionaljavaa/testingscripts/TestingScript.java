@@ -175,8 +175,10 @@ public class TestingScript {
                     TblsTesting.SpecScriptSteps.EXPECTED_CODE.getName(), TblsTesting.SpecScriptSteps.FUNCTION_CODE.getName(), TblsTesting.SpecScriptSteps.TESTER_NOTES.getName(),
                     TblsTesting.SpecScriptSteps.VARIATION_NAME.getName(), TblsTesting.SpecScriptSteps.ANALYSIS.getName(),
                     TblsTesting.SpecScriptSteps.METHOD_NAME.getName(), TblsTesting.SpecScriptSteps.METHOD_VERSION.getName(), TblsTesting.SpecScriptSteps.PARAMETER.getName(), TblsTesting.SpecScriptSteps.VALUE.getName()},
-                new Object[]{scriptId, stepId, true, true, curRow[LPArray.valuePosicInArray(fields,"evaluation")], 
-                    curRow[LPArray.valuePosicInArray(fields,"evaluation")], curRow[LPArray.valuePosicInArray(fields,"reason")],                    
+                new Object[]{scriptId, stepId, 
+                    LPPlatform.LAB_TRUE.equalsIgnoreCase(curRow[LPArray.valuePosicInArray(fields,"syntaxis")].toString()), LPPlatform.LAB_TRUE.equalsIgnoreCase(curRow[LPArray.valuePosicInArray(fields,"syntaxis")].toString()),
+                    curRow[LPArray.valuePosicInArray(fields,"evaluation")], curRow[LPArray.valuePosicInArray(fields,"evaluation")],
+                    curRow[LPArray.valuePosicInArray(fields,"reason")],
                     curRow[LPArray.valuePosicInArray(fields, TblsCnfg.SpecLimits.VARIATION_NAME.getName())], curRow[LPArray.valuePosicInArray(fields, TblsCnfg.SpecLimits.ANALYSIS.getName())],
                     curRow[LPArray.valuePosicInArray(fields, TblsCnfg.SpecLimits.METHOD_NAME.getName())], curRow[LPArray.valuePosicInArray(fields, TblsCnfg.SpecLimits.METHOD_VERSION.getName())],
                     curRow[LPArray.valuePosicInArray(fields, TblsCnfg.SpecLimits.PARAMETER.getName())], curRow[LPArray.valuePosicInArray(fields,"suggested_value")]

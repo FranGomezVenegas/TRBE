@@ -49,7 +49,7 @@ public class LPTestingParams {
         NODB_SCHEMACONFIG_SPECQUANTI_RESULTCHECK("/testing/config/ResultCheckSpecQuantitative", "noDBSchema_config_specQuantitative_resultCheck.txt", 2, "Result;Min;Max Acción;|Min Acción;Min Alerta;Result;Max Alerta;Max Acción", false),
         NODB_DBACTIONS("/testing/platform/DBActions", "noDBSchema_dbActions.txt", 1, "Action Name;Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided", false),
         
-        DB_SCHEMACONFIG_SPEC_RESULTCHECK("/testing/config/db/DbTestingLimitAndResult", "dbSchema_config_spec_resultCheck.txt", 2, "procInstance; specCode; specCodeVersion; variation; analysis; methodName; methodVersion; Parameter; Value; UOM", true),
+        DB_SCHEMACONFIG_SPEC_RESULTCHECK("/testing/config/db/DbTestingLimitAndResult", "dbSchema_config_spec_resultCheck.txt", 2, "specCode; specCodeVersion; variation; analysis; methodName; methodVersion; Parameter; Value; UOM", true),
         
         MONITORING("/testing/moduleEnvMonit/TestingEnvMonitSamples", "DBSchema_data_envMonitSamples.txt", 1, "Action Name;Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided", true),
         SAMPLES("/testing/moduleSamples/TestingSamples", "DBSchema_data_Samples.txt", 1, "Action Name;Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided", true),

@@ -181,7 +181,6 @@ public final class TestingReportHtml implements TestingReport {
                 fileContentTable1Builder.append(addTableHeader(fldNames, numArgsInUse));
                 headerTblAdded = true;
             }
-
             fileContentTable1Builder.append(ROW_START).append(tblLineIndex.toString());
             fileContentTable1Builder.append(rowAddField(tblLineIndex.toString()));
             fileContentTable1Builder.append(rowAddField(curExec.getActionName().toString()));
@@ -190,7 +189,7 @@ public final class TestingReportHtml implements TestingReport {
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(Arrays.toString(curExec.getFunctionEvaluation())));
             }
             if (numEvaluationArguments > 0) {
-                Object[] evaluate = curExec.getTstAssert().evaluate(numEvaluationArguments, ts.getTstAssertSummary(), curExec.getFunctionEvaluation());
+                Object[] evaluate = curExec.getTstAssert().evaluate(numEvaluationArguments, ts.getTstAssertSummary(), curExec.getFunctionEvaluation(), 4);
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate));
             }
             Object[] argsWithNamesAndValues = curExec.getArgsWithNamesAndValues();

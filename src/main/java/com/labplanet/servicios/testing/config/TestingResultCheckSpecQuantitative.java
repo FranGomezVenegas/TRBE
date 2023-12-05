@@ -183,7 +183,7 @@ public class TestingResultCheckSpecQuantitative extends HttpServlet {
                     }
                 }                
                 if (numEvaluationArguments>0){                    
-                    Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, resSpecEvaluation);
+                    Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, resSpecEvaluation, 4);
                     if (minControl==null){
                         fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate)).append(LPTestingOutFormat.ROW_END);
                     }else{

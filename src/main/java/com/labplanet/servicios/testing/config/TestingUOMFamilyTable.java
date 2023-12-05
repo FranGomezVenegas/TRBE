@@ -107,7 +107,7 @@ public class TestingUOMFamilyTable extends HttpServlet {
                 fileContentTable1Builder.append(LPTestingOutFormat.TABLE_END);
                 
                 if (numEvaluationArguments>0){                    
-                    Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, new Object[0]);
+                    Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, new Object[0], 4);
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate));                        
                 }
                 fileContentTable1Builder.append(LPTestingOutFormat.ROW_END);                        
