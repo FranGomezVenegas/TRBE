@@ -21,6 +21,7 @@ import databases.TblsCnfg;
 import databases.TblsData;
 import databases.TblsDataAudit;
 import databases.features.Token;
+import functionaljavaa.audit.GenericAuditFields;
 import static functionaljavaa.certification.AnalysisMethodCertifQueries.analysisMethodCertifiedUsersList;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.samplestructure.DataSample;
@@ -628,11 +629,12 @@ public class SampleAPIfrontend extends HttpServlet {
                     LPFrontEnd.servletReturnSuccess(request, response, jsonarrayf);
                     return;
                 case GET_SAMPLE_AUDIT:
+                   JSONObject jMainObj=new JSONObject();
                    sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);                     
                    sampleId=Integer.valueOf(sampleIdStr);
                    sampleFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_AUDIT_FIELD_TO_RETRIEVE);
                    sampleFieldToRetrieveArr=new String[]{TblsDataAudit.Sample.SAMPLE_ID.getName(), TblsDataAudit.Sample.AUDIT_ID.getName(), TblsDataAudit.Sample.ACTION_NAME.getName(), TblsDataAudit.Sample.FIELDS_UPDATED.getName()
-                    , TblsDataAudit.Sample.REVIEWED.getName(), TblsDataAudit.Sample.REVIEWED_ON.getName(), TblsDataAudit.Sample.DATE.getName(), TblsDataAudit.Sample.PERSON.getName(), TblsDataAudit.Sample.REASON.getName(), TblsDataAudit.Sample.ACTION_PRETTY_EN.getName(), TblsDataAudit.Sample.ACTION_PRETTY_ES.getName()};
+                    , TblsDataAudit.Sample.REVIEWED.getName(), TblsDataAudit.Sample.REVIEWED_ON.getName(), TblsDataAudit.Sample.DATE.getName(), TblsDataAudit.Sample.PERSON.getName(), TblsDataAudit.Sample.REASON.getName(), TblsDataAudit.Sample.ACTION_PRETTY_EN.getName(), TblsDataAudit.Sample.ACTION_PRETTY_ES.getName(), TblsDataAudit.Sample.TABLE_NAME.getName()};
                    Object[][] sampleAuditInfo=QueryUtilitiesEnums.getTableData(TblsDataAudit.TablesDataAudit.SAMPLE,
                         EnumIntTableFields.getTableFieldsFromString(TblsDataAudit.TablesDataAudit.SAMPLE, sampleFieldToRetrieveArr),
                         new String[]{TblsDataAudit.Sample.SAMPLE_ID.getName(), TblsDataAudit.Sample.PARENT_AUDIT_ID.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, new Object[]{sampleId}, 
@@ -655,7 +657,7 @@ public class SampleAPIfrontend extends HttpServlet {
                             new String[]{TblsDataAudit.Sample.AUDIT_ID.getName()});
                         JSONArray jArrLvl2 = new JSONArray();
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditInfoLvl2[0][0].toString())){
-                            Object[] childJObj=new Object[]{null, null, "No child", "", "", "", null, "", "", null, null};
+                            Object[] childJObj=new Object[]{null, null, "No child", "", "", "", null, "", "", null, null, null};
                             for (int iChild=childJObj.length;iChild<sampleFieldToRetrieveArr.length;iChild++)
                                 childJObj=LPArray.addValueToArray1D(childJObj, null);                            
                             JSONObject jObjLvl2=LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, childJObj); 
@@ -674,7 +676,9 @@ public class SampleAPIfrontend extends HttpServlet {
                     jArr.add(jObj);
                    }
                    Rdbms.closeRdbms();
-                   LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                   jMainObj.put(GenericAuditFields.TAG_AUDIT_INFO, jArr);
+                   jMainObj.put(GenericAuditFields.TAG_HIGHLIGHT_FIELDS, GenericAuditFields.getAuditHighLightFields());
+                   LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
                    return;
                 case GET_METHOD_CERTIFIED_USERS_LIST:
                     String methodName=argValues[0].toString();

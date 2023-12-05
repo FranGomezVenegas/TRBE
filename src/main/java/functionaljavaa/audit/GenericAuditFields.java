@@ -6,7 +6,9 @@
 package functionaljavaa.audit;
 
 import databases.Rdbms;
+import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsAppAudit;
+import databases.TblsProcedure;
 import module.instrumentsmanagement.definition.TblsInstrumentsDataAudit;
 import databases.features.Token;
 import functionaljavaa.parameter.Parameter;
@@ -16,10 +18,14 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import trazit.enums.EnumIntAuditEvents;
+import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.globalvariables.GlobalVariables.DEFAULTLANGUAGE;
+import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ProcedureRequestSession;
 import trazit.session.SessionAuditActions;
 
@@ -36,6 +42,25 @@ public class GenericAuditFields {
     private String actionPrettyNameEn;
     private String actionPrettyNameEs;
     
+    public final static String TAG_AUDIT_INFO="audit_info";
+    public final static String TAG_HIGHLIGHT_FIELDS="highlight_fields";
+
+    public static JSONArray getAuditHighLightFields(){
+        EnumIntTableFields[] tableFieldsObj = TblsProcedure.TablesProcedure.AUDIT_HIGHLIGHT_FIELDS.getTableFields();
+        Object[][] auditHighlightFields=QueryUtilitiesEnums.getTableData(TblsProcedure.TablesProcedure.AUDIT_HIGHLIGHT_FIELDS,
+             tableFieldsObj,
+             new String[]{TblsProcedure.AuditHighlightFields.TABLE_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}, 
+             new String[]{TblsProcedure.AuditHighlightFields.TABLE_NAME.getName()});        
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditHighlightFields[0][0].toString())){            
+             return new JSONArray();
+        }
+        JSONArray jArr = new JSONArray();
+        for (Object[] curRow: auditHighlightFields){
+            JSONObject jObj=LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(tableFieldsObj), curRow);
+            jArr.add(jObj);
+        }        
+        return jArr;
+    }
     public GenericAuditFields(Object[] auditlog){
         internalAuditFields(null, true);
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.FIELDS_UPDATED.getName());

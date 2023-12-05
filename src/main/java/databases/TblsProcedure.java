@@ -32,6 +32,9 @@ public class TblsProcedure {
     private static final Boolean IS_PRODEDURE_INSTANCE = true;
 
     public enum TablesProcedure implements EnumIntTables {
+        
+        AUDIT_HIGHLIGHT_FIELDS(null, "audit_highlight_fields", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, AuditHighlightFields.values(), null,
+                new String[]{TblsProcedure.AuditHighlightFields.TABLE_NAME.getName(), TblsProcedure.AuditHighlightFields.FIELD_NAME.getName(), TblsProcedure.AuditHighlightFields.ACTION_NAME.getName()}, null, "audit highlight fields"),
         INVESTIGATION(null, "investigation", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Investigation.values(), TblsProcedure.Investigation.ID.getName(),
                 new String[]{TblsProcedure.Investigation.ID.getName()}, null, "Investigation objects"),
         INVEST_OBJECTS(null, "invest_objects", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, InvestObjects.values(), TblsProcedure.InvestObjects.ID.getName(),
@@ -427,6 +430,57 @@ public class TblsProcedure {
         ACTIVE("active", LPDatabase.booleanFld(true), null, null, null, null);
 
         private ProcedureEventsHelpContent(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules) {
+            this.fieldName = dbObjName;
+            this.fieldType = dbObjType;
+            this.fieldMask = fieldMask;
+            this.reference = refer;
+            this.fieldComment = comment;
+            this.fldBusinessRules = fldBusRules;
+        }
+        private final String fieldName;
+
+        @Override
+        public String getName() {
+            return this.fieldName;
+        }
+        private final String fieldType;
+
+        @Override
+        public String getFieldType() {
+            return this.fieldType;
+        }
+        private final String fieldMask;
+
+        @Override
+        public String getFieldMask() {
+            return this.fieldMask;
+        }
+        private final ReferenceFld reference;
+
+        @Override
+        public ReferenceFld getReferenceTable() {
+            return this.reference;
+        }
+        private final String fieldComment;
+
+        @Override
+        public String getFieldComment() {
+            return this.fieldComment;
+        }
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override
+        public FldBusinessRules[] getFldBusinessRules() {
+            return this.fldBusinessRules;
+        }
+    }
+    public enum AuditHighlightFields implements EnumIntTableFields {
+        TABLE_NAME("table_name", LPDatabase.stringNotNull(), null, null, null, null),
+        FIELD_NAME("field_name", LPDatabase.stringNotNull(), null, null, null, null),
+        ACTION_NAME("action_name", LPDatabase.stringNotNull(), null, null, null, null)
+        ;
+        private AuditHighlightFields(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules) {
             this.fieldName = dbObjName;
             this.fieldType = dbObjType;
