@@ -6,6 +6,7 @@
 package trazit.procedureinstance.definition.logic;
 
 import databases.Rdbms;
+import databases.SqlWhere;
 import databases.TblsTrazitDocTrazit;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
@@ -57,6 +58,13 @@ public class ReqProcedureFrontendMasterData implements FrontendMasterData{
                 Integer moduleVersion=curProcObj.get("module_version").toString().length()>0?Integer.valueOf(curProcObj.get("module_version").toString()):-1;        
                                 
                 JSONArray dbRowsToJsonArr = new JSONArray();        
+                dbRowsToJsonArr = QueryUtilities.dbRowsToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.MODULE_ERROR_NOTIFICATIONS,
+                    new EnumIntTableFields[]{TblsReqs.ModuleErrorNotifications.API_NAME,  TblsReqs.ModuleErrorNotifications.ERROR_CODE},
+                    new SqlWhere(TblsReqs.TablesReqs.MODULE_ERROR_NOTIFICATIONS, new String[]{TblsReqs.ModuleErrorNotifications.MODULE_NAME.getName(), TblsReqs.ModuleErrorNotifications.MODULE_VERSION.getName()},
+                        new Object[]{moduleName, moduleVersion}),
+                    new String[]{TblsReqs.ModuleErrorNotifications.API_NAME.getName()},
+                    new String[]{}, true);
+                curProcObj.put(TblsReqs.TablesReqs.MODULE_ERROR_NOTIFICATIONS.getTableName(), dbRowsToJsonArr);
                 dbRowsToJsonArr = QueryUtilities.dbRowsToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.BUSINESS_RULES_IN_SOLUTION.getViewName(),
                         new String[]{TblsReqs.viewBusinessRulesInSolution.AREA.getName(),
                     TblsReqs.viewBusinessRulesInSolution.RULE_NAME.getName(), TblsReqs.viewBusinessRulesInSolution.PRESENT.getName(), TblsReqs.viewBusinessRulesInSolution.REQUIREMENTS_LIST.getName(),
