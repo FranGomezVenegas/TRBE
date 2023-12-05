@@ -675,6 +675,7 @@ public enum ViewSampleAnalysisResultWithSpecLimits implements EnumIntViewFields{
         LIST_ENTRY("list_entry", LPDatabase.string(), null, null, null, null),
         ADD_IN_COA("add_in_coa", LPDatabase.booleanFld(true), null, null, null, null),
         COA_ORDER("coa_order", LPDatabase.real(), null, null, null, null),
+        CALC_LINKED("calc_linked", LPDatabase.string(), null, null, null, null), /* Este bloque de campos está a nivel de SampleAnalysis, es posible que pueda ser interesante tb en sample_analysis_result
         /* Este bloque de campos está a nivel de SampleAnalysis, es posible que pueda ser interesante tb en sample_analysis_result
         , REVIEWER("reviewer", LPDatabase.String())
         , REVIEWER_ASSIGNED_ON("reviewer_assigned_on", LPDatabase.dateTime())        
