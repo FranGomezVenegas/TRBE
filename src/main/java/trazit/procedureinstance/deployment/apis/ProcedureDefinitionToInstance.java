@@ -10,7 +10,6 @@ import com.labplanet.servicios.ResponseSuccess;
 import trazit.procedureinstance.definition.definition.ReqProcedureEnums.ProcedureDefinitionAPIActionsEndpoints;
 import databases.DbObjects;
 import lbplanet.utilities.LPFrontEnd;
-import databases.Rdbms;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -24,6 +23,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.procedureinstance.deployment.logic.ProcedureDefToInstanceCreateProcViews;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -182,7 +182,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 runSection=Boolean.valueOf(argValues[10].toString()) || PROCDEPL_PROCEDURE_ACTIONS;
                 sectionsSettingJobj.put("6) Procedure Actions", runSection);
                 if (Boolean.TRUE.equals(runSection)){
-                    sectionsSettingJobj.put("Procedure Views",  trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.createDBProcedureViews(procName, procVersion, procInstanceName));
+                    sectionsSettingJobj.put("Procedure Views",  ProcedureDefToInstanceCreateProcViews.createDBProcedureViews(procName, procVersion, procInstanceName));
                     sectionsSettingJobj.put("Procedure Actions", trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.createdDBProcedureActions(procName,  procVersion, procInstanceName));
                     //sectionsSettingJobj.put("Procedure Views json", trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.createDBProcedureViewsJson(procName, procVersion, procInstanceName));
                 }
@@ -250,14 +250,17 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 mainObj.put("sections_log", sectionsDetailCheckerArr);
             else
                 mainObj.put("sections_log", sectionsDetailObj);
-            Rdbms.closeRdbms();            
+            //Rdbms.closeRdbms();           
+            procReqInstance.killIt();
             LPFrontEnd.servletReturnSuccess(request, response, mainObj);
         }catch(Exception e){
             Logger.getLogger(ResponseSuccess.class.getName()).log(Level.SEVERE, null, e.getMessage());
-            Rdbms.closeRdbms();
+            //Rdbms.closeRdbms();
+            procReqInstance.killIt();
             LPFrontEnd.servletReturnSuccess(request, response, mainObj);
         }finally{
-            Rdbms.closeRdbms();
+            //Rdbms.closeRdbms();
+            procReqInstance.killIt();
         }
     }
 

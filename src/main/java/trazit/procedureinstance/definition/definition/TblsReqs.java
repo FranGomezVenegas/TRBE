@@ -118,8 +118,15 @@ public class TblsReqs {
                     new ForeignkeyFld(ProcedureReqSolution.PROCEDURE_VERSION.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_USER_REQS.getTableName(), ProcedureUserRequirements.PROCEDURE_VERSION.getName()),
                     new ForeignkeyFld(ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_USER_REQS.getTableName(), ProcedureUserRequirements.PROC_INSTANCE_NAME.getName()),
                     new ForeignkeyFld(ProcedureReqSolution.REQ_ID.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_USER_REQS.getTableName(), ProcedureUserRequirements.REQ_ID.getName())
-                },
-                "URS for a given process instance"),
+                }, "Requirement solution for a given process instance"),
+        PROCEDURE_REQ_SOL_VIEW_TAB(null, "procedure_req_solution_view_tabs", SCHEMA_NAME, false, ProcedureReqSolutionViewTabs.values(), "sol_tab_id_seq",
+                new String[]{ProcedureReqSolutionViewTabs.TAB_ID.getName()},
+                new Object[]{new ForeignkeyFld(ProcedureReqSolution.SOLUTION_ID.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_USER_REQS.getTableName(), ProcedureUserRequirements.REQ_ID.getName())
+                }, "Definition for Tabs view"),
+        PROCEDURE_REQ_SOL_VIEW_TBL_BUTTONS(null, "procedure_req_solution_view_tbl_w_buttons", SCHEMA_NAME, false, ProcedureReqSolutionViewTableWithButtons.values(), "sol_table_id_seq",
+                new String[]{ProcedureReqSolutionViewTableWithButtons.TABLE_ID.getName()},
+                new Object[]{new ForeignkeyFld(ProcedureReqSolutionViewTableWithButtons.SOLUTION_ID.getName(), SCHEMA_NAME, TablesReqs.PROCEDURE_USER_REQS.getTableName(), ProcedureUserRequirements.PROCEDURE_NAME.getName())
+                    }, "Definition for Table with buttons"),
 /*        PROCEDURE_USER_REQS_EVENTS(null, "procedure_user_requirements_events", SCHEMA_NAME, false, ProcedureReqSolution.values(),
                 ProcedureUserRequirementsEvents.PROCEDURE_NAME.getName() + "_" + ProcedureUserRequirementsEvents.PROCEDURE_VERSION.getName() + "_" + ProcedureUserRequirementsEvents.ID.getName(),
                 new String[]{ProcedureUserRequirementsEvents.PROCEDURE_NAME.getName(), ProcedureUserRequirementsEvents.PROCEDURE_VERSION.getName(), ProcedureInfo.PROC_INSTANCE_NAME.getName(), ProcedureUserRequirementsEvents.ID.getName()},
@@ -310,7 +317,8 @@ public class TblsReqs {
 "    modact.pretty_name_es,\n" +
 "    modact.order_number AS mod_order_number,\n" +
 "    modact.entity,\n" +
-"    reqs.json_model\n" +
+"    reqs.json_model, reqs.twoicons_detail, reqs.add_refresh_button, reqs.grid_columns, reqs.endpoint_params, reqs.enable_context_menu, reqs.add_actions_to_context_menu, \n" +
+"    reqs.view_title_en, reqs.view_title_es \n" +
 "   FROM requirements.procedure_req_solution reqs\n" +
 "     JOIN requirements.procedure_user_requirements urs ON urs.req_id = reqs.req_id\n" +
 "     JOIN requirements.procedure_info procinfo ON reqs.proc_instance_name::text = procinfo.proc_instance_name::text\n" +
@@ -1248,8 +1256,8 @@ public class TblsReqs {
         SOP("sop", LPDatabase.string(), null, null, null, null, false),
         //ESIGN_REQUIRED("esign_required", LPDatabase.booleanFld(), null, null, null, null),
         //USERCONFIRM_REQUIRED("userconfirm_required", LPDatabase.booleanFld(), null, null, null, null),
-        ICON_NAME("icon_name", LPDatabase.string(), null, null, null, null, false),
-        ICON_NAME_WHEN_NOT_CERTIFIED("icon_name_when_not_certified", LPDatabase.string(), null, null, null, null, false),
+        //ICON_NAME("icon_name", LPDatabase.string(), null, null, null, null, false),
+        //ICON_NAME_WHEN_NOT_CERTIFIED("icon_name_when_not_certified", LPDatabase.string(), null, null, null, null, false),
         //BRANCH_NEED("branch_need", LPDatabase.string(), null, null, null, null),        
         WINDOW_NAME("window_name", LPDatabase.string(), null, null, null, null, false),
         WINDOW_TYPE("window_type", LPDatabase.string(), null, null, null, null, false),
@@ -1276,7 +1284,16 @@ public class TblsReqs {
         SPECIAL_VIEW_JSON_MODEL("special_view_json_model", LPDatabase.json(), null, null, null, null, true),
         SPECIAL_VIEW_NAME("special_view_name", LPDatabase.string(), null, null, null, null, false), 
         QUERY_FOR_BUTTON("query_for_button", LPDatabase.booleanFld(false), null, null, null, null, true),
-        EXTRA_ACTIONS("extra_actions", LPDatabase.stringNotNull(), null, null, null, null, true)
+        EXTRA_ACTIONS("extra_actions", LPDatabase.stringNotNull(), null, null, null, null, true),
+        CONTENT_TYPE("content_type", LPDatabase.stringNotNull(), null, null, null, null, true),
+        TWOICONS_DETAIL("twoicons_detail", LPDatabase.json(), null, null, null, null, true),
+/*        ADD_REFRESH_BUTTON("add_refresh_button", LPDatabase.booleanFld(true), null, null, null, null, false),
+        GRID_COLUMNS("grid_columns", LPDatabase.json(), null, null, null, null, true),
+        ENDPOINT_PARAMS("endpoint_params", LPDatabase.json(), null, null, null, null, true),
+        ENABLE_CONTEXT_MENU("enable_context_menu", LPDatabase.booleanFld(true), null, null, null, null, false),
+        ADD_ACTIONS_TO_CONTEXT_MENU("add_actions_to_context_menu", LPDatabase.booleanFld(false), null, null, null, null, false),
+        VIEW_TITLE_EN("view_title_en", LPDatabase.string(), null, null, null, null, false),
+        VIEW_TITLE_ES("view_title_es", LPDatabase.string(), null, null, null, null, false)*/
         ;
         private ProcedureReqSolution(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules, Boolean isSystFld) {
@@ -1321,6 +1338,124 @@ public class TblsReqs {
         @Override        public Boolean isSystemField(){return this.isSystemFld;}
     }
 
+
+    public enum ProcedureReqSolutionViewTableWithButtons implements EnumIntTableFields {
+        TABLE_ID("table_id", LPDatabase.integerNotNull(), null, null, null, null, true),                
+        SOLUTION_ID("solution_id", LPDatabase.integerNotNull(), null, null, null, null, true),
+        TAB_ID("tab_id", LPDatabase.integer(), null, null, null, null, true),                
+        TYPE("type", LPDatabase.string(), null, null, null, null, false),
+        LABEL_EN("label_en", LPDatabase.string(), null, null, null, null, false),
+        LABEL_ES("label_es", LPDatabase.string(), null, null, null, null, false),
+        WINDOW_NAME("window_name", LPDatabase.string(), null, null, null, null, false),
+        WINDOW_TYPE("window_type", LPDatabase.string(), null, null, null, null, false),
+        WINDOW_MODE("window_mode", LPDatabase.string(), null, null, null, null, false),
+        WINDOW_QUERY("window_query", LPDatabase.string(), null, null, null, null, false),
+        ENTITY("entity", LPDatabase.string(), null, null, null, null, false),
+        QUERY_FOR_BUTTON("query_for_button", LPDatabase.booleanFld(false), null, null, null, null, true),
+        EXTRA_ACTIONS("extra_actions", LPDatabase.stringNotNull(), null, null, null, null, true),
+        TWOICONS_DETAIL("twoicons_detail", LPDatabase.json(), null, null, null, null, true),
+        ADD_REFRESH_BUTTON("add_refresh_button", LPDatabase.booleanFld(true), null, null, null, null, false),
+        GRID_COLUMNS("grid_columns", LPDatabase.json(), null, null, null, null, true),
+        ENDPOINT_PARAMS("endpoint_params", LPDatabase.json(), null, null, null, null, true),
+        ENABLE_CONTEXT_MENU("enable_context_menu", LPDatabase.booleanFld(true), null, null, null, null, false),
+        ADD_ACTIONS_TO_CONTEXT_MENU("add_actions_to_context_menu", LPDatabase.booleanFld(false), null, null, null, null, false),
+        VIEW_TITLE_EN("view_title_en", LPDatabase.string(), null, null, null, null, false),
+        VIEW_TITLE_ES("view_title_es", LPDatabase.string(), null, null, null, null, false)
+        ;
+        private ProcedureReqSolutionViewTableWithButtons(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules, Boolean isSystFld) {
+            this.fieldName = dbObjName;
+            this.fieldType = dbObjType;
+            this.fieldMask = fieldMask;
+            this.reference = refer;
+            this.fieldComment = comment;
+            this.fldBusinessRules = fldBusRules;
+            this.isSystemFld=isSystFld;
+        }
+        private final String fieldName;
+
+        @Override
+        public String getName() {
+            return this.fieldName;
+        }
+        private final String fieldType;
+
+        @Override
+        public String getFieldType() {
+            return this.fieldType;
+        }
+        private final String fieldMask;
+
+        @Override
+        public String getFieldMask() {
+            return this.fieldMask;
+        }
+        private final ReferenceFld reference;
+
+        @Override
+        public ReferenceFld getReferenceTable() {
+            return this.reference;
+        }
+        private final String fieldComment;
+
+        @Override        public String getFieldComment() {            return this.fieldComment;        }
+        private final FldBusinessRules[] fldBusinessRules;
+        @Override        public FldBusinessRules[] getFldBusinessRules() {            return this.fldBusinessRules;        }
+        private final Boolean isSystemFld;
+        @Override        public Boolean isSystemField(){return this.isSystemFld;}
+    }
+
+    public enum ProcedureReqSolutionViewTabs implements EnumIntTableFields {
+        SOLUTION_ID("solution_id", LPDatabase.integerNotNull(), null, null, null, null, true),
+        TAB_ID("tab_id", LPDatabase.integerNotNull(), null, null, null, null, true),                
+        ORDER_NUMBER("order_number", LPDatabase.real(), null, null, null, null, false),
+        LABEL_EN("tab_label_en", LPDatabase.string(), null, null, null, null, false),
+        LABEL_ES("tab_label_es", LPDatabase.string(), null, null, null, null, false),
+        CONTENT_TYPE("content_type", LPDatabase.string(), null, null, null, null, false)
+        ;
+        private ProcedureReqSolutionViewTabs(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules, Boolean isSystFld) {
+            this.fieldName = dbObjName;
+            this.fieldType = dbObjType;
+            this.fieldMask = fieldMask;
+            this.reference = refer;
+            this.fieldComment = comment;
+            this.fldBusinessRules = fldBusRules;
+            this.isSystemFld=isSystFld;
+        }
+        private final String fieldName;
+
+        @Override
+        public String getName() {
+            return this.fieldName;
+        }
+        private final String fieldType;
+
+        @Override
+        public String getFieldType() {
+            return this.fieldType;
+        }
+        private final String fieldMask;
+
+        @Override
+        public String getFieldMask() {
+            return this.fieldMask;
+        }
+        private final ReferenceFld reference;
+
+        @Override
+        public ReferenceFld getReferenceTable() {
+            return this.reference;
+        }
+        private final String fieldComment;
+
+        @Override        public String getFieldComment() {            return this.fieldComment;        }
+        private final FldBusinessRules[] fldBusinessRules;
+        @Override        public FldBusinessRules[] getFldBusinessRules() {            return this.fldBusinessRules;        }
+        private final Boolean isSystemFld;
+        @Override        public Boolean isSystemField(){return this.isSystemFld;}
+    }
+    
     /**
      *
      */
@@ -1864,15 +1999,27 @@ public class TblsReqs {
         PRETTY_ES("modAct", ModuleActionsAndQueries.PRETTY_ES.getName(), "modAct.pretty_name_es as pretty_name_es", ModuleActionsAndQueries.PRETTY_ES, null, null, null),
         MOD_ORDER_NUMBER("modAct", "mod_order_number", "modAct.order_number as mod_order_number", ModuleActionsAndQueries.ORDER_NUMBER, null, null, null), 
         ENTITY("modAct", ModuleActionsAndQueries.ENTITY.getName(), "modAct.entity as entity", ModuleActionsAndQueries.ENTITY, null, null, null),
-        JSON_MODEL("reqs", ModuleActionsAndQueries.JSON_MODEL.getName(), "reqs.json_model as json_model", ModuleActionsAndQueries.JSON_MODEL, null, null, null)
-       
+        CONTENT_TYPE("reqs", ProcedureReqSolution.CONTENT_TYPE.getName(), "reqs.content_type as content_type", ProcedureReqSolution.CONTENT_TYPE, null, null, null),
+        TWOICONS_DETAIL("reqs", ProcedureReqSolution.TWOICONS_DETAIL.getName(), "reqs.twoicons_detail as twoicons_detail", ProcedureReqSolution.TWOICONS_DETAIL, null, null, null),
+        /*        JSON_MODEL("reqs", ModuleActionsAndQueries.JSON_MODEL.getName(), "reqs.json_model as json_model", ModuleActionsAndQueries.JSON_MODEL, null, null, null),
+        
+        ADD_REFRESH_BUTTON("reqs", ProcedureReqSolution.ADD_REFRESH_BUTTON.getName(), "reqs.add_refresh_button as add_refresh_button", ProcedureReqSolution.ADD_REFRESH_BUTTON, null, null, null),
+        GRID_COLUMNS("reqs", ProcedureReqSolution.GRID_COLUMNS.getName(), "reqs.grid_columns as grid_columns", ProcedureReqSolution.GRID_COLUMNS, null, null, null),
+        ENDPOINT_PARAMS("reqs", ProcedureReqSolution.ENDPOINT_PARAMS.getName(), "reqs.endpoint_params as endpoint_params", ProcedureReqSolution.ENDPOINT_PARAMS, null, null, null),
+        ENABLE_CONTEXT_MENU("reqs", ProcedureReqSolution.ENABLE_CONTEXT_MENU.getName(), "reqs.enable_context_menu as enable_context_menu", ProcedureReqSolution.ENABLE_CONTEXT_MENU, null, null, null),
+        ADD_ACTIONS_TO_CONTEXT_MENU("reqs", ProcedureReqSolution.ADD_ACTIONS_TO_CONTEXT_MENU.getName(), "reqs.add_actions_to_context_menu as add_actions_to_context_menu", ProcedureReqSolution.ADD_ACTIONS_TO_CONTEXT_MENU, null, null, null),
+        VIEW_TITLE_EN("reqs", ProcedureReqSolution.VIEW_TITLE_EN.getName(), "reqs.view_title_en as view_title_en", ProcedureReqSolution.VIEW_TITLE_EN, null, null, null),
+        VIEW_TITLE_ES("reqs", ProcedureReqSolution.VIEW_TITLE_ES.getName(), "reqs.view_title_es as view_title_es", ProcedureReqSolution.VIEW_TITLE_ES, null, null, null)
+*/        
+        
         /*        RAW_VALUE_NUM("raw_value_num", "CASE " +
 "            WHEN isnumeric(sar.raw_value::text) THEN to_number(sar.raw_value::text, '9999'::text) " +
 "            ELSE NULL::numeric END AS raw_value_num"
              , SampleAnalysisResult.REPLICA, null, null, null),
         PRETTY_VALUE("pretty_value", "sar.pretty_value", SampleAnalysisResult.PRETTY_VALUE, null, null, null),
         SAMPLE_ANALYSIS_STATUS("sample_analysis_status", "sa.status  AS sample_analysis_status", SampleAnalysis.STATUS, null, null, null),
-         */;
+         */
+        ;
 
         private viewProcReqSolutionViews(String tblAliasInView, String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules) {
 //            try{

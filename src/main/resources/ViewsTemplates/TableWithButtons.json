@@ -1,0 +1,27 @@
+ {
+    "component": "TableWithButtons",
+    "langConfig": {
+      "title": {
+      },
+      "gridHeader": {}
+    },
+    "viewQuery": {
+      "actionName": "",    
+      "addRefreshButton": true,
+      "button": {
+        "icon": "refresh",
+        "title": {
+          "label_en": "Reload",
+          "label_es": "Recargar"
+        },
+        "requiresGridItemSelected": true
+      },
+      "endPointParams": []
+    },
+    "enableContextMenu": true,
+    "addActionsInContextMenu": true,
+    "actions": [
+    ],
+    "row_buttons":[
+    ]
+  }

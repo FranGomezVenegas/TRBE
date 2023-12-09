@@ -5,6 +5,7 @@
  */
 package databases;
 
+import databases.TblsProcedure.ProcedureActions;
 import lbplanet.utilities.LPDatabase;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
@@ -28,6 +29,8 @@ public class TblsApp {
             new String[]{UserProcess.USER_NAME.getName(), UserProcess.PROC_NAME.getName()}, null, "Processes assigned to the users"),
         APP_SESSION(null, "app_session", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, AppSession.values(), AppSession.SESSION_ID.getName(),
             new String[]{AppSession.SESSION_ID.getName()}, null, "Id for any user session"),
+        PROCEDURE_ACTIONS(null, "procedure_actions", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProcedureActions.values(), null,
+                    new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName()}, null, "Procedure Actions Info"),            
         IP_WHITE_LIST(null, "ip_white_list", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, IPWhiteList.values(), IPWhiteList.ID.getName(),
             new String[]{IPWhiteList.ID.getName()}, null, "White List, when at least one IP added then the access will be limited to those IPs (except if added to blacklist)"),
         IP_BLACK_LIST(null, "ip_black_list", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, IPBlackList.values(), IPBlackList.ID.getName(),

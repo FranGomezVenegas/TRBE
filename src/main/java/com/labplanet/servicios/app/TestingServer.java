@@ -7,6 +7,7 @@ package com.labplanet.servicios.app;
 
 import static trazit.globalvariables.GlobalVariables.VALIDATION_MODE_REPO;
 import static com.labplanet.servicios.app.AppProcedureListAPI.PROC_NEW_EVENT_FLD_NAME;
+import static com.labplanet.servicios.app.AppProcedureListAPI.newProcedureDefinition;
 import module.monitoring.definition.TblsEnvMonitData.ViewsEnvMonData;
 import databases.features.DbEncryption;
 import lbplanet.utilities.LPArray;
@@ -22,6 +23,7 @@ import module.instrumentsmanagement.definition.TblsInstrumentsDataAudit;
 import databases.TblsCnfg;
 import databases.TblsData;
 import databases.TblsData.TablesData;
+import databases.TblsData.ViewsData;
 import databases.TblsProcedure;
 import databases.TblsProcedureAudit.TablesProcedureAudit;
 import trazit.procedureinstance.definition.definition.TblsReqs;
@@ -133,7 +135,22 @@ public class TestingServer extends HttpServlet {
 
     String dbName="demo_v0_9_2";
     Rdbms.stablishDBConection(dbName);
-                Rdbms.stablishDBConection(dbName);                
+
+    
+                procInstanceName="instruments";
+            out.println("************ ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VWtesting. Begin");
+            out.println(EnumIntViews.getViewScriptCreation(ViewsData.USER_AND_META_DATA_SOP_VIEW, procInstanceName, false, false, true, null));
+            out.println("************ ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VW testing. End");
+            out.println("************ ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VW NO testing. Begin");
+            out.println(EnumIntViews.getViewScriptCreation(ViewsData.USER_AND_META_DATA_SOP_VIEW, procInstanceName, false, false, false, null));
+            out.println("************ ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VW NO testing. End");
+if (1==1)return;
+    
+    
+                
+Token token2 = new Token("eyJ1c2VyREIiOiJhZG1pbiIsImRhdGV0aW1lRm9ybWF0QXRQbGF0Zm9ybUxldmVsIjoiRElTQUJMRUQiLCJwcm9jc01vZHVsZU5hbWUiOiJzdG9jaypTVE9DS1N8aW5zdHJ1bWVudHMqSU5TVFJVTUVOVFN8bW9uX3dhdGVyKk1PTklUT1JJTkd8bWJfZW0qTU9OSVRPUklOR3xpbnNwZWN0aW9uX2xvdCpJTlNQRUNUSU9OX0xPVFMiLCJkYk5hbWUiOiJkZW1vX3YwXzlfMiIsInR5cCI6IkpXVCIsInVzZXJfcHJvY2VkdXJlX2hhc2hjb2RlcyI6InN0b2NrKjEqLTE5MzExMDk1MzZ8aW5zdHJ1bWVudHMqMSo1NzI0ODQyOTZ8bW9uX3dhdGVyKjEqMjA1MzgwNjg2NXxtYl9lbSoxKjE4NzkwNDY5OTN8aW5zcGVjdGlvbl9sb3QqMSoyOTk0NjE1MDAiLCJlU2lnbiI6ImZpcm1hZGVtbyIsInVzZXJEQlBhc3N3b3JkIjoidHJheml0NGV2ZXIiLCJ1c2VyTWFpbCI6ImluZm9AdHJheml0Lm5ldCIsInVzZXJfcHJvY2VkdXJlcyI6IltzdG9jaywgaW5zdHJ1bWVudHMsIG1vbl93YXRlciwgbWJfZW0sIGluc3BlY3Rpb25fbG90XSIsImFwcFNlc3Npb25JZCI6IjYwOCIsImFwcFNlc3Npb25TdGFydGVkRGF0ZSI6IkZyaSBEZWMgMDEgMTg6MjA6NTcgVVRDIDIwMjMiLCJ1c2VyUm9sZSI6InN1cGVydXNlciIsImFsZyI6IkhTMjU2IiwiaW50ZXJuYWxVc2VySUQiOiI0NTQ4OTIyMyJ9.eyJpc3MiOiJMYWJQTEFORVRkZXN0cmFuZ2lzSW5UaGVOaWdodCJ9.o_OJFAZCcncGaOW5fgTxSqMG9ff0H3bziooPmsxtmtw");                
+newProcedureDefinition(token2, "inspection_lot", false);
+if (1==1)return;                
                 CreatePlatform nwPlatf= new CreatePlatform(dbName);
 
     //createModuleActionsAndQueries(moduleName, Integer , jFileContentObjModel, classesImplementingEndPoints);    
