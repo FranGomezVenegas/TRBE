@@ -21,6 +21,7 @@ public class LPTestingParams {
     public static final String NUM_EVAL_ARGS="numEvalArgs";
     public static final String SCRIPT_ID="scriptId";
     public static final String SCRIPT_EXECUTION_EVIDENCE_SAVE="scriptExecutionEvidenceSave";
+    public static final String CONFIRM_DIALOG_SHOULD_BE_VALIDATED="confirmDialogShouldBeValidated";
     
     public static final String SCHEMA_PREFIX="procInstanceName";
     

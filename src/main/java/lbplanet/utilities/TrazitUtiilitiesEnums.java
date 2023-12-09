@@ -32,6 +32,11 @@ public class TrazitUtiilitiesEnums {
         DATERANGE_WRONG_INTERVAL("dateRange_wrongInterval", "", ""),
         SPECIAL_FUNCTION_RETURNED_ERROR("SpecialFunctionReturnedERROR", "", ""),
         UNHANDLED_EXCEPTION("unHandledException", "<*1*>", "<*1*>"),
+        TESTING_CONFIRM_DIALOG_VALIDATION_DISABLED("testingConfirmDialogValidationDisabled", "<*1*>", "<*1*>"),
+        TESTING_CONFIRM_DIALOG_JUSTIF_PHRASE_REQUIRED("testingConfirmDialogJustifPhraseRequired", "<*1*>", "<*1*>"),
+        TESTING_CONFIRM_DIALOG_WRONG_JUSTIF_PHRASE("testingConfirmDialogWrongJustifPhrase", "<*1*>", "<*1*>"),
+        TESTING_CONFIRM_DIALOG_ESIGN_REQUIRED("testingConfirmDialogEsignRequired", "<*1*>", "<*1*>"),
+        TESTING_CONFIRM_DIALOG_USER_CREDENTIALS_REQUIRED("testingConfirmDialogUserCredentialsRequired", "<*1*>", "<*1*>"),
         ;
         private TrazitUtilitiesErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;

@@ -84,6 +84,7 @@ public class TblsTesting {
         INCLUDE_IN_SCHED("include_in_run_scheduled", LPDatabase.booleanFld(), null, null, null, null),
         TESTER_NAME("tester_name", LPDatabase.string(), null, null, null, null),
         EVAL_NUM_ARGS("num_eval_args", LPDatabase.integer(), null, null, null, null),
+        CONFIRM_DIALOG_SHOULD_BE_VALIDATED("confirm_dialog_should_be_validated", LPDatabase.booleanFld(), null, null, null, null),
         EVAL_TOTAL_TESTS("eval_total_tests", LPDatabase.integer(), null, null, null, null),
         EVAL_SYNTAXIS_MATCH("eval_syntaxis_match", LPDatabase.integer(), null, null, null, null),
         EVAL_SYNTAXIS_UNMATCH("eval_syntaxis_unmatch", LPDatabase.integer(), null, null, null, null),

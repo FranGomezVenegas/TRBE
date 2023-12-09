@@ -154,7 +154,8 @@ public class TestingRegressionUAT extends HttpServlet {
                 }
             }
             String[] fldsToRetrieve = new String[]{TblsTesting.Script.TESTER_NAME.getName(), TblsTesting.Script.EVAL_NUM_ARGS.getName(), TblsTesting.Script.AUDIT_IDS_TO_GET.getName(),
-                TblsTesting.Script.GET_DB_ERRORS.getName(), TblsTesting.Script.GET_MSG_ERRORS.getName(), TblsTesting.Script.SAVE_EXEC_EVID_ON_SUCCESS.getName()};
+                TblsTesting.Script.GET_DB_ERRORS.getName(), TblsTesting.Script.GET_MSG_ERRORS.getName(), TblsTesting.Script.SAVE_EXEC_EVID_ON_SUCCESS.getName(),
+                TblsTesting.Script.CONFIRM_DIALOG_SHOULD_BE_VALIDATED.getName()};
             scriptTblInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, repositoryName, TblsTesting.TablesTesting.SCRIPT.getTableName(),
                     new String[]{TblsTesting.Script.SCRIPT_ID.getName()}, new Object[]{scriptId},
                     fldsToRetrieve, new String[]{TblsTesting.Script.SCRIPT_ID.getName()});
@@ -175,6 +176,7 @@ public class TestingRegressionUAT extends HttpServlet {
             request.setAttribute(LPTestingParams.TESTING_SOURCE, "DB");
             request.setAttribute(LPTestingParams.NUM_EVAL_ARGS, numEvalArgs);
             request.setAttribute(LPTestingParams.SCRIPT_ID, scriptId);
+            request.setAttribute(LPTestingParams.CONFIRM_DIALOG_SHOULD_BE_VALIDATED, Boolean.valueOf(LPNulls.replaceNull(scriptTblInfo[0][6].toString())));
             Integer fldPosic = LPArray.valuePosicInArray(fldsToRetrieve, TblsTesting.Script.SAVE_EXEC_EVID_ON_SUCCESS.getName());
             if (fldPosic > -1) {
                 request.setAttribute(LPTestingParams.SCRIPT_EXECUTION_EVIDENCE_SAVE, scriptTblInfo[0][fldPosic]);
@@ -311,7 +313,7 @@ public class TestingRegressionUAT extends HttpServlet {
                 fileContentBuilder.append(procInstanceName).append(" has mirror mismatches, ").append(allMismatches.length).append(", further detail below:");
 
                 StringBuilder htmlStyleHdr = new StringBuilder(0);
-                htmlStyleHdr.append(LPTestingOutFormat.getHtmlStyleHeader(this.getServletName(), "", scriptId, procInstanceName));
+                //htmlStyleHdr.append(LPTestingOutFormat.getHtmlStyleHeader(this.getServletName(), "", scriptId, procInstanceName));
                 fileContentBuilder.append(htmlStyleHdr);
 
                 StringBuilder fileContentTable1Builder = new StringBuilder(0);

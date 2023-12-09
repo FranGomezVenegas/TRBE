@@ -13,7 +13,9 @@ import databases.Rdbms;
 import static databases.Rdbms.dbGetIndexLastNumberInUse;
 import databases.SqlStatement;
 import databases.SqlWhere;
+import databases.TblsProcedure;
 import databases.TblsTesting;
+import functionaljavaa.businessrules.ActionsControl;
 import functionaljavaa.businessrules.BusinessRules;
 import lbplanet.utilities.LPHashMap;
 import lbplanet.utilities.LPNulls;
@@ -42,6 +44,7 @@ import lbplanet.utilities.LPPlatform.ApiErrorTraping;
 import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_CODE_POSIC;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_EVALUATION_POSIC;
+import lbplanet.utilities.TrazitUtiilitiesEnums;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
@@ -74,6 +77,9 @@ public class LPTestingOutFormat {
     private Integer numEvaluationArguments = -1;
     private Integer actionNamePosic = -1;
     private Integer auditReasonPosic = -1;
+    private Integer userPosic = -1;
+    private Integer passPosic = -1;
+    
     private Integer stepIdPosic = -1;
     private Integer stopSyntaxisUnmatchPosic = -1;
     private Integer stopSyntaxisFalsePosic = -1;
@@ -176,6 +182,9 @@ public class LPTestingOutFormat {
         this.numEvaluationArguments = numEvalArgs;
         this.actionNamePosic = actionNmePosic;
         this.auditReasonPosic = LPArray.valuePosicInArray(fieldsName, TblsTesting.ScriptSteps.AUDIT_REASON.getName());
+        this.userPosic = LPArray.valuePosicInArray(fieldsName, TblsTesting.ScriptSteps.CONFIRMUSER_USER_TO_CHECK.getName());
+        this.passPosic = LPArray.valuePosicInArray(fieldsName, TblsTesting.ScriptSteps.CONFIRMUSER_PW_TO_CHECK.getName());
+         
         this.stepIdPosic = LPArray.valuePosicInArray(fieldsName, TblsTesting.ScriptSteps.STEP_ID.getName());
         this.stopSyntaxisUnmatchPosic = LPArray.valuePosicInArray(fieldsName, TblsTesting.ScriptSteps.STOP_WHEN_SYNTAXIS_UNMATCH.getName());
         this.stopSyntaxisFalsePosic = LPArray.valuePosicInArray(fieldsName, TblsTesting.ScriptSteps.STOP_WHEN_SYNTAXIS_FALSE.getName());
@@ -1061,6 +1070,13 @@ public class LPTestingOutFormat {
         return auditReasonPosic;
     }
 
+    public Integer getUserPosic() {
+        return userPosic;
+    }
+    public Integer getPasswPosic() {
+        return passPosic;
+    }
+
     public Integer getStepIdPosic() {
         return stepIdPosic;
     }
@@ -1333,6 +1349,43 @@ public class LPTestingOutFormat {
      */
     public BigDecimal getTotalTimeConsume() {
         return totalTimeConsume;
+    }
+    
+    public Object[] passConfirmDialogValidation(HttpServletRequest request, LPTestingOutFormat tstOut, String curActionName, Object[] curActionInfo){
+        Boolean confirmDialogShouldBeValidated = Boolean.valueOf(request.getAttribute(LPTestingParams.CONFIRM_DIALOG_SHOULD_BE_VALIDATED).toString());
+        if (Boolean.FALSE.equals(confirmDialogShouldBeValidated))
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.TESTING_CONFIRM_DIALOG_VALIDATION_DISABLED, null);
+        String procInstanceName = request.getParameter("procInstanceName");
+        JSONArray actionsWithESign = ActionsControl.procActionsWithESign(procInstanceName);      
+        boolean actionHasConfirmEsignDialog = LPJson.JSONArraycontainsValue((actionsWithESign), curActionName);       
+/*        if (Boolean.TRUE.equals(actionHasConfirmEsignDialog)){
+            
+        } */
+        JSONArray actionsWithConfirmUser = ActionsControl.procActionsWithConfirmUser(procInstanceName);
+        boolean actionHasConfirmUserDialog = LPJson.JSONArraycontainsValue((actionsWithConfirmUser), curActionName);
+/*        if (Boolean.TRUE.equals(actionHasConfirmUserDialog)){
+            if ((LPNulls.replaceNull(curActionInfo[tstOut.getUserPosic()]).toString().length()==0) || (LPNulls.replaceNull(curActionInfo[tstOut.getPasswPosic()]).toString().length()==0))
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.TESTING_CONFIRM_DIALOG_USER_CREDENTIALS_REQUIRED, null);
+            
+        } */
+        JSONArray actionsWithJustifReason = ActionsControl.procActionsWithJustifReason(procInstanceName);
+        boolean actionHasJustifReasonDialog= LPJson.JSONArraycontainsValue((actionsWithJustifReason), curActionName);
+        if (actionHasConfirmEsignDialog||actionHasConfirmUserDialog||actionHasJustifReasonDialog){
+            Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName(), 
+                    new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName()}, new Object[]{curActionName}, 
+                    new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName()});
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())) {
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_FINE, null);
+            }
+            if ("LIST".equalsIgnoreCase(LPNulls.replaceNull(ruleValue[0][1]).toString())){
+                if (LPNulls.replaceNull(curActionInfo[tstOut.getAuditReasonPosic()]).toString().length()==0) 
+                    return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.TESTING_CONFIRM_DIALOG_JUSTIF_PHRASE_REQUIRED, null);
+                if (Boolean.FALSE.equals((LPArray.valueInArray(ruleValue[0][2].toString().split("\\|"), LPNulls.replaceNull(curActionInfo[tstOut.getAuditReasonPosic()]).toString()))
+                    || (LPArray.valueInArray(ruleValue[0][3].toString().split("\\|"), LPNulls.replaceNull(curActionInfo[tstOut.getAuditReasonPosic()]).toString())) ) )
+                    return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.TESTING_CONFIRM_DIALOG_WRONG_JUSTIF_PHRASE, null);
+            }            
+        }
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_FINE, null);
     }
 
 }

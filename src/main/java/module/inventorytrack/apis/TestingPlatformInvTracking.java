@@ -115,7 +115,7 @@ public class TestingPlatformInvTracking extends HttpServlet {
 
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(                    
                     new Object[]{iLines-numHeaderLines+1, LPNulls.replaceNull(testingContent[iLines][5]).toString()})); //print actionName
-
+                Object[] confirmDialogVerif=new Object[]{};
                 if (actionName.toString().equalsIgnoreCase(ProcedureDefinitionAPIActionsEndpoints.SET_PROCEDURE_BUSINESS_RULES.getName())){
                     procInstanceName=LPNulls.replaceNull(testingContent[iLines][6]).toString();
                     fileContentTable1Builder.append(procInstanceName);                    
@@ -138,18 +138,24 @@ public class TestingPlatformInvTracking extends HttpServlet {
                     testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                     
                 }else{    
-                    ClassInvTrackingController clssInvTrackingController=new ClassInvTrackingController(request, response, actionName.toString(), testingContent, iLines, table1NumArgs);
-                    if (Boolean.TRUE.equals(clssInvTrackingController.getFunctionFound())){
-                        functionRelatedObjects=clssInvTrackingController.getFunctionRelatedObjects();
-                        functionEvaluation=(Object[]) clssInvTrackingController.getFunctionDiagn();
-                        testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                        fileContentTable1Builder.append(clssInvTrackingController.getRowArgsRows());
-                    }else{
-                        functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName});
-                        testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                        fileContentTable1Builder.append(clssInvTrackingController.getRowArgsRows());         
+                    confirmDialogVerif=tstOut.passConfirmDialogValidation(request, tstOut, actionName.toString(), testingContent[iLines]);
+                    functionEvaluation=confirmDialogVerif;
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(confirmDialogVerif[0].toString())){
+                        functionRelatedObjects=new JSONArray();
+                    }else{                        
+                        ClassInvTrackingController clssInvTrackingController=new ClassInvTrackingController(request, response, actionName.toString(), testingContent, iLines, table1NumArgs);
+                        if (Boolean.TRUE.equals(clssInvTrackingController.getFunctionFound())){
+                            functionRelatedObjects=clssInvTrackingController.getFunctionRelatedObjects();
+                            functionEvaluation=(Object[]) clssInvTrackingController.getFunctionDiagn();
+                            testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
+                            fileContentTable1Builder.append(clssInvTrackingController.getRowArgsRows());
+                        }else{
+                            functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName});
+                            testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
+                            fileContentTable1Builder.append(clssInvTrackingController.getRowArgsRows());         
+                        }
+                        clssInvTrackingController=null;
                     }
-                    clssInvTrackingController=null;
                 }
                 if (testingContent[iLines][0]==null){tstAssertSummary.increasetotalLabPlanetBooleanUndefined();}
                 if (testingContent[iLines][1]==null){tstAssertSummary.increasetotalLabPlanetErrorCodeUndefined();}

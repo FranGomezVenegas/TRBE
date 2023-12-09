@@ -102,20 +102,13 @@ public class TestingPlatformInstruments extends HttpServlet {
                 Object actionName = LPNulls.replaceNull(testingContent[iLines][5]).toString();
                 request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, actionName);
                 instanceForActions.setActionNameForTesting(scriptId, iLines, actionName.toString());
-//out.println(iLines+" "+actionName);      
-/*if ("ENTER_EVENT_RESULT".equalsIgnoreCase(actionName.toString())){
-    out.println("stop here");
-}*/
-/*if (iLines==7){
-    out.println("stop here");
-}*/
 
                 if (tstOut.getAuditReasonPosic()!=-1)
                     request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE, LPNulls.replaceNull(testingContent[iLines][tstOut.getAuditReasonPosic()]).toString());
 
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(                    
                     new Object[]{iLines-numHeaderLines+1, LPNulls.replaceNull(testingContent[iLines][5]).toString()})); //print actionName
-
+                Object[] confirmDialogVerif=new Object[]{};
                 if (actionName.toString().equalsIgnoreCase(ProcedureDefinitionAPIActionsEndpoints.SET_PROCEDURE_BUSINESS_RULES.getName())){
                     procInstanceName=LPNulls.replaceNull(testingContent[iLines][6]).toString();
                     fileContentTable1Builder.append(procInstanceName);                    
@@ -137,19 +130,25 @@ public class TestingPlatformInstruments extends HttpServlet {
                         functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_NOT_CREATED, new Object[]{diagn});
                     testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                     
-                }else{    
-                    ClassInstrumentsController clssInstrumentsController=new ClassInstrumentsController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
-                    if (Boolean.TRUE.equals(clssInstrumentsController.getFunctionFound())){
-                        functionRelatedObjects=clssInstrumentsController.getFunctionRelatedObjects();
-                        functionEvaluation=(Object[]) clssInstrumentsController.getFunctionDiagn();
-                        testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                        fileContentTable1Builder.append(clssInstrumentsController.getRowArgsRows());
-                    }else{
-                        functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName});
-                        testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                        fileContentTable1Builder.append(clssInstrumentsController.getRowArgsRows());         
+                }else{                                    
+                    confirmDialogVerif=tstOut.passConfirmDialogValidation(request, tstOut, actionName.toString(), testingContent[iLines]);
+                    functionEvaluation=confirmDialogVerif;
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(confirmDialogVerif[0].toString())){
+                        functionRelatedObjects=new JSONArray();
+                    }else{         
+                        ClassInstrumentsController clssInstrumentsController=new ClassInstrumentsController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
+                        if (Boolean.TRUE.equals(clssInstrumentsController.getFunctionFound())){
+                            functionRelatedObjects=clssInstrumentsController.getFunctionRelatedObjects();
+                            functionEvaluation=(Object[]) clssInstrumentsController.getFunctionDiagn();
+                            testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
+                            fileContentTable1Builder.append(clssInstrumentsController.getRowArgsRows());
+                        }else{
+                            functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName});
+                            testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
+                            fileContentTable1Builder.append(clssInstrumentsController.getRowArgsRows());         
+                        }
+                        clssInstrumentsController=null;
                     }
-                    clssInstrumentsController=null;
                 }
                 if (testingContent[iLines][0]==null){tstAssertSummary.increasetotalLabPlanetBooleanUndefined();}
                 if (testingContent[iLines][1]==null){tstAssertSummary.increasetotalLabPlanetErrorCodeUndefined();}
@@ -161,6 +160,7 @@ public class TestingPlatformInstruments extends HttpServlet {
                     (LPNulls.replaceNull(testingContent[iLines][4]).toString().length()>0) ? "Yes" : "No",
                 }));  
                 BigDecimal secondsInDateRange = LPDate.secondsInDateRange(timeStartedStep, LPDate.getCurrentTimeStamp(), true);
+                
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(String.valueOf(secondsInDateRange)));
                 if (numEvaluationArguments==0){                    
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(Arrays.toString(functionEvaluation)));                     
@@ -168,8 +168,8 @@ public class TestingPlatformInstruments extends HttpServlet {
                 }                                
                 if (numEvaluationArguments>0){                    
                     Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, functionEvaluation, 4);   
-                        
-                    Integer stepId=Integer.valueOf(testingContent[iLines][tstOut.getStepIdPosic()].toString());
+
+                    Integer stepId=Integer.valueOf(testingContent[iLines][tstOut.getStepIdPosic()].toString());                    
                     fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, functionEvaluation, functionRelatedObjects, tstAssert, timeStartedStep));                    
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate));                        
                     if ( tstOut.getStopSyntaxisUnmatchPosic()>-1 && Boolean.TRUE.equals(Boolean.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStopSyntaxisUnmatchPosic()]).toString())) &&

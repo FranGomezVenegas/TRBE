@@ -101,7 +101,7 @@ public class TestingInspLotRM extends HttpServlet {
 
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                     new Object[]{iLines-numHeaderLines+1, LPNulls.replaceNull(testingContent[iLines][5]).toString()})); //print actionName
-
+                Object[] confirmDialogVerif=new Object[]{};
                 ClassInspLotRMController clssInspLotRMController=new ClassInspLotRMController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
                 if (Boolean.TRUE.equals(clssInspLotRMController.getFunctionFound())){
                     functionRelatedObjects=clssInspLotRMController.getFunctionRelatedObjects();
@@ -109,30 +109,36 @@ public class TestingInspLotRM extends HttpServlet {
                     testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                     fileContentTable1Builder.append(clssInspLotRMController.getRowArgsRows());                
                 }else{
-                    ClassInspLotRMQueriesController clssInspLotRMQueriesController=new ClassInspLotRMQueriesController(request, response, actionName.toString(), testingContent, iLines, table1NumArgs);
-                    if (Boolean.TRUE.equals(clssInspLotRMQueriesController.getFunctionFound())){
-                        functionRelatedObjects=clssInspLotRMQueriesController.getFunctionRelatedObjects();
-                        functionEvaluation=(Object[]) clssInspLotRMQueriesController.getFunctionDiagn();
-                        testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                        fileContentTable1Builder.append(clssInspLotRMQueriesController.getRowArgsRows());                
-                    }else{                    
-                        ClassSampleController clssSampleController=new ClassSampleController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
-                        if (Boolean.TRUE.equals(clssSampleController.getFunctionFound())){
-                            functionRelatedObjects=clssSampleController.getFunctionRelatedObjects();
-                            functionEvaluation=(Object[]) clssSampleController.getFunctionDiagn();
+                    confirmDialogVerif=tstOut.passConfirmDialogValidation(request, tstOut, actionName.toString(), testingContent[iLines]);
+                    functionEvaluation=confirmDialogVerif;
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(confirmDialogVerif[0].toString())){
+                        functionRelatedObjects=new JSONArray();
+                    }else{                        
+                        ClassInspLotRMQueriesController clssInspLotRMQueriesController=new ClassInspLotRMQueriesController(request, response, actionName.toString(), testingContent, iLines, table1NumArgs);
+                        if (Boolean.TRUE.equals(clssInspLotRMQueriesController.getFunctionFound())){
+                            functionRelatedObjects=clssInspLotRMQueriesController.getFunctionRelatedObjects();
+                            functionEvaluation=(Object[]) clssInspLotRMQueriesController.getFunctionDiagn();
                             testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                            fileContentTable1Builder.append(clssSampleController.getRowArgsRows());                
-                        }else{
-                            ClassSampleQueriesController clssSampleQueriesController=new ClassSampleQueriesController(request, response, actionName.toString(), testingContent, iLines, table1NumArgs);
-                            if (Boolean.TRUE.equals(clssSampleQueriesController.getFunctionFound())){
-                                functionRelatedObjects=clssSampleQueriesController.getFunctionRelatedObjects();
-                                functionEvaluation=(Object[]) clssSampleQueriesController.getFunctionDiagn();
+                            fileContentTable1Builder.append(clssInspLotRMQueriesController.getRowArgsRows());                
+                        }else{                    
+                            ClassSampleController clssSampleController=new ClassSampleController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
+                            if (Boolean.TRUE.equals(clssSampleController.getFunctionFound())){
+                                functionRelatedObjects=clssSampleController.getFunctionRelatedObjects();
+                                functionEvaluation=(Object[]) clssSampleController.getFunctionDiagn();
                                 testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                                fileContentTable1Builder.append(clssSampleQueriesController.getRowArgsRows());                
+                                fileContentTable1Builder.append(clssSampleController.getRowArgsRows());                
                             }else{
-                                functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName});
-                                testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                                fileContentTable1Builder.append(clssSampleController.getRowArgsRows());         
+                                ClassSampleQueriesController clssSampleQueriesController=new ClassSampleQueriesController(request, response, actionName.toString(), testingContent, iLines, table1NumArgs);
+                                if (Boolean.TRUE.equals(clssSampleQueriesController.getFunctionFound())){
+                                    functionRelatedObjects=clssSampleQueriesController.getFunctionRelatedObjects();
+                                    functionEvaluation=(Object[]) clssSampleQueriesController.getFunctionDiagn();
+                                    testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
+                                    fileContentTable1Builder.append(clssSampleQueriesController.getRowArgsRows());                
+                                }else{
+                                    functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName});
+                                    testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
+                                    fileContentTable1Builder.append(clssSampleController.getRowArgsRows());         
+                                }
                             }
                         }
                     }

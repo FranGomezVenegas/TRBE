@@ -115,7 +115,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
 
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                     new Object[]{iLines-numHeaderLines+1, LPNulls.replaceNull(testingContent[iLines][5]).toString()})); //print actionName                    
-
+                Object[] confirmDialogVerif=new Object[]{};
                 if (actionName.toString().equalsIgnoreCase(ProcedureDefinitionAPIActionsEndpoints.SET_PROCEDURE_BUSINESS_RULES.getName())){
                     procInstanceName=LPNulls.replaceNull(testingContent[iLines][6]).toString();
                     fileContentTable1Builder.append(procInstanceName);                    
@@ -135,89 +135,95 @@ public class TestingEnvMonitSamples extends HttpServlet {
                         functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_NOT_CREATED, new Object[]{diagn});
                     testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                     
-                }else{    
-                ClassEnvMonSampleController clssEnvMonSampleController=new ClassEnvMonSampleController(request, actionName.toString(), testingContent, iLines, table1NumArgs, tstOut.getAuditReasonPosic());
-                if (Boolean.TRUE.equals(clssEnvMonSampleController.getFunctionFound())){
-                    functionRelatedObjects=clssEnvMonSampleController.getFunctionRelatedObjects();
-                    functionEvaluation=(Object[]) clssEnvMonSampleController.getFunctionDiagn();
-                    testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                    fileContentTable1Builder.append(clssEnvMonSampleController.getRowArgsRows());
-                    clssEnvMonSampleController=null;
-                }else{
-                    ClassEnvMonSampleFrontendController clssEnvMonSampleFrontendController=new ClassEnvMonSampleFrontendController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
-                    if (Boolean.TRUE.equals(clssEnvMonSampleFrontendController.getFunctionFound())){
-                        functionRelatedObjects=clssEnvMonSampleFrontendController.getFunctionRelatedObjects();
-                        functionEvaluation=(Object[]) clssEnvMonSampleFrontendController.getFunctionDiagn();
-                        testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                        fileContentTable1Builder.append(clssEnvMonSampleFrontendController.getRowArgsRows());    
-                        clssEnvMonSampleFrontendController=null;
-                    }else{
-                        ClassEnvMonController clssEnvMonController=new ClassEnvMonController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
-                        if (Boolean.TRUE.equals(clssEnvMonController.getFunctionFound())){
-                            functionRelatedObjects=clssEnvMonController.getFunctionRelatedObjects();
-                            functionEvaluation=(Object[]) clssEnvMonController.getFunctionDiagn();
+                }else{  
+                    confirmDialogVerif=tstOut.passConfirmDialogValidation(request, tstOut, actionName.toString(), testingContent[iLines]);
+                    functionEvaluation=confirmDialogVerif;
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(confirmDialogVerif[0].toString())){
+                        functionRelatedObjects=new JSONArray();
+                    }else{                        
+                        ClassEnvMonSampleController clssEnvMonSampleController=new ClassEnvMonSampleController(request, actionName.toString(), testingContent, iLines, table1NumArgs, tstOut.getAuditReasonPosic());
+                        if (Boolean.TRUE.equals(clssEnvMonSampleController.getFunctionFound())){
+                            functionRelatedObjects=clssEnvMonSampleController.getFunctionRelatedObjects();
+                            functionEvaluation=(Object[]) clssEnvMonSampleController.getFunctionDiagn();
                             testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                            fileContentTable1Builder.append(clssEnvMonController.getRowArgsRows());
-                            clssEnvMonController=null;
-                        }else{                    
-                            ClassEnvMonIncubatorController clssEnvMonIncubController=new ClassEnvMonIncubatorController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
-                            if (Boolean.TRUE.equals(clssEnvMonIncubController.getFunctionFound())){
-                                functionRelatedObjects=clssEnvMonIncubController.getFunctionRelatedObjects();
-                                functionEvaluation=(Object[]) clssEnvMonIncubController.getFunctionDiagn();
+                            fileContentTable1Builder.append(clssEnvMonSampleController.getRowArgsRows());
+                            clssEnvMonSampleController=null;
+                        }else{
+                            ClassEnvMonSampleFrontendController clssEnvMonSampleFrontendController=new ClassEnvMonSampleFrontendController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
+                            if (Boolean.TRUE.equals(clssEnvMonSampleFrontendController.getFunctionFound())){
+                                functionRelatedObjects=clssEnvMonSampleFrontendController.getFunctionRelatedObjects();
+                                functionEvaluation=(Object[]) clssEnvMonSampleFrontendController.getFunctionDiagn();
                                 testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                                fileContentTable1Builder.append(clssEnvMonIncubController.getRowArgsRows());  
-                                clssEnvMonIncubController=null;
-                            }else{                            
-                                ClassEnvMonQueriesController clssEnvMonQueriesController=new ClassEnvMonQueriesController(request, response, actionName.toString(), testingContent, iLines, table1NumArgs);
-                                if (Boolean.TRUE.equals(clssEnvMonQueriesController.getFunctionFound())){
-                                    functionRelatedObjects=clssEnvMonQueriesController.getFunctionRelatedObjects();
-                                    functionEvaluation=(Object[]) clssEnvMonQueriesController.getFunctionDiagn();
+                                fileContentTable1Builder.append(clssEnvMonSampleFrontendController.getRowArgsRows());    
+                                clssEnvMonSampleFrontendController=null;
+                            }else{
+                                ClassEnvMonController clssEnvMonController=new ClassEnvMonController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
+                                if (Boolean.TRUE.equals(clssEnvMonController.getFunctionFound())){
+                                    functionRelatedObjects=clssEnvMonController.getFunctionRelatedObjects();
+                                    functionEvaluation=(Object[]) clssEnvMonController.getFunctionDiagn();
                                     testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                                    fileContentTable1Builder.append(clssEnvMonQueriesController.getRowArgsRows());     
-                                    clssEnvMonQueriesController=null;
-                                }else{
-                                    ClassSampleController clssSampleController=new ClassSampleController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
-                                    if (Boolean.TRUE.equals(clssSampleController.getFunctionFound())){
-                                        functionRelatedObjects=clssSampleController.getFunctionRelatedObjects();
-                                        functionEvaluation=(Object[]) clssSampleController.getFunctionDiagn();
+                                    fileContentTable1Builder.append(clssEnvMonController.getRowArgsRows());
+                                    clssEnvMonController=null;
+                                }else{                    
+                                    ClassEnvMonIncubatorController clssEnvMonIncubController=new ClassEnvMonIncubatorController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
+                                    if (Boolean.TRUE.equals(clssEnvMonIncubController.getFunctionFound())){
+                                        functionRelatedObjects=clssEnvMonIncubController.getFunctionRelatedObjects();
+                                        functionEvaluation=(Object[]) clssEnvMonIncubController.getFunctionDiagn();
                                         testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                                        fileContentTable1Builder.append(clssSampleController.getRowArgsRows());  
-                                        clssSampleController=null;
-                                    }else{
-                                        ClassInvestigationController clssInvestigationController=new ClassInvestigationController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
-                                        if (Boolean.TRUE.equals(clssInvestigationController.getFunctionFound())){
-                                            functionRelatedObjects=clssInvestigationController.getFunctionRelatedObjects();
-                                            functionEvaluation=(Object[]) clssInvestigationController.getFunctionDiagn();
+                                        fileContentTable1Builder.append(clssEnvMonIncubController.getRowArgsRows());  
+                                        clssEnvMonIncubController=null;
+                                    }else{                            
+                                        ClassEnvMonQueriesController clssEnvMonQueriesController=new ClassEnvMonQueriesController(request, response, actionName.toString(), testingContent, iLines, table1NumArgs);
+                                        if (Boolean.TRUE.equals(clssEnvMonQueriesController.getFunctionFound())){
+                                            functionRelatedObjects=clssEnvMonQueriesController.getFunctionRelatedObjects();
+                                            functionEvaluation=(Object[]) clssEnvMonQueriesController.getFunctionDiagn();
                                             testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                                            fileContentTable1Builder.append(clssInvestigationController.getRowArgsRows()); 
-                                            clssInvestigationController=null;
+                                            fileContentTable1Builder.append(clssEnvMonQueriesController.getRowArgsRows());     
+                                            clssEnvMonQueriesController=null;
                                         }else{
-                                            ClassEnvMonProdLotController clsEnvMonProdLot=new ClassEnvMonProdLotController(request, actionName.toString(), testingContent, iLines, table1NumArgs, tstOut.getAuditReasonPosic());
-                                            if (Boolean.TRUE.equals(clsEnvMonProdLot.getFunctionFound())){
-                                                functionRelatedObjects=clsEnvMonProdLot.getFunctionRelatedObjects();
-                                                functionEvaluation=(Object[]) clsEnvMonProdLot.getFunctionDiagn();
+                                            ClassSampleController clssSampleController=new ClassSampleController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
+                                            if (Boolean.TRUE.equals(clssSampleController.getFunctionFound())){
+                                                functionRelatedObjects=clssSampleController.getFunctionRelatedObjects();
+                                                functionEvaluation=(Object[]) clssSampleController.getFunctionDiagn();
                                                 testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                                                fileContentTable1Builder.append(clsEnvMonProdLot.getRowArgsRows());  
-                                                clsEnvMonProdLot=null;
+                                                fileContentTable1Builder.append(clssSampleController.getRowArgsRows());  
+                                                clssSampleController=null;
                                             }else{
-                                                functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName});
-                                                testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                                                fileContentTable1Builder.append(clssSampleController.getRowArgsRows());         
+                                                ClassInvestigationController clssInvestigationController=new ClassInvestigationController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
+                                                if (Boolean.TRUE.equals(clssInvestigationController.getFunctionFound())){
+                                                    functionRelatedObjects=clssInvestigationController.getFunctionRelatedObjects();
+                                                    functionEvaluation=(Object[]) clssInvestigationController.getFunctionDiagn();
+                                                    testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
+                                                    fileContentTable1Builder.append(clssInvestigationController.getRowArgsRows()); 
+                                                    clssInvestigationController=null;
+                                                }else{
+                                                    ClassEnvMonProdLotController clsEnvMonProdLot=new ClassEnvMonProdLotController(request, actionName.toString(), testingContent, iLines, table1NumArgs, tstOut.getAuditReasonPosic());
+                                                    if (Boolean.TRUE.equals(clsEnvMonProdLot.getFunctionFound())){
+                                                        functionRelatedObjects=clsEnvMonProdLot.getFunctionRelatedObjects();
+                                                        functionEvaluation=(Object[]) clsEnvMonProdLot.getFunctionDiagn();
+                                                        testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
+                                                        fileContentTable1Builder.append(clsEnvMonProdLot.getRowArgsRows());  
+                                                        clsEnvMonProdLot=null;
+                                                    }else{
+                                                        functionEvaluation=ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName});
+                                                        testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
+                                                        fileContentTable1Builder.append(clssSampleController.getRowArgsRows());         
+                                                    }
+                                                    clsEnvMonProdLot=null;                                            
+                                                }
+                                                clssInvestigationController=null;
                                             }
-                                            clsEnvMonProdLot=null;                                            
+                                            clssSampleController=null;
                                         }
-                                        clssInvestigationController=null;
+                                        clssEnvMonQueriesController=null;
                                     }
-                                    clssSampleController=null;
+                                    clssEnvMonIncubController=null;
                                 }
-                                clssEnvMonQueriesController=null;
+                                clssEnvMonSampleFrontendController=null;
                             }
-                            clssEnvMonIncubController=null;
+                            clssEnvMonSampleController=null;
                         }
-                        clssEnvMonSampleFrontendController=null;
                     }
-                    clssEnvMonSampleController=null;
-                }
                 }
                 if (testingContent[iLines][0]==null){tstAssertSummary.increasetotalLabPlanetBooleanUndefined();}
                 if (testingContent[iLines][1]==null){tstAssertSummary.increasetotalLabPlanetErrorCodeUndefined();}
