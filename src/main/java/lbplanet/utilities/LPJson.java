@@ -331,4 +331,22 @@ for (JsonElement element : list) {
         
         return newArr;    
     }
+
+    public static boolean JSONArraycontainsValue(JSONArray jsonArray, String value) {
+        for (int i = 0; i < jsonArray.size(); i++) {
+            Object item = jsonArray.get(i);
+            if (item instanceof JSONObject) {
+                JSONObject jsonObject = (JSONObject) item;
+                if (jsonObject.containsKey(value)) {
+                    return true;
+                }
+            } else if (item instanceof String) {
+                String str = (String) item;
+                if (str.equals(value)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }    
 }
