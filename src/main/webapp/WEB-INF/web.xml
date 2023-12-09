@@ -202,6 +202,10 @@
         <servlet-class>com.labplanet.servicios.app.TestingRegressionUAT</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>TestingSpecUAT</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.TestingSpecUAT</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>TestingAPIActions</servlet-name>
         <servlet-class>com.labplanet.servicios.app.TestingAPIActions</servlet-class>
     </servlet>
@@ -438,6 +442,10 @@
     <servlet-mapping>
         <servlet-name>TestingRegressionUAT</servlet-name>
         <url-pattern>/testing/platform/TestingRegressionUAT</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TestingSpecUAT</servlet-name>
+        <url-pattern>/testing/platform/TestingSpecUAT</url-pattern>
     </servlet-mapping>
     <!-- Block 6# Testing End. -->
     <!-- Block 7# Modules Begin. -->
