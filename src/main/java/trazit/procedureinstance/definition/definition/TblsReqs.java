@@ -394,7 +394,7 @@ public class TblsReqs {
         ACTIONS_IN_SOLUTION("SELECT act.module_name, act.module_version, procinfo.procedure_name, procinfo.procedure_version, procinfo.proc_instance_name, act.entity, act.endpoint_name,\n" +
                         " 		act.api_name,	act.pretty_name_en, act.pretty_name_es,	act.query_for_button, act.extra_actions, act.arguments_array,\n" +
                         "    COALESCE(count(sol.window_action), 0::bigint) AS present,\n" +
-                        "   string_agg(COALESCE(sol.code::text, sol.parent_code::text), ', ') AS requirements_list \n" +
+                        "   string_agg(COALESCE(sol.code::text, sol.parent_code::text), ', ') AS requirements_list, act.output_object_types \n" +
                         "   FROM requirements.module_actions_and_queries act\n" +
                         "   JOIN requirements.procedure_info procinfo ON act.module_name::text = procinfo.module_name::text"+
                         "   LEFT JOIN (select reqsol.window_action, usr.code, usr.parent_code, usr.procedure_name, usr.procedure_version, usr.proc_instance_name \n" +
@@ -410,7 +410,7 @@ public class TblsReqs {
         QUERIES_IN_SOLUTION("SELECT act.module_name, act.module_version, procinfo.procedure_name, procinfo.procedure_version, procinfo.proc_instance_name, act.entity, act.endpoint_name,\n" +
                         " 		act.api_name,	act.pretty_name_en, act.pretty_name_es,	act.arguments_array,	\n" +
                         "    COALESCE(count(sol.window_query), 0::bigint) AS present,\n" +
-                        "    string_agg(COALESCE(sol.code::text, sol.parent_code::text), ', ') AS requirements_list \n" +
+                        "    string_agg(COALESCE(sol.code::text, sol.parent_code::text), ', ') AS requirements_list, act.output_object_types \n" +
                         "   FROM requirements.module_actions_and_queries act\n" +
                         "   LEFT JOIN (select reqsol.window_query, usr.procedure_name, usr.procedure_version, usr.proc_instance_name, usr.parent_code, usr.code \n" +
                         "          		from requirements.procedure_req_solution reqsol, requirements.procedure_user_requirements usr\n" +
@@ -561,7 +561,8 @@ public class TblsReqs {
         JSON_MODEL("json_model", LPDatabase.json(), null, null, null, null),
         QUERY_FOR_BUTTON("query_for_button", LPDatabase.booleanFld(false), null, null, null, null),
         EXTRA_ACTIONS("extra_actions", LPDatabase.stringNotNull(), null, null, null, null),
-        ARGUMENTS_ARRAY("arguments_array", LPDatabase.string(), null, null, null, null)        
+        ARGUMENTS_ARRAY("arguments_array", LPDatabase.string(), null, null, null, null),
+        OUTPUT_OBJECT_TYPES("output_object_types", LPDatabase.string(), null, null, null, null)
         ;
         private ModuleActionsAndQueries(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules) {
@@ -2241,6 +2242,7 @@ public class TblsReqs {
         PROC_INSTANCE_NAME("procinfo", ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), "procinfo.proc_instance_name as proc_instance_name", ProcedureUserRequirements.PROC_INSTANCE_NAME, null, null, null),
         ENTITY("act",TblsReqs.ModuleActionsAndQueries.ENTITY.getName(), "act.entity as entity", ModuleActionsAndQueries.ENTITY, null, null, null),
         API_NAME("act", ModuleActionsAndQueries.API_NAME.getName(), "act.api_name as api_name", ModuleActionsAndQueries.API_NAME, null, null, null),
+        OUTPUT_OBJECT_TYPES("act", ModuleActionsAndQueries.OUTPUT_OBJECT_TYPES.getName(), "act.output_object_types as output_object_types", ModuleActionsAndQueries.OUTPUT_OBJECT_TYPES, null, null, null),
         ENDPOINT_NAME("act", ModuleActionsAndQueries.ENDPOINT_NAME.getName(), "act.endpoint_name as endpoint_name", ModuleActionsAndQueries.ENDPOINT_NAME, null, null, null),
         PRETTY_EN("act", ModuleActionsAndQueries.PRETTY_EN.getName(), "act.pretty_name_en as pretty_name_en", ModuleActionsAndQueries.PRETTY_EN, null, null, null),
         PRETTY_ES("act", ModuleActionsAndQueries.PRETTY_ES.getName(), "act.pretty_name_eS as pretty_name_eS", ModuleActionsAndQueries.PRETTY_ES, null, null, null),
@@ -2306,6 +2308,7 @@ public class TblsReqs {
         ENTITY("act",TblsReqs.ModuleActionsAndQueries.ENTITY.getName(), "act.entity as entity", ModuleActionsAndQueries.ENTITY, null, null, null),
         API_NAME("act", ModuleActionsAndQueries.API_NAME.getName(), "act.api_name as api_name", ModuleActionsAndQueries.API_NAME, null, null, null),
         ENDPOINT_NAME("act", ModuleActionsAndQueries.ENDPOINT_NAME.getName(), "act.endpoint_name as endpoint_name", ModuleActionsAndQueries.ENDPOINT_NAME, null, null, null),
+        OUTPUT_OBJECT_TYPES("act", ModuleActionsAndQueries.OUTPUT_OBJECT_TYPES.getName(), "act.output_object_types as output_object_types", ModuleActionsAndQueries.OUTPUT_OBJECT_TYPES, null, null, null),
         PRETTY_EN("act", ModuleActionsAndQueries.PRETTY_EN.getName(), "act.pretty_name_en as pretty_name_en", ModuleActionsAndQueries.PRETTY_EN, null, null, null),
         PRETTY_ES("act", ModuleActionsAndQueries.PRETTY_ES.getName(), "act.pretty_name_eS as pretty_name_eS", ModuleActionsAndQueries.PRETTY_ES, null, null, null),
         PRESENT("sol", "present", "sol.present as present", ModuleBusinessRules.MODULE_VERSION, null, null, null),

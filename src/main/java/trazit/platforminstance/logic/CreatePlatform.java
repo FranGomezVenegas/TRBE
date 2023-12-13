@@ -901,18 +901,18 @@ if (curBusRuleObj.getTagName().contains("certificationUserSOPMode")){
                 
                 String[] fields=new String[]{TblsReqs.ModuleActionsAndQueries.MODULE_NAME.getName(), TblsReqs.ModuleActionsAndQueries.MODULE_VERSION.getName(), TblsReqs.ModuleActionsAndQueries.API_NAME.getName(),
                     TblsReqs.ModuleActionsAndQueries.ENDPOINT_NAME.getName(), TblsReqs.ModuleActionsAndQueries.ENTITY.getName(), TblsReqs.ModuleActionsAndQueries.ACTIVE.getName(),
-                    TblsReqs.ModuleActionsAndQueries.ARGUMENTS_ARRAY.getName()};
+                    TblsReqs.ModuleActionsAndQueries.ARGUMENTS_ARRAY.getName(), TblsReqs.ModuleActionsAndQueries.OUTPUT_OBJECT_TYPES.getName()};
                 for (int j = 0; j < enumConstantObjects.size(); j++) {
                     EnumIntEndpoints curEndpoint = (EnumIntEndpoints) enumConstantObjects.get(j);
                     apiEndpointsArr.add(curEndpoint.getName());
                 
-                    Object[] values1D=new Object[]{moduleName, moduleVersion, apiNameArr[1], curEndpoint.getName(), curEndpoint.getEntity(), true, EndPointsToRequirements.getEndPointArguments(curEndpoint.getArguments())};
+                    Object[] values1D=new Object[]{moduleName, moduleVersion, apiNameArr[1], curEndpoint.getName(), curEndpoint.getEntity(), true, EndPointsToRequirements.getEndPointArguments(curEndpoint.getArguments()), curEndpoint.getOutputObjectTypes().toString()};
                     values=LPArray.array1dTo2d(LPArray.addValueToArray1D(LPArray.array2dTo1d(values),values1D), fields.length); 
                 }                
                 for (Object[]  curRow: values){
                     fields=new String[]{TblsReqs.ModuleActionsAndQueries.MODULE_NAME.getName(), TblsReqs.ModuleActionsAndQueries.MODULE_VERSION.getName(), TblsReqs.ModuleActionsAndQueries.API_NAME.getName(),
                         TblsReqs.ModuleActionsAndQueries.ENDPOINT_NAME.getName(), TblsReqs.ModuleActionsAndQueries.ENTITY.getName(), 
-                        TblsReqs.ModuleActionsAndQueries.ACTIVE.getName(), TblsReqs.ModuleActionsAndQueries.ARGUMENTS_ARRAY.getName()};
+                        TblsReqs.ModuleActionsAndQueries.ACTIVE.getName(), TblsReqs.ModuleActionsAndQueries.ARGUMENTS_ARRAY.getName(), TblsReqs.ModuleActionsAndQueries.OUTPUT_OBJECT_TYPES.getName()};
                     int[] valuePosicArray2D = LPArray.valuePosicArray2D(this.modulesTrazitEndpoints, new Object[][]{{this.modulesTrazitEndpointsApiNameFldPosic, curRow[2].toString()},{this.modulesTrazitEndpointsEndpointNameFldPosic, curRow[3].toString()}});  
                     if (valuePosicArray2D.length>0){
                         Object jsonModelValue = this.modulesTrazitEndpoints[valuePosicArray2D[0]][this.modulesTrazitEndpointsJsonModelFldPosic];

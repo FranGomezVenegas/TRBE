@@ -392,6 +392,7 @@ public class TblsTrazitDocModules {
         ENDPOINT_VERSION("endpoint_version", LPDatabase.integer(), null, null, null, null),
         ARGUMENTS("arguments", LPDatabase.stringNotNull(), null, null, null, null),
         ARGUMENTS_ARRAY("arguments_array", LPDatabase.string(), null, null, null, null),
+        OUTPUT_OBJECT_TYPES("output_object_types", LPDatabase.string(), null, null, null, null),
         CREATION_DATE("creation_date", LPDatabase.dateTimeWithDefaultNow(), null, null, null, null),
         LAST_UPDATE("last_update", LPDatabase.dateTime(), null, null, null, null),
         BRIEF_SUMMARY_EN("brief_summary_en", LPDatabase.string(), null, null, null, null),
