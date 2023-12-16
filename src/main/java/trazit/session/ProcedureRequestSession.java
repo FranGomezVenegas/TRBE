@@ -130,6 +130,7 @@ public class ProcedureRequestSession {
                 return;
             }
             tokn = new Token(finalToken);
+            if (tokn!=null)this.token=tokn;
             if (Boolean.FALSE.equals(isForDocumentation)) {
                 if ((Boolean.FALSE.equals(LPNulls.replaceNull(dbNameProp).equalsIgnoreCase(LPNulls.replaceNull(tokn.getDbName()))))) {
                     this.hasErrors = true;
@@ -228,7 +229,7 @@ public class ProcedureRequestSession {
                     return;                
                 }
             }
-            if (this.token != null && !isPlatform) {
+            if (this.token != null && !isPlatform && !this.isForDocumentation) {
                 this.procedureVersion = this.token.getProcedureInstanceVersion(procInstanceName);
                 this.procedureHashCode = this.token.getProcedureInstanceHashCode(procInstanceName);
             }
