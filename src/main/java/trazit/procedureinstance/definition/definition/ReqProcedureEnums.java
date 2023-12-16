@@ -378,8 +378,9 @@ public class ReqProcedureEnums {
                     new LPAPIArguments("windowType", LPAPIArguments.ArgumentType.STRING.toString(), true, 12),
                     new LPAPIArguments("windowMode", LPAPIArguments.ArgumentType.STRING.toString(), true, 13),
                     new LPAPIArguments("roleName", LPAPIArguments.ArgumentType.STRING.toString(), true, 14),
-                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 15),
-                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 16)
+                    new LPAPIArguments("sopName", LPAPIArguments.ArgumentType.STRING.toString(), false, 15),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 16),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 17)
                 }, EndPointsToRequirements.endpointWithNoOutputObjects,                null, null),
         ADD_SPECIAL_WINDOW_REQ_SOLUTION("ADD_SPECIAL_WINDOW_REQ_SOLUTION", "addSpecialWindowRequirementSolutionToProcedure_success",
                 new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
@@ -404,8 +405,9 @@ public class ReqProcedureEnums {
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROC_INSTANCENAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.REQUIREMENT_ID.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.SOLUTION_ID.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 10),
-                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 11),
-                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 12)
+                    new LPAPIArguments("sopName", LPAPIArguments.ArgumentType.STRING.toString(), false, 11),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 12),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 13)
                 }, EndPointsToRequirements.endpointWithNoOutputObjects,                null, null),
         NEW_SCRIPT_TESTING("NEW_SCRIPT_TESTING", "newScriptTesting_success",
                 new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),

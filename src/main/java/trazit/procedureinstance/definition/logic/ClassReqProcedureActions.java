@@ -1064,6 +1064,8 @@ public class ClassReqProcedureActions {
                 i++;
                 roleName= argValues[i].toString();
                 i++;
+                sopName= argValues[i].toString();
+                i++;
                 fieldName = argValues[i].toString();
                 i++;
                 fieldValue = argValues[i].toString();
@@ -1115,6 +1117,10 @@ public class ClassReqProcedureActions {
                     fieldValues=LPArray.addValueToArray1D(fieldValues,new Object[]{procedureName, procedureVersion, procInstanceName, 
                         Integer.valueOf(reqId), ProcedureDefinitionToInstanceSections.ReqSolutionTypes.WINDOW.getTagValue(), windowName, roleName,
                         windowQuery, windowType, windowMode});
+                    if (LPNulls.replaceNull(sopName).toString().length()>0){
+                        fieldNames=LPArray.addValueToArray1D(fieldNames, TblsReqs.ProcedureReqSolution.SOP_NAME.getName());
+                        fieldValues=LPArray.addValueToArray1D(fieldValues, sopName);
+                    }
                     removeDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION,
                         fieldNames, fieldValues);
                     if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
@@ -1318,6 +1324,8 @@ public class ClassReqProcedureActions {
                 i++;
                 String solId = argValues[i].toString();
                 i++;
+                sopName = argValues[i].toString();
+                i++;
                 fieldName = argValues[i].toString();
                 i++;
                 fieldValue = argValues[i].toString();
@@ -1343,7 +1351,11 @@ public class ClassReqProcedureActions {
 
                     this.messageDynamicData = new Object[]{reqId, procedureName, procedureVersion};
                     break;
-                }                
+                }         
+                if (LPNulls.replaceNull(sopName).toString().length()>0){
+                    fieldNames=LPArray.addValueToArray1D(fieldNames, TblsReqs.ProcedureReqSolution.SOP_NAME.getName());
+                    fieldValues=LPArray.addValueToArray1D(fieldValues, sopName);
+                }
                 removeDiagn = Rdbms.updateTableRecordFieldsByFilter(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION,
                     EnumIntTableFields.getTableFieldsFromString(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, fieldNames), fieldValues,
                     new SqlWhere(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION,new String[]{TblsReqs.ProcedureReqSolution.PROCEDURE_NAME.getName(), TblsReqs.ProcedureReqSolution.PROCEDURE_VERSION.getName(),
