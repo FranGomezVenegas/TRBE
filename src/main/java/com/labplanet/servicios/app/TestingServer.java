@@ -23,7 +23,6 @@ import module.instrumentsmanagement.definition.TblsInstrumentsDataAudit;
 import databases.TblsCnfg;
 import databases.TblsData;
 import databases.TblsData.TablesData;
-import databases.TblsData.ViewsData;
 import databases.TblsProcedure;
 import databases.TblsProcedureAudit.TablesProcedureAudit;
 import trazit.procedureinstance.definition.definition.TblsReqs;
@@ -104,6 +103,7 @@ import trazit.thirdparties.sap.ExcelExporter;
 import trazit.thirdparties.sap.Mosquitto;
 import trazit.thirdparties.sap.PDFDataExtractor;
 import java.util.Set;
+import module.inspectionlot.rawmaterial.definition.TblsInspLotRMData.ViewsInspLotRMData;
 import trazit.platforminstance.logic.CreatePlatform;
 import static trazit.procedureinstance.definition.logic.ReqProcDefTestingCoverageSummary.procInstanceTestingInfo;
 /**
@@ -137,13 +137,19 @@ public class TestingServer extends HttpServlet {
     Rdbms.stablishDBConection(dbName);
 
     
-                procInstanceName="instruments";
-            out.println("************ ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VWtesting. Begin");
-            out.println(EnumIntViews.getViewScriptCreation(ViewsData.USER_AND_META_DATA_SOP_VIEW, procInstanceName, false, false, true, null));
-            out.println("************ ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VW testing. End");
-            out.println("************ ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VW NO testing. Begin");
-            out.println(EnumIntViews.getViewScriptCreation(ViewsData.USER_AND_META_DATA_SOP_VIEW, procInstanceName, false, false, false, null));
-            out.println("************ ViewsAppProcData.NOT_DECOM_INSTR_EVENT_DATA_VW NO testing. End");
+                procInstanceName="inspection_lot";
+            out.println("************ ViewsAppProcData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW. Begin");
+            String tblCreateScript=EnumIntViews.getViewScriptCreation(ViewsInspLotRMData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, procInstanceName, false, false, true, null);
+            out.println(tblCreateScript);
+Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(procInstanceName, ViewsInspLotRMData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName(), tblCreateScript, new Object[]{});
+out.println(Arrays.toString(prepUpQuery));
+out.println("************ ViewsAppProcData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW testing. End");
+            out.println("************ ViewsAppProcData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW NO testing. Begin");
+            tblCreateScript=EnumIntViews.getViewScriptCreation(ViewsInspLotRMData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, procInstanceName, false, false, false, null);
+            out.println(tblCreateScript);
+prepUpQuery = Rdbms.prepUpQueryWithDiagn(procInstanceName, ViewsInspLotRMData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName(), tblCreateScript, new Object[]{});
+out.println(Arrays.toString(prepUpQuery));
+            out.println("************ ViewsAppProcData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW NO testing. End");
 if (1==1)return;
     
     
@@ -627,7 +633,7 @@ out.println("************ ViewsData.USER_AND_META_DATA_SOP_VIEW NO testing. End"
                 out.println("");
             }
             Rdbms.stablishDBConection("demoplatform");
-            String tblCreateScript = createTableScript(TablesProcedureAudit.PROC_HASH_CODES,
+            tblCreateScript = createTableScript(TablesProcedureAudit.PROC_HASH_CODES,
                     "em-air-spr1", false, true, null);
             Rdbms.prepUpQueryWithDiagn(TablesProcedureAudit.PROC_HASH_CODES.getRepositoryName(),
                     TablesProcedureAudit.PROC_HASH_CODES.getTableName(),
