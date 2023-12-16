@@ -278,6 +278,10 @@
         <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonAPIqueries</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>MonitoringAPIqueries</servlet-name>
+        <servlet-class>module.monitoring.apis.MonitoringAPIqueries</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>InvestigationAPI</servlet-name>
         <servlet-class>com.labplanet.servicios.app.InvestigationAPI</servlet-class>
     </servlet>
@@ -500,6 +504,11 @@
         <servlet-name>EnvMonAPIqueries</servlet-name>
         <url-pattern>/moduleenvmon/EnvMonAPIqueries</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>MonitoringAPIqueries</servlet-name>
+        <url-pattern>/moduleMonitoring/MonitoringAPIqueries</url-pattern>
+    </servlet-mapping>
+    
     <servlet-mapping>
         <servlet-name>EnvMonAPIStats</servlet-name>
         <url-pattern>/moduleenvmon/EnvMonAPIstats</url-pattern>
