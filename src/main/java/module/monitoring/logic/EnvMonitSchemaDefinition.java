@@ -31,7 +31,7 @@ public final class EnvMonitSchemaDefinition {
         JSONObject jsonObj = new JSONObject();
         
         String[] schemaNames = new String[]{GlobalVariables.Schemas.APP.getName(), GlobalVariables.Schemas.REQUIREMENTS.getName(), GlobalVariables.Schemas.CONFIG.getName()};
-         jsonObj.put(JsonTags.NUM_RECORDS_IN_DEFINITION.getTagValue(), schemaNames.length);     
+         jsonObj.put(JsonTags.NUM_RECORDS_IN_DEFINITION.getTagValueEn(), schemaNames.length);     
         for (String configSchemaName:schemaNames){
             JSONArray jsSchemaArr = new JSONArray();
             jsSchemaArr.add(configSchemaName);
