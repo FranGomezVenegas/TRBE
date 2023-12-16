@@ -7,6 +7,8 @@ package module.inspectionlot.rawmaterial.definition;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import static com.labplanet.servicios.moduleenvmonit.EnvMonAPIqueries.JSON_TAG_SPEC_DEFINITION;
+import com.labplanet.servicios.modulesample.ClassSampleQueries;
+import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.SqlStatementEnums;
@@ -14,6 +16,7 @@ import databases.SqlWhere;
 import databases.TblsCnfg;
 import databases.TblsData;
 import databases.TblsProcedure;
+import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.materialspec.SpecFrontEndUtilities;
 import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.parameter.Parameter.isTagValueOneOfEnableOnes;
@@ -40,6 +43,8 @@ import org.json.simple.JSONObject;
 import trazit.enums.EnumIntQueriesObj;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
+import trazit.enums.EnumIntViewFields;
+import trazit.globalvariables.GlobalVariables;
 import trazit.procedureinstance.definition.apis.ReqProcedureDefinitionQueries;
 import trazit.session.ProcedureRequestSession;
 import trazit.queries.QueryUtilitiesEnums;
@@ -545,7 +550,107 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                     Rdbms.closeRdbms();
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     break;
+                case GET_SAMPLE_ANALYSIS_RESULT_LIST:
+                    RelatedObjects rObj = RelatedObjects.getInstanceForActions();
+                        Integer sampleId = Integer.valueOf(LPNulls.replaceNull(argValues[0]).toString());
+                        String[] resultFieldToRetrieveArr = EnumIntViewFields.getAllFieldNames(EnumIntViewFields.getViewFieldsFromString(TblsInspLotRMData.ViewsInspLotRMData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, "ALL"));
+                        EnumIntViewFields[] fldsToGet = EnumIntViewFields.getAllFieldNamesFromDatabase(TblsInspLotRMData.ViewsInspLotRMData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, null);
+                        //fieldsToGet = EnumIntViewFields.(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, sampleAnalysisFieldToRetrieve.split("\\|"));
+                        resultFieldToRetrieveArr = LPArray.getUniquesArray(LPArray.addValueToArray1D(resultFieldToRetrieveArr, SampleAPIParams.MANDATORY_FIELDS_FRONTEND_TO_RETRIEVE_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|")));
 
+                        String[] sampleAnalysisWhereFieldsNameArr = new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName()};
+                        Object[] sampleAnalysisWhereFieldsValueArr = new Object[]{sampleId};
+
+                        String sampleAnalysisWhereFieldsName = LPNulls.replaceNull(argValues[2]).toString();
+                        if ((sampleAnalysisWhereFieldsName != null) && (sampleAnalysisWhereFieldsName.length() > 0)) {
+                            sampleAnalysisWhereFieldsNameArr = LPArray.addValueToArray1D(sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsName.split("\\|"));
+                        }
+                        String sampleAnalysisWhereFieldsValue = LPNulls.replaceNull(argValues[3]).toString();
+                        if ((sampleAnalysisWhereFieldsValue != null) && (sampleAnalysisWhereFieldsValue.length() > 0)) {
+                            sampleAnalysisWhereFieldsValueArr = LPArray.addValueToArray1D(sampleAnalysisWhereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(sampleAnalysisWhereFieldsValue.split("\\|")));
+                        }
+
+                        String sarWhereFieldsName = LPNulls.replaceNull(argValues[4]).toString();
+                        if ((sarWhereFieldsName != null) && (sarWhereFieldsName.length() > 0)) {
+                            sampleAnalysisWhereFieldsNameArr = LPArray.addValueToArray1D(sampleAnalysisWhereFieldsNameArr, sarWhereFieldsName.split("\\|"));
+                        }
+                        String sarWhereFieldsValue = LPNulls.replaceNull(argValues[5]).toString();
+                        if ((sarWhereFieldsValue != null) && (sarWhereFieldsValue.length() > 0)) {
+                            sampleAnalysisWhereFieldsValueArr = LPArray.addValueToArray1D(sampleAnalysisWhereFieldsValueArr, (sampleAnalysisWhereFieldsValue != null ? LPArray.convertStringWithDataTypeToObjectArray(sampleAnalysisWhereFieldsValue.split("\\|")) : new Object[]{}));
+                        }
+
+                        String[] sortFieldsNameArr = null;
+                        String sortFieldsName = LPNulls.replaceNull(argValues[6]).toString();
+                        if ((sortFieldsName != null) && (sortFieldsName.length() > 0)) {
+                            sortFieldsNameArr = sortFieldsName.split("\\|");
+                        } else {
+                            sortFieldsNameArr = LPArray.getUniquesArray(SampleAPIParams.MANDATORY_FIELDS_FRONTEND_WHEN_SORT_NULL_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|"));
+                        }
+
+                        Integer posicRawValueFld = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.RAW_VALUE.getName());
+                        if (posicRawValueFld == -1) {
+                            resultFieldToRetrieveArr = LPArray.addValueToArray1D(resultFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.RAW_VALUE.getName());
+                            posicRawValueFld = resultFieldToRetrieveArr.length;
+                        }
+                        Integer posicLimitIdFld = EnumIntViewFields.getFldPosicInArray(fldsToGet, TblsData.ViewSampleAnalysisResultWithSpecLimits.LIMIT_ID.getName());
+
+                        Object[][] analysisResultList = QueryUtilitiesEnums.getViewData(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW,
+                                fldsToGet,
+                                new SqlWhere(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsValueArr),
+                                sortFieldsNameArr);
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisResultList[0][0].toString())) {
+
+                            this.isSuccess = true;
+                            this.responseSuccessJArr = new JSONArray();
+                        } else {
+                            rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
+                            Object[] objectsIds = ClassSampleQueries.getObjectsId(EnumIntViewFields.getAllFieldNames(fldsToGet), analysisResultList, "-");
+                            for (Object curObj : objectsIds) {
+                                String[] curObjDet = curObj.toString().split("-");
+                                if (TblsData.SampleAnalysisResult.TEST_ID.getName().equalsIgnoreCase(curObjDet[0])) {
+                                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), curObjDet[1]);
+                                }
+                                if (TblsData.SampleAnalysisResult.RESULT_ID.getName().equalsIgnoreCase(curObjDet[0])) {
+                                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), curObjDet[1]);
+                                }
+                            }
+                            jArr = new JSONArray();
+                            for (Object[] curRow : analysisResultList) {
+                                ConfigSpecRule specRule = new ConfigSpecRule();
+                                String currRowRawValue = curRow[posicRawValueFld].toString();
+                                String currRowLimitId = curRow[posicLimitIdFld].toString();
+                                JSONObject row = new JSONObject();
+
+                                Object[] resultLockData = ClassSampleQueries.sampleAnalysisResultLockData(EnumIntViewFields.getAllFieldNames(fldsToGet), curRow);
+                                if (resultLockData != null && resultLockData[0] != null) {
+                                    if (resultLockData.length > 2) {
+                                        row = LPJson.convertArrayRowToJSONObject(LPArray.addValueToArray1D(LPArray.addValueToArray1D(EnumIntViewFields.getAllFieldNames(fldsToGet), (String) resultLockData[2]), (String[]) resultLockData[0]),
+                                                LPArray.addValueToArray1D(LPArray.addValueToArray1D(curRow, resultLockData[3]), (Object[]) resultLockData[1]));
+                                    } else {
+                                        row = LPJson.convertArrayRowToJSONObject(LPArray.addValueToArray1D(EnumIntViewFields.getAllFieldNames(fldsToGet), (String[]) resultLockData[0]), LPArray.addValueToArray1D(curRow, (Object[]) resultLockData[1]));
+                                    }
+                                } else {
+                                    row = LPJson.convertArrayRowToJSONObject(EnumIntViewFields.getAllFieldNames(fldsToGet), curRow);
+                                }
+                                if ((currRowLimitId != null) && (currRowLimitId.length() > 0)) {
+                                    specRule.specLimitsRule(Integer.valueOf(currRowLimitId), null);
+                                    row.put(ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_DETAILED, LPNulls.replaceNull(specRule.getRuleRepresentation()).replace(("R"), "R (" + currRowRawValue + ")"));
+                                    Object[][] specRuleDetail = specRule.getRuleData();
+                                    JSONArray specRuleDetailjArr = new JSONArray();
+                                    JSONObject specRuleDetailjObj = new JSONObject();
+                                    for (Object[] curSpcRlDet : specRuleDetail) {
+                                        specRuleDetailjObj.put(curSpcRlDet[0], curSpcRlDet[1]);
+                                    }
+                                    specRuleDetailjArr.add(specRuleDetailjObj);
+                                    row.put(ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_INFO, specRuleDetailjArr);
+                                }
+                                jArr.add(row);
+                            }
+                            Rdbms.closeRdbms();
+                            this.isSuccess = true;
+                            this.responseSuccessJArr = jArr;
+                        }
+                        return;
                 default:
                     procReqInstance.killIt();
                     LPFrontEnd.servletReturnResponseError(request, response,
