@@ -455,7 +455,7 @@ public class ProcDeployCheckerLogic {
                 new String[]{TblsReqs.ProcedureMasterData.ORDER_NUMBER.getName()});
             JSONArray jsonRowArr=new JSONArray();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procMasterDataObjs[0][0].toString())){
-              jsonObj.put(trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.JsonTags.ERROR.getTagValue(), LPJson.convertToJSON(procMasterDataObjs[0]));
+              jsonObj.put(trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.JsonTags.ERROR.getTagValueEn(), LPJson.convertToJSON(procMasterDataObjs[0]));
               jsonArr.add(jsonObj);
             }else{
                 jsonArr.add(jsonObj);
