@@ -52,6 +52,7 @@ import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
+import trazit.enums.EnumIntQueriesObj;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntViewFields;
@@ -66,7 +67,7 @@ import trazit.session.ApiMessageReturn;
  *
  * @author User
  */
-public class ClassEnvMonSampleFrontend {
+public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
 
     private Object[] messageDynamicData = new Object[]{};
     private RelatedObjects relatedObj = RelatedObjects.getInstanceForActions();
@@ -169,11 +170,11 @@ public class ClassEnvMonSampleFrontend {
                 null, null),
         GET_PENDING_INCUBATION_SAMPLES_AND_ACTIVE_BATCHES("GET_PENDING_INCUBATION_SAMPLES_AND_ACTIVE_BATCHES", "", new LPAPIArguments[]{
             new LPAPIArguments("includeSplittedByIncubNumber", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 6),
-            new LPAPIArguments("includeAllWithAnyPendingIncubation", LPAPIArguments.ArgumentType.BOOLEAN.toString(), true, 7),
+            new LPAPIArguments("includeAllWithAnyPendingIncubation", LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 7),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 10),
-            new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_INCUB1 + GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 11),
+            new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_INCUB1 + GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 11),
             new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_INCUB1 + GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 12),
             new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_INCUB1 + GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 13),
             new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_INCUB1 + GlobalAPIsParams.REQUEST_PARAM_TEST_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 14),
@@ -187,7 +188,7 @@ public class ClassEnvMonSampleFrontend {
             new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_INCUB1 + GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 22),
             new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_INCUB1 + GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 23),
             new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_INCUB1 + GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 24),
-            new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_INCUB2 + GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 25),
+            new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_INCUB2 + GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 25),
             new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_INCUB2 + GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 26),
             new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_INCUB2 + GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 27),
             new LPAPIArguments(GlobalAPIsParams.LBL_PREFIX_INCUB2 + GlobalAPIsParams.REQUEST_PARAM_TEST_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 28),
@@ -1985,19 +1986,19 @@ public class ClassEnvMonSampleFrontend {
         return isSuccess;
     }
 
-    /**
-     * @return the contentSuccessResponse
-     */
-    public JSONArray getResponseContentJArr() {
-        return responseSuccessJArr;
+    @Override
+    public JSONObject getResponseSuccessJObj() {
+        return this.responseSuccessJObj;
     }
 
-    public JSONObject getResponseContentJObj() {
-        return responseSuccessJObj;
+    @Override
+    public JSONArray getResponseSuccessJArr() {
+        return this.responseSuccessJArr;
     }
 
-    public Object getResponseError() {
-        return responseError;
+    @Override
+    public Object[] getResponseError() {
+        return this.diagnostic;
     }
 
     private static Boolean isThereResultsInProgress(String[] fldsName, Object[] fldsValue) {

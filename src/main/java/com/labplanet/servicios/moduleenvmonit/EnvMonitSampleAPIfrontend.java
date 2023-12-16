@@ -40,10 +40,11 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                 endPoint = EnvMonSampleAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
                 ClassEnvMonSampleFrontend clss=new ClassEnvMonSampleFrontend(request, (EnvMonSampleAPIqueriesEndpoints) endPoint);                    
                 if (Boolean.TRUE.equals(clss.getIsSuccess())){
-                    if (clss.getResponseContentJArr()!=null)//&&Boolean.FALSE.equals(clss.getResponseSuccessJArr().isEmpty()))
-                        LPFrontEnd.servletReturnSuccess(request, response, clss.getResponseContentJArr());
-                    if (clss.getResponseContentJObj()!=null)//&&Boolean.FALSE.equals(clss.getResponseSuccessJObj().isEmpty()))
-                        LPFrontEnd.servletReturnSuccess(request, response, clss.getResponseContentJObj());
+                    if (clss.getResponseSuccessJArr()!=null && (Boolean.FALSE.equals(clss.getResponseSuccessJArr().isEmpty())) ){
+                        LPFrontEnd.servletReturnSuccess(request, response, clss.getResponseSuccessJArr());
+                    }else{
+                        LPFrontEnd.servletReturnSuccess(request, response, clss.getResponseSuccessJObj());
+                    }
                 }            
             }catch(Exception e){
                 try{

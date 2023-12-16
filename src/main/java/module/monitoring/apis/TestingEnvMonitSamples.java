@@ -149,7 +149,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
                             fileContentTable1Builder.append(clssEnvMonSampleController.getRowArgsRows());
                             clssEnvMonSampleController=null;
                         }else{
-                            ClassEnvMonSampleFrontendController clssEnvMonSampleFrontendController=new ClassEnvMonSampleFrontendController(request, actionName.toString(), testingContent, iLines, table1NumArgs);
+                            ClassEnvMonSampleFrontendController clssEnvMonSampleFrontendController=new ClassEnvMonSampleFrontendController(request, response, actionName.toString(), testingContent, iLines, table1NumArgs);
                             if (Boolean.TRUE.equals(clssEnvMonSampleFrontendController.getFunctionFound())){
                                 functionRelatedObjects=clssEnvMonSampleFrontendController.getFunctionRelatedObjects();
                                 functionEvaluation=(Object[]) clssEnvMonSampleFrontendController.getFunctionDiagn();

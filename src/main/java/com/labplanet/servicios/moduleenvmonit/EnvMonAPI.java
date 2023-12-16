@@ -9,8 +9,10 @@ import module.monitoring.definition.TblsEnvMonitData;
 import module.monitoring.definition.TblsEnvMonitConfig;
 import lbplanet.utilities.LPArray;
 import com.labplanet.servicios.app.GlobalAPIsParams;
+import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NUM_DAYS;
 import databases.TblsData;
 import databases.TblsProcedure;
+import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -32,6 +34,7 @@ import module.monitoring.definition.ClassEnvMon;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
+import trazit.globalvariables.GlobalVariables.ApiUrls;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -40,7 +43,7 @@ import trazit.session.ProcedureRequestSession;
  */
 public class EnvMonAPI extends HttpServlet {
 
-    public enum EnvMonAPIactionsEndpoints implements EnumIntEndpoints {
+    public enum EnvMonAPIactionsEndpoints implements EnumIntEndpoints{ //, EndpointHandler  {
         /**
          *
          */
@@ -166,12 +169,71 @@ public class EnvMonAPI extends HttpServlet {
         private final JsonArray outputObjectTypes;
         private final String devComment;
         private final String devCommentTag;
-    }
+/*
+        @Override
+        public boolean endpointExists() {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
 
+        @Override
+        public Object[] getDiagnostic() {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+
+        @Override
+        public JSONObject createResponse() {
+            throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        }
+*/        
+    }
     public enum EnvMonQueriesAPIEndpoints implements EnumIntEndpoints {
-        /**
-         *
-         */
+        GET_MASTER_DATA("GET_MASTER_DATA", "",
+                new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects,
+                 null, null),
+        PROGRAMS_LIST("PROGRAMS_LIST", "",
+                new LPAPIArguments[]{new LPAPIArguments("programFldNameList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
+                    new LPAPIArguments("programFldSortList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
+                    new LPAPIArguments("programLocationFldNameList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
+                    new LPAPIArguments("programLocationFldSortList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9),
+                    new LPAPIArguments("programLocationCardInfoFldNameList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
+                    new LPAPIArguments("programLocationCardInfoFldSortList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 11),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJ_GROUP_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 12),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TABLE_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 13),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TABLE_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 14),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 15),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 16),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELDS_TO_RETRIEVE_OR_GROUPING, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 17),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_GROUPED, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 18),}, EndPointsToRequirements.endpointWithNoOutputObjects,
+                 null, null),
+        PROGRAMS_CORRECTIVE_ACTION_LIST("PROGRAMS_CORRECTIVE_ACTION_LIST", "",
+                new LPAPIArguments[]{new LPAPIArguments("programName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments("programCorrectiveActionFldNameList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
+                    new LPAPIArguments("programCorrectiveActionFldSortList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),}, EndPointsToRequirements.endpointWithNoOutputObjects,
+                 null, null),
+        GET_ALL_PRODUCTION_LOTS("GET_ALL_PRODUCTION_LOTS", "",
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_SORT, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7)
+                }, EndPointsToRequirements.endpointWithNoOutputObjects,
+                 null, null),
+        GET_ACTIVE_PRODUCTION_LOTS("GET_ACTIVE_PRODUCTION_LOTS", "",
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_SORT, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7)
+                }, EndPointsToRequirements.endpointWithNoOutputObjects,
+                 null, null),
+        DEACTIVATED_PRODUCTION_LOTS_LAST_N_DAYS("DEACTIVATED_PRODUCTION_LOTS_LAST_N_DAYS", "", new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects,
+                 null, null),
+        GET_SCHEDULED_SAMPLES("GET_SCHEDULED_SAMPLES", "",
+                new LPAPIArguments[]{
+                    new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_START, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_END, LPAPIArguments.ArgumentType.STRING.toString(), false, 8)},
+                    EndPointsToRequirements.endpointWithNoOutputObjects, null, null),
+        GET_STAGES_TIMING_CAPTURE_DATA("GET_STAGES_TIMING_CAPTURE_DATA", "",
+                new LPAPIArguments[]{
+                    new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_START, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_END, LPAPIArguments.ArgumentType.STRING.toString(), false, 8)},
+                    EndPointsToRequirements.endpointWithNoOutputObjects, null, null),
         GET_SAMPLE_INFO("GET_SAMPLE_INFO", "get_sample_info_success",
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
                     new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7)},
@@ -191,7 +253,7 @@ public class EnvMonAPI extends HttpServlet {
                     new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 8)},
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName()).build()).build()
-        , null, null)
+        , null, null)        
         ;
         private EnvMonQueriesAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
             this.name = name;
@@ -212,15 +274,11 @@ public class EnvMonAPI extends HttpServlet {
             hm.put(request, argValues);
             return hm;
         }
-        @Override public String getEntity() {return "sample";}
+        
+        @Override public String getEntity() {return "program";}
         @Override
         public String getName() {
             return this.name;
-        }
-
-        @Override
-        public String getApiUrl() {
-            return GlobalVariables.ApiUrls.ENVMON_QUERIES.getUrl();
         }
 
         @Override
@@ -239,6 +297,15 @@ public class EnvMonAPI extends HttpServlet {
         }
 
         @Override
+        public String getApiUrl() {
+            return ApiUrls.ENVMON_QUERIES.getUrl();
+        }
+        private final String name;
+        private final String successMessageCode;
+        private final LPAPIArguments[] arguments;
+        private final JsonArray outputObjectTypes;
+
+        @Override
         public String getDeveloperComment() {
             return this.devComment;
         }
@@ -247,14 +314,11 @@ public class EnvMonAPI extends HttpServlet {
         public String getDeveloperCommentTag() {
             return this.devCommentTag;
         }
-        private final String name;
-        private final String successMessageCode;
-        private final LPAPIArguments[] arguments;
-        private final JsonArray outputObjectTypes;
         private final String devComment;
         private final String devCommentTag;
     }
 
+    
     /**
      *
      */

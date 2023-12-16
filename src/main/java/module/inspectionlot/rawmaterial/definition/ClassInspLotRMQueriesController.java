@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntQueriesEndpoints;
@@ -50,9 +51,14 @@ public class ClassInspLotRMQueriesController implements EnumIntQueriesEndpoints{
             if (Boolean.TRUE.equals(clss.getIsSuccess()))
                 this.functionDiagn=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "queriesHaveNoMsgCode", null);
             else
-                this.functionDiagn=clss.getDiagnostic(); 
-            
+                this.functionDiagn=clss.getDiagnostic();             
             this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject();               
+            if (clss.getResponseSuccessJArr()!=null && (Boolean.FALSE.equals(clss.getResponseSuccessJArr().isEmpty())) ){
+                LPFrontEnd.servletReturnSuccess(request, response, clss.getResponseSuccessJArr());
+            }else{
+                LPFrontEnd.servletReturnSuccess(request, response, clss.getResponseSuccessJObj());
+            }
+            
         } catch (Exception ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
         }
