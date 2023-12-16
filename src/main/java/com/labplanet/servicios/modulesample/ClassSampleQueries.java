@@ -8,29 +8,56 @@ package com.labplanet.servicios.modulesample;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import module.monitoring.definition.TblsEnvMonitData;
 import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIqueriesEndpoints;
+import static com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIqueriesEndpoints.ANALYSIS_ALL_LIST;
+import static com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIqueriesEndpoints.CHANGEOFCUSTODY_SAMPLE_HISTORY;
+import static com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIqueriesEndpoints.CHANGEOFCUSTODY_USERS_LIST;
+import static com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIqueriesEndpoints.GET_METHOD_CERTIFIED_USERS_LIST;
+import static com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIqueriesEndpoints.GET_SAMPLETEMPLATES;
+import static com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIqueriesEndpoints.GET_SAMPLE_ANALYSIS_LIST;
+import static com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIqueriesEndpoints.GET_SAMPLE_ANALYSIS_RESULT_LIST;
+import static com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIqueriesEndpoints.GET_SAMPLE_ANALYSIS_RESULT_SPEC;
+import static com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIqueriesEndpoints.GET_SAMPLE_AUDIT;
+import static com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIqueriesEndpoints.SAMPLEANALYSIS_PENDING_REVISION;
+import static com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIqueriesEndpoints.SAMPLES_ANALYSIS_RESULTS_VIEW;
+import static com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIqueriesEndpoints.SAMPLES_ANALYSIS_VIEW;
+import static com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIqueriesEndpoints.SAMPLES_AND_RESULTS_VIEW;
+import static com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIqueriesEndpoints.SAMPLES_BY_STAGE;
+import static com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIqueriesEndpoints.SAMPLES_PENDING_SAMPLE_REVISION;
+import static com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIqueriesEndpoints.SAMPLES_PENDING_TESTINGGROUP_REVISION;
+import static com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIqueriesEndpoints.SAMPLES_VIEW;
+import static com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIqueriesEndpoints.SAMPLE_ENTIRE_STRUCTURE;
+import static com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIqueriesEndpoints.UNRECEIVESAMPLES_LIST;
 import static com.labplanet.servicios.modulesample.SampleAPIfrontend.sampleAnalysisResultView;
 import static com.labplanet.servicios.modulesample.SampleAPIfrontend.sampleAnalysisView;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.SqlStatementEnums;
 import databases.SqlWhere;
+import databases.TblsApp;
 import databases.TblsCnfg;
 import databases.TblsData;
+import databases.TblsDataAudit;
 import databases.TblsProcedure;
 import databases.features.Token;
 import functionaljavaa.analysis.ConfigAnalysisStructure;
+import functionaljavaa.audit.GenericAuditFields;
+import functionaljavaa.certification.AnalysisMethodCertif;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import module.monitoring.logic.DataProgramCorrectiveAction;
 import static module.monitoring.logic.DataProgramCorrectiveAction.isProgramCorrectiveActionEnable;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
+import functionaljavaa.samplestructure.DataSample;
 import functionaljavaa.samplestructure.DataSampleStructureStatuses.SampleStatuses;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPFrontEnd;
+import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
@@ -68,10 +95,14 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
     public ClassSampleQueries(HttpServletRequest request, HttpServletResponse response, SampleAPIqueriesEndpoints endPoint) {
         RelatedObjects rObj = RelatedObjects.getInstanceForActions();
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false);
+        String procInstanceName = procReqInstance.getProcedureInstance();
+        String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());    
+        String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());  
+        String language=procReqInstance.getLanguage();
+
         Object[] actionDiagnoses = null;
         this.functionFound = true;
-        Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
-        this.functionFound = true;
+        Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
             this.isSuccess = false;
             this.responseError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE,
@@ -182,7 +213,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                 }
                 return;
             case SAMPLES_VIEW:
-                EnumIntTableFields[] fieldToRetrieveArr;
+                EnumIntTableFields[] fieldToRetrieveArrObj;
                 String whereFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME);
                 if (whereFieldsName == null) {
                     whereFieldsName = "";
@@ -191,9 +222,9 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
 
                 String sampleFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE);
                 if (sampleFieldToRetrieve == null || sampleFieldToRetrieve.length() == 0 || "ALL".equalsIgnoreCase(sampleFieldToRetrieve)) {
-                    fieldToRetrieveArr = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsData.TablesData.SAMPLE);
+                    fieldToRetrieveArrObj = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsData.TablesData.SAMPLE);
                 } else {
-                    fieldToRetrieveArr = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, sampleFieldToRetrieve.split("\\|"));
+                    fieldToRetrieveArrObj = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, sampleFieldToRetrieve.split("\\|"));
                 }
 
                 String sampleAnalysisResultFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_TEST_FIELD_TO_RETRIEVE);
@@ -237,7 +268,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                 Boolean includeOnlyWhenResultsInProgress = Boolean.valueOf(LPNulls.replaceNull(argValues[14]).toString());
 
                 sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME);
-                JSONArray samplesArray = samplesByStageData(sampleLastLevel, fieldToRetrieveArr, whereFieldsName,
+                JSONArray samplesArray = samplesByStageData(sampleLastLevel, fieldToRetrieveArrObj, whereFieldsName,
                         whereFieldsValue, sortFieldsName,
                         addSampleAnalysis, sampleAnalysisFieldToRetrieveArr, sampleAnalysisWhereFieldsName, sampleAnalysisWhereFieldsValue,
                         addSampleAnalysisResult,
@@ -255,9 +286,9 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
 
                 String fieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE);
                 if (fieldToRetrieve == null || fieldToRetrieve.length() == 0 || "ALL".equalsIgnoreCase(fieldToRetrieve)) {
-                    fieldToRetrieveArr = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsData.TablesData.SAMPLE_ANALYSIS);
+                    fieldToRetrieveArrObj = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsData.TablesData.SAMPLE_ANALYSIS);
                 } else {
-                    fieldToRetrieveArr = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS, fieldToRetrieve.split("\\|"));
+                    fieldToRetrieveArrObj = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS, fieldToRetrieve.split("\\|"));
                 }
 
                 sampleAnalysisResultFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_TEST_FIELD_TO_RETRIEVE);
@@ -281,7 +312,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                 includeOnlyWhenResultsInProgress = Boolean.valueOf(LPNulls.replaceNull(argValues[14]).toString());
 
                 sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME);
-                JSONArray samplesAnalysisArray = sampleAnalysisView(EnumIntTableFields.getAllFieldNames(fieldToRetrieveArr), whereFieldsName,
+                JSONArray samplesAnalysisArray = sampleAnalysisView(EnumIntTableFields.getAllFieldNames(fieldToRetrieveArrObj), whereFieldsName,
                         whereFieldsValue, sortFieldsName,
                         addSampleAnalysisResult, sampleAnalysisResultFieldToRetrieveArr, sampleAnalysisResultWhereFieldsName, sampleAnalysisResultWhereFieldsValue,
                         includeOnlyWhenResultsInProgress);
@@ -348,13 +379,13 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
 
                 fieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE);
                 if (fieldToRetrieve == null || fieldToRetrieve.length() == 0 || "ALL".equalsIgnoreCase(fieldToRetrieve)) {
-                    fieldToRetrieveArr = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT);
+                    fieldToRetrieveArrObj = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT);
                 } else {
-                    fieldToRetrieveArr = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, fieldToRetrieve.split("\\|"));
+                    fieldToRetrieveArrObj = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, fieldToRetrieve.split("\\|"));
                 }
 
                 sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME);
-                JSONArray samplesAnalysisResultArray = sampleAnalysisResultView(EnumIntTableFields.getAllFieldNames(fieldToRetrieveArr), whereFieldsName,
+                JSONArray samplesAnalysisResultArray = sampleAnalysisResultView(EnumIntTableFields.getAllFieldNames(fieldToRetrieveArrObj), whereFieldsName,
                         whereFieldsValue, sortFieldsName);
                 this.isSuccess = true;
                 this.responseSuccessJArr = samplesAnalysisResultArray;
@@ -365,12 +396,12 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                     whereFieldsName = "";
                 }
                 whereFieldsValue = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE);
-                EnumIntTableFields[] sampleFieldToRetrieveArr = null;
+                EnumIntTableFields[] sampleFieldToRetrieveArrObj = null;
                 sampleFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE);
                 if (sampleFieldToRetrieve == null || sampleFieldToRetrieve.length() == 0 || "ALL".equalsIgnoreCase(sampleFieldToRetrieve)) {
-                    sampleFieldToRetrieveArr = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsData.TablesData.SAMPLE);
+                    sampleFieldToRetrieveArrObj = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsData.TablesData.SAMPLE);
                 } else {
-                    sampleFieldToRetrieveArr = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, sampleFieldToRetrieve.split("\\|"));
+                    sampleFieldToRetrieveArrObj = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, sampleFieldToRetrieve.split("\\|"));
                 }
                 sampleAnalysisResultFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_TEST_FIELD_TO_RETRIEVE);
                 sampleLastLevel = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_LAST_LEVEL);
@@ -416,7 +447,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                 }
 
                 sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME);
-                samplesArray = samplesByStageData(sampleLastLevel, sampleFieldToRetrieveArr, whereFieldsName,
+                samplesArray = samplesByStageData(sampleLastLevel, sampleFieldToRetrieveArrObj, whereFieldsName,
                         whereFieldsValue, sortFieldsName,
                         addSampleAnalysis, sampleAnalysisFieldToRetrieveArr, sampleAnalysisWhereFieldsName, sampleAnalysisWhereFieldsValue,
                         addSampleAnalysisResult,
@@ -450,18 +481,18 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                 return;
 
             case SAMPLES_PENDING_SAMPLE_REVISION:
-                sampleFieldToRetrieveArr = null;
+                sampleFieldToRetrieveArrObj = null;
                 sampleFieldToRetrieve = argValues[0].toString();
                 if (sampleFieldToRetrieve == null || sampleFieldToRetrieve.length() == 0 || "ALL".equalsIgnoreCase(sampleFieldToRetrieve)) {
-                    sampleFieldToRetrieveArr = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsData.TablesData.SAMPLE);
+                    sampleFieldToRetrieveArrObj = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsData.TablesData.SAMPLE);
                 } else {
-                    sampleFieldToRetrieveArr = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, sampleFieldToRetrieve.split("\\|"));
+                    sampleFieldToRetrieveArrObj = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, sampleFieldToRetrieve.split("\\|"));
                 }
 
                 myData = Rdbms.getRecordFieldsByFilterJSON(procReqInstance.getProcedureInstance(), LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(),
                         new String[]{TblsData.Sample.READY_FOR_REVISION.getName(), "(" + TblsData.Sample.REVIEWED.getName(), SqlStatement.WHERECLAUSE_TYPES.OR.getSqlClause() + " " + TblsData.Sample.REVIEWED.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause() + ")"},
                         new Object[]{true, false, null},
-                        EnumIntTableFields.getAllFieldNames(sampleFieldToRetrieveArr),
+                        EnumIntTableFields.getAllFieldNames(sampleFieldToRetrieveArrObj),
                         new String[]{TblsData.Sample.SAMPLE_ID.getName()});
                 if (myData == null || myData.contains(LPPlatform.LAB_FALSE)) {
                     this.isSuccess = true;
@@ -514,6 +545,622 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                     this.responseSuccessJArr = jArr;
                 }
                 return;
+            case GET_SAMPLETEMPLATES:       
+                String[] filterFieldName = new String[]{TblsCnfg.Sample.JSON_DEFINITION.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()};
+                Object[] filterFieldValue = new Object[]{""};
+                Object[][] datas = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaConfigName,TblsCnfg.TablesConfig.SAMPLE.getTableName(), 
+                        filterFieldName, filterFieldValue, new String[] { TblsCnfg.Sample.JSON_DEFINITION.getName()});
+                Rdbms.closeRdbms();
+                JSONArray jArray = new JSONArray();
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(datas[0][0].toString())){  
+                    LPFrontEnd.responseError(LPArray.array2dTo1d(datas));
+                    return;
+                }else{                   
+                   jArray.addAll(Arrays.asList(LPArray.array2dTo1d(datas)));    
+                }           
+                LPFrontEnd.servletReturnSuccess(request, response, jArray);
+                return;
+            case UNRECEIVESAMPLES_LIST:   
+                Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, SampleAPIParams.MANDATPARMS_FE_UNRECSMPS_LIST.split("\\|"));
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                    procReqInstance.killIt();
+                    LPFrontEnd.servletReturnResponseError(request, response, 
+                            LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
+                    return;                  
+                }                                  
+                sortFieldsNameArr = null;
+                String[] sampleFieldToRetrieveArr = null;
+                sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME); 
+                sampleFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE); 
+                
+                if (! ((sortFieldsName==null) || (sortFieldsName.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED))) ) {
+                    sortFieldsNameArr = sortFieldsName.split("\\|");                                    
+                }else{  sortFieldsNameArr = LPArray.getUniquesArray(SampleAPIParams.MPARAMS_FE_UNRECSMPS_SORTFLDSNAME_DEFAULTV.split("\\|"));}
+                if (sampleFieldToRetrieve!=null){
+                    sampleFieldToRetrieveArr=LPArray.addValueToArray1D(sampleFieldToRetrieveArr, sampleFieldToRetrieve.split("\\|"));
+                }else{
+                    sampleFieldToRetrieveArr=LPArray.getUniquesArray(SampleAPIParams.MANDATPARMS_FE_UNRECSMPS_LIST_SAMPLE_FIELD_RETRIEVE_DEFAULT_VALUE.split("\\|"));
+                }                
+                
+                whereFieldsNameArr = null;
+                whereFieldsValueArr = null;
+                whereFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME); 
+                if (whereFieldsName==null){whereFieldsName="";}
+                whereFieldsValue = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE); 
+                if (whereFieldsValue==null){whereFieldsValue="";}
+                
+                if ( ("".equals(whereFieldsName)) && ("".equals(whereFieldsValue)) ){
+                    whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsData.Sample.RECEIVED_BY.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause());
+                    whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, "");
+                }else{
+                    whereFieldsNameArr=LPArray.addValueToArray1D(whereFieldsNameArr, whereFieldsName.split("\\|"));
+                    whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(whereFieldsValue.split("\\|")));                                          
+                    for (int iFields=0; iFields<whereFieldsNameArr.length; iFields++){
+                        if (Boolean.TRUE.equals(LPPlatform.isEncryptedField(procInstanceName, GlobalVariables.Schemas.DATA.getName(), TblsData.TablesData.SAMPLE.getTableName(), whereFieldsNameArr[iFields]))){
+                            Map<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsNameArr[iFields]);
+                            whereFieldsNameArr[iFields]= hm.keySet().iterator().next();    
+                            if ( hm.get(whereFieldsNameArr[iFields]).length()!=whereFieldsNameArr[iFields].length()){
+                                String newWhereFieldValues = hm.get(whereFieldsNameArr[iFields]);
+                                whereFieldsValueArr[iFields]=newWhereFieldValues;
+                            }
+                        }
+                        String[] tokenFieldValue = Token.getTokenFieldValue(whereFieldsValueArr[iFields].toString(), procReqInstance.getTokenString());
+                        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(tokenFieldValue[0])) 
+                            whereFieldsValueArr[iFields]=tokenFieldValue[1];                                                    
+                    } 
+                    whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsData.Sample.RECEIVED_BY.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause());
+                    whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, "");
+                }  
+                Object[][] smplsData=QueryUtilitiesEnums.getTableData(TblsData.TablesData.SAMPLE, 
+                    EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, sampleFieldToRetrieveArr),
+                    whereFieldsNameArr, whereFieldsValueArr, sortFieldsNameArr);
+                JSONArray smplsJsArr= new JSONArray();
+                for (Object[] curSmp: smplsData){
+                    smplsJsArr.add(LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curSmp));
+                }
+                Rdbms.closeRdbms();
+                LPFrontEnd.servletReturnSuccess(request, response, smplsJsArr);       
+                return; 
+ 
+/*            case SAMPLEANALYSIS_PENDING_REVISION: 
+                whereFieldsNameArr =new String[]{};
+                whereFieldsValueArr =new Object[]{};
+                sampleAnalysisFieldToRetrieveArr= new String[]{};
+                sampleAnalysisSortFieldArr= new String[]{};
+                whereFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_NAME); 
+                if (whereFieldsName==null){whereFieldsName="";}
+                whereFieldsValue = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_VALUE); 
+
+                whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_ANALYSIS_READY_FOR_REVISION.getName());
+                if (whereFieldsName!=null && whereFieldsName.length()>0)whereFieldsNameArr=LPArray.addValueToArray1D(whereFieldsNameArr, whereFieldsName.split("\\|"));
+                
+                if (whereFieldsValue==null || whereFieldsValue.length()==0)whereFieldsValue="true*Boolean";
+                else whereFieldsValue="true*Boolean|"+whereFieldsValue;
+                whereFieldsValueArr=LPArray.convertStringWithDataTypeToObjectArray(whereFieldsValue.split("\\|"));
+                fieldsToGet=null;
+                sampleAnalysisFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE); 
+                if (sampleAnalysisFieldToRetrieve!=null && sampleAnalysisFieldToRetrieve.length()>0){
+                    fieldsToGet=EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, sampleAnalysisFieldToRetrieve.split("\\|"));
+                }
+                else 
+                    fieldsToGet=EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, "ALL");
+                sampleAnalysisSortField = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME); 
+                if (sampleAnalysisSortField!=null && sampleAnalysisSortField.length()>0) sampleAnalysisSortFieldArr=sampleAnalysisSortField.split("\\|");
+                
+                smplsAnaData = QueryUtilitiesEnums.getViewData(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW,
+                    fieldsToGet,
+                    new SqlWhere(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, whereFieldsNameArr, whereFieldsValueArr), sampleAnalysisSortFieldArr);
+                smplAnaJsArr= new JSONArray();
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(smplsAnaData[0][0].toString()))
+                    LPFrontEnd.servletReturnSuccess(request, response, smplAnaJsArr); 
+                for (Object[] curSmpAna: smplsAnaData){
+                    smplAnaJsArr.add(LPJson.convertArrayRowToJSONObject(EnumIntViewFields.getAllFieldNames(fieldsToGet), curSmpAna));
+                }
+                Rdbms.closeRdbms();
+                LPFrontEnd.servletReturnSuccess(request, response, smplAnaJsArr);       
+                return;*/
+            case SAMPLES_AND_RESULTS_VIEW:
+                whereFieldsNameArr=new String[]{};
+                whereFieldsValueArr=new Object[]{};
+                String[] fieldToRetrieveArr=new String[]{};
+                whereFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME); 
+                if (whereFieldsName==null){whereFieldsName="";}
+                whereFieldsValue = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE); 
+                fieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE); 
+                if ( (whereFieldsName!=null) && (whereFieldsValue!=null) ){
+                    whereFieldsNameArr=LPArray.addValueToArray1D(whereFieldsNameArr, whereFieldsName.split("\\|"));
+                    whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(whereFieldsValue.split("\\|")));                                          
+                    for (int iFields=0; iFields<whereFieldsNameArr.length; iFields++){
+                        if (Boolean.TRUE.equals(LPPlatform.isEncryptedField(procInstanceName, GlobalVariables.Schemas.DATA.getName(), TblsData.TablesData.SAMPLE.getTableName(), whereFieldsNameArr[iFields]))){
+                            Map<String, String> hm = LPPlatform.encryptEncryptableFieldsAddBoth(whereFieldsNameArr[iFields], whereFieldsValueArr[iFields].toString());
+                            whereFieldsNameArr[iFields]= hm.keySet().iterator().next();    
+                            if ( hm.get(whereFieldsNameArr[iFields]).length()!=whereFieldsNameArr[iFields].length()){
+                                String newWhereFieldValues = hm.get(whereFieldsNameArr[iFields]);
+                                whereFieldsValueArr[iFields]=newWhereFieldValues;
+                            }
+                        }
+                        String[] tokenFieldValue = Token.getTokenFieldValue(whereFieldsValueArr[iFields].toString(), procReqInstance.getTokenString());
+                        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(tokenFieldValue[0])) 
+                            whereFieldsValueArr[iFields]=tokenFieldValue[1];                                                    
+                    }                                    
+                }    
+                if (fieldToRetrieve!=null && fieldToRetrieve.length()>0){
+                    fieldsToGet=EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, fieldToRetrieve.split("\\|"));
+                }
+                else 
+                    fieldsToGet=EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, "ALL");
+                
+                sortFieldsNameArr = null;
+                sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME); 
+                if (Boolean.FALSE.equals( ((sortFieldsName==null) || (sortFieldsName.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED)))) ) {
+                    sortFieldsNameArr = sortFieldsName.split("\\|");                                    
+                }else{   sortFieldsNameArr=null;}  
+                for (int iFldV=0;iFldV<whereFieldsValueArr.length; iFldV++){                  
+                  if (whereFieldsValueArr[iFldV].toString().equalsIgnoreCase("false")){whereFieldsValueArr[iFldV]=Boolean.valueOf(whereFieldsValueArr[iFldV].toString());}
+                  if (whereFieldsValueArr[iFldV].toString().equalsIgnoreCase("true")){whereFieldsValueArr[iFldV]=Boolean.valueOf(whereFieldsValueArr[iFldV].toString());}
+                }
+                Object[][] mySamples = QueryUtilitiesEnums.getViewData(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW,
+                    fieldsToGet,
+                    new SqlWhere(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, whereFieldsNameArr, whereFieldsValueArr), sortFieldsNameArr);
+                JSONArray myJSArr = new JSONArray();
+                if (mySamples==null){ 
+                    LPFrontEnd.servletReturnSuccess(request, response, myJSArr);
+                    return;
+                }
+                Rdbms.closeRdbms();
+                if ( LPPlatform.LAB_FALSE.equalsIgnoreCase(mySamples[0][0].toString())) {  
+                    LPFrontEnd.servletReturnSuccess(request, response, myJSArr);       
+                    return;
+                }else{                        
+                    for (Object[] mySample : mySamples) {
+                        JSONObject myJSObj = LPJson.convertArrayRowToJSONObject(fieldToRetrieveArr, mySample); 
+                        myJSArr.add(myJSObj);
+                    }
+                    LPFrontEnd.servletReturnSuccess(request, response, myJSArr);                    
+                    return;
+                }                
+            case SAMPLES_BY_STAGE:   
+//            case SAMPLES_VIEW:   
+                whereFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME); 
+                if (whereFieldsName==null){whereFieldsName="";}
+                whereFieldsValue = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE); 
+
+                sampleFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE); 
+                if (sampleFieldToRetrieve==null || sampleFieldToRetrieve.length()==0 || "ALL".equalsIgnoreCase(sampleFieldToRetrieve))
+                    sampleFieldToRetrieveArr=getAllFieldNames(TblsData.TablesData.SAMPLE.getTableFields());
+                else 
+                    sampleFieldToRetrieveArr=sampleFieldToRetrieve.split("\\|");
+                
+                sampleAnalysisResultFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_TEST_FIELD_TO_RETRIEVE); 
+                sampleLastLevel = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_LAST_LEVEL);                 
+                
+                addSampleAnalysis = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS); 
+                if (addSampleAnalysis==null){addSampleAnalysis="false";}
+                sampleAnalysisFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE);                
+                if (sampleAnalysisFieldToRetrieve==null || sampleAnalysisFieldToRetrieve.length()==0 || "ALL".equalsIgnoreCase(sampleAnalysisFieldToRetrieve))
+                    sampleAnalysisFieldToRetrieveArr=getAllFieldNames(TblsData.TablesData.SAMPLE_ANALYSIS.getTableFields());
+                else 
+                    sampleAnalysisFieldToRetrieveArr=sampleAnalysisFieldToRetrieve.split("\\|");
+                sampleAnalysisWhereFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_NAME); 
+                sampleAnalysisWhereFieldsNameArr = new String[0];
+                if ( (sampleAnalysisWhereFieldsName!=null) && (sampleAnalysisWhereFieldsName.length()>0) ) {
+                    sampleAnalysisWhereFieldsNameArr=LPArray.addValueToArray1D(sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsName.split("\\|"));
+                }                                
+                sampleAnalysisWhereFieldsValue = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_VALUE); 
+
+                addSampleAnalysisResult = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT); 
+                if (addSampleAnalysisResult==null){addSampleAnalysisResult="false";}
+                sampleAnalysisResultFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT_FIELD_TO_RETRIEVE); 
+                sampleAnalysisResultFieldToRetrieveArr=null;
+                if (sampleAnalysisResultFieldToRetrieve==null || sampleAnalysisResultFieldToRetrieve.length()==0 || "ALL".equalsIgnoreCase(sampleAnalysisResultFieldToRetrieve))
+                    sampleAnalysisResultFieldToRetrieveArr=getAllFieldNames(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableFields());
+                else 
+                    sampleAnalysisResultFieldToRetrieveArr=sampleAnalysisResultFieldToRetrieve.split("\\|");
+                sampleAnalysisResultWhereFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME); 
+                sampleAnalysisResultWhereFieldsNameArr = new String[0];
+                if ( (sampleAnalysisResultWhereFieldsName!=null) && (sampleAnalysisResultWhereFieldsName.length()>0) ) {
+                    sampleAnalysisResultWhereFieldsNameArr=LPArray.addValueToArray1D(sampleAnalysisResultWhereFieldsNameArr, sampleAnalysisResultWhereFieldsName.split("\\|"));
+                }                                
+                sampleAnalysisResultWhereFieldsValue = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE); 
+                
+                sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME);  
+               
+                if (sampleFieldToRetrieve == null || sampleFieldToRetrieve.length() == 0 || "ALL".equalsIgnoreCase(sampleFieldToRetrieve)) {
+                    sampleFieldToRetrieveArrObj = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsData.TablesData.SAMPLE);
+                } else {
+                    sampleFieldToRetrieveArrObj = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, sampleFieldToRetrieve.split("\\|"));
+                }
+                
+                samplesArray = samplesByStageData(sampleLastLevel, sampleFieldToRetrieveArrObj, whereFieldsName, 
+                    whereFieldsValue, sortFieldsName,
+                    addSampleAnalysis, sampleAnalysisFieldToRetrieveArr, sampleAnalysisWhereFieldsName, sampleAnalysisWhereFieldsValue,
+                    addSampleAnalysisResult,
+                    sampleAnalysisResultFieldToRetrieveArr, sampleAnalysisResultWhereFieldsName, sampleAnalysisResultWhereFieldsValue,
+                    false);
+
+                LPFrontEnd.servletReturnSuccess(request, response, samplesArray);                    
+                return;                                        
+            case ANALYSIS_ALL_LIST:          
+                    fieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE); 
+                    fieldToRetrieveArr = new String[0];
+                    if ( (fieldToRetrieve==null) || (fieldToRetrieve.length()==0) ){
+                        fieldToRetrieveArr=LPArray.getUniquesArray(LPArray.addValueToArray1D(fieldToRetrieveArr, SampleAPIParams.MANDATORY_FIELDS_FRONTEND_TO_RETRIEVE_ANALYSIS_ALL_LIST.split("\\|")));
+                    }else{
+                        fieldToRetrieveArr=LPArray.addValueToArray1D(fieldToRetrieveArr, fieldToRetrieve.split("\\|"));                        
+                            fieldToRetrieveArr=LPArray.getUniquesArray(LPArray.addValueToArray1D(fieldToRetrieveArr, SampleAPIParams.MANDATORY_FIELDS_FRONTEND_TO_RETRIEVE_ANALYSIS_ALL_LIST.split("\\|")));
+                    }                
+                    sortFieldsNameArr = null;
+                    sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME); 
+                    if (Boolean.FALSE.equals( ((sortFieldsName==null) || (sortFieldsName.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED)))) ) {
+                        sortFieldsNameArr = sortFieldsName.split("\\|");                                    
+                    }else{   sortFieldsNameArr=null;}  
+
+                    myData = Rdbms.getRecordFieldsByFilterJSON(procInstanceName, schemaConfigName, TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName(),
+                            new String[]{"code is not null"},new Object[]{true}, fieldToRetrieveArr, sortFieldsNameArr);
+                    Rdbms.closeRdbms();
+                    if (myData.contains(LPPlatform.LAB_FALSE)){  
+                        LPFrontEnd.responseError(new String[] {myData});
+                    }else{
+                        LPFrontEnd.servletReturnSuccess(request, response, myData);
+                    }
+                    return;         
+/*
+            case SAMPLES_ANALYSIS_VIEW:  
+                whereFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME); 
+                if (whereFieldsName==null){whereFieldsName="";}
+                whereFieldsValue = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE); 
+
+                fieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE); 
+                if (fieldToRetrieve==null || fieldToRetrieve.length()==0 || "ALL".equalsIgnoreCase(fieldToRetrieve))
+                    fieldToRetrieveArr=getAllFieldNames(TblsData.TablesData.SAMPLE_ANALYSIS.getTableFields());
+                else 
+                    fieldToRetrieveArr=fieldToRetrieve.split("\\|");
+                
+                sampleAnalysisResultFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_TEST_FIELD_TO_RETRIEVE); 
+                
+                addSampleAnalysisResult = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT); 
+                if (addSampleAnalysisResult==null){addSampleAnalysisResult="false";}
+                sampleAnalysisResultFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ADD_SAMPLE_ANALYSIS_RESULT_FIELD_TO_RETRIEVE); 
+                sampleAnalysisResultFieldToRetrieveArr=null;
+                if (sampleAnalysisResultFieldToRetrieve==null || sampleAnalysisResultFieldToRetrieve.length()==0 || "ALL".equalsIgnoreCase(sampleAnalysisResultFieldToRetrieve))
+                    sampleAnalysisResultFieldToRetrieveArr=getAllFieldNames(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableFields());
+                else 
+                    sampleAnalysisResultFieldToRetrieveArr=sampleAnalysisResultFieldToRetrieve.split("\\|");
+                sampleAnalysisResultWhereFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME); 
+                sampleAnalysisResultWhereFieldsNameArr = new String[0];
+                if ( (sampleAnalysisResultWhereFieldsName!=null) && (sampleAnalysisResultWhereFieldsName.length()>0) ) {
+                    sampleAnalysisResultWhereFieldsNameArr=LPArray.addValueToArray1D(sampleAnalysisResultWhereFieldsNameArr, sampleAnalysisResultWhereFieldsName.split("\\|"));
+                }                                
+                sampleAnalysisResultWhereFieldsValue = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE); 
+                includeOnlyWhenResultsInProgress = Boolean.valueOf(LPNulls.replaceNull(argValues[9]).toString());
+
+                sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME);  
+                samplesAnalysisArray = sampleAnalysisView(fieldToRetrieveArr, whereFieldsName, 
+                        whereFieldsValue, sortFieldsName,                        
+                        addSampleAnalysisResult, sampleAnalysisResultFieldToRetrieveArr, sampleAnalysisResultWhereFieldsName, sampleAnalysisResultWhereFieldsValue,
+                        includeOnlyWhenResultsInProgress);
+                LPFrontEnd.servletReturnSuccess(request, response, samplesAnalysisArray); 
+                return;
+            case SAMPLES_ANALYSIS_RESULTS_VIEW:  
+                whereFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME); 
+                if (whereFieldsName==null){whereFieldsName="";}
+                whereFieldsValue = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE); 
+
+                fieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE); 
+                if (fieldToRetrieve==null || fieldToRetrieve.length()==0 || "ALL".equalsIgnoreCase(fieldToRetrieve))
+                    fieldToRetrieveArr=getAllFieldNames(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableFields());
+                else 
+                    fieldToRetrieveArr=fieldToRetrieve.split("\\|");
+
+                sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME);  
+                samplesAnalysisResultArray = sampleAnalysisResultView(fieldToRetrieveArr, whereFieldsName, 
+                        whereFieldsValue, sortFieldsName);
+                LPFrontEnd.servletReturnSuccess(request, response, samplesAnalysisResultArray); 
+                return;
+                case GET_SAMPLE_ANALYSIS_LIST:    
+                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, SampleAPIParams.MANDATPARMS_FE_GETSMPANA_LIST.split("\\|"));
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                        procReqInstance.killIt();
+                        LPFrontEnd.servletReturnResponseError(request, response, 
+                                LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
+                        return;                  
+                    }                      
+                    String[] sampleAnalysisFixFieldToRetrieveArr = LPArray.getUniquesArray(SampleAPIParams.MANDATORY_FIELDS_FRONTEND_TO_RETRIEVE_GET_SAMPLE_ANALYSIS_LIST.split("\\|"));
+                    String sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);                                                      
+                    sampleId = Integer.parseInt(sampleIdStr);       
+                    
+                    sampleAnalysisFieldToRetrieveArr = new String[0];
+                    sampleAnalysisFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE);  
+                    if (Boolean.FALSE.equals( ((sampleAnalysisFieldToRetrieve==null) || (sampleAnalysisFieldToRetrieve.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED)))) ) {
+                         sampleAnalysisFieldToRetrieveArr=  sampleAnalysisFieldToRetrieve.split("\\|");                             
+                    }    
+                    sampleAnalysisFieldToRetrieveArr = LPArray.addValueToArray1D(sampleAnalysisFieldToRetrieveArr, sampleAnalysisFixFieldToRetrieveArr);
+                    
+                    sortFieldsNameArr = null;
+                    sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME); 
+                    if (Boolean.FALSE.equals( ((sortFieldsName==null) || (sortFieldsName.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED)))) ) {
+                        sortFieldsNameArr =  sortFieldsName.split("\\|");                                    
+                    }else{   
+                        sortFieldsNameArr = LPArray.getUniquesArray(SampleAPIParams.MANDATORY_FIELDS_FRONTEND_WHEN_SORT_NULL_GET_SAMPLE_ANALYSIS_LIST.split("\\|"));                     
+                    }  
+                    myData = Rdbms.getRecordFieldsByFilterJSON(procInstanceName, schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
+                            new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName()},new Object[]{sampleId}, sampleAnalysisFieldToRetrieveArr, sortFieldsNameArr);
+                    Rdbms.closeRdbms();
+                    if (myData.contains(LPPlatform.LAB_FALSE)){  
+                        LPFrontEnd.responseError(new String[] {myData});
+                    }else{
+                        LPFrontEnd.servletReturnSuccess(request, response, myData);
+                    }
+                    return;                                            
+                case GET_SAMPLE_ANALYSIS_RESULT_LIST:
+                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, LPArray.getUniquesArray(SampleAPIParams.MANDATORY_PARAMS_FRONTEND_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|")));
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                        procReqInstance.killIt();
+                        LPFrontEnd.servletReturnResponseError(request, response, 
+                                LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
+                        return;                  
+                    }                      
+                    sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);                                                      
+                    sampleId = Integer.parseInt(sampleIdStr);                           
+                    String resultFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_FIELD_TO_RETRIEVE);
+                    String[] resultFieldToRetrieveArr=null;
+                    EnumIntViewFields[] fldsToGet=null;
+                    if (resultFieldToRetrieve!=null){
+                        resultFieldToRetrieveArr=  resultFieldToRetrieve.split("\\|");
+                        fldsToGet= EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, resultFieldToRetrieveArr);
+                    }else{
+                        fldsToGet= EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, "ALL");
+                        //resultFieldToRetrieveArr=EnumIntTableFields.getAllFieldNames(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableFields());
+                    }
+                    //resultFieldToRetrieveArr = LPArray.getUniquesArray(LPArray.addValueToArray1D(resultFieldToRetrieveArr, SampleAPIParams.MANDATORY_FIELDS_FRONTEND_TO_RETRIEVE_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|")));
+                    sampleAnalysisWhereFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_NAME); 
+                    sampleAnalysisWhereFieldsNameArr = new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName()};
+                    if ( (sampleAnalysisWhereFieldsName!=null) && (sampleAnalysisWhereFieldsName.length()>0) ) {
+                        sampleAnalysisWhereFieldsNameArr=LPArray.addValueToArray1D(sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsName.split("\\|"));
+                    }     
+                    Object[] sampleAnalysisWhereFieldsValueArr = new Object[]{sampleId};
+                    sampleAnalysisWhereFieldsValue = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_VALUE);                    
+                    if ( (sampleAnalysisWhereFieldsValue!=null) && (sampleAnalysisWhereFieldsValue.length()>0) ) 
+                        sampleAnalysisWhereFieldsValueArr=LPArray.addValueToArray1D(sampleAnalysisWhereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(sampleAnalysisWhereFieldsValue.split("\\|")));
+                  
+                    sortFieldsNameArr = null;
+                    sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME); 
+                    if (Boolean.FALSE.equals( ((sortFieldsName==null) || (sortFieldsName.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED)))) ) {
+                        sortFieldsNameArr = sortFieldsName.split("\\|");                                    
+                    }else{   
+                        sortFieldsNameArr = LPArray.getUniquesArray(SampleAPIParams.MANDATORY_FIELDS_FRONTEND_WHEN_SORT_NULL_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|"));     
+                    }  
+                    Integer posicLimitIdFld=EnumIntViewFields.getFldPosicInArray(fldsToGet, TblsData.ViewSampleAnalysisResultWithSpecLimits.LIMIT_ID.getName());
+                    Object[][] analysisResultList = QueryUtilitiesEnums.getViewData(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW,
+                        fldsToGet,
+                        new SqlWhere(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsValueArr), sortFieldsNameArr);
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisResultList[0][0].toString())){  
+                        Rdbms.closeRdbms();                                          
+                        LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
+                    }else{                
+                      JSONArray jArr=new JSONArray();
+                      for (Object[] curRow: analysisResultList){
+                        ConfigSpecRule specRule = new ConfigSpecRule();
+                        String currRowLimitId=curRow[posicLimitIdFld].toString();
+                        JSONObject row=LPJson.convertArrayRowToJSONObject(EnumIntViewFields.getAllFieldNames(fldsToGet), curRow);
+                        if ((currRowLimitId!=null) && (currRowLimitId.length()>0) ){
+                          specRule.specLimitsRule(Integer.valueOf(currRowLimitId) , null);                        
+                          row.put(ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_DETAILED, specRule.getRuleRepresentation());                          
+                        }
+                        jArr.add(row);
+                      }                        
+                      Rdbms.closeRdbms();                    
+                      LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                    }                    
+                    return; 
+                   
+                case SAMPLES_PENDING_TESTINGGROUP_REVISION:
+                    String testingGroup=argValues[0].toString();
+                    fieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE); 
+                    if (fieldToRetrieve==null || fieldToRetrieve.length()==0 || "ALL".equalsIgnoreCase(fieldToRetrieve)){
+                        EnumIntViewFields[] viewFieldsFromString = EnumIntViewFields.getViewFieldsFromString(TblsData.ViewsData.SAMPLE_TESTING_GROUP_VIEW, "ALL");
+                        fieldToRetrieveArr=EnumIntViewFields.getAllFieldNames(viewFieldsFromString);
+                    }else
+                        
+                        fieldToRetrieveArr=fieldToRetrieve.split("\\|");
+                    
+                    myData = Rdbms.getRecordFieldsByFilterJSON(procInstanceName, schemaDataName, TblsData.ViewsData.SAMPLE_TESTING_GROUP_VIEW.getViewName(),
+                        new String[]{TblsData.ViewSampleTestingGroup.READY_FOR_REVISION.getName(), TblsData.ViewSampleTestingGroup.REVIEWED.getName(), TblsData.ViewSampleTestingGroup.TESTING_GROUP.getName()},
+                        new Object[]{true, false, testingGroup}, 
+                        fieldToRetrieveArr,
+                        new String[]{TblsData.ViewSampleTestingGroup.SAMPLE_ID.getName(), TblsData.ViewSampleTestingGroup.TESTING_GROUP.getName()});
+                    Rdbms.closeRdbms();
+                    if (myData==null||myData.contains(LPPlatform.LAB_FALSE)){  
+                        LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
+                    }else{
+                        LPFrontEnd.servletReturnSuccess(request, response, myData);
+                    }                             
+                    return;
+                case SAMPLES_PENDING_SAMPLE_REVISION:   
+                    sampleFieldToRetrieve = argValues[0].toString();
+                    sampleFieldToRetrieveArr = new String[]{TblsData.Sample.SAMPLE_ID.getName()};
+                    
+                    if ((sampleFieldToRetrieve==null) || (sampleFieldToRetrieve.length()==0) || ("ALL".equalsIgnoreCase(sampleFieldToRetrieve)) ){
+
+                        EnumIntTableFields[] tableFieldsFromString = EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, "ALL");
+                        sampleFieldToRetrieveArr=EnumIntTableFields.getAllFieldNames(tableFieldsFromString);
+                        
+                    }else
+                        sampleFieldToRetrieveArr=LPArray.addValueToArray1D(sampleFieldToRetrieveArr, sampleFieldToRetrieve.split("\\|"));
+                      
+                    myData = Rdbms.getRecordFieldsByFilterJSON(procInstanceName, schemaDataName, TblsData.TablesData.SAMPLE.getTableName(),
+                            new String[]{TblsData.Sample.READY_FOR_REVISION.getName(), "("+TblsData.Sample.REVIEWED.getName(), SqlStatement.WHERECLAUSE_TYPES.OR.getSqlClause()+" "+TblsData.Sample.REVIEWED.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()+")"},
+                            new Object[]{true, false, null}, 
+                            sampleFieldToRetrieveArr, 
+                            new String[]{TblsData.Sample.SAMPLE_ID.getName()});
+                    Rdbms.closeRdbms();
+                     
+                    if (myData==null || myData.contains(LPPlatform.LAB_FALSE)){  
+                        LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
+                    }else{
+                        LPFrontEnd.servletReturnSuccess(request, response, myData);
+                    }                             
+                    return;
+*/                    
+                case CHANGEOFCUSTODY_SAMPLE_HISTORY:     
+                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, SampleAPIParams.MANDATORY_PARAMS_FRONTEND_CHANGEOFCUSTODY_SAMPLE_HISTORY.split("\\|"));
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                        procReqInstance.killIt();
+                        LPFrontEnd.servletReturnResponseError(request, response, 
+                                LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
+                        return;                  
+                    }                      
+                    String sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);                                                         
+                    sampleId = Integer.parseInt(sampleIdStr);      
+
+                    fieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE);                    
+                    sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME);
+                    
+                    fieldToRetrieveArr = new String[0];
+                    if (Boolean.FALSE.equals(( (fieldToRetrieve==null) || (fieldToRetrieve.length()==0) ))){
+                        fieldToRetrieveArr=LPArray.addValueToArray1D(fieldToRetrieveArr, fieldToRetrieve.split("\\|"));
+                    }  
+                    fieldToRetrieveArr = LPArray.getUniquesArray(LPArray.addValueToArray1D(fieldToRetrieveArr, SampleAPIParams.MANDATORY_FIELDS_FRONTEND_TO_RETRIEVE_CHANGEOFCUSTODY_SAMPLE_HISTORY.split("\\|")));
+                    
+                    sortFieldsNameArr = null;
+                    sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME); 
+                    if (Boolean.FALSE.equals( ((sortFieldsName==null) || (sortFieldsName.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED))) )) {
+                        sortFieldsNameArr = sortFieldsName.split("\\|");                                    
+                    }else{   
+                        sortFieldsNameArr = LPArray.getUniquesArray(SampleAPIParams.MANDATORY_FIELDS_FRONTEND_WHEN_SORT_NULL_CHANGEOFCUSTODY_SAMPLE_HISTORY.split("\\|"));
+                    }                                          
+                    myData = Rdbms.getRecordFieldsByFilterJSON(procInstanceName, schemaDataName, TblsData.ViewsData.SAMPLE_COC_NAMES_VIEW.getViewName(),
+                            new String[]{TblsData.Sample.SAMPLE_ID.getName()},new Object[]{sampleId}, fieldToRetrieveArr, sortFieldsNameArr);
+                    Rdbms.closeRdbms();
+                    if (myData.contains(LPPlatform.LAB_FALSE)){  
+                        LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
+                    }else{
+                        LPFrontEnd.servletReturnSuccess(request, response, myData);
+                    }                             
+                    return;                      
+                      
+                case CHANGEOFCUSTODY_USERS_LIST:
+
+                    fieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE);                    
+                    sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME);
+                    
+                    fieldToRetrieveArr = new String[0];
+                    if (Boolean.FALSE.equals(( (fieldToRetrieve==null) || (fieldToRetrieve.length()==0) ))){
+                        fieldToRetrieveArr=LPArray.addValueToArray1D(fieldToRetrieveArr, fieldToRetrieve.split("\\|"));                
+                    }   
+                    fieldToRetrieveArr=LPArray.getUniquesArray(LPArray.addValueToArray1D(fieldToRetrieveArr, SampleAPIParams.MANDATORY_FIELDS_FRONTEND_TO_RETRIEVE_CHANGEOFCUSTODY_USERS_LIST.split("\\|")));
+                    sortFieldsNameArr = null;
+                    sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME); 
+                    if (Boolean.FALSE.equals( ((sortFieldsName==null) || (sortFieldsName.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED))) )) {
+                        sortFieldsNameArr = sortFieldsName.split("\\|");                                    
+                    }else{   
+                        sortFieldsNameArr=LPArray.getUniquesArray(SampleAPIParams.MANDATORY_FIELDS_FRONTEND_WHEN_SORT_NULL_CHANGEOFCUSTODY_USERS_LIST.split("\\|")); 
+                    }  
+                    
+                    myData = Rdbms.getRecordFieldsByFilterJSON(procInstanceName, GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(),
+                            new String[]{TblsApp.Users.USER_NAME.getName()+" NOT IN|"},new Object[]{"0"}, fieldToRetrieveArr, sortFieldsNameArr);
+                    Rdbms.closeRdbms();
+                    if (myData.contains(LPPlatform.LAB_FALSE)){  
+                        LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
+                    }else{
+                        LPFrontEnd.servletReturnSuccess(request, response, myData);
+                    }                             
+                    return;                      
+                case GET_SAMPLE_ANALYSIS_RESULT_SPEC:
+                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, SampleAPIParams.MANDATORY_PARAMS_FRONTEND_GET_SAMPLE_ANALYSIS_RESULT_SPEC.split("\\|"));
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                        LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
+                    }                      
+                    return;  
+                case SAMPLE_ENTIRE_STRUCTURE:
+                   sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);                     
+                   String[] sampleIdStrArr=sampleIdStr.split("\\|");  
+                   Object[] sampleIdArr=new Object[0];
+                   for (String smp: sampleIdStrArr){
+                       sampleIdArr=LPArray.addValueToArray1D(sampleIdArr,  Integer.parseInt(smp));
+                   }
+
+                    sampleFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE);
+                    sampleAnalysisFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE);
+                    String sampleAnalysisFieldToSort = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_FIELD_TO_SORT);
+                    String sarFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_FIELD_TO_RETRIEVE);
+                    String sarFieldToSort = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_FIELD_TO_SORT);
+                    String sampleAuditFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_AUDIT_FIELD_TO_RETRIEVE);
+                    String sampleAuditResultFieldToSort = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_AUDIT_FIELD_TO_SORT);
+                    String jsonarrayf=DataSample.sampleEntireStructureData(procInstanceName, Integer.parseInt(sampleIdStr), sampleFieldToRetrieve, 
+                            sampleAnalysisFieldToRetrieve, sampleAnalysisFieldToSort, sarFieldToRetrieve, sarFieldToSort, 
+                            sampleAuditFieldToRetrieve, sampleAuditResultFieldToSort);
+                    Rdbms.closeRdbms();                
+                    LPFrontEnd.servletReturnSuccess(request, response, jsonarrayf);
+                    return;
+                case GET_SAMPLE_AUDIT:
+                   JSONObject jMainObj=new JSONObject();
+                   sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);                     
+                   sampleId=Integer.valueOf(sampleIdStr);
+                   sampleFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_AUDIT_FIELD_TO_RETRIEVE);
+                   sampleFieldToRetrieveArr=new String[]{TblsDataAudit.Sample.SAMPLE_ID.getName(), TblsDataAudit.Sample.AUDIT_ID.getName(), TblsDataAudit.Sample.ACTION_NAME.getName(), TblsDataAudit.Sample.FIELDS_UPDATED.getName()
+                    , TblsDataAudit.Sample.REVIEWED.getName(), TblsDataAudit.Sample.REVIEWED_ON.getName(), TblsDataAudit.Sample.DATE.getName(), TblsDataAudit.Sample.PERSON.getName(), TblsDataAudit.Sample.REASON.getName(), TblsDataAudit.Sample.ACTION_PRETTY_EN.getName(), TblsDataAudit.Sample.ACTION_PRETTY_ES.getName(), TblsDataAudit.Sample.TABLE_NAME.getName()};
+                   Object[][] sampleAuditInfo=QueryUtilitiesEnums.getTableData(TblsDataAudit.TablesDataAudit.SAMPLE,
+                        EnumIntTableFields.getTableFieldsFromString(TblsDataAudit.TablesDataAudit.SAMPLE, sampleFieldToRetrieveArr),
+                        new String[]{TblsDataAudit.Sample.SAMPLE_ID.getName(), TblsDataAudit.Sample.PARENT_AUDIT_ID.getName()+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, new Object[]{sampleId}, 
+                        new String[]{TblsDataAudit.Sample.AUDIT_ID.getName()});
+                   JSONArray jArr = new JSONArray();
+                   if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditInfo[0][0].toString())){
+                        LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                        return;                       
+                   }
+                   for (Object[] curRow: sampleAuditInfo){
+                    JSONObject jObj=LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curRow,
+                            new String[]{TblsDataAudit.Sample.FIELDS_UPDATED.getName()});
+                    Object[] convertToJsonObjectStringedObject = LPJson.convertToJsonObjectStringedObject(curRow[LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsDataAudit.Sample.FIELDS_UPDATED.getName())].toString());
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(convertToJsonObjectStringedObject[0].toString()))
+                        jObj.put(TblsDataAudit.Sample.FIELDS_UPDATED.getName(), convertToJsonObjectStringedObject[1]);            
+                    Integer curAuditId=Integer.valueOf(curRow[1].toString());
+                        Object[][] sampleAuditInfoLvl2=QueryUtilitiesEnums.getTableData(TblsDataAudit.TablesDataAudit.SAMPLE,
+                            EnumIntTableFields.getTableFieldsFromString(TblsDataAudit.TablesDataAudit.SAMPLE, sampleFieldToRetrieveArr),
+                            new String[]{TblsDataAudit.Sample.PARENT_AUDIT_ID.getName()}, new Object[]{curAuditId}, 
+                            new String[]{TblsDataAudit.Sample.AUDIT_ID.getName()});
+                        JSONArray jArrLvl2 = new JSONArray();
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditInfoLvl2[0][0].toString())){
+                            Object[] childJObj=new Object[]{null, null, "No child", "", "", "", null, "", "", null, null, null};
+                            for (int iChild=childJObj.length;iChild<sampleFieldToRetrieveArr.length;iChild++)
+                                childJObj=LPArray.addValueToArray1D(childJObj, null);                            
+                            JSONObject jObjLvl2=LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, childJObj); 
+                            jArrLvl2.add(jObjLvl2);
+                        }else{
+                            for (Object[] curRowLvl2: sampleAuditInfoLvl2){
+                                JSONObject jObjLvl2=LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curRowLvl2,
+                                    new String[]{TblsDataAudit.Sample.FIELDS_UPDATED.getName()});  
+                                Object[] convertToJsonObjectStringedObjectLvl2 = LPJson.convertToJsonObjectStringedObject(curRowLvl2[LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsDataAudit.Sample.FIELDS_UPDATED.getName())].toString());
+                                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(convertToJsonObjectStringedObjectLvl2[0].toString()))
+                                    jObjLvl2.put(TblsDataAudit.Sample.FIELDS_UPDATED.getName(), convertToJsonObjectStringedObjectLvl2[1]);            
+                                jArrLvl2.add(jObjLvl2);
+                            }
+                        }
+                        jObj.put("sublevel", jArrLvl2);
+                    jArr.add(jObj);
+                   }
+                   Rdbms.closeRdbms();
+                   jMainObj.put(GenericAuditFields.TAG_AUDIT_INFO, jArr);
+                   jMainObj.put(GenericAuditFields.TAG_HIGHLIGHT_FIELDS, GenericAuditFields.getAuditHighLightFields());
+                   LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
+                   return;
+/*                case GET_METHOD_CERTIFIED_USERS_LIST:
+                    String methodName=argValues[0].toString();
+                    Object[] analysisMethodCertifiedUsersList = analysisMethodCertifiedUsersList(methodName, null, null);
+                    jArr = new JSONArray();
+                    String[] fldNames=(String[])analysisMethodCertifiedUsersList[0];
+                    Object[][] dataValues=(Object[][])analysisMethodCertifiedUsersList[1];
+                    if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(dataValues[0][0].toString()))){
+                        for (Object[] curRow: dataValues){      
+                            JSONObject jObj=LPJson.convertArrayRowToJSONObject(fldNames, curRow);
+                            jArr.add(jObj);
+                        }
+                    }
+                    Rdbms.closeRdbms();
+                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                    return;
+*/                   
             default:
                 break;
         }
@@ -771,14 +1418,36 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
         }
     }
 
-    static Object[] sampleAnalysisResultLockData(String[] resultFieldToRetrieveArr, Object[] curRow) {
-        String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+    public static Object[] sampleAnalysisResultLockData(String[] resultFieldToRetrieveArr, Object[] curRow) {
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        String procInstanceName = procReqSession.getProcedureInstance();
 
         String[] fldNameArr = new String[0];
         Object[] fldValueArr = new Object[0];
         Integer resultFldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.RESULT_ID.getName());
         Integer resultId = Integer.valueOf(curRow[resultFldPosic].toString());
 
+       if (LPPlatform.LAB_TRUE.equalsIgnoreCase(AnalysisMethodCertif.isUserCertificationEnabled()[0].toString())){
+           String methodName=curRow[LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.METHOD_NAME.getName())].toString();
+            Object[] userCertified = AnalysisMethodCertif.isUserCertified(methodName, procReqSession.getToken().getUserName());
+            if (Boolean.FALSE.equals(Boolean.valueOf(userCertified[0].toString()))){
+                fldNameArr = LPArray.addValueToArray1D(fldNameArr, "is_locked");
+                fldValueArr = LPArray.addValueToArray1D(fldValueArr, true);
+                fldNameArr = LPArray.addValueToArray1D(fldNameArr, "locking_object");
+                fldValueArr = LPArray.addValueToArray1D(fldValueArr, TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName());
+                String msgCode = "instrLockedByAnalysisMethodCertification";
+                fldValueArr = LPArray.addValueToArray1D(fldValueArr, msgCode);
+                String errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_LOCKING_REASONS, null, msgCode, DEFAULTLANGUAGE, null, true, null);
+                String errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_LOCKING_REASONS, null, msgCode, "es", null, false, null);
+                JSONObject reasonInfo = new JSONObject();
+                reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_EN, errorTextEn);
+                reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_ES, errorTextEs);
+                return new Object[]{fldNameArr, fldValueArr, "locking_reason", reasonInfo};                
+            }
+       }
+           
+
+        
         if (Boolean.FALSE.equals(isProgramCorrectiveActionEnable(procInstanceName))) {
             return new Object[]{fldNameArr, fldValueArr};
         }
@@ -842,7 +1511,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
         return (groupedInfo[0][0].toString().length() > 0);
     }
 
-    static Object[] getObjectsId(String[] headerFlds, Object[][] analysisResultList, String separator) {
+    public static Object[] getObjectsId(String[] headerFlds, Object[][] analysisResultList, String separator) {
         if (analysisResultList == null || analysisResultList.length == 0) {
             return new Object[]{};
         }
