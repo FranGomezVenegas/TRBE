@@ -313,7 +313,19 @@
     <version>2.0.28</version>
 </dependency>
 
+<!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3 -->
+<dependency>
+    <groupId>com.amazonaws</groupId>
+    <artifactId>aws-java-sdk-s3</artifactId>
+    <version>1.12.609</version>
+</dependency>
 
+<!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
+<dependency>
+    <groupId>commons-fileupload</groupId>
+    <artifactId>commons-fileupload</artifactId>
+    <version>1.5</version>
+</dependency>
 
 
 <!-- https://mvnrepository.com/artifact/org.molgenis/molgenis-data-excel
