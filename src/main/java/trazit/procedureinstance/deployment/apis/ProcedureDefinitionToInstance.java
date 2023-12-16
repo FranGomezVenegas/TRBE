@@ -24,6 +24,7 @@ import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.procedureinstance.deployment.logic.ProcedureDefToInstanceCreateProcViews;
+import trazit.procedureinstance.deployment.logic.ProcedureDefToInstanceCreateSopMetaDataAndUserSop;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -150,7 +151,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 runSection=Boolean.valueOf(argValues[8].toString()) || PROCDEPL_PROCEDURE_SOP_META_DATA;
                 sectionsSettingJobj.put("4) SOPs", runSection);
                 if (Boolean.TRUE.equals(runSection)){
-                    JSONObject createDBSopMetaDataAndUserSop = trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.createDBSopMetaDataAndUserSop(procName, procVersion, procInstanceName);
+                    JSONObject createDBSopMetaDataAndUserSop = ProcedureDefToInstanceCreateSopMetaDataAndUserSop.createDBSopMetaDataAndUserSop(procName, procVersion, procInstanceName);
                     sectionsDetailObj.put("SOPs", createDBSopMetaDataAndUserSop);
                 } 
             }
@@ -166,7 +167,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 runSection=Boolean.valueOf(argValues[9].toString()) || PROCDEPL_ASIGN_PROC_SOPS_TO_USERS;
                 sectionsSettingJobj.put("5) Assign SOPs to Users", runSection);
                 if (Boolean.TRUE.equals(runSection)){
-                    JSONObject createDBProcedureUserRoles = trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.addProcedureSOPtoUsers(procName, procVersion, procInstanceName);
+                    JSONObject createDBProcedureUserRoles = ProcedureDefToInstanceCreateSopMetaDataAndUserSop.addProcedureSOPtoUsers(procName, procVersion, procInstanceName);
                     sectionsDetailObj.put("Assign SOPs to Users", createDBProcedureUserRoles);
                 } 
             }

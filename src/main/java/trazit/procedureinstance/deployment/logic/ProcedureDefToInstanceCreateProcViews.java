@@ -48,7 +48,7 @@ public class ProcedureDefToInstanceCreateProcViews {
         EnumIntViewFields[] vwProcReqSolFlds = new EnumIntViewFields[]{TblsReqs.viewProcReqSolutionViews.WINDOW_NAME, TblsReqs.viewProcReqSolutionViews.ROLES, TblsReqs.viewProcReqSolutionViews.PARENT_CODE, TblsReqs.viewProcReqSolutionViews.CODE, 
             TblsReqs.viewProcReqSolutionViews.WINDOW_QUERY, TblsReqs.viewProcReqSolutionViews.CONTENT_TYPE, TblsReqs.viewProcReqSolutionViews.WINDOW_MODE, 
             TblsReqs.viewProcReqSolutionViews.WINDOW_TYPE, TblsReqs.viewProcReqSolutionViews.WINDOW_LABEL_EN, TblsReqs.viewProcReqSolutionViews.WINDOW_LABEL_ES, 
-            TblsReqs.viewProcReqSolutionViews.ORDER_NUMBER, TblsReqs.viewProcReqSolutionViews.SOLUTION_ID, TblsReqs.viewProcReqSolutionViews.TWOICONS_DETAIL};
+            TblsReqs.viewProcReqSolutionViews.ORDER_NUMBER, TblsReqs.viewProcReqSolutionViews.SOLUTION_ID, TblsReqs.viewProcReqSolutionViews.TWOICONS_DETAIL, TblsReqs.viewProcReqSolutionViews.SOP_NAME};
         Object[][] procViewsArr = Rdbms.getRecordFieldsByFilterForViews(null, GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_WINDOWS, new SqlWhere(TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_WINDOWS, new String[]{TblsReqs.viewProcReqSolutionViews.PROCEDURE_NAME.getName(), TblsReqs.viewProcReqSolutionViews.PROCEDURE_VERSION.getName(), TblsReqs.viewProcReqSolutionViews.PROC_INSTANCE_NAME.getName(), TblsReqs.viewProcReqSolutionViews.ACTIVE.getName(), TblsReqs.viewProcReqSolutionViews.TYPE.getName()}, new Object[]{procedure, procVersion, procInstanceName, true, ProcedureDefinitionToInstanceSections.ReqSolutionTypes.WINDOW.getTagValue()}), 
             vwProcReqSolFlds, null, false);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procViewsArr[0][0].toString())) {
@@ -62,6 +62,7 @@ public class ProcedureDefToInstanceCreateProcViews {
                 currentParentCode = LPNulls.replaceNull(curView[2]).toString();
                 currentCode = LPNulls.replaceNull(curView[3]).toString();
                 windowType = LPNulls.replaceNull(curView[7]).toString();  
+                String sopName = LPNulls.replaceNull(curView[13]).toString();
                 JsonObject jObjModel= new JsonObject();
                 switch (LPNulls.replaceNull(curView[5]).toString().toUpperCase()){
                     case "TABS":
@@ -82,6 +83,10 @@ public class ProcedureDefToInstanceCreateProcViews {
                 if (jObjModel != null) {
                     updFldN = LPArray.addValueToArray1D(updFldN, TblsProcedure.ProcedureViews.JSON_MODEL.getName());
                     updFldV = LPArray.addValueToArray1D(updFldV, jObjModel);
+                }
+                if (sopName != null) {
+                    updFldN = LPArray.addValueToArray1D(updFldN, TblsProcedure.ProcedureViews.SOP.getName());
+                    updFldV = LPArray.addValueToArray1D(updFldV, sopName);
                 }
                 if ((LPNulls.replaceNull(curView[10]).toString().length() == 0) && (LPNulls.replaceNull(curView[11]).toString().length() > 0)) {
                     curView[11] = curView[10];

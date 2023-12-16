@@ -11,6 +11,8 @@ import databases.TblsCnfg;
 import databases.TblsProcedure;
 import trazit.procedureinstance.definition.definition.TblsReqs;
 import functionaljavaa.sop.UserSop;
+import functionaljavaa.user.UserAndRolesViews;
+import javax.json.JsonArray;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONObject;
@@ -157,17 +159,25 @@ public class ProcedureDefinitionToInstanceUtility {
             return new Object[]{};
         return LPArray.getColumnFromArray2D(procedureRolesListArr, 0);
     }    
-    public static final Object[][] procedureAddSopToUsersByRole(String procInstanceName, Integer procVersion, String schemaName, String roleName, String sopName, Integer sopVersion, Integer sopRevision){
+    public static final JsonArray procedureAddSopToUsersByRole(String procInstanceName, Integer procVersion, String schemaName, String roleName, String sopName, Integer sopVersion, Integer sopRevision){
         String schemaNameDestinationProcedure=LPPlatform.buildSchemaName(schemaName, GlobalVariables.Schemas.PROCEDURE.getName());
         UserSop usSop = new UserSop();
-        Object[][] diagnoses = new Object[0][0];
+        JsonArray diagnoses = null;
         Object[][] personPerRole = Rdbms.getRecordFieldsByFilter(schemaName, schemaNameDestinationProcedure, TblsProcedure.TablesProcedure.PERSON_PROFILE.getTableName(),
         new String[]{TblsProcedure.PersonProfile.ROLE_NAME.getName()}, new Object[]{roleName}, new String[]{TblsProcedure.PersonProfile.PERSON_NAME.getName()});
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(personPerRole[0][0].toString())){
             for (Object[] curPersRole: personPerRole){
                 String curPersonName=curPersRole[0].toString();
                 Object[] addSopToUserByName = usSop.addSopToUserByName(schemaName, curPersonName, sopName);
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(addSopToUserByName[0].toString())) return LPArray.array1dTo2d(addSopToUserByName,addSopToUserByName.length-1);
+                JSONObject diagnObj=new JSONObject();
+                diagnObj.put("roleName", roleName);
+                diagnObj.put("sopName", sopName);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(addSopToUserByName[0].toString())){
+                    diagnObj.put("Error", "SOP "+sopName+" NOT assigned to user "+UserAndRolesViews.getUserByPerson(curPersonName)+". Error: "+addSopToUserByName[addSopToUserByName.length-1]);
+                    //return LPArray.array1dTo2d(addSopToUserByName,addSopToUserByName.length-1);
+                }else{
+                    diagnObj.put("Assigned", "SOP "+sopName+" assigned to user "+UserAndRolesViews.getUserByPerson(curPersonName));
+                }
                 //diagnoses = LPArray.joinTwo2DArrays(diagnoses, new Object[][]{{curPersonName, addSopToUserByName}});
             }
         }
