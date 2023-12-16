@@ -8,12 +8,12 @@ package com.labplanet.servicios.moduleenvmonit;
 import static com.labplanet.servicios.app.AuthenticationAPIParams.RESPONSE_JSON_DATATABLE;
 import module.monitoring.definition.TblsEnvMonitData;
 import module.monitoring.definition.TblsEnvMonitConfig;
-import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NUM_DAYS;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import com.labplanet.servicios.app.GlobalAPIsParams;
+import com.labplanet.servicios.moduleenvmonit.EnvMonAPI.EnvMonQueriesAPIEndpoints;
 import module.monitoring.definition.TblsEnvMonitConfig.ViewsEnvMonConfig;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
@@ -38,24 +38,18 @@ import databases.TblsProcedureConfig;
 import functionaljavaa.materialspec.SpecFrontEndUtilities;
 import module.monitoring.logic.ConfigMasterData;
 import module.monitoring.logic.DataProgramCorrectiveAction.ProgramCorrectiveActionStatuses;
-import functionaljavaa.platform.doc.EndPointsToRequirements;
-import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.json.JsonArray;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPMath;
-import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntViewFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
-import trazit.globalvariables.GlobalVariables.ApiUrls;
 import trazit.queries.QueryUtilities;
 import static trazit.queries.QueryUtilities.getFieldsListToRetrieve;
 import static trazit.queries.QueryUtilities.getKPIInfoFromRequest;
@@ -111,116 +105,6 @@ public class EnvMonAPIqueries extends HttpServlet {
 GlobalAPIsParams. GlobalAPIsParams. GlobalAPIsParams.  
 GlobalAPIsParams.
      */
-    public enum EnvMonAPIqueriesEndpoints implements EnumIntEndpoints {
-        GET_MASTER_DATA("GET_MASTER_DATA", "",
-                new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects,
-                 null, null),
-        PROGRAMS_LIST("PROGRAMS_LIST", "",
-                new LPAPIArguments[]{new LPAPIArguments("programFldNameList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
-                    new LPAPIArguments("programFldSortList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
-                    new LPAPIArguments("programLocationFldNameList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
-                    new LPAPIArguments("programLocationFldSortList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9),
-                    new LPAPIArguments("programLocationCardInfoFldNameList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
-                    new LPAPIArguments("programLocationCardInfoFldSortList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 11),
-                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJ_GROUP_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 12),
-                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TABLE_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 13),
-                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TABLE_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 14),
-                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 15),
-                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 16),
-                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELDS_TO_RETRIEVE_OR_GROUPING, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 17),
-                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_GROUPED, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 18),}, EndPointsToRequirements.endpointWithNoOutputObjects,
-                 null, null),
-        PROGRAMS_CORRECTIVE_ACTION_LIST("PROGRAMS_CORRECTIVE_ACTION_LIST", "",
-                new LPAPIArguments[]{new LPAPIArguments("programName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                    new LPAPIArguments("programCorrectiveActionFldNameList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
-                    new LPAPIArguments("programCorrectiveActionFldSortList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),}, EndPointsToRequirements.endpointWithNoOutputObjects,
-                 null, null),
-        GET_ALL_PRODUCTION_LOTS("GET_ALL_PRODUCTION_LOTS", "",
-                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
-                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_SORT, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7)
-                }, EndPointsToRequirements.endpointWithNoOutputObjects,
-                 null, null),
-        GET_ACTIVE_PRODUCTION_LOTS("GET_ACTIVE_PRODUCTION_LOTS", "",
-                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
-                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_SORT, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7)
-                }, EndPointsToRequirements.endpointWithNoOutputObjects,
-                 null, null),
-        DEACTIVATED_PRODUCTION_LOTS_LAST_N_DAYS("DEACTIVATED_PRODUCTION_LOTS_LAST_N_DAYS", "", new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_NUM_DAYS, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects,
-                 null, null),
-        GET_SCHEDULED_SAMPLES("GET_SCHEDULED_SAMPLES", "",
-                new LPAPIArguments[]{
-                    new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
-                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_START, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
-                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_END, LPAPIArguments.ArgumentType.STRING.toString(), false, 8)},
-                    EndPointsToRequirements.endpointWithNoOutputObjects, null, null),
-        GET_STAGES_TIMING_CAPTURE_DATA("GET_STAGES_TIMING_CAPTURE_DATA", "",
-                new LPAPIArguments[]{
-                    new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
-                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_START, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
-                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_END, LPAPIArguments.ArgumentType.STRING.toString(), false, 8)},
-                    EndPointsToRequirements.endpointWithNoOutputObjects, null, null)        
-        ;
-        private EnvMonAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
-            this.name = name;
-            this.successMessageCode = successMessageCode;
-            this.arguments = argums;
-            this.outputObjectTypes = outputObjectTypes;
-            this.devComment = LPNulls.replaceNull(devComment);
-            this.devCommentTag = LPNulls.replaceNull(devCommentTag);
-        }
-
-        public HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex) {
-            HashMap<HttpServletRequest, Object[]> hm = new HashMap<>();
-            Object[] argValues = new Object[0];
-            for (LPAPIArguments curArg : this.arguments) {
-                argValues = LPArray.addValueToArray1D(argValues, curArg.getName() + ":" + getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
-                request.setAttribute(curArg.getName(), getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
-            }
-            hm.put(request, argValues);
-            return hm;
-        }
-        @Override public String getEntity() {return "program";}
-        @Override
-        public String getName() {
-            return this.name;
-        }
-
-        @Override
-        public String getSuccessMessageCode() {
-            return this.successMessageCode;
-        }
-
-        @Override
-        public JsonArray getOutputObjectTypes() {
-            return outputObjectTypes;
-        }
-
-        @Override
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }
-
-        @Override
-        public String getApiUrl() {
-            return ApiUrls.ENVMON_QUERIES.getUrl();
-        }
-        private final String name;
-        private final String successMessageCode;
-        private final LPAPIArguments[] arguments;
-        private final JsonArray outputObjectTypes;
-
-        @Override
-        public String getDeveloperComment() {
-            return this.devComment;
-        }
-
-        @Override
-        public String getDeveloperCommentTag() {
-            return this.devCommentTag;
-        }
-        private final String devComment;
-        private final String devCommentTag;
-    }
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -246,9 +130,9 @@ GlobalAPIsParams.
         String procInstanceName = procReqInstance.getProcedureInstance();
 
         try (PrintWriter out = response.getWriter()) {
-            EnvMonAPIqueriesEndpoints endPoint = null;
+            EnvMonQueriesAPIEndpoints endPoint = null;
             try {
-                endPoint = EnvMonAPIqueriesEndpoints.valueOf(actionName.toUpperCase());
+                endPoint = EnvMonQueriesAPIEndpoints.valueOf(actionName.toUpperCase());
             } catch (Exception e) {
                 //procReqInstance.killIt();
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
