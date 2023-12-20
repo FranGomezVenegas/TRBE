@@ -31,6 +31,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
 import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables.ApiUrls;
+import trazit.session.InternalMessage;
 
 /**
  *
@@ -198,14 +199,14 @@ public class BatchAPI extends HttpServlet {
         }
         try (PrintWriter out = response.getWriter()) {
             BusinessRules bi = new BusinessRules(procInstanceName, null);
-            Object[] actionEnabled = ActionsControl.procActionEnabled(procInstanceName, token, actionName, bi, false);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) {
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
+            InternalMessage actionEnabled = ActionsControl.procActionEnabled(procInstanceName, token, actionName, bi, false);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled.getDiagnostic())) {
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, actionEnabled.getMessageCodeObj(), actionEnabled.getMessageCodeVariables());
                 return;
             }
             actionEnabled = ActionsControl.procUserRoleActionEnabled(procInstanceName, token.getUserRole(), actionName, bi);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) {
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled.getDiagnostic())) {
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, actionEnabled.getMessageCodeObj(), actionEnabled.getMessageCodeVariables());
                 return;
             }
             switch (endPoint) {
