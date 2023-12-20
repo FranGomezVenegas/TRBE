@@ -11,14 +11,31 @@
                   { "name": "Batches" , "url" : "/moduleenvmon/EnvMonAPIactions"},
                   { "name": "ProdLot" , "url" : "/moduleenvmon/EnvMonProdLotAPIactions"},
                   { "name": "Incubators" , "url" : "/moduleenvmon/EnvMonIncubatorAPIactions"}		
-            ]
+            ],
+        "queriesEndpoints": [
+          {
+            "name": "Lots",
+            "url": "/moduleMonitoring/MonitoringAPIqueries"
+          }
+        ]            
     },
     "picture": "/images/procedures_pictures/inventory.jpg",
+    "special_buttons":[
+        {
+            "type":"ACTION/QUERY",
+            "json_model":{
+                
+            },
+            "window_actions":[
+                {"actionName": ""}
+            ]                    
+        }
+    ],
     "apis":[ "EnvMonAPIactionsEndpoints", "EnvMonAPIqueriesEndpoints", "EnvMonAPIqueriesStatsEndpoints", "EnvMonIncubatorAPIactionsEndpoints", 
         "EnvMonIncubatorAPIqueriesEndpoints", "EnvMonIncubBatchAPIqueriesEndpoints", "EnvMonProdLotAPIactionsEndpoints", "EnvMonQueriesAPIEndpoints", 
         "EnvMonSampleAPIactionsEndpoints", "EnvMonSampleAPIqueriesEndpoints", "SampleAPIactionsEndpoints", "SampleAPIqueriesEndpoints", 
         "SavedQueriesAPIEndpoints", "SavedQueriesAPIqueriesEndpoints", "SopUserAPIactionsEndpoints", "SopUserAPIqueriesEndpoints",
-        "InvestigationAPIactionsEndpoints", "InvestigationAPIqueriesEndpoints"
+        "InvestigationAPIactionsEndpoints", "InvestigationAPIqueriesEndpoints", "CertifyAnalysisMethodAPIactions"
     ], 
     "tables_and_views":[
         {"schema_name":"config", "table_name":"analysis", "is_view":false, "order_number":1, "definition_en":"Analysis master list", "definition_es":"Lista maestra de análisis"},
