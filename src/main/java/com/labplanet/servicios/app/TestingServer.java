@@ -29,6 +29,7 @@ import trazit.procedureinstance.definition.definition.TblsReqs;
 import databases.TblsTesting;
 import databases.features.Token;
 import functionaljavaa.analysis.UserMethod;
+import functionaljavaa.certification.AnalysisMethodCertif;
 import static functionaljavaa.certification.FrontendCertifObjsUtilities.certifObjCertifModeOwnUserAction;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
 import functionaljavaa.intervals.IntervalsUtilities;
@@ -133,23 +134,27 @@ public class TestingServer extends HttpServlet {
         Integer procedureVersion=1;
         String procInstanceName="stock";
 
-    String dbName="demo_v0_9_2";
-    Rdbms.stablishDBConection(dbName);
-
+        String dbName="demo_v0_9_2";
+        Rdbms.stablishDBConection(dbName);
     
-                procInstanceName="inspection_lot";
-            out.println("************ ViewsAppProcData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW. Begin");
-            String tblCreateScript=EnumIntViews.getViewScriptCreation(ViewsInspLotRMData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, procInstanceName, false, false, true, null);
-            out.println(tblCreateScript);
+        procInstanceName="inspection_lot";                
+        Object[] assignMethodToUser = AnalysisMethodCertif.newRecord("EP", 1, "admin", null, null);
+        out.println(Arrays.toString(assignMethodToUser));
+if (1==1)return;
+
+        procInstanceName="inspection_lot";                
+        out.println("************ ViewsAppProcData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW. Begin");
+        String tblCreateScript=EnumIntViews.getViewScriptCreation(ViewsInspLotRMData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, procInstanceName, false, false, true, null);
+        out.println(tblCreateScript);
 Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(procInstanceName, ViewsInspLotRMData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName(), tblCreateScript, new Object[]{});
 out.println(Arrays.toString(prepUpQuery));
 out.println("************ ViewsAppProcData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW testing. End");
-            out.println("************ ViewsAppProcData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW NO testing. Begin");
-            tblCreateScript=EnumIntViews.getViewScriptCreation(ViewsInspLotRMData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, procInstanceName, false, false, false, null);
-            out.println(tblCreateScript);
+        out.println("************ ViewsAppProcData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW NO testing. Begin");
+        tblCreateScript=EnumIntViews.getViewScriptCreation(ViewsInspLotRMData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, procInstanceName, false, false, false, null);
+        out.println(tblCreateScript);
 prepUpQuery = Rdbms.prepUpQueryWithDiagn(procInstanceName, ViewsInspLotRMData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName(), tblCreateScript, new Object[]{});
 out.println(Arrays.toString(prepUpQuery));
-            out.println("************ ViewsAppProcData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW NO testing. End");
+        out.println("************ ViewsAppProcData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW NO testing. End");
 if (1==1)return;
     
     
