@@ -43,6 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPHttp;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.InternalMessage;
 /**
  *
  * @author Administrator
@@ -163,16 +164,16 @@ public class TstDataSample extends HttpServlet {
                             dataSample[1] = ""; dataSample[2] = ""; dataSample[3] = ""; dataSample[4] = ""; dataSample[5] = "";                         
                     }else{
                         BusinessRules bi=new BusinessRules(procInstanceName, null);
-                        Object[] actionEnabledForRole = ActionsControl.procUserRoleActionEnabled(procInstanceName, userRole, actionName, bi);
-                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabledForRole[0].toString())){
+                        InternalMessage actionEnabledForRole = ActionsControl.procUserRoleActionEnabled(procInstanceName, userRole, actionName, bi);
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabledForRole.getDiagnostic())){
                             if (SampleAPIactionsEndpoints.GETSAMPLEINFO.getName().equalsIgnoreCase(actionName)){                
-                                    dataSample2D[0][0] = actionEnabledForRole[0];
-                                    dataSample2D[0][1] = actionEnabledForRole[1]; dataSample2D[0][2] = actionEnabledForRole[2]; 
-                                    dataSample2D[0][3] = actionEnabledForRole[3]; dataSample2D[0][4] = actionEnabledForRole[4]; 
-                                    dataSample2D[0][5] = actionEnabledForRole[5]; 
+                                    dataSample2D[0][0] = actionEnabledForRole.getDiagnostic();
+                                    dataSample2D[0][1] = actionEnabledForRole.getDiagnostic(); dataSample2D[0][2] = actionEnabledForRole.getDiagnostic(); 
+                                    dataSample2D[0][3] = actionEnabledForRole.getDiagnostic(); dataSample2D[0][4] = Arrays.toString(actionEnabledForRole.getMessageCodeVariables()); 
+                                    dataSample2D[0][5] = Arrays.toString(actionEnabledForRole.getMessageCodeVariables()); 
                             }else{        
-                                    dataSample[0] = actionEnabledForRole[0]; dataSample[1] = actionEnabledForRole[1]; dataSample[2] = actionEnabledForRole[2];
-                                    dataSample[3] = actionEnabledForRole[3]; dataSample[4] = actionEnabledForRole[4]; dataSample[5] = actionEnabledForRole[5]; 
+                                    dataSample[0] = actionEnabledForRole.getDiagnostic(); dataSample[1] = actionEnabledForRole.getDiagnostic(); dataSample[2] = actionEnabledForRole.getDiagnostic();
+                                    dataSample[3] = actionEnabledForRole.getDiagnostic(); dataSample[4] = Arrays.toString(actionEnabledForRole.getMessageCodeVariables()); dataSample[5] = Arrays.toString(actionEnabledForRole.getMessageCodeVariables()); 
                             }                      
                         }else{  
                             switch (endPoint){
