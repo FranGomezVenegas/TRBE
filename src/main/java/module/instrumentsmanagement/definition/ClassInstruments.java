@@ -5,6 +5,7 @@
  */
 package module.instrumentsmanagement.definition;
 
+import functionaljavaa.analysis.ConfigAnalysisStructure;
 import module.instrumentsmanagement.definition.TblsInstrumentsData.TablesInstrumentsData;
 import functionaljavaa.audit.SampleAudit;
 import module.instrumentsmanagement.logic.DataInstruments;
@@ -40,6 +41,7 @@ import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
+import trazit.session.ResponseMessages;
 
 /**
  *
@@ -62,6 +64,8 @@ public class ClassInstruments {
         Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
+            ResponseMessages mainMessage = procReqSession.getMessages();
+            mainMessage.addMainForError(ConfigAnalysisStructure.ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{argValues[2].toString()});
             this.diagnostic = (Object[]) argValues[1];
             this.messageDynamicData = new Object[]{argValues[2].toString()};
             return;
