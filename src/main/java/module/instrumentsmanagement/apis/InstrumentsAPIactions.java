@@ -23,7 +23,6 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
-import lbplanet.utilities.LPPlatform.ApiErrorTraping;
 import lbplanet.utilities.TrazitUtiilitiesEnums;
 import module.instrumentsmanagement.definition.TblsInstrumentsData;
 import static module.inventorytrack.apis.InvTrackingAPIactions.publishResult;
@@ -46,7 +45,10 @@ public class InstrumentsAPIactions extends HttpServlet {
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, false);
         if (Boolean.TRUE.equals(procReqInstance.getHasErrors())){
             procReqInstance.killIt();
-            LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
+            if (procReqInstance.getErrorMessageCodeObj()!=null)
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, procReqInstance.getErrorMessageCodeObj(), procReqInstance.getErrorMessageVariables());                   
+            else
+                LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
             return;
         }
         String actionName=procReqInstance.getActionName();
@@ -85,7 +87,11 @@ public class InstrumentsAPIactions extends HttpServlet {
             Object[] diagnostic=clss.getDiagnostic();
             if (diagnostic!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){ 
                 InternalMessage diagnosticObj=clss.getDiagnosticObj();
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnosticObj.getMessageCodeObj(), diagnosticObj.getMessageCodeVariables());   
+                if (diagnosticObj!=null){
+                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnosticObj.getMessageCodeObj(), diagnosticObj.getMessageCodeVariables());   
+                }else{
+                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, "", new Object[]{});
+                }
             }else{
                 RelatedObjects rObj=RelatedObjects.getInstanceForActions();
                 rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);                
@@ -94,11 +100,13 @@ public class InstrumentsAPIactions extends HttpServlet {
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
             }           
         }catch(Exception e){  
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
         } finally {
             // release database resources
             try {           
                 procReqInstance.killIt();
-            } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            } catch (Exception ex) {
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }          
 

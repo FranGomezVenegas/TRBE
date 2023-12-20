@@ -4,6 +4,7 @@ import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import databases.TblsData;
+import functionaljavaa.analysis.ConfigAnalysisStructure;
 import functionaljavaa.certification.AnalysisMethodCertif;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
@@ -28,6 +29,7 @@ import trazit.globalvariables.GlobalVariables;
 import trazit.globalvariables.GlobalVariables.ApiUrls;
 import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
+import trazit.session.ResponseMessages;
 
 /**
  *
@@ -172,10 +174,13 @@ public class CertifyAnalysisMethodAPI extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false);
-        if (Boolean.TRUE.equals(procReqInstance.getHasErrors())) {
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, false);
+        if (Boolean.TRUE.equals(procReqInstance.getHasErrors())){
             procReqInstance.killIt();
-            LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);
+            if (procReqInstance.getErrorMessageCodeObj()!=null)
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, procReqInstance.getErrorMessageCodeObj(), procReqInstance.getErrorMessageVariables());                   
+            else
+                LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
             return;
         }
         String actionName = procReqInstance.getActionName();
@@ -188,6 +193,11 @@ public class CertifyAnalysisMethodAPI extends HttpServlet {
             return;
         }
         Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
+            ResponseMessages mainMessage = procReqInstance.getMessages();
+            mainMessage.addMainForError(ConfigAnalysisStructure.ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{argValues[2].toString()});
+            return;
+        }
         Object[] messageDynamicData = new Object[]{};
         RelatedObjects rObj = RelatedObjects.getInstanceForActions();
         Object[] diagnostic = new Object[0];

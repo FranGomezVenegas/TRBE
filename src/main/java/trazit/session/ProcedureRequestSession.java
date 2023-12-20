@@ -23,6 +23,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import trazit.enums.EnumIntEndpoints;
+import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;
 
 /**
@@ -61,6 +62,7 @@ public class ProcedureRequestSession {
     private Boolean isForProcManagement;
     private Boolean hasErrors;
     private String errorMessage;
+    private Object[] errorMessageVariables;
     private AuditAndUserValidation auditAndUsrValid;
     private TestingAuditIds tstAuditObj;
     private TestingBusinessRulesVisited busRuleVisited;
@@ -77,6 +79,7 @@ public class ProcedureRequestSession {
     private Boolean isTransactional;
     private DbLogSummary dbLogSummary;
     private TestingMainInfo testingMainInfo;
+    private EnumIntMessages errorMessageCodeObj;
 
     private ProcedureRequestSession(HttpServletRequest request, HttpServletResponse response, EnumIntEndpoints actionEndpoint, Boolean isForTesting, Boolean isForUAT, Boolean isQuery, String theActionName, Boolean isPlatform, Boolean isForDocumentation, Boolean isForProcManagement) {
         try {
@@ -235,27 +238,32 @@ public class ProcedureRequestSession {
             }
             if (Boolean.FALSE.equals(isForTesting) && Boolean.FALSE.equals(isForUAT) && Boolean.FALSE.equals(isQuery)
                     && Boolean.FALSE.equals(isPlatform) && Boolean.FALSE.equals(isForDocumentation) && Boolean.FALSE.equals(this.isForProcManagement)) {
-                Object[] theProcActionEnabled = ActionsControl.isTheProcActionEnabled(tokn, procInstanceName, actionName, this.busRulesProcInstance);
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(theProcActionEnabled[0].toString())) {
+                InternalMessage theProcActionEnabled = ActionsControl.isTheProcActionEnabled(tokn, procInstanceName, actionName, this.busRulesProcInstance);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(theProcActionEnabled.getDiagnostic())) {
                     this.hasErrors = true;
-                    this.errorMessage = theProcActionEnabled[theProcActionEnabled.length - 1].toString();
+                    this.errorMessageCodeObj=theProcActionEnabled.getMessageCodeObj();
+                    this.errorMessageVariables=theProcActionEnabled.getMessageCodeVariables();
+                    this.errorMessage = theProcActionEnabled.getMessageCodeObj().getErrorCode();
                     return;
                 }
-
-            }
+            } 
             if (Boolean.FALSE.equals(isForTesting) && Boolean.FALSE.equals(isForUAT) && Boolean.FALSE.equals(isQuery)
                     && Boolean.FALSE.equals(isPlatform) && Boolean.FALSE.equals(isForDocumentation)
                     &&Boolean.FALSE.equals(isForProcManagement)) {
-                Object[] actionEnabled = ActionsControl.procActionEnabled(procInstanceName, token, actionName, this.busRulesProcInstance, false);
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) {
+                InternalMessage actionEnabled = ActionsControl.procActionEnabled(procInstanceName, token, actionName, this.busRulesProcInstance, false);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled.getDiagnostic())) {
                     this.hasErrors = true;
-                    this.errorMessage = actionEnabled[actionEnabled.length - 1].toString();
+                    this.errorMessageCodeObj=actionEnabled.getMessageCodeObj();
+                    this.errorMessageVariables=actionEnabled.getMessageCodeVariables();
+                    this.errorMessage = actionEnabled.getMessageCodeObj().getErrorCode();
                     return;
                 }
                 actionEnabled = ActionsControl.procUserRoleActionEnabled(procInstanceName, token.getUserRole(), actionName, this.busRulesProcInstance);
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())) {
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled.getDiagnostic())) {
                     this.hasErrors = true;
-                    this.errorMessage = actionEnabled[actionEnabled.length - 1].toString();
+                    this.errorMessageVariables=actionEnabled.getMessageCodeVariables();
+                    this.errorMessage = actionEnabled.getMessageCodeObj().getErrorCode();
+                    this.errorMessageCodeObj=actionEnabled.getMessageCodeObj();
                     return;
                 }
             }
@@ -264,6 +272,7 @@ public class ProcedureRequestSession {
                 this.auditAndUsrValid = AuditAndUserValidation.getInstanceForActions(request, language, this.busRulesProcInstance, this.isPlatform);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())) {
                     this.hasErrors = true;
+                    
                     this.errorMessage = this.auditAndUsrValid.getCheckUserValidationPassesDiag()[this.auditAndUsrValid.getCheckUserValidationPassesDiag().length - 1].toString();
                     return;
                 }
@@ -413,6 +422,22 @@ public class ProcedureRequestSession {
         }
         return this.errorMessage;
     }
+    public EnumIntMessages getErrorMessageCodeObj() {
+        if (this.errorMessage == null) {
+            return null;
+        }
+        return this.errorMessageCodeObj;
+    }
+
+     
+    public Object[] getErrorMessageVariables() {
+        if (this.errorMessage == null) {
+            return new Object[]{};
+        }
+        return this.errorMessageVariables;
+    }
+
+    
 
     public ResponseMessages getMessages() {
         if (this.rspMessages == null) {
