@@ -12,6 +12,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import databases.SqlStatement;
 import databases.TblsTesting;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import lbplanet.utilities.LPArray;
@@ -30,6 +31,7 @@ public class BusinessRules {
     static String startsMark = " *** ";
     String procedureInstanceName;
     ArrayList<ActionInfo> actions;
+    String actionsListStr;
     ArrayList<RuleInfo> procedure;
     ArrayList<RuleInfo> data;
     ArrayList<RuleInfo> config;
@@ -85,6 +87,7 @@ public class BusinessRules {
                 Boolean.valueOf(curAction[4].toString()), Boolean.valueOf(curAction[5].toString()),
                 curAction[6].toString(), curAction[7].toString(), curAction[8].toString()));
         }
+        this.actionsListStr=Arrays.toString(LPArray.getColumnFromArray2D(procInstanceActionsList, 0));
     }    
         
             
@@ -148,10 +151,13 @@ public class BusinessRules {
                 {
                     return curElement;
                 }
-            }
+            }            
         }
         return null;
-    }    
+    }  
+    public String getActionsList(){
+        return actionsListStr;
+    }
 
     public String getProcedureBusinessRule(String ruleName) {
         if (this.procedure != null) {
