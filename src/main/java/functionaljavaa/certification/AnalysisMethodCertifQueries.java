@@ -5,6 +5,7 @@ import static functionaljavaa.certification.AnalysisMethodCertif.isUserCertifica
 import lbplanet.utilities.LPPlatform;
 import trazit.enums.EnumIntTableFields;
 import trazit.queries.QueryUtilitiesEnums;
+import trazit.session.InternalMessage;
 
 /**
  *
@@ -22,8 +23,8 @@ public class AnalysisMethodCertifQueries {
         if (fieldsToSort==null)
             fieldsToSort=new String[]{TblsData.CertifUserAnalysisMethod.USER_NAME.getName()};
         AnalysisMethodCertif.uncertifyExpiredOnes();
-        Object[] userCertificationEnabled = isUserCertificationEnabled();
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userCertificationEnabled[0].toString())){
+        InternalMessage userCertificationEnabled = isUserCertificationEnabled();
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userCertificationEnabled.getDiagnostic())){
             Object[][] returnObj=new Object[][]{{userCertificationEnabled}};
             return new Object[]{fieldsToRetrieve, returnObj};
         }

@@ -4,6 +4,7 @@ import databases.TblsDataAudit;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import trazit.enums.EnumIntTables;
+import trazit.session.ProcedureRequestSession;
 /** 
  *
  * @author User
@@ -41,6 +42,7 @@ public final class CertifTablesAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.CertifUserAnalysisMethod.PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
         }    
-        return AuditUtilities.applyTheInsert(gAuditFlds, tblObj, fieldNames, fieldValues);
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();        
+        return AuditUtilities.applyTheInsert(gAuditFlds, tblObj, fieldNames, fieldValues, procInstanceName);
     }    
 }

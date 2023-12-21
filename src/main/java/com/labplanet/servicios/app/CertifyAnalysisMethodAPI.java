@@ -27,7 +27,7 @@ import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
 import trazit.globalvariables.GlobalVariables.ApiUrls;
-import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 import trazit.session.ResponseMessages;
 
@@ -200,14 +200,16 @@ public class CertifyAnalysisMethodAPI extends HttpServlet {
         }
         Object[] messageDynamicData = new Object[]{};
         RelatedObjects rObj = RelatedObjects.getInstanceForActions();
-        Object[] diagnostic = new Object[0];
+        InternalMessage diagnostic = null;
         try (PrintWriter out = response.getWriter()) {
             String sopName = "";
             Integer trainingId = null;
             switch (endPoint) {
                 case CERTIFY_ASSIGN_METHOD_TO_USER:
                     sopName = argValues[3].toString();
-                    trainingId = (Integer) argValues[4];
+                    if (LPNulls.replaceNull(argValues[4]).toString().length()>0){
+                        trainingId = (Integer) argValues[4];
+                    }
                 case CERTIFY_START_USER_METHOD:
                 case CERTIFY_COMPLETE_CERTIFIED_USER_METHOD:
                 case CERTIFY_COMPLETE_NOT_CERTIFIED_USER_METHOD:
@@ -231,13 +233,13 @@ public class CertifyAnalysisMethodAPI extends HttpServlet {
                         diagnostic = AnalysisMethodCertif.revokeCertification(methodName, userName);
                     }
 
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic.getDiagnostic())) {
                         messageDynamicData = new Object[]{sopName, userName, procReqInstance.getProcedureInstance()};
                     } else {
                         messageDynamicData = new Object[]{methodName, userName, procReqInstance.getProcedureInstance()};
                     }
                     if (actionName.equalsIgnoreCase(CertifyAnalysisMethodAPIactionsEndpoints.CERTIFY_ASSIGN_METHOD_TO_USER.getName())) {
-                        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), diagnostic[diagnostic.length - 1]);
+                        rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), diagnostic.getNewObjectId());
                     }
 
                     break;
@@ -247,7 +249,7 @@ public class CertifyAnalysisMethodAPI extends HttpServlet {
                     userName = procReqInstance.getToken().getUserName();
                     diagnostic = AnalysisMethodCertif.userMarkItAsCompleted(methodName);
                     messageDynamicData = new Object[]{methodName, userName, procReqInstance.getProcedureInstance()};
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic.getDiagnostic())) {
                         messageDynamicData = new Object[]{sopName, userName, procReqInstance.getProcedureInstance()};
                     } else {
                         messageDynamicData = new Object[]{methodName, userName, procReqInstance.getProcedureInstance()};
@@ -255,14 +257,14 @@ public class CertifyAnalysisMethodAPI extends HttpServlet {
                     break;
                 case CERTIFUSER_UNDERSTOOD_AND_SENDTOREVIEWER:
                 case CERTIFUSER_TRAINING_REQUIRED:
-                    diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
+                    diagnostic = new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
                     break;
                 default:
                     LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
                     return;
             }
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), messageDynamicData);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic.getDiagnostic())) {
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic.getMessageCodeObj(), diagnostic.getMessageCodeVariables());
             } else {
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, messageDynamicData, rObj.getRelatedObject());
                 rObj.killInstance();
