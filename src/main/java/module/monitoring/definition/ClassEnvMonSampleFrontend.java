@@ -62,6 +62,7 @@ import static trazit.globalvariables.GlobalVariables.DEFAULTLANGUAGE;
 import static trazit.queries.QueryUtilities.getTableData;
 import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 
 /**
  *
@@ -1835,13 +1836,13 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
         String methodName = curRow[fldPosic].toString();
         fldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.METHOD_VERSION.getName());
 
-        Object[] ifUserCertificationEnabled = AnalysisMethodCertif.isUserCertificationEnabled();
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ifUserCertificationEnabled[0].toString())) {
+        InternalMessage ifUserCertificationEnabled = AnalysisMethodCertif.isUserCertificationEnabled();
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ifUserCertificationEnabled.getDiagnostic())) {
             return new Object[]{null, null};
         }
 
-        Object[] userCertified = AnalysisMethodCertif.isUserCertified(methodName, token.getUserName());
-        if (Boolean.TRUE.equals(Boolean.valueOf(userCertified[0].toString()))) {
+        InternalMessage userCertified = AnalysisMethodCertif.isUserCertified(methodName, token.getUserName());
+        if (Boolean.TRUE.equals(Boolean.valueOf(userCertified.getDiagnostic()))) {
             return new Object[]{null, null};
         }
 
@@ -1947,6 +1948,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
         return jObj;
     }
 
+    @Override
     public Object[] getMessageDynamicData() {
         return messageDynamicData;
     }
@@ -1954,6 +1956,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
     /**
      * @return the relatedObj
      */
+    @Override
     public RelatedObjects getRelatedObj() {
         return relatedObj;
     }
@@ -1961,6 +1964,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
     /**
      * @return the endpointExists
      */
+    @Override
     public Boolean getEndpointExists() {
         return endpointExists;
     }
@@ -1968,6 +1972,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
     /**
      * @return the diagnostic
      */
+    @Override
     public Object[] getDiagnostic() {
         return diagnostic;
     }
@@ -1975,6 +1980,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
     /**
      * @return the functionFound
      */
+    @Override
     public Boolean getFunctionFound() {
         return functionFound;
     }
@@ -1982,6 +1988,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
     /**
      * @return the isSuccess
      */
+    @Override
     public Boolean getIsSuccess() {
         return isSuccess;
     }
@@ -1998,7 +2005,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
 
     @Override
     public Object[] getResponseError() {
-        return this.diagnostic;
+        return this.responseError;
     }
 
     private static Boolean isThereResultsInProgress(String[] fldsName, Object[] fldsValue) {
