@@ -72,11 +72,11 @@ public class ClassReqProcedUserAndActionsForQueries {
     }
 
     public static JSONArray actionsByRoles(String procInstanceName, Object[][] procRoles) {
-        String[] roleActionsFldsArr = new String[]{TblsReqs.viewProcReqSolutionActions.ENTITY.getName(), TblsReqs.viewProcReqSolutionActions.PRETTY_EN.getName(), TblsReqs.viewProcReqSolutionActions.PRETTY_ES.getName(), TblsReqs.viewProcReqSolutionActions.ROLES.getName(),
+        String[] roleActionsFldsArr = new String[]{TblsReqs.viewProcReqSolutionActions.ENTITY.getName(), TblsReqs.viewProcReqSolutionActions.WINDOW_ACTION.getName(), TblsReqs.viewProcReqSolutionActions.WINDOW_ACTION.getName(), TblsReqs.viewProcReqSolutionActions.ROLES.getName(),
             TblsReqs.viewProcReqSolutionActions.MOD_ORDER_NUMBER.getName(), TblsReqs.viewProcReqSolutionActions.WINDOW_ACTION.getName()};
         Object[][] roleActions2d = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_ACTIONS.getViewName(),
-                new String[]{TblsReqs.viewProcReqSolutionActions.PROC_INSTANCE_NAME.getName(), TblsReqs.viewProcReqSolutionActions.TYPE.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.LIKE.getSqlClause()},
-                new Object[]{procInstanceName, "%ction%"}, roleActionsFldsArr,
+                new String[]{TblsReqs.viewProcReqSolutionActions.PROC_INSTANCE_NAME.getName(), TblsReqs.viewProcReqSolutionActions.WINDOW_ACTION.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
+                new Object[]{procInstanceName, ""}, roleActionsFldsArr,
                 new String[]{TblsReqs.viewProcReqSolutionActions.ENTITY.getName(), TblsReqs.viewProcReqSolutionActions.MOD_ORDER_NUMBER.getName(), TblsReqs.viewProcReqSolutionActions.WINDOW_ACTION.getName()}, true);
         JSONArray rolesActionsOutput = new JSONArray();
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(roleActions2d[0][0].toString()))) {
