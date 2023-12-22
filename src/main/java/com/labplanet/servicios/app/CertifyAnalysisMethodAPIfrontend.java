@@ -31,6 +31,7 @@ import org.json.simple.JSONObject;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.json.JsonArray;
 import lbplanet.utilities.LPAPIArguments;
@@ -157,7 +158,14 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
             errObject = LPArray.addValueToArray1D(errObject, ERRORMSG_ERROR_STATUS_CODE+": "+HttpServletResponse.SC_BAD_REQUEST);
             errObject = LPArray.addValueToArray1D(errObject, "This call raised one unhandled exception. Error:"+errMessage);     
             LPFrontEnd.responseError(errObject);
-        }                                      
+        } finally {
+            // release database resources
+            try {
+                Rdbms.closeRdbms();
+            } catch (Exception ex) {
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
 
     public static JSONArray allMyAnalysisMethodCertif(HttpServletRequest request, HttpServletResponse response){

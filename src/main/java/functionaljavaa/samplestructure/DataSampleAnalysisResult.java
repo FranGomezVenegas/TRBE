@@ -40,6 +40,7 @@ import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 import trazit.session.ResponseMessages;
 
 /**
@@ -279,11 +280,11 @@ public class DataSampleAnalysisResult {
             limitId = Integer.valueOf(LPNulls.replaceNull(resultData[0][10]).toString());
         }
 
-        Object[] ifUserCertificationEnabled = AnalysisMethodCertif.isUserCertificationEnabled();
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(ifUserCertificationEnabled[0].toString())) {
-            Object[] userCertified = AnalysisMethodCertif.isUserCertified(methodName, token.getUserName());
-            if (Boolean.FALSE.equals(Boolean.valueOf(userCertified[0].toString()))) {
-                return new Object[]{userCertified[1]};
+        InternalMessage ifUserCertificationEnabled = AnalysisMethodCertif.isUserCertificationEnabled();
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(ifUserCertificationEnabled.getDiagnostic())) {
+            InternalMessage userCertified = AnalysisMethodCertif.isUserCertified(methodName, token.getUserName());
+            if (Boolean.FALSE.equals(Boolean.valueOf(userCertified.getDiagnostic()))) {
+                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, userCertified.getMessageCodeObj().getErrorCode(), userCertified.getMessageCodeVariables());
             }
         }
         if (resultStatusReviewed.equalsIgnoreCase(currResultStatus) || resultStatusCanceled.equalsIgnoreCase(currResultStatus)) {
@@ -586,11 +587,11 @@ public class DataSampleAnalysisResult {
                 limitId = Integer.valueOf(LPNulls.replaceNull(resultData[0][10]).toString());
             }
 
-            Object[] ifUserCertificationEnabled = AnalysisMethodCertif.isUserCertificationEnabled();
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(ifUserCertificationEnabled[0].toString())) {
-                Object[] userCertified = AnalysisMethodCertif.isUserCertified(methodName, token.getUserName());
-                if (Boolean.FALSE.equals(Boolean.valueOf(userCertified[0].toString()))) {
-                    return new Object[]{userCertified[1]};
+            InternalMessage ifUserCertificationEnabled = AnalysisMethodCertif.isUserCertificationEnabled();
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(ifUserCertificationEnabled.getDiagnostic())) {
+                InternalMessage userCertified = AnalysisMethodCertif.isUserCertified(methodName, token.getUserName());
+                if (Boolean.FALSE.equals(Boolean.valueOf(userCertified.getDiagnostic()))) {
+                    return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, userCertified.getMessageCodeObj().getErrorCode(), userCertified.getMessageCodeVariables());
                 }
             }
             if (resultStatusReviewed.equalsIgnoreCase(currResultStatus) || resultStatusCanceled.equalsIgnoreCase(currResultStatus)) {
