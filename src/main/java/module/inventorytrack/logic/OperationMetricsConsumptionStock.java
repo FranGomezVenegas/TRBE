@@ -159,7 +159,7 @@ DateColumn.create("Date", LocalDate.of(2022, 1, 1),
         }
 
         double averageConsumptionRate = totalConsumedGrams / consumptionData.size();
-        double daysToReachMinStockAlert = (currentQuantity - minStockAlert) / averageConsumptionRate;
+        double daysToReachMinStockAlert = averageConsumptionRate==0?0:(currentQuantity - minStockAlert) / averageConsumptionRate;
 
         int daysPerWeek = 7;
         int weeksToReachMinStockAlert = (int) Math.ceil(daysToReachMinStockAlert / daysPerWeek);
@@ -169,7 +169,7 @@ DateColumn.create("Date", LocalDate.of(2022, 1, 1),
         conclusion[0]=(" Days to reach min stock alert: " + daysToReachMinStockAlert);
         conclusion[1]=(". Min stock alert will be reached on: " + minStockAlertDate);
 
-        double daysToConsumeAll = currentQuantity / averageConsumptionRate;
+        double daysToConsumeAll = averageConsumptionRate==0?0:currentQuantity / averageConsumptionRate;
         int weeksToConsumeAll = (int) Math.ceil(daysToConsumeAll / daysPerWeek);
 
         LocalDate fullyConsumedDate = currentDate.plus(weeksToConsumeAll, ChronoUnit.WEEKS);
