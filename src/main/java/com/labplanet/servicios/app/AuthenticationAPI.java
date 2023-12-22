@@ -228,13 +228,14 @@ public class AuthenticationAPI extends HttpServlet {
                     request.setAttribute(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myFinalToken);
                     jsonObj.put("header_info", appHeaderApi(request, response));
                     jsonObj.put("procedures_list", procedureListInfo(request, response));
-                    jsonObj.put("all_my_sops", SopUserAPIqueries.AllMySops(request, response));
-                    jsonObj.put("all_my_pending_certif_approvals", SopUserAPIqueries.AllMyPendingSignSops(request, response));
-                    jsonObj.put("procedures_sops", SopUserAPIqueries.ProceduresSops(request, response));
-                    jsonObj.put("sop_tree_list_element", SopUserAPIqueries.SopTreeListElements(request, response));
-                    jsonObj.put("all_my_analysis_methods", CertifyAnalysisMethodAPIfrontend.allMyAnalysisMethodCertif(request, response));
-                    jsonObj.put("platform_business_rules", allAppBusinessRules());
-
+                    if (Boolean.FALSE.equals(GlobalVariables.PROC_MANAGEMENT_SPECIAL_ROLE.equalsIgnoreCase(userRole))) {
+                        jsonObj.put("all_my_sops", SopUserAPIqueries.AllMySops(request, response));
+                        jsonObj.put("all_my_pending_certif_approvals", SopUserAPIqueries.AllMyPendingSignSops(request, response));
+                        jsonObj.put("procedures_sops", SopUserAPIqueries.ProceduresSops(request, response));
+                        jsonObj.put("sop_tree_list_element", SopUserAPIqueries.SopTreeListElements(request, response));
+                        jsonObj.put("all_my_analysis_methods", CertifyAnalysisMethodAPIfrontend.allMyAnalysisMethodCertif(request, response));
+                        jsonObj.put("platform_business_rules", allAppBusinessRules());
+                    }
                     Integer sizeValue = SIZE_WHEN_CONSIDERED_MOBILE + 1;
                     String sizeValueStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SIZE_VALUE);
                     if (sizeValueStr != null && sizeValueStr.length() > 0) {
