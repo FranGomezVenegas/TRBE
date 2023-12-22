@@ -9,12 +9,10 @@ import databases.Rdbms;
 import databases.TblsData;
 import functionaljavaa.analysis.ConfigAnalysisStructure;
 import static functionaljavaa.inventory.DataInventoryRetain.*;
-import functionaljavaa.modulesample.DataModuleSampleAnalysis;
 import functionaljavaa.modulesample.DataModuleSampleAnalysisResult;
 import module.inspectionlot.rawmaterial.logic.DataInspectionLot;
 import module.inspectionlot.rawmaterial.logic.DataInspectionLotDecision;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
-import functionaljavaa.samplestructure.DataSample;
 import functionaljavaa.samplestructure.DataSampleAnalysisResult;
 import java.math.BigDecimal;
 import javax.servlet.http.HttpServletRequest;
@@ -45,11 +43,10 @@ public class ClassInspLotRMactions {
 
     public ClassInspLotRMactions(HttpServletRequest request, InspLotRMEnums.InspLotRMAPIactionsEndpoints endPoint) {
         RelatedObjects rObj = RelatedObjects.getInstanceForActions();
-        //try () {
         DataInspectionLot insplot = new DataInspectionLot();
         DataInspectionLotDecision insplotDecision = new DataInspectionLotDecision();
 
-        this.actionDiagnosesObj = null;//actionDiagnoses;
+        this.actionDiagnosesObj = null;
 
         InternalMessage actionDiagnoses = null;
         Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
@@ -98,7 +95,7 @@ public class ClassInspLotRMactions {
                 if (numBulksStr.length() > 0) {
                     numBulks = Integer.valueOf(numBulksStr);
                     fieldNameArr = LPArray.addValueToArray1D(fieldNameArr, TblsInspLotRMData.Lot.NUM_BULKS.getName());
-                    fieldValueArr = LPArray.addValueToArray1D(fieldValueArr, Integer.valueOf(numBulks));
+                    fieldValueArr = LPArray.addValueToArray1D(fieldValueArr, numBulks);
                 }
                 Integer numLotsToCreate = 1;
                 if (fieldValueArr != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValueArr[0].toString())) {
@@ -139,9 +136,6 @@ public class ClassInspLotRMactions {
                     fieldNameArr = fieldName.split("\\|");
                     fieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
                 }
-                if (fieldValue != null && fieldValue.length() > 0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValueArr[0].toString())) {
-                    actionDiagnoses = (InternalMessage) fieldValueArr[1];
-                }
                 actionDiagnoses = DataBulk.lotBulkAdjustQuantity(lotName, bulkId, BigDecimal.valueOf(Double.valueOf(quantityStr)), quantityUomStr, fieldNameArr, fieldValueArr);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
                     actionDiagnoses = new InternalMessage(LPPlatform.LAB_TRUE, InspLotRMEnums.InspLotRMAPIactionsEndpoints.LOT_BULK_ADJUST_QUANTITY, new Object[]{lotName, quantityStr, fieldNameArr, fieldValueArr, ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance()});
@@ -162,10 +156,7 @@ public class ClassInspLotRMactions {
                     fieldNameArr = fieldName.split("\\|");
                     fieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
                 }
-                if (fieldValue != null && fieldValue.length() > 0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValueArr[0].toString())) {
-                    actionDiagnoses = (InternalMessage) fieldValueArr[1];
-                }
-                actionDiagnoses = DataBulk.lotBulkSampleQuantity(lotName, bulkId, BigDecimal.valueOf(Double.valueOf(quantityStr)), quantityUomStr, fieldNameArr, fieldValueArr);
+                actionDiagnoses = DataBulk.lotBulkSampleQuantity(lotName, bulkId, BigDecimal.valueOf(Double.parseDouble(quantityStr)), quantityUomStr, fieldNameArr, fieldValueArr);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
                     actionDiagnoses = new InternalMessage(LPPlatform.LAB_TRUE, InspLotRMEnums.InspLotRMAPIactionsEndpoints.LOT_BULK_ADJUST_SAMPLE_QUANTITY, new Object[]{lotName, quantityStr, fieldNameArr, fieldValueArr, ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance()});
                     rObj.addSimpleNode(ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance(), TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), lotName);
@@ -183,9 +174,6 @@ public class ClassInspLotRMactions {
                 if (fieldName.length() > 0) {
                     fieldNameArr = fieldName.split("\\|");
                     fieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
-                }
-                if (fieldValue != null && fieldValue.length() > 0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValueArr[0].toString())) {
-                    actionDiagnoses = (InternalMessage) fieldValueArr[1];
                 }
                 actionDiagnoses = DataBulk.lotBulkTakeDecision(lotName, bulkId, decision, fieldNameArr, fieldValueArr);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
@@ -208,9 +196,6 @@ public class ClassInspLotRMactions {
                 if (fieldName.length() > 0) {
                     fieldNameArr = fieldName.split("\\|");
                     fieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
-                }
-                if (fieldValue != null && fieldValue.length() > 0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValueArr[0].toString())) {
-                    actionDiagnoses = (InternalMessage) fieldValueArr[1];
                 }
                 actionDiagnoses = insplotDecision.lotAllBulksTakeDecision(insplot, lotName, decision, fieldNameArr, fieldValueArr);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
@@ -236,7 +221,7 @@ public class ClassInspLotRMactions {
                 if ("LOT_RETAIN_LOCK".equalsIgnoreCase(endPoint.getName())) {
                     actionDiagnoses = retainLock(lotName, retainId);
                 }
-                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
+                if (actionDiagnoses!=null&&LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
                     actionDiagnoses = new InternalMessage(LPPlatform.LAB_TRUE, InspLotRMEnums.InspLotRMAPIactionsEndpoints.LOT_RETAIN_LOCK, new Object[]{lotName, LPNulls.replaceNull(retainId), ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance()});
                     rObj.addSimpleNode(ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance(), TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN.getTableName(), lotName);
                 }
@@ -253,7 +238,7 @@ public class ClassInspLotRMactions {
                 if (newLocationId != null) {
                     actionDiagnoses = retainMovement(lotName, retainId, newLocationId);
                 }
-                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
+                if (actionDiagnoses!=null&&LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
                     actionDiagnoses = new InternalMessage(LPPlatform.LAB_TRUE, InspLotRMEnums.InspLotRMAPIactionsEndpoints.LOT_RETAIN_MOVEMENT, new Object[]{lotName, LPNulls.replaceNull(retainId), ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance()});
                     rObj.addSimpleNode(ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance(), TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN.getTableName(), lotName);
                 }
@@ -280,16 +265,14 @@ public class ClassInspLotRMactions {
                         new Object[]{sampleId},
                         new String[]{TblsInspLotRMData.Sample.SAMPLE_ID.getName()});
                 if (LPPlatform.LAB_FALSE.equals(lotInfo[0][0].toString())) {
-                    new InternalMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{sampleId, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), LPPlatform.buildSchemaName(ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance(), GlobalVariables.Schemas.DATA.getName())}, sampleId);
+                    this.actionDiagnosesObj=new InternalMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{sampleId, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), LPPlatform.buildSchemaName(ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance(), GlobalVariables.Schemas.DATA.getName())}, sampleId);
                 }
                 Integer sampleLotFldPosic = EnumIntTableFields.getFldPosicInArray(fieldsToRetrieveObj, TblsInspLotRMData.Sample.LOT_NAME.getName());
                 if (sampleLotFldPosic == -1) {
-                    new InternalMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{sampleId, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), LPPlatform.buildSchemaName(ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance(), GlobalVariables.Schemas.DATA.getName())}, sampleId);
+                    this.actionDiagnosesObj=new InternalMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{sampleId, TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName(), LPPlatform.buildSchemaName(ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance(), GlobalVariables.Schemas.DATA.getName())}, sampleId);
                 }
                 String sampleLot = lotInfo[0][sampleLotFldPosic].toString();
-                DataModuleSampleAnalysis smpAna = new DataModuleSampleAnalysis();
                 DataModuleSampleAnalysisResult moduleSmpAnaRes = new DataModuleSampleAnalysisResult();
-                DataSample smp = new DataSample(smpAna);
                 DataSampleAnalysisResult smpAnaRes = new DataSampleAnalysisResult(moduleSmpAnaRes);
                 Object[] diagn = smpAnaRes.sampleAnalysisResultReview(sampleId, null, null);
 
@@ -315,9 +298,6 @@ public class ClassInspLotRMactions {
                 if (fieldName.length() > 0) {
                     fieldNameArr = fieldName.split("\\|");
                     fieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
-                }
-                if (fieldValue != null && fieldValue.length() > 0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValueArr[0].toString())) {
-                    actionDiagnoses = (InternalMessage) fieldValueArr[1];
                 }
                 actionDiagnoses = insplotDecision.lotTakeDecision(lotName, decision, fieldNameArr, fieldValueArr);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
@@ -360,9 +340,6 @@ public class ClassInspLotRMactions {
                     fieldNameArr = fieldName.split("\\|");
                     fieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
                 }
-                if (fieldValue != null && fieldValue.length() > 0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValueArr[0].toString())) {
-                    actionDiagnoses = (InternalMessage) fieldValueArr[1];
-                }
                 actionDiagnoses = insplot.createLotCoa(lotName, htmlText);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
                     actionDiagnoses = new InternalMessage(LPPlatform.LAB_TRUE, InspLotRMEnums.InspLotRMAPIactionsEndpoints.LOT_CREATE_COA, new Object[]{lotName, ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance()});
@@ -375,22 +352,13 @@ public class ClassInspLotRMactions {
                 break;
         }
         this.actionDiagnosesObj = actionDiagnoses;
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
+        if (actionDiagnoses!=null&&LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
             this.diagnostic = ApiMessageReturn.trapMessage(actionDiagnoses.getDiagnostic(), actionDiagnoses.getMessageCodeObj(), actionDiagnoses.getMessageCodeVariables());
-        } else {
-            this.diagnostic = ApiMessageReturn.trapMessage(actionDiagnoses.getDiagnostic(), endPoint, actionDiagnoses.getMessageCodeVariables());
         }
         this.relatedObj = rObj;
         rObj.killInstance();
-        /*    catch(Exception e){   
-    }finally{
-        insplot.killInstance();
-        inspLotDecision.killInstance();    */
     }
 
-    /**
-     * @return the messageDynamicData
-     */
     public Object[] getMessageDynamicData() {
         return messageDynamicData;
     }
