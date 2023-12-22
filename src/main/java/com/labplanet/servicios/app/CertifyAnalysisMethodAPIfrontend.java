@@ -191,7 +191,7 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
         Object[][] userAnaMethCertifByProcess = UserMethod.getUserAnalysisMethodCerttifByProcess( 
                 new String[]{TblsData.ViewUserAndAnalysisMethodCertificationView.USER_NAME.getName()}, new Object[]{token.getUserName()}, fieldsToRetrieve, allUserProcedurePrefix);
         if (userAnaMethCertifByProcess==null)return new JSONArray();
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(userAnaMethCertifByProcess[0][0]).toString())){
+        if (userAnaMethCertifByProcess.length==0||LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(userAnaMethCertifByProcess[0][0]).toString())){
             LPFrontEnd.responseError(allUserProcedurePrefix);
             Rdbms.closeRdbms();
             return new JSONArray();
