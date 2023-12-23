@@ -72,6 +72,7 @@ import trazit.globalvariables.GlobalVariables;
 import static trazit.globalvariables.GlobalVariables.DEFAULTLANGUAGE;
 import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 
 /**
  *
@@ -1427,10 +1428,10 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
         Integer resultFldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.RESULT_ID.getName());
         Integer resultId = Integer.valueOf(curRow[resultFldPosic].toString());
 
-       if (LPPlatform.LAB_TRUE.equalsIgnoreCase(AnalysisMethodCertif.isUserCertificationEnabled()[0].toString())){
+       if (LPPlatform.LAB_TRUE.equalsIgnoreCase(AnalysisMethodCertif.isUserCertificationEnabled().getDiagnostic())){
            String methodName=curRow[LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.METHOD_NAME.getName())].toString();
-            Object[] userCertified = AnalysisMethodCertif.isUserCertified(methodName, procReqSession.getToken().getUserName());
-            if (Boolean.FALSE.equals(Boolean.valueOf(userCertified[0].toString()))){
+            InternalMessage userCertified = AnalysisMethodCertif.isUserCertified(methodName, procReqSession.getToken().getUserName());
+            if (Boolean.FALSE.equals(Boolean.valueOf(userCertified.getDiagnostic()))){
                 fldNameArr = LPArray.addValueToArray1D(fldNameArr, "is_locked");
                 fldValueArr = LPArray.addValueToArray1D(fldValueArr, true);
                 fldNameArr = LPArray.addValueToArray1D(fldNameArr, "locking_object");
