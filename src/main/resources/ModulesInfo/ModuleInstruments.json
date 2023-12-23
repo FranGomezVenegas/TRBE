@@ -18,7 +18,6 @@
         {"schema_name":"data", "table_name":"instrument_event", "is_view":false, "order_number":12, "definition_en":"instruments", "definition_es":"instrumentos"},
         {"schema_name":"data", "table_name":"instruments", "is_view":false, "order_number":12, "definition_en":"instruments", "definition_es":"instrumentos"},
         {"schema_name":"data", "table_name":"NOT_DECOM_INSTR_EVENT_DATA_VW", "is_view":true, "order_number":13, "definition_en":"not decommissioned instrument events view", "definition_es":"vista de eventos de instrumentos no retirados"},
-        {"schema_name":"data", "table_name":"USER_AND_ANALYSISMETHOD_CERTIF_VIEW", "is_view":true, "order_number":14, "definition_en":"user and analysis method certification view", "definition_es":"vista de certificación de usuario por método analí­tico"},
         {"schema_name":"data", "table_name":"USER_AND_META_DATA_SOP_VIEW", "is_view":true, "order_number":12, "definition_en":"instruments", "definition_es":"instrumentos"},
         {"schema_name":"data", "table_name":"user_sop", "is_view":false, "order_number":36, "definition_en":"user sop certification", "definition_es":"PNTs de usuario"},{"schema_name":"data", "table_name":"variables_set", "is_view":false, "order_number":8, "definition_en":"variables set", "definition_es":"Conjunto de variables"},
         {"schema_name":"data-audit", "table_name":"instruments", "is_view":false, "order_number":12, "definition_en":"instruments", "definition_es":"instrumentos"},
