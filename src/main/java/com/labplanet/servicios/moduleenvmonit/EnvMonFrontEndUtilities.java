@@ -17,7 +17,7 @@ import trazit.queries.QueryUtilitiesEnums;
  *
  * @author Administrator
  */
-class EnvMonFrontEndUtilities {
+public class EnvMonFrontEndUtilities {
   private EnvMonFrontEndUtilities() {
     throw new IllegalStateException("Utility class");
   }
