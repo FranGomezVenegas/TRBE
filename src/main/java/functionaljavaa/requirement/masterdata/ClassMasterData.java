@@ -187,10 +187,10 @@ public class ClassMasterData {
                         JSONObject jLog = new JSONObject();
                         jLog.put(TblsCnfg.Methods.CODE.getName(), methodName);
                         if (jO.getAsJsonObject().has(GlobalAPIsParams.LBL_USERS_ASSIGNMENT)) {
-                            Object[] userCertificationEnabled = AnalysisMethodCertif.isUserCertificationEnabled();
-                            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userCertificationEnabled[0].toString())) {
-                                globalDiagn = userCertificationEnabled[0].toString();
-                                diagn = userCertificationEnabled[userCertificationEnabled.length - 1].toString();
+                            InternalMessage userCertificationEnabled = AnalysisMethodCertif.isUserCertificationEnabled();
+                            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userCertificationEnabled.getDiagnostic())) {
+                                globalDiagn = userCertificationEnabled.getDiagnostic();
+                                diagn = userCertificationEnabled.getMessageCodeObj().getErrorCode();
                             } else {
                                 String userNameStr = jO.getAsJsonObject().get(GlobalAPIsParams.LBL_USERS_ASSIGNMENT).getAsString();
                                 String[] usersArr = null;
@@ -209,11 +209,11 @@ public class ClassMasterData {
                                     JSONObject jUserAssignLog = new JSONObject();
                                     jUserAssignLog.put(TblsCnfg.Methods.CODE.getName(), methodName);
                                     jUserAssignLog.put(TblsData.ViewUserAndAnalysisMethodCertificationView.USER_NAME.getName(), curUser);
-                                    Object[] newRecord = AnalysisMethodCertif.newRecord(methodName, methodVersion, curUser);
-                                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newRecord[0].toString())) {
-                                        globalDiagn = newRecord[0].toString();
+                                    InternalMessage newRecord = AnalysisMethodCertif.newRecord(methodName, methodVersion, curUser);
+                                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newRecord.getDiagnostic())) {
+                                        globalDiagn = newRecord.getDiagnostic();
                                     }
-                                    jUserAssignLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, newRecord[newRecord.length - 1].toString());
+                                    jUserAssignLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, newRecord.getNewObjectId());
                                     jUserAssignLogArr.add(jUserAssignLog);
                                 }
                                 jLog.put("users_assignment_detail", jUserAssignLogArr);
