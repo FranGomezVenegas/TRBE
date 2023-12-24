@@ -120,8 +120,8 @@ public class ClassReqProcedUserAndActionsForQueries {
         return rolesActionsOutput;
     }
 
-    static JSONArray viewsByRoles(String procInstanceName, Object[][] procViewRoles) {
-        String[] roleActionsFldsArr = new String[]{TblsReqs.ProcedureReqSolution.WINDOW_NAME.getName(), TblsReqs.ProcedureReqSolution.LABEL_EN.getName(), TblsReqs.ProcedureReqSolution.LABEL_ES.getName(), TblsReqs.ProcedureReqSolution.ROLES.getName()};
+    public static JSONArray viewsByRoles(String procInstanceName, Object[][] procViewRoles) {
+        String[] roleActionsFldsArr = new String[]{TblsReqs.ProcedureReqSolution.WINDOW_NAME.getName(), TblsReqs.ProcedureReqSolution.WINDOW_NAME.getName(), TblsReqs.ProcedureReqSolution.WINDOW_NAME.getName(), TblsReqs.ProcedureReqSolution.ROLES.getName()};
         Object[][] roleActions2d = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableName(),
                 new String[]{TblsReqs.ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureReqSolution.TYPE.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.LIKE.getSqlClause()},
                 new Object[]{procInstanceName, "%indow"}, roleActionsFldsArr,
@@ -165,6 +165,55 @@ public class ClassReqProcedUserAndActionsForQueries {
         return rolesActionsOutput;
     }
 
+    public static JSONArray sopsByRoles(String procInstanceName, Object[][] procRoles) {
+        String[] roleActionsFldsArr = new String[]{TblsReqs.ProcedureReqSolution.SOP_NAME.getName(), TblsReqs.ProcedureReqSolution.SOP_NAME.getName(), TblsReqs.ProcedureReqSolution.SOP_NAME.getName(), TblsReqs.ProcedureReqSolution.ROLES.getName(),
+            TblsReqs.ProcedureReqSolution.ORDER_NUMBER.getName(), TblsReqs.ProcedureReqSolution.SOP_NAME.getName()};
+        Object[][] roleActions2d = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableName(),
+                new String[]{TblsReqs.ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureReqSolution.SOP_NAME.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
+                new Object[]{procInstanceName, ""}, roleActionsFldsArr,
+                new String[]{TblsReqs.ProcedureReqSolution.SOP_NAME.getName(), TblsReqs.ProcedureReqSolution.ORDER_NUMBER.getName()}, true);
+        JSONArray rolesActionsOutput = new JSONArray();
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(roleActions2d[0][0].toString()))) {
+            String[] procRoles1D = LPArray.getUniquesArray(LPArray.array2dTo1d(procRoles));
+            JSONArray header = new JSONArray();
+            JSONObject fldDef = new JSONObject();
+            fldDef.put("label", "SOPs / Roles");
+            fldDef.put("is_translation", true);
+            fldDef.put("name", TblsReqs.ProcedureReqSolution.SOP_NAME.getName()+"_en");
+            header.put(fldDef);
+            fldDef = new JSONObject();
+            fldDef.put("label", "PNTs / Roles");
+            fldDef.put("is_translation", true);
+            fldDef.put("name", TblsReqs.ProcedureReqSolution.SOP_NAME.getName()+"_es");
+            header.put(fldDef);
+            for (String curRole : procRoles1D) {
+                header.put(curRole);
+            }
+            rolesActionsOutput.put(header);
+            String prevExecuted = "";
+            for (Object[] curActRow : roleActions2d) {
+                JSONArray curActionRow = new JSONArray();
+                curActionRow.put(curActRow[0]);
+                curActionRow.put(curActRow[0]);
+                if (Boolean.FALSE.equals(prevExecuted.matches(curActRow[0] + ": " + curActRow[1]))) {
+                    String[] allActionRoles = LPNulls.replaceNull(curActRow[3]).toString().split("\\|");
+                    for (String curRole : procRoles1D) {
+                        if (LPArray.valueInArray(allActionRoles, "ALL")) {
+                            curActionRow.put("ALL");
+                        } else if (LPArray.valueInArray(allActionRoles, curRole)) {
+                            curActionRow.put("X");
+                        } else {
+                            curActionRow.put("");
+                        }
+                    }
+                    rolesActionsOutput.put(curActionRow);
+                    prevExecuted = curActRow[0].toString();
+                }
+            }
+        }
+        return rolesActionsOutput;
+    }
+    
     public static JSONArray viewsBySops(String procInstanceName) {
         JSONArray viewSopsOutput = new JSONArray();
 
@@ -174,50 +223,50 @@ public class ClassReqProcedUserAndActionsForQueries {
                 new Object[]{procInstanceName}, fldsArr,
                 new String[]{TblsReqs.ProcedureSopMetaData.SOP_NAME.getName()});
         if (Boolean.TRUE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procSops[0][0].toString()))) {
-            //viewSopsOutput.put(NO_DATA, NO_DATA);
             return viewSopsOutput;
         }
-        String[] viewFldsArr = new String[]{TblsReqs.viewProcReqSolutionActions.WINDOW_NAME.getName(), TblsReqs.viewProcReqSolutionActions.WINDOW_LABEL_EN.getName(), TblsReqs.viewProcReqSolutionActions.WINDOW_LABEL_ES.getName(), TblsReqs.viewProcReqSolutionActions.SOP_NAME.getName()};
-        Object[][] views2d = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_ACTIONS.getViewName(),
-                new String[]{TblsReqs.viewProcReqSolutionActions.PROC_INSTANCE_NAME.getName(), TblsReqs.viewProcReqSolutionActions.TYPE.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.LIKE.getSqlClause()},
+        String[] viewFldsArr = new String[]{TblsReqs.ProcedureReqSolution.WINDOW_NAME.getName(), TblsReqs.ProcedureReqSolution.WINDOW_NAME.getName(), TblsReqs.ProcedureReqSolution.WINDOW_NAME.getName(), TblsReqs.ProcedureReqSolution.SOP_NAME.getName()};
+        Object[][] views2d = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableName(),
+                new String[]{TblsReqs.ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureReqSolution.TYPE.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.LIKE.getSqlClause()},
                 new Object[]{procInstanceName, "%indow"}, viewFldsArr,
-                new String[]{TblsReqs.viewProcReqSolutionActions.ORDER_NUMBER.getName(), TblsReqs.viewProcReqSolutionActions.WINDOW_NAME.getName()});
+                new String[]{TblsReqs.ProcedureReqSolution.ORDER_NUMBER.getName(), TblsReqs.ProcedureReqSolution.WINDOW_NAME.getName()});
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(views2d[0][0].toString()))) {
             String[] procSops1D = LPArray.getUniquesArray(LPArray.array2dTo1d(procSops));
             JSONArray header = new JSONArray();
             JSONObject fldDef = new JSONObject();
             fldDef.put("label", "Views / SOPs");
             fldDef.put("is_translation", true);
-            fldDef.put("name", TblsReqs.viewProcReqSolutionActions.WINDOW_LABEL_EN.getName());
+            fldDef.put("name", TblsReqs.ProcedureReqSolution.LABEL_EN.getName());
             header.put(fldDef);
             fldDef = new JSONObject();
             fldDef.put("label", "Pantallas / PNTs");
             fldDef.put("is_translation", true);
-            fldDef.put("name", TblsReqs.viewProcReqSolutionActions.WINDOW_LABEL_ES.getName());
+            fldDef.put("name", TblsReqs.ProcedureReqSolution.LABEL_ES.getName());
             header.put(fldDef);
 
-            for (String curRole : procSops1D) {
-                header.put(curRole);
+            for (String curSop : procSops1D) {
+                header.put(curSop);
             }
             viewSopsOutput.put(header);
             for (Object[] curActRow : views2d) {
-                JSONArray curActionRow = new JSONArray();
-                curActionRow.put(((LPNulls.replaceNull(curActRow[1]).toString().length()) > 0) ? curActRow[1] : curActRow[0]);
-                curActionRow.put(((LPNulls.replaceNull(curActRow[2]).toString().length()) > 0) ? curActRow[2] : curActRow[0]);
+                JSONArray curWindowRow = new JSONArray();
+                curWindowRow.put(((LPNulls.replaceNull(curActRow[1]).toString().length()) > 0) ? curActRow[1] : curActRow[0]);
+                curWindowRow.put(((LPNulls.replaceNull(curActRow[2]).toString().length()) > 0) ? curActRow[2] : curActRow[0]);
                 String[] allActionRoles = LPNulls.replaceNull(curActRow[3]).toString().split("\\|");
-                for (String curRole : procSops1D) {
+                for (String curSop : procSops1D) {
                     if (LPArray.valueInArray(allActionRoles, "ALL")) {
-                        curActionRow.put("ALL");
-                    } else if (LPArray.valueInArray(allActionRoles, curRole)) {
-                        curActionRow.put("X");
+                        curWindowRow.put("ALL");
+                    } else if (LPArray.valueInArray(allActionRoles, curSop)) {
+                        curWindowRow.put("X");
                     } else {
-                        curActionRow.put("");
+                        curWindowRow.put("");
                     }
                 }
-                viewSopsOutput.put(curActionRow);
+                viewSopsOutput.put(curWindowRow);
             }
         }
         return viewSopsOutput;
     }
 
+    
 }

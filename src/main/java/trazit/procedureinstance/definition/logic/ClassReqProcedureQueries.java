@@ -16,6 +16,7 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
+import static trazit.procedureinstance.definition.logic.ClassReqProcedUserAndActionsForQueries.sopsByRoles;
 import static trazit.procedureinstance.definition.logic.ClassReqProcedUserAndActionsForQueries.usersByRoles;
 
 /**
@@ -86,7 +87,9 @@ public class ClassReqProcedureQueries {
         allContentArr1D=LPArray.addValueToArray1D(allContentArr1D, "access_users_per_roles");
         allContentArr1D=LPArray.addValueToArray1D(allContentArr1D, usersByRoles(procInstanceName, procRoles));
 //        jBlockArr.put("users_per_roles", usersByRoles(procInstanceName, procRoles));
-        
+        allContentArr1D=LPArray.addValueToArray1D(allContentArr1D, "access_roles_sops");
+        allContentArr1D=LPArray.addValueToArray1D(allContentArr1D, sopsByRoles(procInstanceName, procRoles));
+
         return LPArray.array1dTo2d(allContentArr1D, 2);
         //return jBlockArr;
     }
