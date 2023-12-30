@@ -1428,10 +1428,10 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
         Integer resultFldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.RESULT_ID.getName());
         Integer resultId = Integer.valueOf(curRow[resultFldPosic].toString());
 
-       if (LPPlatform.LAB_TRUE.equalsIgnoreCase(AnalysisMethodCertif.isUserCertificationEnabled().getDiagnostic())){
-           String methodName=curRow[LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.METHOD_NAME.getName())].toString();
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(AnalysisMethodCertif.isUserCertificationEnabled().getDiagnostic())){
+            String methodName=curRow[LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.METHOD_NAME.getName())].toString();
             InternalMessage userCertified = AnalysisMethodCertif.isUserCertified(methodName, procReqSession.getToken().getUserName());
-            if (Boolean.FALSE.equals(Boolean.valueOf(userCertified.getDiagnostic()))){
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userCertified.getDiagnostic())){
                 fldNameArr = LPArray.addValueToArray1D(fldNameArr, "is_locked");
                 fldValueArr = LPArray.addValueToArray1D(fldValueArr, true);
                 fldNameArr = LPArray.addValueToArray1D(fldNameArr, "locking_object");
@@ -1445,10 +1445,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                 reasonInfo.put(GlobalAPIsParams.LBL_MESSAGE_ES, errorTextEs);
                 return new Object[]{fldNameArr, fldValueArr, "locking_reason", reasonInfo};                
             }
-       }
-           
-
-        
+        }
         if (Boolean.FALSE.equals(isProgramCorrectiveActionEnable(procInstanceName))) {
             return new Object[]{fldNameArr, fldValueArr};
         }
@@ -1623,5 +1620,21 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
         }
         return jArr;
     }
+    public static JSONArray configMethodsList(String procInstanceName) {
+        String[] fieldsToRetrieve = getAllFieldNames(TblsCnfg.TablesConfig.METHODS, procInstanceName);
+        Object[][] analysisMethodsList = QueryUtilitiesEnums.getTableData(TblsCnfg.TablesConfig.METHODS,
+                EnumIntTableFields.getAllFieldNamesFromDatabase(TblsCnfg.TablesConfig.METHODS, procInstanceName),
+                new String[]{TblsCnfg.Methods.CODE.getName() + "<>"},
+                new Object[]{">>>"},
+                new String[]{TblsCnfg.Methods.CODE.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()}, procInstanceName);
+        JSONArray jArr = new JSONArray();
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisMethodsList[0][0].toString()))) {
+            for (Object[] currAnalysisMeth : analysisMethodsList) {
+                JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currAnalysisMeth);
+                jArr.add(jObj);
+            }
+        }
+        return jArr;
+    }    
 
 }
