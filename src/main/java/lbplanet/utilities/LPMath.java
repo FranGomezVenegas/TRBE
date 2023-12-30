@@ -118,6 +118,38 @@ public class LPMath {
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "isNumeric", null);
     }
 
+    public static double calculateSD(double numArray[]) {
+        double sum = 0.0, standardDeviation = 0.0;
+        int length = numArray.length;
+
+        for(double num : numArray) {
+            sum += num;
+        }
+
+        double mean = sum/length;
+
+        for(double num: numArray) {
+            standardDeviation += Math.pow(num - mean, 2);
+        }
+
+        return Math.sqrt(standardDeviation/length);
+    }    
+    public static double calculateSD(Double numArray[]) {
+        double sum = 0.0, standardDeviation = 0.0;
+        int length = numArray.length;
+
+        for(Double num : numArray) {
+            sum += num;
+        }
+
+        double mean = sum/length;
+
+        for(Double num: numArray) {
+            standardDeviation += Math.pow(num - mean, 2);
+        }
+
+        return Math.sqrt(standardDeviation/length);
+    }    
     public static JSONObject statAnalysis(double[] taskDurations, Object[] durArr, String unit) {
         JSONObject jObj=new JSONObject();
         // Análisis de valores atípicos
