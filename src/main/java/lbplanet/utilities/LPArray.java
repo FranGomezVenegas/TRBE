@@ -628,6 +628,22 @@ public class LPArray {
         newArray[newArray.length - 1] = newValue;
         return newArray;
     }
+    public static Double[] addValueToArray1D(Double[] array, Double newValue) {
+        Integer arrayLen = 0;
+        if (array == null) {
+            arrayLen = 0;
+        } else {
+            arrayLen = array.length;
+        }
+        Double[] newArray = new Double[arrayLen + 1];
+        if (array != null) {
+            for (Integer i = 0; i < array.length; i++) {
+                newArray[i] = array[i];
+            }
+        }
+        newArray[newArray.length - 1] = newValue;
+        return newArray;
+    }
 
     /**
      * Add one new position to the Calendar array at the bottom for the new
