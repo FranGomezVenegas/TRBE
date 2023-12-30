@@ -1842,7 +1842,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
         }
 
         InternalMessage userCertified = AnalysisMethodCertif.isUserCertified(methodName, token.getUserName());
-        if (Boolean.TRUE.equals(Boolean.valueOf(userCertified.getDiagnostic()))) {
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userCertified.getDiagnostic())){
             return new Object[]{null, null};
         }
 

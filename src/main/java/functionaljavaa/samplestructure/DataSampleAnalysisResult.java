@@ -15,7 +15,7 @@ import databases.SqlWhere;
 import databases.TblsCnfg;
 import databases.TblsData;
 import databases.features.Token;
-import static functionaljavaa.analysis.AnalysisCalculations.fireCalcController;
+import functionaljavaa.analysis.AnalysisCalculations;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.certification.AnalysisMethodCertif;
 import functionaljavaa.inventory.InventoryGlobalVariables.DataInvRetErrorTrapping;
@@ -283,7 +283,7 @@ public class DataSampleAnalysisResult {
         InternalMessage ifUserCertificationEnabled = AnalysisMethodCertif.isUserCertificationEnabled();
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(ifUserCertificationEnabled.getDiagnostic())) {
             InternalMessage userCertified = AnalysisMethodCertif.isUserCertified(methodName, token.getUserName());
-            if (Boolean.FALSE.equals(Boolean.valueOf(userCertified.getDiagnostic()))) {
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userCertified.getDiagnostic())){
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, userCertified.getMessageCodeObj().getErrorCode(), userCertified.getMessageCodeVariables());
             }
         }
@@ -394,7 +394,8 @@ public class DataSampleAnalysisResult {
                 smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
                         resultId, sampleId, testId, resultId, fieldsName, fieldsValue, alternativeAuditEntry, alternativeAuditClass);
                 if (calcLinkedFldPosicInArray > -1) {
-                    fireCalcController(resultId, testId, sampleId, resultFieldsArr, resultData[0], this.sar, alternativeAuditEntry, alternativeAuditClass);
+                    AnalysisCalculations anCalc=new AnalysisCalculations(resultId, testId, sampleId, resultFieldsArr, resultData[0], this.sar, alternativeAuditEntry, alternativeAuditClass);
+                    anCalc=null;
                 }
             }
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
@@ -453,7 +454,8 @@ public class DataSampleAnalysisResult {
                     EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, fieldsName), fieldsValue, sqlWhere, null);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                 if (calcLinkedFldPosicInArray > -1) {
-                    fireCalcController(resultId, testId, sampleId, resultFieldsArr, resultData[0], this.sar, alternativeAuditEntry, alternativeAuditClass);
+                    AnalysisCalculations anCalc=new AnalysisCalculations(resultId, testId, sampleId, resultFieldsArr, resultData[0], this.sar, alternativeAuditEntry, alternativeAuditClass);
+                    anCalc=null;
                 }
                 SampleAudit smpAudit = new SampleAudit();
                 smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
@@ -518,7 +520,8 @@ public class DataSampleAnalysisResult {
                 sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
                         resultId, sampleId, testId, resultId, fieldsName, fieldsValue, alternativeAuditEntry, alternativeAuditClass);
                 if (calcLinkedFldPosicInArray > -1) {
-                    fireCalcController(resultId, testId, sampleId, resultFieldsArr, resultData[0], this.sar, alternativeAuditEntry, alternativeAuditClass);
+                    AnalysisCalculations anCalc=new AnalysisCalculations(resultId, testId, sampleId, resultFieldsArr, resultData[0], this.sar, alternativeAuditEntry, alternativeAuditClass);
+                    anCalc=null;
                 }
             }
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
@@ -590,7 +593,7 @@ public class DataSampleAnalysisResult {
             InternalMessage ifUserCertificationEnabled = AnalysisMethodCertif.isUserCertificationEnabled();
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(ifUserCertificationEnabled.getDiagnostic())) {
                 InternalMessage userCertified = AnalysisMethodCertif.isUserCertified(methodName, token.getUserName());
-                if (Boolean.FALSE.equals(Boolean.valueOf(userCertified.getDiagnostic()))) {
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userCertified.getDiagnostic())){
                     return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, userCertified.getMessageCodeObj().getErrorCode(), userCertified.getMessageCodeVariables());
                 }
             }

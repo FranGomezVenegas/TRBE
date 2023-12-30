@@ -16,6 +16,7 @@ import databases.SqlWhere;
 import databases.TblsCnfg;
 import databases.TblsData;
 import databases.TblsProcedure;
+import functionaljavaa.certification.AnalysisMethodCertifQueries;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.materialspec.SpecFrontEndUtilities;
 import functionaljavaa.parameter.Parameter;
@@ -46,6 +47,7 @@ import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntViewFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.procedureinstance.definition.apis.ReqProcedureDefinitionQueries;
+import trazit.queries.QueryUtilities;
 import trazit.session.ProcedureRequestSession;
 import trazit.queries.QueryUtilitiesEnums;
 
@@ -550,6 +552,62 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                     Rdbms.closeRdbms();
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     break;
+                case GET_ANALYSIS:
+                    String code = LPNulls.replaceNull(argValues[0]).toString();
+                    Boolean includeCertif = Boolean.valueOf(LPNulls.replaceNull(argValues[1]).toString());
+                    jArr = new JSONArray();
+                    whereObj = new SqlWhere();
+                    String[] wFldN=new String[]{};
+                    Object[] wFldV=new Object[]{};
+                    if ("ALL".equalsIgnoreCase(code)){
+                        wFldN=LPArray.addValueToArray1D(wFldN, TblsCnfg.Analysis.CODE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause());                        
+                    }else{
+                        wFldN=LPArray.addValueToArray1D(wFldN, TblsCnfg.Analysis.CODE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.LIKE.getSqlClause());
+                        wFldV=LPArray.addValueToArray1D(wFldV, code);
+                    }
+                    if (LPNulls.replaceNull(code).toString().length() == 0) {
+                        whereObj.addConstraint(TblsCnfg.Analysis.CODE, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, null, null);
+                    } else {
+                        whereObj.addConstraint(TblsCnfg.Analysis.CODE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{code}, null);
+                    }
+                    String repositoryName=LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), TblsCnfg.TablesConfig.ANALYSIS.getRepositoryName());
+                    JSONArray mainArr = QueryUtilities.dbRowsToJsonArr(procReqInstance.getProcedureInstance(), repositoryName, TblsCnfg.TablesConfig.ANALYSIS.getTableName(),
+                        EnumIntTableFields.getAllFieldNames(TblsCnfg.TablesConfig.ANALYSIS.getTableFields()),
+                        wFldN, wFldV,
+                        new String[]{TblsCnfg.Analysis.CODE.getName()}, null, false, false);                    
+                    JSONArray dbRowsToJsonArr2 = new JSONArray();                    
+                    for (int i = 0; i < mainArr.size(); i++) {
+                        JSONObject anajObj = (JSONObject) mainArr.get(i);
+                        String curAnalysis = LPNulls.replaceNull(anajObj.get("code")).toString();
+                        JSONArray anaMethod = QueryUtilities.dbRowsToJsonArr(procReqInstance.getProcedureInstance(), repositoryName, TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName(),
+                            EnumIntTableFields.getAllFieldNames(TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableFields()),
+                            new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName()},new Object[]{curAnalysis},
+                            new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName()}, null, false, false);   
+                        JSONArray anaMethodArr = new JSONArray();
+                        for (int j = 0; j < anaMethod.size(); j++) {
+                            JSONObject anaMethodjObj = (JSONObject) anaMethod.get(j);
+                            String curAnaMethod = LPNulls.replaceNull(anaMethodjObj.get(TblsCnfg.AnalysisMethod.METHOD_NAME.getName())).toString();
+                            JSONArray anaMethodParam = QueryUtilities.dbRowsToJsonArr(procReqInstance.getProcedureInstance(), repositoryName, TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(),
+                                EnumIntTableFields.getAllFieldNames(TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableFields()),
+                                new String[]{TblsCnfg.AnalysisMethodParams.ANALYSIS.getName(), TblsCnfg.AnalysisMethodParams.METHOD_NAME.getName()},
+                                new Object[]{curAnalysis, curAnaMethod},
+                                new String[]{TblsCnfg.AnalysisMethodParams.ANALYSIS.getName()}, null, false, false);   
+                            anaMethodjObj.put(TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(), anaMethodParam);
+                            anaMethodArr.add(anaMethodjObj);
+                        }
+                        anajObj.put(TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName(), anaMethodArr);
+                        dbRowsToJsonArr2.add(anajObj);
+                    }                    
+                    Rdbms.closeRdbms();
+                    JSONObject jMainObj=new JSONObject();
+                    jMainObj.put(TblsCnfg.TablesConfig.ANALYSIS.getTableName(), dbRowsToJsonArr2);
+                    if (includeCertif){
+                        jMainObj.put("certifications_info", AnalysisMethodCertifQueries.methodsByUser(procReqInstance.getProcedureInstance()));
+                    }    
+                    LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
+                    
+                    break;                    
+                    
                 case GET_SAMPLE_ANALYSIS_RESULT_LIST:
                     RelatedObjects rObj = RelatedObjects.getInstanceForActions();
                         Integer sampleId = Integer.valueOf(LPNulls.replaceNull(argValues[0]).toString());
