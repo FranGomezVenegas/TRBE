@@ -84,10 +84,7 @@ public class Rdbms {
         RDBMS_RECORD_FOUND("existsRecord_RecordFound", "", ""),
         RDBMS_TABLE_FOUND("existsTable_TableFound", "", ""),
         TRANSFERRED_RECORDS_BETWEEN_INSTANCES("transferredRecordsBetweenInstances", "", ""),
-        ANALYSIS_CREATED("analysisRecord_createdSuccessfully", "", ""),
-        ANALYSIS_METHOD_CREATED("analysisMethodRecord_createdSuccessfully", "", ""),
-        ANALYSIS_METHOD_PARAM_CREATED("analysisMethodParamRecord_createdSuccessfully", "", ""),;
-
+        ;
         RdbmsSuccess(String cl, String msgEn, String msgEs) {
             this.errorCode = cl;
             this.defaultTextWhenNotInPropertiesFileEn = msgEn;
