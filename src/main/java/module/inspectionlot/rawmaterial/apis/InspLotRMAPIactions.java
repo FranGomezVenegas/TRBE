@@ -5,6 +5,7 @@
  */
 package module.inspectionlot.rawmaterial.apis;
 
+import com.labplanet.servicios.app.CertifyAnalysisMethodAPI;
 import com.labplanet.servicios.app.InvestigationAPI;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import module.inspectionlot.rawmaterial.definition.ClassInspLotRMactions;
 import com.labplanet.servicios.modulesample.ClassSample;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
+import functionaljavaa.certification.ClassAnalysisMehtodCertif;
 import functionaljavaa.investigation.ClassInvestigation;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,6 +24,10 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import module.inspectionlot.rawmaterial.definition.InspLotRMEnums.InspLotRMAPIactionsEndpoints;
+import modules.masterdata.analysis.ClassAnalysis;
+import modules.masterdata.analysis.MasterDataAnalysisEnums;
+import modules.masterdata.spec.ClassSpec;
+import modules.masterdata.spec.MasterDataSpecEnums;
 import org.json.simple.JSONObject;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
@@ -60,30 +66,74 @@ public class InspLotRMAPIactions extends HttpServlet {
                 try {
                     endPointSmp = SampleAPIParams.SampleAPIactionsEndpoints.valueOf(procReqInstance.getActionName().toUpperCase());
                 } catch (Exception er) {
+                    CertifyAnalysisMethodAPI.CertifyAnalysisMethodAPIactionsEndpoints endPointMethodCertif = null;
                     try {
-                        InvestigationAPI.InvestigationAPIactionsEndpoints endPoint2 = InvestigationAPI.InvestigationAPIactionsEndpoints.valueOf(procReqInstance.getActionName().toUpperCase());
-                        Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint2.getArguments());
-                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())) {
-                            procReqInstance.killIt();
-                            LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{procReqInstance.getActionName(), this.getServletName()}, procReqInstance.getLanguage(), LPPlatform.ApiErrorTraping.class.getSimpleName());
-                            return;
+                        endPointMethodCertif = CertifyAnalysisMethodAPI.CertifyAnalysisMethodAPIactionsEndpoints.valueOf(procReqInstance.getActionName().toUpperCase());
+                    } catch (Exception er2) {                    
+                        MasterDataSpecEnums.MasterDataSpecActionsEndpoints endPointMasterDataSpec = null;
+                        try {
+                            endPointMasterDataSpec = MasterDataSpecEnums.MasterDataSpecActionsEndpoints.valueOf(procReqInstance.getActionName().toUpperCase());
+                        } catch (Exception er3) {
+                            MasterDataAnalysisEnums.MasterDataAnalysisActionsEndpoints endPointMasterDataAna = null;
+                            try {
+                                endPointMasterDataAna = MasterDataAnalysisEnums.MasterDataAnalysisActionsEndpoints.valueOf(procReqInstance.getActionName().toUpperCase());
+                            } catch (Exception er4) {
+                                try {
+                                    InvestigationAPI.InvestigationAPIactionsEndpoints endPoint2 = InvestigationAPI.InvestigationAPIactionsEndpoints.valueOf(procReqInstance.getActionName().toUpperCase());
+                                    Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint2.getArguments());
+                                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())) {
+                                        procReqInstance.killIt();
+                                        LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{procReqInstance.getActionName(), this.getServletName()}, procReqInstance.getLanguage(), LPPlatform.ApiErrorTraping.class.getSimpleName());
+                                        return;
+                                    }
+                                    ClassInvestigation clssInv = new ClassInvestigation(request, InvestigationAPI.InvestigationAPIactionsEndpoints.valueOf(procReqInstance.getActionName().toUpperCase()));
+                                    if (Boolean.TRUE.equals(clssInv.getEndpointExists())) {
+                                        Object[] diagnostic = clssInv.getDiagnostic();
+                                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
+                                            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clssInv.getMessageDynamicData());
+                                        } else {
+                                            JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(InvestigationAPI.InvestigationAPIactionsEndpoints.valueOf(procReqInstance.getActionName().toUpperCase()), clssInv.getMessageDynamicData(), clssInv.getRelatedObj().getRelatedObject());
+                                            LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
+                                        }
+                                    }
+                                } catch (Exception er5) {
+                                    procReqInstance.killIt();
+                                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{procReqInstance.getActionName(), this.getServletName()}, procReqInstance.getLanguage(), LPPlatform.ApiErrorTraping.class.getSimpleName());
+                                    return;                        
+                                }
+                            }
+                            ClassAnalysis clssMasterDataAna = new ClassAnalysis(request, response, endPointMasterDataAna);
+                            if (Boolean.TRUE.equals(clssMasterDataAna.getEndpointExists())) {
+                                InternalMessage diagnostic = clssMasterDataAna.getDiagnosticObj();
+                                if (diagnostic!=null&&LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic.getDiagnostic())) {
+                                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic.getMessageCodeObj(), diagnostic.getMessageCodeVariables());
+                                } else {
+                                    JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPointMasterDataAna, clssMasterDataAna.getMessageDynamicData(), clssMasterDataAna.getRelatedObj().getRelatedObject());
+                                    LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
+                                }
+                            }
                         }
-                        ClassInvestigation clssInv = new ClassInvestigation(request, InvestigationAPI.InvestigationAPIactionsEndpoints.valueOf(procReqInstance.getActionName().toUpperCase()));
-                        if (Boolean.TRUE.equals(clssInv.getEndpointExists())) {
-                            Object[] diagnostic = clssInv.getDiagnostic();
-                            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
-                                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clssInv.getMessageDynamicData());
+                        ClassSpec clssMasterDataSpec = new ClassSpec(request, response, endPointMasterDataSpec);
+                        if (Boolean.TRUE.equals(clssMasterDataSpec.getEndpointExists())) {
+                            InternalMessage diagnostic = clssMasterDataSpec.getDiagnosticObj();
+                            if (diagnostic!=null&&LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic.getDiagnostic())) {
+                                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic.getMessageCodeObj(), diagnostic.getMessageCodeVariables());
                             } else {
-                                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(InvestigationAPI.InvestigationAPIactionsEndpoints.valueOf(procReqInstance.getActionName().toUpperCase()), clssInv.getMessageDynamicData(), clssInv.getRelatedObj().getRelatedObject());
+                                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPointMasterDataSpec, clssMasterDataSpec.getMessageDynamicData(), clssMasterDataSpec.getRelatedObj().getRelatedObject());
                                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
                             }
                         }
-                    } catch (Exception er2) {
-                        procReqInstance.killIt();
-                        LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{procReqInstance.getActionName(), this.getServletName()}, procReqInstance.getLanguage(), LPPlatform.ApiErrorTraping.class.getSimpleName());
-                        return;                        
                     }
-                    
+                    ClassAnalysisMehtodCertif clssMethodCertif = new ClassAnalysisMehtodCertif(request, response, endPointMethodCertif);
+                    if (Boolean.TRUE.equals(clssMethodCertif.getEndpointExists())) {
+                        Object[] diagnostic = clssMethodCertif.getDiagnostic();
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
+                            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clssMethodCertif.getMessageDynamicData());
+                        } else {
+                            JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPointSmp, clssMethodCertif.getMessageDynamicData(), clssMethodCertif.getRelatedObj().getRelatedObject());
+                            LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
+                        }
+                    }
                 }
                 ClassSample clssSmp = new ClassSample(request, endPointSmp);
                 if (Boolean.TRUE.equals(clssSmp.getEndpointExists())) {
