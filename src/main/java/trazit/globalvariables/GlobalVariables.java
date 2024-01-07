@@ -5,6 +5,37 @@
  */
 package trazit.globalvariables;
 
+import databases.TblsCnfg.TablesConfig;
+import databases.TblsCnfg.ViewsConfig;
+import databases.TblsCnfgAudit;
+import databases.TblsData;
+import databases.TblsDataAudit;
+import databases.TblsProcedure;
+import databases.TblsProcedureAudit.TablesProcedureAudit;
+import module.clinicalstudies.definition.TblsGenomaConfig;
+import module.clinicalstudies.definition.TblsGenomaData;
+import module.clinicalstudies.definition.TblsGenomaDataAudit;
+import module.inspectionlot.rawmaterial.definition.TblsInspLotRMConfig;
+import module.inspectionlot.rawmaterial.definition.TblsInspLotRMData;
+import module.inspectionlot.rawmaterial.definition.TblsInspLotRMDataAudit;
+import module.inspectionlot.rawmaterial.definition.TblsInspLotRMProcedure;
+import module.instrumentsmanagement.definition.TblsInstrumentsConfig.TablesInstrumentsConfig;
+import module.instrumentsmanagement.definition.TblsInstrumentsConfigAudit;
+import module.instrumentsmanagement.definition.TblsInstrumentsData;
+import module.instrumentsmanagement.definition.TblsInstrumentsDataAudit;
+import module.instrumentsmanagement.definition.TblsInstrumentsProcedure;
+import module.inventorytrack.definition.TblsInvTrackingConfig;
+import module.inventorytrack.definition.TblsInvTrackingData;
+import module.inventorytrack.definition.TblsInvTrackingDataAudit;
+import module.inventorytrack.definition.TblsInvTrackingProcedure;
+import module.monitoring.definition.TblsEnvMonitConfig;
+import module.monitoring.definition.TblsEnvMonitConfigAudit;
+import module.monitoring.definition.TblsEnvMonitData;
+import module.monitoring.definition.TblsEnvMonitDataAudit;
+import module.monitoring.definition.TblsEnvMonitProcedure;
+import trazit.enums.EnumIntTables;
+import trazit.enums.EnumIntViews;
+
 /**
  *
  * @author User
@@ -47,8 +78,90 @@ public class GlobalVariables {
         private final String name;        
     }    
     
-    public enum TrazitModules{STOCKS, INSTRUMENTS, MONITORING, GENOMICS,
-        PLATFORM_ADMIN, SAMPLES_MANAGEMENT, INSPECTION_LOTS}
+    public enum TrazitModules{
+        STOCKS(null,TblsInvTrackingConfig.TablesInvTrackingConfig.values(),
+            TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.values(), TblsInvTrackingData.TablesInvTrackingData.values(),
+            null, TblsInvTrackingProcedure.TablesInvTrackingProcedure.values(),
+            null,TblsInvTrackingConfig.ViewsInvTrackingConfig.values(),
+            null, TblsInvTrackingData.ViewsInvTrackingData.values(),
+            null, null                
+        ), 
+        INSTRUMENTS(TblsInstrumentsConfigAudit.TablesInstrumentsConfigAudit.values(), TablesInstrumentsConfig.values(),
+            TblsInstrumentsDataAudit.TablesInstrumentsDataAudit.values(), TblsInstrumentsData.TablesInstrumentsData.values(),
+              null, TblsInstrumentsProcedure.TablesInstrumentsProcedure.values(),
+            null, null,
+            null, TblsInstrumentsData.ViewsInstrumentsData.values(),
+              null, null
+        ), 
+        MONITORING(TblsEnvMonitConfigAudit.TablesEnvMonitConfigAudit.values(), TblsEnvMonitConfig.TablesEnvMonitConfig.values(),
+                TblsEnvMonitDataAudit.TablesEnvMonitDataAudit.values(), TblsEnvMonitData.TablesEnvMonitData.values(),
+                null, TblsEnvMonitProcedure.TablesEnvMonitProcedure.values(),
+                null, TblsEnvMonitConfig.ViewsEnvMonConfig.values(),
+                null, TblsEnvMonitData.ViewsEnvMonData.values(),
+                null, null                
+        ), 
+        CLINICAL_STUDIES(null, TblsGenomaConfig.TablesGenomaConfig.values(), 
+                TblsGenomaDataAudit.TablesGenomaDataAudit.values(), TblsGenomaData.TablesGenomaData.values(),
+                null, null,
+                null, null,
+                null, null, null, null), 
+        PLATFORM_ADMIN(null, null, null, null, null, null, null, null, null, null, null, null), 
+        SAMPLES_MANAGEMENT(TblsCnfgAudit.TablesCfgAudit.values(), TablesConfig.values(),
+                TblsDataAudit.TablesDataAudit.values(), TblsData.TablesData.values(), 
+                TablesProcedureAudit.values(), TblsProcedure.TablesProcedure.values(),
+                null, ViewsConfig.values(),
+                null, TblsData.ViewsData.values(), 
+                null, TblsProcedure.ViewsProcedure.values()
+        ), 
+        INSPECTION_LOTS(null, TblsInspLotRMConfig.TablesInspLotRMConfig.values(),
+                TblsInspLotRMDataAudit.TablesInspLotRMDataAudit.values(), TblsInspLotRMData.TablesInspLotRMData.values(),
+                null, TblsInspLotRMProcedure.TablesInspLotRMProcedure.values(),
+                null, null,
+                null, TblsInspLotRMData.ViewsInspLotRMData.values(),
+                null, null                
+        )
+        ;
+        TrazitModules(EnumIntTables[] configAudit, EnumIntTables[] config, EnumIntTables[] dataAudit, EnumIntTables[] data, EnumIntTables[] procAudit, EnumIntTables[] proc,
+            EnumIntViews[] configAuditVw, EnumIntViews[] configVw, EnumIntViews[] dataAuditVw, EnumIntViews[] dataVw, EnumIntViews[] procAuditVw, EnumIntViews[] procVw){
+                this.configAuditTbls=configAudit;
+                this.configTbls=config;
+                this.dataAuditTbls=dataAudit;
+                this.dataTbls=data;
+                this.procedureAuditTbls=procAudit;
+                this.procedureTbls=proc;
+                this.configAuditVws=configAuditVw;
+                this.configVws=configVw;
+                this.dataAuditVws=dataAuditVw;
+                this.dataVws=dataVw;
+                this.procedureAuditVws=procAuditVw;
+                this.procedureVws=procVw;
+        }
+        private final EnumIntTables[] configAuditTbls;
+        public EnumIntTables[] getConfigAuditTbls(){return configAuditTbls;}
+        private final EnumIntTables[] configTbls;
+        public EnumIntTables[] getConfigTbls(){return configTbls;}
+        private final EnumIntTables[] dataAuditTbls;
+        public EnumIntTables[] getDataAuditTbls(){return dataAuditTbls;}
+        private final EnumIntTables[] dataTbls;
+        public EnumIntTables[] getDataTbls(){return dataTbls;}
+        private final EnumIntTables[] procedureAuditTbls;
+        public EnumIntTables[] getProcedureAuditTbls(){return procedureAuditTbls;}
+        private final EnumIntTables[] procedureTbls;
+        public EnumIntTables[] getProcedureTbls(){return procedureTbls;}
+
+        private final EnumIntViews[] configAuditVws;
+        public EnumIntViews[] getConfigAuditVws(){return configAuditVws;}
+        private final EnumIntViews[] configVws;
+        public EnumIntViews[] getConfigVws(){return configVws;}
+        private final EnumIntViews[] dataAuditVws;
+        public EnumIntViews[] getDataAuditVws(){return dataAuditVws;}
+        private final EnumIntViews[] dataVws;
+        public EnumIntViews[] getDataVws(){return dataVws;}
+        private final EnumIntViews[] procedureAuditVws;
+        public EnumIntViews[] getProcedureAuditVws(){return procedureAuditVws;}
+        private final EnumIntViews[] procedureVws;
+        public EnumIntViews[] getProcedureVws(){return procedureVws;}
+    }
     
     public enum ServletsResponse{SUCCESS("/ResponseSuccess", "response"), ERROR("/ResponseError", "errorDetail");
         ServletsResponse(String svlt, String attr){
