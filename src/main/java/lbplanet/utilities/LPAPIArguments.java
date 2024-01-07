@@ -5,7 +5,7 @@
  */
 package lbplanet.utilities;
 
-import functionaljavaa.analysis.ConfigAnalysisStructure.ConfigAnalysisErrorTrapping;
+import modules.masterdata.analysis.ConfigAnalysisStructure.ConfigAnalysisErrorTrapping;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
