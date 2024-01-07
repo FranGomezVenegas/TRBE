@@ -18,13 +18,13 @@ import trazit.globalvariables.GlobalVariables;
  */
 public class TblsInvTrackingConfigAudit {
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.CONFIG_AUDIT.getName();
-    public enum TablesEnvMonitConfigAudit implements EnumIntTables{ 
+    public enum TablesInvTrackingConfigAudit implements EnumIntTables{ 
         ANALYSIS(null, "analysis", SCHEMA_NAME, true, TblsCnfgAudit.Analysis.values(), TblsCnfgAudit.Analysis.AUDIT_ID.getName(),
             new String[]{TblsCnfgAudit.Analysis.AUDIT_ID.getName()}, null, "Analysis Audit Trial"),
         SPEC(null, "spec", SCHEMA_NAME, true, TblsCnfgAudit.Spec.values(), TblsCnfgAudit.Spec.AUDIT_ID.getName(),
             new String[]{TblsCnfgAudit.Spec.AUDIT_ID.getName()}, null, "Spec Audit Trial"),        
         ;
-        private TablesEnvMonitConfigAudit(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
+        private TablesInvTrackingConfigAudit(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){
             this.getTblBusinessRules=fldBusRules;
             this.tableName=dbTblName;
