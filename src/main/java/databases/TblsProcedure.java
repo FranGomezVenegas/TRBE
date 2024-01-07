@@ -49,6 +49,8 @@ public class TblsProcedure {
                 new String[]{TblsProcedure.ProcedureViews.NAME.getName(), ProcedureViews.ROLE_NAME.getName()}, null, "Procedure Events Info"),
         PROCEDURE_ACTIONS(null, "procedure_actions", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProcedureActions.values(), null,
                 new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName()}, null, "Procedure Actions Info"),
+        PROCEDURE_ACTIONS_MASTER_DATA(null, "procedure_actions_master_data", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProcedureActions.values(), null,
+                new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName()}, null, "Procedure Actions for Master Data Info"),
         PROCEDURE_EVENTS_HELP_CONTENT(null, "procedure_events_help_content", SCHEMA_NAME, false, ProcedureEventsHelpContent.values(), null,
                 new String[]{ProcedureEventsHelpContent.LP_FRONTEND_PAGE_NAME.getName(), ProcedureEventsHelpContent.LP_FRONTEND_PAGE_FILTER.getName(), ProcedureEventsHelpContent.ORDER_NUMBER.getName()},
                 new Object[]{new ForeignkeyFld(ProcedureEventsHelpContent.LP_FRONTEND_PAGE_NAME.getName(), SCHEMA_NAME, TablesProcedure.PROCEDURE_VIEWS.getTableName(), ProcedureViews.LP_FRONTEND_PAGE_NAME.getName()),

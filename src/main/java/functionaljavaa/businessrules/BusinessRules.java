@@ -31,7 +31,9 @@ public class BusinessRules {
     static String startsMark = " *** ";
     String procedureInstanceName;
     ArrayList<ActionInfo> actions;
+    ArrayList<ActionInfo> actionsMasterData;
     String actionsListStr;
+    String actionsListMasterDataStr;
     ArrayList<RuleInfo> procedure;
     ArrayList<RuleInfo> data;
     ArrayList<RuleInfo> config;
@@ -89,11 +91,40 @@ public class BusinessRules {
         }
         this.actionsListStr=Arrays.toString(LPArray.getColumnFromArray2D(procInstanceActionsList, 0));
     }    
-        
+
+    public static Object[] getProcInstanceActionsMasterDataInfo(String procedureInstanceName){
+        String[] fldNames=new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.ROLES_NAME.getName(),
+            TblsProcedure.ProcedureActions.ARE_YOU_SURE_REQUIRED.getName(), TblsProcedure.ProcedureActions.JUSTIF_REASON_REQUIRED.getName(), TblsProcedure.ProcedureActions.ESIGN_REQUIRED.getName(),
+            TblsProcedure.ProcedureActions.USER_CREDENTIAL_REQUIRED.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(),
+            TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName()};
+        Object[][] actionsInfo = Rdbms.getRecordFieldsByFilter(procedureInstanceName, LPPlatform.buildSchemaName(procedureInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS_MASTER_DATA.getTableName(),
+                new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
+                new Object[]{},fldNames);        
+        return new Object[]{fldNames, actionsInfo};
+    }
+    private void setActionsMasterData(String procedureInstanceName){
+        Object[] dbTableExists = Rdbms.dbTableExists(procedureInstanceName, procedureInstanceName + "-procedure", 
+                TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())) {return;}
+        JSONArray jArr = new JSONArray();
+        Object[] procInstanceActionsListAll=getProcInstanceActionsMasterDataInfo(procedureInstanceName);
+        Object[][] procInstanceActionsList=(Object[][])procInstanceActionsListAll[1];
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInstanceActionsList[0][0].toString())) {
+            return;
+        }        
+        for (Object[] curAction : procInstanceActionsList) {
+            this.actionsMasterData.add(new ActionInfo(curAction[0].toString(), curAction[1].toString(), Boolean.valueOf(curAction[2].toString()), Boolean.valueOf(curAction[3].toString()), 
+                Boolean.valueOf(curAction[4].toString()), Boolean.valueOf(curAction[5].toString()),
+                curAction[6].toString(), curAction[7].toString(), curAction[8].toString()));
+        }
+        this.actionsListMasterDataStr=Arrays.toString(LPArray.getColumnFromArray2D(procInstanceActionsList, 0));
+    }    
+    
             
     public BusinessRules(String procedureInstanceName, Integer scriptId) {
         this.procedureInstanceName = procedureInstanceName;
         this.actions = new ArrayList<>();
+        this.actionsMasterData = new ArrayList<>();
         this.procedure = new ArrayList<>();
         this.data = new ArrayList<>();
         this.config = new ArrayList<>();
@@ -134,6 +165,7 @@ public class BusinessRules {
         }
         this.totalBusinessRules = this.procedure.size() + this.config.size() + this.data.size();
         setActions(procedureInstanceName);
+        setActionsMasterData(procedureInstanceName);
     }
 
     public Integer getTotalBusinessRules() {
@@ -144,6 +176,9 @@ public class BusinessRules {
         return Collections.unmodifiableList(this.procedure);
     }
 
+    public String getActionsList(){
+        return actionsListStr;
+    }
     public ActionInfo getActionDefinition(String actionName) {
         if (this.actions != null) {
             for (ActionInfo curElement : this.actions) {
@@ -155,9 +190,20 @@ public class BusinessRules {
         }
         return null;
     }  
-    public String getActionsList(){
-        return actionsListStr;
+    public String getActionsMasterDataList(){
+        return actionsListMasterDataStr;
     }
+    public ActionInfo getActionDefinitionMasterData(String actionName) {
+        if (this.actionsMasterData != null) {
+            for (ActionInfo curElement : this.actionsMasterData) {
+                if (actionName.equalsIgnoreCase(curElement.getActionName())) 
+                {
+                    return curElement;
+                }
+            }            
+        }
+        return null;
+    }  
 
     public String getProcedureBusinessRule(String ruleName) {
         if (this.procedure != null) {

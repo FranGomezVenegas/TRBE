@@ -238,7 +238,7 @@ public class ActionsControl {
         Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
         //return (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))? 
         //    procUserRoleActionEnabledInBusRules(procInstanceName, userRole, actionName, procBusinessRules):
-        return procUserRoleActionEnabledInTable(procInstanceName, userRole, actionName, procBusinessRules);        
+        return procUserRoleActionEnabledInTable(procInstanceName, userRole, actionName, procBusinessRules);
     }
     private static Object[] xprocUserRoleActionEnabledInBusRules(String procInstanceName, String userRole, String actionName, BusinessRules procBusinessRules) {
         String[] procedureActionsUserRoles = procBusinessRules.getProcedureBusinessRule(LPPlatform.LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName() + actionName).split("\\|");
@@ -260,7 +260,12 @@ public class ActionsControl {
         }
     }
     private static InternalMessage procUserRoleActionEnabledInTable(String procInstanceName, String userRole, String actionName, BusinessRules procBusinessRules) {
-        ActionInfo actionDefinition = procBusinessRules.getActionDefinition(actionName);
+        ActionInfo actionDefinition=null;
+        actionDefinition = procBusinessRules.getActionDefinition(actionName);
+        if (actionDefinition==null)
+            actionDefinition = procBusinessRules.getActionDefinitionMasterData(actionName);
+
+        
         String[] procedureActionsUserRoles = actionDefinition.getActionRoles().split("\\|");
         if (Boolean.TRUE.equals(ProcedureRequestSession.getInstanceForQueries(null, null, null).getIsForTesting())) {
             TestingBusinessRulesVisited testingBusinessRulesVisitedObj = ProcedureRequestSession.getInstanceForActions(null, null, null).getTestingBusinessRulesVisitedObj();
@@ -297,6 +302,9 @@ public class ActionsControl {
         
         ActionInfo actionDefinition = procBusinessRules.getActionDefinition(actionName);
         if (actionDefinition==null) {            
+            actionDefinition = procBusinessRules.getActionDefinitionMasterData(actionName);
+        }
+        if (actionDefinition==null) {            
 
             procBusinessRules.getActionsList();
             return new InternalMessage(LPPlatform.LAB_FALSE, LPPlatform.LpPlatformErrorTrapping.ACTION_NOTFOUND, new String[]{procInstanceName, actionName});
@@ -332,6 +340,8 @@ public class ActionsControl {
     private static Object[] procActionRequiresJustificationPhraseInTable(String procInstanceName, String actionName, BusinessRules procBusinessRules) {
         actionName = actionName.toUpperCase();
         ActionInfo actionDefinition = procBusinessRules.getActionDefinition(actionName);
+        if (actionDefinition==null) 
+            actionDefinition = procBusinessRules.getActionDefinitionMasterData(actionName);
         
         if (actionDefinition==null) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_DENIED_RULENOTFOUND, new Object[]{procInstanceName, actionDefinition.getActionName()});
@@ -349,6 +359,8 @@ public class ActionsControl {
     private static Object[] procActionRequiresEsignConfirmationInTable(String procInstanceName, String actionName, BusinessRules procBusinessRules) {
         actionName = actionName.toUpperCase();
         ActionInfo actionDefinition = procBusinessRules.getActionDefinition(actionName);
+        if (actionDefinition==null) 
+            actionDefinition = procBusinessRules.getActionDefinitionMasterData(actionName);
 
         if (actionDefinition==null) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.LpPlatformErrorTrapping.ESIGNREQUIRED_DENIED_RULENOTFOUND, new Object[]{procInstanceName, actionDefinition.getActionName()});
@@ -367,7 +379,8 @@ public class ActionsControl {
     public static Object[] procActionRequiresUserConfirmationInTable(String procInstanceName, String actionName, BusinessRules procBusinessRules) {
         actionName = actionName.toUpperCase();
         ActionInfo actionDefinition = procBusinessRules.getActionDefinition(actionName);
-
+        if (actionDefinition==null) 
+            actionDefinition = procBusinessRules.getActionDefinitionMasterData(actionName);
         if (actionDefinition==null) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.LpPlatformErrorTrapping.VERIFYUSERREQUIRED_DENIED_RULENOTFOUND, new Object[]{procInstanceName, actionDefinition.getActionName()});
         } else if (Boolean.FALSE.equals(actionDefinition.getUserConfirmReqd())) {
