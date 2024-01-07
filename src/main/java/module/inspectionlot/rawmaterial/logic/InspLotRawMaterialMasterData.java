@@ -19,6 +19,7 @@ public class InspLotRawMaterialMasterData implements FrontendMasterData{
     @Override
     public JSONObject getMasterDataJsonObject(String alternativeProcInstanceName) {
         JSONObject jSummaryObj=new JSONObject();        
+        jSummaryObj.put(TblsCnfg.TablesConfig.METHODS.getTableName(), ClassSampleQueries.configMethodsList(alternativeProcInstanceName));
         jSummaryObj.put(TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName(), ClassSampleQueries.configAnalysisList(alternativeProcInstanceName));
         return jSummaryObj;
     }
