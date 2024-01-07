@@ -39,7 +39,7 @@ import databases.TblsData;
 import databases.TblsDataAudit;
 import databases.TblsProcedure;
 import databases.features.Token;
-import functionaljavaa.analysis.ConfigAnalysisStructure;
+import modules.masterdata.analysis.ConfigAnalysisStructure;
 import functionaljavaa.audit.GenericAuditFields;
 import functionaljavaa.certification.AnalysisMethodCertif;
 import functionaljavaa.materialspec.ConfigSpecRule;
