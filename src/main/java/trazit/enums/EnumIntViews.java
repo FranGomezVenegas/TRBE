@@ -32,6 +32,14 @@ public interface EnumIntViews {
 
     Boolean getUsesFixScriptView();
 
+    public static Integer getViewPosicInArray(EnumIntViews[] views, String viewName) {
+        for (int i = 0; i < views.length; i++) {
+            if (views[i].getViewName().equalsIgnoreCase(viewName)) {
+                return i;
+            }
+        }
+        return -1;    
+    }
     public static String getViewScriptCreation(EnumIntViews vwDef, String procInstanceName, Boolean run, Boolean refreshTableIfExists, Boolean isForTesting, String fieldsToExclude) {
         if (vwDef.getTablesRequiredInView() == null) {
             return "ERROR: No Views specified to build the view";
