@@ -28,8 +28,9 @@ import databases.TblsProcedureAudit.TablesProcedureAudit;
 import trazit.procedureinstance.definition.definition.TblsReqs;
 import databases.TblsTesting;
 import databases.features.Token;
-import functionaljavaa.analysis.UserMethod;
+import modules.masterdata.analysis.UserMethod;
 import functionaljavaa.certification.AnalysisMethodCertif;
+import functionaljavaa.certification.AnalysisMethodCertifQueries;
 import static functionaljavaa.certification.FrontendCertifObjsUtilities.certifObjCertifModeOwnUserAction;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
 import functionaljavaa.intervals.IntervalsUtilities;
@@ -107,6 +108,7 @@ import java.util.Set;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMData.ViewsInspLotRMData;
 import trazit.platforminstance.logic.CreatePlatform;
 import static trazit.procedureinstance.definition.logic.ReqProcDefTestingCoverageSummary.procInstanceTestingInfo;
+import trazit.procedureinstance.deployment.logic.ModuleTableOrViewGet;
 /**
  *
  * @author Administrator
@@ -133,13 +135,41 @@ public class TestingServer extends HttpServlet {
         String procedureName="stock";
         Integer procedureVersion=1;
         String procInstanceName="stock";
-
+        
         String dbName="demo_v0_9_2";
         Rdbms.stablishDBConection(dbName);
-    
+        
+        CreatePlatform crPlat=new CreatePlatform();
+        crPlat.createModules(dbName, "ModuleClinicialStudies.json");        
+if (1==1)return;                
+        
+        procInstanceName="inspection_lot";
+        out.println("************ createTableScript.ANALYSIS. Begin");
+        ModuleTableOrViewGet tblDiagn=new ModuleTableOrViewGet(false, "INSPECTION_LOTS", "config-audit", "analysis", procInstanceName);
+        createTableScript(tblDiagn.getTableObj(), procInstanceName, true, true, null);
+        out.println("************ createTableScript.SPEC. Begin");
+        tblDiagn=new ModuleTableOrViewGet(false, "INSPECTION_LOTS", "config-audit", "spec", procInstanceName);
+        createTableScript(tblDiagn.getTableObj(), procInstanceName, true, true, null);
+        //out.println(EnumIntTables.getViewScriptCreation(ViewsInstrumentsData.NOT_DECOM_INSTR_EVENT_DATA_VW, procInstanceName, false, false, true, null));
+if (1==1)return;
+
+        String[] fldsArr = new String[]{TblsReqs.ProcedureRoles.ROLE_NAME.getName()};
+        Object[][] procRoles = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_ROLES.getTableName(),
+            new String[]{TblsReqs.ProcedureRoles.PROC_INSTANCE_NAME.getName()},
+            new Object[]{procInstanceName}, fldsArr,
+            new String[]{TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()});
+        procInstanceName="inspection_lot";
+        org.json.JSONArray viewsBySops = AnalysisMethodCertifQueries.methodsByUser(procInstanceName);
+        out.println(viewsBySops);
+if (1==1)return;                
+        org.json.JSONArray actionsByRoles = ClassReqProcedUserAndActionsForQueries.actionsByRoles(procInstanceName, procRoles);
+        out.println(actionsByRoles);
+        
+if (1==1)return;        
         procInstanceName="inspection_lot";                
-        Object[] assignMethodToUser = AnalysisMethodCertif.newRecord("EP", 1, "admin", null, null);
-        out.println(Arrays.toString(assignMethodToUser));
+        InternalMessage assignMethodToUser = AnalysisMethodCertif.newRecord("EP", 1, "admin", null, null);
+        out.println(assignMethodToUser.getDiagnostic());
+        out.println(Arrays.toString(assignMethodToUser.getMessageCodeVariables()));
 if (1==1)return;
 
         procInstanceName="inspection_lot";                
@@ -339,9 +369,9 @@ for (int scriptId=1;scriptId<6;scriptId++){
             out.println(curStr);
         }*/
         //out.println("Weka determines...."+OperationMetricsConsumptionStock.mainWeka());
-        for (String curStr: OperationMetricsConsumptionStock.mainWeka(currentQuantity, minStockAlert, consumptionData)){
-            out.println(curStr);
-        }
+//works weka         for (String curStr: OperationMetricsConsumptionStock.mainWeka(currentQuantity, minStockAlert, consumptionData)){
+//works weka             out.println(curStr);
+//works weka         }
 if (1==1)return;            
 
 Rdbms.stablishDBConection("labplanet");
@@ -352,8 +382,8 @@ Rdbms.stablishDBConection("labplanet");
 if (1==1)return;            
             Rdbms.stablishDBConection("labplanet");
             procInstanceName = "inv-draft";
-            String[] fldsArr = new String[]{TblsReqs.ProcedureRoles.ROLE_NAME.getName()};
-            Object[][] procRoles = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_ROLES.getTableName(),
+            fldsArr = new String[]{TblsReqs.ProcedureRoles.ROLE_NAME.getName()};
+            procRoles = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_ROLES.getTableName(),
                     new String[]{TblsReqs.ProcedureRoles.PROC_INSTANCE_NAME.getName()},
                     new Object[]{procInstanceName}, fldsArr,
                     new String[]{TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()});
