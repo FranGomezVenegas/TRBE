@@ -171,27 +171,27 @@
     </servlet>
     <servlet>
         <servlet-name>GenomaProjectAPIactions</servlet-name>
-        <servlet-class>com.labplanet.servicios.modulegenoma.GenomaProjectAPI</servlet-class>
+        <servlet-class>module.clinicalstudies.apis.GenomaProjectAPI</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GenomaStudyAPIactions</servlet-name>
-        <servlet-class>com.labplanet.servicios.modulegenoma.GenomaStudyAPI</servlet-class>
+        <servlet-class>module.clinicalstudies.apis.GenomaStudyAPI</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GenomaStudyAPIqueries</servlet-name>
-        <servlet-class>com.labplanet.servicios.modulegenoma.GenomaStudyAPIFrontend</servlet-class>
+        <servlet-class>module.clinicalstudies.apis.GenomaStudyAPIFrontend</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GenomaConfigVariableAPI</servlet-name>
-        <servlet-class>com.labplanet.servicios.modulegenoma.GenomaConfigVariableAPI</servlet-class>
+        <servlet-class>module.clinicalstudies.apis.GenomaConfigVariableAPI</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GenomaConfigVariableAPIqueries</servlet-name>
-        <servlet-class>com.labplanet.servicios.modulegenoma.GenomaConfigVariableAPIFrontend</servlet-class>
+        <servlet-class>module.clinicalstudies.apis.GenomaConfigVariableAPIFrontend</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GenomaStudyObjectsVariablesAPI</servlet-name>
-        <servlet-class>com.labplanet.servicios.modulegenoma.GenomaStudyObjectsVariablesAPI</servlet-class>
+        <servlet-class>module.clinicalstudies.apis.GenomaStudyObjectsVariablesAPI</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>TesterFromUploadFile</servlet-name>
@@ -239,7 +239,7 @@
     </servlet>
     <servlet>
         <servlet-name>TestingGenoma</servlet-name>
-        <servlet-class>com.labplanet.servicios.modulegenoma.TestingGenoma</servlet-class>
+        <servlet-class>module.clinicalstudies.apis.TestingGenoma</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>TestingInspLotRM</servlet-name>
@@ -508,7 +508,6 @@
         <servlet-name>MonitoringAPIqueries</servlet-name>
         <url-pattern>/moduleMonitoring/MonitoringAPIqueries</url-pattern>
     </servlet-mapping>
-    
     <servlet-mapping>
         <servlet-name>EnvMonAPIStats</servlet-name>
         <url-pattern>/moduleenvmon/EnvMonAPIstats</url-pattern>
