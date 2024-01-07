@@ -19,4 +19,14 @@ public interface EnumIntTables {
     Object[] getForeignKey();
     String getTableComment();
     FldBusinessRules[] getTblBusinessRules();
+    
+        public static Integer getTblPosicInArray(EnumIntTables[] tbls, String tableName) {
+        for (int i = 0; i < tbls.length; i++) {
+            if (tbls[i].getTableName().equalsIgnoreCase(tableName)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
 }
