@@ -72,6 +72,8 @@ public class TblsCnfgAudit {
         PICTURE_AFTER("picture_after", "json", null, null, null, null),
         PARENT_AUDIT_ID("parent_audit_id", LPDatabase.integer(), null, null, null, null),
         REASON("reason", LPDatabase.string(), null, null, null, null),
+        ACTION_PRETTY_EN("action_pretty_en", LPDatabase.string(), null, null, null, null),
+        ACTION_PRETTY_ES("action_pretty_es", LPDatabase.string(), null, null, null, null),
         ;
         private Analysis(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
@@ -110,6 +112,8 @@ public class TblsCnfgAudit {
         PICTURE_AFTER("picture_after", "json", null, null, null, null),
         PARENT_AUDIT_ID("parent_audit_id", LPDatabase.integer(), null, null, null, null),
         REASON("reason", LPDatabase.string(), null, null, null, null),
+        ACTION_PRETTY_EN("action_pretty_en", LPDatabase.string(), null, null, null, null),
+        ACTION_PRETTY_ES("action_pretty_es", LPDatabase.string(), null, null, null, null),
         ;
         private Spec(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
