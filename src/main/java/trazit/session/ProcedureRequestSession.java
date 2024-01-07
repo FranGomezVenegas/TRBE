@@ -59,7 +59,7 @@ public class ProcedureRequestSession {
     private Boolean isQuery;
     private Boolean isPlatform;
     private Boolean isForDocumentation;
-    private Boolean isForProcManagement;
+    private Boolean isForProcManagement;    
     private Boolean hasErrors;
     private String errorMessage;
     private Object[] errorMessageVariables;
