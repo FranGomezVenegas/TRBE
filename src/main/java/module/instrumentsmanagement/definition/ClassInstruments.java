@@ -5,7 +5,7 @@
  */
 package module.instrumentsmanagement.definition;
 
-import functionaljavaa.analysis.ConfigAnalysisStructure;
+import modules.masterdata.analysis.ConfigAnalysisStructure;
 import module.instrumentsmanagement.definition.TblsInstrumentsData.TablesInstrumentsData;
 import functionaljavaa.audit.SampleAudit;
 import module.instrumentsmanagement.logic.DataInstruments;
