@@ -70,6 +70,9 @@ public class CreatePlatform {
     private final String[] moduleSpecialViewsMandatoryAttributes=new String[]{"moduleName", "moduleVersion", "releaseDate", "viewName", "windowType",
         "entity", "requirementsInfo", "jsonModel"};
     private final String[] moduleTablesAndViewsMandatoryAttributes=new String[]{"schema_name", "table_name", "is_view", "order_number"};
+    public CreatePlatform(){
+        
+    }
     public CreatePlatform(String platformName){
         diagnSummary="";
         executionLog = new JSONObject();
@@ -77,7 +80,7 @@ public class CreatePlatform {
         getDataFromDictionary();
         createBasicSchemasAndTablesStructure(platformName);
         createAppProcTables(platformName);
-        createModules(platformName);
+        createModules(platformName, null);
     }
 
     public void getDataFromDictionary(){
@@ -490,7 +493,7 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
         addToLogSummary("add_platform_admin", recordsLogObj);
     }
 
-    private void createModules(String platformName){
+    public void createModules(String platformName, String moduleFileName){
         String directoryPathModulesInfo = "ModulesInfo"; 
         String directoryPathModulesSpecialViews = "ModulesSpecialViews"; 
         JSONArray allModuleFilesInfo=new JSONArray();
@@ -526,7 +529,8 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
                     String moduleName="Still not specified";
                     JSONObject jFileContentObjModel = new JSONObject(); 
                     try{
-                        if (file.isFile() && file.getName().endsWith(".json")) {
+                        if (file.isFile() && file.getName().endsWith(".json") && 
+                        ((moduleFileName==null) || (moduleFileName!=null&&file.getName().equalsIgnoreCase(moduleFileName))) ){
                             // Read the content of each text file
                             StringBuilder jsonDataModel = new StringBuilder();
 
