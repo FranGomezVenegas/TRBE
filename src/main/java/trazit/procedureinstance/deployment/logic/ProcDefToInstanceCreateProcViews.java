@@ -31,7 +31,7 @@ import trazit.procedureinstance.definition.definition.TblsReqs;
  *
  * @author User
  */
-public class ProcedureDefToInstanceCreateProcViews {
+public class ProcDefToInstanceCreateProcViews {
 
     
     public static final JSONObject createDBProcedureViews(String procedure, Integer procVersion, String procInstanceName) {

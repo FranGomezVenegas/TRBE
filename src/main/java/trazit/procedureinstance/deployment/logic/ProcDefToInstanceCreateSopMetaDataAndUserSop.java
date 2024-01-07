@@ -24,7 +24,7 @@ import trazit.procedureinstance.definition.definition.TblsReqs;
  *
  * @author User
  */
-public class ProcedureDefToInstanceCreateSopMetaDataAndUserSop {
+public class ProcDefToInstanceCreateSopMetaDataAndUserSop {
 
     /**
      *

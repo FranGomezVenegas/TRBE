@@ -23,8 +23,8 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import trazit.procedureinstance.deployment.logic.ProcedureDefToInstanceCreateProcViews;
-import trazit.procedureinstance.deployment.logic.ProcedureDefToInstanceCreateSopMetaDataAndUserSop;
+import trazit.procedureinstance.deployment.logic.ProcDefToInstanceCreateProcViews;
+import trazit.procedureinstance.deployment.logic.ProcDefToInstanceCreateSopMetaDataAndUserSop;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -151,7 +151,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 runSection=Boolean.valueOf(argValues[8].toString()) || PROCDEPL_PROCEDURE_SOP_META_DATA;
                 sectionsSettingJobj.put("4) SOPs", runSection);
                 if (Boolean.TRUE.equals(runSection)){
-                    JSONObject createDBSopMetaDataAndUserSop = ProcedureDefToInstanceCreateSopMetaDataAndUserSop.createDBSopMetaDataAndUserSop(procName, procVersion, procInstanceName);
+                    JSONObject createDBSopMetaDataAndUserSop = ProcDefToInstanceCreateSopMetaDataAndUserSop.createDBSopMetaDataAndUserSop(procName, procVersion, procInstanceName);
                     sectionsDetailObj.put("SOPs", createDBSopMetaDataAndUserSop);
                 } 
             }
@@ -167,7 +167,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 runSection=Boolean.valueOf(argValues[9].toString()) || PROCDEPL_ASIGN_PROC_SOPS_TO_USERS;
                 sectionsSettingJobj.put("5) Assign SOPs to Users", runSection);
                 if (Boolean.TRUE.equals(runSection)){
-                    JSONObject createDBProcedureUserRoles = ProcedureDefToInstanceCreateSopMetaDataAndUserSop.addProcedureSOPtoUsers(procName, procVersion, procInstanceName);
+                    JSONObject createDBProcedureUserRoles = ProcDefToInstanceCreateSopMetaDataAndUserSop.addProcedureSOPtoUsers(procName, procVersion, procInstanceName);
                     sectionsDetailObj.put("Assign SOPs to Users", createDBProcedureUserRoles);
                 } 
             }
@@ -183,7 +183,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 runSection=Boolean.valueOf(argValues[10].toString()) || PROCDEPL_PROCEDURE_ACTIONS;
                 sectionsSettingJobj.put("6) Procedure Actions", runSection);
                 if (Boolean.TRUE.equals(runSection)){
-                    sectionsSettingJobj.put("Procedure Views",  ProcedureDefToInstanceCreateProcViews.createDBProcedureViews(procName, procVersion, procInstanceName));
+                    sectionsSettingJobj.put("Procedure Views",  ProcDefToInstanceCreateProcViews.createDBProcedureViews(procName, procVersion, procInstanceName));
                     sectionsSettingJobj.put("Procedure Actions", trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.createdDBProcedureActions(procName,  procVersion, procInstanceName));
                     //sectionsSettingJobj.put("Procedure Views json", trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.createDBProcedureViewsJson(procName, procVersion, procInstanceName));
                 }
@@ -216,7 +216,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 runSection=Boolean.valueOf(argValues[12].toString()) || PROCDEPL_MODULE_TABLES_AND_FIELDS;
                 sectionsSettingJobj.put("8) Module tables and fields", runSection);
                 if (Boolean.TRUE.equals(runSection)){
-                    JSONObject createDBModuleTablesAndFields = trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.createDBModuleTablesAndFields(procName, procVersion, procInstanceName, moduleName);
+                    JSONObject createDBModuleTablesAndFields = trazit.procedureinstance.deployment.logic.ProcDefToInstanceCreateModuleTablesAndViews.createDBModuleTablesAndFields(procName, procVersion, procInstanceName, moduleName);
                     sectionsDetailObj.put("Module tables and fields", createDBModuleTablesAndFields);
                 }
             }
