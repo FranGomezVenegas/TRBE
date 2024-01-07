@@ -3,11 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.labplanet.servicios.modulegenoma;
+package module.clinicalstudies.apis;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import static com.labplanet.servicios.modulegenoma.GenomaConfigVariableAPI.GenomaVariableAPIactionsEndpoints.VARIABLE_SET_ADD_VARIABLE;
-import com.labplanet.servicios.modulegenoma.GenomaProjectAPI.GenomaProjectAPIParamsList;
+import static module.clinicalstudies.apis.GenomaConfigVariableAPI.GenomaVariableAPIactionsEndpoints.VARIABLE_SET_ADD_VARIABLE;
+import module.clinicalstudies.apis.GenomaProjectAPI.GenomaProjectAPIParamsList;
 import functionaljavaa.modulegenoma.GenomaConfigVariables;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import java.io.IOException;

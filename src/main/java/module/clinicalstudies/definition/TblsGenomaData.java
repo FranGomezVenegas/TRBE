@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.labplanet.servicios.modulegenoma;
+package module.clinicalstudies.definition;
 
 import lbplanet.utilities.LPDatabase;
 import static lbplanet.utilities.LPDatabase.dateTime;

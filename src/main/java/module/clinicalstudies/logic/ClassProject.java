@@ -3,9 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.labplanet.servicios.modulegenoma;
+package module.clinicalstudies.logic;
 
-import com.labplanet.servicios.modulegenoma.GenomaProjectAPI.GenomaProjectAPIactionsEndPoints;
+import module.clinicalstudies.definition.TblsGenomaData;
+import module.clinicalstudies.apis.GenomaProjectAPI.GenomaProjectAPIactionsEndPoints;
 import functionaljavaa.modulegenoma.GenomaDataProject;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;

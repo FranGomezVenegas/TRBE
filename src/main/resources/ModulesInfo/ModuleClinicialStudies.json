@@ -1,0 +1,53 @@
+{
+    "name": "CLINICAL_STUDIES",
+    "version": 1,
+    "releaseDate": "2024-01-02",
+    "description_en": "Clinical Studies",
+    "description_es": "Estudios Clínicos",
+    "ModuleSettings":{
+            "actionsEndpoints":[
+                  { "name": "InventoryLot" , "url" : "/app/procs/InvTrackingAPIactions"}
+            ],
+            "queriesEndpoints":[
+                  { "name": "InventoryLot" , "url" : "/app/procs/InvTrackingAPIqueries"}
+            ]
+    },
+    "picture": "/images/procedures_pictures/clinical_studies.jpg",
+    "apis":[ "ConfigMasterDataAPIactionsEndpoints", "GenomaProjectAPIactionsEndPoints", "GenomaStudyAPIactionsEndPoints", 
+        "GenomaStudyAPIqueriesEndpoints", "GenomaVariableAPIqueriesEndpoints", "SavedQueriesAPIEndpoints", "SavedQueriesAPIqueriesEndpoints",
+        "SopUserAPIactionsEndpoints", "SopUserAPIqueriesEndpoints"
+    ],
+    "error_notifications":[
+        {"api_name":"AuditAndUserValidationErrorTrapping"}, {"api_name":"GenomaDataProjectErrorTrapping"}, {"api_name":"GenomaErrorTrapping"}, 
+        {"api_name":"UomErrorTrapping"}, {"api_name":"UserSopErrorTrapping"}
+    ],
+    "tables_and_views":[
+        {"schema_name":"config", "table_name":"variables", "is_view":false, "order_number":1, "definition_en":"Variables list", "definition_es":"Lista de variables"},
+        {"schema_name":"config", "table_name":"variables_set", "is_view":false, "order_number":3, "definition_en":"Variables Set list", "definition_es":"Lista de variables agrupadas"},
+        {"schema_name":"data", "table_name":"project", "is_view":false, "order_number":1, "definition_en":"User certifications for analysis methods", "definition_es":"Certificaciones de usuario para métodos de análisis"},
+        {"schema_name":"data", "table_name":"project_users", "is_view":false, "order_number":2, "definition_en":"Inventory lots", "definition_es":"Lotes de inventario"},
+        {"schema_name":"data", "table_name":"study", "is_view":false, "order_number":3, "definition_en":"Inventory lot qualifications", "definition_es":"Cualificaciones de lotes de inventario"},
+        {"schema_name":"data", "table_name":"study_users", "is_view":false, "order_number":4, "definition_en":"Inventory lot qualifications variable values", "definition_es":"Valores a las variables de las cualificaciones de lotes de inventario"},
+        {"schema_name":"data", "table_name":"study_individual", "is_view":false, "order_number":5, "definition_en":"user and analysis method certification view", "definition_es":"vista de certificación de usuario por método analí­tico"},
+        {"schema_name":"data", "table_name":"study_family_individual", "is_view":false, "order_number":6, "definition_en":"user and analysis method certification view", "definition_es":"vista de certificación de usuario por método analí­tico"},
+        {"schema_name":"data", "table_name":"study_individual_sample", "is_view":false, "order_number":7, "definition_en":"user and analysis method certification view", "definition_es":"vista de certificación de usuario por método analí­tico"},
+        {"schema_name":"data", "table_name":"study_samples_set", "is_view":false, "order_number":8, "definition_en":"user and analysis method certification view", "definition_es":"vista de certificación de usuario por método analí­tico"},
+        {"schema_name":"data", "table_name":"study_family", "is_view":false, "order_number":9, "definition_en":"user and sop certification view", "definition_es":"vista de certificación de usuario por PNT"},
+        {"schema_name":"data", "table_name":"study_variable_values", "is_view":false, "order_number":10, "definition_en":"user and analysis method certification view", "definition_es":"vista de certificación de usuario por método analí­tico"},
+        {"schema_name":"data", "table_name":"study_objects_files", "is_view":false, "order_number":11, "definition_en":"user and sop certification view", "definition_es":"vista de certificación de usuario por PNT"},
+        {"schema_name":"data", "table_name":"user_sop", "is_view":false, "order_number":12, "definition_en":"user sop certification", "definition_es":"PNTs de usuario"},
+        {"schema_name":"data-audit", "table_name":"project", "is_view":false, "order_number":1, "definition_en":"inventory lot audit history", "definition_es":"historial de auditorí­a de lotes de inventario"},
+        {"schema_name":"data-audit", "table_name":"study", "is_view":false, "order_number":2, "definition_en":"inventory lot audit history", "definition_es":"historial de auditorí­a de lotes de inventario"},
+        {"schema_name":"procedure", "table_name":"proc_user_and_roles", "is_view":true, "order_number":35, "definition_en":"procedure user and roles", "definition_es":"usuarios y perfiles del proceso"},
+        {"schema_name":"procedure-audit", "table_name":"proc_hashcodes_history", "is_view":false, "order_number":38, "definition_en":"procedure instance hashcodes audit history", "definition_es":"historial de auditorí­a de códigos hash de instancia de procedimiento"}
+    ],    
+    "business_rules":[
+        {"type": "all_business_rules", "api_name": "GenomaBusnessRules",  "name": "N/A", "mandatory": true},
+        {"type": "one_business_rule", "api_name": "UserSopBusinessRules", "name": "userSopMode", "mandatory": true},
+        {"type": "one_business_rule", "api_name": "UserSopBusinessRules", "name": "windowOpenableWhenNotSopCertifiedUserSopCertification", "mandatory": true}
+
+    ],
+    "manuals":[
+        {"manual_name":"Auditoría", "manual_version": 1, "description":"La auditorí­a en TRAZiT", "file_link":"https://onedrive.live.com/embed?cid=FC113EC81E46401D&resid=FC113EC81E46401D%2125255&authkey=AL-4PNfH61-f-Pw&em=2", "is_video":false, "active":true, "area": "Usuario"}
+    ]    
+}

@@ -3,9 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.labplanet.servicios.modulegenoma;
+package module.clinicalstudies.apis;
 
+import module.clinicalstudies.definition.TblsGenomaData;
 import com.labplanet.servicios.app.GlobalAPIsParams;
+import module.clinicalstudies.logic.ClassProject;
 import functionaljavaa.modulegenoma.GenomaDataAudit.DataGenomaProjectAuditEvents;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
@@ -49,7 +51,7 @@ public class GenomaProjectAPI extends HttpServlet {
             this.paramName = name;
         }
 
-        String getParamName() {
+        public String getParamName() {
             return this.paramName;
         }
         private final String paramName;
