@@ -17,7 +17,7 @@ import module.instrumentsmanagement.definition.TblsInstrumentsConfig;
 import databases.TblsCnfg;
 import databases.TblsData;
 import databases.TblsProcedureConfig;
-import functionaljavaa.analysis.ConfigAnalysisStructure;
+import modules.masterdata.analysis.ConfigAnalysisStructure;
 import functionaljavaa.certification.AnalysisMethodCertif;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.materialspec.ConfigSpecStructure;
@@ -258,7 +258,7 @@ public class ClassMasterData {
                             fldValues = LPArray.addValueToArray1D(fldValues, jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.UOM.getName()).getAsString());
                         }
 
-                        this.diagnostic = cAna.analysisMethodParamsNew(jO.getAsJsonObject().get(TblsCnfg.Analysis.CODE.getName()).getAsString(), 1, jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.METHOD_NAME.getName()).getAsString(), fldNames, fldValues, instanceName);
+                        this.diagnostic = cAna.analysisMethodParamsNew(jO.getAsJsonObject().get(TblsCnfg.Analysis.CODE.getName()).getAsString(), 1, jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.METHOD_NAME.getName()).getAsString(), fldNames, fldValues, true);
                         //if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
                         if (jO.getAsJsonObject().has(TblsCnfg.AnalysisMethodParams.UOM.getName())) {
                             String uom = jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.UOM.getName()).getAsString();
