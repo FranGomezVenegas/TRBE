@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package functionaljavaa.analysis;
+package modules.masterdata.analysis;
 
 import databases.Rdbms;
 import databases.SqlStatement;

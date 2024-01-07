@@ -4,7 +4,7 @@ import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import databases.TblsData;
-import functionaljavaa.analysis.ConfigAnalysisStructure;
+import modules.masterdata.analysis.ConfigAnalysisStructure;
 import functionaljavaa.certification.AnalysisMethodCertif;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
