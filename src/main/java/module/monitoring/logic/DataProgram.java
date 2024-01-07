@@ -11,7 +11,7 @@ import lbplanet.utilities.LPPlatform;
 import databases.DataDataIntegrity;
 import databases.Rdbms;
 import databases.RdbmsObject;
-import functionaljavaa.analysis.ConfigAnalysisStructure.ConfigAnalysisErrorTrapping;
+import modules.masterdata.analysis.ConfigAnalysisStructure.ConfigAnalysisErrorTrapping;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
