@@ -7,7 +7,7 @@ package module.inspectionlot.rawmaterial.definition;
 
 import databases.Rdbms;
 import databases.TblsData;
-import functionaljavaa.analysis.ConfigAnalysisStructure;
+import modules.masterdata.analysis.ConfigAnalysisStructure;
 import static functionaljavaa.inventory.DataInventoryRetain.*;
 import functionaljavaa.modulesample.DataModuleSampleAnalysisResult;
 import module.inspectionlot.rawmaterial.logic.DataInspectionLot;
