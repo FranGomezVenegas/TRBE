@@ -11,7 +11,7 @@ import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_PARAMET
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_SPEC_FIELD_NAME;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_SPEC_FIELD_VALUE;
 import databases.TblsCnfg;
-import functionaljavaa.analysis.ConfigAnalysisStructure;
+import modules.masterdata.analysis.ConfigAnalysisStructure;
 import functionaljavaa.materialspec.ConfigSpecStructure;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
