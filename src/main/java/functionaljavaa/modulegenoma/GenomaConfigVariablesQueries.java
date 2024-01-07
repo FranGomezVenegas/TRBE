@@ -5,7 +5,7 @@
  */
 package functionaljavaa.modulegenoma;
 
-import com.labplanet.servicios.modulegenoma.TblsGenomaConfig;
+import module.clinicalstudies.definition.TblsGenomaConfig;
 import databases.Rdbms;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;

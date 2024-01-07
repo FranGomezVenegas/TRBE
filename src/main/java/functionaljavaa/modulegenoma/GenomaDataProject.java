@@ -5,8 +5,8 @@
  */
 package functionaljavaa.modulegenoma;
 
-import com.labplanet.servicios.modulegenoma.GenomaProjectAPI;
-import com.labplanet.servicios.modulegenoma.TblsGenomaData;
+import module.clinicalstudies.apis.GenomaProjectAPI;
+import module.clinicalstudies.definition.TblsGenomaData;
 import databases.DataDataIntegrity;
 import databases.Rdbms;
 import databases.RdbmsObject;

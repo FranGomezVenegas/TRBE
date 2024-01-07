@@ -5,7 +5,7 @@
  */
 package functionaljavaa.modulegenoma;
 
-import com.labplanet.servicios.modulegenoma.TblsGenomaConfig;
+import module.clinicalstudies.definition.TblsGenomaConfig;
 import static functionaljavaa.modulegenoma.GenomaUtilities.addObjectToUnstructuredField;
 import static functionaljavaa.modulegenoma.GenomaUtilities.removeObjectToUnstructuredField;
 import lbplanet.utilities.LPPlatform;
