@@ -15,7 +15,7 @@ import databases.SqlWhere;
 import databases.TblsCnfg;
 import databases.TblsData;
 import databases.features.Token;
-import functionaljavaa.analysis.AnalysisCalculations;
+import modules.masterdata.analysis.AnalysisCalculations;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.certification.AnalysisMethodCertif;
 import functionaljavaa.inventory.InventoryGlobalVariables.DataInvRetErrorTrapping;

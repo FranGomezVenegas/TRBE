@@ -18,7 +18,7 @@ import databases.SqlStatement;
 import databases.SqlWhere;
 import databases.TblsData;
 import databases.features.Token;
-import functionaljavaa.analysis.UserMethod;
+import modules.masterdata.analysis.UserMethod;
 import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.modulesample.DataModuleSampleAnalysisResult;
