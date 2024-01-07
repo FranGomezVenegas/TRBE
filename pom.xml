@@ -17,18 +17,18 @@
     
     <dependencies>
 <!-- https://mvnrepository.com/artifact/nz.ac.waikato.cms.weka/weka-dev -->
-<dependency>
+<!-- <dependency>
     <groupId>nz.ac.waikato.cms.weka</groupId>
     <artifactId>weka-dev</artifactId>
     <version>3.9.6</version>
-</dependency>
+</dependency> -->
 <!-- https://mvnrepository.com/artifact/tech.tablesaw/tablesaw-core -->
-<dependency>
+<!-- <dependency>
     <groupId>tech.tablesaw</groupId>
     <artifactId>tablesaw-core</artifactId>
     <version>0.43.1</version>
 </dependency>
-
+-->
 <dependency>
     <groupId>javax.servlet</groupId>
     <artifactId>javax.servlet-api</artifactId>
@@ -68,26 +68,7 @@
     <version>1.2.5</version>
 </dependency>
 
-<!--<dependency>
-    <groupId>org.hibernate</groupId>
-    <artifactId>hibernate-core</artifactId>
-    <version>5.2.12.Final</version>
-        <exclusions>
-        <exclusion>
-            <artifactId>jta</artifactId>
-            <groupId>javax.transaction</groupId>
-        </exclusion>
-        <exclusion>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </exclusion>
-        <exclusion>
-            <groupId>dom4j</groupId>
-            <artifactId>dom4j</artifactId>
-        </exclusion>
-    </exclusions>    
-</dependency>
--->
+
 <dependency>
     <groupId>com.mchange</groupId>
     <artifactId>mchange-commons-java</artifactId>
@@ -314,19 +295,19 @@
 </dependency>
 
 <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-s3 -->
-<dependency>
+<!-- <dependency>
     <groupId>com.amazonaws</groupId>
     <artifactId>aws-java-sdk-s3</artifactId>
     <version>1.12.609</version>
 </dependency>
-
+-->
 <!-- https://mvnrepository.com/artifact/commons-fileupload/commons-fileupload -->
-<dependency>
+<!-- with aws above <dependency>
     <groupId>commons-fileupload</groupId>
     <artifactId>commons-fileupload</artifactId>
     <version>1.5</version>
 </dependency>
-
+-->
 
 <!-- https://mvnrepository.com/artifact/org.molgenis/molgenis-data-excel
  <dependency>

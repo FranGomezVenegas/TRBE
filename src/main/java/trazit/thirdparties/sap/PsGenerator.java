@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 package trazit.thirdparties.sap;
-import org.apache.commons.text.RandomStringGenerator;
+// pwGenerator required import org.apache.commons.text.RandomStringGenerator;
 
 public class PsGenerator {
     public static void main(String[] args) {
@@ -13,14 +13,14 @@ public class PsGenerator {
         boolean useNumbers = true;
         boolean useSpecialCharacters = true;
 
-        RandomStringGenerator generator = new RandomStringGenerator.Builder()
-                .withinRange('0', 'z')
-                .filteredBy(Character::isLetter, Character::isDigit) // Include letters and digits
-                .build();
+// pwGenerator required         RandomStringGenerator generator = new RandomStringGenerator.Builder()
+// pwGenerator required                 .withinRange('0', 'z')
+// pwGenerator required                 .filteredBy(Character::isLetter, Character::isDigit) // Include letters and digits
+// pwGenerator required                 .build();
 
-        String generatedPassword = generator.generate(passwordLength);
+// pwGenerator required         String generatedPassword = generator.generate(passwordLength);
 
-        System.out.println("Generated Password: " + generatedPassword);
+// pwGenerator required         System.out.println("Generated Password: " + generatedPassword);
     }
 }
 
