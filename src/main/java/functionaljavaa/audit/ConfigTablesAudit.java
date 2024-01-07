@@ -13,7 +13,7 @@ import trazit.enums.EnumIntTables;
 public class ConfigTablesAudit {
 
     public enum ConfigAnalysisAuditEvents implements EnumIntAuditEvents {
-        ANALYSIS_NEW, ANALYSIS_UPDATE, ANALYSIS_METHOD_NEW, ANALYSIS_METHOD_UPDATE, ANALYSIS_METHOD_DELETE,
+        ANALYSIS_NEW, ANALYSIS_UPDATE, ANALYSIS_METHOD_ADDED, ANALYSIS_METHOD_UPDATE, ANALYSIS_METHOD_DELETE,
         ANALYSIS_METHOD_PARAM_NEW, ANALYSIS_METHOD_PARAM_UPDATE, ANALYSIS_METHOD_PARAM_DELETE
     }
 
@@ -36,19 +36,14 @@ public class ConfigTablesAudit {
      * @param parentAuditId
      * @return
      */
-    public static Object[] analysisAuditAdd(String action, EnumIntTables tblObj, String tableId,
-            String specCode, Integer specConfigVersion, Object[] auditlog, Integer parentAuditId) {
+    public static Object[] analysisAuditAdd(EnumIntAuditEvents action, EnumIntTables tblObj, String tableId,
+            String specCode, Integer specConfigVersion, String[] fldNames, Object[] fldValues, Integer parentAuditId) {
 
-        GenericAuditFields gAuditFlds = new GenericAuditFields(auditlog);
+        GenericAuditFields gAuditFlds=new GenericAuditFields(action, tblObj, fldNames, fldValues);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();
+        String[] fieldNames=gAuditFlds.getFieldNames();
+        Object[] fieldValues=gAuditFlds.getFieldValues();
 
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) {
-            return gAuditFlds.getErrorDetail();
-        }
-        String[] fieldNames = gAuditFlds.getFieldNames();
-        Object[] fieldValues = gAuditFlds.getFieldValues();
-
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Analysis.ACTION_NAME.getName());
-        fieldValues = LPArray.addValueToArray1D(fieldValues, action);
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Analysis.TABLE_NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, tblObj.getTableName());
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Analysis.TABLE_ID.getName());
@@ -83,19 +78,14 @@ public class ConfigTablesAudit {
      * @param parentAuditId
      * @return
      */
-    public static Object[] specAuditAdd(String action, EnumIntTables tblObj, String tableId,
-            String specCode, Integer specConfigVersion, Object[] auditlog, Integer parentAuditId) {
+    public static Object[] specAuditAdd(EnumIntAuditEvents action, EnumIntTables tblObj, String tableId,
+            String specCode, Integer specConfigVersion, String[] fldNames, Object[] fldValues, Integer parentAuditId) {
 
-        GenericAuditFields gAuditFlds = new GenericAuditFields(auditlog);
-
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) {
-            return gAuditFlds.getErrorDetail();
-        }
-        String[] fieldNames = gAuditFlds.getFieldNames();
-        Object[] fieldValues = gAuditFlds.getFieldValues();
-
-        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Spec.ACTION_NAME.getName());
-        fieldValues = LPArray.addValueToArray1D(fieldValues, action);
+        GenericAuditFields gAuditFlds=new GenericAuditFields(action, tblObj, fldNames, fldValues);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();
+        String[] fieldNames=gAuditFlds.getFieldNames();
+        Object[] fieldValues=gAuditFlds.getFieldValues();
+        
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Spec.TABLE_NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, tblObj.getTableName());
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsCnfgAudit.Spec.TABLE_ID.getName());
