@@ -493,12 +493,13 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                     break;
                 case GET_SPECS:
                     String specCode = LPNulls.replaceNull(argValues[0]).toString();
+
                     jArr = new JSONArray();
                     whereObj = new SqlWhere();
-                    if (LPNulls.replaceNull(specCode).toString().length() == 0) {
+                    if ("ALL".equalsIgnoreCase(specCode)||LPNulls.replaceNull(specCode).toString().length() == 0) {
                         whereObj.addConstraint(TblsInspLotRMConfig.Spec.CODE, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, null, null);
                     } else {
-                        whereObj.addConstraint(TblsInspLotRMConfig.Spec.CODE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{specCode}, null);
+                        whereObj.addConstraint(TblsInspLotRMConfig.Spec.CODE, SqlStatement.WHERECLAUSE_TYPES.LIKE, new Object[]{specCode}, null);
                     }
                     flds = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInspLotRMConfig.TablesInspLotRMConfig.SPEC);
                     Object[][] specInfoInfo = QueryUtilitiesEnums.getTableData(TblsInspLotRMConfig.TablesInspLotRMConfig.SPEC,
@@ -516,8 +517,8 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                         Object curSpecConfigVersion = jObj2.get(TblsInspLotRMConfig.Spec.CONFIG_VERSION.getName());
 
                         whereObj = new SqlWhere();
-                        whereObj.addConstraint(TblsInspLotRMConfig.SpecLimits.CODE, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{curSpecCode}, null);
-                        whereObj.addConstraint(TblsInspLotRMConfig.SpecLimits.CONFIG_VERSION, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{curSpecConfigVersion}, null);
+                        whereObj.addConstraint(TblsInspLotRMConfig.SpecLimits.CODE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{curSpecCode}, null);
+                        whereObj.addConstraint(TblsInspLotRMConfig.SpecLimits.CONFIG_VERSION, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{curSpecConfigVersion}, null);
                         EnumIntTableFields[] fldsSpecLimits = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInspLotRMConfig.TablesInspLotRMConfig.SPEC_LIMITS);
                         JSONArray jSpecLimitsArr = new JSONArray();
                         Object[][] specLimitsInfo = QueryUtilitiesEnums.getTableData(TblsInspLotRMConfig.TablesInspLotRMConfig.SPEC_LIMITS,
