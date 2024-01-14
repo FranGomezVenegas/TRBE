@@ -15,7 +15,6 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
-import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.ApiErrorTraping;
@@ -81,10 +80,17 @@ public class ClassInvTracking {
             return;
         }
         DataInventory invLot = null;
-        String lotName = argValues[0].toString();
-        String category = argValues[1].toString();
-        String reference = argValues[2].toString();
-        if (Boolean.FALSE.equals("NEW_INVENTORY_LOT".equalsIgnoreCase(endPoint.getName())) && Boolean.FALSE.equals("CONFIG_ADD_REFERENCE".equalsIgnoreCase(endPoint.getName()))) {
+        String lotName = "";
+        String category = "";
+        String reference = "";
+        if (Boolean.FALSE.equals("LOTAUDIT_SET_AUDIT_ID_REVIEWED".equalsIgnoreCase(endPoint.getName()))) {
+            lotName = argValues[0].toString();
+            category = argValues[1].toString();
+            reference = argValues[2].toString();
+        }
+        if (Boolean.FALSE.equals("NEW_INVENTORY_LOT".equalsIgnoreCase(endPoint.getName())) && Boolean.FALSE.equals("CONFIG_ADD_REFERENCE".equalsIgnoreCase(endPoint.getName()))
+            && Boolean.FALSE.equals("LOTAUDIT_SET_AUDIT_ID_REVIEWED".equalsIgnoreCase(endPoint.getName()))                
+            ) {
             invLot = new DataInventory(lotName, reference, category, null);
             if (Boolean.TRUE.equals(invLot.getHasError())) {
                 this.actionDiagnosesObj = invLot.getErrorDetail();
