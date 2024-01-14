@@ -28,7 +28,10 @@ public class ActionsControl {
 
     public static JSONObject auditSignMode(String procInstanceName) {
         JSONObject jObj = new JSONObject();
-        Object[][] rulesValues = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause()}, new Object[]{"sampleAuditChildRevisionRequired|sampleAuditRevisionMode"}, new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});
+        Object[][] rulesValues = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), 
+            TblsProcedure.TablesProcedure.PROCEDURE_BUSINESS_RULE.getTableName(), 
+            new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.LIKE.getSqlClause()}, 
+            new Object[]{"%Audit%Revision%"}, new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(rulesValues[0][0].toString())) {
             return jObj;
         }
