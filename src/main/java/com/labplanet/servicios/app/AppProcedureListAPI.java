@@ -186,10 +186,11 @@ public class AppProcedureListAPI extends HttpServlet {
                         procedures.add(procedure);
                     }
                 } catch (Exception e) {
-                    JSONObject proceduresList = new JSONObject();
-                    proceduresList.put(LABEL_ARRAY_PROCEDURES, "Error in procedure " + curProc.toString() + ". Error: " + e.getMessage());
-                    return proceduresList;
-
+                    JSONObject procWithError = new JSONObject();
+                    procWithError.put(LABEL_ARRAY_PROCEDURES, "Error in procedure " + curProc.toString() + ". Error: " + e.getMessage());
+//                    procedures.add(procWithError);
+                    //proceduresList.put(LABEL_ARRAY_PROCEDURES, procedures);
+                    //return proceduresList;
                 }
 
             }
