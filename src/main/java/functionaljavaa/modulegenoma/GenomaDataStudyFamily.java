@@ -168,8 +168,8 @@ public InternalMessage createStudyFamily(GenomaStudyAPI.GenomaStudyAPIactionsEnd
             for (String currIndiv: individuals)
                 studyFamilyAddIndividual(endpoint, studyName, familyName, currIndiv);
         if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())){
-            GenomaDataAudit.studyAuditAdd(endpoint, TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName(), familyName, 
-                studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
+            GenomaDataAudit.studyAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.STUDY_FAMILY, familyName, 
+                studyName, null, fieldsName, fieldsValue);
             return new InternalMessage(LPPlatform.LAB_TRUE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), insertRecordInTable.getNewRowId());
         }
         return new InternalMessage(LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), null);
@@ -185,8 +185,8 @@ public Object[] studyFamilyActivate(GenomaStudyAPI.GenomaStudyAPIactionsEndPoint
     Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.STUDY_FAMILY,
         EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.STUDY_FAMILY, fieldsName), fieldsValue, sqlWhere, null);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-        GenomaDataAudit.studyAuditAdd(endpoint, TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName(), familyName, 
-            studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
+        GenomaDataAudit.studyAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.STUDY_FAMILY, familyName, 
+            studyName, null, fieldsName, fieldsValue);
     return diagnosesProj;      
 }    
 
@@ -202,8 +202,8 @@ public Object[] studyFamilyDeActivate(GenomaStudyAPI.GenomaStudyAPIactionsEndPoi
     Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.STUDY_FAMILY,
         EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.STUDY_FAMILY, fieldsName), fieldsValue, sqlWhere, null);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-        GenomaDataAudit.studyAuditAdd(endpoint, TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName(), familyName, 
-            studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
+        GenomaDataAudit.studyAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.STUDY_FAMILY, familyName, 
+            studyName, null, fieldsName, fieldsValue);
     return diagnosesProj;      
 }   
 
@@ -220,8 +220,8 @@ public Object[] studyFamilyIndividualUpdate(GenomaStudyAPI.GenomaStudyAPIactions
     Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.STUDY_FAMILY,
         EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.STUDY_FAMILY, fieldsName), fieldsValue, sqlWhere, null);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-        GenomaDataAudit.studyAuditAdd(endpoint, TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName(), familyName, 
-            studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
+        GenomaDataAudit.studyAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.STUDY_FAMILY, familyName, 
+            studyName, null, fieldsName, fieldsValue);
     return diagnosesProj;      
 } 
 
@@ -244,9 +244,9 @@ public Object[] studyFamilyAddIndividual(GenomaStudyAPI.GenomaStudyAPIactionsEnd
                 new Object[]{studyName, familyName, Integer.valueOf(curIndiv), LPDate.getCurrentTimeStamp()});
         if (Boolean.FALSE.equals(curFamilyAndIndividualLinked.getRunSuccess())) return curFamilyAndIndividualLinked.getApiMessage();
         if (Boolean.TRUE.equals(curFamilyAndIndividualLinked.getRunSuccess())){
-            GenomaDataAudit.studyAuditAdd(endpoint, TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName(), familyName, 
-                studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(new String[]{TblsGenomaData.StudyFamily.UNSTRUCT_CONTENT.getName()}, 
-                        new Object[]{curFamilyAndIndividualLinked.getNewRowId()}, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
+            GenomaDataAudit.studyAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.STUDY_FAMILY, familyName, 
+                studyName, null, new String[]{TblsGenomaData.StudyFamily.UNSTRUCT_CONTENT.getName()}, 
+                        new Object[]{curFamilyAndIndividualLinked.getNewRowId()});
         }
     }
     return curFamilyAndIndividualLinked.getApiMessage();
@@ -268,9 +268,9 @@ public Object[] studyFamilyRemoveIndividual(GenomaStudyAPI.GenomaStudyAPIactions
     where.addConstraint(TblsGenomaData.StudyFamilyIndividual.INDIVIDUAL_ID, null, new Object[]{Integer.valueOf(individualId)}, null);
     RdbmsObject removeDiagn=Rdbms.removeRecordInTable(TblsGenomaData.TablesGenomaData.STUDY_FAMILY_INDIVIDUAL, where, null); 
     if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
-        GenomaDataAudit.studyAuditAdd(endpoint, TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName(), familyName, 
-            studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(new String[]{TblsGenomaData.StudyFamily.UNSTRUCT_CONTENT.getName()}, 
-                    new Object[]{removeDiagn.getErrorMessageCode()}, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
+        GenomaDataAudit.studyAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.STUDY_FAMILY, familyName, 
+            studyName, null, new String[]{TblsGenomaData.StudyFamily.UNSTRUCT_CONTENT.getName()}, 
+                    new Object[]{removeDiagn.getErrorMessageCode()});
     }
             if (Boolean.TRUE.equals(removeDiagn.getRunSuccess()))
                 return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE,"", null);

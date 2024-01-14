@@ -87,8 +87,8 @@ public class DataStudyObjectsVariableValues {
             }
             insertRecordInTable = Rdbms.insertRecordInTable(TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES, fieldsName, fieldsValue);
             if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
-                GenomaDataAudit.studyAuditAdd(endPoint, TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES.getTableName(), Arrays.toString(variableSetContent[i]),
-                        studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
+                GenomaDataAudit.studyAuditAdd(endPoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES, Arrays.toString(variableSetContent[i]),
+                        studyName, null, fieldsName, fieldsValue);
             } else {
                 return new InternalMessage(LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), null);
             }
@@ -122,8 +122,8 @@ public class DataStudyObjectsVariableValues {
         }
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES, fieldsName, fieldsValue);
         if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
-            GenomaDataAudit.studyAuditAdd(endPoint, TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES.getTableName(), variableName,
-                    studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
+            GenomaDataAudit.studyAuditAdd(endPoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES, variableName,
+                    studyName, null, fieldsName, fieldsValue);
             return new InternalMessage(LPPlatform.LAB_TRUE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), insertRecordInTable.getNewRowId());
         }
         return new InternalMessage(LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), null);
@@ -182,8 +182,8 @@ public class DataStudyObjectsVariableValues {
         diagn = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES,
                 EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES, updFieldsName), updFieldsValue, sqlWhere, null);
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString()))) {
-            GenomaDataAudit.studyAuditAdd(endpoint, TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES.getTableName(), newValue,
-                    studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(updFieldsName, updFieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
+            GenomaDataAudit.studyAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES, newValue,
+                    studyName, null, updFieldsName, updFieldsValue);
         }
 
         return diagn;

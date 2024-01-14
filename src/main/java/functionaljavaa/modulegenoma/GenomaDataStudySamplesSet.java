@@ -153,8 +153,8 @@ public InternalMessage createStudySamplesSet(GenomaStudyAPI.GenomaStudyAPIaction
             for (String currSample: samples)
                 studySamplesSetAddSample(endpoint, studyName, sampleSetName, currSample);
         if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())){
-            GenomaDataAudit.studyAuditAdd(endpoint, TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), sampleSetName, 
-                studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
+            GenomaDataAudit.studyAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET, sampleSetName, 
+                studyName, null, fieldsName, fieldsValue);
             return new InternalMessage(LPPlatform.LAB_TRUE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), insertRecordInTable.getNewRowId());
         }
         return new InternalMessage(LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), null);
@@ -170,8 +170,8 @@ public Object[] studySamplesSetActivate(GenomaStudyAPI.GenomaStudyAPIactionsEndP
     Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET,
         EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET, fieldsName), fieldsValue, sqlWhere, null);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-        GenomaDataAudit.studyAuditAdd(endpoint, TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), sampleSetName, 
-            studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
+        GenomaDataAudit.studyAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET, sampleSetName, 
+            studyName, null, fieldsName, fieldsValue);
     return diagnosesProj;      
 }    
 
@@ -188,8 +188,8 @@ public Object[] studySamplesSetDeActivate(GenomaStudyAPI.GenomaStudyAPIactionsEn
     Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET,
         EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET, fieldsName), fieldsValue, sqlWhere, null);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-        GenomaDataAudit.studyAuditAdd(endpoint, TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), sampleSetName, 
-            studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
+        GenomaDataAudit.studyAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET, sampleSetName, 
+            studyName, null, fieldsName, fieldsValue);
     return diagnosesProj;      
 }   
 
@@ -206,8 +206,8 @@ public Object[] studySamplesSetUpdate(GenomaStudyAPI.GenomaStudyAPIactionsEndPoi
     Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET,
         EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET, fieldsName), fieldsValue, sqlWhere, null);
     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-        GenomaDataAudit.studyAuditAdd(endpoint, TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), sampleSetName, 
-            studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
+        GenomaDataAudit.studyAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET, sampleSetName, 
+            studyName, null, fieldsName, fieldsValue);
     return diagnosesProj;      
 } 
 
@@ -222,8 +222,8 @@ public Object[] studySamplesSetAddSample(GenomaStudyAPI.GenomaStudyAPIactionsEnd
         return updateSamplesSetSamples;
     }
     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSamplesSetSamples[0].toString()))) {
-        GenomaDataAudit.studyAuditAdd(endpoint, TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), sampleSetName, 
-            studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(new String[]{TblsGenomaData.StudySamplesSet.UNSTRUCT_CONTENT.getName()}, new Object[]{updateSamplesSetSamples[updateSamplesSetSamples.length-1]}, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
+        GenomaDataAudit.studyAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET, sampleSetName, 
+            studyName, null, new String[]{TblsGenomaData.StudySamplesSet.UNSTRUCT_CONTENT.getName()}, new Object[]{updateSamplesSetSamples[updateSamplesSetSamples.length-1]});
     }
     return updateSamplesSetSamples;
 }
@@ -240,8 +240,8 @@ public Object[] studySamplesSetRemoveSample(GenomaStudyAPI.GenomaStudyAPIactions
     }
     
     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSamplesSetSamples[0].toString()))) {
-        GenomaDataAudit.studyAuditAdd(endpoint, TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET.getTableName(), sampleSetName, 
-            studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(new String[]{TblsGenomaData.StudySamplesSet.UNSTRUCT_CONTENT.getName()}, new Object[]{updateSamplesSetSamples[updateSamplesSetSamples.length-1]}, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
+        GenomaDataAudit.studyAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.STUDY_SAMPLES_SET, sampleSetName, 
+            studyName, null, new String[]{TblsGenomaData.StudySamplesSet.UNSTRUCT_CONTENT.getName()}, new Object[]{updateSamplesSetSamples[updateSamplesSetSamples.length-1]});
     }
     return updateSamplesSetSamples;
 }

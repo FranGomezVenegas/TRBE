@@ -2696,7 +2696,7 @@ private static final int CLIENT_CODE_STACK_INDEX;
     public static RdbmsObject insertRecord(EnumIntTables tblObj, String[] fieldNames, Object[] fieldValues, String alternativeProcInstanceName, Boolean encryptAllFlds) {
         String query = "";
         try {
-            String schemaName = addSuffixIfItIsForTesting(alternativeProcInstanceName, tblObj.getRepositoryName(), tblObj.getTableName());
+            String schemaName = addSuffixIfItIsForTesting(alternativeProcInstanceName, tblObj.getRepositoryName(), tblObj);
             if (fieldNames.length == 0) {
                 return new RdbmsObject(false, "", RdbmsErrorTrapping.RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tblObj.getTableName(), schemaName});
             }
