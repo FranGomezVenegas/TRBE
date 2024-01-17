@@ -70,7 +70,13 @@ public class AnalysisCalculations {
         String paramName=null;
         if (calcInfoArr.length>1)
             paramName=calcInfoArr[1];
-        AnalysisCalculationsCollection selCalcName = AnalysisCalculationsCollection.valueOf(calcName);
+        if (calcName.length()==0) return;
+        AnalysisCalculationsCollection selCalcName = null;
+        try{
+            selCalcName = AnalysisCalculationsCollection.valueOf(calcName);
+        }catch(Exception e){
+            return;
+        }
         switch (selCalcName) {
             case LOD:
                 calcLossOnDrying();
