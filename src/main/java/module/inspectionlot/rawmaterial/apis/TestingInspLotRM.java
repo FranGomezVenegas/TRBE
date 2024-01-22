@@ -35,6 +35,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -58,6 +59,7 @@ public class TestingInspLotRM extends HttpServlet {
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
 
         Object[] functionEvaluation=new Object[0];
+        InternalMessage functionEvaluationObj=null;
         JSONArray functionRelatedObjects=new JSONArray();        
         Integer scriptId=Integer.valueOf(LPNulls.replaceNull(request.getParameter("scriptId")));
 
@@ -106,6 +108,7 @@ public class TestingInspLotRM extends HttpServlet {
                 if (Boolean.TRUE.equals(clssInspLotRMController.getFunctionFound())){
                     functionRelatedObjects=clssInspLotRMController.getFunctionRelatedObjects();
                     functionEvaluation=clssInspLotRMController.getFunctionDiagn();
+                    functionEvaluationObj=clssInspLotRMController.getFunctionDiagnObj();
                     testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                     fileContentTable1Builder.append(clssInspLotRMController.getRowArgsRows());                
                 }else{
@@ -158,9 +161,13 @@ public class TestingInspLotRM extends HttpServlet {
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(Arrays.toString(functionEvaluation)));                     
                     fileContentTable1Builder.append(LPTestingOutFormat.createLogsTable(scriptId));
                 }                                
-                if (numEvaluationArguments>0){                    
-                    Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, functionEvaluation, 4);   
-                        
+                if (numEvaluationArguments>0){  
+                    Object[] evaluate = null;
+                    if (functionEvaluationObj!=null){
+                        evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, functionEvaluation, 4);   
+                    }else{
+                        evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, functionEvaluation, 4);   
+                    }
                     Integer stepId=Integer.valueOf(testingContent[iLines][tstOut.getStepIdPosic()].toString());
                     fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, functionEvaluation, functionRelatedObjects, tstAssert, timeStartedStep));                    
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate));                        
