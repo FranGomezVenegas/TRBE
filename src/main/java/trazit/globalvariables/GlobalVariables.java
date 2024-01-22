@@ -6,7 +6,6 @@
 package trazit.globalvariables;
 
 import databases.TblsCnfg.TablesConfig;
-import databases.TblsCnfg.ViewsConfig;
 import databases.TblsCnfgAudit;
 import databases.TblsData;
 import databases.TblsDataAudit;
@@ -109,7 +108,7 @@ public class GlobalVariables {
         SAMPLES_MANAGEMENT(TblsCnfgAudit.TablesCfgAudit.values(), TablesConfig.values(),
                 TblsDataAudit.TablesDataAudit.values(), TblsData.TablesData.values(), 
                 TablesProcedureAudit.values(), TblsProcedure.TablesProcedure.values(),
-                null, ViewsConfig.values(),
+                null, null,
                 null, TblsData.ViewsData.values(), 
                 null, TblsProcedure.ViewsProcedure.values()
         ), 

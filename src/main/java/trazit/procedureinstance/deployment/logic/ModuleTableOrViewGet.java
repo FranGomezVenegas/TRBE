@@ -312,7 +312,7 @@ public final class ModuleTableOrViewGet {
                 this.found = true;
             }else{
                 try {
-                    this.viewObj = TblsCnfg.ViewsConfig.valueOf(tblName.toUpperCase());
+                    this.viewObj = TblsCnfg.zViewsConfig.valueOf(tblName.toUpperCase());
                     this.found = true;
                 } catch (Exception e2) {
                     this.found = false;
