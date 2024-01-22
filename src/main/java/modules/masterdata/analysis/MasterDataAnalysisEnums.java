@@ -8,8 +8,8 @@ package modules.masterdata.analysis;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_CODE;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_CONFIG_VERSION;
-import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_SPEC_FIELD_NAME;
-import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_SPEC_FIELD_VALUE;
+import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME;
+import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE;
 import com.labplanet.servicios.app.InvestigationAPI;
 import databases.TblsCnfg;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
@@ -40,7 +40,7 @@ public class MasterDataAnalysisEnums {
     }
 
     public enum MasterDataAnalysisAuditEvents implements EnumIntAuditEvents {
-        ANALYSIS_CREATION, ANALYSIS_UPDATED, ANALYSIS_METHOD_ADDED, ANALYSIS_METHOD_REMOVED
+        ANALYSIS_CREATION, ANALYSIS_UPDATED, ANALYSIS_METHOD_ADDED, ANALYSIS_METHOD_REMOVED, ANALYSIS_REACTIVATED, ANALYSIS_DEACTIVATED, ANALYSIS_APPROVED_FOR_USE
     }
 
     public enum DataLotProperties {
@@ -118,8 +118,8 @@ public class MasterDataAnalysisEnums {
     public enum MasterDataAnalysisActionsEndpoints implements EnumIntEndpoints {
         ANALYSIS_NEW("ANALYSIS_NEW", "analysisNew_success",
             new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_CODE, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),                    
-                new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
-                new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 8)}, MasterDataAnalysisAuditEvents.ANALYSIS_CREATION,
+                new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
+                new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 8)}, MasterDataAnalysisAuditEvents.ANALYSIS_CREATION,
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.CONFIG.getName())
                     .add(GlobalAPIsParams.LBL_TABLE, TblsCnfg.TablesConfig.ANALYSIS.getTableName()).build()).build(),
             null, null),
@@ -150,16 +150,40 @@ public class MasterDataAnalysisEnums {
                 new LPAPIArguments("uomConversionMode", LPAPIArguments.ArgumentType.STRING.toString(), false, 13),
                 new LPAPIArguments("calcLinked", LPAPIArguments.ArgumentType.STRING.toString(), false, 14),
                 new LPAPIArguments("listEntry", LPAPIArguments.ArgumentType.STRING.toString(), false, 15),
-                new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 16),
-                new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 17)}, MasterDataAnalysisAuditEvents.ANALYSIS_METHOD_REMOVED,
+                new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 16),
+                new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 17)}, MasterDataAnalysisAuditEvents.ANALYSIS_METHOD_REMOVED,
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.CONFIG.getName())
                     .add(GlobalAPIsParams.LBL_TABLE, TblsCnfg.TablesConfig.ANALYSIS.getTableName()).build()).build(),
             null, null),
         ANALYSIS_UPDATE("ANALYSIS_UPDATE", "analysisNew_success",
                 new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_CODE, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(REQUEST_PARAM_CONFIG_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
-                    new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
-                    new LPAPIArguments(REQUEST_PARAM_SPEC_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 9)}, MasterDataAnalysisAuditEvents.ANALYSIS_UPDATED,
+                    new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
+                    new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 9)}, MasterDataAnalysisAuditEvents.ANALYSIS_UPDATED,
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.CONFIG.getName())
+                        .add(GlobalAPIsParams.LBL_TABLE, TblsCnfg.TablesConfig.ANALYSIS.getTableName()).build()).build(),
+                null, null),
+        ANALYSIS_REACTIVATE("ANALYSIS_REACTIVATE", "analysisReactivate_success",
+                new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_CODE, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments(REQUEST_PARAM_CONFIG_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
+                    new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
+                    new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 9)}, MasterDataAnalysisAuditEvents.ANALYSIS_REACTIVATED,
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.CONFIG.getName())
+                        .add(GlobalAPIsParams.LBL_TABLE, TblsCnfg.TablesConfig.ANALYSIS.getTableName()).build()).build(),
+                null, null),
+        ANALYSIS_DEACTIVATE("ANALYSIS_DEACTIVATE", "analysisDeactivate_success",
+                new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_CODE, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments(REQUEST_PARAM_CONFIG_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
+                    new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
+                    new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 9)}, MasterDataAnalysisAuditEvents.ANALYSIS_DEACTIVATED,
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.CONFIG.getName())
+                        .add(GlobalAPIsParams.LBL_TABLE, TblsCnfg.TablesConfig.ANALYSIS.getTableName()).build()).build(),
+                null, null),
+        ANALYSIS_APPROVAL_FOR_USE("ANALYSIS_APPROVAL_FOR_USE", "analysisApprovalForUse_success",
+                new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_CODE, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments(REQUEST_PARAM_CONFIG_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
+                    new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
+                    new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 9)}, MasterDataAnalysisAuditEvents.ANALYSIS_APPROVED_FOR_USE,
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.CONFIG.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TblsCnfg.TablesConfig.ANALYSIS.getTableName()).build()).build(),
                 null, null),
