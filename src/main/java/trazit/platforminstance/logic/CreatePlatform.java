@@ -37,6 +37,7 @@ import trazit.procedureinstance.definition.definition.TblsReqs;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.labplanet.servicios.ResponseError;
 import static databases.DbObjects.createSchemas;
 import databases.SqlStatement;
 import databases.SqlWhere;
@@ -45,6 +46,8 @@ import functionaljavaa.platform.doc.EndPointsToRequirements;
 import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import trazit.enums.EnumIntBusinessRules;
@@ -494,6 +497,7 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
     }
 
     public void createModules(String platformName, String moduleFileName){
+    try{
         String directoryPathModulesInfo = "ModulesInfo"; 
         String directoryPathModulesSpecialViews = "ModulesSpecialViews"; 
         JSONArray allModuleFilesInfo=new JSONArray();
@@ -696,8 +700,12 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
         }
         addToLogSummary("modules_info", allModuleFilesInfo);
         addToLogSummary("modules_special_views", allModuleSpecialViewsInfo);
-        
-    }                
+    }catch(Exception e){
+        StackTraceElement[] stackTraceElements = e.getStackTrace();
+        System.out.println("Excepción en línea: " + stackTraceElements[0].getLineNumber());
+        Logger.getLogger(ResponseError.class.getName()).log(Level.SEVERE, null, e);         
+    }  
+    }
      
     public JSONArray createBusinessRules(String moduleName, Integer moduleVersion, org.json.JSONArray jArr, ClassInfoList classInfo){
         JSONObject jMainObj=new JSONObject();        
@@ -909,8 +917,11 @@ if (curBusRuleObj.getTagName().contains("certificationUserSOPMode")){
                 for (int j = 0; j < enumConstantObjects.size(); j++) {
                     EnumIntEndpoints curEndpoint = (EnumIntEndpoints) enumConstantObjects.get(j);
                     apiEndpointsArr.add(curEndpoint.getName());
-                
-                    Object[] values1D=new Object[]{moduleName, moduleVersion, apiNameArr[1], curEndpoint.getName(), curEndpoint.getEntity(), true, EndPointsToRequirements.getEndPointArguments(curEndpoint.getArguments()), curEndpoint.getOutputObjectTypes().toString()};
+                    String outputObjectTpesStr = LPNulls.replaceNull(curEndpoint.getOutputObjectTypes()).toString();
+                    if (outputObjectTpesStr.length()==0){
+                        outputObjectTpesStr="NULL>>>STRING";
+                    }
+                    Object[] values1D=new Object[]{moduleName, moduleVersion, apiNameArr[1], curEndpoint.getName(), curEndpoint.getEntity(), true, EndPointsToRequirements.getEndPointArguments(curEndpoint.getArguments()), outputObjectTpesStr};
                     values=LPArray.array1dTo2d(LPArray.addValueToArray1D(LPArray.array2dTo1d(values),values1D), fields.length); 
                 }                
                 for (Object[]  curRow: values){
