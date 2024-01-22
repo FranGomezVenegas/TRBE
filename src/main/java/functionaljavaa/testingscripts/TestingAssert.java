@@ -6,10 +6,12 @@
 package functionaljavaa.testingscripts;
 
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_CODE_POSIC;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_EVALUATION_POSIC;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_MESSAGE_POSIC;
+import trazit.session.InternalMessage;
 
 /**
  *
@@ -123,23 +125,120 @@ public class TestingAssert {
         }
         Object[] diagnostic=new Object[]{};//{sintaxisIcon + " ("+this.getEvalSyntaxisB()!=null?this.getEvalSyntaxisB().toString():this.getEvalSyntaxis().toString()+") "};
         String message="";
-        if (diagnoses.length>TRAP_MESSAGE_EVALUATION_POSIC){
+        if (diagnoses==null){
+            diagnostic=LPArray.addValueToArray1D(diagnostic, sintaxisIcon+ " ("+LPNulls.replaceNull(this.getEvalSyntaxisB()).toString()+") ");
+            message=message+LPPlatform.LAB_TRUE.equalsIgnoreCase("diagnoses is null");            
+        }
+        if (diagnoses!=null&&diagnoses.length>TRAP_MESSAGE_EVALUATION_POSIC){
             message=message+"Syntaxis:";
             if (this.getEvalSyntaxisB()!=null){
-                diagnostic=LPArray.addValueToArray1D(diagnostic, sintaxisIcon+ " ("+this.getEvalSyntaxisB().toString()+") ");
+                diagnostic=LPArray.addValueToArray1D(diagnostic, sintaxisIcon+ " ("+LPNulls.replaceNull(this.getEvalSyntaxisB()).toString()+") ");
                 message=message+LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[TRAP_MESSAGE_EVALUATION_POSIC].toString());
             }else{
-                diagnostic=LPArray.addValueToArray1D(diagnostic, sintaxisIcon+ " ("+this.getEvalSyntaxis().toString()+") ");
+                diagnostic=LPArray.addValueToArray1D(diagnostic, sintaxisIcon+ " ("+LPNulls.replaceNull(this.getEvalSyntaxis()).toString()+") ");
                 message=message+diagnoses[TRAP_MESSAGE_EVALUATION_POSIC].toString()+". ";
             }
             diagnoses[TRAP_MESSAGE_EVALUATION_POSIC]=message;
             //diagnostic=LPArray.addValueToArray1D(diagnostic, sintaxisIcon + "<h8>("+this.getEvalCode()+")</h8> ");
         }
-        if (numEvaluationArguments>=2){
+        if (diagnoses!=null&&numEvaluationArguments>=2){
             if (diagnoses.length>TRAP_MESSAGE_CODE_POSIC) message=message+" Code:"+diagnoses[TRAP_MESSAGE_CODE_POSIC]+". ";
             diagnostic=LPArray.addValueToArray1D(diagnostic, codeIcon + "<h8>("+this.getEvalCode()+")</h8> ");
         }
-        if (diagnoses.length>TRAP_MESSAGE_MESSAGE_POSIC) message=message+"Message:"+diagnoses[TRAP_MESSAGE_MESSAGE_POSIC]+". ";  
+        if (diagnoses!=null&&diagnoses.length>TRAP_MESSAGE_MESSAGE_POSIC) message=message+"Message:"+diagnoses[TRAP_MESSAGE_MESSAGE_POSIC]+". ";  
+        diagnostic=LPArray.addValueToArray1D(diagnostic, message);
+        return diagnostic;
+    }
+
+    public Object[] evaluate(Integer numEvaluationArguments, TestingAssertSummary tstAssertSummary, InternalMessage diagnosesObj, Integer codeEvalPosic){
+        String sintaxisIcon = ""; 
+        String codeIcon = "";
+        if (diagnosesObj==null){
+            this.evalSyntaxisDiagnostic=EvalCodes.WITH_NO_DIAGNOSTIC.toString();
+            this.evalCodeDiagnostic=EvalCodes.WITH_NO_DIAGNOSTIC.toString();
+        }else{
+            if (numEvaluationArguments>=1){
+                if ( ((this.getEvalSyntaxis()==null) || (this.getEvalSyntaxis().length()==0) ||("".equals(this.getEvalSyntaxis())))
+                    &&   (this.getEvalSyntaxisB()==null) ){
+                    tstAssertSummary.increasetotalLabPlanetBooleanUndefined();
+                    sintaxisIcon=LPTestingOutFormat.TST_BOOLEANUNDEFINED;
+                    this.evalSyntaxisDiagnostic=EvalCodes.UNDEFINED.toString();
+                }else{
+                    if ((this.getEvalSyntaxisB()==null)){
+                        if (this.getEvalSyntaxis().equalsIgnoreCase(diagnosesObj.getDiagnostic())){
+                            tstAssertSummary.increasetotalLabPlanetBooleanMatch(); 
+                            sintaxisIcon=LPTestingOutFormat.TST_BOOLEANMATCH;
+                            this.evalSyntaxisDiagnostic=EvalCodes.MATCH.toString();
+                        }else{
+                            tstAssertSummary.increasetotalLabPlanetBooleanUnMatch(); 
+                            sintaxisIcon=LPTestingOutFormat.TST_BOOLEANUNMATCH;
+                            this.evalSyntaxisDiagnostic=EvalCodes.UNMATCH.toString();
+                        }
+                    }else{
+                        Boolean diagB=diagnosesObj.getDiagnostic()==LPPlatform.LAB_TRUE?true:false;
+                        
+                        if (this.getEvalSyntaxisB().equals(diagB)){
+                            tstAssertSummary.increasetotalLabPlanetBooleanMatch(); 
+                            sintaxisIcon=LPTestingOutFormat.TST_BOOLEANMATCH;
+                            this.evalSyntaxisDiagnostic=EvalCodes.MATCH.toString();
+                        }else{
+                            tstAssertSummary.increasetotalLabPlanetBooleanUnMatch(); 
+                            sintaxisIcon=LPTestingOutFormat.TST_BOOLEANUNMATCH;
+                            this.evalSyntaxisDiagnostic=EvalCodes.UNMATCH.toString();
+                        }                        
+                    }
+                }
+            }else{
+                tstAssertSummary.increasetotalLabPlanetBooleanUndefined();sintaxisIcon=LPTestingOutFormat.TST_BOOLEANUNDEFINED;            
+            }
+            if (numEvaluationArguments>=2){
+                if ( (this.getEvalCode()==null) || (this.getEvalCode().length()==0) ||("".equals(this.getEvalCode())) ){
+                    tstAssertSummary.increasetotalLabPlanetErrorCodeUndefined();
+                    codeIcon=LPTestingOutFormat.TST_ERRORCODEUNDEFINED;
+                    this.evalCodeDiagnostic=EvalCodes.UNDEFINED.toString();
+                }else{
+                    if (LPNulls.replaceNull(diagnosesObj.getMessageCodeObj().getErrorCode()).length()==0){
+                        tstAssertSummary.increasetotalLabPlanetErrorCodeUndefined();
+                        codeIcon=LPTestingOutFormat.TST_ERRORCODEUNDEFINED;
+                    }
+                    else if (this.getEvalCode().equalsIgnoreCase(diagnosesObj.getMessageCodeObj().getErrorCode())){
+                        tstAssertSummary.increasetotalLabPlanetErrorCodeMatch(); 
+                        codeIcon=LPTestingOutFormat.TST_ERRORCODEMATCH;
+                        this.evalCodeDiagnostic=EvalCodes.MATCH.toString();
+                    }else{
+                        tstAssertSummary.increasetotalLabPlanetErrorCodeUnMatch(); 
+                        codeIcon=LPTestingOutFormat.TST_ERRORCODEUNMATCH;
+                        this.evalCodeDiagnostic=EvalCodes.UNMATCH.toString();
+                    }
+                }    
+            }else{
+                tstAssertSummary.increasetotalLabPlanetErrorCodeUndefined();
+                codeIcon=LPTestingOutFormat.TST_ERRORCODEUNDEFINED;            
+            }
+        }
+        Object[] diagnostic=new Object[]{};//{sintaxisIcon + " ("+this.getEvalSyntaxisB()!=null?this.getEvalSyntaxisB().toString():this.getEvalSyntaxis().toString()+") "};
+        String message="";
+        if (diagnosesObj==null){
+            diagnostic=LPArray.addValueToArray1D(diagnostic, sintaxisIcon+ " ("+LPNulls.replaceNull(this.getEvalSyntaxisB()).toString()+") ");
+            message=message+LPPlatform.LAB_TRUE.equalsIgnoreCase("diagnoses is null");            
+        }
+        if (diagnosesObj!=null&&diagnosesObj.getMessageCodeObj().getErrorCode()!=null){
+            message=message+"Syntaxis:";
+            if (this.getEvalSyntaxisB()!=null){
+                diagnostic=LPArray.addValueToArray1D(diagnostic, sintaxisIcon+ " ("+LPNulls.replaceNull(this.getEvalSyntaxisB()).toString()+") ");
+                message=message+LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesObj.getMessageCodeObj().getErrorCode().toString());
+            }else{
+                diagnostic=LPArray.addValueToArray1D(diagnostic, sintaxisIcon+ " ("+LPNulls.replaceNull(this.getEvalSyntaxis()).toString()+") ");
+                message=message+diagnosesObj.getMessageCodeObj().getErrorCode().toString()+". ";
+            }
+            //diagnoses[TRAP_MESSAGE_EVALUATION_POSIC]=message;
+            //diagnostic=LPArray.addValueToArray1D(diagnostic, sintaxisIcon + "<h8>("+this.getEvalCode()+")</h8> ");
+        }
+        if (diagnosesObj!=null&&numEvaluationArguments>=2){
+            if (diagnosesObj.getMessageCodeObj().getErrorCode()!=null) message=message+" Code:"+diagnosesObj.getMessageCodeObj().getErrorCode()+". ";
+            diagnostic=LPArray.addValueToArray1D(diagnostic, codeIcon + "<h8>("+this.getEvalCode()+")</h8> ");
+        }
+        if (diagnosesObj!=null&&diagnosesObj.getMessageCodeObj().getErrorCode()!=null) message=message+"Message:"+diagnosesObj.getMessageCodeObj().getDefaultTextEn()+". ";  
         diagnostic=LPArray.addValueToArray1D(diagnostic, message);
         return diagnostic;
     }
