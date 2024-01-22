@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPArray;
 import org.json.simple.JSONArray;
+import trazit.session.InternalMessage;
 
 /**
  *
@@ -22,6 +23,7 @@ public class ClassInspLotRMController {
     private Object[] functionDiagn=null;
     private JSONArray functionRelatedObjects=new JSONArray();
     private Boolean functionFound=false;
+    private InternalMessage functionDiagnObj=null;
     
     public ClassInspLotRMController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
         
@@ -39,6 +41,7 @@ public class ClassInspLotRMController {
             this.rowArgsRows=this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));            
             ClassInspLotRMactions clss=new ClassInspLotRMactions(request, endPoint);
             this.functionDiagn=clss.getDiagnostic();
+            this.functionDiagnObj=clss.getDiagnosticObj();
             this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject();              
         } catch (Exception ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
@@ -58,6 +61,9 @@ public class ClassInspLotRMController {
     public Object[] getFunctionDiagn() {
         return functionDiagn;
     }
+    public InternalMessage getFunctionDiagnObj() {
+        return functionDiagnObj;
+    }    
 
     /**
      * @return the functionRelatedObjects
