@@ -73,6 +73,7 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false);
         String actionName = procReqInstance.getActionName();
         String language = procReqInstance.getLanguage();
+        String procInstanceName = procReqInstance.getProcedureInstance();
         try {
             if (Boolean.TRUE.equals(procReqInstance.getHasErrors())) {
                 procReqInstance.killIt();
@@ -502,29 +503,80 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                         whereObj.addConstraint(TblsInspLotRMConfig.Spec.CODE, SqlStatement.WHERECLAUSE_TYPES.LIKE, new Object[]{specCode}, null);
                     }
                     flds = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInspLotRMConfig.TablesInspLotRMConfig.SPEC);
-                    Object[][] specInfoInfo = QueryUtilitiesEnums.getTableData(TblsInspLotRMConfig.TablesInspLotRMConfig.SPEC,
+                    Object[][] specInfo = QueryUtilitiesEnums.getTableData(TblsInspLotRMConfig.TablesInspLotRMConfig.SPEC,
                             flds, whereObj,
                             new String[]{TblsInspLotRMConfig.Spec.CODE.getName()});
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(specInfoInfo[0][0].toString())) {
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(specInfo[0][0].toString())) {
                         LPFrontEnd.servletReturnSuccess(request, response, jArr);
                         return;
                     }
-                    for (Object[] curRow : specInfoInfo) {
+                    for (Object[] curRow : specInfo) {
                         JSONObject jObj2 = new JSONObject();
                         jObj2 = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(flds), curRow);
 
                         Object curSpecCode = jObj2.get(TblsInspLotRMConfig.Spec.CODE.getName());
                         Object curSpecConfigVersion = jObj2.get(TblsInspLotRMConfig.Spec.CONFIG_VERSION.getName());
 
+                        if (jObj2.containsKey(TblsInspLotRMConfig.Spec.ANALYSES.getName())){
+                            Object analysisListStr = jObj2.get(TblsInspLotRMConfig.Spec.ANALYSES.getName());
+                            if (analysisListStr.toString().length()==0){
+                                jObj2.put("analysis_list", new JSONArray());
+                            }else{
+                                JSONArray analysisJArr=new JSONArray();
+                                for (String curAna: analysisListStr.toString().split("\\|")){
+                                    JSONObject jObj=new JSONObject();
+                                    jObj.put("name", curAna);
+                                    analysisJArr.add(jObj);
+                                }
+                                jObj2.put("analysis_list", analysisJArr);
+                            }
+                        }
+                        if (jObj2.containsKey(TblsInspLotRMConfig.Spec.VARIATION_NAMES.getName())){
+                            Object variationsListStr = jObj2.get(TblsInspLotRMConfig.Spec.VARIATION_NAMES.getName());
+                            if (variationsListStr.toString().length()==0){
+                                jObj2.put("variations_list", new JSONArray());
+                            }else{
+                                JSONArray variationsJArr=new JSONArray();
+                                for (String curVar: variationsListStr.toString().split("\\|")){
+                                    JSONObject jObj=new JSONObject();
+                                    jObj.put("name", curVar);
+                                    variationsJArr.add(jObj);
+                                }
+                                jObj2.put("variations_list", variationsJArr);
+                            }
+                        }                       
                         whereObj = new SqlWhere();
                         whereObj.addConstraint(TblsInspLotRMConfig.SpecLimits.CODE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{curSpecCode}, null);
                         whereObj.addConstraint(TblsInspLotRMConfig.SpecLimits.CONFIG_VERSION, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{curSpecConfigVersion}, null);
+                        
+                        JSONArray specRulesInfo = QueryUtilities.dbRowsToJsonArr(procInstanceName, procInstanceName, TblsCnfg.TablesConfig.SPEC_RULES, 
+                        EnumIntTableFields.getTableFieldsFromString(TblsCnfg.TablesConfig.SPEC_RULES, "ALL"),
+                        whereObj, new String[]{}, null, true);
+                        jObj2.put(TblsCnfg.TablesConfig.SPEC_RULES.getTableName(), specRulesInfo);
+                        
+                        JSONArray specRulesCardArr=new JSONArray();
+                        if (specRulesInfo != null && specRulesInfo.size() > 0) {
+                            JSONObject jsonObject = (JSONObject) specRulesInfo.get(0);
+
+                            // Iterate through the keys of the JSONObject
+                            for (Object key : jsonObject.keySet()) {
+                                // Skip the key "hello"
+                                if ( (!TblsInspLotRMConfig.SpecLimits.CODE.getName().equals(key.toString())) && (!TblsInspLotRMConfig.SpecLimits.CONFIG_VERSION.getName().equals(key.toString())) ) {
+                                    JSONObject specRulesCardObj=new JSONObject();
+                                    specRulesCardObj.put(key, jsonObject.get(key));
+                                    specRulesCardObj.put("name", key);
+                                    specRulesCardObj.put("value", jsonObject.get(key));
+                                    specRulesCardArr.add(specRulesCardObj);
+                                }
+                            }
+                        }                        
+                        jObj2.put(TblsCnfg.TablesConfig.SPEC_RULES.getTableName()+"_for_card", specRulesCardArr);
                         EnumIntTableFields[] fldsSpecLimits = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInspLotRMConfig.TablesInspLotRMConfig.SPEC_LIMITS);
                         JSONArray jSpecLimitsArr = new JSONArray();
                         Object[][] specLimitsInfo = QueryUtilitiesEnums.getTableData(TblsInspLotRMConfig.TablesInspLotRMConfig.SPEC_LIMITS,
                                 fldsSpecLimits, whereObj,
                                 new String[]{TblsInspLotRMConfig.SpecLimits.CODE.getName()});
-                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(specInfoInfo[0][0].toString())) {
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(specInfo[0][0].toString())) {
                             LPFrontEnd.servletReturnSuccess(request, response, jArr);
                             return;
                         }
@@ -539,7 +591,7 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                         JSONArray scriptDetail = new JSONArray();
                         if (curSpecTestScripts.length() > 0) {
                             for (String curId : curSpecTestScripts.split("\\|")) {
-                                JSONObject curTestObj = ReqProcedureDefinitionQueries.getScriptWithSteps(Integer.valueOf(curId),
+                                JSONObject curTestObj = ReqProcedureDefinitionQueries.getSpecScriptWithSteps(Integer.valueOf(curId),
                                         procReqInstance.getProcedureInstance(), null, null);
                                 if (Boolean.FALSE.equals(curTestObj.isEmpty())) {
                                     scriptDetail.add(curTestObj);
