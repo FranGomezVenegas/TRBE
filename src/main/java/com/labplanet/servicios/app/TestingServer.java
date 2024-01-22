@@ -140,7 +140,10 @@ public class TestingServer extends HttpServlet {
         Rdbms.stablishDBConection(dbName);
         
         CreatePlatform crPlat=new CreatePlatform();
-        crPlat.createModules(dbName, "ModuleClinicialStudies.json");        
+        crPlat.createModules(dbName, "ModuleMonitoring.json");      
+
+        crPlat.createModules(dbName, "ModuleInspectionLots.json");        
+        
 if (1==1)return;                
         
         procInstanceName="inspection_lot";
