@@ -74,7 +74,7 @@ public class ReqProcedureFrontendMasterData implements FrontendMasterData{
                         new String[]{TblsReqs.viewBusinessRulesInSolution.PRESENT.getName()+" desc",  TblsReqs.viewBusinessRulesInSolution.AREA.getName(), TblsReqs.viewBusinessRulesInSolution.RULE_NAME.getName()},
                         new String[]{}, true, true);
                 curProcObj.put("module_in_solution_business_rules", dbRowsToJsonArr);
-                dbRowsToJsonArr = new JSONArray();        
+                dbRowsToJsonArr = new JSONArray();
                 dbRowsToJsonArr = QueryUtilities.dbRowsToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.ACTIONS_IN_SOLUTION.getViewName(),
                     new String[]{TblsReqs.viewActionsInSolution.PRETTY_EN.getName(), TblsReqs.viewActionsInSolution.PRETTY_ES.getName(),
                         TblsReqs.viewActionsInSolution.ENTITY.getName(), TblsReqs.viewActionsInSolution.PRESENT.getName(), TblsReqs.viewActionsInSolution.REQUIREMENTS_LIST.getName(),
