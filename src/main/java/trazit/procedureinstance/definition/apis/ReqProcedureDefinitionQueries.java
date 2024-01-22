@@ -609,6 +609,84 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         return curTestObj;
     }
 
+    public static JSONObject getSpecScriptWithSteps(Integer scriptId, String procInstanceName, String[] fieldsToRetrieveScripts, Object[] curTest) {
+        String[] actionsList = new String[]{};
+
+        String repositoryName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName());
+        if (curTest == null) {
+            fieldsToRetrieveScripts = TblsTesting.getSpecScriptPublicFieldNames(procInstanceName);
+            Object[][] scriptsTblInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, repositoryName, TblsTesting.TablesTesting.SPEC_SCRIPT.getTableName(),
+                    new String[]{TblsTesting.SpecScript.SCRIPT_ID.getName()}, new Object[]{scriptId},
+                    fieldsToRetrieveScripts, new String[]{TblsTesting.SpecScript.SCRIPT_ID.getName()});
+            curTest = scriptsTblInfo[0];
+        }
+        JSONObject curTestObj = new JSONObject();
+        if (Boolean.TRUE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(curTest[0].toString()))) {
+            return curTestObj;
+        }
+        curTestObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieveScripts, curTest);
+        String[] fieldsToRetrieveScriptSteps = EnumIntTableFields.getAllFieldNames(TblsTesting.TablesTesting.SPEC_SCRIPT_STEPS, procInstanceName);
+        Integer scriptIdPosic = LPArray.valuePosicInArray(fieldsToRetrieveScripts, TblsTesting.SpecScript.SCRIPT_ID.getName());
+        if (scriptIdPosic > -1) {
+            Object[][] scriptStepsTblInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, repositoryName, TblsTesting.TablesTesting.SPEC_SCRIPT_STEPS.getTableName(),
+                    new String[]{TblsTesting.SpecScriptSteps.SCRIPT_ID.getName()},
+                    new Object[]{Integer.valueOf(curTest[scriptIdPosic].toString())},
+                    fieldsToRetrieveScriptSteps,
+                    new String[]{TblsTesting.SpecScriptSteps.STEP_ID.getName()});
+            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptStepsTblInfo[0][0].toString()))) {
+                JSONArray scriptStepsList = new JSONArray();
+                for (Object[] curStep : scriptStepsTblInfo) {
+                    JSONObject curStepObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieveScriptSteps, curStep);
+                    Integer analysisPosic = LPArray.valuePosicInArray(fieldsToRetrieveScriptSteps, TblsTesting.SpecScriptSteps.ANALYSIS.getName());
+                    if (analysisPosic > -1) {
+                        actionsList = LPArray.addValueToArray1D(actionsList, LPNulls.replaceNull(curStep[analysisPosic]).toString());
+                    }
+                    Integer posicId = LPArray.valuePosicInArray(fieldsToRetrieveScriptSteps, TblsTesting.SpecScriptSteps.EVAL_SYNTAXIS.getName());
+                    String tagName = TblsTesting.SpecScriptSteps.EVAL_SYNTAXIS.getName() + "_icon";
+                    String tagClass = TblsTesting.SpecScriptSteps.EVAL_SYNTAXIS.getName() + "_class";
+                    if (posicId > -1) {
+                        switch (curStep[posicId].toString().toUpperCase()) {
+                            case "MATCH":
+                                curStepObj.put(tagName, "check_circle");
+                                curStepObj.put(tagClass, "green");
+                                break;
+                            case "UNMATCH":
+                                curStepObj.put(tagName, "cancel");
+                                curStepObj.put(tagClass, "red");
+                                break;
+                            default:
+                                curStepObj.put(tagName, "help");
+                                curStepObj.put(tagClass, "yellow");
+                                break;
+                        }
+                    }
+                    posicId = LPArray.valuePosicInArray(fieldsToRetrieveScriptSteps, TblsTesting.SpecScriptSteps.EVAL_CODE.getName());
+                    tagName = TblsTesting.SpecScriptSteps.EVAL_CODE.getName() + "_icon";
+                    tagClass = TblsTesting.SpecScriptSteps.EVAL_CODE.getName() + "_class";
+                    if (posicId > -1) {
+                        switch (curStep[posicId].toString().toUpperCase()) {
+                            case "MATCH":
+                                curStepObj.put(tagName, "check_circle");
+                                curStepObj.put(tagClass, "green");
+                                break;
+                            case "UNMATCH":
+                                curStepObj.put(tagName, "cancel");
+                                curStepObj.put(tagClass, "red");
+                                break;
+                            default:
+                                curStepObj.put(tagName, "help");
+                                curStepObj.put(tagClass, "yellow");
+                                break;
+                        }
+                    }
+                    scriptStepsList.add(curStepObj);
+                }
+                curTestObj.put("steps", scriptStepsList);
+            }
+        }
+        return curTestObj;
+    }
+
     private static JSONObject procInstanceSummaryTesting(String procInstanceName) {
         String repositoryName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName());
         String[] fieldsToRetrieveScript = new String[]{TblsTesting.Script.RUN_SUMMARY.getName(), TblsTesting.Script.DATE_EXECUTION.getName()};
