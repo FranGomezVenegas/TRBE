@@ -268,7 +268,7 @@ public class ProcedureRequestSession {
                 }
             }
             if (Boolean.FALSE.equals(isForTesting) && Boolean.FALSE.equals(isForUAT) && Boolean.FALSE.equals(isQuery) && Boolean.FALSE.equals(isForDocumentation)
-                    &&Boolean.FALSE.equals(isForProcManagement)) {
+                    &&Boolean.FALSE.equals(isForProcManagement)&&Boolean.FALSE.equals(this.isPlatform)) {
                 this.auditAndUsrValid = AuditAndUserValidation.getInstanceForActions(request, language, this.busRulesProcInstance, this.isPlatform);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())) {
                     this.hasErrors = true;
