@@ -404,6 +404,23 @@ public class TblsTesting {
         return newTableFlds;
     }
     
+    public static String[] getSpecScriptPublicFieldNames(String procInstanceName){
+        TablesTesting tblObj = TblsTesting.TablesTesting.SPEC_SCRIPT;
+        String[] fieldsToNotGet=new String[]{Script.DB_ERRORS_IDS_VALUES.getName(), Script.MSG_ERRORS_IDS_VALUES.getName(), Script.AUDIT_IDS_VALUES.getName(), Script.MESSAGES_VISITED.getName(), Script.BUSINESS_RULES_VISITED.getName()};
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        if (procInstanceName==null)
+            procInstanceName=instanceForActions.getProcedureInstance();        
+        Map<String[], Object[][]> dbTableGetFieldDefinition = Rdbms.dbTableGetFieldDefinition(LPPlatform.buildSchemaName(procInstanceName, tblObj.getRepositoryName()), tblObj.getTableName());
+        String[] fldDefinitionColName= dbTableGetFieldDefinition.keySet().iterator().next();    
+        Object[][] tableFldsInfo = dbTableGetFieldDefinition.get(fldDefinitionColName);
+        String[] tableFldsInfoColumns = LPArray.convertObjectArrayToStringArray(LPArray.getColumnFromArray2D(tableFldsInfo, LPArray.valuePosicInArray(fldDefinitionColName, "column_name")));
+        String[] newTableFlds=new String[]{};
+        for (String curFld: tableFldsInfoColumns){
+            if (Boolean.FALSE.equals(LPArray.valueInArray(fieldsToNotGet, curFld)))
+                newTableFlds=LPArray.addValueToArray1D(newTableFlds, curFld);
+        }
+        return newTableFlds;
+    }
 
     
 }
