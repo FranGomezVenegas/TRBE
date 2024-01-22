@@ -94,9 +94,9 @@ public class ClassAnalysis {
             Integer trainingId = null;
             switch (endPoint) {
                 case ANALYSIS_NEW:
-                    ConfigAnalysisStructure anaStr = new ConfigAnalysisStructure();
                     String code = argValues[0].toString();
                     String anaFieldName = argValues[1].toString();
+                    ConfigAnalysisStructure anaStr = new ConfigAnalysisStructure(code, null);
                     String  anaFieldValue = argValues[2].toString();
                     String[] anaFieldNameArr = new String[]{};
                     Object[] anaFieldValueArr = new Object[]{};
@@ -119,10 +119,91 @@ public class ClassAnalysis {
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ANALYSIS.getTableName(), this.diagnosticObj.getNewObjectId());
                     }
                     break;
-                case ANALYSIS_ADD_METHOD:
-                    anaStr = new ConfigAnalysisStructure();
+                case ANALYSIS_DEACTIVATE:
                     code = argValues[0].toString();
                     Integer codeVersion = Integer.valueOf(argValues[1].toString());
+                    anaStr = new ConfigAnalysisStructure(code, codeVersion);
+/*                    String anaFieldName = argValues[1].toString();
+                    String  anaFieldValue = argValues[2].toString();
+                    String[] anaFieldNameArr = new String[]{};
+                    Object[] anaFieldValueArr = new Object[]{};
+                    if (anaFieldName != null && anaFieldName.length() > 0) {
+                        anaFieldNameArr = anaFieldName.split("\\|");
+                    }
+                    if (anaFieldValue != null && anaFieldValue.length() > 0) {
+                        anaFieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(anaFieldValue.split("\\|"));
+                    }
+                    if (anaFieldValueArr != null && anaFieldValueArr.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(anaFieldValueArr[0].toString())) {
+                        Object[] diagn = anaFieldValueArr;
+                        this.diagnosticObj=new InternalMessage(diagn[0].toString(), diagn[diagn.length-1].toString(), null, null);
+                    } else {*/
+                        this.diagnosticObj = anaStr.analysisDeactivate();
+                    //}
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())) {
+                        messageDynamicData = new Object[]{code, procReqInstance.getProcedureInstance()};
+                    } else {
+                        messageDynamicData = new Object[]{code};
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ANALYSIS.getTableName(), code);
+                    }
+                    break;
+                case ANALYSIS_REACTIVATE:
+                    code = argValues[0].toString();
+                    codeVersion = Integer.valueOf(argValues[1].toString());
+                    anaStr = new ConfigAnalysisStructure(code, codeVersion);
+/*                    String anaFieldName = argValues[1].toString();
+                    String  anaFieldValue = argValues[2].toString();
+                    String[] anaFieldNameArr = new String[]{};
+                    Object[] anaFieldValueArr = new Object[]{};
+                    if (anaFieldName != null && anaFieldName.length() > 0) {
+                        anaFieldNameArr = anaFieldName.split("\\|");
+                    }
+                    if (anaFieldValue != null && anaFieldValue.length() > 0) {
+                        anaFieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(anaFieldValue.split("\\|"));
+                    }
+                    if (anaFieldValueArr != null && anaFieldValueArr.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(anaFieldValueArr[0].toString())) {
+                        Object[] diagn = anaFieldValueArr;
+                        this.diagnosticObj=new InternalMessage(diagn[0].toString(), diagn[diagn.length-1].toString(), null, null);
+                    } else {*/
+                        this.diagnosticObj = anaStr.analysisReactivate();
+                    //}
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())) {
+                        messageDynamicData = new Object[]{code, procReqInstance.getProcedureInstance()};
+                    } else {
+                        messageDynamicData = new Object[]{code};
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ANALYSIS.getTableName(), code);
+                    }
+                    break;
+                case ANALYSIS_APPROVAL_FOR_USE:
+                    code = argValues[0].toString();
+                    codeVersion = Integer.valueOf(argValues[1].toString());
+                    anaStr = new ConfigAnalysisStructure(code, codeVersion);
+/*                    String anaFieldName = argValues[1].toString();
+                    String  anaFieldValue = argValues[2].toString();
+                    String[] anaFieldNameArr = new String[]{};
+                    Object[] anaFieldValueArr = new Object[]{};
+                    if (anaFieldName != null && anaFieldName.length() > 0) {
+                        anaFieldNameArr = anaFieldName.split("\\|");
+                    }
+                    if (anaFieldValue != null && anaFieldValue.length() > 0) {
+                        anaFieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(anaFieldValue.split("\\|"));
+                    }
+                    if (anaFieldValueArr != null && anaFieldValueArr.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(anaFieldValueArr[0].toString())) {
+                        Object[] diagn = anaFieldValueArr;
+                        this.diagnosticObj=new InternalMessage(diagn[0].toString(), diagn[diagn.length-1].toString(), null, null);
+                    } else {*/
+                        this.diagnosticObj = anaStr.analysisApproveForUse();
+                    //}
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())) {
+                        messageDynamicData = new Object[]{code, procReqInstance.getProcedureInstance()};
+                    } else {
+                        messageDynamicData = new Object[]{code};
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ANALYSIS.getTableName(), code);
+                    }
+                    break;
+                case ANALYSIS_ADD_METHOD:
+                    code = argValues[0].toString();
+                    codeVersion = Integer.valueOf(argValues[1].toString());
+                    anaStr = new ConfigAnalysisStructure(code, codeVersion);
                     String methodName = argValues[2].toString();
                     Integer methodVersion = null;
                     if (LPNulls.replaceNull(argValues[3]).toString().length()>0)
@@ -130,32 +211,31 @@ public class ClassAnalysis {
                     String expiryIntervalInfo = argValues[4].toString();
 
                     this.diagnosticObj = anaStr.analysisAddMethod(code, codeVersion, methodName, methodVersion, expiryIntervalInfo);
-                    
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())) {
                         messageDynamicData = new Object[]{code, methodName, procReqInstance.getProcedureInstance()};
                     } else {
-                        messageDynamicData = new Object[]{code};
+                        messageDynamicData = new Object[]{methodName, code};
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ANALYSIS.getTableName(), this.diagnosticObj.getNewObjectId());
                     }
                     break;
                 case ANALYSIS_REMOVE_METHOD:
-                    anaStr = new ConfigAnalysisStructure();
                     code = argValues[0].toString();
                     codeVersion = (Integer) argValues[1];
+                    anaStr = new ConfigAnalysisStructure(code, codeVersion);
                     methodName = argValues[2].toString();
                     this.diagnosticObj = anaStr.analysisRemoveMethod(code, codeVersion, methodName);
                     
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())) {
                         messageDynamicData = new Object[]{code, methodName, procReqInstance.getProcedureInstance()};
                     } else {
-                        messageDynamicData = new Object[]{code};
+                        messageDynamicData = new Object[]{methodName, code};
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.ANALYSIS.getTableName(), this.diagnosticObj.getNewObjectId());
                     }
                     break;
                 case ANALYSIS_ADD_PARAM:
-                    anaStr = new ConfigAnalysisStructure();
                     code = argValues[0].toString();
                     codeVersion = (Integer) argValues[1];
+                    anaStr = new ConfigAnalysisStructure(code, codeVersion);
                     methodName = argValues[2].toString();
                     String[] fldNames=new String[]{};
                     Object[] fldValues=new Object[]{};
@@ -205,9 +285,9 @@ public class ClassAnalysis {
 
                 
                 case ANALYSIS_UPDATE:
-                    anaStr = new ConfigAnalysisStructure();
                     code = argValues[0].toString();
                     codeVersion = (Integer) argValues[1];
+                    anaStr = new ConfigAnalysisStructure(code, codeVersion);
                     anaFieldName = argValues[2].toString();
                     anaFieldValue = argValues[3].toString();
                     anaFieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(anaFieldValue.split("\\|"));
