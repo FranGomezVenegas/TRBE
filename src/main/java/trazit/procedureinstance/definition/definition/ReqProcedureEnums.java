@@ -68,7 +68,7 @@ public class ReqProcedureEnums {
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DEPLOY_PROC_BUSINESS_RULES_PROP_FILES.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 17),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DEPLOY_MODULE_TABLES_AND_FIELDS.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 18),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DEPLOY_PROC_MASTER_DATA.getName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 19)}, EndPointsToRequirements.endpointWithNoOutputObjects,
-                null, null),
+                "", ""),
         DEFINITION_CHECKER("DEFINITION_CHECKER", "checkedRequirements_success",
                 new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
@@ -520,40 +520,13 @@ public class ReqProcedureEnums {
             return hm;
         }
         @Override public String getEntity() {return "procedure_deployment";}
-        @Override
-        public String getName() {
-            return this.name;
-        }
-
-        @Override
-        public String getSuccessMessageCode() {
-            return this.successMessageCode;
-        }
-
-        @Override
-        public JsonArray getOutputObjectTypes() {
-            return outputObjectTypes;
-        }
-
-        @Override
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }
-
-        @Override
-        public String getApiUrl() {
-            return ApiUrls.PROCEDURE_DEFINITION_ACTIONS.getUrl();
-        }
-
-        @Override
-        public String getDeveloperComment() {
-            return this.devComment;
-        }
-
-        @Override
-        public String getDeveloperCommentTag() {
-            return this.devCommentTag;
-        }
+        @Override        public String getName() {            return this.name;        }
+        @Override        public String getSuccessMessageCode() {            return this.successMessageCode;        }
+        @Override        public JsonArray getOutputObjectTypes() {            return outputObjectTypes;        }
+        @Override        public LPAPIArguments[] getArguments() {            return arguments;        }
+        @Override        public String getApiUrl() {            return LPNulls.replaceNull(ApiUrls.PROCEDURE_DEFINITION_ACTIONS.getUrl());        }
+        @Override        public String getDeveloperComment() {            return LPNulls.replaceNull(this.devComment);        }
+        @Override        public String getDeveloperCommentTag() {            return LPNulls.replaceNull(this.devCommentTag);        }
         private final String name;
         private final String successMessageCode;
         private final LPAPIArguments[] arguments;
