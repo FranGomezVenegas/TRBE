@@ -89,9 +89,6 @@ public final class EndPointsToRequirements {
             totalEntities=classesImplementing.size();
             for (currentEntityIndex = 0; currentEntityIndex < classesImplementing.size(); currentEntityIndex++) {
                 Thread.sleep(500);
-                if (currentEntityIndex==47){
-                    String hola="adios";                    
-                }
                 ClassInfo getMine = classesImplementing.get(currentEntityIndex);
                 audEvObjStr = getMine.getSimpleName();
                 List<Object> enumConstantObjects = getMine.getEnumConstantObjects();
@@ -100,13 +97,16 @@ public final class EndPointsToRequirements {
                 for (int j = 0; j < enumConstantObjects.size(); j++) {
                     EnumIntEndpoints curEndpoint = (EnumIntEndpoints) enumConstantObjects.get(j);
                     evName = curEndpoint.getName();
+                    if ("DEPLOY_REQUIREMENTS".equalsIgnoreCase(evName)){
+                        continue;
+                    }
                     String[] fieldNames = LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.API_NAME.getName(), EndpointsDeclaration.ENDPOINT_NAME.getName()});
                     Object[] fieldValues = LPArray.addValueToArray1D(new Object[]{}, new Object[]{curEndpoint.getClass().getSimpleName(), curEndpoint.getName()});
                     fieldNames = LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.ARGUMENTS_ARRAY.getName()});
                     fieldValues = LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curEndpoint.getArguments())});
 
                     fieldNames = LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.DEV_NOTES.getName(), EndpointsDeclaration.DEV_NOTES_TAGS.getName()});
-                    fieldValues = LPArray.addValueToArray1D(fieldValues, new Object[]{curEndpoint.getDeveloperComment(), curEndpoint.getDeveloperCommentTag()});
+                    fieldValues = LPArray.addValueToArray1D(fieldValues, new Object[]{LPNulls.replaceNull(curEndpoint.getDeveloperComment()).length()==0?"TBD":LPNulls.replaceNull(curEndpoint.getDeveloperComment()), LPNulls.replaceNull(curEndpoint.getDeveloperCommentTag()).length()==0?"TBD":LPNulls.replaceNull(curEndpoint.getDeveloperCommentTag())});
                     fieldNames = LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.SUCCESS_MESSAGE_CODE.getName()});
                     fieldValues = LPArray.addValueToArray1D(fieldValues, new Object[]{curEndpoint.getSuccessMessageCode()});
 
@@ -157,7 +157,7 @@ public final class EndPointsToRequirements {
             }
         } catch (Exception e) {            
             JSONArray errorJArr = new JSONArray();
-            errorJArr.add("index:" + totalEndpointsVisitedInjection + audEvObjStr + "_" + evName + ":" + e.getMessage());
+            errorJArr.add("Error found then ending incomplete in index:" + totalEndpointsVisitedInjection + audEvObjStr + "_" + evName + ":" + e.getMessage());
             LPFrontEnd.servletReturnSuccess(request, response, errorJArr);
             return;
         }
@@ -273,6 +273,9 @@ public final class EndPointsToRequirements {
 
     public void declareInDatabase(String apiName, String endpointName, String[] fieldNames, Object[] fieldValues, JsonArray outputObjectTypes, Integer numEndpointsInApi, Integer numEndpointArguments, String apiUrl, String entity) {
         try {
+            if ("COVERAGE_UNEXCLUDE_ACTION".equalsIgnoreCase(endpointName)){
+                String h="hola";
+            }
             Object[] reqEndpointInfo = existsEndPointInDatabase(apiName, endpointName);
             if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(reqEndpointInfo[0].toString()))) {
                 String newArgumentsArray = fieldValues[LPArray.valuePosicInArray(fieldNames, EndpointsDeclaration.ARGUMENTS_ARRAY.getName())].toString();
