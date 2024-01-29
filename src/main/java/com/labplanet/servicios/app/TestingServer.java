@@ -138,7 +138,9 @@ public class TestingServer extends HttpServlet {
         
         String dbName="demo_v0_9_2";
         Rdbms.stablishDBConection(dbName);
-        
+
+        //out.println(ReqProcedureDefinitionQueries.procInstanceViewDesignInRequirements("stock"));
+if (1==1)return;        
         CreatePlatform crPlat=new CreatePlatform();
         crPlat.createModules(dbName, "ModuleMonitoring.json");      
 
