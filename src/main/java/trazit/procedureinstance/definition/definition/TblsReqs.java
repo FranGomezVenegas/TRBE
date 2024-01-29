@@ -263,7 +263,7 @@ public class TblsReqs {
 "	urs.in_system,\n" +
 "	urs.in_scope,	\n" +
 "	reqs.solution_id,\n" + 
-"    reqs.window_action,\n" +
+"    reqs.window_name AS window_name,\n" +
 "    reqs.label_en AS window_label_en,\n" +
 "    reqs.label_es AS window_label_es,\n" +
 "    reqs.order_number,\n" +
