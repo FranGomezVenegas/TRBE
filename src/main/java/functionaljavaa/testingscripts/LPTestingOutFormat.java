@@ -50,6 +50,7 @@ import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 
 /*
@@ -236,6 +237,49 @@ public class LPTestingOutFormat {
         }
         return fileContentBuilder;
     }
+
+    public StringBuilder publishEvalStep(HttpServletRequest request, Integer stepId, InternalMessage evaluate, JSONArray functionRelatedObjects, TestingAssert tstAssert, LocalDateTime timeStarted) {
+        StringBuilder fileContentBuilder = new StringBuilder(0);
+        LocalDateTime timeCompleted = LPDate.getCurrentTimeStamp();
+        String[] updFldNames = new String[]{TblsTesting.ScriptSteps.DATE_EXECUTION.getName(), TblsTesting.ScriptSteps.TIME_COMPLETED.getName()};
+        Object[] updFldValues = new Object[]{timeCompleted, timeCompleted};
+        if (timeStarted != null) {
+            updFldNames = LPArray.addValueToArray1D(updFldNames, TblsTesting.ScriptSteps.TIME_STARTED.getName());
+            updFldValues = LPArray.addValueToArray1D(updFldValues, timeStarted);
+            BigDecimal secondsInDateRange = LPDate.secondsInDateRange(timeStarted, timeCompleted, true);
+            updFldNames = LPArray.addValueToArray1D(updFldNames, TblsTesting.ScriptSteps.TIME_CONSUME.getName());
+            updFldValues = LPArray.addValueToArray1D(updFldValues, secondsInDateRange);
+        }
+        if (numEvaluationArguments > 0 && ("DB".equals(this.inputMode))) {
+            Integer scriptId = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_ID).toString()));
+            if (evaluate == null) {
+                updFldNames = LPArray.addValueToArray1D(updFldNames, new String[]{TblsTesting.ScriptSteps.FUNCTION_SYNTAXIS.getName(), TblsTesting.ScriptSteps.EVAL_SYNTAXIS.getName()});
+                updFldValues = LPArray.addValueToArray1D(updFldValues, new Object[]{"EvaluateEmpty", tstAssert.getEvalSyntaxisDiagnostic()});
+            } else {
+                updFldNames = LPArray.addValueToArray1D(updFldNames, new String[]{TblsTesting.ScriptSteps.FUNCTION_SYNTAXIS.getName(), TblsTesting.ScriptSteps.EVAL_SYNTAXIS.getName()});
+                updFldValues = LPArray.addValueToArray1D(updFldValues, new Object[]{evaluate.getDiagnostic(), tstAssert.getEvalSyntaxisDiagnostic()});
+                if (numEvaluationArguments > 1) {
+                    updFldNames = LPArray.addValueToArray1D(updFldNames, new String[]{TblsTesting.ScriptSteps.FUNCTION_CODE.getName(), TblsTesting.ScriptSteps.EVAL_CODE.getName(),
+                        TblsTesting.ScriptSteps.DYNAMIC_DATA.getName()});
+                    updFldValues = LPArray.addValueToArray1D(updFldValues, new Object[]{tstAssert.getEvalCode(), tstAssert.getEvalCodeDiagnostic(),
+                        functionRelatedObjects.toJSONString()});
+                }
+            }
+            if (1==2){
+                updFldNames = LPArray.addValueToArray1D(updFldNames, new String[]{TblsTesting.ScriptSteps.ARGUMENTS_LAST_EXEC.getName(), TblsTesting.ScriptSteps.EVAL_SYNTAXIS.getName()});
+                updFldValues = LPArray.addValueToArray1D(updFldValues, new Object[]{evaluate.getDiagnostic(), tstAssert.getEvalSyntaxisDiagnostic()});
+            }
+            
+            SqlWhere sqlWhere = new SqlWhere();
+            sqlWhere.addConstraint(TblsTesting.ScriptSteps.SCRIPT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{scriptId}, "");
+            sqlWhere.addConstraint(TblsTesting.ScriptSteps.STEP_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{stepId}, "");
+            Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPT_STEPS,
+                    EnumIntTableFields.getTableFieldsFromString(TblsTesting.TablesTesting.SCRIPT_STEPS, updFldNames), updFldValues, sqlWhere, null);
+        }
+        return fileContentBuilder;
+    }
+
+    
 
     public StringBuilder publishEvalSummary(HttpServletRequest request, TestingAssertSummary tstAssertSummary) {
         return publishEvalSummary(request, tstAssertSummary, null);
