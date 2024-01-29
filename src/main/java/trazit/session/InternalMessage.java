@@ -40,6 +40,8 @@ public class InternalMessage {
     }
     public InternalMessage(String diag, EnumIntEndpoints msgCode, Object[] msgCodeVars, Object theNew){
         this.diagnostic=diag;
+        this.msgCodeObj=null;//new InternalMessage(diag, msgCode.getSuccessMessageCode(), msgCodeVars, theNew);
+        this.messageCode=msgCode.getSuccessMessageCode();
         this.msgCodeEndpoint=msgCode;
         this.messageCodeVariables=msgCodeVars;
         this.newObjectId=theNew;
