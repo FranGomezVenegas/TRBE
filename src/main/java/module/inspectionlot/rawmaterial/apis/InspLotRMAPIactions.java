@@ -104,12 +104,22 @@ public class InspLotRMAPIactions extends HttpServlet {
                             }
                             ClassAnalysis clssMasterDataAna = new ClassAnalysis(request, response, endPointMasterDataAna);
                             if (Boolean.TRUE.equals(clssMasterDataAna.getEndpointExists())) {
-                                InternalMessage diagnostic = clssMasterDataAna.getDiagnosticObj();
-                                if (diagnostic!=null&&LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic.getDiagnostic())) {
-                                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic.getMessageCodeObj(), diagnostic.getMessageCodeVariables());
-                                } else {
-                                    JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPointMasterDataAna, clssMasterDataAna.getMessageDynamicData(), clssMasterDataAna.getRelatedObj().getRelatedObject());
-                                    LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
+                                InternalMessage diagnosticObj = clssMasterDataAna.getDiagnosticObj();
+                                Object[] diagnostic = clssMasterDataAna.getDiagnostic();
+                                if (diagnosticObj!=null){
+                                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosticObj.getDiagnostic())) {
+                                        LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnosticObj.getMessageCodeObj(), diagnosticObj.getMessageCodeVariables());
+                                    } else {
+                                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPointMasterDataAna, clssMasterDataAna.getMessageDynamicData(), clssMasterDataAna.getRelatedObj().getRelatedObject());
+                                        LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
+                                    }
+                                }else{
+                                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
+                                        LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[diagnostic.length-2].toString(), clssMasterDataAna.getMessageDynamicData());
+                                    } else {
+                                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPointMasterDataAna, clssMasterDataAna.getMessageDynamicData(), clssMasterDataAna.getRelatedObj().getRelatedObject());
+                                        LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
+                                    }                                    
                                 }
                             }
                         }
