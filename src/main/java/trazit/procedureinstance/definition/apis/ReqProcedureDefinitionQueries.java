@@ -6,7 +6,6 @@ import static com.labplanet.servicios.app.AppProcedureListAPI.procModelArray;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.app.TestingRegressionUAT;
 import module.monitoring.definition.TblsEnvMonitConfig;
-import trazit.procedureinstance.definition.logic.ReqProcDefTestingCoverageSummary;
 import trazit.procedureinstance.definition.definition.ReqProcedureEnums.ReqProcedureDefinitionAPIQueriesEndpoints;
 import databases.Rdbms;
 import databases.SqlStatement;
@@ -41,9 +40,11 @@ import static trazit.queries.QueryUtilities.getTableData;
 import trazit.session.ProcedureRequestSession;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import static trazit.procedureinstance.definition.apis.prodDefQueriesViewDetail.getProcedureViews;
 import trazit.procedureinstance.definition.definition.TblsReqs;
 import trazit.procedureinstance.definition.logic.ClassReqProcedUserAndActionsForQueries;
 import trazit.procedureinstance.definition.logic.ClassReqProcedureQueries;
+import trazit.procedureinstance.definition.logic.ReqProcDefTestingCoverageSummary;
 import static trazit.procedureinstance.definition.logic.ReqProcedureFrontendMasterData.getActiveModulesJSON;
 import trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.ReqSolutionTypes;
 import trazit.queries.QueryUtilities;
@@ -126,15 +127,18 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procAndInstanceArr[0][0].toString()))){
                         for (Object[] curProc : procAndInstanceArr) {
                             JSONObject curProcObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieveScripts, curProc);
-                            Integer valuePosicInArray = LPArray.valuePosicInArray(fieldsToRetrieveScripts, TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName());
-                            if (valuePosicInArray > -1) {                                
-                                curProcObj.put("cardData", procInstanceCardDataInRequirements(curProc[valuePosicInArray].toString()));
-                                curProcObj.put("definition", procInstanceDefinitionInRequirements(curProc[valuePosicInArray].toString()));
-                                curProcObj.put("master_data", procInstanceMasterDataInRequirements(curProc[valuePosicInArray].toString()));
+                            Integer valuePosicProcNameInArray = LPArray.valuePosicInArray(fieldsToRetrieveScripts, TblsReqs.ProcedureInfo.PROCEDURE_NAME.getName());
+                            Integer valuePosicProcVersionInArray = LPArray.valuePosicInArray(fieldsToRetrieveScripts, TblsReqs.ProcedureInfo.PROCEDURE_VERSION.getName());
+                            Integer valuePosicProcInstanceNameInArray = LPArray.valuePosicInArray(fieldsToRetrieveScripts, TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName());
+                            if (valuePosicProcInstanceNameInArray > -1) {                                
+                                curProcObj.put("cardData", procInstanceCardDataInRequirements(curProc[valuePosicProcInstanceNameInArray].toString()));
+                                curProcObj.put("definition", procInstanceDefinitionInRequirements(curProc[valuePosicProcInstanceNameInArray].toString()));
+                                curProcObj.put("master_data", procInstanceMasterDataInRequirements(curProc[valuePosicProcInstanceNameInArray].toString()));
                                 curProcObj.put("views", procInstanceViewsInRequirements());
-                                curProcObj.put("testing", ReqProcDefTestingCoverageSummary.procInstanceTestingInfo(curProc[valuePosicInArray].toString()));
-                                curProcObj.put("manuals", procInstanceManualsInRequirements(curProc[valuePosicInArray].toString()));
-                                curProcObj.put("frontend_testing", procInstanceFrontendTestingInRequirements(curProc[valuePosicInArray].toString()));
+                                curProcObj.put("views_design", getProcedureViews(curProc[valuePosicProcNameInArray].toString(), Integer.valueOf(curProc[valuePosicProcVersionInArray].toString()), curProc[valuePosicProcInstanceNameInArray].toString()));
+                                curProcObj.put("testing", ReqProcDefTestingCoverageSummary.procInstanceTestingInfo(curProc[valuePosicProcInstanceNameInArray].toString()));
+                                curProcObj.put("manuals", procInstanceManualsInRequirements(curProc[valuePosicProcInstanceNameInArray].toString()));
+                                curProcObj.put("frontend_testing", procInstanceFrontendTestingInRequirements(curProc[valuePosicProcInstanceNameInArray].toString()));
 
                             }
                             proceduresList.add(curProcObj);
@@ -395,6 +399,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         return procModelArray(GlobalVariables.PROC_MANAGEMENT_SPECIAL_ROLE, SIZE_WHEN_CONSIDERED_MOBILE + 1);
     }
 
+    
     private static JSONObject procInstanceDefinitionInRequirements(String procInstanceName) {
         JSONObject jMainObj = new JSONObject();
         JSONObject dbSingleRowToJsonObj = ClassReqProcedureQueries.dbSingleRowToJsonObj(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName(),
