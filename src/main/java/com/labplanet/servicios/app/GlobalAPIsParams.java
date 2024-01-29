@@ -90,7 +90,7 @@ public class GlobalAPIsParams extends HttpServlet {
      *
      */
     public static final String REQUEST_PARAM_CODE = "code";
-    public static final String REQUEST_PARAM_CONFIG_VERSION = "config_version";
+    public static final String REQUEST_PARAM_CONFIG_VERSION = "configVersion";
     public static final String REQUEST_PARAM_SPEC_FIELD_NAME = "specFieldName";
     public static final String REQUEST_PARAM_SPEC_FIELD_VALUE = "specFieldValue";
 
