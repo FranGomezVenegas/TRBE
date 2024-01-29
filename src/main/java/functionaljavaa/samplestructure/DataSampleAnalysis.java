@@ -5,6 +5,7 @@
  */
 package functionaljavaa.samplestructure;
 
+import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIactionsEndpoints;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
@@ -485,7 +486,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_REMOVED, sampleLevel + TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
                 testId, sampleId, testId, null, remFlds, remFldsV);
 
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
+        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SampleAPIactionsEndpoints.SAMPLEANALYSISREMOVE.getSuccessMessageCode(), new Object[]{fieldValue[0], sampleId});
     }
 
     /**
