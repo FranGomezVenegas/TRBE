@@ -696,6 +696,10 @@ public class TblsInspLotRMConfig {
         TITLE2_EN("title2_en", LPDatabase.string(), null, null, null, null),
         TITLE2_ES("title2_es", LPDatabase.string(), null, null, null, null),
         PAPER_SIZE("paper_size", LPDatabase.string(), null, null, "A4 / LETTER", null),
+        DISPLAY_HEADER_BOX_BORDER("display_header_box_border", LPDatabase.booleanFld(false), null, null, "", null),
+        DISPLAY_RESULT_BOX_BORDER("display_result_box_border", LPDatabase.booleanFld(false), null, null, "", null),
+        DISPLAY_RESULT_BOX_COLUMNBARS("display_result_box_column_bars", LPDatabase.booleanFld(false), null, null, "", null),
+        DISPLAY_RESULT_BOX_ROWSBARS("display_result_box_rows_bars", LPDatabase.booleanFld(false), null, null, "", null),
         ;
 
         private CoaDefinition(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
