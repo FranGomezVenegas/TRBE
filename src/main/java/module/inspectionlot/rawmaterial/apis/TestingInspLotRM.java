@@ -164,12 +164,16 @@ public class TestingInspLotRM extends HttpServlet {
                 if (numEvaluationArguments>0){  
                     Object[] evaluate = null;
                     if (functionEvaluationObj!=null){
-                        evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, functionEvaluation, 4);   
+                        evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, functionEvaluationObj, 4);   
                     }else{
                         evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, functionEvaluation, 4);   
                     }
                     Integer stepId=Integer.valueOf(testingContent[iLines][tstOut.getStepIdPosic()].toString());
-                    fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, functionEvaluation, functionRelatedObjects, tstAssert, timeStartedStep));                    
+                    if (functionEvaluationObj!=null){
+                        fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, functionEvaluationObj, functionRelatedObjects, tstAssert, timeStartedStep));                                            
+                    }else{
+                        fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, functionEvaluation, functionRelatedObjects, tstAssert, timeStartedStep));                    
+                    }
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate));                        
                     if ( tstOut.getStopSyntaxisUnmatchPosic()>-1 && Boolean.TRUE.equals(Boolean.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStopSyntaxisUnmatchPosic()]).toString())) &&
                             Boolean.FALSE.equals(TestingAssert.EvalCodes.MATCH.toString().equalsIgnoreCase(tstAssert.getEvalSyntaxisDiagnostic())) ){
