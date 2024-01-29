@@ -31,7 +31,7 @@ public class TblsCnfg {
         ANALYSIS(null, "analysis", SCHEMA_NAME, true, Analysis.values(), null,
             new String[]{Analysis.CODE.getName()}, null, "Analysis"),
         ANALYSIS_METHOD(null, "analysis_method", SCHEMA_NAME, true, AnalysisMethod.values(), null,
-            new String[]{AnalysisMethod.ANALYSIS.getName(), AnalysisMethod.METHOD_NAME.getName(), AnalysisMethod.METHOD_VERSION.getName()}, 
+            new String[]{AnalysisMethod.ANALYSIS.getName(), AnalysisMethod.METHOD_NAME.getName()}, 
             new Object[]{new ForeignkeyFld(AnalysisMethod.METHOD_NAME.getName(), SCHEMA_NAME, TablesConfig.METHODS.getTableName(), Methods.CODE.getName())
             }, "Analysis Method"),
         ANALYSIS_METHOD_PARAMS(null, "analysis_method_params", SCHEMA_NAME, true, AnalysisMethodParams.values(), null,
@@ -99,24 +99,13 @@ public class TblsCnfg {
         private final Object[] foreignkey;
         private final String tableComment;
     }
-    public enum ViewsConfig implements EnumIntViews{
+    public enum zViewsConfig implements EnumIntViews{
         //https://github.com/FranGomezVenegas/BE-Issues/issues/921-zANALYSIS_METHODS is not implemented but probably can be implemented
         //  to get analysis by user method qualif etc ...        
         zANALYSIS_METHODS(null, "analysis_methods_view", SCHEMA_NAME, true, zViewAnalysisMethodsView.values(), null,
             null, null, "ViewAnalysisMethodsView"),        
-/*        
-        TBL("analysis_methods_view", " CREATE OR REPLACE VIEW #SCHEMA.#TBL AS " +
-                " SELECT a.code, " +
-                "    meth.method_name, " +
-                "    meth.method_version " +
-                "   FROM #SCHEMA.analysis a, " +
-                "    #SCHEMA.analysis_method meth " +
-                "  WHERE meth.analysis::text = a.code::text AND a.active = true;" +
-                "ALTER TABLE  #SCHEMA.#TBL  OWNER TO #OWNER;" +
-                "GRANT ALL ON TABLE  #SCHEMA.#TBL TO #OWNER;")
-*/        
         ;
-        private ViewsConfig(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
+        private zViewsConfig(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){
             this.getTblBusinessRules=fldBusRules;
             this.tableName=dbTblName;
@@ -181,7 +170,7 @@ public class TblsCnfg {
     public enum Methods implements EnumIntTableFields{
         CODE("code", LPDatabase.stringNotNull(), null, null, null, null),
         CONFIG_VERSION("config_version", LPDatabase.integer(), null, null, null, null),
-        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
+        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date(), null, null, null, null),
         ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(), null, null, null, null),
         EXPIRES("expires", LPDatabase.booleanFld(), null, null, null, null),
@@ -207,10 +196,15 @@ public class TblsCnfg {
     public enum Analysis implements EnumIntTableFields{
         CODE("code", LPDatabase.stringNotNull(), null, null, null, null),
         CONFIG_VERSION("config_version", LPDatabase.integer(), null, null, null, null),
-        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
-        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date(), null, null, null, null),
-        ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(), null, null, null, null),
-        TESTING_GROUP( LPDatabase.FIELDS_NAMES_TESTING_GROUP, LPDatabase.booleanFld(), null, null, null, null),
+        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
+        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date(), "to_char(" + "reviewed_on" + ",'YYYY-MM-DD HH:MI')", null, null, null),
+        ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(true), null, null, null, null),
+        TESTING_GROUP( LPDatabase.FIELDS_NAMES_TESTING_GROUP, LPDatabase.string(), null, null, null, null),
+        APPROVED_FOR_USE( "approved_for_use", LPDatabase.booleanFld(false), null, null, null, null),
+        APPROVED_BY( "approved_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
+        APPROVED_ON( "approved_on", LPDatabase.dateTime(), "to_char(" + "reviewed_on" + ",'YYYY-MM-DD HH:MI')", null, null, null),
+        INACTIVATED_BY( "inactivated_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
+        INACTIVATED_ON( "inactivated_on", LPDatabase.dateTime(), "to_char(" + "reviewed_on" + ",'YYYY-MM-DD HH:MI')", null, null, null),
         ;
         private Analysis(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
@@ -235,8 +229,8 @@ public class TblsCnfg {
     public enum AnalysisMethod implements EnumIntTableFields{
         ANALYSIS(TablesConfig.ANALYSIS.getTableName(), LPDatabase.stringNotNull(), null, null, null, null),
         METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, LPDatabase.stringNotNull(), null, null, null, null),
-        METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, LPDatabase.integer(), null, null, null, null),
-        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
+        //METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, LPDatabase.integer(), null, null, null, null),
+        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date(), null, null, null, null),
         EXPIRY_INTERVAL_INFO(DB_FLDNAME_EXPIRY_INTRVL_INFO, LPDatabase.string(), null, null, null, null),
         ;
@@ -271,7 +265,7 @@ public class TblsCnfg {
         NUM_REPLICAS("num_replicas", LPDatabase.integer(), null, null, null, null),
         UOM("uom", LPDatabase.string(), null, null, null, null),
         UOM_CONVERSION_MODE("uom_conversion_mode", LPDatabase.string(), null, null, null, null),
-        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
+        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date(), null, null, null, null),
         CALC_LINKED("calc_linked",  LPDatabase.string(), null, null, null, null),
         LIST_ENTRY("list_entry",  LPDatabase.string(), null, null, null, null),
