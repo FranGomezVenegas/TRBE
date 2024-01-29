@@ -195,8 +195,8 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
             switch (endPoint) {
                 case SPEC_NEW:
                     ConfigSpecStructure spcStr = new ConfigSpecStructure();
-                    String specCode = argValues[0].toString();
-                    Integer specCodeVersion = (Integer) argValues[1];
+                    String code = argValues[0].toString();
+                    Integer codeVersion = (Integer) argValues[1];
                     String specFieldName = argValues[2].toString();
                     String specFieldValue = argValues[3].toString();
                     String[] specFieldNameArr = new String[]{};
@@ -211,7 +211,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                         Object[] diagn = specFieldValueArr;
                         diagnostic=new InternalMessage(diagn[0].toString(), diagn[diagn.length-1].toString(), null, null);
                     } else {
-                        diagnostic = spcStr.specNew(specCode, specCodeVersion, specFieldNameArr, specFieldValueArr, null, null);
+                        diagnostic = spcStr.specNew(code, codeVersion, specFieldNameArr, specFieldValueArr, null, null);
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic.getDiagnostic())) {
                             messageDynamicData = new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
                         } else {
@@ -222,8 +222,8 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     break;
                 case SPEC_UPDATE:
                     spcStr = new ConfigSpecStructure();
-                    specCode = argValues[0].toString();
-                    specCodeVersion = (Integer) argValues[1];
+                    code = argValues[0].toString();
+                    codeVersion = (Integer) argValues[1];
                     specFieldName = argValues[2].toString();
                     specFieldValue = argValues[3].toString();
                     if (specFieldValue != null && specFieldValue.length() > 0) {
@@ -234,7 +234,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                         Object[] diagn = specFieldValueArr;
                         diagnostic=new InternalMessage(diagn[0].toString(), diagn[diagn.length-1].toString(), null, null);
                     } else {
-                        diagnostic = spcStr.specUpdate(specCode, specCodeVersion, specFieldName.split("\\|"), specFieldValueArr);
+                        diagnostic = spcStr.specUpdate(code, codeVersion, specFieldName.split("\\|"), specFieldValueArr);
                     }
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic.getDiagnostic())) {
                         messageDynamicData = new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
@@ -244,9 +244,9 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     }
                     break;
                 case ANALYSIS_NEW:
-                    ConfigAnalysisStructure anaStr = new ConfigAnalysisStructure();
-                    specCode = argValues[0].toString();
-                    specCodeVersion = (Integer) argValues[1];
+                    code = argValues[0].toString();
+                    codeVersion = (Integer) argValues[1];
+                    ConfigAnalysisStructure anaStr = new ConfigAnalysisStructure(code, codeVersion);
                     specFieldName = argValues[2].toString();
                     specFieldValue = argValues[3].toString();
                     specFieldNameArr = new String[]{};
@@ -261,7 +261,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                         Object[] diagn = specFieldValueArr;
                         diagnostic=new InternalMessage(diagn[0].toString(), diagn[diagn.length-1].toString(), null, null);
                     } else {
-                        diagnostic = anaStr.analysisNew(specCode, specCodeVersion, specFieldNameArr, specFieldValueArr, procReqInstance.getProcedureInstance());
+                        diagnostic = anaStr.analysisNew(code, codeVersion, specFieldNameArr, specFieldValueArr, procReqInstance.getProcedureInstance());
                     }
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic.getDiagnostic())) {
                         messageDynamicData = new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
@@ -271,9 +271,9 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     }
                     break;
                 case ANALYSIS_UPDATE:
-                    anaStr = new ConfigAnalysisStructure();
-                    specCode = argValues[0].toString();
-                    specCodeVersion = (Integer) argValues[1];
+                    code = argValues[0].toString();
+                    codeVersion = (Integer) argValues[1];
+                    anaStr = new ConfigAnalysisStructure(code, codeVersion);
                     specFieldName = argValues[2].toString();
                     specFieldValue = argValues[3].toString();
                     specFieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|"));
@@ -281,7 +281,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                         Object[] diagn = specFieldValueArr;
                         diagnostic=new InternalMessage(diagn[0].toString(), diagn[diagn.length-1].toString(), null, null);
                     } else {
-                        diagnostic = anaStr.analysisUpdate(specCode, specCodeVersion, specFieldName.split("\\|"), specFieldValueArr);
+                        diagnostic = anaStr.analysisUpdate(code, codeVersion, specFieldName.split("\\|"), specFieldValueArr);
                     }
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic.getDiagnostic())) {
                         messageDynamicData = new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
@@ -293,8 +293,8 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                 case SPEC_LIMIT_NEW:
                     int i = 0;
                     spcStr = new ConfigSpecStructure();
-                    specCode = argValues[i++].toString();
-                    specCodeVersion = (Integer) argValues[i++];
+                    code = argValues[i++].toString();
+                    codeVersion = (Integer) argValues[i++];
                     String analysis = argValues[i++].toString();
                     String methodName = argValues[i++].toString();
                     Integer methodVersion = (Integer) argValues[i++];
@@ -344,7 +344,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                         Object[] diagn = specFieldValueArr;
                         diagnostic=new InternalMessage(diagn[0].toString(), diagn[diagn.length-1].toString(), null, null);
                     } else {
-                        diagnostic = spcStr.specLimitNew(specCode, specCodeVersion, specFieldNameArr, specFieldValueArr);
+                        diagnostic = spcStr.specLimitNew(code, codeVersion, specFieldNameArr, specFieldValueArr);
                     }
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic.getDiagnostic())) {
                         messageDynamicData = new Object[]{specFieldName, specFieldValue, procReqInstance.getProcedureInstance()};
