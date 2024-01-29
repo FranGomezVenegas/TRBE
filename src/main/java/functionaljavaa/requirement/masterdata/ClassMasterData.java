@@ -226,7 +226,7 @@ public class ClassMasterData {
                     break;
                 case MD_ANALYSIS_PARAMS:
                     asJsonArray = jsonObject.get(GlobalAPIsParams.LBL_VALUES).getAsJsonArray();
-                    ConfigAnalysisStructure cAna = new ConfigAnalysisStructure();
+                    
                     for (JsonElement jO : asJsonArray) {
                         String methodName = jO.getAsJsonObject().get(TblsCnfg.AnalysisMethodParams.METHOD_NAME.getName()).getAsString();
                         String[] fldNames = new String[]{TblsCnfg.Methods.CODE.getName(), TblsCnfg.Methods.CONFIG_VERSION.getName(),
@@ -237,13 +237,14 @@ public class ClassMasterData {
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existMethod[0].toString())) {
                             Rdbms.insertRecord(TblsCnfg.TablesConfig.METHODS, fldNames, fldValues, instanceName);
                         }
-
+                        String analysisCode=jO.getAsJsonObject().get(TblsCnfg.Analysis.CODE.getName()).getAsString();
+                        ConfigAnalysisStructure cAna = new ConfigAnalysisStructure(analysisCode, null);
                         fldNames = new String[]{TblsCnfg.Analysis.ACTIVE.getName(), TblsCnfg.Analysis.CREATED_ON.getName(), TblsCnfg.Analysis.CREATED_BY.getName()};
                         fldValues = new Object[]{true, LPDate.getCurrentTimeStamp(), userCreator};
-                        Object[] existAnalysis = Rdbms.existsRecord(TblsCnfg.TablesConfig.ANALYSIS, new String[]{TblsCnfg.Analysis.CODE.getName()}, new Object[]{jO.getAsJsonObject().get(TblsCnfg.Analysis.CODE.getName()).getAsString()}, instanceName);
+                        Object[] existAnalysis = Rdbms.existsRecord(TblsCnfg.TablesConfig.ANALYSIS, new String[]{TblsCnfg.Analysis.CODE.getName()}, 
+                                new Object[]{analysisCode}, instanceName);
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existAnalysis[0].toString())) {
                             this.diagnostic = cAna.analysisNew(jO.getAsJsonObject().get(TblsCnfg.Analysis.CODE.getName()).getAsString(), 1, fldNames, fldValues, instanceName);
-                            //if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic[0].toString())) return;
                         }
 
                         fldNames = new String[]{TblsCnfg.AnalysisMethod.CREATED_ON.getName(), TblsCnfg.AnalysisMethod.CREATED_BY.getName(),

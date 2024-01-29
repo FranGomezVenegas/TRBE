@@ -205,12 +205,9 @@ public class ClassAnalysis {
                     codeVersion = Integer.valueOf(argValues[1].toString());
                     anaStr = new ConfigAnalysisStructure(code, codeVersion);
                     String methodName = argValues[2].toString();
-                    Integer methodVersion = null;
-                    if (LPNulls.replaceNull(argValues[3]).toString().length()>0)
-                        methodVersion=Integer.valueOf(argValues[3].toString());
-                    String expiryIntervalInfo = argValues[4].toString();
+                    String expiryIntervalInfo = argValues[3].toString();
 
-                    this.diagnosticObj = anaStr.analysisAddMethod(code, codeVersion, methodName, methodVersion, expiryIntervalInfo);
+                    this.diagnosticObj = anaStr.analysisAddMethod(code, codeVersion, methodName, expiryIntervalInfo);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())) {
                         messageDynamicData = new Object[]{code, methodName, procReqInstance.getProcedureInstance()};
                     } else {

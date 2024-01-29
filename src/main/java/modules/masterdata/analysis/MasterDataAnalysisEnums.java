@@ -126,9 +126,8 @@ public class MasterDataAnalysisEnums {
         ANALYSIS_ADD_METHOD("ANALYSIS_ADD_METHOD", "analysisMethodAdded_success",
             new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_CODE, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(REQUEST_PARAM_CONFIG_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
-                new LPAPIArguments("methodName", LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
-                new LPAPIArguments("methodVersion", LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
-                new LPAPIArguments("expiryIntervalInfo", LPAPIArguments.ArgumentType.STRING.toString(), false, 10),}, MasterDataAnalysisAuditEvents.ANALYSIS_METHOD_ADDED,
+                new LPAPIArguments("methodName", LPAPIArguments.ArgumentType.STRING.toString(), true, 8),                
+                new LPAPIArguments("expiryIntervalInfo", LPAPIArguments.ArgumentType.STRING.toString(), false, 9)}, MasterDataAnalysisAuditEvents.ANALYSIS_METHOD_ADDED,
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.CONFIG.getName())
                     .add(GlobalAPIsParams.LBL_TABLE, TblsCnfg.TablesConfig.ANALYSIS.getTableName()).build()).build(),
             null, null),

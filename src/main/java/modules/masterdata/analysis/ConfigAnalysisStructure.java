@@ -47,16 +47,31 @@ import trazit.session.InternalMessage;
  */
 public class ConfigAnalysisStructure {
 
-    String classVersion = "Class Version=0.1";
+
+
     private static final String DIAGNOSES_SUCCESS = "SUCCESS";
     private static final String DIAGNOSES_ERROR = "ERROR";
+    
+    Boolean approvedForUse=true;
+    String code;
+    Integer configVersion;
+    
+    private InternalMessage lockedDueToApprovedForUse(){
+        return new InternalMessage(LPPlatform.LAB_FALSE, ConfigAnalysisErrorTrapping.LOCKED_DUE_TO_APPROVED_FOR_USE, new Object[]{code});
+    }
 
+    public ConfigAnalysisStructure(String code, Integer codeVersion) {        
+        this.approvedForUse=false;
+        this.code=code;
+        this.configVersion=codeVersion;
+    } 
     public enum ConfigAnalysisErrorTrapping implements EnumIntMessages {
-        SAMPLE_NOT_FOUND("SampleNotFound", "", ""),
         ERROR_INSERTING_SAMPLE_RECORD("errorInsertingSampleRecord", "", ""),
         MISSING_MANDATORY_FIELDS("MissingMandatoryFields", "MissingMandatoryFields <*1*>", ""),
-        MISSING_CONFIG_CODE("MissingConfigCode", "", ""),;
-
+        MISSING_CONFIG_CODE("MissingConfigCode", "", ""),
+        LOCKED_DUE_TO_APPROVED_FOR_USE("analysisLockedDueToApprovedForUse", "MissingMandatoryFields <*1*>", ""),
+        ANALYSIS_IN_USE_BY_SPECS("analysisInUseBySpecs", "MissingMandatoryFields <*1*>", "")
+        ;
         private ConfigAnalysisErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs) {
             this.errorCode = errCode;
             this.defaultTextWhenNotInPropertiesFileEn = defaultTextEn;
@@ -164,8 +179,8 @@ public class ConfigAnalysisStructure {
             return "ERROR: The parameter method_version cannot be null";
         }
 
-        String[] fieldNames = new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName(), TblsCnfg.AnalysisMethod.METHOD_NAME.getName(), TblsCnfg.AnalysisMethod.METHOD_VERSION.getName()};
-        Object[] fieldValues = new Object[]{analysis, methodName, methodVersion};
+        String[] fieldNames = new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName(), TblsCnfg.AnalysisMethod.METHOD_NAME.getName()};
+        Object[] fieldValues = new Object[]{analysis, methodName};
 
         Object[] diagnosis = Rdbms.existsRecord(procInstanceName, schemaConfigName, TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName(), fieldNames, fieldValues);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString())) {
@@ -199,6 +214,9 @@ public class ConfigAnalysisStructure {
      * @return
      */
     public InternalMessage analysisUpdate(String code, Integer configVersion, String[] specFieldName, Object[] specFieldValue) {
+
+        if (this.approvedForUse)
+            return lockedDueToApprovedForUse();
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
         Object[] errorDetailVariables = new Object[0];
@@ -423,25 +441,94 @@ public class ConfigAnalysisStructure {
         }
     }
      */
-    /**
-     *
-     * @param analysisCode
-     * @param fieldName
-     * @param methodName
-     * @param fieldValue
-     * @param analysisCodeVersion
-     * @return
-     */
-    public InternalMessage analysisAddMethod(String analysisCode, Integer analysisCodeVersion, String methodName, Integer methodVersion, String expiryIntervalInfo){
+    public InternalMessage analysisDeactivate(){
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        String procInstanceName = instanceForActions.getProcedureInstance();
+
+        String[] fieldName=new String[]{TblsCnfg.Analysis.ACTIVE.getName(), TblsCnfg.Analysis.INACTIVATED_BY.getName(), TblsCnfg.Analysis.INACTIVATED_ON.getName()};
+        Object[] fieldValue=new Object[]{false, instanceForActions.getToken().getPersonName(), LPDate.getCurrentTimeStamp()};
+        
+        
+        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsCnfg.TablesConfig.SPEC_LIMITS.getRepositoryName()), TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName());
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())){
+            Object[] existsRecord = Rdbms.existsRecord(TblsCnfg.TablesConfig.SPEC_LIMITS, 
+                    new String[]{TblsCnfg.SpecLimits.ANALYSIS.getName()}, new Object[]{this.code}, procInstanceName);
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())){
+                return new InternalMessage(LPPlatform.LAB_FALSE, ConfigAnalysisErrorTrapping.ANALYSIS_IN_USE_BY_SPECS, new Object[]{code});                
+            }
+        }
+        
+        SqlWhere sqlWhere = new SqlWhere();
+        sqlWhere.addConstraint(TblsCnfg.Analysis.CODE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{this.code}, "");
+        sqlWhere.addConstraint(TblsCnfg.Analysis.CONFIG_VERSION, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{this.configVersion}, "");
+        RdbmsObject diagnObj = Rdbms.updateTableRecordFieldsByFilter(TblsCnfg.TablesConfig.ANALYSIS,
+                EnumIntTableFields.getTableFieldsFromString(TblsCnfg.TablesConfig.ANALYSIS, fieldName), fieldValue, sqlWhere, null);
+        if (Boolean.TRUE.equals(diagnObj.getRunSuccess())) {
+            ConfigTablesAudit.analysisAuditAdd(ConfigAnalysisAuditEvents.ANALYSIS_DEACTIVATED, TblsCnfgAudit.TablesCfgAudit.ANALYSIS, code,
+                    code, configVersion, fieldName, fieldValue, null);
+            if (this.approvedForUse){
+                fieldName=new String[]{TblsCnfg.Analysis.APPROVED_FOR_USE.getName(), TblsCnfg.Analysis.APPROVED_BY.getName(), TblsCnfg.Analysis.APPROVED_ON.getName()};
+                fieldValue=new Object[]{false, "NULL>>>STRING", "NULL>>>DATETIME"};
+                diagnObj = Rdbms.updateTableRecordFieldsByFilter(TblsCnfg.TablesConfig.ANALYSIS,
+                        EnumIntTableFields.getTableFieldsFromString(TblsCnfg.TablesConfig.ANALYSIS, fieldName), fieldValue, sqlWhere, null);
+                ConfigTablesAudit.analysisAuditAdd(ConfigAnalysisAuditEvents.UNAPPROVED_FOR_USE, TblsCnfgAudit.TablesCfgAudit.ANALYSIS, code,
+                        code, configVersion, fieldName, fieldValue, null);
+            }
+            return new InternalMessage(LPPlatform.LAB_TRUE, MasterDataAnalysisEnums.MasterDataAnalysisActionsEndpoints.ANALYSIS_DEACTIVATE, new Object[]{code});
+        } else {
+            return new InternalMessage(LPPlatform.LAB_FALSE, diagnObj.getErrorMessageCode(), diagnObj.getErrorMessageVariables());
+        }
+    }
+    public InternalMessage analysisReactivate(){
+        String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
+        String[] fieldName=new String[]{TblsCnfg.Analysis.ACTIVE.getName(), TblsCnfg.Analysis.INACTIVATED_BY.getName(), TblsCnfg.Analysis.INACTIVATED_ON.getName()};
+        Object[] fieldValue=new Object[]{true, "NULL>>>STRING", "NULL>>>DATE"};
+        SqlWhere sqlWhere = new SqlWhere();
+        sqlWhere.addConstraint(TblsCnfg.Analysis.CODE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{code}, "");
+        sqlWhere.addConstraint(TblsCnfg.Analysis.CONFIG_VERSION, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{configVersion}, "");
+        RdbmsObject diagnObj = Rdbms.updateTableRecordFieldsByFilter(TblsCnfg.TablesConfig.ANALYSIS,
+                EnumIntTableFields.getTableFieldsFromString(TblsCnfg.TablesConfig.ANALYSIS, fieldName), fieldValue, sqlWhere, null);
+        if (Boolean.TRUE.equals(diagnObj.getRunSuccess())) {
+            ConfigTablesAudit.analysisAuditAdd(ConfigAnalysisAuditEvents.ANALYSIS_REACTIVATED, TblsCnfgAudit.TablesCfgAudit.ANALYSIS, code,
+                    code, configVersion, fieldName, fieldValue, null);
+            return new InternalMessage(LPPlatform.LAB_TRUE, MasterDataAnalysisEnums.MasterDataAnalysisActionsEndpoints.ANALYSIS_REACTIVATE, new Object[]{code});
+        } else {
+            return new InternalMessage(LPPlatform.LAB_FALSE, diagnObj.getErrorMessageCode(), diagnObj.getErrorMessageVariables());
+        }
+    }
+    public InternalMessage analysisApproveForUse(){
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        String procInstanceName = instanceForActions.getProcedureInstance();
+        String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
+        String[] fieldName=new String[]{TblsCnfg.Analysis.APPROVED_FOR_USE.getName(), TblsCnfg.Analysis.APPROVED_BY.getName(), TblsCnfg.Analysis.APPROVED_ON.getName()};
+        Object[] fieldValue=new Object[]{true, instanceForActions.getToken().getPersonName(), LPDate.getCurrentTimeStamp()};
+        SqlWhere sqlWhere = new SqlWhere();
+        sqlWhere.addConstraint(TblsCnfg.Analysis.CODE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{code}, "");
+        sqlWhere.addConstraint(TblsCnfg.Analysis.CONFIG_VERSION, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{configVersion}, "");
+        RdbmsObject diagnObj = Rdbms.updateTableRecordFieldsByFilter(TblsCnfg.TablesConfig.ANALYSIS,
+                EnumIntTableFields.getTableFieldsFromString(TblsCnfg.TablesConfig.ANALYSIS, fieldName), fieldValue, sqlWhere, null);
+        if (Boolean.TRUE.equals(diagnObj.getRunSuccess())) {
+            ConfigTablesAudit.analysisAuditAdd(ConfigAnalysisAuditEvents.ANALYSIS_REACTIVATED, TblsCnfgAudit.TablesCfgAudit.ANALYSIS, code,
+                    code, configVersion, fieldName, fieldValue, null);
+            return new InternalMessage(LPPlatform.LAB_TRUE, MasterDataAnalysisEnums.MasterDataAnalysisActionsEndpoints.ANALYSIS_REACTIVATE, new Object[]{code});
+        } else {
+            return new InternalMessage(LPPlatform.LAB_FALSE, diagnObj.getErrorMessageCode(), diagnObj.getErrorMessageVariables());
+        }
+    }
+
+    public InternalMessage analysisAddMethod(String analysisCode, Integer analysisCodeVersion, String methodName, String expiryIntervalInfo){
+        if (this.approvedForUse)
+            return lockedDueToApprovedForUse();
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
         Object[] diagnoses = Rdbms.existsRecord(procInstanceName, schemaName, TblsCnfg.TablesConfig.METHODS.getTableName(), 
-            new String[]{TblsCnfg.Methods.CODE.getName(), TblsCnfg.Methods.CONFIG_VERSION.getName()}, new Object[]{methodName, methodVersion});
+            new String[]{TblsCnfg.Methods.CODE.getName()}, new Object[]{methodName});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, MasterDataAnalysisErrorTrapping.METHOD_NOT_FOUND, new Object[]{methodName});
         }
-        String[] fieldName=new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName(), TblsCnfg.AnalysisMethod.METHOD_NAME.getName(), TblsCnfg.AnalysisMethod.METHOD_VERSION.getName(), TblsCnfg.AnalysisMethod.EXPIRY_INTERVAL_INFO.getName()};
-        Object[] fieldValue=new Object[]{analysisCode, methodName, methodVersion, expiryIntervalInfo};
+        String[] fieldName=new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName(), TblsCnfg.AnalysisMethod.METHOD_NAME.getName(), TblsCnfg.AnalysisMethod.EXPIRY_INTERVAL_INFO.getName()};
+        Object[] fieldValue=new Object[]{analysisCode, methodName, expiryIntervalInfo};
                 RdbmsObject diagnObj = Rdbms.insertRecordInTable(TblsCnfg.TablesConfig.ANALYSIS_METHOD, 
                 fieldName,fieldValue);
         if (Boolean.TRUE.equals(diagnObj.getRunSuccess())) {
@@ -453,6 +540,8 @@ public class ConfigAnalysisStructure {
         }
     }
     public InternalMessage analysisRemoveMethod(String analysisCode, Integer analysisCodeVersion, String methodName){
+        if (this.approvedForUse)
+            return lockedDueToApprovedForUse();
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
         Object[] diagnoses = Rdbms.existsRecord(procInstanceName, schemaName, TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName(), 
@@ -474,6 +563,8 @@ public class ConfigAnalysisStructure {
         }
     }
     public InternalMessage analysisMethodParamsNew(String analysisCode, Integer analysisCodeVersion, String methodName, String[] fieldName, Object[] fieldValue, Boolean createMethodIfNotFound) {
+        if (this.approvedForUse)
+            return lockedDueToApprovedForUse();
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
         String procInstanceName = instanceForActions.getProcedureInstance();
         Object[] mandatoryFieldValue = new String[0];
@@ -563,17 +654,17 @@ public class ConfigAnalysisStructure {
                 }
             }
         }
-        whereFields = new String[]{TblsCnfg.AnalysisMethod.METHOD_NAME.getName(), TblsCnfg.AnalysisMethod.METHOD_VERSION.getName()};
-        whereFieldsValue = new Object[]{methodName, methodVersion};
+        whereFields = new String[]{TblsCnfg.AnalysisMethod.METHOD_NAME.getName()};
+        whereFieldsValue = new Object[]{methodName};
         diagnoses = Rdbms.existsRecord(procInstanceName, schemaName, TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName(), whereFields, whereFieldsValue);
         if (createMethodIfNotFound&&LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString())) {
-            String[] anaMethFldName = new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName(), TblsCnfg.AnalysisMethod.METHOD_NAME.getName(), TblsCnfg.AnalysisMethod.METHOD_VERSION.getName(),
+            String[] anaMethFldName = new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName(), TblsCnfg.AnalysisMethod.METHOD_NAME.getName(), 
                 TblsCnfg.AnalysisMethod.CREATED_BY.getName(), TblsCnfg.AnalysisMethod.CREATED_ON.getName()};
             Integer createdByFldPosic=LPArray.valuePosicInArray(fieldName, TblsCnfg.AnalysisMethod.CREATED_BY.getName());
             String createdBy=instanceForActions.getToken().getPersonName();
             if (createdByFldPosic>-1)
                 createdBy=fieldValue[createdByFldPosic].toString();
-            Object[] anaMethFldValue = new Object[]{analysisCode, methodName, methodVersion, createdBy, LPDate.getCurrentTimeStamp()};
+            Object[] anaMethFldValue = new Object[]{analysisCode, methodName, createdBy, LPDate.getCurrentTimeStamp()};
             RdbmsObject diagnObj = Rdbms.insertRecord(TblsCnfg.TablesConfig.ANALYSIS_METHOD, anaMethFldName, anaMethFldValue, procInstanceName); 
             if (Boolean.TRUE.equals(diagnObj.getRunSuccess())) {
                 ConfigTablesAudit.analysisAuditAdd(ConfigAnalysisAuditEvents.ANALYSIS_METHOD_ADDED, TblsCnfgAudit.TablesCfgAudit.ANALYSIS, analysisCode,
