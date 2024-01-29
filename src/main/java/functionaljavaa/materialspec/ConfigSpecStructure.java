@@ -279,8 +279,8 @@ public class ConfigSpecStructure {
             return "ERROR: The parameter method_version cannot be null";
         }
 
-        String[] fieldNames = new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName(), TblsCnfg.AnalysisMethod.METHOD_NAME.getName(), TblsCnfg.AnalysisMethod.METHOD_VERSION.getName()};
-        Object[] fieldValues = new Object[]{analysis, methodName, methodVersion};
+        String[] fieldNames = new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName(), TblsCnfg.AnalysisMethod.METHOD_NAME.getName()};
+        Object[] fieldValues = new Object[]{analysis, methodName};
 
         Object[] diagnosis = Rdbms.existsRecord(procInstanceName, schemaConfigName, TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName(), fieldNames, fieldValues);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString())) {
@@ -736,7 +736,6 @@ public class ConfigSpecStructure {
         keyFieldValues = LPArray.addValueToArray1D(keyFieldValues, specFieldValue[fieldIndex]);
 
         Integer fieldIndexMethodName = Arrays.asList(specFieldName).indexOf(TblsCnfg.AnalysisMethod.METHOD_NAME.getName());
-        Integer fieldIndexMethodVersion = Arrays.asList(specFieldName).indexOf(TblsCnfg.AnalysisMethod.METHOD_VERSION.getName());
         String methodName = "";
         Integer methodVersion = -1;
         if (fieldIndexMethodName > -1) {
@@ -744,15 +743,10 @@ public class ConfigSpecStructure {
             keyFieldNames = LPArray.addValueToArray1D(keyFieldNames, TblsCnfg.SpecLimits.METHOD_NAME.getName());
             keyFieldValues = LPArray.addValueToArray1D(keyFieldValues, methodName);
         }
-        if (fieldIndexMethodVersion > -1) {
-            methodVersion = (Integer) specFieldValue[fieldIndexMethodVersion];
-            keyFieldNames = LPArray.addValueToArray1D(keyFieldNames, TblsCnfg.SpecLimits.METHOD_VERSION.getName());
-            keyFieldValues = LPArray.addValueToArray1D(keyFieldValues, methodVersion);
-        }
 
         Object[][] analysisMethods = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName(),
                 new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName()}, new Object[]{analysis},
-                new String[]{TblsCnfg.AnalysisMethod.METHOD_NAME.getName(), TblsCnfg.AnalysisMethod.METHOD_VERSION.getName()},
+                new String[]{TblsCnfg.AnalysisMethod.METHOD_NAME.getName()},
                 new String[]{"1"}, true);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisMethods[0][0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, "analysis <*1*> not found", new Object[]{analysis}, null);
@@ -773,12 +767,6 @@ public class ConfigSpecStructure {
         } else {
             specFieldName = LPArray.addValueToArray1D(specFieldName, TblsCnfg.AnalysisMethod.METHOD_NAME.getName());
             specFieldValue = LPArray.addValueToArray1D(specFieldValue, methodName);
-        }
-        if (fieldIndexMethodVersion > -1) {
-            specFieldValue[fieldIndexMethodVersion] = methodVersion;
-        } else {
-            specFieldName = LPArray.addValueToArray1D(specFieldName, TblsCnfg.AnalysisMethod.METHOD_VERSION.getName());
-            specFieldValue = LPArray.addValueToArray1D(specFieldValue, methodVersion);
         }
 
         Object[] existsRecord = Rdbms.existsRecord(TblsCnfg.TablesConfig.SPEC_LIMITS, keyFieldNames, keyFieldValues, procInstanceName);
@@ -850,8 +838,8 @@ public class ConfigSpecStructure {
                 }
             }
         } */
-        String[] whereFields = new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName(), TblsCnfg.AnalysisMethod.METHOD_NAME.getName(), TblsCnfg.AnalysisMethod.METHOD_VERSION.getName()};
-        Object[] whereFieldsValue = new Object[]{analysis, methodName, methodVersion};
+        String[] whereFields = new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName(), TblsCnfg.AnalysisMethod.METHOD_NAME.getName()};
+        Object[] whereFieldsValue = new Object[]{analysis, methodName};
         diagnoses = Rdbms.existsRecord(procInstanceName, schemaName, TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName(), whereFields, whereFieldsValue);
         if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString()))) {
             Object[] whereFieldsAndValues = LPArray.joinTwo1DArraysInOneOf1DString(diagnoses, whereFieldsValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR);

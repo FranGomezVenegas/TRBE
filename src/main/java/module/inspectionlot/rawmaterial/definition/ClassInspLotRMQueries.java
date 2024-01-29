@@ -618,7 +618,7 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                         wFldN=LPArray.addValueToArray1D(wFldN, TblsCnfg.Analysis.CODE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.LIKE.getSqlClause());
                         wFldV=LPArray.addValueToArray1D(wFldV, code);
                     }
-                    if (LPNulls.replaceNull(code).toString().length() == 0) {
+                    if ("ALL".equalsIgnoreCase(code)||LPNulls.replaceNull(code).toString().length() == 0) {
                         whereObj.addConstraint(TblsCnfg.Analysis.CODE, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, null, null);
                     } else {
                         whereObj.addConstraint(TblsCnfg.Analysis.CODE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{code}, null);
