@@ -153,6 +153,15 @@ public class TestingAssert {
     public Object[] evaluate(Integer numEvaluationArguments, TestingAssertSummary tstAssertSummary, InternalMessage diagnosesObj, Integer codeEvalPosic){
         String sintaxisIcon = ""; 
         String codeIcon = "";
+        
+        String errorCode="";
+        if (diagnosesObj.getMessageCodeObj()!=null){
+            errorCode=diagnosesObj.getMessageCodeObj().getErrorCode();
+        }else{
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesObj.getDiagnostic()))
+                errorCode=diagnosesObj.getMessageCodeEndpoint().getSuccessMessageCode();
+        }
+
         if (diagnosesObj==null){
             this.evalSyntaxisDiagnostic=EvalCodes.WITH_NO_DIAGNOSTIC.toString();
             this.evalCodeDiagnostic=EvalCodes.WITH_NO_DIAGNOSTIC.toString();
@@ -197,11 +206,11 @@ public class TestingAssert {
                     codeIcon=LPTestingOutFormat.TST_ERRORCODEUNDEFINED;
                     this.evalCodeDiagnostic=EvalCodes.UNDEFINED.toString();
                 }else{
-                    if (LPNulls.replaceNull(diagnosesObj.getMessageCodeObj().getErrorCode()).length()==0){
+                    if (errorCode.length()==0){
                         tstAssertSummary.increasetotalLabPlanetErrorCodeUndefined();
                         codeIcon=LPTestingOutFormat.TST_ERRORCODEUNDEFINED;
                     }
-                    else if (this.getEvalCode().equalsIgnoreCase(diagnosesObj.getMessageCodeObj().getErrorCode())){
+                    else if (this.getEvalCode().equalsIgnoreCase(errorCode)){
                         tstAssertSummary.increasetotalLabPlanetErrorCodeMatch(); 
                         codeIcon=LPTestingOutFormat.TST_ERRORCODEMATCH;
                         this.evalCodeDiagnostic=EvalCodes.MATCH.toString();
@@ -222,23 +231,27 @@ public class TestingAssert {
             diagnostic=LPArray.addValueToArray1D(diagnostic, sintaxisIcon+ " ("+LPNulls.replaceNull(this.getEvalSyntaxisB()).toString()+") ");
             message=message+LPPlatform.LAB_TRUE.equalsIgnoreCase("diagnoses is null");            
         }
-        if (diagnosesObj!=null&&diagnosesObj.getMessageCodeObj().getErrorCode()!=null){
+        if (diagnosesObj!=null&&errorCode!=null){
             message=message+"Syntaxis:";
             if (this.getEvalSyntaxisB()!=null){
                 diagnostic=LPArray.addValueToArray1D(diagnostic, sintaxisIcon+ " ("+LPNulls.replaceNull(this.getEvalSyntaxisB()).toString()+") ");
-                message=message+LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesObj.getMessageCodeObj().getErrorCode().toString());
+                message=message+LPPlatform.LAB_TRUE.equalsIgnoreCase(errorCode);
             }else{
                 diagnostic=LPArray.addValueToArray1D(diagnostic, sintaxisIcon+ " ("+LPNulls.replaceNull(this.getEvalSyntaxis()).toString()+") ");
-                message=message+diagnosesObj.getMessageCodeObj().getErrorCode().toString()+". ";
+                message=message+errorCode+". ";
             }
             //diagnoses[TRAP_MESSAGE_EVALUATION_POSIC]=message;
             //diagnostic=LPArray.addValueToArray1D(diagnostic, sintaxisIcon + "<h8>("+this.getEvalCode()+")</h8> ");
         }
         if (diagnosesObj!=null&&numEvaluationArguments>=2){
-            if (diagnosesObj.getMessageCodeObj().getErrorCode()!=null) message=message+" Code:"+diagnosesObj.getMessageCodeObj().getErrorCode()+". ";
+            if (errorCode!=null) message=message+" Code:"+errorCode+". ";
             diagnostic=LPArray.addValueToArray1D(diagnostic, codeIcon + "<h8>("+this.getEvalCode()+")</h8> ");
         }
-        if (diagnosesObj!=null&&diagnosesObj.getMessageCodeObj().getErrorCode()!=null) message=message+"Message:"+diagnosesObj.getMessageCodeObj().getDefaultTextEn()+". ";  
+        if (diagnosesObj!=null&&errorCode!=null&&diagnosesObj.getMessageCodeObj()!=null){
+            message=message+"Message:"+diagnosesObj.getMessageCodeObj().getDefaultTextEn()+". ";  
+        }else{
+            message=message+"Message:"+errorCode+". ";  
+        }
         diagnostic=LPArray.addValueToArray1D(diagnostic, message);
         return diagnostic;
     }
