@@ -657,21 +657,23 @@ public class ConfigAnalysisStructure {
         whereFields = new String[]{TblsCnfg.AnalysisMethod.METHOD_NAME.getName()};
         whereFieldsValue = new Object[]{methodName};
         diagnoses = Rdbms.existsRecord(procInstanceName, schemaName, TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName(), whereFields, whereFieldsValue);
-        if (createMethodIfNotFound&&LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString())) {
-            String[] anaMethFldName = new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName(), TblsCnfg.AnalysisMethod.METHOD_NAME.getName(), 
-                TblsCnfg.AnalysisMethod.CREATED_BY.getName(), TblsCnfg.AnalysisMethod.CREATED_ON.getName()};
-            Integer createdByFldPosic=LPArray.valuePosicInArray(fieldName, TblsCnfg.AnalysisMethod.CREATED_BY.getName());
-            String createdBy=instanceForActions.getToken().getPersonName();
-            if (createdByFldPosic>-1)
-                createdBy=fieldValue[createdByFldPosic].toString();
-            Object[] anaMethFldValue = new Object[]{analysisCode, methodName, createdBy, LPDate.getCurrentTimeStamp()};
-            RdbmsObject diagnObj = Rdbms.insertRecord(TblsCnfg.TablesConfig.ANALYSIS_METHOD, anaMethFldName, anaMethFldValue, procInstanceName); 
-            if (Boolean.TRUE.equals(diagnObj.getRunSuccess())) {
-                ConfigTablesAudit.analysisAuditAdd(ConfigAnalysisAuditEvents.ANALYSIS_METHOD_ADDED, TblsCnfgAudit.TablesCfgAudit.ANALYSIS, analysisCode,
-                        analysisCode, analysisCodeVersion, anaMethFldName, anaMethFldValue, null);
-            }
-        }else{
-            return new InternalMessage(LPPlatform.LAB_FALSE, MasterDataAnalysisErrorTrapping.ANALYSIS_METHOD_NOT_FOUND, new Object[]{methodName, analysisCode});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses[0].toString())) {
+            if (createMethodIfNotFound){
+                String[] anaMethFldName = new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName(), TblsCnfg.AnalysisMethod.METHOD_NAME.getName(), 
+                    TblsCnfg.AnalysisMethod.CREATED_BY.getName(), TblsCnfg.AnalysisMethod.CREATED_ON.getName()};
+                Integer createdByFldPosic=LPArray.valuePosicInArray(fieldName, TblsCnfg.AnalysisMethod.CREATED_BY.getName());
+                String createdBy=instanceForActions.getToken().getPersonName();
+                if (createdByFldPosic>-1)
+                    createdBy=fieldValue[createdByFldPosic].toString();
+                Object[] anaMethFldValue = new Object[]{analysisCode, methodName, createdBy, LPDate.getCurrentTimeStamp()};
+                RdbmsObject diagnObj = Rdbms.insertRecord(TblsCnfg.TablesConfig.ANALYSIS_METHOD, anaMethFldName, anaMethFldValue, procInstanceName); 
+                if (Boolean.TRUE.equals(diagnObj.getRunSuccess())) {
+                    ConfigTablesAudit.analysisAuditAdd(ConfigAnalysisAuditEvents.ANALYSIS_METHOD_ADDED, TblsCnfgAudit.TablesCfgAudit.ANALYSIS, analysisCode,
+                            analysisCode, analysisCodeVersion, anaMethFldName, anaMethFldValue, null);
+                }            
+            }else{
+                return new InternalMessage(LPPlatform.LAB_FALSE, MasterDataAnalysisErrorTrapping.ANALYSIS_METHOD_NOT_FOUND, new Object[]{methodName, analysisCode});
+            }            
         }
         try {
             fieldName = LPArray.addValueToArray1D(fieldName, TblsCnfg.AnalysisMethodParams.ANALYSIS.getName());
