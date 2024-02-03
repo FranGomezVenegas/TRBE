@@ -498,6 +498,9 @@ public class ConfigAnalysisStructure {
         }
     }
     public InternalMessage analysisApproveForUse(){
+        if (this.approvedForUse){
+            return lockedDueToApprovedForUse();
+        }
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
         String procInstanceName = instanceForActions.getProcedureInstance();
         String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
