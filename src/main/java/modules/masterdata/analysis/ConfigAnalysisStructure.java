@@ -55,15 +55,33 @@ public class ConfigAnalysisStructure {
     Boolean approvedForUse=true;
     String code;
     Integer configVersion;
-    
+    EnumIntTableFields[] fldsToGetObj = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsCnfg.TablesConfig.ANALYSIS);
+    Object[] lotInfo;
     private InternalMessage lockedDueToApprovedForUse(){
         return new InternalMessage(LPPlatform.LAB_FALSE, ConfigAnalysisErrorTrapping.LOCKED_DUE_TO_APPROVED_FOR_USE, new Object[]{code});
     }
 
-    public ConfigAnalysisStructure(String code, Integer codeVersion) {        
-        this.approvedForUse=false;
+    public ConfigAnalysisStructure(String code, Integer codeVersion) {      
+        
         this.code=code;
         this.configVersion=codeVersion;
+
+        SqlWhere sqlWhere = new SqlWhere();
+        sqlWhere.addConstraint(TblsCnfg.Analysis.CODE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{code}, "");
+        sqlWhere.addConstraint(TblsCnfg.Analysis.CONFIG_VERSION, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{configVersion}, "");
+
+
+        String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+//        EnumIntTableFields[] fldsToGetObj = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsCnfg.TablesConfig.ANALYSIS);
+        Object[][] lotInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsCnfg.TablesConfig.ANALYSIS,
+            sqlWhere, this.fldsToGetObj, null, false);
+        this.approvedForUse=false;
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(lotInfo[0][0].toString())) return;
+        
+        this.lotInfo=lotInfo[0];
+        Integer appForUseFldPosic = EnumIntTableFields.getFldPosicInArray(this.fldsToGetObj, TblsCnfg.Analysis.APPROVED_FOR_USE.getName());
+        if (appForUseFldPosic>-1)
+            this.approvedForUse=Boolean.valueOf(LPNulls.replaceNull(lotInfo[0][appForUseFldPosic]).toString());
     } 
     public enum ConfigAnalysisErrorTrapping implements EnumIntMessages {
         ERROR_INSERTING_SAMPLE_RECORD("errorInsertingSampleRecord", "", ""),
