@@ -100,9 +100,11 @@ public class UserProfile {
             }else{
                 String currProcPrefix = procInstanceName1.toString();
                 Object[] currProcUserProfiles =  getProcedureUserProfileFieldValues(currProcPrefix, personName);
-                for (Object fn: currProcUserProfiles ){
-                    if (Boolean.FALSE.equals(LPArray.valueInArray(totalProcUserProfiles, fn)))
-                        totalProcUserProfiles = LPArray.addValueToArray1D(totalProcUserProfiles, fn);
+                if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(currProcUserProfiles[0].toString()))){
+                    for (Object fn: currProcUserProfiles ){
+                        if (Boolean.FALSE.equals(LPArray.valueInArray(totalProcUserProfiles, fn)))
+                            totalProcUserProfiles = LPArray.addValueToArray1D(totalProcUserProfiles, fn);
+                    }
                 }
             }
         }            
