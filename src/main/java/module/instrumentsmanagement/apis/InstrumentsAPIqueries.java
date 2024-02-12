@@ -880,13 +880,18 @@ try{
     }
 
     public static JSONArray instrumentFamiliesList(String alternativeProcInstanceName) {
+        JSONArray jArr = new JSONArray();
+        Object[] dbTableExists = Rdbms.dbTableExists(alternativeProcInstanceName, LPPlatform.buildSchemaName(alternativeProcInstanceName, 
+                TblsInstrumentsConfig.TablesInstrumentsConfig.INSTRUMENTS_FAMILY.getRepositoryName()), 
+                TblsInstrumentsConfig.TablesInstrumentsConfig.INSTRUMENTS_FAMILY.getTableName());
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))
+            return jArr;
         String[] fieldsToRetrieve = getAllFieldNames(TblsInstrumentsConfig.TablesInstrumentsConfig.INSTRUMENTS_FAMILY, alternativeProcInstanceName);
         Object[][] instrumentFamily = QueryUtilitiesEnums.getTableData(TblsInstrumentsConfig.TablesInstrumentsConfig.INSTRUMENTS_FAMILY,
                 EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInstrumentsConfig.TablesInstrumentsConfig.INSTRUMENTS_FAMILY, alternativeProcInstanceName),
                 new String[]{TblsInstrumentsConfig.InstrumentsFamily.NAME.getName() + "<>"},
                 new Object[]{">>>"},
                 new String[]{TblsInstrumentsConfig.InstrumentsFamily.NAME.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()}, alternativeProcInstanceName);
-        JSONArray jArr = new JSONArray();
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentFamily[0][0].toString()))) {
             for (Object[] currInstr : instrumentFamily) {
                 JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
@@ -897,13 +902,18 @@ try{
     }
 
     public static JSONArray instrumentVariablesSetList(String alternativeProcInstanceName) {
+        JSONArray jArr = new JSONArray();
+        Object[] dbTableExists = Rdbms.dbTableExists(alternativeProcInstanceName, LPPlatform.buildSchemaName(alternativeProcInstanceName, 
+                TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES_SET.getRepositoryName()), 
+                TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES_SET.getTableName());
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))
+            return jArr;
         String[] fieldsToRetrieve = getAllFieldNames(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES_SET, alternativeProcInstanceName);
         Object[][] instrumentFamily = QueryUtilitiesEnums.getTableData(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES_SET,
                 EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES_SET, alternativeProcInstanceName),
                 new String[]{TblsInstrumentsConfig.VariablesSet.NAME.getName() + "<>"},
                 new Object[]{">>>"},
                 new String[]{TblsInstrumentsConfig.VariablesSet.NAME.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()}, alternativeProcInstanceName);
-        JSONArray jArr = new JSONArray();
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentFamily[0][0].toString()))) {
             for (Object[] currInstr : instrumentFamily) {
                 JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
@@ -914,13 +924,18 @@ try{
     }
 
     public static JSONArray instrumentVariablesList(String alternativeProcInstanceName) {
+        JSONArray jArr = new JSONArray();
+        Object[] dbTableExists = Rdbms.dbTableExists(alternativeProcInstanceName, LPPlatform.buildSchemaName(alternativeProcInstanceName, 
+                TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES.getRepositoryName()), 
+                TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES.getTableName());
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))
+            return jArr;
         String[] fieldsToRetrieve = getAllFieldNames(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES, alternativeProcInstanceName);
         Object[][] instrumentFamily = QueryUtilitiesEnums.getTableData(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES,
                 EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES, alternativeProcInstanceName),
                 new String[]{TblsInstrumentsConfig.Variables.PARAM_NAME.getName() + "<>"},
                 new Object[]{">>>"},
                 new String[]{TblsInstrumentsConfig.Variables.PARAM_NAME.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()}, alternativeProcInstanceName);
-        JSONArray jArr = new JSONArray();
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentFamily[0][0].toString()))) {
             for (Object[] currInstr : instrumentFamily) {
                 JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
@@ -931,13 +946,19 @@ try{
     }
 
     public static JSONArray instrumentsList(String alternativeProcInstanceName) {
+        JSONArray jArr = new JSONArray();
+        Object[] dbTableExists = Rdbms.dbTableExists(alternativeProcInstanceName, LPPlatform.buildSchemaName(alternativeProcInstanceName, 
+                TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS.getRepositoryName()), 
+                TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS.getTableName());
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))
+            return jArr;
         String[] fieldsToRetrieve = getAllFieldNames(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS, alternativeProcInstanceName);
         Object[][] instrumentFamily = QueryUtilitiesEnums.getTableData(TablesInstrumentsData.INSTRUMENTS,
                 EnumIntTableFields.getAllFieldNamesFromDatabase(TablesInstrumentsData.INSTRUMENTS, alternativeProcInstanceName),
                 new String[]{TblsInstrumentsData.Instruments.NAME.getName() + "<>"},
                 new Object[]{">>>"},
                 new String[]{TblsInstrumentsData.Instruments.NAME.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()}, alternativeProcInstanceName);
-        JSONArray jArr = new JSONArray();
+        
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentFamily[0][0].toString()))) {
             for (Object[] currInstr : instrumentFamily) {
                 JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);

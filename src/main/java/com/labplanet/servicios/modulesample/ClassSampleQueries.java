@@ -1605,13 +1605,18 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
     }
 
     public static JSONArray configAnalysisList(String alternativeProcInstanceName) {
+        JSONArray jArr = new JSONArray();
+        Object[] dbTableExists = Rdbms.dbTableExists(alternativeProcInstanceName, LPPlatform.buildSchemaName(alternativeProcInstanceName, 
+            TblsCnfg.TablesConfig.ANALYSIS_METHOD.getRepositoryName()), 
+            TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName());
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))
+            return jArr;
         String[] fieldsToRetrieve = getAllFieldNames(TblsCnfg.TablesConfig.ANALYSIS_METHOD, alternativeProcInstanceName);
         Object[][] analysisMethodsList = QueryUtilitiesEnums.getTableData(TblsCnfg.TablesConfig.ANALYSIS_METHOD,
                 EnumIntTableFields.getAllFieldNamesFromDatabase(TblsCnfg.TablesConfig.ANALYSIS_METHOD, alternativeProcInstanceName),
                 new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName() + "<>"},
                 new Object[]{">>>"},
                 new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()}, alternativeProcInstanceName);
-        JSONArray jArr = new JSONArray();
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisMethodsList[0][0].toString()))) {
             for (Object[] currAnalysisMeth : analysisMethodsList) {
                 JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currAnalysisMeth);
@@ -1621,13 +1626,19 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
         return jArr;
     }
     public static JSONArray configMethodsList(String procInstanceName) {
+        JSONArray jArr = new JSONArray();
+        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, 
+            TblsCnfg.TablesConfig.METHODS.getRepositoryName()), 
+            TblsCnfg.TablesConfig.METHODS.getTableName());
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))
+            return jArr;
         String[] fieldsToRetrieve = getAllFieldNames(TblsCnfg.TablesConfig.METHODS, procInstanceName);
         Object[][] analysisMethodsList = QueryUtilitiesEnums.getTableData(TblsCnfg.TablesConfig.METHODS,
                 EnumIntTableFields.getAllFieldNamesFromDatabase(TblsCnfg.TablesConfig.METHODS, procInstanceName),
                 new String[]{TblsCnfg.Methods.CODE.getName() + "<>"},
                 new Object[]{">>>"},
                 new String[]{TblsCnfg.Methods.CODE.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()}, procInstanceName);
-        JSONArray jArr = new JSONArray();
+        
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisMethodsList[0][0].toString()))) {
             for (Object[] currAnalysisMeth : analysisMethodsList) {
                 JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currAnalysisMeth);
