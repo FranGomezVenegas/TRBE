@@ -16,14 +16,70 @@ import com.google.gson.JsonSyntaxException;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.procedureinstance.definition.definition.TblsReqs;
 
 public class LPJson {
+
+    public static org.json.JSONArray pivotTable(Object[][] dataInfo, Integer dataAxisPosic, Integer dataContentPosic, Object[][] colsData, String headerCrossTextEn, String headerCrossTextEs, String linkedFieldName) {
+        Map<String, Set<String>> userRolesMap = new HashMap<>();
+        String[] procRoles1D = LPArray.getUniquesArray(LPArray.array2dTo1d(colsData));
+        org.json.JSONArray rolesActionsOutput = new org.json.JSONArray();
+        org.json.JSONArray header = new org.json.JSONArray();
+        JSONObject fldDef = new JSONObject();
+        fldDef.put("label", headerCrossTextEn);
+        fldDef.put("is_translation", true);
+        fldDef.put(linkedFieldName, TblsReqs.viewProcReqSolutionActions.PRETTY_EN.getName());
+        header.put(fldDef);
+        fldDef = new JSONObject();
+        fldDef.put("label", headerCrossTextEn);
+        fldDef.put("is_translation", true);
+        fldDef.put(linkedFieldName, TblsReqs.viewProcReqSolutionActions.PRETTY_ES.getName());
+        header.put(fldDef);
+        for (String curRole : procRoles1D) {
+            header.put(curRole);
+        }
+        rolesActionsOutput.put(header);
+        for (Object[] curActRow : dataInfo) {
+            String userName = curActRow[dataAxisPosic].toString();
+            String[] allActionRoles = LPNulls.replaceNull(curActRow[dataContentPosic]).toString().split("\\|");
+            if (!userRolesMap.containsKey(userName)) {
+                userRolesMap.put(userName, new HashSet<>());
+            }
+            for (String role : allActionRoles) {
+                if (role.equals("ALL")) {
+                    // If role is ALL, add all procRoles
+                    Collections.addAll(userRolesMap.get(userName), procRoles1D);
+                    break;
+                } else {
+                    userRolesMap.get(userName).add(role);
+                }
+            }
+        }
+        for (Map.Entry<String, Set<String>> entry : userRolesMap.entrySet()) {
+            org.json.JSONArray curUserRow = new org.json.JSONArray();
+            curUserRow.put(entry.getKey()); // Add username
+            curUserRow.put(entry.getKey()); // Add username
+            for (String curRole : procRoles1D) {
+                if (entry.getValue().contains(curRole)) {
+                    curUserRow.put("X");
+                } else {
+                    curUserRow.put("");
+                }
+            }
+            rolesActionsOutput.put(curUserRow);
+        }
+        return rolesActionsOutput;
+    }
 
     /**
      * classVersion {@value}
