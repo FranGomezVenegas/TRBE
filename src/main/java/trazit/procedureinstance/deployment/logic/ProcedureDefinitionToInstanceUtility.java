@@ -90,7 +90,7 @@ public class ProcedureDefinitionToInstanceUtility {
             new String[]{TblsReqs.viewActionsInSolution.MODULE_NAME.getName(), TblsReqs.viewActionsInSolution.MODULE_VERSION.getName(),
                 TblsReqs.viewActionsInSolution.ENDPOINT_NAME.getName()}, 
             new Object[]{moduleName, moduleVersion, wAction}, 
-            new String[]{TblsReqs.viewActionsInSolution.API_NAME.getName(), TblsReqs.viewActionsInSolution.ENDPOINT_NAME.getName(), TblsReqs.viewActionsInSolution.QUERY_FOR_BUTTON.getName(), TblsReqs.viewActionsInSolution.EXTRA_ACTIONS.getName()}, new String[]{});
+            new String[]{TblsReqs.viewActionsInSolution.API_NAME.getName(), TblsReqs.viewActionsInSolution.ENDPOINT_NAME.getName(), TblsReqs.viewActionsInSolution.QUERY_FOR_BUTTON.getName(), TblsReqs.viewActionsInSolution.EXTRA_ACTIONS.getName(), TblsReqs.viewActionsInSolution.JSON_MODEL.getName()}, new String[]{});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(moduleWindowActions[0][0].toString()) )
             return new Object[]{LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.MODULE_WINDOW_BUTTON_NOT_FOUND, new Object[]{wAction, moduleName}};
         
@@ -286,5 +286,15 @@ public class ProcedureDefinitionToInstanceUtility {
         return new Object[]{LPPlatform.LAB_FALSE};
     }
     
+    public static final Object[] tableWithButtonsSolutionInfo(String procInstanceName, Integer solutionId, Integer tableId){
+        Object[][] procedureReqSolutions = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_REQ_SOL_VIEW_TBL_BUTTONS.getTableName(), 
+            new String[]{TblsReqs.ProcedureReqSolutionViewTableWithButtons.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureReqSolutionViewTableWithButtons.SOLUTION_ID.getName(), TblsReqs.ProcedureReqSolutionViewTableWithButtons.TABLE_ID.getName()}, 
+            new Object[]{procInstanceName, solutionId, tableId}, 
+            EnumIntTableFields.getAllFieldNames(TblsReqs.ProcedureReqSolutionViewTableWithButtons.values()), new String[]{});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureReqSolutions[0][0].toString()))
+            return new Object[]{LPPlatform.LAB_FALSE};
+        
+        return new Object[]{LPPlatform.LAB_TRUE, procedureReqSolutions[0], EnumIntTableFields.getAllFieldNames(TblsReqs.ProcedureReqSolutionViewTableWithButtons.values())};
+    }    
     
 }
