@@ -107,6 +107,9 @@ import trazit.thirdparties.sap.PDFDataExtractor;
 import java.util.Set;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMData.ViewsInspLotRMData;
 import trazit.platforminstance.logic.CreatePlatform;
+import trazit.procedureinstance.definition.apis.ReqProcedureDefinitionQueries;
+import static trazit.procedureinstance.definition.apis.prodDefQueriesViewDetail.getProcedureViews;
+import trazit.procedureinstance.definition.logic.ClassReqProcedureQueries;
 import static trazit.procedureinstance.definition.logic.ReqProcDefTestingCoverageSummary.procInstanceTestingInfo;
 import trazit.procedureinstance.deployment.logic.ModuleTableOrViewGet;
 /**
@@ -138,7 +141,15 @@ public class TestingServer extends HttpServlet {
         
         String dbName="demo_v0_9_2";
         Rdbms.stablishDBConection(dbName);
+        out.println(ReqProcedureDefinitionQueries.procInstanceDefinitionInRequirements("Seminario1"));
+if (1==1)return;                
+        getProcedureViews("Seminario1", 1, "Seminario1");
+        //out.println(ClassReqProcedureQueries.procAccessBlockInRequirements("Seminario1"));
+if (1==1)return;        
 
+        out.println(ClassReqProcedureQueries.procAccessBlockInRequirements("Seminario1"));
+        
+        out.println(ReqProcedureDefinitionQueries.procReqSolutionTree("instruments"));
         //out.println(ReqProcedureDefinitionQueries.procInstanceViewDesignInRequirements("stock"));
 if (1==1)return;        
         CreatePlatform crPlat=new CreatePlatform();
