@@ -47,8 +47,8 @@ public class AnalysisMethodCertif {
         USER_NOT_CERTIFIED ("userNotCertifiedForAnalysisMethod", "", ""),
         CERTIF_RECORD_ALREADY_EXISTS ("certifyRecordAlreadyExists", "", ""),
         USER_NOT_INVOLVED_IN_THIS_CERTIFICATION ("userNotInvolvedInThisProcedure", "", ""),
-        TRAINING_NOT_FOUND("trainingNotFount", "", ""),
-        EXPIRATION_INFO_NOT_FOUND("expirationInfoNotFount", "", ""),
+        TRAINING_NOT_FOUND("trainingNotFound", "", ""),
+        EXPIRATION_INFO_NOT_FOUND("expirationInfoNotFound", "", ""),
         MARKEDASCOMPLETED_NOT_PENDING("analysisMethodMarkedAsCompletedNotPending", "", ""),
         NOT_ASSIGNED_TO_THIS_USER("UserAnalysisMethod_NotAssignedToThisUser", "", ""),        
         ;
