@@ -72,7 +72,10 @@ public class ProcDefToInstanceCreateProcViews {
                         jObjModel=viewTableWithButtons(Integer.valueOf(curView[11].toString()), null, curView, currentParentCode, currentCode, windowType, procedure, procVersion, procInstanceName);
                         break;
                     default:
-                        break;                        
+                        jObjModel.addProperty("error", 
+                                "Error: The content_type should be TABS or TABLE_WITH_BUTTONS. This value, "+
+                                        LPNulls.replaceNull(curView[5]).toString().toUpperCase()+", is not one of those." );
+                        break;                       
                 }
                 if (jObjModel.has("error")){
                     mainLog.put(curView[0], jObjModel);     
@@ -119,9 +122,14 @@ public class ProcDefToInstanceCreateProcViews {
             new EnumIntViewFields[]{TblsReqs.viewProcReqSolutionSpecialViews.WINDOW_NAME, TblsReqs.viewProcReqSolutionSpecialViews.ROLES, TblsReqs.viewProcReqSolutionSpecialViews.PARENT_CODE, TblsReqs.viewProcReqSolutionSpecialViews.CODE, TblsReqs.viewProcReqSolutionSpecialViews.WINDOW_QUERY, TblsReqs.viewProcReqSolutionSpecialViews.JSON_MODEL, TblsReqs.viewProcReqSolutionSpecialViews.WINDOW_MODE, TblsReqs.viewProcReqSolutionSpecialViews.WINDOW_TYPE, TblsReqs.viewProcReqSolutionSpecialViews.WINDOW_LABEL_EN, TblsReqs.viewProcReqSolutionSpecialViews.WINDOW_LABEL_ES, TblsReqs.viewProcReqSolutionViews.TWOICONS_DETAIL, TblsReqs.viewProcReqSolutionSpecialViews.ORDER_NUMBER,}, null, false);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procSpecialViewsArr[0][0].toString())) {
             JSONObject curViewLog = new JSONObject();
-            curViewLog.put("error", "cannot get the special view data");
-            curViewLog.put("error_detail", Arrays.toString(procSpecialViewsArr[0]));
-            mainLog.put("special_views_error", curViewLog);
+            if (Arrays.toString(procSpecialViewsArr[0]).contains("existsRecord_RecordNotFound")){
+                curViewLog.put("detail", "This deployment includes no special views to be deployed");
+                mainLog.put("special_views_log", curViewLog);
+            }else{
+                curViewLog.put("error", "cannot get the special view data");
+                curViewLog.put("error_detail", Arrays.toString(procSpecialViewsArr[0]));
+                mainLog.put("special_views_error", curViewLog);
+            }
         } else {
             for (Object[] curView : procSpecialViewsArr) {
                 windowType = LPNulls.replaceNull(curView[7]).toString();
@@ -213,7 +221,7 @@ public class ProcDefToInstanceCreateProcViews {
             JsonObject curViewLog = new JsonObject();
             curViewLog.addProperty("error", "cannot get the window data");
             curViewLog.addProperty("error_detail", Arrays.toString(procViewsArr[0]));            
-            return curViewLog;
+            //return curViewLog;
         }
         JsonObject jObjModel = null;
         try {
@@ -226,7 +234,10 @@ public class ProcDefToInstanceCreateProcViews {
             jObjModel=viewAddEnableContextMenu(jObjModel, vwProcReqSolFlds, procViewsArr[0]);
             jObjModel=viewAddActionsInContextMenu(jObjModel, vwProcReqSolFlds, procViewsArr[0]);
 
-            Object[][] procActionsArr = Rdbms.getRecordFieldsByFilterForViews(null, GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_ACTIONS, new SqlWhere(TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_ACTIONS, new String[]{TblsReqs.viewProcReqSolutionActions.PROCEDURE_NAME.getName(), TblsReqs.viewProcReqSolutionActions.PROCEDURE_VERSION.getName(), TblsReqs.viewProcReqSolutionActions.PROC_INSTANCE_NAME.getName(), TblsReqs.viewProcReqSolutionActions.ACTIVE.getName(), TblsReqs.viewProcReqSolutionActions.TYPE.getName(), TblsReqs.viewProcReqSolutionActions.PARENT_CODE.getName()}, new Object[]{procedure, procVersion, procInstanceName, true, ProcedureDefinitionToInstanceSections.ReqSolutionTypes.WINDOW_BUTTON.getTagValue(), currentParentCode}), new EnumIntViewFields[]{TblsReqs.viewProcReqSolutionActions.MODULE_NAME, TblsReqs.viewProcReqSolutionActions.JSON_MODEL}, new String[]{TblsReqs.viewProcReqSolutionActions.ORDER_NUMBER.getName(), TblsReqs.viewProcReqSolutionActions.SOLUTION_ID.getName()}, false);
+            Object[][] procActionsArr = Rdbms.getRecordFieldsByFilterForViews(null, GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_ACTIONS, 
+                    new SqlWhere(TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_ACTIONS, new String[]{TblsReqs.viewProcReqSolutionActions.PROCEDURE_NAME.getName(), TblsReqs.viewProcReqSolutionActions.PROCEDURE_VERSION.getName(), TblsReqs.viewProcReqSolutionActions.PROC_INSTANCE_NAME.getName(), TblsReqs.viewProcReqSolutionActions.ACTIVE.getName(), TblsReqs.viewProcReqSolutionActions.TYPE.getName(), TblsReqs.viewProcReqSolutionActions.PARENT_CODE.getName()}, 
+                            new Object[]{procedure, procVersion, procInstanceName, true, ProcedureDefinitionToInstanceSections.ReqSolutionTypes.WINDOW_BUTTON.getTagValue(), currentParentCode}), 
+                    new EnumIntViewFields[]{TblsReqs.viewProcReqSolutionActions.MODULE_NAME, TblsReqs.viewProcReqSolutionActions.JSON_MODEL}, new String[]{TblsReqs.viewProcReqSolutionActions.ORDER_NUMBER.getName(), TblsReqs.viewProcReqSolutionActions.SOLUTION_ID.getName()}, false);
             if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procActionsArr[0][0].toString()))) {
                 JSONArray allViewActions = new JSONArray();
                 for (Object[] curAction : procActionsArr) {
