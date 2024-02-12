@@ -35,9 +35,6 @@ import static functionaljavaa.sop.UserSop.isProcedureSopEnable;
 import static functionaljavaa.user.UserProfile.getProcedureUsers;
 import static functionaljavaa.user.UserProfile.getProcedureUsersAndRolesList;
 import lbplanet.utilities.LPNulls;
-import module.inspectionlot.rawmaterial.logic.InspLotRawMaterialMasterData;
-import module.instrumentsmanagement.logic.InstrumentsFrontendMasterData;
-import module.inventorytrack.logic.InvTrackingFrontendMasterData;
 import trazit.globalvariables.GlobalVariables;
 import trazit.procedureinstance.definition.logic.ReqProcedureFrontendMasterData;
 
@@ -298,19 +295,18 @@ public class AppProcedureListAPI extends HttpServlet {
             if (GlobalVariables.TrazitModules.MONITORING.name().equalsIgnoreCase(moduleNameFromProcInstance)) {
                 BusinessRules bi = new BusinessRules(procInstanceName, null);
                 jObj = ConfigMasterData.getMasterData(procInstanceName, bi);
-            } else if (GlobalVariables.TrazitModules.INSTRUMENTS.name().equalsIgnoreCase(moduleNameFromProcInstance)) {
-                InstrumentsFrontendMasterData mdObj = new InstrumentsFrontendMasterData();
-                jObj = mdObj.getMasterDataJsonObject(procInstanceName);
-            } else if (GlobalVariables.TrazitModules.STOCKS.name().equalsIgnoreCase(moduleNameFromProcInstance)) {
-                InvTrackingFrontendMasterData mdObj = new InvTrackingFrontendMasterData();
-                jObj = mdObj.getMasterDataJsonObject(procInstanceName);
-            } else if (GlobalVariables.TrazitModules.INSPECTION_LOTS.name().equalsIgnoreCase(moduleNameFromProcInstance)) {
-                InspLotRawMaterialMasterData mdObj = new InspLotRawMaterialMasterData();
-                jObj = mdObj.getMasterDataJsonObject(procInstanceName);
-            } else {
-                jObj.put(procInstanceName, "no master data logic defined");
-                return jObj;
-            }
+            }else{
+                try {
+                    GlobalVariables.TrazitModules moduleDefinition = GlobalVariables.TrazitModules.valueOf(moduleNameFromProcInstance);
+                    // Create an instance of the class
+                    if (moduleDefinition.getModuleMasterDataClass()!=null)
+                        jObj=moduleDefinition.getModuleMasterDataClass().getDeclaredConstructor().newInstance().getMasterDataJsonObject(procInstanceName);                        
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    jObj.put(procInstanceName, "no master data logic defined");
+                    // Handle the exception appropriately
+                }            
+            }        
             JSONArray usArr = new JSONArray();
             if (Boolean.FALSE.equals(GlobalVariables.PROC_MANAGEMENT_SPECIAL_ROLE.equalsIgnoreCase(token.getUserRole()))){
                 for (Object[] curRow : getProcedureUsersAndRolesList(procInstanceName, null)) {
