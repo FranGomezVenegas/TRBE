@@ -6,12 +6,14 @@ package trazit.procedureinstance.definition.logic;
 
 import databases.Rdbms;
 import databases.RdbmsObject;
+import databases.SqlStatement;
 import databases.SqlWhere;
 import databases.TblsTesting;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.TrazitUtiilitiesEnums;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.procedureinstance.definition.definition.ReqProcedureEnums.ReqProcedureDefinitionErrorTraping;
 import trazit.queries.QueryUtilities;
@@ -75,6 +77,14 @@ public class TestingScriptRecords {
         RdbmsObject insertRecord = Rdbms.insertRecord(TblsTesting.TablesTesting.SCRIPT_STEPS, 
             fldNames, fldValues, null);
         return new InternalMessage(insertRecord.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, insertRecord.getErrorMessageCode(), insertRecord.getErrorMessageVariables());
+    }
+    public InternalMessage scriptTestUpdateStep(Integer scriptId, Integer stepId, String[] fldNames, Object[] fldValues){
+        SqlWhere wObj = new SqlWhere();
+        wObj.addConstraint(TblsTesting.ScriptSteps.SCRIPT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{scriptId}, null);
+        wObj.addConstraint(TblsTesting.ScriptSteps.STEP_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{stepId}, null);
+        RdbmsObject insertRecord = Rdbms.updateTableRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPT_STEPS, 
+            EnumIntTableFields.getTableFieldsFromString(TblsTesting.TablesTesting.SCRIPT_STEPS, fldNames), fldValues, wObj, null);
+        return new InternalMessage(insertRecord.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, insertRecord.getErrorMessageCode(), new Object[]{stepId, scriptId});
     }
     public InternalMessage scriptTestRemoveStep(Integer scriptId, Integer stepId){
         RdbmsObject insertRecord = Rdbms.removeRecordInTable(TblsTesting.TablesTesting.SCRIPT_STEPS, 
