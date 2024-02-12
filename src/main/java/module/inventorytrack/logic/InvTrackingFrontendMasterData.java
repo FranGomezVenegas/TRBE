@@ -5,6 +5,7 @@
  */
 package module.inventorytrack.logic;
 
+import databases.Rdbms;
 import databases.SqlStatement;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
@@ -26,6 +27,11 @@ public class InvTrackingFrontendMasterData implements FrontendMasterData{
     @Override
     public JSONObject getMasterDataJsonObject(String alternativeProcInstanceName) {
         JSONObject jSummaryObj=new JSONObject();
+        Object[] dbTableExists = Rdbms.dbTableExists(alternativeProcInstanceName, LPPlatform.buildSchemaName(alternativeProcInstanceName, 
+            TblsInvTrackingConfig.TablesInvTrackingConfig.INV_CATEGORY.getRepositoryName()), 
+            TblsInvTrackingConfig.TablesInvTrackingConfig.INV_CATEGORY.getTableName());
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))
+            return jSummaryObj;
         
         String[] fieldsToRetrieve = getAllFieldNames(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_CATEGORY, alternativeProcInstanceName);
         if (Boolean.FALSE.equals(LPArray.valueInArray(fieldsToRetrieve, TblsInvTrackingConfig.Category.NAME.getName())))
