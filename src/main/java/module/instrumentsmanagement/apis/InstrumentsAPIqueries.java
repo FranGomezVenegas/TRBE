@@ -569,7 +569,8 @@ public class InstrumentsAPIqueries extends HttpServlet {
                  */
 
                 case GET_INSTRUMENT_FAMILY_LIST:
-                    jArr = instrumentFamiliesList(null);
+                    
+                    jArr = instrumentFamiliesList(procReqInstance.getProcedureInstance());
                     Rdbms.closeRdbms();
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     break;
