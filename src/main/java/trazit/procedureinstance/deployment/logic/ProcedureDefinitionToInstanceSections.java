@@ -67,6 +67,27 @@ public class ProcedureDefinitionToInstanceSections {
     }
     }
 
+        public enum ReqWindowContentType {
+        WINDOW("Window"), WINDOW_BUTTON("Window Button"), TABLE_ROW_BUTTON("Table Row Button"), BUSINESS_RULE("Business Rule"), SPECIAL_VIEW("Special View")
+        ;
+        private ReqWindowContentType(String tgVal) {
+            this.tagValue = tgVal;
+        }
+        public String getTagValue() {
+            return this.tagValue;
+        }
+        private final String tagValue;
+            public static ReqSolutionTypes getByTagValue(String tagValue) {
+        for (ReqSolutionTypes type : ReqSolutionTypes.values()) {
+            if (type.getTagValue().equals(tagValue)) {
+                return type;
+            }
+        }
+        // If no matching enum is found, you can return null or throw an exception as per your requirement.
+        return null;
+    }
+    }
+
     public enum JsonTags {
         NO("No", "No"), YES("Yes", "Si"), ERROR("Error", "Error"), USERS("Users", "Usuarios"), NUM_RECORDS_IN_DEFINITION("Num Records in Definition Area", "Número de registros en área de Definición");
 
@@ -554,14 +575,16 @@ public class ProcedureDefinitionToInstanceSections {
             JSONObject jsUserRoleObj = new JSONObject();
             jsUserRoleObj.put("User", curUserName);
             jsUserRoleObj.put("Role", curRoleName);
-            //Object[] encryptPers=DbEncryption.encryptValue(curUserName + "z");        
-            String persEncrypted = String.valueOf(curUserName.hashCode());//encryptPers[encryptPers.length-1].toString();
-
+            String persEncrypted = "";
             Object[][] existsAppUser = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USERS.getTableName(),
                     new String[]{TblsApp.Users.USER_NAME.getName()}, new Object[]{curUserName.toString()}, new String[]{TblsApp.Users.PERSON_NAME.getName()});
             String diagnosesForLog = (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsAppUser[0][0].toString())) ? JsonTags.NO.getTagValueEn() : JsonTags.YES.getTagValueEn();
-            //if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsAppUser[0][0].toString())) {                
-
+            if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(existsAppUser[0][0].toString()))) {
+                persEncrypted=existsAppUser[0][0].toString();
+            }else{
+                //Object[] encryptPers=DbEncryption.encryptValue(curUserName + "z");        
+                persEncrypted = String.valueOf(curUserName.hashCode());//encryptPers[encryptPers.length-1].toString();                
+            }
                 RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsAppConfig.TablesAppConfig.PERSON,
                         new String[]{TblsAppConfig.Person.PERSON_ID.getName(), TblsAppConfig.Person.FIRST_NAME.getName(),
                             TblsAppConfig.Person.LAST_NAME.getName(), TblsAppConfig.Person.PHOTO.getName()},
@@ -578,7 +601,6 @@ public class ProcedureDefinitionToInstanceSections {
 
                 // Place to create the user
                 existsAppUser[0][0]=persEncrypted;
-            //}
             jsUserRoleObj.put("User exists in the app after running this logic?", LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesForLog));
             if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(existsAppUser[0])))) {
                 Object[] existsAppUserProcess = Rdbms.existsRecord("", GlobalVariables.Schemas.APP.getName(), TblsApp.TablesApp.USER_PROCESS.getTableName(),
