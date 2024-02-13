@@ -72,7 +72,7 @@ public class TblsTesting {
     
     public enum Script implements EnumIntTableFields{
         SCRIPT_ID("script_id", LPDatabase.integerNotNull(), null, null, null, null),
-        ACTIVE("active", LPDatabase.booleanFld(), null, null, null, null),
+        ACTIVE("active", LPDatabase.booleanFld(true), null, null, null, null),
         DATE_CREATION("date_creation", LPDatabase.dateTimeWithDefaultNow(), null, null, null, null),
         SAVE_EXEC_EVID_ON_SUCCESS("save_execution_evidence_on_success", LPDatabase.booleanFld(false), null, null, null, null),        
         DATE_EXECUTION("date_execution", LPDatabase.dateTime(), null, null, null, null),
@@ -211,7 +211,7 @@ public class TblsTesting {
     }
     public enum ScriptsCoverage implements EnumIntTableFields{
         COVERAGE_ID("coverage_id", LPDatabase.integerNotNull(),null, null, "", null),
-        ACTIVE("active", LPDatabase.booleanFld(),null, null, "", null),
+        ACTIVE("active", LPDatabase.booleanFld(true),null, null, "", null),
         DATE_CREATION("date_creation", LPDatabase.dateTimeWithDefaultNow(),null, null, "", null),
         DATE_EXECUTION("date_execution", LPDatabase.dateTime(),null, null, "", null),
         PURPOSE("purpose", LPDatabase.string(),null, null, "", null),
@@ -282,7 +282,7 @@ public class TblsTesting {
         SCRIPT_ID("script_id", LPDatabase.integerNotNull(), null, null, null, null),
         SPEC_CODE("spec_code", LPDatabase.stringNotNull(), null, null, null, null),
         SPEC_VERSION("spec_version", LPDatabase.integerNotNull(), null, null, null, null),
-        ACTIVE("active", LPDatabase.booleanFld(), null, null, null, null),
+        ACTIVE("active", LPDatabase.booleanFld(true), null, null, null, null),
         DATE_CREATION("date_creation", LPDatabase.dateTimeWithDefaultNow(), null, null, null, null),
         SAVE_EXEC_EVID_ON_SUCCESS("save_execution_evidence_on_success", LPDatabase.booleanFld(false), null, null, null, null),        
         DATE_EXECUTION("date_execution", LPDatabase.dateTime(), null, null, null, null),
