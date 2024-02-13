@@ -111,7 +111,7 @@ public final class ModuleTableOrViewGet {
         if (curSchemaName.toLowerCase().contains(GlobalVariables.Schemas.CONFIG_AUDIT.getName())) {
             this.mirrorForTesting = true;     
             Integer tblPosic=-1;
-            if (moduleObj.getConfigAuditVws()!=null)
+            if (moduleObj.getConfigAuditTbls()!=null)
                 tblPosic=EnumIntTables.getTblPosicInArray(moduleObj.getConfigAuditTbls(), tblName.toUpperCase());
             if (tblPosic>-1){
                 this.tableObj = moduleObj.getConfigAuditTbls()[tblPosic];

@@ -80,10 +80,15 @@ public class ProcDefToInstanceCreateModuleTablesAndViews {
                             }
                         }
                     } else {
-                        tblCreateScript = EnumIntViews.getViewScriptCreation(TblsProcedure.ViewsProcedure.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, false, fieldsToExclude);
-                        tblCreateScriptTesting = EnumIntViews.getViewScriptCreation(TblsData.ViewsData.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, true, fieldsToExclude);
+                        if (Boolean.FALSE.equals(tblDiagn.getFound())) {
+                            curTblJsonObj.put(GlobalAPIsParams.LBL_ERROR, tblDiagn.getErrorMsg());
+                            //curTblJsonObj.put(GlobalAPIsParams.LBL_ERROR, tableCreationScriptTable);
+                        } else {
+                            tblCreateScript = EnumIntViews.getViewScriptCreation(TblsProcedure.ViewsProcedure.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, false, fieldsToExclude);
+                            tblCreateScriptTesting = EnumIntViews.getViewScriptCreation(TblsData.ViewsData.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, true, fieldsToExclude);
+                        }
                     }
-                    if (tblCreateScript.length() > 0) {
+                    if (tblCreateScript!=null&&tblCreateScript.length() > 0) {
                         Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curSchemaName, curTableName, tblCreateScript, new Object[]{});
                         if ("-999".equalsIgnoreCase(prepUpQuery[0].toString())) {
                             diagn = diagn + " and not created, " + prepUpQuery[prepUpQuery.length - 1];
