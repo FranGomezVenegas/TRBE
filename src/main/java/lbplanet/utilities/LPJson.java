@@ -49,6 +49,8 @@ public class LPJson {
             header.put(curRole);
         }
         rolesActionsOutput.put(header);
+        if (Boolean.TRUE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(dataInfo[0][0].toString())))
+            return rolesActionsOutput;
         for (Object[] curActRow : dataInfo) {
             String userName = curActRow[dataAxisPosic].toString();
             String[] allActionRoles = LPNulls.replaceNull(curActRow[dataContentPosic]).toString().split("\\|");
@@ -404,5 +406,42 @@ for (JsonElement element : list) {
             }
         }
         return false;
+    } 
+    
+    public static Integer JSONArrayValuePosic(JSONArray jsonArray, String argName, String argValue) {
+        for (int i = 0; i < jsonArray.size(); i++) {
+            Object item = jsonArray.get(i);
+            if (item instanceof JSONObject) {
+                JSONObject jsonObject = (JSONObject) item;
+                if (jsonObject.containsKey(argName) && argValue.equals(jsonObject.get(argName).toString())) {
+                    return i;
+                }
+            } else if (item instanceof JsonObject) {
+                JsonObject jObject = (JsonObject) item;
+                JsonElement element = jObject.get(argName);
+                if (element != null && argValue.equals(element.getAsString())) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }  
+
+    public static JSONArray removeEntry(JSONArray jsonArray, String argName, String argValue) {
+        int indexToRemove = JSONArrayValuePosic(jsonArray, argName, argValue);
+
+        if (indexToRemove == -1) {
+            // Entry not found, return the original array
+            return jsonArray;
+        }
+
+        JSONArray newArray = new JSONArray();
+        for (int i = 0; i < jsonArray.size(); i++) {
+            if (i != indexToRemove) {
+                newArray.add(jsonArray.get(i));
+            }
+        }
+
+        return newArray;
     }    
 }
