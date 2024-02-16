@@ -67,7 +67,7 @@ public class CoverageTestingAnalysis {
             return new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.COVERAGE_ACTION_ALREADY_PRESENT_IN_EXCLUDED_LIST, new Object[]{action, this.coverageId});
         }
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(riskIsActionUponRisk(procInstanceName, action)[0].toString()))
-            return new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.COVERAGE_ACTION_ALREADY_PRESENT_IN_EXCLUDED_LIST, new Object[]{action, this.coverageId});
+            return new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.COVERAGE_ACTION_ALREADY_ACTION_UPON_RISK_ASSESSMENT, new Object[]{action, this.coverageId});
         if (LPNulls.replaceNull(excludeList).length()>0)
             excludeList=excludeList+"|";
         excludeList=excludeList+action;
