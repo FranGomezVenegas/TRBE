@@ -149,18 +149,17 @@ public class BusinessRules {
         } else {
             testingBusRulsInfo = new Object[][]{ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "BusinessRulesNotCompatibleYetForPlatformRules", null)};
         }
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(testingBusRulsInfo[0][0].toString())) {
-            return;
-        }
-        for (Object[] curObj : testingBusRulsInfo) {
-            if ("PROCEDURE".equalsIgnoreCase(curObj[0].toString())) {
-                this.procedure.add(new RuleInfo(curObj[1].toString(), curObj[2].toString()));
-            }
-            if ("DATA".equalsIgnoreCase(curObj[0].toString())) {
-                this.data.add(new RuleInfo(curObj[1].toString(), curObj[2].toString()));
-            }
-            if ("CONFIG".equalsIgnoreCase(curObj[0].toString())) {
-                this.config.add(new RuleInfo(curObj[1].toString(), curObj[2].toString()));
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(testingBusRulsInfo[0][0].toString()))) {
+            for (Object[] curObj : testingBusRulsInfo) {
+                if ("PROCEDURE".equalsIgnoreCase(curObj[0].toString())) {
+                    this.procedure.add(new RuleInfo(curObj[1].toString(), curObj[2].toString()));
+                }
+                if ("DATA".equalsIgnoreCase(curObj[0].toString())) {
+                    this.data.add(new RuleInfo(curObj[1].toString(), curObj[2].toString()));
+                }
+                if ("CONFIG".equalsIgnoreCase(curObj[0].toString())) {
+                    this.config.add(new RuleInfo(curObj[1].toString(), curObj[2].toString()));
+                }
             }
         }
         this.totalBusinessRules = this.procedure.size() + this.config.size() + this.data.size();
