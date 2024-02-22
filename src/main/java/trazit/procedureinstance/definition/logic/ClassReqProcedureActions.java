@@ -1062,6 +1062,10 @@ public class ClassReqProcedureActions {
                 i++;
                 String windowMode= argValues[i].toString(); 
                 i++;
+                String contentType= argValues[i].toString();
+                i++;
+                orderNumber = argValues[i].toString();
+                i++;
                 roleName= argValues[i].toString();
                 i++;
                 sopName= argValues[i].toString();
@@ -1099,6 +1103,9 @@ public class ClassReqProcedureActions {
 
                 fieldNames=new String[0];
                 fieldValues=new Object[0];
+                String[] fieldNamesTblButtons=new String[0];
+                Object[] fieldValuesTblButtons=new Object[0];
+                
                 if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            
                 if (fieldValue!=null && fieldValue.length()>0) fieldValues = convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"), TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, fieldName.split("\\|"));
                 if (fieldValues!=null && fieldValues.length>0 && fieldValues[0].toString().length()>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
@@ -1112,18 +1119,45 @@ public class ClassReqProcedureActions {
                         TblsReqs.ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureReqSolution.REQ_ID.getName(), TblsReqs.ProcedureReqSolution.TYPE.getName(),
                         TblsReqs.ProcedureReqSolution.WINDOW_NAME.getName(), TblsReqs.ProcedureReqSolution.ROLES.getName(),
                         TblsReqs.ProcedureReqSolution.WINDOW_QUERY.getName(), TblsReqs.ProcedureReqSolution.WINDOW_TYPE.getName(), 
-                        TblsReqs.ProcedureReqSolution.WINDOW_MODE.getName(), });                        
+                        TblsReqs.ProcedureReqSolution.WINDOW_MODE.getName(), TblsReqs.ProcedureReqSolution.CONTENT_TYPE.getName()});                        
                     
                     fieldValues=LPArray.addValueToArray1D(fieldValues,new Object[]{procedureName, procedureVersion, procInstanceName, 
                         Integer.valueOf(reqId), ProcedureDefinitionToInstanceSections.ReqSolutionTypes.WINDOW.getTagValue(), windowName, roleName,
-                        windowQuery, windowType, windowMode});
+                        windowQuery, windowType, windowMode, contentType});
                     if (LPNulls.replaceNull(sopName).toString().length()>0){
                         fieldNames=LPArray.addValueToArray1D(fieldNames, TblsReqs.ProcedureReqSolution.SOP_NAME.getName());
                         fieldValues=LPArray.addValueToArray1D(fieldValues, sopName);
                     }
+
+                    if (LPNulls.replaceNull(orderNumber).toString().length()>0){
+                        fieldNames=LPArray.addValueToArray1D(fieldNames, TblsReqs.ProcedureReqSolution.ORDER_NUMBER.getName());
+                        fieldValues=LPArray.addValueToArray1D(fieldValues, Integer.valueOf(orderNumber));
+                    }
                     removeDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION,
                         fieldNames, fieldValues);
                     if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
+
+                        fieldNamesTblButtons=LPArray.addValueToArray1D(fieldNamesTblButtons, new String[]{TblsReqs.ProcedureReqSolution.PROCEDURE_NAME.getName(), TblsReqs.ProcedureReqSolution.PROCEDURE_VERSION.getName(),
+                        TblsReqs.ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureReqSolution.REQ_ID.getName(), TblsReqs.ProcedureReqSolutionViewTableWithButtons.TYPE.getName(),
+                            TblsReqs.ProcedureReqSolutionViewTableWithButtons.WINDOW_NAME.getName(), TblsReqs.ProcedureReqSolutionViewTableWithButtons.WINDOW_QUERY.getName(), 
+                            TblsReqs.ProcedureReqSolutionViewTableWithButtons.WINDOW_TYPE.getName(), TblsReqs.ProcedureReqSolutionViewTableWithButtons.WINDOW_MODE.getName()});                        
+
+                        fieldValuesTblButtons=LPArray.addValueToArray1D(fieldValuesTblButtons,new Object[]{procedureName, procedureVersion, procInstanceName, 
+                            Integer.valueOf(reqId), 
+                            ProcedureDefinitionToInstanceSections.ReqSolutionTypes.WINDOW.getTagValue(), windowName, windowQuery, windowType, windowMode});
+                        if(isModuleWindowAvailableDiagn[2]!=null){
+                            com.google.gson.JsonObject queryJsonModel=LPJson.convertToJsonObjectStringedValue(isModuleWindowAvailableDiagn[2].toString());
+                            com.google.gson.JsonObject queryJsonGridColumns= queryJsonModel.getAsJsonObject("langConfig").getAsJsonObject("gridHeader");
+                                    
+                            fieldNamesTblButtons=LPArray.addValueToArray1D(fieldNamesTblButtons, TblsReqs.ProcedureReqSolutionViewTableWithButtons.GRID_COLUMNS.getName());
+                            fieldValuesTblButtons=LPArray.addValueToArray1D(fieldValuesTblButtons, queryJsonGridColumns);
+                        }
+                        fieldNamesTblButtons=LPArray.addValueToArray1D(fieldNamesTblButtons, TblsReqs.ProcedureReqSolutionViewTableWithButtons.SOLUTION_ID.getName());
+                        fieldValuesTblButtons=LPArray.addValueToArray1D(fieldValuesTblButtons, Integer.valueOf(removeDiagn.getNewRowId().toString()));
+
+                        RdbmsObject removeDiagnTblButtons = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_REQ_SOL_VIEW_TBL_BUTTONS,
+                                fieldNamesTblButtons, fieldValuesTblButtons);
+
                         actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{reqId});
                         this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{reqId});
                         this.messageDynamicData = new Object[]{reqId, procedureName, procedureVersion};
@@ -1145,6 +1179,8 @@ public class ClassReqProcedureActions {
                 String confirmDialog = argValues[i].toString();
                 i++;
                 String confirmDialogDetail= argValues[i].toString(); 
+                i++;
+                orderNumber = argValues[i].toString();
                 i++;
                 roleName= argValues[i].toString();
                 i++;
@@ -1207,6 +1243,14 @@ public class ClassReqProcedureActions {
                     if (confirmDialog.length()>0){
                         fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{TblsReqs.ProcedureReqSolution.CONFIRM_DIALOG.getName(), TblsReqs.ProcedureReqSolution.CONFIRM_DIALOG_DETAIL.getName()});
                         fieldValues=LPArray.addValueToArray1D(fieldValues,new Object[]{confirmDialog, confirmDialogDetail});
+                    }
+                    if (LPNulls.replaceNull(isModuleWindowActionAvailableDiagn[4]).toString().length()>0){
+                        fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{TblsReqs.ProcedureReqSolution.JSON_MODEL.getName()});
+                        fieldValues=LPArray.addValueToArray1D(fieldValues,new Object[]{isModuleWindowActionAvailableDiagn[4].toString()});
+                    }
+                    if (LPNulls.replaceNull(orderNumber).toString().length()>0){
+                        fieldNames=LPArray.addValueToArray1D(fieldNames, TblsReqs.ProcedureReqSolution.ORDER_NUMBER.getName());
+                        fieldValues=LPArray.addValueToArray1D(fieldValues, Integer.valueOf(orderNumber));
                     }
                     fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{TblsReqs.ProcedureReqSolution.QUERY_FOR_BUTTON.getName(), TblsReqs.ProcedureReqSolution.EXTRA_ACTIONS.getName()});
                     fieldValues=LPArray.addValueToArray1D(fieldValues,new Object[]{Boolean.valueOf(LPNulls.replaceNull(isModuleWindowActionAvailableDiagn[2]).toString()), isModuleWindowActionAvailableDiagn[3]});
@@ -1277,16 +1321,21 @@ public class ClassReqProcedureActions {
                     fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{TblsReqs.ProcedureReqSolution.PROCEDURE_NAME.getName(), TblsReqs.ProcedureReqSolution.PROCEDURE_VERSION.getName(),
                         TblsReqs.ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureReqSolution.REQ_ID.getName(), TblsReqs.ProcedureReqSolution.TYPE.getName(),
                         TblsReqs.ProcedureReqSolution.WINDOW_NAME.getName(), TblsReqs.ProcedureReqSolution.SPECIAL_VIEW_NAME.getName(), TblsReqs.ProcedureReqSolution.ROLES.getName(), 
+                        TblsReqs.ProcedureReqSolution.CONTENT_TYPE.getName(), 
                         TblsReqs.ProcedureReqSolution.WINDOW_TYPE.getName(), TblsReqs.ProcedureReqSolution.WINDOW_MODE.getName(), TblsReqs.ProcedureReqSolution.SPECIAL_VIEW_JSON_MODEL.getName()});                        
                     
                     fieldValues=LPArray.addValueToArray1D(fieldValues,new Object[]{procedureName, procedureVersion, procInstanceName, 
                         Integer.valueOf(reqId), ProcedureDefinitionToInstanceSections.ReqSolutionTypes.SPECIAL_VIEW.getTagValue(), specialWindowName, specialWindowName, roleName,
+                        "TABLE_WITH_BUTTONS",
                         isModuleSpecialWindowAvailableDiagn[3].toString(), windowMode, isModuleSpecialWindowAvailableDiagn[1]});
+                    if (LPNulls.replaceNull(isModuleSpecialWindowAvailableDiagn[4]).toString().length()>0){
+                        fieldNames=LPArray.addValueToArray1D(fieldNames, TblsReqs.ProcedureReqSolution.ORDER_NUMBER.getName());
+                        fieldValues=LPArray.addValueToArray1D(fieldValues, Integer.valueOf(isModuleSpecialWindowAvailableDiagn[4].toString()));
+                    }
+                    
                     removeDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION,
                         fieldNames, fieldValues);
                     if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
-                        
-                        
                         JSONObject speViewDefinition=new JSONObject(isModuleSpecialWindowAvailableDiagn[2].toString());
                         //speViewDefinition=(JSONObject) speViewDefinition.get("requirementsInfo");
                         if (Boolean.TRUE.equals(speViewDefinition.has("window_actions"))){
@@ -1319,7 +1368,7 @@ public class ClassReqProcedureActions {
                     }
                 }
                 break;
-            case UPDATE_REQUIREMENT_SOLUTION:
+            case UPDATE_REQ_SOLUTION: 
                 reqId = argValues[i].toString();
                 i++;
                 String solId = argValues[i].toString();
@@ -1373,7 +1422,6 @@ public class ClassReqProcedureActions {
                     this.messageDynamicData = removeDiagn.getErrorMessageVariables();
                 }
                 break;
-
             case REMOVE_REQ_SOLUTION:
                 String solutionId = argValues[3].toString();
 /*                procedureSopsList = procedureSops(procedureName, procedureVersion);
@@ -1385,8 +1433,9 @@ public class ClassReqProcedureActions {
                     break;
                 }*/
                 removeDiagn = Rdbms.removeRecordInTable(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION,
-                    new SqlWhere(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION,new String[]{TblsReqs.ProcedureReqSolution.PROCEDURE_NAME.getName(), TblsReqs.ProcedureReqSolution.PROCEDURE_VERSION.getName(),
-                        TblsReqs.ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureReqSolution.REQ_ID.getName()},
+                    new SqlWhere(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION,
+                            new String[]{TblsReqs.ProcedureReqSolution.PROCEDURE_NAME.getName(), TblsReqs.ProcedureReqSolution.PROCEDURE_VERSION.getName(),
+                        TblsReqs.ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureReqSolution.SOLUTION_ID.getName()},
                     new Object[]{procedureName, procedureVersion, procInstanceName, Integer.valueOf(solutionId)}), null);
                 if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{solutionId});
@@ -1399,6 +1448,177 @@ public class ClassReqProcedureActions {
                     this.messageDynamicData = removeDiagn.getErrorMessageVariables();
                 }
                 break;
+            case VIEW_UPDATE_REQ_SOLUTION_MAIN_INFO:
+                reqId = argValues[i].toString();
+                i++;
+                solId = argValues[i].toString();
+                i++;
+                String tableId = argValues[i].toString();
+                i++;
+                fieldName = argValues[i].toString();
+                i++;
+                fieldValue = argValues[i].toString();
+                i++;                
+                fieldNames=new String[0];
+                fieldValues=new Object[0];
+                if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            
+                if (fieldValue!=null && fieldValue.length()>0) fieldValues = convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"), TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, fieldName.split("\\|"));
+                if (fieldValues!=null && fieldValues.length>0 && fieldValues[0].toString().length()>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
+                    InternalMessage errMsg=(InternalMessage)fieldValues[1];
+                    actionDiagnoses=null;                         
+                    this.diagnosticObj=new InternalMessage(LPPlatform.LAB_FALSE, errMsg.getMessageCodeObj(), errMsg.getMessageCodeVariables());
+                    this.diagnosticObjIntMsg=errMsg.getMessageCodeObj();
+                    break;
+                }                
+                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, TblsReqs.ProcedureUserRequirements.REQ_ID);                
+                valuePosicArray2D = valuePosicArray2D(procedureParentUserAndReqList, new Object[][]{{0, Integer.valueOf(reqId)}});
+                if (valuePosicArray2D.length==0){
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND, new Object[]{reqId, procedureName, procedureVersion});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND, new Object[]{reqId, procedureName, procedureVersion});
+                    this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND;
+
+                    this.messageDynamicData = new Object[]{reqId, procedureName, procedureVersion};
+                    break;
+                }         
+                removeDiagn = Rdbms.updateTableRecordFieldsByFilter(TblsReqs.TablesReqs.PROCEDURE_REQ_SOL_VIEW_TBL_BUTTONS,
+                    EnumIntTableFields.getTableFieldsFromString(TblsReqs.TablesReqs.PROCEDURE_REQ_SOL_VIEW_TBL_BUTTONS, fieldNames), fieldValues,
+                    new SqlWhere(TblsReqs.TablesReqs.PROCEDURE_REQ_SOL_VIEW_TBL_BUTTONS,new String[]{TblsReqs.ProcedureReqSolutionViewTableWithButtons.PROCEDURE_NAME.getName(), TblsReqs.ProcedureReqSolutionViewTableWithButtons.PROCEDURE_VERSION.getName(),
+                            TblsReqs.ProcedureReqSolutionViewTableWithButtons.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureReqSolutionViewTableWithButtons.REQ_ID.getName(), TblsReqs.ProcedureReqSolutionViewTableWithButtons.SOLUTION_ID.getName(), TblsReqs.ProcedureReqSolutionViewTableWithButtons.TABLE_ID.getName()},
+                        new Object[]{procedureName, procedureVersion, procInstanceName, Integer.valueOf(reqId), Integer.valueOf(solId), Integer.valueOf(tableId)}), null);                    
+                
+                if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{solId});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{solId});
+                    this.messageDynamicData = new Object[]{solId, procedureName, procedureVersion};                    
+                } else {
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
+                    this.messageDynamicData = removeDiagn.getErrorMessageVariables();
+                }
+                break;
+            case VIEW_ADD_TBL_ENDPOINT_PARAM:
+                reqId = argValues[i].toString();
+                i++;
+                solId = argValues[i].toString();
+                i++;
+                tableId = argValues[i].toString();
+                i++;
+                String argumentName = argValues[i].toString();
+                i++;
+                String argumentValue = argValues[i].toString();
+                i++;                
+                fieldName = argValues[i].toString();
+                i++;
+                fieldValue = argValues[i].toString();
+                i++;                
+                fieldNames=new String[0];
+                fieldValues=new Object[0];
+                if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            
+                if (fieldValue!=null && fieldValue.length()>0) fieldValues = convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"), TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, fieldName.split("\\|"));
+                if (fieldValues!=null && fieldValues.length>0 && fieldValues[0].toString().length()>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
+                    InternalMessage errMsg=(InternalMessage)fieldValues[1];
+                    actionDiagnoses=null;                         
+                    this.diagnosticObj=new InternalMessage(LPPlatform.LAB_FALSE, errMsg.getMessageCodeObj(), errMsg.getMessageCodeVariables());
+                    this.diagnosticObjIntMsg=errMsg.getMessageCodeObj();
+                    break;
+                }                
+                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, TblsReqs.ProcedureUserRequirements.REQ_ID);                
+                valuePosicArray2D = valuePosicArray2D(procedureParentUserAndReqList, new Object[][]{{0, Integer.valueOf(reqId)}});
+                if (valuePosicArray2D.length==0){
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND, new Object[]{reqId, procedureName, procedureVersion});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND, new Object[]{reqId, procedureName, procedureVersion});
+                    this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND;
+
+                    this.messageDynamicData = new Object[]{reqId, procedureName, procedureVersion};
+                    break;
+                }       
+                InternalMessage diagn=ViewDesignerTableWithButtons.addGridColumn(procInstanceName, procedureVersion, procInstanceName, Integer.valueOf(reqId), Integer.valueOf(solId), Integer.valueOf(tableId), argumentName, argumentValue, fieldNames, fieldValues);
+                actionDiagnoses=ApiMessageReturn.trapMessage(diagn.getDiagnostic(),diagn.getMessageCodeObj(), diagn.getMessageCodeVariables());
+                this.diagnosticObj = diagn;
+                this.messageDynamicData = diagn.getMessageCodeVariables();
+                break;
+            case VIEW_UPDATE_TBL_ENDPOINT_PARAM:
+                reqId = argValues[i].toString();
+                i++;
+                solId = argValues[i].toString();
+                i++;
+                tableId = argValues[i].toString();
+                i++;
+                argumentName = argValues[i].toString();
+                i++;
+                argumentValue = argValues[i].toString();
+                i++;                
+                fieldName = argValues[i].toString();
+                i++;
+                fieldValue = argValues[i].toString();
+                i++;                
+                fieldNames=new String[0];
+                fieldValues=new Object[0];
+                if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            
+                if (fieldValue!=null && fieldValue.length()>0) fieldValues = convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"), TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, fieldName.split("\\|"));
+                if (fieldValues!=null && fieldValues.length>0 && fieldValues[0].toString().length()>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
+                    InternalMessage errMsg=(InternalMessage)fieldValues[1];
+                    actionDiagnoses=null;                         
+                    this.diagnosticObj=new InternalMessage(LPPlatform.LAB_FALSE, errMsg.getMessageCodeObj(), errMsg.getMessageCodeVariables());
+                    this.diagnosticObjIntMsg=errMsg.getMessageCodeObj();
+                    break;
+                }                
+                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, TblsReqs.ProcedureUserRequirements.REQ_ID);                
+                valuePosicArray2D = valuePosicArray2D(procedureParentUserAndReqList, new Object[][]{{0, Integer.valueOf(reqId)}});
+                if (valuePosicArray2D.length==0){
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND, new Object[]{reqId, procedureName, procedureVersion});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND, new Object[]{reqId, procedureName, procedureVersion});
+                    this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND;
+
+                    this.messageDynamicData = new Object[]{reqId, procedureName, procedureVersion};
+                    break;
+                }       
+                diagn=ViewDesignerTableWithButtons.updateGridColumn(procInstanceName, procedureVersion, procInstanceName, Integer.valueOf(reqId), Integer.valueOf(solId), Integer.valueOf(tableId), argumentName, argumentValue, fieldNames, fieldValues);
+                actionDiagnoses=ApiMessageReturn.trapMessage(diagn.getDiagnostic(),diagn.getMessageCodeObj(), diagn.getMessageCodeVariables());
+                this.diagnosticObj = diagn;
+                this.messageDynamicData = diagn.getMessageCodeVariables();
+                break;
+            case VIEW_REMOVE_TBL_ENDPOINT_PARAM:
+                reqId = argValues[i].toString();
+                i++;
+                solId = argValues[i].toString();
+                i++;
+                tableId = argValues[i].toString();
+                i++;
+                argumentName = argValues[i].toString();
+                i++;
+                fieldName = argValues[i].toString();
+                i++;
+                fieldValue = argValues[i].toString();
+                i++;                
+                fieldNames=new String[0];
+                fieldValues=new Object[0];
+                if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            
+                if (fieldValue!=null && fieldValue.length()>0) fieldValues = convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"), TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, fieldName.split("\\|"));
+                if (fieldValues!=null && fieldValues.length>0 && fieldValues[0].toString().length()>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
+                    InternalMessage errMsg=(InternalMessage)fieldValues[1];
+                    actionDiagnoses=null;                         
+                    this.diagnosticObj=new InternalMessage(LPPlatform.LAB_FALSE, errMsg.getMessageCodeObj(), errMsg.getMessageCodeVariables());
+                    this.diagnosticObjIntMsg=errMsg.getMessageCodeObj();
+                    break;
+                }                
+                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, TblsReqs.ProcedureUserRequirements.REQ_ID);                
+                valuePosicArray2D = valuePosicArray2D(procedureParentUserAndReqList, new Object[][]{{0, Integer.valueOf(reqId)}});
+                if (valuePosicArray2D.length==0){
+                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND, new Object[]{reqId, procedureName, procedureVersion});
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND, new Object[]{reqId, procedureName, procedureVersion});
+                    this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND;
+
+                    this.messageDynamicData = new Object[]{reqId, procedureName, procedureVersion};
+                    break;
+                }       
+                diagn=ViewDesignerTableWithButtons.removeGridColumn(procInstanceName, procedureVersion, procInstanceName, Integer.valueOf(reqId), Integer.valueOf(solId), Integer.valueOf(tableId), argumentName, fieldNames, fieldValues);
+                actionDiagnoses=ApiMessageReturn.trapMessage(diagn.getDiagnostic(),diagn.getMessageCodeObj(), diagn.getMessageCodeVariables());
+                this.diagnosticObj = diagn;
+                this.messageDynamicData = diagn.getMessageCodeVariables();
+                break;
+
             case GET_UOM:
                 String uomName = argValues[3].toString();
                 String importType = argValues[4].toString();
@@ -1604,9 +1824,12 @@ public class ClassReqProcedureActions {
                     fieldNames=LPArray.addValueToArray1D(fieldNames, "argument_0"+iArg++);                    
                     fieldValues=LPArray.addValueToArray1D(fieldValues, curArgValu.toString().split("\\*")[0]);                   
                 }
+                
                 String expectedSyntaxis = argValues[7].toString();
                 if (expectedSyntaxis.length()>0){
                     fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTesting.ScriptSteps.EXPECTED_SYNTAXIS.getName());
+                    if ("false".equalsIgnoreCase(expectedSyntaxis))expectedSyntaxis=LPPlatform.LAB_FALSE;
+                    if ("true".equalsIgnoreCase(expectedSyntaxis))expectedSyntaxis=LPPlatform.LAB_TRUE;
                     fieldValues=LPArray.addValueToArray1D(fieldValues, expectedSyntaxis);
                 }
                 String expectedNotification = argValues[8].toString();
@@ -1625,9 +1848,59 @@ public class ClassReqProcedureActions {
                     this.messageDynamicData=new Object[]{scriptId, scriptId};
                 }
                 break;
-            case SCRIPT_REMOVE_STEP:
+            case SCRIPT_UPDATE_STEP:
                 scriptId = argValues[3].toString();
                 String stepId = argValues[4].toString();
+                action = argValues[5].toString();
+
+                fieldName = argValues[6].toString();
+                fieldValue = argValues[7].toString();
+                fieldNames=new String[]{TblsTesting.ScriptSteps.SCRIPT_ID.getName(), TblsTesting.ScriptSteps.ACTION_NAME.getName(), TblsTesting.ScriptSteps.ACTIVE.getName()};
+                fieldValues=new Object[]{Integer.valueOf(scriptId), action, true};
+                /*if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            
+                if (fieldValue!=null && fieldValue.length()>0) fieldValues = convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"), TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, fieldName.split("\\|"));
+                if (fieldValue!=null && fieldName.length()>0) fieldValues = fieldValue.split("\\|");                                            
+                if (fieldValues!=null && fieldValues.length>0 && fieldValues[0].toString().length()>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
+                    InternalMessage errMsg=(InternalMessage)fieldValues[1];
+                    actionDiagnoses=null;                         
+                    this.diagnosticObj=new InternalMessage(LPPlatform.LAB_FALSE, errMsg.getMessageCodeObj(), errMsg.getMessageCodeVariables());
+                    this.diagnosticObjIntMsg=errMsg.getMessageCodeObj();
+                    break;
+                }                                
+                fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTesting.ScriptSteps.ACTION_NAME.getName());
+                fieldValues=LPArray.addValueToArray1D(fieldNames, action);*/
+                iArg=1;
+                for (String curArgValu: fieldValue.split("\\|")){
+                    fieldNames=LPArray.addValueToArray1D(fieldNames, "argument_0"+iArg++);                    
+                    fieldValues=LPArray.addValueToArray1D(fieldValues, curArgValu.toString().split("\\*")[0]);                   
+                }
+                
+                expectedSyntaxis = argValues[8].toString();
+                if (expectedSyntaxis.length()>0){
+                    fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTesting.ScriptSteps.EXPECTED_SYNTAXIS.getName());
+                    if ("false".equalsIgnoreCase(expectedSyntaxis))expectedSyntaxis=LPPlatform.LAB_FALSE;
+                    if ("true".equalsIgnoreCase(expectedSyntaxis))expectedSyntaxis=LPPlatform.LAB_TRUE;
+                    fieldValues=LPArray.addValueToArray1D(fieldValues, expectedSyntaxis);
+                }
+                expectedNotification = argValues[9].toString();
+                if (expectedSyntaxis.length()>0){
+                    fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTesting.ScriptSteps.EXPECTED_CODE.getName());
+                    fieldValues=LPArray.addValueToArray1D(fieldValues, expectedNotification);
+                }
+                alternativeToken = argValues[10].toString();
+                if (alternativeToken.length()>0){
+                    fieldNames=LPArray.addValueToArray1D(fieldNames, TblsTesting.ScriptSteps.ALTERNATIVE_TOKEN.getName());
+                    fieldValues=LPArray.addValueToArray1D(fieldValues, alternativeToken);
+                }
+                tstScript=new TestingScriptRecords(procInstanceName, Integer.valueOf(scriptId));
+                this.diagnosticObj = tstScript.scriptTestUpdateStep(Integer.valueOf(scriptId), Integer.valueOf(stepId), fieldNames, fieldValues);
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())){
+                    this.messageDynamicData=new Object[]{scriptId, scriptId};
+                }
+                break;                
+            case SCRIPT_REMOVE_STEP:
+                scriptId = argValues[3].toString();
+                stepId = argValues[4].toString();
                 tstScript=new TestingScriptRecords(procInstanceName, Integer.valueOf(scriptId));
                 this.diagnosticObj = tstScript.scriptTestRemoveStep(Integer.valueOf(scriptId), Integer.valueOf(stepId));
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())){
