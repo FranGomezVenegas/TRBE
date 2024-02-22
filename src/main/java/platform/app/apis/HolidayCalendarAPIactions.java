@@ -7,8 +7,8 @@ package platform.app.apis;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.TblsApp;
-import functionaljavaa.holidayscalendar.HolidaysCalendar;
-import functionaljavaa.holidayscalendar.HolidaysCalendarEnums.CalendarAPIactionsEndpoints;
+import platform.app.logic.HolidaysCalendar;
+import platform.app.definition.HolidaysCalendarEnums.CalendarAPIactionsEndpoints;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.io.IOException;
 import java.io.PrintWriter;

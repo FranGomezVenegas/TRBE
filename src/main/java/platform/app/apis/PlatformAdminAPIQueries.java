@@ -14,7 +14,7 @@ import databases.SqlWhere;
 import databases.TblsApp;
 import databases.TblsProcedure;
 import databases.features.Token;
-import trazit.codedocumentation.logic.PlatformAdminEnums.PlatformAdminAPIqueriesEndpoints;
+import platform.app.definition.PlatformAdminEnums.PlatformAdminAPIqueriesEndpoints;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;

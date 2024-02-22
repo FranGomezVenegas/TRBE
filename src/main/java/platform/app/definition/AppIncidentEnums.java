@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package functionaljavaa.incident;
+package platform.app.definition;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import platform.app.apis.IncidentAPIactions;

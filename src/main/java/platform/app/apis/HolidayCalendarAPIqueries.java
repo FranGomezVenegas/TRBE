@@ -6,7 +6,7 @@ import databases.SqlStatementEnums;
 import static platform.app.apis.IncidentAPIactions.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.TblsApp;
 import databases.features.Token;
-import functionaljavaa.holidayscalendar.HolidaysCalendarEnums.CalendarAPIqueriesEndpoints;
+import platform.app.definition.HolidaysCalendarEnums.CalendarAPIqueriesEndpoints;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.logging.Level;

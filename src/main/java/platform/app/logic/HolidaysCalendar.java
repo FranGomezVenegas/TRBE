@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package functionaljavaa.holidayscalendar;
+package platform.app.logic;
 
 import databases.Rdbms;
 import databases.RdbmsObject;
@@ -11,8 +11,8 @@ import databases.SqlStatement;
 import databases.SqlWhere;
 import databases.TblsApp;
 import databases.features.Token;
-import functionaljavaa.holidayscalendar.HolidaysCalendarEnums.CalendarAPIactionsEndpoints;
-import functionaljavaa.holidayscalendar.HolidaysCalendarEnums.CalendarErrorTrapping;
+import platform.app.definition.HolidaysCalendarEnums.CalendarAPIactionsEndpoints;
+import platform.app.definition.HolidaysCalendarEnums.CalendarErrorTrapping;
 import java.sql.Date;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;

@@ -10,8 +10,8 @@ import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NUM_DAY
 import static trazit.session.ProcedureRequestSession.MANDATPRMS_MAIN_SERVLET_PROCEDURE;
 import databases.RdbmsObject;
 import databases.TblsApp;
-import functionaljavaa.incident.AppIncident;
-import functionaljavaa.incident.AppIncidentEnums.IncidentAPIactionsEndpoints;
+import platform.app.logic.AppIncident;
+import platform.app.definition.AppIncidentEnums.IncidentAPIactionsEndpoints;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
