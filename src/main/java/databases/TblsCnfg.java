@@ -197,14 +197,14 @@ public class TblsCnfg {
         CODE("code", LPDatabase.stringNotNull(), null, null, null, null),
         CONFIG_VERSION("config_version", LPDatabase.integer(), null, null, null, null),
         CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
-        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date(), "to_char(" + "reviewed_on" + ",'YYYY-MM-DD HH:MI')", null, null, null),
+        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date(), "to_char(" + "created_on" + ",'YYYY-MM-DD HH:MI')", null, null, null),
         ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(true), null, null, null, null),
         TESTING_GROUP( LPDatabase.FIELDS_NAMES_TESTING_GROUP, LPDatabase.string(), null, null, null, null),
         APPROVED_FOR_USE( "approved_for_use", LPDatabase.booleanFld(false), null, null, null, null),
         APPROVED_BY( "approved_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
-        APPROVED_ON( "approved_on", LPDatabase.dateTime(), "to_char(" + "reviewed_on" + ",'YYYY-MM-DD HH:MI')", null, null, null),
+        APPROVED_ON( "approved_on", LPDatabase.dateTime(), "to_char(" + "approved_on" + ",'YYYY-MM-DD HH:MI')", null, null, null),
         INACTIVATED_BY( "inactivated_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
-        INACTIVATED_ON( "inactivated_on", LPDatabase.dateTime(), "to_char(" + "reviewed_on" + ",'YYYY-MM-DD HH:MI')", null, null, null),
+        INACTIVATED_ON( "inactivated_on", LPDatabase.dateTime(), "to_char(" + "inactivated_on" + ",'YYYY-MM-DD HH:MI')", null, null, null),
         ;
         private Analysis(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
