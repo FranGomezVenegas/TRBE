@@ -45,12 +45,14 @@ public class LPJson {
         fldDef.put("is_translation", true);
         fldDef.put(linkedFieldName, TblsReqs.viewProcReqSolutionActions.PRETTY_ES.getName());
         header.put(fldDef);
+        rolesActionsOutput.put(header);
+        if (Boolean.TRUE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(colsData[0][0].toString())))
+            return rolesActionsOutput;
+        if (Boolean.TRUE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(dataInfo[0][0].toString())))
+            return rolesActionsOutput;
         for (String curRole : procRoles1D) {
             header.put(curRole);
         }
-        rolesActionsOutput.put(header);
-        if (Boolean.TRUE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(dataInfo[0][0].toString())))
-            return rolesActionsOutput;
         for (Object[] curActRow : dataInfo) {
             String userName = curActRow[dataAxisPosic].toString();
             String[] allActionRoles = LPNulls.replaceNull(curActRow[dataContentPosic]).toString().split("\\|");
@@ -346,13 +348,34 @@ for (JsonElement element : list) {
         JsonParser parser = new JsonParser();
         boolean containsDemo = false;
         for (JsonElement element : jArr) {
+            
+           if (element.isJsonObject()) {
+                JsonObject obj = element.getAsJsonObject();
+                if (jsonObjectContainsValue(obj, valueToFind)) {
+                    return true;
+                }
+            } else {
+                // For other types of JsonElements, use the existing logic
+                if (element.getAsString().equals(valueToFind)) {
+                    return true;
+                }
+            }            
+            /*
             if (parser.parse(element.toString()).getAsString().equals(valueToFind)) {
                 containsDemo = true;
                 break;
-            }
+            }*/
         }
         return containsDemo;
     }
+    private static boolean jsonObjectContainsValue(JsonObject jsonObject, String valueToFind) {
+        for (String key : jsonObject.keySet()) {
+            if (jsonObject.get(key).getAsString().equals(valueToFind)) {
+                return true;
+            }
+        }
+        return false;
+    }    
 /*    
     public static Object[] filterJArrByProperty2(JSONArray arr, String filterPropName, String filterPropValue, String propToGet){
         Object[] newArr=new Object[]{};
