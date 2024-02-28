@@ -411,5 +411,28 @@ public final class QueryUtilities {
             return LPPlatform.LAB_FALSE;
         }
     }
-    
+/*
+    public static JSONArray QueryForViews(HttpServletRequest request, EnumIntEndpoints endpoint, String[] fieldsToRetrieve, FilterCriteria criteria, String sortFields) {
+        Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endpoint.getArguments());
+
+        // Asumiendo que el enum también proporciona los nombres de los campos y los valores predeterminados
+        String[] fieldNames = endpoint.getFieldNames();
+        Object[] fieldValues = endpoint.getDefaultValues();
+
+        SqlWhere sqlWhere = criteria.buildSqlWhere(argValues, fieldNames, fieldValues);
+
+        // Realizar la consulta y procesar los resultados
+        Object[][] queryResults = QueryUtilitiesEnums.getViewData(
+            endpoint.getViewObj(), fieldsToRetrieve, sqlWhere, sortFields
+        );
+
+        // Convertir los resultados a JSON
+        JSONArray jsonArray = new JSONArray();
+        for (Object[] row : queryResults) {
+            jsonArray.add(LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, row));
+        }
+
+        return jsonArray;
+    }    
+*/
 }
