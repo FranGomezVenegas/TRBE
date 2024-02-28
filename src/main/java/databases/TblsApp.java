@@ -401,5 +401,5 @@ public class TblsApp {
         private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
         private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }    
-    
+
 }

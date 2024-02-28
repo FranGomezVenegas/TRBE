@@ -141,6 +141,11 @@ public class TestingServer extends HttpServlet {
         
         String dbName="demo_v0_9_2";
         Rdbms.stablishDBConection(dbName);
+        
+        out.println(ReqProcedureDefinitionQueries.procReqSolutionTree("instruments"));
+if (1==1)return;                
+        
+        
         out.println(ReqProcedureDefinitionQueries.procInstanceDefinitionInRequirements("Seminario1"));
 if (1==1)return;                
         getProcedureViews("Seminario1", 1, "Seminario1");
