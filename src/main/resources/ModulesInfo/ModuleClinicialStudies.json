@@ -5,13 +5,16 @@
     "description_en": "Clinical Studies",
     "description_es": "Estudios Clínicos",
     "ModuleSettings":{
-            "actionsEndpoints":[
-                  { "name": "InventoryLot" , "url" : "/app/procs/InvTrackingAPIactions"}
-            ],
-            "queriesEndpoints":[
-                  { "name": "InventoryLot" , "url" : "/app/procs/InvTrackingAPIqueries"}
-            ]
-    },
+      "actionsEndpoints":[
+            { "name": "Projects" , "url" : "/modulegenoma/GenomaProjectAPIactions"}		
+      ],
+      "queriesEndpoints":[
+            { "name": "Studies" , "url" : "/modulegenoma/GenomaStudyAPIqueries"}				
+      ],
+      "zzzactionsEndpoints":[
+            { "name": "Studies" , "url" : "/modulegenoma/GenomaStudyAPIactions"}
+      ]
+    },	
     "picture": "/images/procedures_pictures/clinical_studies.jpg",
     "apis":[ "ConfigMasterDataAPIactionsEndpoints", "GenomaProjectAPIactionsEndPoints", "GenomaStudyAPIactionsEndPoints", 
         "GenomaStudyAPIqueriesEndpoints", "GenomaVariableAPIqueriesEndpoints", "SavedQueriesAPIEndpoints", "SavedQueriesAPIqueriesEndpoints",
