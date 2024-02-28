@@ -53,6 +53,7 @@ public class ConfigAnalysisStructure {
     private static final String DIAGNOSES_ERROR = "ERROR";
     
     Boolean approvedForUse=true;
+    Boolean isCurrentlyActive=true;
     String code;
     Integer configVersion;
     EnumIntTableFields[] fldsToGetObj = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsCnfg.TablesConfig.ANALYSIS);
@@ -82,13 +83,20 @@ public class ConfigAnalysisStructure {
         Integer appForUseFldPosic = EnumIntTableFields.getFldPosicInArray(this.fldsToGetObj, TblsCnfg.Analysis.APPROVED_FOR_USE.getName());
         if (appForUseFldPosic>-1)
             this.approvedForUse=Boolean.valueOf(LPNulls.replaceNull(lotInfo[0][appForUseFldPosic]).toString());
+
+        this.lotInfo=lotInfo[0];
+        Integer isCurrentlyActiveFldPosic = EnumIntTableFields.getFldPosicInArray(this.fldsToGetObj, TblsCnfg.Analysis.ACTIVE.getName());
+        if (isCurrentlyActiveFldPosic>-1)
+            this.isCurrentlyActive=Boolean.valueOf(LPNulls.replaceNull(lotInfo[0][isCurrentlyActiveFldPosic]).toString());
+
     } 
     public enum ConfigAnalysisErrorTrapping implements EnumIntMessages {
         ERROR_INSERTING_SAMPLE_RECORD("errorInsertingSampleRecord", "", ""),
         MISSING_MANDATORY_FIELDS("MissingMandatoryFields", "MissingMandatoryFields <*1*>", ""),
         MISSING_CONFIG_CODE("MissingConfigCode", "", ""),
         LOCKED_DUE_TO_APPROVED_FOR_USE("analysisLockedDueToApprovedForUse", "MissingMandatoryFields <*1*>", ""),
-        ANALYSIS_IN_USE_BY_SPECS("analysisInUseBySpecs", "MissingMandatoryFields <*1*>", "")
+        ANALYSIS_IN_USE_BY_SPECS("analysisInUseBySpecs", "MissingMandatoryFields <*1*>", ""),
+        ANALYSIS_ALREADY_DEACTIVATED("analysisAlreadyDeactivated", "MissingMandatoryFields <*1*>", "")
         ;
         private ConfigAnalysisErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs) {
             this.errorCode = errCode;
@@ -460,6 +468,8 @@ public class ConfigAnalysisStructure {
     }
      */
     public InternalMessage analysisDeactivate(){
+        if (Boolean.FALSE.equals(this.isCurrentlyActive))
+            return new InternalMessage(LPPlatform.LAB_FALSE, ConfigAnalysisErrorTrapping.ANALYSIS_ALREADY_DEACTIVATED, new Object[]{code});                
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
         String procInstanceName = instanceForActions.getProcedureInstance();
 
