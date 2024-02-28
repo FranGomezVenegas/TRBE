@@ -54,7 +54,7 @@ public class ClassReqProcedureQueries {
         Object[][] procRoles = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_ROLES.getTableName(),
                 new String[]{TblsReqs.ProcedureRoles.PROC_INSTANCE_NAME.getName()},
                 new Object[]{procInstanceName}, fldsArr,
-                new String[]{TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()});
+                new String[]{TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()}, true);
 
         jBlockArr = new JSONArray();
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procRoles[0][0].toString()))) {
