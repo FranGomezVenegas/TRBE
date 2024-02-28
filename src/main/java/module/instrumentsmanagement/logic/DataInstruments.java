@@ -112,7 +112,7 @@ public class DataInstruments {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString())) {
             this.name = null;
             this.hasError = true;
-            this.errorDetail = new InternalMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{instrName, TablesInstrumentsData.INSTRUMENTS.getTableName(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName())}, instrName);
+            this.errorDetail = new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.NOT_FOUND, new Object[]{instrName, TablesInstrumentsData.INSTRUMENTS.getTableName(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName())}, instrName);
         } else {
             this.hasError = false;
             this.fieldNames = getAllFieldNames(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS.getTableFields());
