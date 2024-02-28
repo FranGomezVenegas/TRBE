@@ -1,0 +1,435 @@
+{
+    "moduleName": "INSTRUMENTS",
+    "moduleVersion": 1,
+    "releaseDate": "2023-11-01",
+    "viewName":"Master Data-Instrument Families",
+    "entity": "instrument_family",
+    "windowType": "simple",
+    "requirementsInfo":{
+    "window_actions":[
+        {"actionName": "CONFIG_NEW_INSTRUMENT_FAMILY"},
+        {"actionName": "CONFIG_UPDATE_INSTRUMENT_FAMILY"}
+    ]
+    },    
+    "jsonModel":{
+  "component": "TableWithButtons",
+  "langConfig": {
+    "title": {
+      "InstrumentFamilyList": {
+        "label_en": "Instrument Family List",
+        "label_es": "Lista familia instrumentos"
+      }
+    },
+    "gridHeader": {
+      "name": {
+        "label_en": "Name",
+        "label_es": "Nombre",
+        "sort": true,
+        "filter": true,
+        "is_icon": false,
+        "width": "20%"
+      },
+      "description": {
+        "label_en": "Description",
+        "label_es": "Descripcion",
+        "sort": false,
+        "filter": true,
+        "is_icon": false,
+        "width": "20%",
+        "align": "left"
+      },
+      "calibration_required": {
+        "label_en": "Calibration required?",
+        "label_es": "Necesita calibracion",
+        "sort": false,
+        "filter": true,
+        "is_icon": true,
+        "width": "10%"
+      },
+      "pm_required": {
+        "label_en": "PM required?",
+        "label_es": "Necesita PM?",
+        "sort": false,
+        "filter": true,
+        "is_icon": true,
+        "width": "10%"
+      },
+      "verif_same_day_required": {
+        "label_en": "Verification same day required?",
+        "label_es": "Necesita verificación el mismo dia?",
+        "sort": false,
+        "filter": true,
+        "is_icon": true,
+        "width": "10%"
+      },
+      "service_required": {
+        "label_en": "Service required?",
+        "label_es": "¿Necesita Servicio?",
+        "sort": false,
+        "filter": true,
+        "is_icon": true,
+        "width": "10%"
+      }
+    }
+  },
+  "viewQuery": {
+    "actionName": "GET_INSTRUMENT_FAMILY_LIST",
+    "addRefreshButton": true,
+    "button": {
+      "icon": "refresh",
+      "title": {
+        "label_en": "Reload",
+        "label_es": "Recargar"
+      },
+      "requiresGridItemSelected": true
+    },
+    "endPointParams": []
+  },
+  "row_buttons": [],
+  "enableContextMenu": true,
+  "addActionsInContextMenu": false,
+  "actions": [
+    {
+      "actionName": "CONFIG_NEW_INSTRUMENT_FAMILY",
+      "requiresDialog": true,
+      "button": {
+        "icon": "create_new_folder",
+        "title": {
+          "label_en": "New instrument family",
+          "label_es": "Nueva familia de instrumento"
+        },
+        "requiresGridItemSelected": false
+      },
+      "endPointParams": [
+        {
+          "argumentName": "instrFamilyName",
+          "element": "text1"
+        },
+        {
+          "argumentName": "fieldName",
+          "value": "description"
+        },
+        {
+          "argumentName": "fieldValue",
+          "element": "text2"
+        },
+        {
+          "argumentName": "calibration_required",
+          "element": "checkbox1",
+          "addToFieldNameAndValue": true,
+          "fieldType": "BOOLEAN",
+          "defaultValue": false
+        },
+        {
+          "argumentName": "pm_required",
+          "element": "checkbox2",
+          "addToFieldNameAndValue": true,
+          "fieldType": "BOOLEAN",
+          "defaultValue": false
+        },
+        {
+          "argumentName": "verif_same_day_required",
+          "element": "checkbox3",
+          "addToFieldNameAndValue": true,
+          "fieldType": "BOOLEAN",
+          "defaultValue": false
+        },
+        {
+          "argumentName": "service_required",
+          "element": "checkbox4",
+          "addToFieldNameAndValue": true,
+          "fieldType": "BOOLEAN",
+          "defaultValue": false
+        }
+      ],
+      "dialogInfo": {
+        "name": "genericDialog",
+        "fields": [
+          {
+            "text1": {
+              "label_en": "New Instrument Family Name",
+              "label_es": "Nombre para nueva familia de instrumentos"
+            }
+          },
+          {
+            "text2": {
+              "label_en": "Description",
+              "label_es": "Descripción"
+            }
+          },
+          {
+            "checkbox1": {
+              "label_en": "Calibration required?",
+              "label_es": "¿Necesita calibración?",
+              "default_value": true
+            }
+          },
+          {
+            "checkbox2": {
+              "label_en": "Preventive maintenance required?",
+              "label_es": "¿Necesita mantenimiento preventivo?",
+              "default_value": true
+            }
+          },
+          {
+            "checkbox3": {
+              "label_en": "Verification required?",
+              "label_es": "¿Necesita verificación?",
+              "default_value": true
+            }
+          },
+          {
+            "checkbox4": {
+              "label_en": "Service required?",
+              "label_es": "¿Necesita servicio?",
+              "default_value": true
+            }
+          }
+        ]
+      }
+    },
+    {
+      "actionName": "CONFIG_UPDATE_INSTRUMENT_FAMILY",
+      "requiresDialog": true,
+      "button": {
+        "icon": "edit_document",
+        "title": {
+          "label_en": "Update instrument family",
+          "label_es": "Actualizar familia de instrumentos"
+        },
+        "requiresGridItemSelected": true
+      },
+      "endPointParams": [
+        {
+          "argumentName": "instrFamilyName",
+          "selObjectPropertyName": "name"
+        },
+        {
+          "argumentName": "fieldName",
+          "value": "description"
+        },
+        {
+          "argumentName": "fieldValue",
+          "element": "text1"
+        }
+      ],
+      "dialogInfo": {
+        "name": "genericDialog",
+        "fields": [
+          {
+            "text1": {
+              "label_en": "Description",
+              "label_es": "Descripción",
+              "selObjectPropertyName": "description",
+              "defaultValue": " "
+            }
+          }
+        ]
+      }
+    },
+    {
+      "actionName": "CONFIG_UPDATE_INSTRUMENT_FAMILY",
+      "requiresDialog": true,
+      "button": {
+        "img": "inst_ev_type_calibration.svg",
+        "title": {
+          "label_en": "Config calibration event",
+          "label_es": "Configurar evento de calibración"
+        },
+        "requiresGridItemSelected": true
+      },
+      "endPointParams": [
+        {
+          "argumentName": "instrFamilyName",
+          "selObjectPropertyName": "name"
+        },
+        {
+          "argumentName": "calibration_required",
+          "element": "checkbox1",
+          "addToFieldNameAndValue": true,
+          "fieldType": "BOOLEAN",
+          "defaultValue": false
+        },
+        {
+          "argumentName": "calibration_interval",
+          "element": "text2",
+          "addToFieldNameAndValue": true,
+          "fieldType": "STRING",
+          "notAddWhenValueIsBlank": true
+        }
+      ],
+      "dialogInfo": {
+        "name": "genericDialog",
+        "fields": [
+          {
+            "checkbox1": {
+              "label_en": "Calibration required?",
+              "label_es": "¿Necesita calibración?",
+              "defaultValue": false
+            }
+          },
+          {
+            "text2": {
+              "label_en": "Calibration Interval",
+              "label_es": "Intervalo de calibración"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "actionName": "CONFIG_UPDATE_INSTRUMENT_FAMILY",
+      "requiresDialog": true,
+      "button": {
+        "img": "inst_ev_type_preventive_maintenance.svg",
+        "title": {
+          "label_en": "Config Preventive Maintenance event",
+          "label_es": "Configurar evento de mantenimiento preventivo"
+        },
+        "requiresGridItemSelected": true
+      },
+      "endPointParams": [
+        {
+          "argumentName": "instrFamilyName",
+          "selObjectPropertyName": "name"
+        },
+        {
+          "argumentName": "pm_required",
+          "element": "checkbox1",
+          "addToFieldNameAndValue": true,
+          "fieldType": "BOOLEAN",
+          "defaultValue": false
+        },
+        {
+          "argumentName": "pm_interval",
+          "element": "text2",
+          "addToFieldNameAndValue": true,
+          "fieldType": "STRING",
+          "notAddWhenValueIsBlank": true
+        }
+      ],
+      "dialogInfo": {
+        "name": "genericDialog",
+        "fields": [
+          {
+            "checkbox1": {
+              "label_en": "Preventive Maintenance required?",
+              "label_es": "¿Necesita mantenimiento preventivo?",
+              "defaultValue": false
+            }
+          },
+          {
+            "text2": {
+              "label_en": "Preventive Maintenance  Interval",
+              "label_es": "Intervalo de mantenimiento preventivo",
+              "defaultValue": " "
+            }
+          }
+        ]
+      }
+    },
+    {
+      "actionName": "CONFIG_UPDATE_INSTRUMENT_FAMILY",
+      "requiresDialog": true,
+      "button": {
+        "img": "inst_ev_type_service.svg",
+        "title": {
+          "label_en": "Config service event",
+          "label_es": "Configurar evento de servicio"
+        },
+        "requiresGridItemSelected": true
+      },
+      "endPointParams": [
+        {
+          "argumentName": "instrFamilyName",
+          "selObjectPropertyName": "name"
+        },
+        {
+          "argumentName": "service_required",
+          "element": "checkbox1",
+          "addToFieldNameAndValue": true,
+          "fieldType": "BOOLEAN",
+          "defaultValue": false
+        },
+        {
+          "argumentName": "service_variables_set",
+          "element": "text2",
+          "addToFieldNameAndValue": true,
+          "fieldType": "STRING",
+          "notAddWhenValueIsBlank": true
+        }
+      ],
+      "dialogInfo": {
+        "name": "genericDialog",
+        "fields": [
+          {
+            "checkbox1": {
+              "label_en": "Service required?",
+              "label_es": "¿Necesita servicio?",
+              "defaultValue": false
+            }
+          },
+          {
+            "text2": {
+              "label_en": "Service Interval",
+              "label_es": "Intervalo de servicio",
+              "defaultValue": " "
+            }
+          }
+        ]
+      }
+    },
+    {
+      "actionName": "CONFIG_UPDATE_INSTRUMENT_FAMILY",
+      "requiresDialog": true,
+      "button": {
+        "img": "inst_ev_type_verification.svg",
+        "title": {
+          "label_en": "Config same day verification event",
+          "label_es": "Configurar evento de verificación mismo día"
+        },
+        "requiresGridItemSelected": true
+      },
+      "endPointParams": [
+        {
+          "argumentName": "instrFamilyName",
+          "selObjectPropertyName": "name"
+        },
+        {
+          "argumentName": "verif_same_day_required",
+          "element": "checkbox1",
+          "addToFieldNameAndValue": true,
+          "fieldType": "BOOLEAN",
+          "defaultValue": false
+        },
+        {
+          "argumentName": "verif_same_day_variable_set",
+          "element": "text2",
+          "addToFieldNameAndValue": true,
+          "fieldType": "STRING",
+          "notAddWhenValueIsBlank": true
+        }
+      ],
+      "dialogInfo": {
+        "name": "genericDialog",
+        "fields": [
+          {
+            "checkbox1": {
+              "label_en": "Verification same day required?",
+              "label_es": "¿Necesita verificación el mismo día?",
+              "defaultValue": false
+            }
+          },
+          {
+            "text2": {
+              "label_en": "Verification variable set",
+              "label_es": "Set de variables de verficación",
+              "defaultValue": " "
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+}
