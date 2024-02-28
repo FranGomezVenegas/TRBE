@@ -73,12 +73,12 @@ public class ProcedureDefinitionToInstanceUtility {
             new String[]{TblsReqs.ModuleActionsAndQueries.MODULE_NAME.getName(), TblsReqs.ModuleActionsAndQueries.MODULE_VERSION.getName(),
                 TblsReqs.ModuleActionsAndQueries.ENDPOINT_NAME.getName()}, 
             new Object[]{moduleName, moduleVersion, viewQuery}, 
-            new String[]{TblsReqs.ModuleActionsAndQueries.API_NAME.getName(), TblsReqs.ModuleActionsAndQueries.ENDPOINT_NAME.getName()}, new String[]{});
+            new String[]{TblsReqs.ModuleActionsAndQueries.API_NAME.getName(), TblsReqs.ModuleActionsAndQueries.ENDPOINT_NAME.getName(), TblsReqs.ModuleActionsAndQueries.JSON_MODEL.getName()}, new String[]{});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(moduleViewQuery[0][0].toString())||
            (Boolean.FALSE.equals(moduleViewQuery[0][0].toString().toUpperCase().contains("QUER"))&&Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(moduleViewQuery[0][0].toString()))) )
             return new Object[]{LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.MODULE_VIEW_QUERY_NOT_FOUND, new Object[]{viewQuery, moduleName}};
         
-        return new Object[]{LPPlatform.LAB_TRUE};
+        return moduleViewQuery[0];
     }
     public static final Object[] isModuleWindowActionAvailable(String procInstanceName, String wAction){
         JSONObject dbSingleRowToJsonObj = ClassReqProcedureQueries.dbSingleRowToJsonObj(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName(),
@@ -107,7 +107,7 @@ public class ProcedureDefinitionToInstanceUtility {
                 TblsReqs.ModuleSpecialViews.VIEW_NAME.getName()}, 
             new Object[]{moduleName, moduleVersion, viewQuery}, 
             new String[]{TblsReqs.ModuleSpecialViews.VIEW_NAME.getName(), TblsReqs.ModuleSpecialViews.JSON_MODEL.getName(),
-                TblsReqs.ModuleSpecialViews.JSON_REQUIREMENTS.getName(), TblsReqs.ModuleSpecialViews.WINDOW_TYPE.getName()}, new String[]{});
+                TblsReqs.ModuleSpecialViews.JSON_REQUIREMENTS.getName(), TblsReqs.ModuleSpecialViews.WINDOW_TYPE.getName(), TblsReqs.ModuleSpecialViews.ORDER_NUMBER.getName()}, new String[]{});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(moduleSpecialViewQuery[0][0].toString()))
             return new Object[]{LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.MODULE_VIEW_QUERY_NOT_FOUND, new Object[]{viewQuery, moduleName}};
         
