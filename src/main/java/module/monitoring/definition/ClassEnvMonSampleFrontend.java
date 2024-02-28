@@ -1500,7 +1500,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(null, null, false);
         String procInstanceName = procReqInstance.getProcedureInstance();
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
-
+    try{
         if (sampleLastLevel == null) {
             sampleLastLevel = TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName();
         }
@@ -1656,8 +1656,12 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
             samplesArray.add(sampleArray);
             return samplesArray;
         }
-
+    }catch (Exception e){
+        String errMsg=e.getMessage();
     }
+    return new JSONArray();
+    }
+    
 
     private JSONArray sampleStageDataJsonArr(Integer sampleId, String[] sampleFldName, Object[] sampleFldValue, String[] sampleStageFldName, Object[] sampleStageFldValue) {
         if (sampleStageFldValue == null) {
