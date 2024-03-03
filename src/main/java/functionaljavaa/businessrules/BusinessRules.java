@@ -181,7 +181,7 @@ public class BusinessRules {
     public ActionInfo getActionDefinition(String actionName) {
         if (this.actions != null) {
             for (ActionInfo curElement : this.actions) {
-                if (actionName.equalsIgnoreCase(curElement.getActionName())) 
+                if ("ALL".equalsIgnoreCase(curElement.getActionName())||actionName.equalsIgnoreCase(curElement.getActionName())) 
                 {
                     return curElement;
                 }
