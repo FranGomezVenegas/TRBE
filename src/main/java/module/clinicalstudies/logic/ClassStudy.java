@@ -21,6 +21,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPMath;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.ActionsClass;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -30,11 +31,12 @@ import trazit.session.InternalMessage;
  *
  * @author User
  */
-public class ClassStudy {
+public class ClassStudy implements ActionsClass{
     private Object[] messageDynamicData=new Object[]{};
     private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
     private Boolean endpointExists=true;
     private Object[] diagnostic=new Object[0];
+    InternalMessage actionDiagnosesObj;
     private Boolean functionFound=false;
 static final String NAME_SUFFIX="_name";
     public ClassStudy(HttpServletRequest request, GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endPoint){
@@ -51,7 +53,7 @@ static final String NAME_SUFFIX="_name";
         String projectName = "";
         
         Object[] actionDiagnoses = null;
-        InternalMessage actionDiagnosesObj = null;
+        this.actionDiagnosesObj = null;
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
             this.functionFound=true;
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
@@ -388,6 +390,11 @@ static final String NAME_SUFFIX="_name";
      */
     public Boolean getFunctionFound() {
         return functionFound;
+    }
+
+    @Override
+    public InternalMessage getDiagnosticObj() {
+        return this.actionDiagnosesObj;
     }
     
 }

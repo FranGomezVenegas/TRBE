@@ -25,12 +25,12 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.TrazitUtiilitiesEnums;
 import module.instrumentsmanagement.definition.TblsInstrumentsData;
-import static module.inventorytrack.apis.InvTrackingAPIactions.publishResult;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
+import static trazit.session.ActionsServletCommons.publishResult;
 import trazit.session.InternalMessage;
 /**
  *

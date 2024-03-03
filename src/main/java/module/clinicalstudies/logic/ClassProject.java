@@ -14,6 +14,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.ActionsClass;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -23,7 +24,7 @@ import trazit.session.InternalMessage;
  *
  * @author User
  */
-public class ClassProject {
+public class ClassProject  implements ActionsClass{
     private Object[] messageDynamicData=new Object[]{};
     private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
     private Boolean endpointExists=true;
@@ -156,6 +157,11 @@ public class ClassProject {
      */
     public Boolean getFunctionFound() {
         return functionFound;
+    }
+
+    @Override
+    public InternalMessage getDiagnosticObj() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
 }

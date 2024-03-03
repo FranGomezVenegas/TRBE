@@ -11,9 +11,13 @@ import databases.TblsData;
 import databases.TblsDataAudit;
 import databases.TblsProcedure;
 import databases.TblsProcedureAudit.TablesProcedureAudit;
+import module.clinicalstudies.apis.GenomaProjectAPI.GenomaProjectAPIactionsEndPoints;
+import module.clinicalstudies.apis.GenomaStudyAPI.GenomaStudyAPIactionsEndPoints;
 import module.clinicalstudies.definition.TblsGenomaConfig;
 import module.clinicalstudies.definition.TblsGenomaData;
 import module.clinicalstudies.definition.TblsGenomaDataAudit;
+import module.clinicalstudies.logic.ClassProject;
+import module.clinicalstudies.logic.ClassStudy;
 import module.clinicalstudies.logic.ClinicalStudiesFrontendMasterData;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMConfig;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMData;
@@ -36,6 +40,7 @@ import module.monitoring.definition.TblsEnvMonitConfigAudit;
 import module.monitoring.definition.TblsEnvMonitData;
 import module.monitoring.definition.TblsEnvMonitDataAudit;
 import module.monitoring.definition.TblsEnvMonitProcedure;
+import trazit.enums.ActionsEndpointPair;
 import trazit.enums.EnumIntTables;
 import trazit.enums.EnumIntViews;
 import trazit.enums.FrontendMasterData;
@@ -88,46 +93,55 @@ public class GlobalVariables {
             null, TblsInvTrackingProcedure.TablesInvTrackingProcedure.values(),
             null,TblsInvTrackingConfig.ViewsInvTrackingConfig.values(),
             null, TblsInvTrackingData.ViewsInvTrackingData.values(),
-            null, null, InvTrackingFrontendMasterData.class
+            null, null, InvTrackingFrontendMasterData.class,
+              null
         ), 
         INSTRUMENTS(TblsInstrumentsConfigAudit.TablesInstrumentsConfigAudit.values(), TablesInstrumentsConfig.values(),
             TblsInstrumentsDataAudit.TablesInstrumentsDataAudit.values(), TblsInstrumentsData.TablesInstrumentsData.values(),
               null, TblsInstrumentsProcedure.TablesInstrumentsProcedure.values(),
             null, null,
             null, TblsInstrumentsData.ViewsInstrumentsData.values(),
-              null, null, InstrumentsFrontendMasterData.class
+              null, null, InstrumentsFrontendMasterData.class,
+              null
         ), 
         MONITORING(TblsEnvMonitConfigAudit.TablesEnvMonitConfigAudit.values(), TblsEnvMonitConfig.TablesEnvMonitConfig.values(),
                 TblsEnvMonitDataAudit.TablesEnvMonitDataAudit.values(), TblsEnvMonitData.TablesEnvMonitData.values(),
                 null, TblsEnvMonitProcedure.TablesEnvMonitProcedure.values(),
                 null, TblsEnvMonitConfig.ViewsEnvMonConfig.values(),
                 null, TblsEnvMonitData.ViewsEnvMonData.values(),
-                null, null, null
+                null, null, null,
+                null
         ), 
         CLINICAL_STUDIES(null, TblsGenomaConfig.TablesGenomaConfig.values(), 
                 TblsGenomaDataAudit.TablesGenomaDataAudit.values(), TblsGenomaData.TablesGenomaData.values(),
                 null, null,
                 null, null,
-                null, null, null, null, ClinicalStudiesFrontendMasterData.class), 
-        PLATFORM_ADMIN(null, null, null, null, null, null, null, null, null, null, null, null, null), 
+                null, null, null, null, ClinicalStudiesFrontendMasterData.class,
+                new ActionsEndpointPair[]{
+                    new ActionsEndpointPair(GenomaProjectAPIactionsEndPoints.class.getName(), ClassProject.class.getName()),
+                    new ActionsEndpointPair(GenomaStudyAPIactionsEndPoints.class.getName(), ClassStudy.class.getName())}        
+        ), 
+        PLATFORM_ADMIN(null, null, null, null, null, null, null, null, null, null, null, null, null, null), 
         SAMPLES_MANAGEMENT(TblsCnfgAudit.TablesCfgAudit.values(), TablesConfig.values(),
-                TblsDataAudit.TablesDataAudit.values(), TblsData.TablesData.values(), 
-                TablesProcedureAudit.values(), TblsProcedure.TablesProcedure.values(),
-                null, null,
-                null, TblsData.ViewsData.values(), 
-                null, TblsProcedure.ViewsProcedure.values(), null
+            TblsDataAudit.TablesDataAudit.values(), TblsData.TablesData.values(), 
+            TablesProcedureAudit.values(), TblsProcedure.TablesProcedure.values(),
+            null, null,
+            null, TblsData.ViewsData.values(), 
+            null, TblsProcedure.ViewsProcedure.values(), null,
+            null
         ), 
         INSPECTION_LOTS(null, TblsInspLotRMConfig.TablesInspLotRMConfig.values(),
                 TblsInspLotRMDataAudit.TablesInspLotRMDataAudit.values(), TblsInspLotRMData.TablesInspLotRMData.values(),
                 null, TblsInspLotRMProcedure.TablesInspLotRMProcedure.values(),
                 null, null,
                 null, TblsInspLotRMData.ViewsInspLotRMData.values(),
-                null, null, InspLotRawMaterialMasterData.class                
+                null, null, InspLotRawMaterialMasterData.class,
+              null                
         )
         ;
         TrazitModules(EnumIntTables[] configAudit, EnumIntTables[] config, EnumIntTables[] dataAudit, EnumIntTables[] data, EnumIntTables[] procAudit, EnumIntTables[] proc,
             EnumIntViews[] configAuditVw, EnumIntViews[] configVw, EnumIntViews[] dataAuditVw, EnumIntViews[] dataVw, EnumIntViews[] procAuditVw, EnumIntViews[] procVw,
-            Class<? extends FrontendMasterData> masterDataClass){
+            Class<? extends FrontendMasterData> masterDataClass, ActionsEndpointPair[] actionsEndpointPair){
                 this.configAuditTbls=configAudit;
                 this.configTbls=config;
                 this.dataAuditTbls=dataAudit;
@@ -141,6 +155,7 @@ public class GlobalVariables {
                 this.procedureAuditVws=procAuditVw;
                 this.procedureVws=procVw;
                 this.masterDataClass=masterDataClass;
+                this.actionsEndpointsPair=actionsEndpointPair;
         }
         private final EnumIntTables[] configAuditTbls;
         public EnumIntTables[] getConfigAuditTbls(){return configAuditTbls;}
@@ -169,6 +184,8 @@ public class GlobalVariables {
         public EnumIntViews[] getProcedureVws(){return procedureVws;}
         private final Class<? extends FrontendMasterData> masterDataClass;
         public Class<? extends FrontendMasterData> getModuleMasterDataClass(){return masterDataClass;}
+        private final ActionsEndpointPair[] actionsEndpointsPair;
+        public ActionsEndpointPair[] getActionsEndpointPair(){return actionsEndpointsPair;}
     }
     
     public enum ServletsResponse{SUCCESS("/ResponseSuccess", "response"), ERROR("/ResponseError", "errorDetail");

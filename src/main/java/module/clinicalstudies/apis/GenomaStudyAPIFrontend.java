@@ -271,8 +271,8 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                     if (getOnlyActiveObjectsStr.length() > 0) {
                         getOnlyActiveObjects = Boolean.valueOf(getOnlyActiveObjectsStr);
                     }
-                    String[] wFldName=new String[]{TblsGenomaData.StudyUsers.PERSON.getName()};
-                    Object[] wFldValue=new Object[]{procReqInstance.getToken().getPersonName()};
+                    String[] wFldName=new String[]{TblsGenomaData.StudyUsers.PERSON.getName(), TblsGenomaData.StudyUsers.ACTIVE.getName()};
+                    Object[] wFldValue=new Object[]{procReqInstance.getToken().getPersonName(), true};
                     if (argValues[2].toString().length()>0&&"ALL".equalsIgnoreCase(argValues[2].toString())){
                         wFldName=LPArray.addValueToArray1D(wFldName, TblsGenomaData.StudyUsers.STUDY.getName() + " "+SqlStatement.WHERECLAUSE_TYPES.LIKE.getSqlClause());
                         wFldValue=LPArray.addValueToArray1D(wFldValue, argValues[2].toString());

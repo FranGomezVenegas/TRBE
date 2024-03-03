@@ -21,6 +21,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.TrazitUtiilitiesEnums;
+import trazit.enums.ActionsClass;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
@@ -30,7 +31,7 @@ import trazit.session.ProcedureRequestSession;
  *
  * @author User
  */
-public class ClassInvestigation {
+public class ClassInvestigation implements ActionsClass {
 
     /**
      * @return the messageDynamicData

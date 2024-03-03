@@ -353,6 +353,10 @@
     </servlet>
     <!-- Start mapping and urls block -->
     <!-- Block #1. App Platform Begin. -->
+    <servlet>
+        <servlet-name>ClinicalStudyAPIactions</servlet-name>
+        <servlet-class>module.clinicalstudies.apis.ClinicalStudyAPIactions</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>AuthenticationAPIactions</servlet-name>
         <url-pattern>/app/AuthenticationAPIactions</url-pattern>
@@ -728,6 +732,10 @@
     <servlet-mapping>
         <servlet-name>TestingAPIActions</servlet-name>
         <url-pattern>/testing/platform/TestingAPIActions</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ClinicalStudyAPIactions</servlet-name>
+        <url-pattern>/moduleclinicalstudy/ClinicalStudyAPIactions</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
