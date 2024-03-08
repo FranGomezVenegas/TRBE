@@ -13,6 +13,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.json.JSONException;
 import org.json.simple.JSONObject;
 import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 
 /**
  * LPMath is a library for adding extra maths to the standard ones.
@@ -114,8 +115,22 @@ public class LPMath {
             }
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.VALUE_NOT_NUMERIC, null);
         }
-
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "isNumeric", null);
+    }
+
+    public static InternalMessage isNumeric(String strNum, Boolean fake) {
+        if (strNum == null || strNum.length() == 0) {
+            return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.VALUE_EMPTY, null);
+        }
+        try {
+            Double.parseDouble(strNum);
+        } catch (NumberFormatException nfe) {
+            if (strNum.contains(",")) {
+                return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.DOT_IS_DECIMAL_SEPARATOR, null);
+            }
+            return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.VALUE_NOT_NUMERIC, null);
+        }
+        return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, null);
     }
 
     public static double calculateSD(double numArray[]) {

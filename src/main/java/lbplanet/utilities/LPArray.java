@@ -32,6 +32,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static lbplanet.utilities.LPDate.stringFormatToLocalDateTime;
+import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
@@ -1067,6 +1068,15 @@ public class LPArray {
             }
         }
         return theArr;        
+    }
+    
+    public static InternalMessage areAllNumericValues(String numbersStr){
+        for (String curNumber: numbersStr.split("\\|")){
+            Object[] numeric = LPMath.isNumeric(curNumber);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(numeric[0].toString()))
+            return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.AT_LEAST_ONE_VALUE_IS_NOT_NUMERIC, new Object[]{curNumber, Arrays.toString(numbersStr.split("\\|"))});
+        }
+        return new InternalMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_FINE, null);
     }
 
 }
