@@ -8,7 +8,7 @@ package module.clinicalstudies.apis;
 import module.clinicalstudies.definition.TblsGenomaData;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import module.clinicalstudies.logic.ClassProject;
-import functionaljavaa.modulegenoma.GenomaDataAudit.DataGenomaProjectAuditEvents;
+import functionaljavaa.modulegenoma.ClinicalStudyDataAudit.DataGenomaProjectAuditEvents;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;

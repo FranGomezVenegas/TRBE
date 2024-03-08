@@ -12,8 +12,8 @@ import databases.Rdbms;
 import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.SqlWhere;
-import static functionaljavaa.modulegenoma.GenomaConfigVariablesQueries.getVariableSetVariablesProperties;
-import static functionaljavaa.modulegenoma.GenomaDataStudy.isStudyOpenToChanges;
+import static functionaljavaa.modulegenoma.ClinicalStudyConfigVariablesQueries.getVariableSetVariablesProperties;
+import static functionaljavaa.modulegenoma.ClinicalStudyDataStudy.isStudyOpenToChanges;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import static lbplanet.utilities.LPMath.isNumeric;
@@ -23,14 +23,13 @@ import module.instrumentsmanagement.definition.InstrumentsEnums;
 import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
-import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 
 /**
  *
  * @author User
  */
-public class DataStudyObjectsVariableValues {
+public class ClinicalStudyDataStudyObjectsVariableValues {
 
     public enum VariableTypes {
         LIST, INTEGER, REAL, TEXT, FILE
@@ -51,14 +50,14 @@ public class DataStudyObjectsVariableValues {
     }
 
     public static InternalMessage addVariableSetToObject(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endPoint, String studyName, String variableSetName, String ownerTable, String ownerId) {
-        InternalMessage studyOpenToChanges = GenomaDataStudy.isStudyOpenToChanges2(studyName);
+        InternalMessage studyOpenToChanges = ClinicalStudyDataStudy.isStudyOpenToChanges(studyName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(studyOpenToChanges.getDiagnostic())) {
             return studyOpenToChanges;
         }
 
         Object[][] variableSetContent = getVariableSetVariablesProperties(variableSetName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(variableSetContent[0]))) {
-            return new InternalMessage(LPPlatform.LAB_FALSE, GenomaEnums.GenomaErrorTrapping.VARIABLES_SET_NOT_FOUND, null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, ClinicalStudyEnums.GenomaErrorTrapping.VARIABLES_SET_NOT_FOUND, null);
         }
         RdbmsObject insertRecordInTable = null;
         //for (Object[] currVar: variableSetContent){
@@ -87,7 +86,7 @@ public class DataStudyObjectsVariableValues {
             }
             insertRecordInTable = Rdbms.insertRecordInTable(TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES, fieldsName, fieldsValue);
             if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
-                GenomaDataAudit.studyAuditAdd(endPoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES, Arrays.toString(variableSetContent[i]),
+                ClinicalStudyDataAudit.studyAuditAdd(endPoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES, Arrays.toString(variableSetContent[i]),
                         studyName, null, fieldsName, fieldsValue);
             } else {
                 return new InternalMessage(LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), null);
@@ -100,7 +99,7 @@ public class DataStudyObjectsVariableValues {
 
     public static InternalMessage addVariableToObject(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endPoint, String studyName, String variableName, String ownerTable, String ownerId) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        InternalMessage studyOpenToChanges = GenomaDataStudy.isStudyOpenToChanges2(studyName);
+        InternalMessage studyOpenToChanges = ClinicalStudyDataStudy.isStudyOpenToChanges(studyName);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(studyOpenToChanges.getDiagnostic())) {
             return studyOpenToChanges;
         }
@@ -108,7 +107,7 @@ public class DataStudyObjectsVariableValues {
         Object[] existsRecord = Rdbms.existsRecord(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getRepositoryName()), TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableName(),
                 new String[]{TblsGenomaConfig.Variables.NAME.getName()}, new Object[]{variableName});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsRecord[0].toString())) {
-            return new InternalMessage(LPPlatform.LAB_FALSE, GenomaEnums.GenomaErrorTrapping.VARIABLE_NOT_FOUND, null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, ClinicalStudyEnums.GenomaErrorTrapping.VARIABLE_NOT_FOUND, null);
         }
         String[] fieldsName = new String[]{TblsGenomaData.StudyVariableValues.STUDY.getName(), TblsGenomaData.StudyVariableValues.OWNER_TABLE.getName(), TblsGenomaData.StudyVariableValues.OWNER_ID.getName(),
             TblsGenomaData.StudyVariableValues.NAME.getName()};
@@ -122,18 +121,18 @@ public class DataStudyObjectsVariableValues {
         }
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES, fieldsName, fieldsValue);
         if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
-            GenomaDataAudit.studyAuditAdd(endPoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES, variableName,
+            ClinicalStudyDataAudit.studyAuditAdd(endPoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES, variableName,
                     studyName, null, fieldsName, fieldsValue);
             return new InternalMessage(LPPlatform.LAB_TRUE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), insertRecordInTable.getNewRowId());
         }
         return new InternalMessage(LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), null);
     }
 
-    public static Object[] objectVariableSetValue(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, String ownerTable, String ownerId, String variableSetName, String variableName, String newValue) {
+    public static InternalMessage objectVariableSetValue(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, String ownerTable, String ownerId, String variableSetName, String variableName, String newValue) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] diagn = new Object[0];
-        Object[] isStudyOpenToChanges = isStudyOpenToChanges(studyName);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())) {
+        InternalMessage isStudyOpenToChanges = isStudyOpenToChanges(studyName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges.getDiagnostic())) {
             return isStudyOpenToChanges;
         }
 
@@ -146,20 +145,21 @@ public class DataStudyObjectsVariableValues {
         Object[][] objectVariablePropInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES.getTableName(),
                 fieldsName, fieldsValue, fieldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(objectVariablePropInfo[0]))) {
-            return objectVariablePropInfo;
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.VARIABLE_NOT_EXISTS,
+                    new Object[]{variableSetName, variableName, procInstanceName});
         }
 
         if (objectVariablePropInfo.length != 1) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Found more than one record, <*1*> for the query <*2*> on <*3*>",
+            return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.MORE_THAN_ONE_VARIABLE,
                     new Object[]{objectVariablePropInfo.length, Arrays.toString(fieldsName), procInstanceName});
         }
 
         String fieldType = objectVariablePropInfo[0][2].toString().toUpperCase();
-        switch (DataStudyObjectsVariableValues.VariableTypes.valueOf(fieldType)) {
+        switch (ClinicalStudyDataStudyObjectsVariableValues.VariableTypes.valueOf(fieldType)) {
             case LIST:
                 String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
                 if (Boolean.FALSE.equals(LPArray.valueInArray(allowedValuesArr, newValue))) {
-                    return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "The value <*1*> is not one of the accepted values <*2*> for variable <*3*> in procedure <*4*>",
+                    return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.VARIABLE_VALUE_NOTONEOFTHEEXPECTED,
                             new Object[]{newValue, Arrays.toString(allowedValuesArr), variableName, procInstanceName});
                 }
                 break;
@@ -167,26 +167,23 @@ public class DataStudyObjectsVariableValues {
             case INTEGER:
                 Object[] isNumeric = isNumeric(newValue);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isNumeric[0].toString())) {
-                    return isNumeric;
+                    return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.NOT_NUMERIC_VALUE, null, null);
                 }
                 break;
             case TEXT:
                 break;
             default:
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.VARIABLE_TYPE_NOT_RECOGNIZED, new Object[]{fieldType}, null);
+                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.VARIABLE_TYPE_NOT_RECOGNIZED, new Object[]{fieldType}, null);
         }
         String[] updFieldsName = new String[]{TblsGenomaData.StudyVariableValues.VALUE.getName()};
         Object[] updFieldsValue = new Object[]{newValue};
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsGenomaData.StudyVariableValues.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{Integer.valueOf(objectVariablePropInfo[0][0].toString())}, "");
-        diagn = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES,
+        RdbmsObject diagnosesProj = Rdbms.updateTableRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES,
                 EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES, updFieldsName), updFieldsValue, sqlWhere, null);
-        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString()))) {
-            GenomaDataAudit.studyAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES, newValue,
-                    studyName, null, updFieldsName, updFieldsValue);
+        if (Boolean.FALSE.equals(diagnosesProj.getRunSuccess())) {
+            return new InternalMessage(LPPlatform.LAB_FALSE, diagnosesProj.getErrorMessageCode(), diagnosesProj.getErrorMessageVariables());
         }
-
-        return diagn;
-
+        return new InternalMessage(LPPlatform.LAB_TRUE, endpoint, new Object[]{studyName});
     }
 }

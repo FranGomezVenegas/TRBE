@@ -5,7 +5,7 @@
  */
 package module.clinicalstudies.apis;
 
-import functionaljavaa.modulegenoma.GenomaConfigVariablesQueries;
+import functionaljavaa.modulegenoma.ClinicalStudyConfigVariablesQueries;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -121,7 +121,7 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
                 return;                  
             }  
             String variableSetName=request.getParameter(GenomaProjectAPI.GenomaProjectAPIParamsList.VARIABLE_SET_NAME.getParamName());  
-            Object[] varSetVariables=GenomaConfigVariablesQueries.getVariableSetVariablesId(variableSetName);            
+            Object[] varSetVariables=ClinicalStudyConfigVariablesQueries.getVariableSetVariablesId(variableSetName);            
             JSONArray jsonArr=new JSONArray();
             jsonArr.add(LPJson.convertToJSON(varSetVariables, "Variable Name"));
             LPFrontEnd.servletReturnSuccess(request, response, jsonArr);

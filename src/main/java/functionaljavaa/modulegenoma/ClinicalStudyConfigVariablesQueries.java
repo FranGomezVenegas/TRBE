@@ -16,8 +16,8 @@ import trazit.globalvariables.GlobalVariables;
  *
  * @author User
  */
-public final class GenomaConfigVariablesQueries {
-    private GenomaConfigVariablesQueries() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
+public final class ClinicalStudyConfigVariablesQueries {
+    private ClinicalStudyConfigVariablesQueries() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
     
     public static Object[] getVariableSetVariablesId(String variableSetName){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();

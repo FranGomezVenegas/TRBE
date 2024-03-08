@@ -28,8 +28,12 @@ public class TblsGenomaData {
         STUDY_INDIVIDUAL(null, "study_individual", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, StudyIndividual.values(), StudyIndividual.INDIVIDUAL_ID.getName(), new String[]{StudyIndividual.INDIVIDUAL_ID.getName()}, null, "StudyIndividual table"),
         STUDY_FAMILY_INDIVIDUAL(null, "study_family_individual", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, StudyFamilyIndividual.values(), StudyFamilyIndividual.ID.getName(), new String[]{StudyFamilyIndividual.ID.getName()}, null, "StudyFamilyIndividual table"),
         STUDY_INDIVIDUAL_SAMPLE(null, "study_individual_sample", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, StudyIndividualSample.values(), StudyIndividualSample.SAMPLE_ID.getName(), new String[]{StudyIndividualSample.SAMPLE_ID.getName()}, null, "StudyIndividualSample table"),
+        STUDY_INDIVIDUAL_CONSENT(null, "study_individual_consent", SCHEMA_NAME, true, StudyIndividualConsent.values(), StudyIndividualConsent.ID.getName(),
+            new String[]{StudyIndividualConsent.ID.getName()}, null, "StudyIndividualConsent"),
         STUDY_SAMPLES_SET(null, "study_samples_set", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, StudySamplesSet.values(), null, new String[]{StudySamplesSet.NAME.getName()}, null, "StudySamplesSet table"),
         STUDY_FAMILY(null, "study_family", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, StudyFamily.values(), null, new String[]{StudyFamily.NAME.getName()}, null, "StudyFamily table"),
+        STUDY_COHORT(null, "study_cohort", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, StudyCohort.values(), null, new String[]{StudyCohort.NAME.getName()}, null, "StudyCohort table"),
+        STUDY_COHORT_INDIVIDUAL(null, "study_cohort_individual", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, StudyCohortIndividual.values(), StudyCohortIndividual.ID.getName(), new String[]{StudyCohortIndividual.ID.getName()}, null, "StudyCohortIndividual table"),
         STUDY_VARIABLE_VALUES(null, "study_variable_values", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, StudyVariableValues.values(), StudyVariableValues.ID.getName(), new String[]{StudyVariableValues.ID.getName()}, null, "StudyVariableValues table"),
         STUDY_OBJECTS_FILES(null, "study_objects_files", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, StudyObjectsFiles.values(), StudyObjectsFiles.FILE_ID.getName(), new String[]{StudyObjectsFiles.FILE_ID.getName()}, null, "study_objects_files table"),
         ;
@@ -375,6 +379,73 @@ public class TblsGenomaData {
         @Override        public String getFieldComment(){return this.fieldComment;}
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }
+    public enum StudyCohort implements EnumIntTableFields{
+        NAME("name",  LPDatabase.stringNotNull(), null, null, null, null),
+        STUDY("study",  LPDatabase.stringNotNull(100), null, null, null, null),
+        DESCRIPTION("description", LPDatabase.string(), null, null, null, null),
+        TYPE("type", LPDatabase.string(), null, null, null, null),
+        ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(), null, null, null, null),
+        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.dateTime(), null, null, null, null),
+        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
+        DEACTIVATED_ON( LPDatabase.FIELDS_NAMES_DEACTIVATED_ON, LPDatabase.dateTime(), null, null, null, null),
+        DEACTIVATED_BY( LPDatabase.FIELDS_NAMES_DEACTIVATED_BY, LPDatabase.string(), null, null, null, null),
+        COMPLETED("completed", LPDatabase.booleanFld(false), null, null, null, null),
+        UNSTRUCT_CONTENT("unstruct_content", LPDatabase.string(), null, null, null, null),
+        ;
+        private StudyCohort(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }
+    public enum StudyCohortIndividual implements EnumIntTableFields{
+        ID("id",  LPDatabase.integerNotNull(), null, null, null, null),
+        STUDY("study",  LPDatabase.stringNotNull(100), null, null, null, null),
+        COHORT_NAME("cohort_name",  LPDatabase.stringNotNull(100), null, null, null, null),
+        INDIVIDUAL_ID("individual_id",  LPDatabase.integerNotNull(), null, null, null, null),
+        LINKED_ON("linked_on", LPDatabase.dateTime(), null, null, null, null),
+        ;
+        private StudyCohortIndividual(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override        public String getName(){return this.fieldName;}
+        @Override        public String getFieldType() {return this.fieldType;}
+        @Override        public String getFieldMask() {return this.fieldMask;}
+        @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        @Override        public String getFieldComment(){return this.fieldComment;}
+        @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }
+    
     public enum StudyVariableValues implements EnumIntTableFields{
         ID("id", LPDatabase.integerNotNull(), null, null, null, null),
         OWNER_TABLE("owner_table", LPDatabase.stringNotNull(), null, null, null, null),
@@ -452,4 +523,33 @@ public class TblsGenomaData {
         @Override        public String getFieldComment(){return this.fieldComment;}
         @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }
+    
+    public enum StudyIndividualConsent implements EnumIntTableFields{
+        ID("id", LPDatabase.integerNotNull(), null, null, null, null),
+        STUDY("study", LPDatabase.stringNotNull(), null, null, null, null),
+        INDIVIDUAL_ID("individual_id",  LPDatabase.integerNotNull(), null, null, null, null),
+        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
+        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.dateTime(), null, null, null, null),
+        FILE_LINK("file_link", LPDatabase.string(), null, null, null, null),
+        DB_FILE("db_file", LPDatabase.embeddedFile(), null, null, null, null),
+        BRIEF_SUMMARY("brief_summary", LPDatabase.string(), null, null, null, null),
+        REMOVED("removed", LPDatabase.booleanFld(false), null, null, null, null),
+        ;
+        private StudyIndividualConsent(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName; @Override        public String getName(){return this.fieldName;}
+        private final String fieldType; @Override        public String getFieldType() {return this.fieldType;}
+        private final String fieldMask; @Override        public String getFieldMask() {return this.fieldMask;}
+        private final ReferenceFld reference; @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
+        private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }                
+    
 }

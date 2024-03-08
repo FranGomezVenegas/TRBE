@@ -16,13 +16,12 @@ import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import databases.features.Token;
-import functionaljavaa.modulegenoma.GenomaEnums.GenomaErrorTrapping;
-import functionaljavaa.modulegenoma.GenomaEnums.GenomaSuccess;
+import functionaljavaa.modulegenoma.ClinicalStudyEnums.GenomaErrorTrapping;
+import functionaljavaa.modulegenoma.ClinicalStudyEnums.GenomaSuccess;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPParadigm;
 import lbplanet.utilities.TrazitUtiilitiesEnums;
-import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -33,38 +32,7 @@ import trazit.session.InternalMessage;
  *
  * @author User
  */
-public class GenomaDataProject {
-
-    public enum GenomaDataProjectErrorTrapping implements EnumIntMessages {
-        PROJECT_ALREADY_EXISTS("ProjectAlreadyExists", "", ""),
-        MISSING_MANDATORY_FIELDS("MissingMandatoryFields", "", ""),
-        NEW_PROJECT_MISSING_MANDATORY_FIELDS("NewProjectMissingMandatoryFields", "", ""),;
-
-        private GenomaDataProjectErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs) {
-            this.errorCode = errCode;
-            this.defaultTextWhenNotInPropertiesFileEn = defaultTextEn;
-            this.defaultTextWhenNotInPropertiesFileEs = defaultTextEs;
-        }
-
-        @Override
-        public String getErrorCode() {
-            return this.errorCode;
-        }
-
-        @Override
-        public String getDefaultTextEn() {
-            return this.defaultTextWhenNotInPropertiesFileEn;
-        }
-
-        @Override
-        public String getDefaultTextEs() {
-            return this.defaultTextWhenNotInPropertiesFileEs;
-        }
-
-        private final String errorCode;
-        private final String defaultTextWhenNotInPropertiesFileEn;
-        private final String defaultTextWhenNotInPropertiesFileEs;
-    }
+public class ClinicalStudyDataProject {
 
     public InternalMessage createProject(GenomaProjectAPI.GenomaProjectAPIactionsEndPoints endpoint, String projectName, String[] fieldsName, Object[] fieldsValue, Boolean devMode) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
@@ -112,14 +80,14 @@ public class GenomaDataProject {
                 }
             }
             if (mandatoryFieldsMissingBuilder.length() > 0) {
-                return new InternalMessage(LPPlatform.LAB_FALSE, GenomaDataProjectErrorTrapping.NEW_PROJECT_MISSING_MANDATORY_FIELDS, new String[]{projectName, mandatoryFieldsMissingBuilder.toString(), procInstanceName});
+                return new InternalMessage(LPPlatform.LAB_FALSE, GenomaErrorTrapping.NEW_PROJECT_MISSING_MANDATORY_FIELDS, new String[]{projectName, mandatoryFieldsMissingBuilder.toString(), procInstanceName});
             }
             Object[] diagnosis = Rdbms.existsRecord(procInstanceName,
                     LPPlatform.buildSchemaName(procInstanceName, TblsGenomaData.TablesGenomaData.PROJECT.getRepositoryName()),
                      TblsGenomaData.TablesGenomaData.PROJECT.getTableName(),
                     new String[]{TblsGenomaData.Project.NAME.getName()}, new Object[]{projectName});
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString())) {
-                return new InternalMessage(LPPlatform.LAB_FALSE, GenomaDataProjectErrorTrapping.PROJECT_ALREADY_EXISTS, new Object[]{projectName, procInstanceName});
+                return new InternalMessage(LPPlatform.LAB_FALSE, GenomaErrorTrapping.PROJECT_ALREADY_EXISTS, new Object[]{projectName, procInstanceName});
             }
 
             /*        String[] specialFields = labIntChecker.getStructureSpecialFields(schemaDataName, "projectStructure", actionName);
@@ -178,9 +146,9 @@ public class GenomaDataProject {
             }
             if (LPArray.valuePosicInArray(fieldsName, TblsGenomaData.Project.ACTIVE.getName()) == -1) {
                 fieldsName = LPArray.addValueToArray1D(fieldsName, TblsGenomaData.Project.ACTIVE.getName());
-                fieldsValue = LPArray.addValueToArray1D(fieldsValue, GenomaEnums.activateOnCreation(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.PROJECT.getTableName()));
+                fieldsValue = LPArray.addValueToArray1D(fieldsValue, ClinicalStudyEnums.activateOnCreation(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.PROJECT.getTableName()));
             } else {
-                fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.Project.ACTIVE.getName())] = GenomaEnums.activateOnCreation(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.PROJECT.getTableName());
+                fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.Project.ACTIVE.getName())] = ClinicalStudyEnums.activateOnCreation(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.PROJECT.getTableName());
             }
             /*        fieldsName = LPArray.addValueToArray1D(fieldsName, GlobalVariables.Schemas.CONFIG.getName());    
         fieldsValue = LPArray.addValueToArray1D(fieldsValue, projectTemplate);
@@ -189,7 +157,7 @@ public class GenomaDataProject {
              */
             RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsGenomaData.TablesGenomaData.PROJECT, fieldsName, fieldsValue);
             if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
-                GenomaDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT, projectName,
+                ClinicalStudyDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT, projectName,
                         projectName, null, fieldsName, fieldsValue);
                 return new InternalMessage(LPPlatform.LAB_TRUE, GenomaSuccess.PROJECT_CREATED, insertRecordInTable.getErrorMessageVariables(), insertRecordInTable.getNewRowId());
             }
@@ -211,7 +179,7 @@ public class GenomaDataProject {
         Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.PROJECT,
                 EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.PROJECT, fieldsName), fieldsValue, sqlWhere, null);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString())) {
-            GenomaDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT, projectName,
+            ClinicalStudyDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT, projectName,
                     projectName, null, fieldsName, fieldsValue);
         }
         return diagnosesProj;
@@ -232,7 +200,7 @@ public class GenomaDataProject {
         Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.PROJECT,
                 EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.PROJECT, fieldsName), fieldsValue, sqlWhere, null);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString())) {
-            GenomaDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT, projectName,
+            ClinicalStudyDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT, projectName,
                     projectName, null, fieldsName, fieldsValue);
         }
         return diagnosesProj;
@@ -243,17 +211,12 @@ public class GenomaDataProject {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges[0].toString())) {
             return projOpenToChanges;
         }
-
-        Object[] specialFieldsPresent = GenomaEnums.specialFieldsInUpdateArray(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.PROJECT.getTableName(), fieldsName);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(specialFieldsPresent[0].toString())) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, specialFieldsPresent[specialFieldsPresent.length - 1].toString(), null);
-        }
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsGenomaData.Project.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{projectName}, "");
         Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.PROJECT,
                 EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.PROJECT, fieldsName), fieldsValue, sqlWhere, null);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString())) {
-            GenomaDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT, projectName,
+            ClinicalStudyDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT, projectName,
                     projectName, null, fieldsName, fieldsValue);
         }
         return diagnosesProj;
@@ -271,19 +234,19 @@ public class GenomaDataProject {
         switch (endpoint) {
             case PROJECT_ADD_USER:
                 fieldsName = LPArray.addValueToArray1D(fieldsName, TblsGenomaData.ProjectUsers.ACTIVE.getName());
-                fieldsValue = LPArray.addValueToArray1D(fieldsValue, GenomaEnums.activateOnCreation(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName()));
+                fieldsValue = LPArray.addValueToArray1D(fieldsValue, ClinicalStudyEnums.activateOnCreation(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName()));
                 RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsGenomaData.TablesGenomaData.PROJECT_USERS, fieldsName, fieldsValue);
                 diagnosesProj = insertRecordInTable.getApiMessage();
                 if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess())) {
                     return insertRecordInTable.getApiMessage();
                 }
-                GenomaDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT, projectName,
+                ClinicalStudyDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT, projectName,
                         projectName, null, fieldsName, fieldsValue);
                 break;
 
             case PROJECT_REMOVE_USER:
                 fieldsName = LPArray.addValueToArray1D(fieldsName, TblsGenomaData.ProjectUsers.ACTIVE.getName());
-                fieldsValue = LPArray.addValueToArray1D(fieldsValue, GenomaEnums.activateOnCreation(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName()));
+                fieldsValue = LPArray.addValueToArray1D(fieldsValue, ClinicalStudyEnums.activateOnCreation(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName()));
                 SqlWhere sqlWhere = new SqlWhere();
                 sqlWhere.addConstraint(TblsGenomaData.ProjectUsers.PROJECT, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{projectName}, null);
                 sqlWhere.addConstraint(TblsGenomaData.ProjectUsers.PERSON, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{userName}, null);
@@ -293,7 +256,7 @@ public class GenomaDataProject {
                 if (Boolean.FALSE.equals(removeRecordInTable.getRunSuccess())){
                     return removeRecordInTable.getApiMessage();
                 }
-                GenomaDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT, projectName,
+                ClinicalStudyDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT, projectName,
                         projectName, null, fieldsName, fieldsValue);
                 break;
             case PROJECT_USER_ACTIVATE:
@@ -323,7 +286,7 @@ public class GenomaDataProject {
         Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.PROJECT_USERS,
                 EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.PROJECT_USERS, fieldsName), fieldsValue, sqlWhere, null);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString())) {
-            GenomaDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT_USERS, projectName,
+            ClinicalStudyDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT_USERS, projectName,
                     projectName, null, fieldsName, fieldsValue);
         }
         return diagnosesProj;
@@ -344,7 +307,7 @@ public class GenomaDataProject {
         Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.PROJECT_USERS,
                 EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.PROJECT_USERS, fieldsName), fieldsValue, sqlWhere, null);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString())) {
-            GenomaDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT_USERS, projectName,
+            ClinicalStudyDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT_USERS, projectName,
                     projectName, null, fieldsName, fieldsValue);
         }
         return diagnosesProj;
@@ -386,7 +349,7 @@ public class GenomaDataProject {
         Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.PROJECT_USERS,
                 EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.PROJECT_USERS, fieldsName), fieldsValue, sqlWhere, null);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString())) {
-            GenomaDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT_USERS, projectName,
+            ClinicalStudyDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT_USERS, projectName,
                     projectName, null, fieldsName, fieldsValue);
         }
         return diagnosesProj;

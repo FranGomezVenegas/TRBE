@@ -9,7 +9,7 @@ import module.clinicalstudies.definition.TblsGenomaConfig;
 import module.clinicalstudies.definition.TblsGenomaData;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import module.clinicalstudies.apis.GenomaProjectAPI.GenomaProjectAPIParamsList;
-import functionaljavaa.modulegenoma.DataStudyObjectsVariableValues;
+import functionaljavaa.modulegenoma.ClinicalStudyDataStudyObjectsVariableValues;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
@@ -167,7 +167,7 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
                     String studyName=request.getParameter(GenomaProjectAPIParamsList.STUDY_NAME.getParamName());
                     String ownerTable=request.getParameter(GenomaProjectAPIParamsList.OWNER_TABLE.getParamName());
                     String ownerId=request.getParameter(GenomaProjectAPIParamsList.OWNER_ID.getParamName());
-                    InternalMessage actionDiagnosesObj = DataStudyObjectsVariableValues.addVariableSetToObject(endPoint, studyName, variableSetName, ownerTable, ownerId);
+                    InternalMessage actionDiagnosesObj = ClinicalStudyDataStudyObjectsVariableValues.addVariableSetToObject(endPoint, studyName, variableSetName, ownerTable, ownerId);
                     diagnostic=ApiMessageReturn.trapMessage(actionDiagnosesObj.getDiagnostic(), actionDiagnosesObj.getMessageCodeObj(), actionDiagnosesObj.getMessageCodeVariables());
                     messageDynamicData=LPArray.addValueToArray1D(messageDynamicData, new Object[]{variableSetName, ownerTable, ownerId});
                     relatedObject.addSimpleNode(procInstanceName,  TblsGenomaConfig.TablesGenomaConfig.VARIABLES_SET.getTableName(), variableSetName);
@@ -181,7 +181,7 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
                     ownerId=request.getParameter(GenomaProjectAPIParamsList.OWNER_ID.getParamName());
                     String variableName=request.getParameter(GenomaProjectAPIParamsList.VARIABLE_NAME.getParamName());
                     String newValue=request.getParameter(GenomaProjectAPIParamsList.NEW_VALUE.getParamName());
-                    diagnostic =DataStudyObjectsVariableValues.objectVariableSetValue(endPoint, studyName, ownerTable, ownerId, variableSetName, variableName, newValue);
+                    actionDiagnosesObj =ClinicalStudyDataStudyObjectsVariableValues.objectVariableSetValue(endPoint, studyName, ownerTable, ownerId, variableSetName, variableName, newValue);
                     messageDynamicData=LPArray.addValueToArray1D(messageDynamicData, new Object[]{newValue, variableName});
                     relatedObject.addSimpleNode(procInstanceName, TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES.getTableName(), variableName);
                     relatedObject.addSimpleNode(procInstanceName, ownerTable, ownerId);

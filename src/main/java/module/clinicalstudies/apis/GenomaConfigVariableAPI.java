@@ -8,7 +8,7 @@ package module.clinicalstudies.apis;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import static module.clinicalstudies.apis.GenomaConfigVariableAPI.GenomaVariableAPIactionsEndpoints.VARIABLE_SET_ADD_VARIABLE;
 import module.clinicalstudies.apis.GenomaProjectAPI.GenomaProjectAPIParamsList;
-import functionaljavaa.modulegenoma.GenomaConfigVariables;
+import functionaljavaa.modulegenoma.ClinicalStudyConfigVariables;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -24,8 +24,12 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import module.clinicalstudies.definition.TblsGenomaConfig;
+import org.json.simple.JSONArray;
+import trazit.enums.EnumIntEndpoints;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables.ApiUrls;
+import trazit.session.InternalMessage;
 /**
  *
  * @author User
@@ -34,33 +38,37 @@ public class GenomaConfigVariableAPI extends HttpServlet {
 
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME+"|"+GlobalAPIsParams.REQUEST_PARAM_DB_NAME;
             
-    public enum GenomaVariableAPIactionsEndpoints {
+    public enum GenomaVariableAPIactionsEndpoints implements EnumIntEndpoints {
           VARIABLE_SET_ADD_VARIABLE("VARIABLE_SET_ADD_VARIABLE", "variableSetName|variableName", new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects
-                  , null, null),
+                  , null, null, TblsGenomaConfig.TablesGenomaConfig.VARIABLES_SET.getTableName()),
           VARIABLE_SET_REMOVE_VARIABLE("VARIABLE_SET_REMOVE_VARIABLE", "variableSetName|variableName", new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects
-                  , null, null)
+                  , null, null, TblsGenomaConfig.TablesGenomaConfig.VARIABLES_SET.getTableName())
           ;
-        private GenomaVariableAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
+        private GenomaVariableAPIactionsEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag
+        , String entity) {
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
             this.outputObjectTypes=outputObjectTypes;            
             this.devComment = LPNulls.replaceNull(devComment);
             this.devCommentTag = LPNulls.replaceNull(devCommentTag);
+            this.entityName=entity;
         } 
-                public String getName(){return this.name;}
-                public String getSuccessMessageCode(){return this.successMessageCode;}           
-                public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
-                public LPAPIArguments[] getArguments() {return arguments;}
-                public String getApiUrl(){return ApiUrls.GENOMA_VARIABLE_ACTIONS.getUrl();}
+          @Override                public String getName(){return this.name;}
+          @Override                public String getSuccessMessageCode(){return this.successMessageCode;}           
+          @Override                public JsonArray getOutputObjectTypes() {return outputObjectTypes;}     
+          @Override                public LPAPIArguments[] getArguments() {return arguments;}
+          @Override                public String getApiUrl(){return ApiUrls.GENOMA_VARIABLE_ACTIONS.getUrl();}
         private final String name;
         private final String successMessageCode;  
         private final LPAPIArguments[] arguments;
         private final JsonArray outputObjectTypes;
-         public String getDeveloperComment() { return this.devComment;}
-                public String getDeveloperCommentTag() {            return this.devCommentTag;        }
+          @Override         public String getDeveloperComment() { return this.devComment;}
+          @Override        public String getDeveloperCommentTag() {            return this.devCommentTag;        }
         private final String devComment;
         private final String devCommentTag;
+        private final String entityName;
+        @Override        public String getEntity() {return entityName;}
     }
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -85,7 +93,7 @@ public class GenomaConfigVariableAPI extends HttpServlet {
         String language=procReqInstance.getLanguage();
         String[] errObject = new String[]{"Servlet Genoma VariableAPI at " + request.getServletPath()};   
         try (PrintWriter out = response.getWriter()) {
-            Object[] dataSample = null;
+            InternalMessage actionDiagnoseObj = null;
                     GenomaVariableAPIactionsEndpoints endPoint = null;
                     try{
                         endPoint = GenomaVariableAPIactionsEndpoints.valueOf(actionName.toUpperCase());
@@ -107,9 +115,9 @@ public class GenomaConfigVariableAPI extends HttpServlet {
                     String variableSetName=request.getParameter(GenomaProjectAPIParamsList.VARIABLE_SET_NAME.getParamName());
                     String variableName=request.getParameter(GenomaProjectAPIParamsList.VARIABLE_NAME.getParamName());
                     if (VARIABLE_SET_ADD_VARIABLE.equals(endPoint))
-                        dataSample =GenomaConfigVariables.variableSetAddVariable(variableSetName, variableName);
+                        actionDiagnoseObj =ClinicalStudyConfigVariables.variableSetAddVariable(variableSetName, variableName);
                     else if ("VARIABLE_SET_REMOVE_VARIABLE".equalsIgnoreCase(actionName))
-                        dataSample =GenomaConfigVariables.variableSetRemoveVariable(variableSetName, variableName);
+                        actionDiagnoseObj =ClinicalStudyConfigVariables.variableSetRemoveVariable(variableSetName, variableName);
                     else
                         LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                     break;       
@@ -117,10 +125,10 @@ public class GenomaConfigVariableAPI extends HttpServlet {
                     LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
                     return;                    
             }    
-            if (dataSample!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(dataSample[0].toString())){  
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, dataSample);   
-            }else{                
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, dataSample[4].toString(), null);   
+            if (actionDiagnoseObj!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoseObj.getDiagnostic())){  
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response,  actionDiagnoseObj.getMessageCodeObj(), actionDiagnoseObj.getMessageCodeVariables());   
+            }else{              
+                LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, actionDiagnoseObj.getMessageCodeVariables(), new JSONArray());                
             }            
         }catch(Exception e){   
             response.setStatus(401);
