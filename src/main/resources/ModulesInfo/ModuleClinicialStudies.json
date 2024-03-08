@@ -6,7 +6,7 @@
     "description_es": "Estudios Clínicos",
     "ModuleSettings":{
       "actionsEndpoints":[
-            { "name": "Projects" , "url" : "/modulegenoma/GenomaProjectAPIactions"}		
+            { "name": "Projects" , "url" : "/moduleclinicalstudy/ClinicalStudyAPIactions"}		
       ],
       "queriesEndpoints":[
             { "name": "Studies" , "url" : "/modulegenoma/GenomaStudyAPIqueries"}				

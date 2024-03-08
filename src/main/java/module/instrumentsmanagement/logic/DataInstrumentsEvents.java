@@ -20,7 +20,7 @@ import module.instrumentsmanagement.definition.InstrumentsEnums.InstrEventsError
 import module.instrumentsmanagement.definition.InstrumentsEnums.InstrumentsAPIactionsEndpoints;
 import module.instrumentsmanagement.definition.InstrumentsEnums.InstrumentsBusinessRules;
 import module.instrumentsmanagement.definition.InstrumentsEnums.InstrumentsErrorTrapping;
-import functionaljavaa.modulegenoma.DataStudyObjectsVariableValues;
+import functionaljavaa.modulegenoma.ClinicalStudyDataStudyObjectsVariableValues;
 import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.parameter.Parameter.isTagValueOneOfEnableOnes;
 import java.util.Arrays;
@@ -167,7 +167,7 @@ public class DataInstrumentsEvents {
         Object[] updFieldsValue = new Object[]{newValue};
 
         String fieldType = objectVariablePropInfo[0][2].toString().toUpperCase();
-        switch (DataStudyObjectsVariableValues.VariableTypes.valueOf(fieldType)) {
+        switch (ClinicalStudyDataStudyObjectsVariableValues.VariableTypes.valueOf(fieldType)) {
             case LIST:
                 String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
                 if (Boolean.FALSE.equals(LPArray.valueInArray(allowedValuesArr, newValue))) {
@@ -244,7 +244,7 @@ public class DataInstrumentsEvents {
                     new Object[]{variableName, procReqSession.getProcedureInstance(), newValue});
         }
         String fieldType = objectVariablePropInfo[0][2].toString().toUpperCase();
-        switch (DataStudyObjectsVariableValues.VariableTypes.valueOf(fieldType)) {
+        switch (ClinicalStudyDataStudyObjectsVariableValues.VariableTypes.valueOf(fieldType)) {
             case LIST:
                 String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
                 if (Boolean.FALSE.equals(LPArray.valueInArray(allowedValuesArr, newValue))) {

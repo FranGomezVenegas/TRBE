@@ -11,7 +11,7 @@ import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.SqlWhere;
 import databases.features.Token;
-import functionaljavaa.modulegenoma.DataStudyObjectsVariableValues;
+import functionaljavaa.modulegenoma.ClinicalStudyDataStudyObjectsVariableValues;
 import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.parameter.Parameter.isTagValueOneOfEnableOnes;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
@@ -337,7 +337,7 @@ public class DataInventoryQualif {
                     new Object[]{});
         }
         String fieldType = objectVariablePropInfo[0][2].toString().toUpperCase();
-        switch (DataStudyObjectsVariableValues.VariableTypes.valueOf(fieldType)) {
+        switch (ClinicalStudyDataStudyObjectsVariableValues.VariableTypes.valueOf(fieldType)) {
             case LIST:
                 String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
                 if (Boolean.FALSE.equals(LPArray.valueInArray(allowedValuesArr, newValue))) {
@@ -409,7 +409,7 @@ public class DataInventoryQualif {
                     new Object[]{variableName, procReqSession.getProcedureInstance(), newValue});
         }
         String fieldType = objectVariablePropInfo[0][2].toString().toUpperCase();
-        switch (DataStudyObjectsVariableValues.VariableTypes.valueOf(fieldType)) {
+        switch (ClinicalStudyDataStudyObjectsVariableValues.VariableTypes.valueOf(fieldType)) {
             case LIST:
                 String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
                 if (Boolean.FALSE.equals(LPArray.valueInArray(allowedValuesArr, newValue))) {
