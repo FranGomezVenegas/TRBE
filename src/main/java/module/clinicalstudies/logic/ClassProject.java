@@ -73,7 +73,7 @@ public class ClassProject  implements ActionsClass{
                             actionDiagnoses=ApiMessageReturn.trapMessage(actionDiagnosesObj.getDiagnostic(), actionDiagnosesObj.getMessageCodeObj(), actionDiagnosesObj.getMessageCodeVariables());
                         }
                         if ("PROJECT_UPDATE".equalsIgnoreCase(endPoint.getName()))
-                            actionDiagnoses= prj.projectUpdate(endPoint, projectName, fieldNames, fieldValues);
+                            this.actionDiagnosesObj= prj.projectUpdate(endPoint, projectName, fieldNames, fieldValues);
                         rObj.addSimpleNode(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.PROJECT.getTableName(), projectName);                
                         this.messageDynamicData=new Object[]{projectName, procInstanceName};                    
                     }
@@ -82,9 +82,9 @@ public class ClassProject  implements ActionsClass{
                 case PROJECT_DEACTIVATE:
                     projectName = argValues[0].toString();
                     if ("PROJECT_ACTIVATE".equalsIgnoreCase(endPoint.getName()))
-                        actionDiagnoses =prj.projectActivate(endPoint, projectName);
+                        this.actionDiagnosesObj =prj.projectActivate(endPoint, projectName);
                     else if ("PROJECT_DEACTIVATE".equalsIgnoreCase(endPoint.getName()))
-                        actionDiagnoses =prj.projectDeActivate(endPoint, projectName);                    
+                        this.actionDiagnosesObj =prj.projectDeActivate(endPoint, projectName);                    
                     rObj.addSimpleNode(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.PROJECT.getTableName(), projectName);                
                     break;
                 case PROJECT_ADD_USER:
@@ -95,7 +95,7 @@ public class ClassProject  implements ActionsClass{
                     projectName = argValues[0].toString();
                     String userName=argValues[1].toString();
                     String userRole=argValues[2].toString();
-                    actionDiagnoses =prj.projectUserManagement(endPoint, projectName, userName, userRole);
+                    this.actionDiagnosesObj =prj.projectUserManagement(endPoint, projectName, userName, userRole);
                     this.messageDynamicData=new Object[]{userName, projectName, userName, userRole, procInstanceName};
                     rObj.addSimpleNode(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.PROJECT.getTableName(), projectName);
                     rObj.addSimpleNode(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName(), userName);

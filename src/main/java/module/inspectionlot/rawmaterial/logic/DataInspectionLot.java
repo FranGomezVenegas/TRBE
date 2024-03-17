@@ -65,6 +65,7 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.PDPageContentStream.AppendMode;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import trazit.enums.AnnotationDefinitions.UsesEnum;
 import trazit.enums.EnumIntTableFields;
 
 /**
@@ -444,6 +445,8 @@ public class DataInspectionLot {
         return new InternalMessage(LPPlatform.LAB_TRUE, InspLotRMEnums.InspLotRMAPIactionsEndpoints.NEW_LOT, null);
     }
 
+    @UsesEnum("InspLotRMEnums.NO_NUMBER_OF_BULKS_SPECIFIED") 
+    @UsesEnum("InspLotRMEnums.NEW_LOT")    
     public InternalMessage applyBulkPlan(String lotName, Integer numBulks, String materialName, String specCode, Integer specCodeVersion,
             String[] lotFldName, Object[] lotFldValue, String containerAlgorithm, Double smpQuant, String smpQuantUom) {
         if (numBulks == null) {

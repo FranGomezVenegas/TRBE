@@ -9,7 +9,6 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.features.Token;
 import functionaljavaa.businessrules.ActionsControl;
 import functionaljavaa.businessrules.BusinessRules;
-import java.util.ArrayList;
 import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
@@ -19,10 +18,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
-import org.json.simple.JSONArray;
-import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;
-import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
 import trazit.session.ResponseMessages;
@@ -52,35 +48,8 @@ public class AuditAndUserValidation {
         private final String defaultTextWhenNotInPropertiesFileEn;
         private final String defaultTextWhenNotInPropertiesFileEs;
     }
-    public enum AuditAndUserValidationBusinessRules implements EnumIntBusinessRules{     
-        PREFIX_AUDITREASONPHRASE ("AuditReasonPhrase", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
-        ;
-        private AuditAndUserValidationBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator
-        , Boolean isOpt, ArrayList<String[]> preReqs){
-            this.tagName=tgName;
-            this.areaName=areaNm;
-            this.valuesList=valuesList;  
-            this.allowMultiValue=allowMulti;
-            this.multiValueSeparator=separator;
-            this.isOptional=isOpt;
-            this.preReqs=preReqs;
-        }       
-        @Override        public String getTagName(){return this.tagName;}
-        @Override        public String getAreaName(){return this.areaName;}
-        @Override        public JSONArray getValuesList(){return this.valuesList;}
-        @Override        public Boolean getAllowMultiValue(){return this.allowMultiValue;}
-        @Override        public char getMultiValueSeparator(){return this.multiValueSeparator;}
-        @Override        public Boolean getIsOptional() {return isOptional;}
-        @Override        public ArrayList<String[]> getPreReqs() {return this.preReqs;}
-        
-        private final String tagName;
-        private final String areaName;
-        private final JSONArray valuesList;  
-        private final Boolean allowMultiValue;
-        private final char multiValueSeparator;        
-        private final Boolean isOptional;
-        private final ArrayList<String[]> preReqs;
-    }
+    
+    public static final String PREFIX_AUDITREASONPHRASE ="AuditReasonPhrase";//, GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
 
     private static AuditAndUserValidation auditUserVal;
 
@@ -202,7 +171,7 @@ public class AuditAndUserValidation {
             this.checkUserValidationPassesDiag= ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AuditAndUserValidationErrorTrapping.PROC_INSTANCE_NAME_NULL, null);
             return false;
         }
-        String[] actionAuditReasonInfo = busRulesProcInstance.getProcedureBusinessRule(actionName+AuditAndUserValidationBusinessRules.PREFIX_AUDITREASONPHRASE.getTagName()).split("\\|");
+        String[] actionAuditReasonInfo = busRulesProcInstance.getProcedureBusinessRule(actionName+PREFIX_AUDITREASONPHRASE).split("\\|");
         if ( ("LIST".equalsIgnoreCase(actionAuditReasonInfo[0])) && (Boolean.FALSE.equals(LPArray.valueInArray(actionAuditReasonInfo, auditReasonPhrase))) ){
             this.checkUserValidationPassesDiag= ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, AuditAndUserValidationErrorTrapping.WRONG_PHRASE, new Object[]{auditReasonPhrase, Arrays.toString(actionAuditReasonInfo)});
             return false;

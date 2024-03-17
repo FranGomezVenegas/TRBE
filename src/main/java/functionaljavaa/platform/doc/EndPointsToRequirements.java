@@ -60,6 +60,7 @@ public final class EndPointsToRequirements {
     public EndPointsToRequirements(HttpServletRequest request, HttpServletResponse response) {
         Integer totalEndpointsVisitedInt = 0;
         int totalEndpointsVisitedInjection = 0;
+        int totalApisVisitedInjection = 0;
         int currentEntityIndex = 0;
         Integer totalEntities=0;
         String evName = "";
@@ -88,7 +89,7 @@ public final class EndPointsToRequirements {
             classesImplementingInt = classesImplementing.size();
             totalEntities=classesImplementing.size();
             for (currentEntityIndex = 0; currentEntityIndex < classesImplementing.size(); currentEntityIndex++) {
-                Thread.sleep(500);
+                Thread.sleep(2000);
                 ClassInfo getMine = classesImplementing.get(currentEntityIndex);
                 audEvObjStr = getMine.getSimpleName();
                 List<Object> enumConstantObjects = getMine.getEnumConstantObjects();
@@ -143,7 +144,9 @@ public final class EndPointsToRequirements {
                         }
                     }
                     totalEndpointsVisitedInjection++;
+                    
                 }
+                totalApisVisitedInjection++;
                 if (Boolean.FALSE.equals(enumsIncomplete.isEmpty())) {
                     LPFrontEnd.servletReturnSuccess(request, response, enumsIncomplete);
                     return;
@@ -155,11 +158,12 @@ public final class EndPointsToRequirements {
                 }
 //                    }
             }
-        } catch (Exception e) {            
+        } catch (InterruptedException  e) {    
+            Thread.currentThread().interrupt();
             JSONArray errorJArr = new JSONArray();
             errorJArr.add("Error found then ending incomplete in index:" + totalEndpointsVisitedInjection + audEvObjStr + "_" + evName + ":" + e.getMessage());
             LPFrontEnd.servletReturnSuccess(request, response, errorJArr);
-            return;
+            //return;
         }
         ScanResult.closeAll();
         org.json.JSONObject jMainObj = new org.json.JSONObject();
@@ -213,7 +217,7 @@ public final class EndPointsToRequirements {
         this.summaryInfo = sortedJsonObject;
     } catch (Exception e) {        
         JSONArray errorsJArr = new JSONArray();
-        errorsJArr.add("totalEndpointsVisitedInjection:" + totalEndpointsVisitedInjection + " current event when failed:"+evName+". Error:" + e.getMessage());
+        errorsJArr.add("totalApisVisitedInjection:" + totalApisVisitedInjection+" totalEndpointsVisitedInjection:" + totalEndpointsVisitedInjection + " current event when failed:"+evName+". Error:" + e.getMessage());
         JSONObject jObj=new JSONObject();
         jObj.put("current_entity", currentEntityIndex);
         jObj.put("total_entities", totalEntities);

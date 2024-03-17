@@ -163,4 +163,11 @@ public class LPHttp {
     public static void sendResponseMissingMandatories() {
         // Not implemented yet
     }
+    
+    public static String toSnakeCase(String camelCaseStr) {
+        String regex = "([a-z])([A-Z]+)";
+        String replacement = "$1_$2";
+        return camelCaseStr.replaceAll(regex, replacement).toLowerCase();
+    }
+    
 }

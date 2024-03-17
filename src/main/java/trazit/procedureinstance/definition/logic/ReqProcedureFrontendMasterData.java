@@ -104,22 +104,47 @@ public class ReqProcedureFrontendMasterData implements FrontendMasterData{
                     new String[]{}, true, true);
                 dbRowsToJsonFinalArr = new JSONArray();
                 for (int i=0;i<dbRowsToJsonArr.size();i++){
-                    JSONObject curRow = (JSONObject) dbRowsToJsonArr.get(i);                                        
-                    com.google.gson.JsonArray argArrayToJson = LPJson.convertToJsonArrayStringedObject(
-                        curRow.get(TblsTrazitDocTrazit.EndpointsDeclaration.ARGUMENTS_ARRAY.getName()).toString());
-                    curRow.put(TblsTrazitDocTrazit.EndpointsDeclaration.ARGUMENTS_ARRAY.getName(), argArrayToJson);
-                    dbRowsToJsonFinalArr.add(curRow);
+                    JSONObject curRow = (JSONObject) dbRowsToJsonArr.get(i);     
+                    String curEndpointName=curRow.get("endpoint_name").toString();
+                    if (Boolean.FALSE.equals(LPJson.ValueInJsonArray(LPJson.convertJsonArrayToJSONArray(dbRowsToJsonFinalArr), curEndpointName))){
+                        JSONObject curRowObj=new JSONObject();
+                        curRowObj.put("endpoint_name", curEndpointName);
+                        dbRowsToJsonFinalArr.add(curRowObj);
+                    }
+                    //com.google.gson.JsonArray argArrayToJson = LPJson.convertToJsonArrayStringedObject(
+                    //    curRow.get(TblsTrazitDocTrazit.EndpointsDeclaration.ARGUMENTS_ARRAY.getName()).toString());
+                    //curRow.put(TblsTrazitDocTrazit.EndpointsDeclaration.ARGUMENTS_ARRAY.getName(), argArrayToJson);
+                    //dbRowsToJsonFinalArr.add(curRow);
                 }
                 curProcObj.put("module_in_solution_queries", dbRowsToJsonFinalArr);                
-                curProcObj.put("module_in_solution_special_views", QueryUtilities.dbRowsToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.SPECIAL_VIEWS_IN_SOLUTION.getViewName(),
+
+                dbRowsToJsonArr=QueryUtilities.dbRowsToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.SPECIAL_VIEWS_IN_SOLUTION.getViewName(),
                     new String[]{TblsReqs.viewSpecialViewsInSolution.PRETTY_EN.getName(), TblsReqs.viewSpecialViewsInSolution.PRETTY_ES.getName(),
-                        TblsReqs.viewSpecialViewsInSolution.ENTITY.getName(), TblsReqs.viewSpecialViewsInSolution.PRESENT.getName(), TblsReqs.viewQueriesInSolution.REQUIREMENTS_LIST.getName(),
+                        TblsReqs.viewSpecialViewsInSolution.ENTITY.getName(), TblsReqs.viewSpecialViewsInSolution.PRESENT.getName(), TblsReqs.viewSpecialViewsInSolution.REQUIREMENTS_LIST.getName(),
                         TblsReqs.viewSpecialViewsInSolution.VIEW_NAME.getName()},
                     new String[]{TblsReqs.viewSpecialViewsInSolution.MODULE_NAME.getName(), TblsReqs.viewSpecialViewsInSolution.MODULE_VERSION.getName()},
                     new Object[]{moduleName, moduleVersion},
                     new String[]{TblsReqs.viewSpecialViewsInSolution.PRESENT.getName()+" desc",  TblsReqs.viewSpecialViewsInSolution.ENTITY.getName(), TblsReqs.viewSpecialViewsInSolution.VIEW_NAME.getName()},
-                    new String[]{}, true, true));
+                    new String[]{}, true, true);        
+                dbRowsToJsonFinalArr=new JSONArray();
+                for (int i=0;i<dbRowsToJsonArr.size();i++){
+                    JSONObject curRow = (JSONObject) dbRowsToJsonArr.get(i);     
+                    String curEndpointName=curRow.get(TblsReqs.viewSpecialViewsInSolution.VIEW_NAME.getName()).toString();
+                    if (Boolean.FALSE.equals(LPJson.ValueInJsonArray(LPJson.convertJsonArrayToJSONArray(dbRowsToJsonFinalArr), curEndpointName))){
+                        JSONObject curRowObj=new JSONObject();
+                        curRowObj.put(TblsReqs.viewSpecialViewsInSolution.VIEW_NAME.getName(), curEndpointName);
+                        dbRowsToJsonFinalArr.add(curRowObj);
+                    }
+                    //com.google.gson.JsonArray argArrayToJson = LPJson.convertToJsonArrayStringedObject(
+                    //    curRow.get(TblsTrazitDocTrazit.EndpointsDeclaration.ARGUMENTS_ARRAY.getName()).toString());
+                    //curRow.put(TblsTrazitDocTrazit.EndpointsDeclaration.ARGUMENTS_ARRAY.getName(), argArrayToJson);
+                    //dbRowsToJsonFinalArr.add(curRow);
+                }            
+                curProcObj.put("module_in_solution_special_views", dbRowsToJsonFinalArr);
+
+
                 proceduresList.add(curProcObj);                            
+
             }
             return proceduresList;
 

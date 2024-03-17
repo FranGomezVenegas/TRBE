@@ -680,7 +680,7 @@ public class ReqProcedureEnums {
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROC_INSTANCENAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.DB_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9)}, EndPointsToRequirements.endpointWithNoOutputObjects, null, null),
-        GET_ALL_ACTIVE_MODULES("GET_ALL_ACTIVE_MODULES", "", new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects, null, null),
+        GET_ALL_ACTIVE_MODULES("GET_ALL_ACTIVE_MODULES", "", new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects, null, null)
         ;
 
         private ReqProcedureDefinitionAPIQueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
@@ -703,47 +703,19 @@ public class ReqProcedureEnums {
             return hm;
         }
         @Override public String getEntity() {return "procedure_deployment";}
-        @Override
-        public String getName() {
-            return this.name;
-        }
-
-        @Override
-        public String getSuccessMessageCode() {
-            return this.successMessageCode;
-        }
-
-        @Override
-        public JsonArray getOutputObjectTypes() {
-            return outputObjectTypes;
-        }
-
-        @Override
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }
-
-        @Override
-        public String getApiUrl() {
-            return ApiUrls.PROCEDURE_DEFINITION_QUERIES.getUrl();
-        }
-
-        @Override
-        public String getDeveloperComment() {
-            return this.devComment;
-        }
-
-        @Override
-        public String getDeveloperCommentTag() {
-            return this.devCommentTag;
-        }
+        @Override        public String getName() {            return this.name;        }
+        @Override        public String getSuccessMessageCode() {            return this.successMessageCode;        }
+        @Override        public JsonArray getOutputObjectTypes() {            return outputObjectTypes;        }
+        @Override        public LPAPIArguments[] getArguments() {            return arguments;        }
+        @Override        public String getApiUrl() {            return ApiUrls.PROCEDURE_DEFINITION_QUERIES.getUrl();        }
+        @Override        public String getDeveloperComment() {            return this.devComment;        }
+        @Override        public String getDeveloperCommentTag() {            return this.devCommentTag;        }
         private final String name;
         private final String successMessageCode;
         private final LPAPIArguments[] arguments;
         private final JsonArray outputObjectTypes;
         private final String devComment;
         private final String devCommentTag;
-
     }
 
     public enum ReqProcedureDefinitionErrorTraping implements EnumIntMessages {

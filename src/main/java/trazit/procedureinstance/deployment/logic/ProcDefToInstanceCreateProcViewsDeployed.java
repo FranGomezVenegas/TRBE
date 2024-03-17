@@ -31,10 +31,9 @@ import trazit.procedureinstance.definition.definition.TblsReqs;
  *
  * @author User
  */
-public class ProcDefToInstanceCreateProcViews {
-
+public class ProcDefToInstanceCreateProcViewsDeployed {
     
-    public static final JSONObject createDBProcedureViewsDesigner(String procedure, Integer procVersion, String procInstanceName) {
+    public static final JSONObject createDBProcedureViewsDeployed(String procedure, Integer procVersion, String procInstanceName) {
     String currentParentCode = "";
     String currentCode = "";
     String windowType = "";
@@ -66,10 +65,10 @@ public class ProcDefToInstanceCreateProcViews {
                 JsonObject jObjModel= new JsonObject();
                 switch (LPNulls.replaceNull(curView[5]).toString().toUpperCase()){
                     case "TABS":
-                        jObjModel=viewTabsDesigner(Integer.valueOf(curView[11].toString()), curView, currentParentCode, currentCode, windowType, procedure, procVersion, procInstanceName);
+                        jObjModel=viewTabsDeployed(Integer.valueOf(curView[11].toString()), curView, currentParentCode, currentCode, windowType, procedure, procVersion, procInstanceName);
                         break;
                     case "TABLE_WITH_BUTTONS":
-                        jObjModel=viewTableWithButtonsDesigner(Integer.valueOf(curView[11].toString()), null, curView, currentParentCode, currentCode, windowType, procedure, procVersion, procInstanceName);
+                        jObjModel=viewTableWithButtonsDeployed(Integer.valueOf(curView[11].toString()), null, curView, currentParentCode, currentCode, windowType, procedure, procVersion, procInstanceName);
                         break;
                     default:
                         jObjModel.addProperty("error", 
@@ -107,7 +106,7 @@ public class ProcDefToInstanceCreateProcViews {
                 //curViewLog.put("error", "cannot get the special view data");
                 if (updateTableRecordFieldsByFilter.getRunSuccess()) {
                     if (Boolean.TRUE.equals(AppProcedureListAPI.elementType.TWOICONS.toString().equalsIgnoreCase(windowType))) {
-                        xcreateProcedureViewTwoIconsChilds(updFldN, updFldV, curView[0].toString(), curView[12].toString(), procInstanceName);
+                        createProcedureViewTwoIconsChilds(updFldN, updFldV, curView[0].toString(), curView[12].toString(), procInstanceName);
                     }
                     curViewLog.put("created", "yes");
                 } else {
@@ -143,7 +142,7 @@ public class ProcDefToInstanceCreateProcViews {
                 //curViewLog.put("error", "cannot get the special view data");
                 if (updateTableRecordFieldsByFilter.getRunSuccess()) {
                     if (Boolean.TRUE.equals(AppProcedureListAPI.elementType.TWOICONS.toString().equalsIgnoreCase(windowType))) {
-                        xcreateProcedureViewTwoIconsChilds(updFldN, updFldV, curView[0].toString(), curView[10].toString(), procInstanceName);
+                        createProcedureViewTwoIconsChilds(updFldN, updFldV, curView[0].toString(), curView[10].toString(), procInstanceName);
                     }
                     curViewLog.put("created", "yes");
                 } else {
@@ -165,7 +164,7 @@ public class ProcDefToInstanceCreateProcViews {
     }
 
     
-    public static JsonObject viewTabsDesigner(Integer solId, Object[] curView, String currentParentCode, String currentCode, String windowType,
+    public static JsonObject viewTabsDeployed(Integer solId, Object[] curView, String currentParentCode, String currentCode, String windowType,
     String procedure, Integer procVersion, String procInstanceName){
         JsonObject jObjModel =LPFilesTools.getLocalFileContentAsJsonObject("ViewsTemplates", "Tabs.json");
 
@@ -183,7 +182,7 @@ public class ProcDefToInstanceCreateProcViews {
         }
         JsonArray jTabsArr=new JsonArray();
         for (Object[] curTab: solTabs){
-            JsonObject curTabModel = viewTableWithButtonsDesigner(solId, Integer.valueOf(curTab[0].toString()), curView, currentParentCode, currentCode, windowType,
+            JsonObject curTabModel = viewTableWithButtonsDeployed(solId, Integer.valueOf(curTab[0].toString()), curView, currentParentCode, currentCode, windowType,
                     procedure, procVersion, procInstanceName);
             JsonObject tabLabelObj=new JsonObject();
             tabLabelObj.addProperty("label_en", curTab[2].toString());
@@ -201,8 +200,8 @@ public class ProcDefToInstanceCreateProcViews {
         jObjModel.add("tabs", jTabsArr);
         return jObjModel;
     }
-
-    public static JsonObject viewTableWithButtonsDesigner(Integer solId, Integer tabId, Object[] curView, String currentParentCode, String currentCode, String windowType,
+    
+    public static JsonObject viewTableWithButtonsDeployed(Integer solId, Integer tabId, Object[] curView, String currentParentCode, String currentCode, String windowType,
     String procedure, Integer procVersion, String procInstanceName){
         EnumIntTableFields[] vwProcReqSolFlds = new EnumIntTableFields[]{TblsReqs.ProcedureReqSolutionViewTableWithButtons.ADD_REFRESH_BUTTON, TblsReqs.ProcedureReqSolutionViewTableWithButtons.ADD_REFRESH_BUTTON, TblsReqs.ProcedureReqSolutionViewTableWithButtons.ADD_REFRESH_BUTTON, 
             TblsReqs.ProcedureReqSolutionViewTableWithButtons.ADD_REFRESH_BUTTON, TblsReqs.ProcedureReqSolutionViewTableWithButtons.WINDOW_QUERY, TblsReqs.ProcedureReqSolutionViewTableWithButtons.ADD_REFRESH_BUTTON, TblsReqs.ProcedureReqSolutionViewTableWithButtons.WINDOW_MODE, TblsReqs.ProcedureReqSolutionViewTableWithButtons.WINDOW_TYPE, TblsReqs.ProcedureReqSolutionViewTableWithButtons.ADD_REFRESH_BUTTON, TblsReqs.ProcedureReqSolutionViewTableWithButtons.ADD_REFRESH_BUTTON, 
@@ -226,14 +225,13 @@ public class ProcDefToInstanceCreateProcViews {
         try {
             //jObjModel = JsonParser.parseString(curView[5].toString()).getAsJsonObject();
             jObjModel =LPFilesTools.getLocalFileContentAsJsonObject("ViewsTemplates", "TableWithButtons.json");
-            jObjModel=xviewAddQueryName(jObjModel, vwProcReqSolFlds, procViewsArr[0]);
-            jObjModel=xviewAddRefreshButton(jObjModel, vwProcReqSolFlds, procViewsArr[0]);
-            jObjModel=xviewAddGridHeader(jObjModel, vwProcReqSolFlds, procViewsArr[0]);
+            jObjModel=viewAddQueryName(jObjModel, vwProcReqSolFlds, procViewsArr[0]);
+            jObjModel=viewAddRefreshButton(jObjModel, vwProcReqSolFlds, procViewsArr[0]);
+            jObjModel=viewAddGridHeader(jObjModel, vwProcReqSolFlds, procViewsArr[0]);
                         
             jObjModel=viewAddEndpointParams(jObjModel, vwProcReqSolFlds, procViewsArr[0]);
-            jObjModel=xviewAddEnableContextMenu(jObjModel, vwProcReqSolFlds, procViewsArr[0]);
-            jObjModel=xviewAddActionsInContextMenu(jObjModel, vwProcReqSolFlds, procViewsArr[0]);
-            jObjModel.addProperty("hola", "adios");
+            jObjModel=viewAddEnableContextMenu(jObjModel, vwProcReqSolFlds, procViewsArr[0]);
+            jObjModel=viewAddActionsInContextMenu(jObjModel, vwProcReqSolFlds, procViewsArr[0]);
 
             Object[][] procActionsArr = Rdbms.getRecordFieldsByFilterForViews(null, GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_ACTIONS, 
                     new SqlWhere(TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_ACTIONS, new String[]{TblsReqs.viewProcReqSolutionActions.PROCEDURE_NAME.getName(), TblsReqs.viewProcReqSolutionActions.PROCEDURE_VERSION.getName(), TblsReqs.viewProcReqSolutionActions.PROC_INSTANCE_NAME.getName(), TblsReqs.viewProcReqSolutionActions.ACTIVE.getName(), TblsReqs.viewProcReqSolutionActions.TYPE.getName(), TblsReqs.viewProcReqSolutionActions.PARENT_CODE.getName()}, 
@@ -257,10 +255,10 @@ public class ProcDefToInstanceCreateProcViews {
                 jObjModel.add("row_buttons", JsonParser.parseString(allTableRowButtons.toString()));
             }
             if (Boolean.TRUE.equals(AppProcedureListAPI.elementType.TWOICONS.toString().equalsIgnoreCase(windowType))) {                
-                jObjModel=xviewAddTwoIconsSubQueryFilter(jObjModel, curView[12].toString());
-                jObjModel=xviewAddTwoIconsTitle(jObjModel, curView[12].toString());
+                jObjModel=viewAddTwoIconsSubQueryFilter(jObjModel, curView[12].toString());
+                jObjModel=viewAddTwoIconsTitle(jObjModel, curView[12].toString());
             }else{
-                jObjModel=xviewAddSimpleTitle(jObjModel, vwProcReqSolFlds, procViewsArr[0]);
+                jObjModel=viewAddSimpleTitle(jObjModel, vwProcReqSolFlds, procViewsArr[0]);
             }
             return jObjModel;
         } catch (Exception e) {
@@ -269,14 +267,11 @@ public class ProcDefToInstanceCreateProcViews {
             jsonObj.addProperty("currentCode", currentCode);
             jsonObj.addProperty("windowType", windowType);
             jsonObj.addProperty("error_exception", e.getMessage());
-            jsonObj.addProperty("hola", "adios");
             return jsonObj;
         }
     }
-    
-
-    
-    public static JsonObject xviewAddQueryName(JsonObject curModel, EnumIntTableFields[] flds, Object[] values){
+   
+    public static JsonObject viewAddGridColumns(JsonObject curModel, EnumIntTableFields[] flds, Object[] values){
         Integer fldPosic=EnumIntTableFields.getFldPosicInArray(flds, TblsReqs.viewProcReqSolutionViews.WINDOW_QUERY.getName());
         if (fldPosic==-1)return curModel;
         if (LPNulls.replaceNull(values[fldPosic]).toString().length()==0) return curModel;
@@ -285,7 +280,17 @@ public class ProcDefToInstanceCreateProcViews {
         curModel.add("viewQuery", vwQueryjObj);
         return curModel;
     }
-    public static JsonObject xviewAddRefreshButton(JsonObject curModel, EnumIntTableFields[] flds, Object[] values){
+
+    public static JsonObject viewAddQueryName(JsonObject curModel, EnumIntTableFields[] flds, Object[] values){
+        Integer fldPosic=EnumIntTableFields.getFldPosicInArray(flds, TblsReqs.viewProcReqSolutionViews.WINDOW_QUERY.getName());
+        if (fldPosic==-1)return curModel;
+        if (LPNulls.replaceNull(values[fldPosic]).toString().length()==0) return curModel;
+        JsonObject vwQueryjObj = curModel.get("viewQuery").getAsJsonObject();
+        vwQueryjObj.addProperty("actionName", values[fldPosic].toString());
+        curModel.add("viewQuery", vwQueryjObj);
+        return curModel;
+    }
+    public static JsonObject viewAddRefreshButton(JsonObject curModel, EnumIntTableFields[] flds, Object[] values){
         Integer fldPosic=EnumIntTableFields.getFldPosicInArray(flds, TblsReqs.ProcedureReqSolutionViewTableWithButtons.ADD_REFRESH_BUTTON.getName());
         if (fldPosic==-1)return curModel;
         if (LPNulls.replaceNull(values[fldPosic]).toString().length()==0) return curModel;
@@ -304,7 +309,7 @@ public class ProcDefToInstanceCreateProcViews {
         curModel.add("viewQuery", vwQueryjObj);
         return curModel;
     }
-    public static JsonObject xviewAddGridHeader(JsonObject curModel, EnumIntTableFields[] flds, Object[] values){
+    public static JsonObject viewAddGridHeader(JsonObject curModel, EnumIntTableFields[] flds, Object[] values){
         String mainTag="gridHeader";
         
         JsonObject langConfigjObj = curModel.get("langConfig").getAsJsonObject();
@@ -325,7 +330,7 @@ public class ProcDefToInstanceCreateProcViews {
         curModel.add("langConfig", langConfigjObj);
         return curModel;
     }
-    public static JsonObject xviewAddEnableContextMenu(JsonObject curModel, EnumIntTableFields[] flds, Object[] values){
+    public static JsonObject viewAddEnableContextMenu(JsonObject curModel, EnumIntTableFields[] flds, Object[] values){
         String mainTag="enableContextMenu";
                         
         curModel.remove(mainTag);        
@@ -341,7 +346,7 @@ public class ProcDefToInstanceCreateProcViews {
         curModel.addProperty(mainTag, Boolean.valueOf(values[fldPosic].toString()));
         return curModel;
     }
-    public static JsonObject xviewAddActionsInContextMenu(JsonObject curModel, EnumIntTableFields[] flds, Object[] values){
+    public static JsonObject viewAddActionsInContextMenu(JsonObject curModel, EnumIntTableFields[] flds, Object[] values){
         String mainTag="addActionsInContextMenu";
                         
         curModel.remove(mainTag);        
@@ -357,7 +362,7 @@ public class ProcDefToInstanceCreateProcViews {
         curModel.addProperty(mainTag, Boolean.valueOf(values[fldPosic].toString()));
         return curModel;
     }
-    public static JsonObject xviewAddSimpleTitle(JsonObject curModel, EnumIntTableFields[] flds, Object[] values){
+    public static JsonObject viewAddSimpleTitle(JsonObject curModel, EnumIntTableFields[] flds, Object[] values){
         String mainTag="title";
         
         JsonObject langConfigjObj = curModel.get("langConfig").getAsJsonObject();
@@ -384,7 +389,7 @@ public class ProcDefToInstanceCreateProcViews {
         curModel.add("langConfig", langConfigjObj);
         return curModel;
     }             
-    public static JsonObject xviewAddTwoIconsTitle(JsonObject curModel, String twoIconsDetail){
+    public static JsonObject viewAddTwoIconsTitle(JsonObject curModel, String twoIconsDetail){
         String mainTag="title";
         
         JsonObject langConfigjObj = curModel.get("langConfig").getAsJsonObject();
@@ -414,7 +419,7 @@ public class ProcDefToInstanceCreateProcViews {
         curModel.add("langConfig", langConfigjObj);
         return curModel;
     }
-    public static JsonObject xviewAddTwoIconsSubQueryFilter(JsonObject curModel, String twoIconsDetail){
+    public static JsonObject viewAddTwoIconsSubQueryFilter(JsonObject curModel, String twoIconsDetail){
         String mainTag="subViewFilter";
         curModel.remove(mainTag);
         
@@ -433,7 +438,7 @@ public class ProcDefToInstanceCreateProcViews {
         curModel.add(mainTag, subQueryArr);
         return curModel;
     }
-    public static void xcreateProcedureViewTwoIconsChilds(String[] updFldN, Object[] updFldV, String parentName, String twoIconsDetail, String procInstanceName) {
+    public static void createProcedureViewTwoIconsChilds(String[] updFldN, Object[] updFldV, String parentName, String twoIconsDetail, String procInstanceName) {
     try{
         if (LPNulls.replaceNull(twoIconsDetail).length() == 0) {
             return;

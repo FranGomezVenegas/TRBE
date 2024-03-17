@@ -19,6 +19,19 @@ import trazit.globalvariables.GlobalVariables;
 public final class ClinicalStudyConfigVariablesQueries {
     private ClinicalStudyConfigVariablesQueries() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
     
+    public static Object[][] getVariableProperties(String variableName){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+
+        String[] fieldsToRetrieve=new String[]{TblsGenomaConfig.Variables.NAME.getName(), TblsGenomaConfig.Variables.PARAM_TYPE.getName(), TblsGenomaConfig.Variables.REQUIRED.getName(), 
+            TblsGenomaConfig.Variables.ALLOWED_VALUES.getName()};
+        Object[][] variablesProperties2D= Rdbms.getRecordFieldsByFilter(procInstanceName,LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableName(), 
+            new String[]{TblsGenomaConfig.Variables.NAME.getName()+" in|"}, new Object[]{variableName}, 
+             fieldsToRetrieve);
+        Object[] variablesProperties1D=LPArray.array2dTo1d(variablesProperties2D);
+        variablesProperties1D=LPArray.addValueToArray1D(fieldsToRetrieve, variablesProperties1D);
+        return LPArray.array1dTo2d(variablesProperties1D, fieldsToRetrieve.length);
+    }
+
     public static Object[] getVariableSetVariablesId(String variableSetName){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 

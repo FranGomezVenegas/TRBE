@@ -27,6 +27,7 @@ public class TrazitUtiilitiesEnums {
         PORTION_NOT_ZERO_OR_NEGATIVE("portion_cannot_be_zero_or_negative", "", ""),
         VALUE_EMPTY("valueEmpty", "", ""),
         VALUE_NOT_NUMERIC("valueNotNumeric", "", ""),
+        AT_LEAST_ONE_VALUE_IS_NOT_NUMERIC("atleastOneValueIsNotNumeric", "", ""),
         DOT_IS_DECIMAL_SEPARATOR("dotIsTheDecimalsSeparator", "", ""),
         RECORD_ALREADY_EXISTS("recordAlreadyExists", "", ""),
         DATERANGE_WRONG_INTERVAL("dateRange_wrongInterval", "", ""),

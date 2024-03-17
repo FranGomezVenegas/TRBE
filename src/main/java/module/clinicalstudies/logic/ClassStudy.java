@@ -440,7 +440,7 @@ static final String NAME_SUFFIX="_name";
                     studyName=request.getParameter(GenomaProjectAPI.GenomaProjectAPIParamsList.STUDY_NAME.getParamName());
                     ownerTable=request.getParameter(GenomaProjectAPI.GenomaProjectAPIParamsList.OWNER_TABLE.getParamName());
                     ownerId=request.getParameter(GenomaProjectAPI.GenomaProjectAPIParamsList.OWNER_ID.getParamName());
-                    actionDiagnosesObj =ClinicalStudyDataStudyObjectsVariableValues.addVariableToObject(endPoint, studyName, variableName, ownerTable, ownerId);
+                    actionDiagnosesObj =ClinicalStudyDataStudyObjectsVariableValues.addVariableToObject(endPoint, studyName, variableName, ownerTable, ownerId, null, null);
                     actionDiagnoses=ApiMessageReturn.trapMessage(actionDiagnosesObj.getDiagnostic(), actionDiagnosesObj.getMessageCodeObj(), actionDiagnosesObj.getMessageCodeVariables());
                     messageDynamicData=LPArray.addValueToArray1D(messageDynamicData, new Object[]{variableName, ownerTable, ownerId});
                     rObj.addSimpleNode(procInstanceName,  TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableName(), variableName);

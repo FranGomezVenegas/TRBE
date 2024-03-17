@@ -27,6 +27,7 @@ import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
+import trazit.session.ResponseMessages;
 
 /**
  *
@@ -35,6 +36,8 @@ import trazit.session.InternalMessage;
 public class ClinicalStudyDataProject {
 
     public InternalMessage createProject(GenomaProjectAPI.GenomaProjectAPIactionsEndPoints endpoint, String projectName, String[] fieldsName, Object[] fieldsValue, Boolean devMode) {
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        ResponseMessages messages = instanceForActions.getMessages();    
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
@@ -80,6 +83,7 @@ public class ClinicalStudyDataProject {
                 }
             }
             if (mandatoryFieldsMissingBuilder.length() > 0) {
+                messages.addMainForError(ClinicalStudyEnums.GenomaErrorTrapping.NEW_PROJECT_MISSING_MANDATORY_FIELDS, new String[]{projectName, mandatoryFieldsMissingBuilder.toString(), procInstanceName});
                 return new InternalMessage(LPPlatform.LAB_FALSE, GenomaErrorTrapping.NEW_PROJECT_MISSING_MANDATORY_FIELDS, new String[]{projectName, mandatoryFieldsMissingBuilder.toString(), procInstanceName});
             }
             Object[] diagnosis = Rdbms.existsRecord(procInstanceName,
@@ -87,6 +91,7 @@ public class ClinicalStudyDataProject {
                      TblsGenomaData.TablesGenomaData.PROJECT.getTableName(),
                     new String[]{TblsGenomaData.Project.NAME.getName()}, new Object[]{projectName});
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString())) {
+                messages.addMainForError(GenomaErrorTrapping.PROJECT_ALREADY_EXISTS, new Object[]{projectName, procInstanceName});
                 return new InternalMessage(LPPlatform.LAB_FALSE, GenomaErrorTrapping.PROJECT_ALREADY_EXISTS, new Object[]{projectName, procInstanceName});
             }
 
@@ -157,89 +162,108 @@ public class ClinicalStudyDataProject {
              */
             RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsGenomaData.TablesGenomaData.PROJECT, fieldsName, fieldsValue);
             if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
+                messages.addMinorForSuccess(endpoint, new Object[]{projectName}); 
                 ClinicalStudyDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT, projectName,
                         projectName, null, fieldsName, fieldsValue);
                 return new InternalMessage(LPPlatform.LAB_TRUE, GenomaSuccess.PROJECT_CREATED, insertRecordInTable.getErrorMessageVariables(), insertRecordInTable.getNewRowId());
             }
+            messages.addMainForError(insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables());
             return new InternalMessage(LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), null);
         }
+        messages.addMainForError(TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.ERRORTRAPPING_EXCEPTION, null);
         return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.ERRORTRAPPING_EXCEPTION, null, null);
     }
 
-    public Object[] projectActivate(GenomaProjectAPI.GenomaProjectAPIactionsEndPoints endpoint, String projectName) {
-        Object[] projOpenToChanges = isProjectOpenToChanges(projectName);
-        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges[0].toString()))) {
+    public InternalMessage projectActivate(GenomaProjectAPI.GenomaProjectAPIactionsEndPoints endpoint, String projectName) {
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        ResponseMessages messages = instanceForActions.getMessages();    
+        InternalMessage projOpenToChanges = isProjectOpenToChanges2(projectName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges.getDiagnostic())){
+            messages.addMainForError(projOpenToChanges.getMessageCodeObj(), projOpenToChanges.getMessageCodeVariables());
             return projOpenToChanges;
         }
-
         String[] fieldsName = new String[]{TblsGenomaData.Project.ACTIVE.getName()};
         Object[] fieldsValue = new Object[]{true};
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsGenomaData.Project.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{projectName}, "");
-        Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.PROJECT,
+        RdbmsObject diagnosesProj = Rdbms.updateTableRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.PROJECT,
                 EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.PROJECT, fieldsName), fieldsValue, sqlWhere, null);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString())) {
+        if (Boolean.TRUE.equals(diagnosesProj.getRunSuccess())) {
+            messages.addMinorForSuccess(endpoint, new Object[]{projectName});
             ClinicalStudyDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT, projectName,
                     projectName, null, fieldsName, fieldsValue);
         }
-        return diagnosesProj;
+        messages.addMainForError(diagnosesProj.getErrorMessageCode(), diagnosesProj.getErrorMessageVariables());
+        return new InternalMessage(LPPlatform.LAB_FALSE, diagnosesProj.getErrorMessageCode(), diagnosesProj.getErrorMessageVariables());
     }
 
-    public Object[] projectDeActivate(GenomaProjectAPI.GenomaProjectAPIactionsEndPoints endpoint, String projectName) {
-
-        Object[] projOpenToChanges = isProjectOpenToChanges(projectName);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges[0].toString())) {
+    public InternalMessage projectDeActivate(GenomaProjectAPI.GenomaProjectAPIactionsEndPoints endpoint, String projectName) {
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        ResponseMessages messages = instanceForActions.getMessages();    
+        InternalMessage projOpenToChanges = isProjectOpenToChanges2(projectName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges.getDiagnostic())){
+            messages.addMainForError(projOpenToChanges.getMessageCodeObj(), projOpenToChanges.getMessageCodeVariables());
             return projOpenToChanges;
         }
-
-        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
         String[] fieldsName = new String[]{TblsGenomaData.Project.ACTIVE.getName(), TblsGenomaData.Project.DEACTIVATED_BY.getName(), TblsGenomaData.Project.DEACTIVATED_ON.getName()};
         Object[] fieldsValue = new Object[]{false, instanceForActions.getToken().getPersonName(), LPDate.getCurrentTimeStamp()};
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsGenomaData.Project.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{projectName}, "");
-        Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.PROJECT,
+        RdbmsObject diagnosesProj = Rdbms.updateTableRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.PROJECT,
                 EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.PROJECT, fieldsName), fieldsValue, sqlWhere, null);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString())) {
+        if (Boolean.TRUE.equals(diagnosesProj.getRunSuccess())) {
+            messages.addMinorForSuccess(endpoint, new Object[]{projectName});
             ClinicalStudyDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT, projectName,
                     projectName, null, fieldsName, fieldsValue);
         }
-        return diagnosesProj;
+        messages.addMainForError(diagnosesProj.getErrorMessageCode(), diagnosesProj.getErrorMessageVariables());
+        return new InternalMessage(LPPlatform.LAB_FALSE, diagnosesProj.getErrorMessageCode(), diagnosesProj.getErrorMessageVariables());
     }
 
-    public Object[] projectUpdate(GenomaProjectAPI.GenomaProjectAPIactionsEndPoints endpoint, String projectName, String[] fieldsName, Object[] fieldsValue) {
-        Object[] projOpenToChanges = isProjectOpenToChanges(projectName);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges[0].toString())) {
+    public InternalMessage projectUpdate(GenomaProjectAPI.GenomaProjectAPIactionsEndPoints endpoint, String projectName, String[] fieldsName, Object[] fieldsValue) {
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        ResponseMessages messages = instanceForActions.getMessages();    
+        InternalMessage projOpenToChanges = isProjectOpenToChanges2(projectName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges.getDiagnostic())){
+            messages.addMainForError(projOpenToChanges.getMessageCodeObj(), projOpenToChanges.getMessageCodeVariables());
             return projOpenToChanges;
         }
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsGenomaData.Project.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{projectName}, "");
-        Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.PROJECT,
+        RdbmsObject diagnosesProj = Rdbms.updateTableRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.PROJECT,
                 EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.PROJECT, fieldsName), fieldsValue, sqlWhere, null);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString())) {
+        if (Boolean.TRUE.equals(diagnosesProj.getRunSuccess())) {
+            messages.addMinorForSuccess(endpoint, new Object[]{projectName});
             ClinicalStudyDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT, projectName,
                     projectName, null, fieldsName, fieldsValue);
         }
-        return diagnosesProj;
+        messages.addMainForError(diagnosesProj.getErrorMessageCode(), diagnosesProj.getErrorMessageVariables());
+        return new InternalMessage(LPPlatform.LAB_FALSE, diagnosesProj.getErrorMessageCode(), diagnosesProj.getErrorMessageVariables());
     }
 
-    public Object[] projectUserManagement(GenomaProjectAPI.GenomaProjectAPIactionsEndPoints endpoint, String projectName, String userName, String userRole) {
+    public InternalMessage projectUserManagement(GenomaProjectAPI.GenomaProjectAPIactionsEndPoints endpoint, String projectName, String userName, String userRole) {
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        ResponseMessages messages = instanceForActions.getMessages();    
         String[] fieldsName = new String[]{TblsGenomaData.ProjectUsers.PROJECT.getName(), TblsGenomaData.ProjectUsers.PERSON.getName(), TblsGenomaData.ProjectUsers.ROLES.getName()};
         Object[] fieldsValue = new Object[]{projectName, userName, userRole};
 
-        Object[] projOpenToChanges = isProjectOpenToChanges(projectName);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges[0].toString())) {
+        InternalMessage projOpenToChanges = isProjectOpenToChanges2(projectName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges.getDiagnostic())){
+            messages.addMainForError(projOpenToChanges.getMessageCodeObj(), projOpenToChanges.getMessageCodeVariables());
             return projOpenToChanges;
         }
-        Object[] diagnosesProj = null;
+        InternalMessage diagnosesProj = null;
         switch (endpoint) {
             case PROJECT_ADD_USER:
                 fieldsName = LPArray.addValueToArray1D(fieldsName, TblsGenomaData.ProjectUsers.ACTIVE.getName());
                 fieldsValue = LPArray.addValueToArray1D(fieldsValue, ClinicalStudyEnums.activateOnCreation(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName()));
                 RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsGenomaData.TablesGenomaData.PROJECT_USERS, fieldsName, fieldsValue);
-                diagnosesProj = insertRecordInTable.getApiMessage();
+                
                 if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess())) {
-                    return insertRecordInTable.getApiMessage();
+                    messages.addMainForError(insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables());
+                    return new InternalMessage(LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables());
                 }
+                messages.addMainForSuccess(endpoint, insertRecordInTable.getErrorMessageVariables());
                 ClinicalStudyDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT, projectName,
                         projectName, null, fieldsName, fieldsValue);
                 break;
@@ -252,9 +276,10 @@ public class ClinicalStudyDataProject {
                 sqlWhere.addConstraint(TblsGenomaData.ProjectUsers.PERSON, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{userName}, null);
                 RdbmsObject removeRecordInTable = Rdbms.removeRecordInTable(TblsGenomaData.TablesGenomaData.PROJECT_USERS,
                         sqlWhere, null);
-                diagnosesProj = removeRecordInTable.getApiMessage();
+                messages.addMainForSuccess(endpoint, removeRecordInTable.getErrorMessageVariables());
                 if (Boolean.FALSE.equals(removeRecordInTable.getRunSuccess())){
-                    return removeRecordInTable.getApiMessage();
+                    messages.addMainForError(removeRecordInTable.getErrorMessageCode(), removeRecordInTable.getErrorMessageVariables());
+                    return new InternalMessage(LPPlatform.LAB_FALSE, removeRecordInTable.getErrorMessageCode(), removeRecordInTable.getErrorMessageVariables());
                 }
                 ClinicalStudyDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT, projectName,
                         projectName, null, fieldsName, fieldsValue);
@@ -269,12 +294,20 @@ public class ClinicalStudyDataProject {
                 diagnosesProj = projectUserChangeRole(endpoint, projectName, userName, userRole);
                 break;
             default:
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, endpoint.toString() + " not implemented yet", null);
+                messages.addMainForError(TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
+                return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
         }
         return diagnosesProj;
     }
 
-    public Object[] projectUserActivate(GenomaProjectAPI.GenomaProjectAPIactionsEndPoints endpoint, String projectName, String userName, String userRole) {
+    public InternalMessage projectUserActivate(GenomaProjectAPI.GenomaProjectAPIactionsEndPoints endpoint, String projectName, String userName, String userRole) {
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        ResponseMessages messages = instanceForActions.getMessages();    
+        InternalMessage projOpenToChanges = isProjectOpenToChanges2(projectName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges.getDiagnostic())){
+            messages.addMainForError(projOpenToChanges.getMessageCodeObj(), projOpenToChanges.getMessageCodeVariables());
+            return projOpenToChanges;
+        }
         String[] fieldsName = new String[]{TblsGenomaData.ProjectUsers.ACTIVE.getName()};
         Object[] fieldsValue = new Object[]{true};
         SqlWhere sqlWhere = new SqlWhere();
@@ -283,19 +316,23 @@ public class ClinicalStudyDataProject {
         if (LPNulls.replaceNull(userRole).length() > 0) {
             sqlWhere.addConstraint(TblsGenomaData.ProjectUsers.ROLES, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{userRole}, "");
         }
-        Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.PROJECT_USERS,
+        RdbmsObject diagnosesProj = Rdbms.updateTableRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.PROJECT_USERS,
                 EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.PROJECT_USERS, fieldsName), fieldsValue, sqlWhere, null);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString())) {
+        if (Boolean.TRUE.equals(diagnosesProj.getRunSuccess())) {
+            messages.addMinorForSuccess(endpoint, new Object[]{projectName, userName, userRole});
             ClinicalStudyDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT_USERS, projectName,
                     projectName, null, fieldsName, fieldsValue);
         }
-        return diagnosesProj;
+        messages.addMainForError(diagnosesProj.getErrorMessageCode(), diagnosesProj.getErrorMessageVariables());
+        return new InternalMessage(LPPlatform.LAB_FALSE, diagnosesProj.getErrorMessageCode(), diagnosesProj.getErrorMessageVariables());
     }
 
-    public Object[] projectUserDeActivate(GenomaProjectAPI.GenomaProjectAPIactionsEndPoints endpoint, String projectName, String userName, String userRole) {
+    public InternalMessage projectUserDeActivate(GenomaProjectAPI.GenomaProjectAPIactionsEndPoints endpoint, String projectName, String userName, String userRole) {
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        Object[] projOpenToChanges = isProjectOpenToChanges(projectName);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges[0].toString())) {
+        ResponseMessages messages = instanceForActions.getMessages();    
+        InternalMessage projOpenToChanges = isProjectOpenToChanges2(projectName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges.getDiagnostic())){
+            messages.addMainForError(projOpenToChanges.getMessageCodeObj(), projOpenToChanges.getMessageCodeVariables());
             return projOpenToChanges;
         }
         String[] fieldsName = new String[]{TblsGenomaData.ProjectUsers.ACTIVE.getName(), TblsGenomaData.ProjectUsers.DEACTIVATED_BY.getName(), TblsGenomaData.ProjectUsers.DEACTIVATED_ON.getName()};
@@ -304,13 +341,15 @@ public class ClinicalStudyDataProject {
         sqlWhere.addConstraint(TblsGenomaData.ProjectUsers.PROJECT, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{projectName}, "");
         sqlWhere.addConstraint(TblsGenomaData.ProjectUsers.PERSON, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{userName}, "");
         sqlWhere.addConstraint(TblsGenomaData.ProjectUsers.ROLES, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{userRole}, "");
-        Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.PROJECT_USERS,
+        RdbmsObject diagnosesProj = Rdbms.updateTableRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.PROJECT_USERS,
                 EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.PROJECT_USERS, fieldsName), fieldsValue, sqlWhere, null);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString())) {
+        if (Boolean.TRUE.equals(diagnosesProj.getRunSuccess())) {
+            messages.addMinorForSuccess(endpoint, new Object[]{projectName, userName, userRole});
             ClinicalStudyDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT_USERS, projectName,
                     projectName, null, fieldsName, fieldsValue);
         }
-        return diagnosesProj;
+        messages.addMainForError(diagnosesProj.getErrorMessageCode(), diagnosesProj.getErrorMessageVariables());
+        return new InternalMessage(LPPlatform.LAB_FALSE, diagnosesProj.getErrorMessageCode(), diagnosesProj.getErrorMessageVariables());
     }
 
     public static Object[] isProjectOpenToChanges(String projectName) {
@@ -340,19 +379,24 @@ public class ClinicalStudyDataProject {
         return new InternalMessage(LPPlatform.LAB_TRUE, GenomaSuccess.PROJECT_OPEN_TO_CHANGES, new Object[]{projectName, procInstanceName});
     }
 
-    public Object[] projectUserChangeRole(GenomaProjectAPI.GenomaProjectAPIactionsEndPoints endpoint, String projectName, String userName, String userRole) {
+    public InternalMessage projectUserChangeRole(GenomaProjectAPI.GenomaProjectAPIactionsEndPoints endpoint, String projectName, String userName, String userRole) {
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        ResponseMessages messages = instanceForActions.getMessages();    
         String[] fieldsName = new String[]{TblsGenomaData.ProjectUsers.ROLES.getName()};
         Object[] fieldsValue = new Object[]{userRole};
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsGenomaData.ProjectUsers.PROJECT, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{projectName}, "");
         sqlWhere.addConstraint(TblsGenomaData.ProjectUsers.PERSON, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{userName}, "");
-        Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.PROJECT_USERS,
+        RdbmsObject diagnosesProj = Rdbms.updateTableRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.PROJECT_USERS,
                 EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.PROJECT_USERS, fieldsName), fieldsValue, sqlWhere, null);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString())) {
+        if (Boolean.TRUE.equals(diagnosesProj.getRunSuccess())) {
+            messages.addMinorForSuccess(endpoint, new Object[]{projectName, userName, userRole});
             ClinicalStudyDataAudit.projectAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.PROJECT_USERS, projectName,
                     projectName, null, fieldsName, fieldsValue);
+            return new InternalMessage(LPPlatform.LAB_TRUE, endpoint, new Object[]{projectName, userName, userRole});
         }
-        return diagnosesProj;
+        messages.addMainForError(diagnosesProj.getErrorMessageCode(), diagnosesProj.getErrorMessageVariables());
+        return new InternalMessage(LPPlatform.LAB_FALSE, diagnosesProj.getErrorMessageCode(), diagnosesProj.getErrorMessageVariables());
     }
 
 }

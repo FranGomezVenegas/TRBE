@@ -3,15 +3,15 @@
     "moduleVersion": 1,
     "releaseDate": "2023-11-01",
     "viewName":"Deviations",
-	"entity": "investigation",
+    "entity": "investigation",
     "windowType": "simple",
     "requirementsInfo":{
-            "window_actions":[
-                {"actionName": "NEW_INVESTIGATION"},
-				{"actionName": "OPEN_INVESTIGATIONS"},
-				{"actionName": "INVESTIGATION_CAPA_DECISION"},
-				{"actionName": "CLOSE_INVESTIGATION"}
-            ]
+    "window_actions":[
+        {"actionName": "NEW_INVESTIGATION"},
+        {"actionName": "OPEN_INVESTIGATIONS"},
+        {"actionName": "INVESTIGATION_CAPA_DECISION"},
+        {"actionName": "CLOSE_INVESTIGATION", "confirmDialog":"confirm", "confirmDialogDetail": ""}
+    ]
     },    
     "jsonModel":{
 	"component":"Tabs",  

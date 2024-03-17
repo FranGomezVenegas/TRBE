@@ -178,8 +178,8 @@
         <servlet-class>module.clinicalstudies.apis.GenomaStudyAPI</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>GenomaStudyAPIqueries</servlet-name>
-        <servlet-class>module.clinicalstudies.apis.GenomaStudyAPIFrontend</servlet-class>
+        <servlet-name>ClinicalStudyAPIqueries</servlet-name>
+        <servlet-class>module.clinicalstudies.apis.ClinicalStudyAPIqueries</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GenomaConfigVariableAPI</servlet-name>
@@ -535,8 +535,8 @@
         <url-pattern>/modulegenoma/GenomaStudyAPIactions</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>GenomaStudyAPIqueries</servlet-name>
-        <url-pattern>/modulegenoma/GenomaStudyAPIqueries</url-pattern>
+        <servlet-name>ClinicalStudyAPIqueries</servlet-name>
+        <url-pattern>/moduleclinicalstudy/ClinicalStudyAPIqueries</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>GenomaConfigVariableAPI</servlet-name>

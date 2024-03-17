@@ -27,17 +27,23 @@ import trazit.globalvariables.GlobalVariables;
 import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
+import trazit.session.ResponseMessages;
 /**
  *
  * @author User
  */
 public class ClinicalStudyDataStudyIndividuals {
     public InternalMessage createStudyIndividual(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, String indivName, String[] fieldsName, Object[] fieldsValue, Boolean devMode){
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        ResponseMessages messages = instanceForActions.getMessages();    
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
         InternalMessage projOpenToChanges=isStudyOpenToChanges(studyName);    
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges.getDiagnostic())) return projOpenToChanges;
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges.getDiagnostic())){
+            messages.addMainForError(projOpenToChanges.getMessageCodeObj(), projOpenToChanges.getMessageCodeVariables());
+            return projOpenToChanges;
+        }
 
         String classVersionProj = "0.1";
         String[] mandatoryFields = null;
@@ -92,8 +98,8 @@ public class ClinicalStudyDataStudyIndividuals {
         Object[] diagnosesProj = new Object[0];
         if (Boolean.FALSE.equals(devMode)){
             if (LPArray.duplicates(fieldsName)) {
-                return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.FIELDS_DUPLICATED, 
-                        fieldsName);
+                messages.addMainForError(TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.FIELDS_DUPLICATED, fieldsName);
+                return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.FIELDS_DUPLICATED, fieldsName);
             }
 
             StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
@@ -111,6 +117,7 @@ public class ClinicalStudyDataStudyIndividuals {
                 }        
             }            
             if (mandatoryFieldsMissingBuilder.length()>0){
+                messages.addMainForError(ClinicalStudyEnums.GenomaErrorTrapping.NEW_PROJECT_MISSING_MANDATORY_FIELDS, new String[]{studyName, mandatoryFieldsMissingBuilder.toString(), procInstanceName});
                 return new InternalMessage(LPPlatform.LAB_FALSE, ClinicalStudyEnums.GenomaErrorTrapping.NEW_PROJECT_MISSING_MANDATORY_FIELDS, new String[]{studyName, mandatoryFieldsMissingBuilder.toString(), procInstanceName});
             }        
     /*        Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, tableName, new String[]{GlobalVariables.Schemas.CONFIG.getName(),"config_version"}, new Object[]{projectTemplate, projectTemplateVersion});
@@ -199,8 +206,10 @@ public class ClinicalStudyDataStudyIndividuals {
                 diagnosesProj=LPArray.addValueToArray1D(diagnosesProj, insertRecordInTable.getNewRowId());
             }
             if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess())) {
+                messages.addMainForError(insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables());
                 return new InternalMessage(LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables());
             }else{
+                messages.addMinorForSuccess(endpoint, new Object[]{studyName, indivName});
                 return new InternalMessage(LPPlatform.LAB_TRUE, endpoint, new Object[]{studyName, indivName});
             }              
         }    
@@ -215,10 +224,13 @@ public class ClinicalStudyDataStudyIndividuals {
             }
             LPPlatform.addJavaClassDoc(javaDocFields, javaDocValues, elementsDev);
         }
+        messages.addMinorForSuccess(endpoint, new Object[]{studyName, indivName});
         return new InternalMessage(LPPlatform.LAB_TRUE, endpoint, new Object[]{studyName, indivName});
     }    
 
     public InternalMessage studyIndividualActivate(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, Integer indivId){
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        ResponseMessages messages = instanceForActions.getMessages();    
         String[] fieldsName=new String[]{TblsGenomaData.StudyIndividual.ACTIVE.getName()};
         Object[] fieldsValue=new Object[]{true};
         SqlWhere sqlWhere = new SqlWhere();
@@ -230,12 +242,16 @@ public class ClinicalStudyDataStudyIndividuals {
                 studyName, null, fieldsName, fieldsValue);
         }
         if (Boolean.FALSE.equals(diagnosesProj.getRunSuccess())) {
+            messages.addMainForError(diagnosesProj.getErrorMessageCode(), diagnosesProj.getErrorMessageVariables());
             return new InternalMessage(LPPlatform.LAB_FALSE, diagnosesProj.getErrorMessageCode(), diagnosesProj.getErrorMessageVariables());
         }
+        messages.addMinorForSuccess(endpoint, new Object[]{studyName});
         return new InternalMessage(LPPlatform.LAB_TRUE, endpoint, new Object[]{studyName});
     }    
 
     public InternalMessage studyIndividualDeActivate(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, Integer indivId){
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        ResponseMessages messages = instanceForActions.getMessages();    
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsGenomaData.StudyIndividual.STUDY, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{studyName}, "");
         sqlWhere.addConstraint(TblsGenomaData.StudyIndividual.INDIVIDUAL_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{indivId}, "");
@@ -245,10 +261,10 @@ public class ClinicalStudyDataStudyIndividuals {
 
         Object[][] studyIndivInfo = QueryUtilitiesEnums.getTableData(TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL,
                 EnumIntTableFields.getTableFieldsFromString(TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL, TblsGenomaData.StudyIndividual.ACTIVE.getName()), sqlWhere, null);
-        if ("false".equalsIgnoreCase(studyIndivInfo[0][0].toString()))
+        if ("false".equalsIgnoreCase(studyIndivInfo[0][0].toString())){
+            messages.addMainForError(Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{studyName, indivId});
             return new InternalMessage(LPPlatform.LAB_FALSE, endpoint, new Object[]{studyName, indivId});
-        
-        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);    
+        }
         String[] fieldsName=new String[]{TblsGenomaData.StudyIndividual.ACTIVE.getName(), TblsGenomaData.StudyIndividual.DEACTIVATED_BY.getName(), TblsGenomaData.StudyIndividual.DEACTIVATED_ON.getName()};
         Object[] fieldsValue=new Object[]{false, instanceForActions.getToken().getPersonName(),LPDate.getCurrentTimeStamp()};
         RdbmsObject diagnosesProj = Rdbms.updateTableRecordFieldsByFilter(TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL,
@@ -258,14 +274,21 @@ public class ClinicalStudyDataStudyIndividuals {
                 studyName, null, fieldsName, fieldsValue);
         }
         if (Boolean.FALSE.equals(diagnosesProj.getRunSuccess())) {
+            messages.addMainForError(diagnosesProj.getErrorMessageCode(), diagnosesProj.getErrorMessageVariables());
             return new InternalMessage(LPPlatform.LAB_FALSE, diagnosesProj.getErrorMessageCode(), diagnosesProj.getErrorMessageVariables());
         }
+        messages.addMinorForSuccess(endpoint, new Object[]{studyName});
         return new InternalMessage(LPPlatform.LAB_TRUE, endpoint, new Object[]{studyName});
     }   
 
     public InternalMessage studyIndividualUpdate(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, Integer indivId, String[] fieldsName, Object[] fieldsValue){
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        ResponseMessages messages = instanceForActions.getMessages();    
         InternalMessage projOpenToChanges=isStudyOpenToChanges(studyName);    
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges.getDiagnostic())) return projOpenToChanges;
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges.getDiagnostic())){
+            messages.addMainForError(projOpenToChanges.getMessageCodeObj(), projOpenToChanges.getMessageCodeVariables());
+            return projOpenToChanges;
+        }
 
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsGenomaData.StudyIndividual.STUDY, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{studyName}, "");
@@ -277,18 +300,21 @@ public class ClinicalStudyDataStudyIndividuals {
                 studyName, null, fieldsName, fieldsValue);
         }
         if (Boolean.FALSE.equals(diagnosesProj.getRunSuccess())) {
+            messages.addMainForError(diagnosesProj.getErrorMessageCode(), diagnosesProj.getErrorMessageVariables());
             return new InternalMessage(LPPlatform.LAB_FALSE, diagnosesProj.getErrorMessageCode(), diagnosesProj.getErrorMessageVariables());
         }
+        messages.addMinorForSuccess(endpoint, new Object[]{studyName});
         return new InternalMessage(LPPlatform.LAB_TRUE, endpoint, new Object[]{studyName});
     } 
-public static InternalMessage isStudyIndividualOpenToChanges(String studyName, Integer individualId){
-    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-    Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(procInstanceName,LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName(),
-        new String[]{TblsGenomaData.StudyIndividual.STUDY.getName(), TblsGenomaData.StudyIndividual.INDIVIDUAL_ID.getName()}, new Object[]{studyName, individualId}, new String[]{TblsGenomaData.StudyIndividual.ACTIVE.getName()});
-    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString()))
-        return new InternalMessage(LPPlatform.LAB_FALSE, GenomaErrorTrapping.STUDY_INDIVIDUAL_NOT_FOUND, new Object[]{studyName, procInstanceName});
-    if (Boolean.FALSE.equals(Boolean.valueOf(LPNulls.replaceNull(sampleInfo[0][0]).toString())))
-        return new InternalMessage(LPPlatform.LAB_FALSE, GenomaErrorTrapping.STUDY_INDIVIDUAL_ALREADY_DEACTIVATED, new Object[]{studyName, procInstanceName});
-    return new InternalMessage(LPPlatform.LAB_TRUE, ClinicalStudyEnums.GenomaSuccess.STUDY_INDIVIDUAL_OPEN_TO_CHANGES, new Object[]{studyName, individualId, procInstanceName});
-}    
+    
+    public static InternalMessage isStudyIndividualOpenToChanges(String studyName, Integer individualId){
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(procInstanceName,LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName(),
+            new String[]{TblsGenomaData.StudyIndividual.STUDY.getName(), TblsGenomaData.StudyIndividual.INDIVIDUAL_ID.getName()}, new Object[]{studyName, individualId}, new String[]{TblsGenomaData.StudyIndividual.ACTIVE.getName()});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString()))
+            return new InternalMessage(LPPlatform.LAB_FALSE, GenomaErrorTrapping.STUDY_INDIVIDUAL_NOT_FOUND, new Object[]{studyName, procInstanceName});
+        if (Boolean.FALSE.equals(Boolean.valueOf(LPNulls.replaceNull(sampleInfo[0][0]).toString())))
+            return new InternalMessage(LPPlatform.LAB_FALSE, GenomaErrorTrapping.STUDY_INDIVIDUAL_ALREADY_DEACTIVATED, new Object[]{studyName, procInstanceName});
+        return new InternalMessage(LPPlatform.LAB_TRUE, ClinicalStudyEnums.GenomaSuccess.STUDY_INDIVIDUAL_OPEN_TO_CHANGES, new Object[]{studyName, individualId, procInstanceName});
+    }    
 }

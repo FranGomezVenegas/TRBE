@@ -21,6 +21,8 @@ public interface EnumIntEndpoints {
     LPAPIArguments[] getArguments();
     String getDeveloperComment();
     String getDeveloperCommentTag();
+//    EnumIntTables getTableObj();
+//    EnumIntViews getViewObj();
 }
 
 

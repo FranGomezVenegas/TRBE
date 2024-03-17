@@ -43,7 +43,7 @@ public class GenomaProjectAPI extends HttpServlet {
     public enum GenomaProjectAPIParamsList {
         PROJECT_NAME("projectName"), STUDY_NAME("studyName"), INDIVIDUAL_NAME("individualName"), INDIVIDUAL_ID("individualId"), INDIVIDUALS_LIST("individualsList"),
         FIELDS_NAMES("fieldsNames"), FIELDS_VALUES("fieldsValues"), SAMPLE_ID("sampleId"), SAMPLES_LIST("samplesList"), FAMILY_NAME("familyName"),
-        SAMPLES_SET_NAME("samplesSetName"), USER_NAME("userName"), USER_ROLE("userRole"),
+        SAMPLES_SET_NAME("samplesSetName"), USER_NAME("userName"), USER_ROLE("userRole"), COHORT_NAME("cohortName"),
         VARIABLE_NAME("variableName"), VARIABLE_SET_NAME("variableSetName"), NEW_VALUE("newValue"),
         OWNER_TABLE("ownerTable"), OWNER_ID("ownerId");
 

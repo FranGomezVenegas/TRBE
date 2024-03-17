@@ -76,6 +76,7 @@ public final class ClinicalStudyEnums {
         
         VARIABLES_SET_NOT_FOUND("variablesSetNotFound", "The variables set <*1*> does not exist in procedure <*2*>",""),
         VARIABLE_NOT_FOUND("variableNotFound", "Variable <*1*> does not exist in procedure <*2*>",""),
+        VARIABLE_ALREADY_EXISTS("studyVariableAlreadyExists", "", ""),
 
         STUDY_INDIVIDUAL_ALREADY_DEACTIVATED("studyIndividualAlreadyInactive", "",""),
         STUDY_INDIVIDUAL_NOT_FOUND("studyIndividualNotFound", "Individual <*1*> does not exist in procedure <*2*>",""),

@@ -91,44 +91,18 @@ public class EnvMonIncubatorAPIactions extends HttpServlet {
             return hm;
         }
         @Override public String getEntity() {return "incubator";}
-        @Override
-        public String getName() {
-            return this.name;
-        }
-
-        @Override
-        public String getSuccessMessageCode() {
-            return this.successMessageCode;
-        }
-
-        @Override
-        public JsonArray getOutputObjectTypes() {
-            return outputObjectTypes;
-        }
-
-        @Override
-        public LPAPIArguments[] getArguments() {
-            return arguments;
-        }
-
-        @Override
-        public String getApiUrl() {
-            return GlobalVariables.ApiUrls.ENVMON_INCUBATOR_ACTIONS.getUrl();
-        }
+        @Override        public String getName() {            return this.name;        }
+        @Override        public String getSuccessMessageCode() {            return this.successMessageCode;        }
+        @Override        public JsonArray getOutputObjectTypes() {            return outputObjectTypes;        }
+        @Override        public LPAPIArguments[] getArguments() {            return arguments;        }
+        @Override        public String getApiUrl() {            return GlobalVariables.ApiUrls.ENVMON_INCUBATOR_ACTIONS.getUrl();        }
         private final String name;
         private final String successMessageCode;
         private final LPAPIArguments[] arguments;
         private final JsonArray outputObjectTypes;
 
-        @Override
-        public String getDeveloperComment() {
-            return this.devComment;
-        }
-
-        @Override
-        public String getDeveloperCommentTag() {
-            return this.devCommentTag;
-        }
+        @Override        public String getDeveloperComment() {            return this.devComment;        }
+        @Override        public String getDeveloperCommentTag() {            return this.devCommentTag;        }
         private final String devComment;
         private final String devCommentTag;
     }

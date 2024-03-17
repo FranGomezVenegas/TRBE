@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.sql.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static lbplanet.utilities.LPHttp.toSnakeCase;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import trazit.session.ApiMessageReturn;
 
@@ -102,7 +103,121 @@ public class LPAPIArguments {
         this.argCommentTag = "";
         this.specialCheck = null;
     }
+/*
+    public Map<EnumIntTableFields, Object> buildAPIArgumentsArgsValues(Map<String, Object> requestArgs) {
+        Map<EnumIntTableFields, Object> dbArgs = new HashMap<>();
+        requestArgs.forEach((key, value) -> {
+            String snakeCaseKey = toSnakeCase(key);
+            EnumIntTables dbField = EnumIntTableFields.valueOf(snakeCaseKey.toUpperCase());
+            dbArgs.put(dbField, value);
+        });
+        return dbArgs;
+    }    
+*/
+    public static Object[] buildAPIArgsumentsArgsValuesSnake(HttpServletRequest request, LPAPIArguments[] argsDef) {
+        if (argsDef == null) {
+            return new Object[0];
+        }
+        Object[] returnArgsDef = new Object[0];
+        for (LPAPIArguments currArg : argsDef) {
+            
+            
+            String snakeCaseArgName = toSnakeCase(currArg.getName());
 
+            // Usa el nombre en snake case para obtener el valor del request
+            String requestArgValue = (String) request.getAttribute(snakeCaseArgName);
+            if (requestArgValue == null) {
+                requestArgValue = LPNulls.replaceNull(request.getParameter(snakeCaseArgName));
+            }
+        
+            requestArgValue = (String) request.getAttribute(requestArgValue);
+            if (requestArgValue == null) {
+                requestArgValue = LPNulls.replaceNull(request.getParameter(requestArgValue));
+            }
+            if (LPNulls.replaceNull(requestArgValue).length() == 0 && Boolean.FALSE.equals(ArgumentType.FILE.toString().equalsIgnoreCase(currArg.getType()))) {
+                if (Boolean.TRUE.equals(currArg.getMandatory())) {
+                    return new Object[]{LPPlatform.LAB_FALSE, ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{currArg.getName()}), currArg.getName()};
+                } else {
+                    returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, "");
+                }
+            } else {
+                requestArgValue = specialTagFilter(requestArgValue);
+                try {
+                    ArgumentType argType = ArgumentType.valueOf(currArg.getType().toUpperCase());
+                    switch (argType) {
+                        case STRING:
+                            returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
+                            break;
+                        case INTEGER:
+                            Integer valueConverted = null;
+                            try {
+                                if (Boolean.FALSE.equals("UNDEFINED".equalsIgnoreCase(requestArgValue)) && requestArgValue.length() > 0) {
+                                    valueConverted = Integer.parseInt(requestArgValue);
+                                }
+                            } catch (NumberFormatException e) {
+                                return new Object[]{LPPlatform.LAB_FALSE, ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.VALUE_NOT_NUMERIC, new Object[]{requestArgValue}), requestArgValue};
+                            }
+                            returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, valueConverted);
+                            break;
+                        case BIGDECIMAL:
+                            BigDecimal valueConvertedBigDec = null;
+                            if (requestArgValue.length() > 0) {
+                                valueConvertedBigDec = new BigDecimal(requestArgValue);
+                            }
+                            returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, valueConvertedBigDec);
+                            break;
+                        case DATE:
+                            Date valueConvertedDate = null;
+                            if (requestArgValue.length() > 0) {
+                                valueConvertedDate = Date.valueOf(requestArgValue);
+                            }
+                            returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, valueConvertedDate);
+                            break;
+                        case DATETIME:
+                            returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, LPDate.stringFormatToLocalDateTime(requestArgValue));
+                            break;
+                        case BOOLEAN:
+                            Boolean valueConvertedBoolean = null;
+                            if (requestArgValue.length() > 0 && ("TRUE".equalsIgnoreCase(requestArgValue) || "FALSE".equalsIgnoreCase(requestArgValue))) {
+                                valueConvertedBoolean = Boolean.valueOf(requestArgValue);
+                            }
+                            returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, valueConvertedBoolean);
+                            break;
+                        case STRINGARR:
+                            //String[] valueConvertedStrArr = requestArgValue.split("\\|");
+                            returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
+                            break;
+                        case STRINGOFOBJECTS:
+                            //Object[] valueConvertedTopObjectArr = LPArray.convertStringWithDataTypeToObjectArray(requestArgValue.split("\\|"));   
+                            returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
+                            break;
+                        case FILE:
+                            StringBuilder requestBody = new StringBuilder();
+                            String line;
+                            BufferedReader reader = null;
+                            try {
+                                reader = request.getReader();
+                                while ((line = reader.readLine()) != null) {
+                                    requestBody.append(line);
+                                }
+                                reader.close();
+                                returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, requestBody.toString());
+                            } catch (IOException ex) {
+                                Logger.getLogger(LPAPIArguments.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        default:
+                            returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
+                            break;
+                    }
+                } catch (NumberFormatException e) {
+                    returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
+                    break;
+                }
+            }
+        }
+        return returnArgsDef;
+    }
+    
     public static Object[] buildAPIArgsumentsArgsValues(HttpServletRequest request, LPAPIArguments[] argsDef) {
         if (argsDef == null) {
             return new Object[0];

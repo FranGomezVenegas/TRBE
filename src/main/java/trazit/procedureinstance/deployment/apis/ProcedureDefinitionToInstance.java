@@ -23,7 +23,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import trazit.procedureinstance.deployment.logic.ProcDefToInstanceCreateProcViews;
+import trazit.procedureinstance.deployment.logic.ProcDefToInstanceCreateProcViewsDeployed;
 import trazit.procedureinstance.deployment.logic.ProcDefToInstanceCreateSopMetaDataAndUserSop;
 import trazit.session.ProcedureRequestSession;
 
@@ -183,7 +183,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 runSection=Boolean.valueOf(argValues[10].toString()) || PROCDEPL_PROCEDURE_ACTIONS;
                 sectionsSettingJobj.put("6) Procedure Actions", runSection);
                 if (Boolean.TRUE.equals(runSection)){
-                    sectionsSettingJobj.put("Procedure Views",  ProcDefToInstanceCreateProcViews.createDBProcedureViews(procName, procVersion, procInstanceName));
+                    sectionsSettingJobj.put("Procedure Views",  ProcDefToInstanceCreateProcViewsDeployed.createDBProcedureViewsDeployed(procName, procVersion, procInstanceName));
                     sectionsSettingJobj.put("Procedure Actions", trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.createdDBProcedureActions(procName,  procVersion, procInstanceName));
                     //sectionsSettingJobj.put("Procedure Views json", trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.createDBProcedureViewsJson(procName, procVersion, procInstanceName));
                 }

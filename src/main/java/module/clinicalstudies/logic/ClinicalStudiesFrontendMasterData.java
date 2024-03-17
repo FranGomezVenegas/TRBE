@@ -6,22 +6,18 @@
  */
 package module.clinicalstudies.logic;
 
+import module.clinicalstudies.apis.ClinicalStudyAPIqueries;
+import module.clinicalstudies.definition.TblsGenomaConfig;
 import org.json.simple.JSONObject;
 import trazit.enums.FrontendMasterData;
 
-/**
- *
- * @author User
- */
 public class ClinicalStudiesFrontendMasterData implements FrontendMasterData{
 
     @Override
     public JSONObject getMasterDataJsonObject(String alternativeProcInstanceName) {
         JSONObject jSummaryObj=new JSONObject();        
-        //jSummaryObj.put(TblsInstrumentsConfig.TablesInstrumentsConfig.INSTRUMENTS_FAMILY.getTableName(), InstrumentsAPIqueries.instrumentFamiliesList(alternativeProcInstanceName));
-        //jSummaryObj.put(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES.getTableName(), InstrumentsAPIqueries.instrumentVariablesList(alternativeProcInstanceName));
-        //jSummaryObj.put(TblsInstrumentsConfig.TablesInstrumentsConfig.VARIABLES_SET.getTableName(), InstrumentsAPIqueries.instrumentVariablesSetList(alternativeProcInstanceName));
-        //jSummaryObj.put(TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS.getTableName(), InstrumentsAPIqueries.instrumentsList(alternativeProcInstanceName));
+        jSummaryObj.put(TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableName(), ClinicalStudyAPIqueries.variablesList(alternativeProcInstanceName));
+        jSummaryObj.put(TblsGenomaConfig.TablesGenomaConfig.VARIABLES_SET.getTableName(), ClinicalStudyAPIqueries.variableSetList(alternativeProcInstanceName));
         return jSummaryObj;
     }
     

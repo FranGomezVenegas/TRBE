@@ -494,6 +494,70 @@ public class TblsReqs {
                 null, "procedure_tables_and_views_deployment_log", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProcedureTablesAndViewsDeploymentLog.values(), "ProcedureTablesAndViewsDeploymentLog",
                 new EnumIntTablesJoin[]{}, " ", false
         ),
+        PROC_REQ_SOLUTION_VIEW(
+" CREATE OR REPLACE VIEW requirements.procedure_req_solution_view\n" +
+"as select\n" +
+" 	req.parent_code,\n" +
+"	req.code,\n" +
+"    solution_id,\n" +
+"    sol.req_id,\n" +
+"    sol.procedure_name,\n" +
+"    sol.procedure_version,\n" +
+"    sol.proc_instance_name,\n" +
+"    sol.order_number ,\n" +
+"    name ,\n" +
+"    lp_frontend_page_name ,\n" +
+"    lp_frontend_page_filter ,\n" +
+"    \"position\" ,\n" +
+"    mode ,\n" +
+"    type ,\n" +
+"    label_en ,\n" +
+"    label_es ,\n" +
+"    sop ,\n" +
+"    window_name ,\n" +
+"    window_action ,\n" +
+"    business_rule ,\n" +
+"    business_rule_value ,\n" +
+"    confirmation_dialog ,\n" +
+"    confirmation_dialog_detail ,\n" +
+"    roles ,\n" +
+"    sop_name ,\n" +
+"    training_req ,\n" +
+"    training_name ,\n" +
+"    uat_req ,\n" +
+"    uat_name ,\n" +
+"    req.active ,\n" +
+"    req.in_scope ,\n" +
+"    req.in_system ,\n" +
+"    window_query ,\n" +
+"    entity,\n" +
+"    window_type,\n" +
+"    window_mode,\n" +
+"    business_rule_area,\n" +
+"    special_view_json_model ,\n" +
+"    special_view_name ,\n" +
+"    json_model ,\n" +
+"    query_for_button ,\n" +
+"    extra_actions ,\n" +
+"    twoicons_detail,\n" +
+"    add_refresh_button ,\n" +
+"    grid_columns ,\n" +
+"    endpoint_params ,\n" +
+"    enable_context_menu ,\n" +
+"    add_actions_to_context_menu,\n" +
+"    view_title_en ,\n" +
+"    view_title_es ,\n" +
+"    content_type \n" +
+"	from requirements.procedure_req_solution sol, requirements.procedure_user_requirements req\n" +
+"	where sol.req_id=req.req_id\n" +
+"	;\n" +
+"\n" +
+"\n" +
+"ALTER TABLE requirements.procedure_req_solution_view\n" +
+"    OWNER to labplanet;",                
+null, "procedure_req_solution_view", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProcedureTablesAndViewsDeploymentLog.values(), "ProcedureTablesAndViewsDeploymentLog",
+                new EnumIntTablesJoin[]{}, " ", false                
+        ),
         ; 
         private ViewsReqs(String viewScript, FldBusinessRules[] fldBusRules, String dbVwName, String repositoryName, Boolean isProcedure, EnumIntViewFields[] vwFlds,
                 String comment, EnumIntTablesJoin[] tablesInView, String extraFilters, Boolean useFixViewScript) {

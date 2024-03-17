@@ -12,29 +12,33 @@ import databases.Rdbms;
 import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.SqlWhere;
-import databases.features.Token;
+import static functionaljavaa.modulegenoma.ClinicalStudyDataStudy.isStudyOpenToChanges;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPParadigm;
 import lbplanet.utilities.LPPlatform;
+import lbplanet.utilities.TrazitUtiilitiesEnums;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.InternalMessage;
+import trazit.session.ResponseMessages;
 /**
  *
  * @author User
  */
 public class ClinicalStudyDataStudyIndividualSamples {
 
-public InternalMessage createStudyIndividualSample(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, Integer indivId, String[] fieldsName, Object[] fieldsValue, Boolean devMode){
-    String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-    Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
-
-        InternalMessage studyOpenToChanges = ClinicalStudyDataStudy.isStudyOpenToChanges(studyName);    
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(studyOpenToChanges.getDiagnostic())) return studyOpenToChanges;        
+    public InternalMessage createStudyIndividualSample(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, Integer indivId, String[] fieldsName, Object[] fieldsValue, Boolean devMode){
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        ResponseMessages messages = instanceForActions.getMessages();    
+        InternalMessage projOpenToChanges=isStudyOpenToChanges(studyName);    
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges.getDiagnostic())){
+            messages.addMainForError(projOpenToChanges.getMessageCodeObj(), projOpenToChanges.getMessageCodeVariables());
+            return projOpenToChanges;
+        }
 
         String[] mandatoryFields = null;
         Object[] mandatoryFieldsValue = fieldsValue;
@@ -46,8 +50,10 @@ public InternalMessage createStudyIndividualSample(GenomaStudyAPI.GenomaStudyAPI
         mandatoryFields = labIntChecker.getTableMandatoryFields(TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName(), actionName);
         if (Boolean.FALSE.equals(devMode)){
             InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldsName, fieldsValue);
-            if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic())))
+            if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))){
+                messages.addMainForError(fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
                 return fieldNameValueArrayChecker;
+            }
         }    
         if (Boolean.FALSE.equals(devMode)){        
             StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
@@ -65,7 +71,8 @@ public InternalMessage createStudyIndividualSample(GenomaStudyAPI.GenomaStudyAPI
                 }        
             }            
             if (mandatoryFieldsMissingBuilder.length()>0){
-                return new InternalMessage(LPPlatform.LAB_FALSE, ClinicalStudyEnums.GenomaErrorTrapping.NEW_PROJECT_MISSING_MANDATORY_FIELDS, new String[]{studyName, mandatoryFieldsMissingBuilder.toString(), procInstanceName});
+                messages.addMainForError(ClinicalStudyEnums.GenomaErrorTrapping.NEW_PROJECT_MISSING_MANDATORY_FIELDS, new String[]{studyName, mandatoryFieldsMissingBuilder.toString()});
+                return new InternalMessage(LPPlatform.LAB_FALSE, ClinicalStudyEnums.GenomaErrorTrapping.NEW_PROJECT_MISSING_MANDATORY_FIELDS, new String[]{studyName, mandatoryFieldsMissingBuilder.toString(), instanceForActions.getProcedureInstance()});
             }        
     /*        Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, tableName, new String[]{GlobalVariables.Schemas.CONFIG.getName(),"config_version"}, new Object[]{projectTemplate, projectTemplateVersion});
             if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString())){	
@@ -132,9 +139,9 @@ public InternalMessage createStudyIndividualSample(GenomaStudyAPI.GenomaStudyAPI
                fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividualSample.CREATED_ON.getName())] = LPDate.getCurrentTimeStamp();
             if (LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividualSample.CREATED_BY.getName())==-1){
                fieldsName=LPArray.addValueToArray1D(fieldsName, TblsGenomaData.StudyIndividualSample.CREATED_BY.getName());
-               fieldsValue=LPArray.addValueToArray1D(fieldsValue, token.getPersonName());
+               fieldsValue=LPArray.addValueToArray1D(fieldsValue, instanceForActions.getToken().getPersonName());
             }else
-               fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividualSample.CREATED_BY.getName())] = token.getPersonName();
+               fieldsValue[LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividualSample.CREATED_BY.getName())] = instanceForActions.getToken().getPersonName();
             if (LPArray.valuePosicInArray(fieldsName, TblsGenomaData.StudyIndividualSample.ACTIVE.getName())==-1){
                fieldsName=LPArray.addValueToArray1D(fieldsName, TblsGenomaData.StudyIndividualSample.ACTIVE.getName());
                fieldsValue=LPArray.addValueToArray1D(fieldsValue, ClinicalStudyEnums.activateOnCreation(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE.getTableName()));
@@ -147,17 +154,27 @@ public InternalMessage createStudyIndividualSample(GenomaStudyAPI.GenomaStudyAPI
     */
             RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE, fieldsName, fieldsValue);            
             if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())){
+                messages.addMinorForSuccess(endpoint, fieldsValue);
                 ClinicalStudyDataAudit.studyAuditAdd(endpoint.getAuditEventObj(), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_SAMPLE, 
                         insertRecordInTable.getNewRowId().toString(), 
                     studyName, null, fieldsName, fieldsValue);
-                return new InternalMessage(LPPlatform.LAB_TRUE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), insertRecordInTable.getNewRowId());
+                return new InternalMessage(LPPlatform.LAB_TRUE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables());
             }
-            return new InternalMessage(LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), null);            
+            messages.addMainForError(insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables());
+            return new InternalMessage(LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), null);
         }    
+        messages.addMainForError(TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.ERRORTRAPPING_EXCEPTION, null);
         return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.ERRORTRAPPING_EXCEPTION, null, null);            
      }    
 
     public InternalMessage studyIndividualSampleActivate(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, Integer indivId, Integer sampleId){
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        ResponseMessages messages = instanceForActions.getMessages();    
+        InternalMessage projOpenToChanges=isStudyOpenToChanges(studyName);    
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges.getDiagnostic())){
+            messages.addMainForError(projOpenToChanges.getMessageCodeObj(), projOpenToChanges.getMessageCodeVariables());
+            return projOpenToChanges;
+        }
         String[] fieldsName=new String[]{TblsGenomaData.StudyIndividualSample.ACTIVE.getName()};
         Object[] fieldsValue=new Object[]{true};
         SqlWhere sqlWhere = new SqlWhere();
@@ -169,16 +186,21 @@ public InternalMessage createStudyIndividualSample(GenomaStudyAPI.GenomaStudyAPI
                 studyName, null, fieldsName, fieldsValue);
         }
         if (Boolean.FALSE.equals(diagnosesProj.getRunSuccess())) {
+            messages.addMainForError(diagnosesProj.getErrorMessageCode(), diagnosesProj.getErrorMessageVariables());
             return new InternalMessage(LPPlatform.LAB_FALSE, diagnosesProj.getErrorMessageCode(), diagnosesProj.getErrorMessageVariables());
         }
+        messages.addMinorForSuccess(endpoint, new Object[]{studyName});
         return new InternalMessage(LPPlatform.LAB_TRUE, endpoint, new Object[]{studyName});
     }    
 
     public InternalMessage studyIndividualSampleDeActivate(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, Integer indivId, Integer sampleId){
-        InternalMessage projStudyToChanges=ClinicalStudyDataStudy.isStudyOpenToChanges(studyName);    
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges.getDiagnostic())) return projStudyToChanges;
-
-        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);    
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        ResponseMessages messages = instanceForActions.getMessages();    
+        InternalMessage projOpenToChanges=isStudyOpenToChanges(studyName);    
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges.getDiagnostic())){
+            messages.addMainForError(projOpenToChanges.getMessageCodeObj(), projOpenToChanges.getMessageCodeVariables());
+            return projOpenToChanges;
+        }
         String[] fieldsName=new String[]{TblsGenomaData.StudyIndividualSample.ACTIVE.getName(), TblsGenomaData.StudyIndividualSample.DEACTIVATED_BY.getName(), TblsGenomaData.StudyIndividualSample.DEACTIVATED_ON.getName()};
         Object[] fieldsValue=new Object[]{false, instanceForActions.getToken().getPersonName(),LPDate.getCurrentTimeStamp()};
         SqlWhere sqlWhere = new SqlWhere();
@@ -192,14 +214,21 @@ public InternalMessage createStudyIndividualSample(GenomaStudyAPI.GenomaStudyAPI
                 studyName, null, fieldsName, fieldsValue);
         }
         if (Boolean.FALSE.equals(diagnosesProj.getRunSuccess())) {
+            messages.addMainForError(diagnosesProj.getErrorMessageCode(), diagnosesProj.getErrorMessageVariables());
             return new InternalMessage(LPPlatform.LAB_FALSE, diagnosesProj.getErrorMessageCode(), diagnosesProj.getErrorMessageVariables());
         }
+        messages.addMinorForSuccess(endpoint, new Object[]{studyName});
         return new InternalMessage(LPPlatform.LAB_TRUE, endpoint, new Object[]{studyName});
     }   
 
     public InternalMessage studyIndividualSampleUpdate(GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endpoint, String studyName, Integer indivId, Integer sampleId, String[] fieldsName, Object[] fieldsValue){
-        InternalMessage projStudyToChanges=ClinicalStudyDataStudy.isStudyOpenToChanges(studyName);    
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges.getDiagnostic())) return projStudyToChanges;
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        ResponseMessages messages = instanceForActions.getMessages();    
+        InternalMessage projOpenToChanges=isStudyOpenToChanges(studyName);    
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges.getDiagnostic())){
+            messages.addMainForError(projOpenToChanges.getMessageCodeObj(), projOpenToChanges.getMessageCodeVariables());
+            return projOpenToChanges;
+        }
 
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsGenomaData.StudyIndividualSample.STUDY, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{studyName}, "");
@@ -212,8 +241,10 @@ public InternalMessage createStudyIndividualSample(GenomaStudyAPI.GenomaStudyAPI
                 studyName, null, fieldsName, fieldsValue);
         }
         if (Boolean.FALSE.equals(diagnosesProj.getRunSuccess())) {
+            messages.addMainForError(diagnosesProj.getErrorMessageCode(), diagnosesProj.getErrorMessageVariables());
             return new InternalMessage(LPPlatform.LAB_FALSE, diagnosesProj.getErrorMessageCode(), diagnosesProj.getErrorMessageVariables());
         }
+        messages.addMinorForSuccess(endpoint, new Object[]{studyName});
         return new InternalMessage(LPPlatform.LAB_TRUE, endpoint, new Object[]{studyName});
     } 
     
