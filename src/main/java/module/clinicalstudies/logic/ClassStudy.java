@@ -18,12 +18,15 @@ import functionaljavaa.modulegenoma.ClinicalStudyDataStudyIndividualSamples;
 import functionaljavaa.modulegenoma.ClinicalStudyDataStudyIndividuals;
 import functionaljavaa.modulegenoma.ClinicalStudyDataStudySamplesSet;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPMath;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import static module.clinicalstudies.apis.GenomaStudyAPI.GenomaStudyAPIactionsEndPoints.ENTER_STUDY_OBJECT_VARIABLE_VALUE;
 import trazit.enums.ActionsClass;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -57,7 +60,7 @@ static final String NAME_SUFFIX="_name";
         
         String studyName = "";
         String projectName = "";
-        
+        try{
         Object[] actionDiagnoses = null;
         this.actionDiagnosesObj = null;
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
@@ -446,7 +449,8 @@ static final String NAME_SUFFIX="_name";
                     rObj.addSimpleNode(procInstanceName,  TblsGenomaConfig.TablesGenomaConfig.VARIABLES.getTableName(), variableName);
                     rObj.addSimpleNode(procInstanceName, ownerTable, ownerId);
                     break;                       
-                case STUDY_OBJECT_SET_VARIABLE_VALUE:     
+                case ENTER_STUDY_OBJECT_VARIABLE_VALUE:     
+                case REENTER_STUDY_OBJECT_VARIABLE_VALUE:     
                     variableSetName=request.getParameter(GenomaProjectAPI.GenomaProjectAPIParamsList.VARIABLE_SET_NAME.getParamName());
                     studyName=request.getParameter(GenomaProjectAPI.GenomaProjectAPIParamsList.STUDY_NAME.getParamName());
                     ownerTable=request.getParameter(GenomaProjectAPI.GenomaProjectAPIParamsList.OWNER_TABLE.getParamName());
@@ -466,6 +470,17 @@ static final String NAME_SUFFIX="_name";
             this.diagnostic=actionDiagnoses;
             this.relatedObj=rObj;
             rObj.killInstance();
+        }catch(Exception e){
+             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
+             this.actionDiagnosesObj=new InternalMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.EXCEPTION_RAISED, new Object[]{e.getMessage()});
+        } finally {
+            // release database resources
+            try {           
+                procReqSession.killIt();
+            } catch (Exception ex) {
+                Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            }
+        }                      
     }
     
     /**

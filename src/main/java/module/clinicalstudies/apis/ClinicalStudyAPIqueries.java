@@ -81,6 +81,8 @@ public class ClinicalStudyAPIqueries extends HttpServlet {
         STUDY_VARIABLES_LIST("STUDY_VARIABLES_LIST", "", new LPAPIArguments[]{
             new LPAPIArguments("studyName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
             new LPAPIArguments("variableId", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),
+            new LPAPIArguments("ownerTable", LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
+            new LPAPIArguments("ownerId", LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
             }, EndPointsToRequirements.endpointWithNoOutputObjects, null, null
         ),
         DEACTIVATED_PROJECT_USERS_LAST_N_DAYS("DEACTIVATED_PROJECT_USERS_LAST_N_DAYS", "",
@@ -120,8 +122,14 @@ public class ClinicalStudyAPIqueries extends HttpServlet {
                 null, null),
         ALL_ACTIVE_VARIABLES_AND_VARIABLES_SET("ALL_ACTIVE_VARIABLES_AND_VARIABLES_SET", "", new LPAPIArguments[]{
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects,
-                null, null);
-
+                null, null),
+        GET_INDIVIDUAL_CONSENT_FILE("GET_INDIVIDUAL_CONSENT_FILE", "",
+                new LPAPIArguments[]{new LPAPIArguments("studyName", LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
+                    new LPAPIArguments("individualId", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),
+                new LPAPIArguments("attachmentId", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 8)},
+                EndPointsToRequirements.endpointWithNoOutputObjects,
+                null, null)
+        ;        
         private GenomaStudyAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
             this.name = name;
             this.successMessageCode = successMessageCode;
@@ -263,7 +271,7 @@ public class ClinicalStudyAPIqueries extends HttpServlet {
                                 curProjStudyJson = studyIndividualJson(curProjStudyJson, curStudyName, null, null, getOnlyActiveObjects);
 //                                curProjStudyJson=studySamplesSetJson(curProjStudyJson, curStudyName, getOnlyActiveObjects);
                                 curProjStudyJson = studyFamilyJson(curProjStudyJson, curStudyName, getOnlyActiveObjects);
-                                curProjStudyJson = studyVariableValuesJson(curProjStudyJson, curStudyName, null, null, null, null, null);
+                                curProjStudyJson = studyVariableValuesJson(curProjStudyJson, curStudyName, null, null, null, null, null, null);
                                 curProjStudyJson = studyObjectsFileJson(curProjStudyJson, curStudyName);
                                 projStudiesJsonArr.add(curProjStudyJson);
                             }
@@ -318,11 +326,13 @@ public class ClinicalStudyAPIqueries extends HttpServlet {
                                 curProjStudyJson = studyUsersJson(curProjStudyJson, curStudyName, getOnlyActiveObjects);
                                 curProjStudyJson = studyIndividualSamplesJson(curProjStudyJson, curStudyName, null, getOnlyActiveObjects);
                                 curProjStudyJson = studyIndividualJson(curProjStudyJson, curStudyName, null, null, getOnlyActiveObjects);
+                                curProjStudyJson = studyIndividualConsentJson(curProjStudyJson, curStudyName, getOnlyActiveObjects);                                
                                 curProjStudyJson = studySamplesSetJson(curProjStudyJson, curStudyName, getOnlyActiveObjects);
                                 curProjStudyJson = studyFamilyJson(curProjStudyJson, curStudyName, getOnlyActiveObjects);
                                 curProjStudyJson = studyCohortJson(curProjStudyJson, curStudyName, getOnlyActiveObjects);
-                                curProjStudyJson = studyVariableValuesJson(curProjStudyJson,curStudyName, null, null, null, null, null);
+                                curProjStudyJson = studyVariableValuesJson(curProjStudyJson,curStudyName, null, null, null, null, null, null);
                                 curProjStudyJson = studyObjectsFileJson(curProjStudyJson, curStudyName);
+                                
                                 myStudiesjArr.add(curProjStudyJson);
                             }
                         }
@@ -335,10 +345,47 @@ public class ClinicalStudyAPIqueries extends HttpServlet {
                     Integer variableIdInt = null;
                     if (variableId.length()>0)
                         variableIdInt = Integer.valueOf(variableId);
+                    String ownerTable = LPNulls.replaceNull(argValues[2]).toString();
+                    String ownerId = LPNulls.replaceNull(argValues[3]).toString();
+                    Integer indivInt = null;
+                    Integer sampleInt = null;
+                    String familyName = null;
+                    String cohortName = null;
+                    String samplesSetName = null;
+                    switch (ownerTable) {
+                        case "study_family":
+                            familyName=ownerId;
+                            break;
+                        case "study_cohort":
+                            cohortName=ownerId;
+                            break;
+                        case "study_samples_set":
+                            samplesSetName=ownerId;
+                            break;
+                        case "study_individual":
+                            indivInt=Integer.valueOf(ownerId);
+                            break;
+                        case "study_individual_sample":
+                            sampleInt=Integer.valueOf(ownerId);
+                            break;
+                        default:
+                            break;
+                    }
+                    if (variableId.length()>0)
+                        variableIdInt = Integer.valueOf(variableId);
                     JSONObject variablesJObj = new JSONObject();
-                    variablesJObj = studyVariableValuesJson(variablesJObj, studyName, null, null, null, null, variableIdInt);
+                    variablesJObj = studyVariableValuesJson(variablesJObj, studyName, indivInt, sampleInt, familyName, cohortName, samplesSetName, variableIdInt);
                     LPFrontEnd.servletReturnSuccess(request, response, (JSONArray) variablesJObj.get(TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES.getTableName()));
                     return;
+                case GET_INDIVIDUAL_CONSENT_FILE:
+                    studyName = argValues[0].toString();
+                    Integer individualId = LPNulls.replaceNull(argValues[1]).toString().length() > 0 ? (Integer) argValues[1] : null;
+                    Integer attachmentId = LPNulls.replaceNull(argValues[2]).toString().length() > 0 ? (Integer) argValues[2] : null;
+                    JSONArray jArr = individualConsentAttachment(studyName, individualId, attachmentId, null);
+                    Rdbms.closeRdbms();
+                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                    return;
+
                 case ALL_ACTIVE_VARIABLES_AND_VARIABLES_SET:
                     schemaConfig = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
                     JSONObject variablesAndVariablesSetObj = new JSONObject();
@@ -465,7 +512,7 @@ public class ClinicalStudyAPIqueries extends HttpServlet {
                             Rdbms.closeRdbms();
                             request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
                     }
-                    JSONArray jArr = new JSONArray();
+                    jArr = new JSONArray();
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(objectsDeactivactedLastDays[0][0].toString()))) {
                         for (Object[] currIncident : objectsDeactivactedLastDays) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
@@ -529,12 +576,37 @@ public class ClinicalStudyAPIqueries extends HttpServlet {
             for (Object[] curStudyFamily : studyFamilyInfo) {
                 JSONObject curStudyFamilyJson = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyFamily.values()), curStudyFamily);
                 String curFamilyName = curStudyFamily[LPArray.valuePosicInArray(EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyFamily.values()), TblsGenomaData.StudyFamily.NAME.getName())].toString();
-                curStudyFamilyJson = studyVariableValuesJson(curStudyFamilyJson, curStudyName, null, null, curFamilyName, null, null);
+                curStudyFamilyJson = studyVariableValuesJson(curStudyFamilyJson, curStudyName, null, null, curFamilyName, null, null, null);
                 curStudyFamilyJson = studyIndividualJson(curStudyFamilyJson, curStudyName, curFamilyName, null, getOnlyActiveObjects);
                 studyFamiliesJsonArr.add(curStudyFamilyJson);
             }            
         }
         curProjStudyJson.put(TblsGenomaData.TablesGenomaData.STUDY_FAMILY.getTableName(), studyFamiliesJsonArr);
+        return curProjStudyJson;
+    }
+
+    JSONObject studyIndividualConsentJson(JSONObject curProjStudyJson, String curStudyName, Boolean getOnlyActiveObjects) {
+        String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        String[] whereFldNames = new String[]{TblsGenomaData.StudyIndividualConsent.STUDY.getName()};
+        Object[] whereFldValues = new Object[]{curStudyName};
+        if (Boolean.TRUE.equals(getOnlyActiveObjects)) {
+            whereFldNames = LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyIndividualConsent.REMOVED.getName());
+            whereFldValues = LPArray.addValueToArray1D(whereFldValues, false);
+        }
+        String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
+        Object[][] studyFamilyInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_CONSENT.getTableName(),
+                whereFldNames, whereFldValues,
+                EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyIndividualConsent.values()), new String[]{TblsGenomaData.StudyIndividualConsent.ID.getName()});
+        JSONArray studyIndivConsentJsonArr = new JSONArray();
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(studyFamilyInfo[0][0].toString()))) {
+            for (Object[] curStudyIndivConsent : studyFamilyInfo) {
+                JSONObject curStudyIndivConsentJson = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyIndividualConsent.values()), curStudyIndivConsent);
+                String curFamilyName = curStudyIndivConsent[LPArray.valuePosicInArray(EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyIndividualConsent.values()), TblsGenomaData.StudyIndividualConsent.ID.getName())].toString();
+                curStudyIndivConsentJson = studyIndividualJson(curStudyIndivConsentJson, curStudyName, curFamilyName, null, getOnlyActiveObjects);
+                studyIndivConsentJsonArr.add(curStudyIndivConsentJson);
+            }            
+        }
+        curProjStudyJson.put(TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_CONSENT.getTableName(), studyIndivConsentJsonArr);
         return curProjStudyJson;
     }
 
@@ -555,7 +627,7 @@ public class ClinicalStudyAPIqueries extends HttpServlet {
             for (Object[] curStudyCohort : studyCohortInfo) {
                 JSONObject curStudyCohortJson = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyCohort.values()), curStudyCohort);
                 String curCohortName = curStudyCohort[LPArray.valuePosicInArray(EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyCohort.values()), TblsGenomaData.StudyCohort.NAME.getName())].toString();
-                curStudyCohortJson = studyVariableValuesJson(curStudyCohortJson, curStudyName, null, null, null,curCohortName, null);
+                curStudyCohortJson = studyVariableValuesJson(curStudyCohortJson, curStudyName, null, null, null,curCohortName, null, null);
                 curStudyCohortJson = studyIndividualJson(curStudyCohortJson, curStudyName, null, curCohortName, getOnlyActiveObjects);
                 studyCohortJsonArr.add(curStudyCohortJson);
             }
@@ -657,7 +729,7 @@ public class ClinicalStudyAPIqueries extends HttpServlet {
                 JSONObject curStudyIndividualJson = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyIndividual.values()), curStudyIndividual);
 
                 Integer curStudyIndividualId = Integer.valueOf(curStudyIndividual[LPArray.valuePosicInArray(EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyIndividual.values()), TblsGenomaData.StudyIndividual.INDIVIDUAL_ID.getName())].toString());
-                curStudyIndividualJson = studyVariableValuesJson(curStudyIndividualJson, curStudyName, curStudyIndividualId, null, null, null, null);
+                curStudyIndividualJson = studyVariableValuesJson(curStudyIndividualJson, curStudyName, curStudyIndividualId, null, null, null, null, null);
                 curStudyIndividualJson = studyIndividualFamiliesJson(curStudyIndividualJson, curStudyName, curStudyIndividualId);
                 curStudyIndividualJson = studyIndividualCohortsJson(curStudyIndividualJson, curStudyName, curStudyIndividualId);
                 curStudyIndividualJson = studyIndividualSamplesJson(curStudyIndividualJson, curStudyName, curStudyIndividualId, getOnlyActiveObjects);
@@ -733,7 +805,7 @@ public class ClinicalStudyAPIqueries extends HttpServlet {
                 JSONObject curStudyIndividualSampleJson = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyIndividualSample.values()), curStudyIndividualSample);
                 Integer curSampleId = Integer.valueOf(curStudyIndividualSample[LPArray.valuePosicInArray(EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyIndividualSample.values()), TblsGenomaData.StudyIndividualSample.SAMPLE_ID.getName())].toString());
                 Integer curIndividualId = Integer.valueOf(curStudyIndividualSample[LPArray.valuePosicInArray(EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyIndividualSample.values()), TblsGenomaData.StudyIndividualSample.INDIVIDUAL_ID.getName())].toString());
-                curStudyIndividualSampleJson = studyVariableValuesJson(curStudyIndividualSampleJson, curStudyName, null, curSampleId, null, null, null);
+                curStudyIndividualSampleJson = studyVariableValuesJson(curStudyIndividualSampleJson, curStudyName, null, curSampleId, null, null, null, null);
                 curStudyIndividualSampleJson = studyIndividualSampleSamplesSetJson(curStudyIndividualSampleJson, curStudyName, curSampleId);
                 curStudyIndividualSampleJson = studyIndividualFamiliesJson(curStudyIndividualSampleJson, curStudyName, curIndividualId);
                 curStudyIndividualSampleJson = studyIndividualCohortsJson(curStudyIndividualSampleJson, curStudyName, curIndividualId);
@@ -767,7 +839,7 @@ public class ClinicalStudyAPIqueries extends HttpServlet {
         return curProjStudyJson;
     }
 
-    JSONObject studyVariableValuesJson(JSONObject curProjStudyJson, String curStudyName, Integer individualId, Integer sampleId, String familyName, String cohortName, Integer variableId) {
+    JSONObject studyVariableValuesJson(JSONObject curProjStudyJson, String curStudyName, Integer individualId, Integer sampleId, String familyName, String cohortName, String samplesSet, Integer variableId) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String schemaName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
         String[] whereFldNames = new String[]{TblsGenomaData.StudyIndividual.STUDY.getName()};
@@ -787,6 +859,10 @@ public class ClinicalStudyAPIqueries extends HttpServlet {
         if (cohortName != null && cohortName.length() > 0) {
             whereFldNames = LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyVariableValues.COHORT.getName());
             whereFldValues = LPArray.addValueToArray1D(whereFldValues, cohortName);
+        }
+        if (samplesSet != null && samplesSet.length() > 0) {
+            whereFldNames = LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyVariableValues.SAMPLES_SET.getName());
+            whereFldValues = LPArray.addValueToArray1D(whereFldValues, samplesSet);
         }
         if (variableId != null) {
             whereFldNames = LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyVariableValues.ID.getName());
@@ -837,7 +913,7 @@ public class ClinicalStudyAPIqueries extends HttpServlet {
                             Integer curSampleId = Integer.valueOf(curStudySamplesSetContent[LPArray.valuePosicInArray(EnumIntTableFields.getAllFieldNames(TblsGenomaData.StudyIndividualSample.values()), TblsGenomaData.StudyIndividualSample.SAMPLE_ID.getName())].toString());
                             curSamplesSetContentJson = studyIndividualSamplesJson(curSamplesSetContentJson, curStudyName, curSampleId, getOnlyActiveObjects);
                             curSamplesSetContentJson = studyIndividualSampleSamplesSetJson(curSamplesSetContentJson, curStudyName, curSampleId);                
-                            curSamplesSetContentJson = studyVariableValuesJson(curSamplesSetContentJson, curStudyName, null, curSampleId, null, null, null);
+                            curSamplesSetContentJson = studyVariableValuesJson(curSamplesSetContentJson, curStudyName, null, curSampleId, null, null, null, null);
                             studySamplesSetContentJsonArr.add(curSamplesSetContentJson);
                         }
                     }
@@ -927,6 +1003,30 @@ public class ClinicalStudyAPIqueries extends HttpServlet {
     }
 
     
+    public static JSONArray individualConsentAttachment(String instrName, Integer individualId, Integer attachId, String alternativeProcInstanceName) {
+        String[] fieldsToRetrieve = getAllFieldNames(TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_CONSENT, alternativeProcInstanceName);
+        String[] wFldN = new String[]{TblsGenomaData.StudyIndividualConsent.STUDY.getName(), TblsGenomaData.StudyIndividualConsent.REMOVED.getName()};
+        Object[] wFldV = new Object[]{instrName, false};
+        if (attachId != null && attachId.toString().length() > 0) {
+            wFldN = LPArray.addValueToArray1D(wFldN, TblsGenomaData.StudyIndividualConsent.ID.getName());
+            wFldV = LPArray.addValueToArray1D(wFldV, attachId);
+        }
+        if (individualId != null && individualId.toString().length() > 0) {
+            wFldN = LPArray.addValueToArray1D(wFldN, TblsGenomaData.StudyIndividualConsent.INDIVIDUAL_ID.getName());
+            wFldV = LPArray.addValueToArray1D(wFldV, individualId);
+        }
+        Object[][] instrumentFamily = QueryUtilitiesEnums.getTableData(TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_CONSENT,
+                EnumIntTableFields.getAllFieldNamesFromDatabase(TablesGenomaData.STUDY_INDIVIDUAL_CONSENT, alternativeProcInstanceName),
+                wFldN, wFldV, new String[]{TblsGenomaData.StudyIndividualConsent.STUDY.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()}, alternativeProcInstanceName);
+        JSONArray jArr = new JSONArray();
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentFamily[0][0].toString()))) {
+            for (Object[] currInstr : instrumentFamily) {
+                JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
+                jArr.add(jObj);
+            }
+        }
+        return jArr;
+    }
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

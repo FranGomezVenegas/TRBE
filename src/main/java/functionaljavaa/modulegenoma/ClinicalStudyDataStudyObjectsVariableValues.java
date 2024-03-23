@@ -39,15 +39,15 @@ public class ClinicalStudyDataStudyObjectsVariableValues {
         switch (ownerTable) {
             case "study_family":
                 fields = LPArray.addValueToArray1D(fields, TblsGenomaData.StudyVariableValues.FAMILY.getName());
-                fields = LPArray.addValueToArray1D(fields, Integer.valueOf(ownerId));
+                fields = LPArray.addValueToArray1D(fields, ownerId);
                 break;
             case "study_cohort":
                 fields = LPArray.addValueToArray1D(fields, TblsGenomaData.StudyVariableValues.COHORT.getName());
-                fields = LPArray.addValueToArray1D(fields, Integer.valueOf(ownerId));
+                fields = LPArray.addValueToArray1D(fields, ownerId);
                 break;
             case "study_samples_set":
                 fields = LPArray.addValueToArray1D(fields, TblsGenomaData.StudyVariableValues.SAMPLES_SET.getName());
-                fields = LPArray.addValueToArray1D(fields, Integer.valueOf(ownerId));
+                fields = LPArray.addValueToArray1D(fields, ownerId);
                 break;
             case "study_individual":
                 fields = LPArray.addValueToArray1D(fields, TblsGenomaData.StudyVariableValues.INDIVIDUAL.getName());
@@ -222,7 +222,7 @@ public class ClinicalStudyDataStudyObjectsVariableValues {
         }
         Object[][] objectVariablePropInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.STUDY_VARIABLE_VALUES.getTableName(),
                 fieldsName, fieldsValue, fieldsToRetrieve);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(objectVariablePropInfo[0]))) {
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objectVariablePropInfo[0][0].toString())) {
             messages.addMainForError(InstrumentsEnums.InstrEventsErrorTrapping.VARIABLE_NOT_EXISTS, new Object[]{variableSetName, variableName, procInstanceName});
             return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrEventsErrorTrapping.VARIABLE_NOT_EXISTS,
                     new Object[]{variableSetName, variableName, procInstanceName});

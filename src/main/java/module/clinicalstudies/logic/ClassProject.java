@@ -9,6 +9,8 @@ import module.clinicalstudies.definition.TblsGenomaData;
 import module.clinicalstudies.apis.GenomaProjectAPI.GenomaProjectAPIactionsEndPoints;
 import functionaljavaa.modulegenoma.ClinicalStudyDataProject;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import static lbplanet.utilities.LPArray.convertStringWithDataTypeToObjectArrayInternalMessage;
@@ -35,7 +37,8 @@ public class ClassProject  implements ActionsClass{
     private Boolean functionFound=false;
     EnumIntMessages diagnosticObjIntMsg;
     public ClassProject(HttpServletRequest request, GenomaProjectAPIactionsEndPoints endPoint){
-        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        String procInstanceName=procReqSession.getProcedureInstance();
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
 
         ClinicalStudyDataProject prj = new ClinicalStudyDataProject();
@@ -50,7 +53,8 @@ public class ClassProject  implements ActionsClass{
             this.diagnostic=(Object[]) argValues[1];
             this.messageDynamicData=new Object[]{argValues[2].toString()};
             return;                        
-        }        
+        } 
+        try{
             switch (endPoint){
                 case PROJECT_NEW:
                 case PROJECT_UPDATE:
@@ -126,6 +130,16 @@ public class ClassProject  implements ActionsClass{
         this.diagnostic=actionDiagnoses;
         this.relatedObj=rObj;
         rObj.killInstance();
+    }catch(Exception e){
+         Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
+    } finally {
+        // release database resources
+        try {           
+            procReqSession.killIt();
+        } catch (Exception ex) {
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+        }
+    }          
     }
     
     /**

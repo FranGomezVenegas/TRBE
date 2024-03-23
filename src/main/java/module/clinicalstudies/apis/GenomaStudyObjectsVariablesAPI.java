@@ -28,6 +28,8 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
+import static module.clinicalstudies.apis.GenomaStudyAPI.GenomaStudyAPIactionsEndPoints.ENTER_STUDY_OBJECT_VARIABLE_VALUE;
+import static module.clinicalstudies.apis.GenomaStudyAPI.GenomaStudyAPIactionsEndPoints.REENTER_STUDY_OBJECT_VARIABLE_VALUE;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.session.ProcedureRequestSession;
@@ -174,7 +176,8 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
                     relatedObject.addSimpleNode(procInstanceName, ownerTable, ownerId);
                     break;                      
                       
-                case STUDY_OBJECT_SET_VARIABLE_VALUE:     
+                case ENTER_STUDY_OBJECT_VARIABLE_VALUE:     
+                case REENTER_STUDY_OBJECT_VARIABLE_VALUE:     
                     variableSetName=request.getParameter(GenomaProjectAPIParamsList.VARIABLE_SET_NAME.getParamName());
                     studyName=request.getParameter(GenomaProjectAPIParamsList.STUDY_NAME.getParamName());
                     ownerTable=request.getParameter(GenomaProjectAPIParamsList.OWNER_TABLE.getParamName());
