@@ -14,7 +14,6 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import module.clinicalstudies.apis.GenomaStudyAPI.GenomaStudyAPIactionsEndPoints;
 import module.clinicalstudies.definition.TblsGenomaData;
-import module.instrumentsmanagement.definition.InstrumentsEnums;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.InternalMessage;
@@ -32,14 +31,13 @@ public class ClinicalStudyDataStudyIndividualConsent {
         //    return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_DECOMMISSIONED, new Object[]{studyName}, null);
         //}
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
-        if (individualId != null) {
-            Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_CONSENT.getTableName(),
+            Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName(),
                     new String[]{TblsGenomaData.StudyIndividual.STUDY.getName(), TblsGenomaData.StudyIndividual.INDIVIDUAL_ID.getName()},
                     new Object[]{studyName, individualId},
                     new String[]{TblsGenomaData.StudyIndividual.STUDY.getName(), TblsGenomaData.StudyIndividual.STUDY.getName()});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())) {
-                messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.NOT_FOUND, new Object[]{studyName});
-                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.NOT_FOUND, new Object[]{studyName}, studyName);
+                messages.addMainForError(ClinicalStudyEnums.GenomaErrorTrapping.STUDY_INDIVIDUAL_NOT_FOUND, new Object[]{individualId});
+                return new InternalMessage(LPPlatform.LAB_FALSE, ClinicalStudyEnums.GenomaErrorTrapping.STUDY_INDIVIDUAL_NOT_FOUND, new Object[]{individualId}, studyName);
             }
             RelatedObjects rObj = RelatedObjects.getInstanceForActions();
             rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL_CONSENT.getTableName(), individualId);
@@ -47,14 +45,9 @@ public class ClinicalStudyDataStudyIndividualConsent {
                 messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_INPROGRESS, new Object[]{instrEventId});
                 return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.ALREADY_INPROGRESS, new Object[]{instrEventId}, name);
             }*/
-        }
         String[] fldNames = new String[]{TblsGenomaData.StudyIndividual.STUDY.getName(), TblsGenomaData.StudyIndividualConsent.INDIVIDUAL_ID.getName(), TblsGenomaData.StudyIndividualConsent.FILE_LINK.getName(), 
             TblsGenomaData.StudyIndividualConsent.CREATED_ON.getName(), TblsGenomaData.StudyIndividualConsent.CREATED_BY.getName()};        
         Object[] fldValues = new Object[]{studyName, individualId, attachUrl, LPDate.getCurrentTimeStamp(), procReqSession.getToken().getPersonName()};
-        if (individualId != null) {
-            fldNames=LPArray.addValueToArray1D(fldNames, TblsGenomaData.StudyIndividualConsent.INDIVIDUAL_ID.getName());
-            fldValues=LPArray.addValueToArray1D(fldValues, individualId);
-        }
         if (briefSummary != null) {
             fldNames=LPArray.addValueToArray1D(fldNames, TblsGenomaData.StudyIndividualConsent.BRIEF_SUMMARY.getName());
             fldValues=LPArray.addValueToArray1D(fldValues, briefSummary);
@@ -91,8 +84,8 @@ public class ClinicalStudyDataStudyIndividualConsent {
                     new Object[]{studyName, individualId},
                     new String[]{TblsGenomaData.StudyIndividual.STUDY.getName(), TblsGenomaData.StudyIndividual.STUDY.getName()});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())) {
-                messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.NOT_FOUND, new Object[]{studyName});
-                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.NOT_FOUND, new Object[]{studyName}, studyName);
+                messages.addMainForError(ClinicalStudyEnums.GenomaErrorTrapping.STUDY_INDIVIDUAL_NOT_FOUND, new Object[]{individualId});
+                return new InternalMessage(LPPlatform.LAB_FALSE, ClinicalStudyEnums.GenomaErrorTrapping.STUDY_INDIVIDUAL_NOT_FOUND, new Object[]{individualId}, studyName);
             }
             RelatedObjects rObj = RelatedObjects.getInstanceForActions();
             rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName(), individualId);
@@ -137,8 +130,8 @@ public class ClinicalStudyDataStudyIndividualConsent {
                     new Object[]{studyName, individualId},
                     new String[]{TblsGenomaData.StudyIndividual.STUDY.getName(), TblsGenomaData.StudyIndividual.STUDY.getName()});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())) {
-                messages.addMainForError(InstrumentsEnums.InstrumentsErrorTrapping.NOT_FOUND, new Object[]{studyName});
-                return new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsEnums.InstrumentsErrorTrapping.NOT_FOUND, new Object[]{studyName}, studyName);
+                messages.addMainForError(ClinicalStudyEnums.GenomaErrorTrapping.STUDY_INDIVIDUAL_NOT_FOUND, new Object[]{individualId});
+                return new InternalMessage(LPPlatform.LAB_FALSE, ClinicalStudyEnums.GenomaErrorTrapping.STUDY_INDIVIDUAL_NOT_FOUND, new Object[]{individualId}, studyName);
             }
             RelatedObjects rObj = RelatedObjects.getInstanceForActions();
             rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsGenomaData.TablesGenomaData.STUDY_INDIVIDUAL.getTableName(), individualId);
