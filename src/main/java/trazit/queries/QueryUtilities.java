@@ -30,6 +30,8 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
+import trazit.enums.EnumIntViewFields;
+import trazit.enums.EnumIntViews;
 import trazit.globalvariables.GlobalVariables;
 import trazit.procedureinstance.definition.definition.TblsReqs;
 import trazit.session.ApiMessageReturn;
@@ -87,6 +89,10 @@ public final class QueryUtilities {
     public static JSONArray dbRowsToJsonArr(String procInstanceName, String schemaName, EnumIntTables tblObj, EnumIntTableFields[] fldsToGet, SqlWhere wObj, String[] sortFlds, String[] fldsToExclude, Boolean emptyWhenNoData) {
         Object[][] procTblRows = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, tblObj, wObj, fldsToGet, sortFlds, false);
         return convertArray2DtoJArr(procTblRows, EnumIntTableFields.getAllFieldNames(fldsToGet), fldsToExclude, emptyWhenNoData);
+    }
+    public static JSONArray dbRowsToJsonArr(String procInstanceName, String schemaName, EnumIntViews tblObj, EnumIntViewFields[] fldsToGet, SqlWhere wObj, String[] sortFlds, String[] fldsToExclude, Boolean emptyWhenNoData) {
+        Object[][] procTblRows = Rdbms.getRecordFieldsByFilterForViews(procInstanceName, schemaName, tblObj, wObj, fldsToGet, sortFlds, false);        
+        return convertArray2DtoJArr(procTblRows, EnumIntViewFields.getAllFieldNames(fldsToGet), fldsToExclude, emptyWhenNoData);
     }
 
     public static JSONArray dbRowsToJsonArr(String procInstanceName, String schemaName, String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue, String[] sortFlds, String[] fldsToExclude, Boolean emptyWhenNoData, Boolean inforceDistinct) {

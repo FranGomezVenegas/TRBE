@@ -555,7 +555,7 @@ public class TblsReqs {
 "\n" +
 "ALTER TABLE requirements.procedure_req_solution_view\n" +
 "    OWNER to labplanet;",                
-null, "procedure_req_solution_view", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ProcedureTablesAndViewsDeploymentLog.values(), "ProcedureTablesAndViewsDeploymentLog",
+null, "procedure_req_solution_view", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, viewProcReqAndSolutionView.values(), "viewProcReqAndSolutionView",
                 new EnumIntTablesJoin[]{}, " ", false                
         ),
         ; 
@@ -2088,6 +2088,117 @@ null, "procedure_req_solution_view", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Procedu
             return this.fldObj;
         }
     }
+
+    public enum viewProcReqAndSolutionView implements EnumIntViewFields {
+        PARENT_CODE("req", ProcedureUserRequirements.PARENT_CODE.getName(), "req.parent_code as parent_code", ProcedureUserRequirements.PARENT_CODE, null, null, null),
+        CODE("req", ProcedureUserRequirements.CODE.getName(), "req.code as code", ProcedureUserRequirements.CODE, null, null, null),
+        REQ_ID("sol", ProcedureUserRequirements.REQ_ID.getName(), "sol.req_id as req_id", ProcedureUserRequirements.REQ_ID, null, null, null),
+        PROCEDURE_NAME("sol", ProcedureReqSolution.PROCEDURE_NAME.getName(), "sol.procedure_name as procedure_name", ProcedureUserRequirements.PROCEDURE_NAME, null, null, null),
+        PROCEDURE_VERSION("sol", ProcedureReqSolution.PROCEDURE_VERSION.getName(), "sol.procedure_version as procedure_version", ProcedureUserRequirements.PROCEDURE_VERSION, null, null, null),
+        PROC_INSTANCE_NAME("sol", ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), "sol.proc_instance_name as proc_instance_name", ProcedureUserRequirements.PROC_INSTANCE_NAME, null, null, null),
+        ORDER_NUMBER("sol", ProcedureReqSolution.ORDER_NUMBER.getName(), "sol.order_number as order_number", ProcedureUserRequirements.ORDER_NUMBER, null, null, null),
+        NAME("sol", ProcedureReqSolution.NAME.getName(), "sol.name as name", ProcedureReqSolution.NAME, null, null, null),
+        LP_FRONTEND_PAGE_NAME("sol", ProcedureReqSolution.LP_FRONTEND_PAGE_NAME.getName(), "sol.lp_frontend_page_name as lp_frontend_page_name", ProcedureReqSolution.LP_FRONTEND_PAGE_NAME, null, null, null),
+        LP_FRONTEND_PAGE_FILTER("sol", ProcedureReqSolution.LP_FRONTEND_PAGE_FILTER.getName(), "sol.lp_frontend_page_filter as lp_frontend_page_filter", ProcedureReqSolution.LP_FRONTEND_PAGE_FILTER, null, null, null),
+        POSITION("sol", ProcedureReqSolution.POSITION.getName(), "sol.position as position", ProcedureReqSolution.POSITION, null, null, null),
+        MODE("sol", ProcedureReqSolution.MODE.getName(), "sol.mode as mode", ProcedureReqSolution.MODE, null, null, null),
+        TYPE("sol", ProcedureReqSolution.TYPE.getName(), "sol.type as type", ProcedureReqSolution.TYPE, null, null, null),
+        WINDOW_LABEL_EN("sol", "window_label_en", "sol.window_label_en as window_label_en", ProcedureReqSolution.LABEL_EN, null, null, null),
+        WINDOW_LABEL_ES("sol", "window_label_es", "sol.window_label_es as window_label_es", ProcedureReqSolution.LABEL_ES, null, null, null),
+        SOP("sol", "sop", "sol.sop as sop", ProcedureReqSolution.SOP_NAME, null, null, null),
+        WINDOW_NAME("sol", ProcedureReqSolution.WINDOW_NAME.getName(), "sol.window_name as window_name", ProcedureReqSolution.WINDOW_NAME, null, null, null),
+        WINDOW_ACTION("sol", ProcedureReqSolution.WINDOW_ACTION.getName(), "sol.window_action as window_action", ProcedureReqSolution.WINDOW_ACTION, null, null, null),
+        BUSINESS_RULE("sol", ProcedureReqSolution.BUSINESS_RULE.getName(), "sol.business_rule as business_rule", ProcedureReqSolution.BUSINESS_RULE, null, null, null),
+        BUSINESS_RULE_VALUE("sol", ProcedureReqSolution.BUSINESS_RULE_VALUE.getName(), "sol.business_rule_value as business_rule_value", ProcedureReqSolution.BUSINESS_RULE_VALUE, null, null, null),
+        BUSINESS_RULE_AREA("sol", ProcedureReqSolution.BUSINESS_RULE_AREA.getName(), "sol.business_rule_area as business_rule_area", ProcedureReqSolution.BUSINESS_RULE_AREA, null, null, null),
+        CONFIRM_DIALOG("sol", ProcedureReqSolution.CONFIRM_DIALOG.getName(), "sol.confirmation_dialog as confirmation_dialog", ProcedureReqSolution.CONFIRM_DIALOG, null, null, null),
+        CONFIRM_DIALOG_DETAIL("sol", ProcedureReqSolution.CONFIRM_DIALOG_DETAIL.getName(), "sol.confirmation_dialog_detail as confirmation_dialog_detail", ProcedureReqSolution.CONFIRM_DIALOG_DETAIL, null, null, null),
+        ROLES("sol", ProcedureReqSolution.ROLES.getName(), "sol.roles as roles", ProcedureReqSolution.ROLES, null, null, null),
+        SOP_NAME("sol", "sop_name", "sol.sop_name as sop_name", ProcedureReqSolution.SOP_NAME, null, null, null),
+        TRAINING_REQ("sol", ProcedureReqSolution.TRAINING_REQ.getName(), "sol.training_req as training_req", ProcedureReqSolution.TRAINING_REQ, null, null, null),
+        TRAINING_NAME("sol", ProcedureReqSolution.TRAINING_NAME.getName(), "sol.training_name as training_name", ProcedureReqSolution.TRAINING_NAME, null, null, null),
+        UAT_REQ("sol", ProcedureReqSolution.UAT_REQ.getName(), "sol.uat_req as uat_req", ProcedureReqSolution.UAT_REQ, null, null, null),
+        UAT_NAME("sol", ProcedureReqSolution.UAT_NAME.getName(), "sol.uat_name as uat_name", ProcedureReqSolution.UAT_NAME, null, null, null),
+        ACTIVE("sol", ProcedureUserRequirements.ACTIVE.getName(), "sol.active as active", ProcedureUserRequirements.ACTIVE, null, null, null),
+        IN_SCOPE("sol", ProcedureUserRequirements.IN_SCOPE.getName(), "sol.in_scope as in_scope", ProcedureUserRequirements.IN_SCOPE, null, null, null),
+        IN_SYSTEM("sol", ProcedureUserRequirements.IN_SYSTEM.getName(), "sol.in_system as in_system", ProcedureUserRequirements.IN_SYSTEM, null, null, null),
+        WINDOW_QUERY("sol", ProcedureReqSolution.WINDOW_QUERY.getName(), "sol.window_query as window_query", ProcedureReqSolution.WINDOW_QUERY, null, null, null),
+        ENTITY("sol", ModuleActionsAndQueries.ENTITY.getName(), "sol.entity as entity", ModuleActionsAndQueries.ENTITY, null, null, null),
+        WINDOW_TYPE("sol", ProcedureReqSolution.WINDOW_TYPE.getName(), "sol.window_type as window_type", ProcedureReqSolution.WINDOW_TYPE, null, null, null),
+        WINDOW_MODE("sol", ProcedureReqSolution.WINDOW_MODE.getName(), "sol.window_mode as window_mode", ProcedureReqSolution.WINDOW_MODE, null, null, null),        
+
+        JSON_MODEL("sol", ProcedureReqSolution.JSON_MODEL.getName(), "sol.json_model as json_model", ProcedureReqSolution.JSON_MODEL, null, null, null),
+        SPECIAL_VIEW_JSON_MODEL("sol", ProcedureReqSolution.SPECIAL_VIEW_JSON_MODEL.getName(), "sol.special_view_json_model as special_view_json_model", ProcedureReqSolution.SPECIAL_VIEW_JSON_MODEL, null, null, null),
+        SPECIAL_VIEW_NAME("sol", ProcedureReqSolution.SPECIAL_VIEW_NAME.getName(), "sol.special_view_name as special_view_name", ProcedureReqSolution.SPECIAL_VIEW_NAME, null, null, null),
+        QUERY_FOR_BUTTON("sol", ProcedureReqSolution.QUERY_FOR_BUTTON.getName(), "sol.query_for_button as query_for_button", ProcedureReqSolution.QUERY_FOR_BUTTON, null, null, null),
+        EXTRA_ACTIONS("sol", ProcedureReqSolution.EXTRA_ACTIONS.getName(), "sol.extra_actions as extra_actions", ProcedureReqSolution.EXTRA_ACTIONS, null, null, null),
+
+        TWOICONS_DETAIL("sol", ProcedureReqSolution.TWOICONS_DETAIL.getName(), "sol.twoicons_detail as twoicons_detail", ProcedureReqSolution.TWOICONS_DETAIL, null, null, null),
+        ADD_REFRESH_BUTTON("sol", ProcedureReqSolutionViewTableWithButtons.ADD_REFRESH_BUTTON.getName(), "sol.add_refresh_button as add_refresh_button", ProcedureReqSolutionViewTableWithButtons.ADD_REFRESH_BUTTON, null, null, null),
+        GRID_COLUMNS("sol", ProcedureReqSolutionViewTableWithButtons.GRID_COLUMNS.getName(), "sol.grid_columns as grid_columns", ProcedureReqSolutionViewTableWithButtons.GRID_COLUMNS, null, null, null),
+        ENDPOINT_PARAMS("sol", ProcedureReqSolutionViewTableWithButtons.ENDPOINT_PARAMS.getName(), "sol.endpoint_params as endpoint_params", ProcedureReqSolutionViewTableWithButtons.ENDPOINT_PARAMS, null, null, null),
+        ENABLE_CONTEXT_MENU("sol", ProcedureReqSolutionViewTableWithButtons.ENABLE_CONTEXT_MENU.getName(), "sol.enable_context_menu as enable_context_menu", ProcedureReqSolutionViewTableWithButtons.ENABLE_CONTEXT_MENU, null, null, null),
+        ADD_ACTIONS_TO_CONTEXT_MENU("sol", ProcedureReqSolutionViewTableWithButtons.ADD_ACTIONS_TO_CONTEXT_MENU.getName(), "reqs.add_actions_to_context_menu as add_actions_to_context_menu", ProcedureReqSolutionViewTableWithButtons.ADD_ACTIONS_TO_CONTEXT_MENU, null, null, null),        
+        VIEW_TITLE_EN("sol", ProcedureReqSolutionViewTableWithButtons.VIEW_TITLE_EN.getName(), "sol.view_title_en as view_title_en", ProcedureReqSolutionViewTableWithButtons.VIEW_TITLE_EN, null, null, null),
+        VIEW_TITLE_ES("sol", ProcedureReqSolutionViewTableWithButtons.VIEW_TITLE_ES.getName(), "sol.view_title_es as view_title_es", ProcedureReqSolutionViewTableWithButtons.VIEW_TITLE_ES, null, null, null),
+        CONTENT_TYPE("sol", ProcedureReqSolution.CONTENT_TYPE.getName(), "sol.content_type as content_type", ProcedureReqSolution.CONTENT_TYPE, null, null, null),
+        ;
+
+        private viewProcReqAndSolutionView(String tblAliasInView, String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules) {
+//            try{
+//            this.fldName="";
+            this.fldName = name;
+            this.fldAliasInView = vwAliasName;
+            this.fldMask = fldMask;
+            this.fldComment = comment;
+            this.fldBusinessRules = busRules;
+            this.fldObj = fldObj;
+            this.tblAliasInView=tblAliasInView;
+            /*            }catch(Exception e){
+                String s= e.getMessage();
+                //String s2=name;
+                this.fldName="";
+            }*/
+        }
+        private final String fldName;
+        private final String tblAliasInView;
+        private final String fldAliasInView;
+        private final EnumIntTableFields fldObj;
+        private final String fldMask;
+        private final String fldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+        @Override public String getTblAliasInView() {return this.tblAliasInView;}
+        @Override
+        public String getName() {
+            return fldName;
+        }
+
+        @Override
+        public String getFldViewAliasName() {
+            return this.fldAliasInView;
+        }
+
+        @Override
+        public String getFieldMask() {
+            return this.fldMask;
+        }
+
+        @Override
+        public String getFieldComment() {
+            return this.fldComment;
+        }
+
+        @Override
+        public FldBusinessRules[] getFldBusinessRules() {
+            return this.fldBusinessRules;
+        }
+
+        @Override
+        public EnumIntTableFields getTableField() {
+            return this.fldObj;
+        }
+    }
+
     public enum viewProcReqSolutionViews implements EnumIntViewFields {
         MODULE_NAME("procInfo", ProcedureInfo.MODULE_NAME.getName(), "procInfo.module_name as module_name", ProcedureInfo.MODULE_NAME, null, null, null),
         MODULE_VERSION("procInfo", ProcedureInfo.MODULE_VERSION.getName(), "procInfo.module_verion as module_version", ProcedureInfo.MODULE_VERSION, null, null, null),

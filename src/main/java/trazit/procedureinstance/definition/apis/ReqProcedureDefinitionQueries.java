@@ -502,7 +502,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
             wObj, null, null, false));
 
         jMainObj.put(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableName(), procReqSolution(procInstanceName));
-        //jMainObj.put(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableName()+"_tree", procReqSolutionTree(procInstanceName));
+        jMainObj.put(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableName()+"_tree", procReqSolutionTree(procInstanceName));
         
         jMainObj.put(TblsReqs.TablesReqs.PROCEDURE_USER_REQS.getTableName(), 
         QueryUtilities.dbRowsToJsonArr(procInstanceName, GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS, TblsReqs.ProcedureUserRequirements.values(), 
@@ -890,8 +890,9 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                 SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, null);
         parentCodeWhereObj.addConstraint(TblsReqs.ProcedureUserRequirements.CODE,
                 SqlStatement.WHERECLAUSE_TYPES.IS_NULL, new Object[]{}, null);
-        JSONArray parentCodeArr = QueryUtilities.dbRowsToJsonArr(procInstanceName, GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS, TblsReqs.ProcedureUserRequirements.values(), 
-                parentCodeWhereObj, new String[]{TblsReqs.ProcedureUserRequirements.PARENT_CODE.getName(), TblsReqs.ProcedureUserRequirements.CODE.getName()}, null, false);        
+        JSONArray parentCodeArr = QueryUtilities.dbRowsToJsonArr(procInstanceName, GlobalVariables.Schemas.REQUIREMENTS.getName(), 
+                TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_VIEW, TblsReqs.viewProcReqAndSolutionView.values(), 
+                parentCodeWhereObj, new String[]{TblsReqs.viewProcReqSolutionViews.PARENT_CODE.getName(), TblsReqs.viewProcReqSolutionViews.CODE.getName()}, null, false);        
 
 
         for (int i=0;i<parentCodeArr.size();i++){
@@ -912,7 +913,8 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                     SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{curParentCode}, null);
             parentCodeWhereObj.addConstraint(TblsReqs.ProcedureUserRequirements.CODE,
                     SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, null);
-            JSONArray codeArr = QueryUtilities.dbRowsToJsonArr(procInstanceName, GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS, TblsReqs.ProcedureUserRequirements.values(), 
+            JSONArray codeArr = QueryUtilities.dbRowsToJsonArr(procInstanceName, GlobalVariables.Schemas.REQUIREMENTS.getName(), 
+                    TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_VIEW, TblsReqs.viewProcReqAndSolutionView.values(), 
                     parentCodeWhereObj, new String[]{TblsReqs.ProcedureUserRequirements.PARENT_CODE.getName(), TblsReqs.ProcedureUserRequirements.CODE.getName()}, null, false);        
             
             if (curRow.containsKey("No Data"))
@@ -921,7 +923,9 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                 JSONArray codeFinalArr = new JSONArray();
                 for (int j=0;j<codeArr.size();j++){
                     JSONObject curChildrenRow=(JSONObject) codeArr.get(j);
-                    codeFinalArr.add(solutionAddRelevantInfo(curChildrenRow));
+                     if (Boolean.FALSE.equals(curChildrenRow.containsKey("No Data"))){
+                        codeFinalArr.add(solutionAddRelevantInfo(curChildrenRow));
+                     }
                 }                  
                 curRow.put("children", codeFinalArr);
             }
