@@ -5,6 +5,7 @@
  */
 package lbplanet.utilities;
 
+import functionaljavaa.investigation.Investigation.InvestigationErrorTrapping;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -13,8 +14,10 @@ import static java.time.format.DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
+import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 /**
  *
  * @author Administrator
@@ -195,17 +198,23 @@ public class LPDate {
             return null;
         }
     }
-    
+    public static InternalMessage isIntervalTypeOneRecognized(String itemsMeasurement){    
+            IntervalTypes iTypes=null;
+        try{
+            iTypes = IntervalTypes.valueOf(itemsMeasurement.toUpperCase());
+            return new InternalMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_FINE, null);
+        }catch(Exception e){
+            return new InternalMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.OBJECT_NOT_RECOGNIZED, new Object[]{itemsMeasurement, IntervalTypes.values().toString()});
+        }
+    }
     public static Boolean isDateBiggerThanTimeStamp(Calendar dateToCompare){
         return (Calendar.getInstance().before(dateToCompare));        
     }
     public static Date addIntervalToGivenDate(Date startDay, String itemsMeasurement, int scheduleSize){    
-        IntervalTypes iTypes=null;
-        try{
-            iTypes = IntervalTypes.valueOf(itemsMeasurement.toUpperCase());
-        }catch(Exception e){
+        InternalMessage intervalTypeOneRecognized = isIntervalTypeOneRecognized(itemsMeasurement.toUpperCase());
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(intervalTypeOneRecognized.getDiagnostic()))
             return null;
-        }
+        IntervalTypes iTypes = IntervalTypes.valueOf(itemsMeasurement.toUpperCase());
         switch (iTypes){
             case DAYS:
                 return LPDate.addDays(startDay, scheduleSize);
