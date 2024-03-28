@@ -96,10 +96,9 @@
             <type>jar</type>
         </dependency>
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>42.3.8</version>
-            <type>jar</type>
+          <groupId>org.postgresql</groupId>
+          <artifactId>postgresql</artifactId>
+          <version>[42.3.9,)</version>
         </dependency>
         <dependency>
           <groupId>org.json</groupId>
