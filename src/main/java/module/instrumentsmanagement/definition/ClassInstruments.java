@@ -26,11 +26,13 @@ import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
+import static lbplanet.utilities.LPDate.isIntervalTypeOneRecognized;
 import lbplanet.utilities.LPFrontEnd;
+import lbplanet.utilities.LPMath;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import lbplanet.utilities.LPPlatform.ApiErrorTraping;
 import lbplanet.utilities.TrazitUtiilitiesEnums;
+import module.instrumentsmanagement.definition.InstrumentsEnums.InstrEventsErrorTrapping;
 import module.instrumentsmanagement.definition.InstrumentsEnums.InstrumentsErrorTrapping;
 import module.instrumentsmanagement.logic.ConfigInstrumentsFamily;
 import org.apache.pdfbox.pdmodel.PDDocument;
@@ -593,6 +595,9 @@ public class ClassInstruments {
                 instrName = argValues[0].toString();
                 fieldName = argValues[1].toString();
                 fieldValue = argValues[2].toString();
+                String eventName = argValues[3].toString();
+                String intervalType = argValues[4].toString();
+                String intervalNumber = argValues[5].toString();
                 fieldNames = null;
                 fieldValues = null;
                 if (fieldValue != null && fieldValue.length() > 0) {
@@ -601,10 +606,39 @@ public class ClassInstruments {
                     }
                     fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
                 }
-                if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
-                    actionDiagnoses = (InternalMessage) fieldValues[1];
-                } else {
-                    actionDiagnoses = ConfigInstrumentsFamily.configUpdateInstrumentFamily(instrName, fieldNames, fieldValues);
+                actionDiagnoses=null;
+                if (eventName.length()>0){
+                    switch (eventName){
+                        case "calib":
+                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsInstrumentsConfig.InstrumentsFamily.CALIB_INTERVAL.getName());
+                            break;
+                        case "pm":
+                            fieldNames=LPArray.addValueToArray1D(fieldNames, TblsInstrumentsConfig.InstrumentsFamily.PM_INTERVAL.getName());
+                            break;
+                        default: 
+                            actionDiagnoses=new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.CONFIG_EVENT_NAME_NOT_RECOGNIZED, new Object[]{eventName, "calib, pm"});
+                            break;
+                    }
+                    
+                    if (intervalType.length()==0||intervalNumber.length()==0){
+                        actionDiagnoses=new InternalMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING, new Object[]{"intervalType, eventName"});                        
+                    }else{
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(LPMath.isNumeric(intervalNumber, false).getDiagnostic())){
+                            actionDiagnoses=LPMath.isNumeric(intervalNumber, false);
+                        }
+                        InternalMessage intervalTypeOneRecognized = isIntervalTypeOneRecognized(intervalType.toUpperCase());
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(intervalTypeOneRecognized.getDiagnostic())){ 
+                            actionDiagnoses=intervalTypeOneRecognized;
+                        }                        
+                        fieldValues=LPArray.addValueToArray1D(fieldValues, intervalType+"*"+intervalNumber);
+                    }
+                }
+                if (actionDiagnoses!=null){
+                    if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                        actionDiagnoses = (InternalMessage) fieldValues[1];
+                    } else {
+                        actionDiagnoses = ConfigInstrumentsFamily.configUpdateInstrumentFamily(instrName, fieldNames, fieldValues);
+                    }                
                 }
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInstrumentsData.INSTRUMENTS.getTableName(), instrName);
@@ -655,7 +689,7 @@ public class ClassInstruments {
                 }
                 break;
             default:
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, null, ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, null);
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, null, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, null);
                 return;
         }
         if (actionDiagnoses != null) {

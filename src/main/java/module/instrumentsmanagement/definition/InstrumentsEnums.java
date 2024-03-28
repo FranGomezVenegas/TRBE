@@ -244,7 +244,11 @@ public class InstrumentsEnums {
         CONFIG_UPDATE_INSTRUMENT_FAMILY("CONFIG_UPDATE_INSTRUMENT_FAMILY", GlobalAPIsParams.REQUEST_PARAM_INSTRUMENT_NAME, "", "configInstrumentFamilyUpdated_success",
                 new LPAPIArguments[]{new LPAPIArguments("instrFamilyName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
-                    new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 8),},
+                    new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 8),
+                    new LPAPIArguments("eventName", LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
+                    new LPAPIArguments("intervalType", LPAPIArguments.ArgumentType.STRING.toString(), false, 10),
+                    new LPAPIArguments("intervalNumber", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 11),
+                }, 
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TablesInstrumentsData.INSTRUMENTS.getTableName()).build()).build(),
                 null, null),  
@@ -610,6 +614,7 @@ public class InstrumentsEnums {
     }
 
     public enum InstrEventsErrorTrapping implements EnumIntMessages {
+        CONFIG_EVENT_NAME_NOT_RECOGNIZED("instrConfig_EventNameNotRecognized", "", ""),
         EVENT_NOT_FOUND("instrEvent_EventNotFound", "The instrument event <*1*> is already complete in procedure <*2*>", "The instrument event <*1*> is already complete in procedure <*2*>"),
         EVENT_NOT_OPEN_FOR_CHANGES("instrEvent_NotOpenedForChanges", "The event is not open for changes", "Evento no abierto a cambios"),
         VARIABLE_NOT_EXISTS_EVENT_WITHNOVARIABLES("instEvent_variableNotExists_eventWithNoVariables", "This event has no this variable and the event has no variables", "Este evento no contiene esta variable y el evento no tiene variables"),
