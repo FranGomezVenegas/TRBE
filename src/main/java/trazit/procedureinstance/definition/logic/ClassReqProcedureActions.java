@@ -277,37 +277,41 @@ public class ClassReqProcedureActions {
                 trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.createDBPersonProfiles(procedureName, procedureVersion, procInstanceName);
                 break;
             case ADD_ROLE_TO_USER:
-                userName = argValues[3].toString();
-                roleName = argValues[4].toString();
+                userName = LPNulls.replaceNull(argValues[3]).toString();
+                roleName = LPNulls.replaceNull(argValues[4]).toString();
                 procedureSopsList = procedureUsersList(procedureName, procedureVersion);
-                if (Boolean.FALSE.equals(LPArray.valueInArray(procedureSopsList, userName, false))) {
-                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_NOT_FOUND, new Object[]{roleName, procedureName, procedureVersion});
-                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_NOT_FOUND, new Object[]{roleName, procedureName, procedureVersion});
-                    this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.USER_NOT_FOUND;
-                    this.messageDynamicData = new Object[]{userName, procedureName, procedureVersion};
-                    break;
-                }
-                procedureRolesList = procedureRolesList(procedureName, procedureVersion);
-                if (Boolean.FALSE.equals(LPArray.valueInArray(procedureRolesList, roleName, false))) {
-                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.ROLE_NOT_FOUND, new Object[]{roleName, procedureName, procedureVersion});
-                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.ROLE_NOT_FOUND, new Object[]{roleName, procedureName, procedureVersion});
-                    this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.ROLE_NOT_FOUND;
-                    this.messageDynamicData = new Object[]{roleName, procedureName, procedureVersion};
-                    break;
-                }
-                removeDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROC_USER_ROLES,
-                        new String[]{TblsReqs.ProcedureUserRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRoles.PROCEDURE_VERSION.getName(),
-                            TblsReqs.ProcedureUserRoles.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUserRoles.USER_NAME.getName(), TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()},
-                        new Object[]{procedureName, procedureVersion, procInstanceName, userName, roleName});
-                if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
-                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
-                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
-                    this.messageDynamicData = new Object[]{roleName, userName};
-                } else {
-                    actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
-                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
-                    this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
-                    this.messageDynamicData = removeDiagn.getErrorMessageVariables();
+                for (String curUser: userName.split("\\|")){
+                    for (String curRole: roleName.split("\\|")){
+                        if (Boolean.FALSE.equals(LPArray.valueInArray(procedureSopsList, curUser, false))) {
+                            actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_NOT_FOUND, new Object[]{curUser, procedureName, procedureVersion});
+                            this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_NOT_FOUND, new Object[]{curUser, procedureName, procedureVersion});
+                            this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.USER_NOT_FOUND;
+                            this.messageDynamicData = new Object[]{curUser, procedureName, procedureVersion};
+                            break;
+                        }
+                        procedureRolesList = procedureRolesList(procedureName, procedureVersion);
+                        if (Boolean.FALSE.equals(LPArray.valueInArray(procedureRolesList, curRole, false))) {
+                            actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.ROLE_NOT_FOUND, new Object[]{curRole, procedureName, procedureVersion});
+                            this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.ROLE_NOT_FOUND, new Object[]{curRole, procedureName, procedureVersion});
+                            this.diagnosticObjIntMsg = ReqProcedureDefinitionErrorTraping.ROLE_NOT_FOUND;
+                            this.messageDynamicData = new Object[]{curRole, procedureName, procedureVersion};
+                            break;
+                        }
+                        removeDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROC_USER_ROLES,
+                                new String[]{TblsReqs.ProcedureUserRoles.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRoles.PROCEDURE_VERSION.getName(),
+                                    TblsReqs.ProcedureUserRoles.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureUserRoles.USER_NAME.getName(), TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()},
+                                new Object[]{procedureName, procedureVersion, procInstanceName, curUser, curRole});
+                        if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
+                            actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                            this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                            this.messageDynamicData = new Object[]{curRole, curUser};
+                        } else {
+                            actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                            this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                            this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
+                            this.messageDynamicData = removeDiagn.getErrorMessageVariables();
+                        }
+                    }
                 }
                 break;
             case REMOVE_USER:
