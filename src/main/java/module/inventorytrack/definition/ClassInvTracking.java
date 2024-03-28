@@ -18,6 +18,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.ApiErrorTraping;
+import lbplanet.utilities.TrazitUtiilitiesEnums;
 import module.inventorytrack.definition.TblsInvTrackingData.TablesInvTrackingData;
 import module.inventorytrack.logic.DataInventory;
 import module.inventorytrack.definition.InvTrackingEnums.InventoryTrackAPIactionsEndpoints;
@@ -378,25 +379,30 @@ public class ClassInvTracking {
                 String[] tblFields = new String[]{TblsInvTrackingConfig.Reference.NAME.getName(), TblsInvTrackingConfig.Reference.CATEGORY.getName(), TblsInvTrackingConfig.Reference.LOT_REQUIRES_QUALIF.getName(),
                     TblsInvTrackingConfig.Reference.MIN_STOCK.getName(), TblsInvTrackingConfig.Reference.MIN_STOCK_UOM.getName(), TblsInvTrackingConfig.Reference.ALLOWED_UOMS.getName(),
                     TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE.getName(), TblsInvTrackingConfig.Reference.REQUIRES_AVAILABLES_FOR_USE.getName(), TblsInvTrackingConfig.Reference.MIN_AVAILABLES_FOR_USE.getName(),
-                    TblsInvTrackingConfig.Reference.MIN_AVAILABLES_FOR_USE_TYPE.getName(), TblsInvTrackingConfig.Reference.QUALIF_VARIABLES_SET.getName()};
+                    TblsInvTrackingConfig.Reference.MIN_AVAILABLES_FOR_USE_TYPE.getName(), TblsInvTrackingConfig.Reference.ALLOW_OPENING_SOME_AT_A_TIME.getName(), TblsInvTrackingConfig.Reference.QUALIF_VARIABLES_SET.getName()};
 
                 JSONObject jsonObj = new JSONObject();
                 jsonObj.put("parsing_type", "SIMPLE_TABLE");
                 jsonObj.put("object_type", TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName());
                 JSONArray jArr = new JSONArray();
                 JSONObject jsonValuesObj = new JSONObject();
-                for (int i = 0; i < argValues.length; i++) {
-                    if (LPNulls.replaceNull(argValues[i]).toString().length() > 0) {
-                        jsonValuesObj.put(tblFields[i], argValues[i]);
+                Object[] checkTwoArraysSameLength=LPArray.checkTwoArraysSameLength(tblFields, argValues);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(checkTwoArraysSameLength[0].toString())) {
+                    actionDiagnoses=new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.ARRAYS_DIFFERENT_SIZE, new Object[]{checkTwoArraysSameLength[checkTwoArraysSameLength.length - 1].toString()}, null);
+                }else{
+                    for (int i = 0; i < argValues.length; i++) {
+                        if (LPNulls.replaceNull(argValues[i]).toString().length() > 0) {
+                            jsonValuesObj.put(tblFields[i], argValues[i]);
+                        }
                     }
-                }
-                jArr.add(jsonValuesObj);
-                jsonObj.put("values", jArr);
-                ClassMasterData clss = new ClassMasterData(procReqSession.getProcedureInstance(), TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName(), jsonObj.toJSONString(), TrazitModules.STOCKS.toString());
-                actionDiagnoses = clss.getDiagnostic();
-                this.messageDynamicData = new Object[]{argValues[0].toString()};
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(clss.getDiagnostic().getDiagnostic())) {
-                    this.messageDynamicData = clss.getDiagnostic().getMessageCodeVariables();
+                    jArr.add(jsonValuesObj);
+                    jsonObj.put("values", jArr);
+                    ClassMasterData clss = new ClassMasterData(procReqSession.getProcedureInstance(), TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName(), jsonObj.toJSONString(), TrazitModules.STOCKS.toString());
+                    actionDiagnoses = clss.getDiagnostic();
+                    this.messageDynamicData = new Object[]{argValues[0].toString()};
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(clss.getDiagnostic().getDiagnostic())) {
+                        this.messageDynamicData = clss.getDiagnostic().getMessageCodeVariables();
+                    }
                 }
                 break;
 
