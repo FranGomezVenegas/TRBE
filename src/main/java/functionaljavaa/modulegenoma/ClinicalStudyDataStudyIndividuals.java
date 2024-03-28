@@ -84,7 +84,7 @@ public class ClinicalStudyDataStudyIndividuals {
         }    
         Object[] checkTwoArraysSameLength = LPArray.checkTwoArraysSameLength(fieldsName, fieldsValue);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(checkTwoArraysSameLength[0].toString())) {
-            return new InternalMessage(LPPlatform.LAB_FALSE, checkTwoArraysSameLength[0].toString(), null, null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.ARRAYS_DIFFERENT_SIZE, new Object[]{checkTwoArraysSameLength[checkTwoArraysSameLength.length - 1].toString()}, null);
         }
         if (Boolean.TRUE.equals(devMode)){
             StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
