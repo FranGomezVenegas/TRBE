@@ -5,6 +5,7 @@
  */
 package lbplanet.utilities;
 
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.logging.Level;
@@ -12,6 +13,11 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
+import trazit.enums.ActionsEndpointPair;
+import trazit.enums.EnumIntEndpoints;
+import trazit.session.ActionsServletCommons;
+import static trazit.session.ActionsServletCommons.publishResult;
+import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -170,4 +176,45 @@ public class LPHttp {
         return camelCaseStr.replaceAll(regex, replacement).toLowerCase();
     }
     
+    public static void moduleActionsSingleAPI(HttpServletRequest request, HttpServletResponse response, ActionsEndpointPair[] actionEndpointArr, String thisServletName){
+        request=LPHttp.requestPreparation(request);
+        response=LPHttp.responsePreparation(response);     
+        
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, false);
+        if (Boolean.TRUE.equals(procReqInstance.getHasErrors())){
+            procReqInstance.killIt();
+            if (procReqInstance.getErrorMessageCodeObj()!=null)
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, procReqInstance.getErrorMessageCodeObj(), procReqInstance.getErrorMessageVariables());                   
+            else
+                LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), thisServletName}, procReqInstance.getLanguage(), null);                   
+            return;
+        }
+        String actionName=procReqInstance.getActionName();
+        String language=procReqInstance.getLanguage();
+        EnumIntEndpoints endPoint = null;
+        try (PrintWriter out = response.getWriter()) {
+            
+            ActionsServletCommons clss=new ActionsServletCommons(request, actionEndpointArr, actionName);
+            if (clss.getEndpointFound()){
+                publishResult(request, response, procReqInstance, clss.getEndpointObj(), 
+                    clss.getActionClassRun().getDiagnostic(), clss.getActionClassRun().getDiagnosticObj(), 
+                    clss.getActionClassRun().getMessageDynamicData(), 
+                    clss.getActionClassRun().getRelatedObj());
+            }else{
+                procReqInstance.killIt();
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, thisServletName}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
+                return;                
+            }
+        }catch(Exception e){  
+            Logger.getLogger(thisServletName).log(Level.SEVERE, null, e);
+        } finally {
+            // release database resources
+            try {           
+                procReqInstance.killIt();
+            } catch (Exception ex) {
+                Logger.getLogger(thisServletName).log(Level.SEVERE, null, ex);
+            }
+        }          
+        
+    }
 }

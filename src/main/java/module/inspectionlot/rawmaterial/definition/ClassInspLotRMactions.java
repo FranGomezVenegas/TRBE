@@ -21,6 +21,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import module.inspectionlot.rawmaterial.logic.DataBulk;
+import trazit.enums.ActionsClass;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.queries.QueryUtilitiesEnums;
@@ -32,7 +33,7 @@ import trazit.session.ProcedureRequestSession;
  *
  * @author User
  */
-public class ClassInspLotRMactions {
+public class ClassInspLotRMactions implements ActionsClass{
 
     private Object[] messageDynamicData = new Object[]{};
     private RelatedObjects relatedObj = RelatedObjects.getInstanceForActions();

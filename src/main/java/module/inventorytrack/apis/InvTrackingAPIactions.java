@@ -19,14 +19,17 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
+import static lbplanet.utilities.LPHttp.moduleActionsSingleAPI;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.ApiErrorTraping;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import module.inventorytrack.definition.ClassInvTracking;
 import module.inventorytrack.definition.InvTrackingEnums.InventoryTrackAPIactionsEndpoints;
+import trazit.enums.ActionsEndpointPair;
 import trazit.session.ProcedureRequestSession;
 
 import trazit.enums.EnumIntEndpoints;
+import trazit.globalvariables.GlobalVariables;
 import trazit.session.ActionsServletCommons;
 
 /**
@@ -34,8 +37,11 @@ import trazit.session.ActionsServletCommons;
  * @author User
  */
 public class InvTrackingAPIactions extends HttpServlet {
-
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response){        
+        ActionsEndpointPair[] actionEndpointArr = GlobalVariables.TrazitModules.STOCKS.getActionsEndpointPair(); //implements ActionsClass
+        moduleActionsSingleAPI(request, response, actionEndpointArr, this.getServletName());
+    }
+    protected void processRequest2(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request = LPHttp.requestPreparation(request);
         response = LPHttp.responsePreparation(response);
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(request, response, false, false);
@@ -110,11 +116,8 @@ public class InvTrackingAPIactions extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
-        try {
             processRequest(request, response);
-        } catch (IOException ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-        }
+
     }
 
     /**
@@ -174,11 +177,7 @@ public class InvTrackingAPIactions extends HttpServlet {
          */
 //        Scanner s = new Scanner(request.getInputStream(), "UTF-8").useDelimiter("\A");
 //        String  s.hasNext() ? s.next() : ""; 
-        try {
             processRequest(request, response);
-        } catch (IOException ex) {
-            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-        }
 
     }
 

@@ -33,6 +33,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPMath;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.ActionsClass;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -43,7 +44,7 @@ import trazit.session.ResponseMessages;
  *
  * @author User
  */
-public class ClassEnvMonSample {
+public class ClassEnvMonSample implements ActionsClass{
 
     /**
      * @return the messageDynamicData
@@ -72,10 +73,14 @@ public class ClassEnvMonSample {
     public Object[] getDiagnostic() {
         return this.diagnostic;
     }
+    public InternalMessage getDiagnosticObj() {
+        return diagnosticObj;
+    }    
     private Object[] messageDynamicData = new Object[]{};
     private RelatedObjects relatedObj = RelatedObjects.getInstanceForActions();
     private Boolean endpointExists = true;
     private Object[] diagnostic = new Object[0];
+    private InternalMessage diagnosticObj=null;
     private Boolean isSuccess = false;
     private Object[] responseError = null;
     private Boolean functionFound = false;
@@ -87,6 +92,7 @@ public class ClassEnvMonSample {
         String procInstanceName = procReqSession.getProcedureInstance();
 
         Object[] dynamicDataObjects = new Object[]{};
+        InternalMessage actionDiagnosesObj = null;
         this.functionFound = true;
         Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
@@ -393,7 +399,7 @@ public class ClassEnvMonSample {
                     String useOpenReferenceLot = LPNulls.replaceNull(argValues[5]).toString();
 
                     numItems = 1;
-                    InternalMessage actionDiagnosesObj = DataProgramSample.assignCultureMedia(sampleId, referenceLot, reference, category,
+                    actionDiagnosesObj = DataProgramSample.assignCultureMedia(sampleId, referenceLot, reference, category,
                             new BigDecimal(numItems.toString()), null, externalProcInstanceName, Boolean.valueOf(useOpenReferenceLot));
                     dynamicDataObjects = actionDiagnosesObj.getMessageCodeVariables();
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()),
@@ -421,6 +427,7 @@ public class ClassEnvMonSample {
 
             }
             this.diagnostic = actionDiagnoses;
+            this.diagnosticObj=actionDiagnosesObj;
             this.relatedObj = rObj;
             this.messageDynamicData = dynamicDataObjects;
         } catch (ServletException | IOException ex) {

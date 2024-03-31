@@ -28,6 +28,7 @@ import static module.inventorytrack.logic.DataInventoryQualif.objectVariableChan
 import static module.inventorytrack.logic.DataInventoryQualif.objectVariableSetValue;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import trazit.enums.ActionsClass;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.globalvariables.GlobalVariables.TrazitModules;
@@ -36,7 +37,7 @@ import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 
-public class ClassInvTracking {
+public class ClassInvTracking implements ActionsClass{
 
     private Object[] messageDynamicData = new Object[]{};
     private RelatedObjects relatedObj = RelatedObjects.getInstanceForActions();

@@ -22,19 +22,22 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.ActionsClass;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 
 /**
  *
  * @author User
  */
-public class ClassEnvMon {
+public class ClassEnvMon implements ActionsClass{
     private Object[] messageDynamicData=new Object[]{};
     private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
     private Boolean endpointExists=true;
     private Object[] diagnostic=new Object[0];
+    private InternalMessage diagnosticObj=null;
     private Boolean functionFound=false;
 
     public ClassEnvMon(HttpServletRequest request, EnvMonAPIactionsEndpoints endPoint){
@@ -47,6 +50,7 @@ public class ClassEnvMon {
         String incubationName = "";
         
         Object[] actionDiagnoses = null;
+        InternalMessage actionDiagnosesObj = null;
         this.functionFound=true;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
@@ -169,6 +173,7 @@ public class ClassEnvMon {
                     request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);                    
             }    
         this.diagnostic=actionDiagnoses;
+        this.diagnosticObj=actionDiagnosesObj;
         this.relatedObj=rObj;
         rObj.killInstance();
     }
@@ -199,6 +204,9 @@ public class ClassEnvMon {
      */
     public Object[] getDiagnostic() {
         return diagnostic;
+    }
+    public InternalMessage getDiagnosticObj() {
+        return diagnosticObj;
     }
 
     /**

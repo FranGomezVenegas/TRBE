@@ -42,12 +42,14 @@ import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
 import trazit.session.ResponseMessages;
 import lbplanet.utilities.LPPlatform.LpPlatformErrorTrapping;
+import trazit.enums.ActionsClass;
+import trazit.session.InternalMessage;
 
 /**
  *
  * @author User
  */
-public class ClassSample {
+public class ClassSample implements ActionsClass{
 
     public Object[] getMessageDynamicData() {
         return this.messageDynamicData;
@@ -72,6 +74,7 @@ public class ClassSample {
     private RelatedObjects relatedObj = RelatedObjects.getInstanceForActions();
     private Boolean endpointExists = true;
     private Object[] diagnostic = new Object[0];
+    private InternalMessage diagnosticObj=null;
     private Boolean functionFound = false;
     private Boolean isSuccess = false;
     private Object[] responseError = null;
@@ -96,6 +99,7 @@ public class ClassSample {
         Integer incubationStage = null;
         Integer sampleId = null;
         Object[] diagn = null;
+        InternalMessage actionDiagnosesObj = null;
         this.functionFound = true;
         Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
@@ -666,9 +670,14 @@ public class ClassSample {
         }
 
         this.diagnostic = diagn;
-
+        this.diagnosticObj=actionDiagnosesObj;
         this.relatedObj = rObj;
 
         rObj.killInstance();
+    }
+
+    @Override
+    public InternalMessage getDiagnosticObj() {
+        return diagnosticObj;
     }
 }

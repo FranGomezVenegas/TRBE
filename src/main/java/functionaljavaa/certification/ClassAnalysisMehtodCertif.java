@@ -30,6 +30,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.TrazitUtiilitiesEnums;
+import trazit.enums.ActionsClass;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
@@ -39,7 +40,7 @@ import trazit.session.ProcedureRequestSession;
  *
  * @author User
  */
-public class ClassAnalysisMehtodCertif {
+public class ClassAnalysisMehtodCertif implements ActionsClass{
 
     /**
      * @return the messageDynamicData

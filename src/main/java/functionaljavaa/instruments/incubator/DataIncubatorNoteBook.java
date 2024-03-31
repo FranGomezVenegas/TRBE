@@ -30,6 +30,7 @@ import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 
 /**
  *
@@ -79,7 +80,7 @@ public class DataIncubatorNoteBook {
      * @param personName
      * @return
      */
-    public static Object[] temperatureReading(String instName, BigDecimal temperature, String personName) {
+    public static InternalMessage temperatureReading(String instName, BigDecimal temperature, String personName) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[][] instrInfo = QueryUtilitiesEnums.getTableData(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR,
                 EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR,
@@ -87,17 +88,17 @@ public class DataIncubatorNoteBook {
                 new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()}, new Object[]{instName},
                 new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString())) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS, new Object[]{instName, procInstanceName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS, new Object[]{instName, procInstanceName});
         }
         if (Boolean.FALSE.equals(Boolean.valueOf(instrInfo[0][1].toString()))) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.CURRENTLY_DEACTIVE, new Object[]{instName, procInstanceName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.CURRENTLY_DEACTIVE, new Object[]{instName, procInstanceName});
         }
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK,
                 new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.EVENT_TYPE.getName(),
                     TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_BY.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName(),
                     TblsEnvMonitData.InstrIncubatorNoteBook.TEMPERATURE.getName()},
                 new Object[]{instName, EventType.TEMPERATURE_READING.toString(), personName, LPDate.getCurrentTimeStamp(), temperature});
-        return insertRecordInTable.getApiMessage();
+        return new InternalMessage(insertRecordInTable.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), null);  
     }
 
     /**
@@ -106,7 +107,7 @@ public class DataIncubatorNoteBook {
      * @param personName
      * @return
      */
-    public static Object[] activation(String instName, String personName) {
+    public static InternalMessage activation(String instName, String personName) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         Object[][] instrInfo = QueryUtilitiesEnums.getTableData(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR,
@@ -115,13 +116,13 @@ public class DataIncubatorNoteBook {
                 new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()}, new Object[]{instName},
                 new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString())) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS, new Object[]{instName, procInstanceName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS, new Object[]{instName, procInstanceName});
         }
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK,
                 new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.EVENT_TYPE.getName(),
                     TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_BY.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName()},
                 new Object[]{instName, EventType.ACTIVATE.toString(), personName, LPDate.getCurrentTimeStamp()});
-        return insertRecordInTable.getApiMessage();
+        return new InternalMessage(insertRecordInTable.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), null);  
     }
 
     /**
@@ -130,7 +131,7 @@ public class DataIncubatorNoteBook {
      * @param personName
      * @return
      */
-    public static Object[] deactivation(String instName, String personName) {
+    public static InternalMessage deactivation(String instName, String personName) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         Object[][] instrInfo = QueryUtilitiesEnums.getTableData(TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR,
@@ -139,13 +140,13 @@ public class DataIncubatorNoteBook {
                 new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()}, new Object[]{instName},
                 new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString())) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS, new Object[]{instName, procInstanceName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS, new Object[]{instName, procInstanceName});
         }
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK,
                 new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.EVENT_TYPE.getName(),
                     TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_BY.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName()},
                 new Object[]{instName, EventType.DEACTIVATE.toString(), personName, LPDate.getCurrentTimeStamp()});
-        return insertRecordInTable.getApiMessage();
+        return new InternalMessage(insertRecordInTable.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), null);  
     }
 
     /**
@@ -155,7 +156,7 @@ public class DataIncubatorNoteBook {
      * @param temperature
      * @return
      */
-    public static Object[] newTemperatureReading(String instName, String personName, BigDecimal temperature) {
+    public static InternalMessage newTemperatureReading(String instName, String personName, BigDecimal temperature) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] dbMaxFldExists = Rdbms.dbTableExists(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), TblsEnvMonitConfig.InstrIncubator.MAX.getName());
         String[] fieldsToRetrieve = new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName(), TblsEnvMonitConfig.InstrIncubator.ACTIVE.getName()};
@@ -172,10 +173,10 @@ public class DataIncubatorNoteBook {
                 new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()}, new Object[]{instName},
                 new String[]{TblsEnvMonitConfig.InstrIncubator.NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString())) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS, new Object[]{instName, procInstanceName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.NOT_EXISTS, new Object[]{instName, procInstanceName});
         }
         if (Boolean.FALSE.equals(Boolean.valueOf(instrInfo[0][1].toString()))) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.CURRENTLY_DEACTIVE, new Object[]{instName, procInstanceName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorTrapping.CURRENTLY_DEACTIVE, new Object[]{instName, procInstanceName});
         }
         String[] insFldsName = new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.EVENT_TYPE.getName(),
             TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_BY.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName(),
@@ -203,7 +204,7 @@ public class DataIncubatorNoteBook {
             }
             Object[] resultCheck = dtSpec.resultCheck(temperature, minVal, maxVal, minIsStrict, maxIsStrict, null, null);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultCheck[0].toString())) {
-                return resultCheck;
+                return new InternalMessage(LPPlatform.LAB_FALSE,(EnumIntMessages) resultCheck[resultCheck.length-1],new Object[]{temperature});
             }
             EnumIntMessages checkMsgCode = (EnumIntMessages) resultCheck[resultCheck.length - 1];
             specEval = checkMsgCode.getErrorCode();
@@ -213,12 +214,12 @@ public class DataIncubatorNoteBook {
         }
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK, insFldsName, insFldsValue);
         if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess())) {
-            return insertRecordInTable.getApiMessage();
+            return new InternalMessage(insertRecordInTable.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), null);  
         }
 
         incubatorLocking(instName, new Object[]{specEval, specEvalDetail}, fieldsToRetrieve, instrInfo[0]);
 
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, EnvMonIncubatorAPIactionsEndpoints.EM_INCUBATOR_ADD_TEMP_READING, new Object[]{instName, procInstanceName});
+        return new InternalMessage(LPPlatform.LAB_TRUE, EnvMonIncubatorAPIactionsEndpoints.EM_INCUBATOR_ADD_TEMP_READING, new Object[]{instName, procInstanceName});
     }
 
     /**

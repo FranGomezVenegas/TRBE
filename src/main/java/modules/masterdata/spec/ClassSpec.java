@@ -24,6 +24,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.TrazitUtiilitiesEnums;
 import modules.masterdata.spec.MasterDataSpecEnums.MasterDataSpecActionsEndpoints;
+import trazit.enums.ActionsClass;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
@@ -33,7 +34,7 @@ import trazit.session.ProcedureRequestSession;
  *
  * @author User
  */
-public class ClassSpec {
+public class ClassSpec implements ActionsClass{
 
     /**
      * @return the messageDynamicData

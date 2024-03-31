@@ -20,18 +20,21 @@ import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
+import trazit.enums.ActionsClass;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.InternalMessage;
 
 /**
  *
  * @author User
  */
-public class ClassEnvMonProdLot {
+public class ClassEnvMonProdLot implements ActionsClass{
     private Object[] messageDynamicData=new Object[]{};
     private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
     private Boolean endpointExists=true;
     private Object[] diagnostic=new Object[0];
+    private InternalMessage diagnosticObj;
     private Boolean functionFound=false;
 
     public ClassEnvMonProdLot(HttpServletRequest request, EnvMonProdLotAPIactionsEndpoints endPoint){
@@ -40,6 +43,7 @@ public class ClassEnvMonProdLot {
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
 
         
+        InternalMessage actionDiagnosesObj = null;
         Object[] actionDiagnoses = null;
         this.functionFound=true;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments()); 
@@ -57,15 +61,13 @@ public class ClassEnvMonProdLot {
                     String[] fieldNameArr=new String[0];
                     if (fieldName!=null && fieldName.length()>0) fieldNameArr=fieldName.split("\\|");
                     Object[] fieldValueArr=new Object[0];
-                    if (fieldValue!=null && fieldValue.length()>0) {
-                        fieldValueArr = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"),
-                        TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT, fieldNameArr);
-                    }
-                    if (fieldValueArr!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValueArr[0].toString()))
+                    if (fieldValue!=null && fieldValue.length()>0) fieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                                                                    
+                    if (fieldValueArr!=null && fieldValueArr.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValueArr[0].toString())){
                         actionDiagnoses=fieldValueArr;
-                    else
-                        actionDiagnoses=DataProgramProductionLot.newProgramProductionLot(lotName, fieldNameArr, fieldValueArr);
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
+                        break;
+                    }
+                    actionDiagnosesObj=DataProgramProductionLot.newProgramProductionLot(lotName, fieldNameArr, fieldValueArr);
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnosesObj.getDiagnostic())){
                         messageDynamicData=new Object[]{lotName};
                         rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableName(), lotName);
                     }else{
@@ -76,13 +78,13 @@ public class ClassEnvMonProdLot {
                     lotName=argValues[0].toString();
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableName(), lotName);
                     messageDynamicData=new Object[]{lotName};
-                    actionDiagnoses=DataProgramProductionLot.activateProgramProductionLot(lotName);
+                    actionDiagnosesObj=DataProgramProductionLot.activateProgramProductionLot(lotName);
                     break;
                 case EM_DEACTIVATE_PRODUCTION_LOT:
                     lotName=argValues[0].toString();
                     rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsEnvMonitData.TablesEnvMonitData.PRODUCTION_LOT.getTableName(), lotName);
                     messageDynamicData=new Object[]{lotName};
-                    actionDiagnoses=DataProgramProductionLot.deactivateProgramProductionLot(lotName);
+                    actionDiagnosesObj=DataProgramProductionLot.deactivateProgramProductionLot(lotName);
                     break;
                 default:      
                     Rdbms.closeRdbms(); 
@@ -93,6 +95,7 @@ public class ClassEnvMonProdLot {
                     Logger.getLogger(ClassEnvMonProdLot.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+        this.diagnosticObj=actionDiagnosesObj;
         this.diagnostic=actionDiagnoses;
         this.relatedObj=rObj;
         rObj.killInstance();
@@ -125,6 +128,10 @@ public class ClassEnvMonProdLot {
     public Object[] getDiagnostic() {
         return diagnostic;
     }
+    public InternalMessage getDiagnosticObj() {
+        return diagnosticObj;
+    }
+    
 
     /**
      * @return the functionFound

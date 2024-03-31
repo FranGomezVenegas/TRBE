@@ -37,6 +37,7 @@ import module.instrumentsmanagement.definition.InstrumentsEnums.InstrumentsError
 import module.instrumentsmanagement.logic.ConfigInstrumentsFamily;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+import trazit.enums.ActionsClass;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.queries.QueryUtilitiesEnums;
@@ -49,7 +50,7 @@ import trazit.session.ResponseMessages;
  *
  * @author User
  */
-public class ClassInstruments {
+public class ClassInstruments implements ActionsClass{
 
     private Object[] messageDynamicData = new Object[]{};
     private RelatedObjects relatedObj = RelatedObjects.getInstanceForActions();
@@ -633,7 +634,7 @@ public class ClassInstruments {
                         fieldValues=LPArray.addValueToArray1D(fieldValues, intervalType+"*"+intervalNumber);
                     }
                 }
-                if (actionDiagnoses!=null){
+                if (actionDiagnoses==null){
                     if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                         actionDiagnoses = (InternalMessage) fieldValues[1];
                     } else {

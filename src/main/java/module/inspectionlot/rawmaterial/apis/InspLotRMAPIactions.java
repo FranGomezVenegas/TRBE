@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
+import static lbplanet.utilities.LPHttp.moduleActionsSingleAPI;
 import lbplanet.utilities.LPPlatform;
 import module.inspectionlot.rawmaterial.definition.InspLotRMEnums.InspLotRMAPIactionsEndpoints;
 import modules.masterdata.analysis.ClassAnalysis;
@@ -29,6 +30,8 @@ import modules.masterdata.analysis.MasterDataAnalysisEnums;
 import modules.masterdata.spec.ClassSpec;
 import modules.masterdata.spec.MasterDataSpecEnums;
 import org.json.simple.JSONObject;
+import trazit.enums.ActionsEndpointPair;
+import trazit.globalvariables.GlobalVariables;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 
@@ -47,7 +50,12 @@ public class InspLotRMAPIactions extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response){        
+        ActionsEndpointPair[] actionEndpointArr = GlobalVariables.TrazitModules.INSPECTION_LOTS.getActionsEndpointPair(); //implements ActionsClass
+        moduleActionsSingleAPI(request, response, actionEndpointArr, this.getServletName());
+    }
+    
+    protected void processRequest2(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request = LPHttp.requestPreparation(request);
         response = LPHttp.responsePreparation(response);
 
@@ -206,11 +214,7 @@ public class InspLotRMAPIactions extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
-        try {
-            processRequest(request, response);
-        } catch (ServletException | IOException e) {
-            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null, null);
-        }
+        processRequest(request, response);
     }
 
     /**
@@ -221,11 +225,8 @@ public class InspLotRMAPIactions extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-        try {
             processRequest(request, response);
-        } catch (ServletException | IOException e) {
-            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null, null);
-        }
+
     }
 
     /**

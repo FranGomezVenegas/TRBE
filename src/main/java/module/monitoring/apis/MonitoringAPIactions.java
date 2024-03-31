@@ -23,12 +23,15 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
+import static lbplanet.utilities.LPHttp.moduleActionsSingleAPI;
 import lbplanet.utilities.LPPlatform;
 import module.monitoring.definition.ClassEnvMon;
 import module.monitoring.definition.ClassEnvMonIncubator;
 import module.monitoring.definition.ClassEnvMonProdLot;
 import module.monitoring.definition.ClassEnvMonSample;
 import org.json.simple.JSONObject;
+import trazit.enums.ActionsEndpointPair;
+import trazit.globalvariables.GlobalVariables;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 
@@ -57,8 +60,12 @@ public class EndpointHandlerFactory {
     }
 }
 */    
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response){        
+        ActionsEndpointPair[] actionEndpointArr = GlobalVariables.TrazitModules.MONITORING.getActionsEndpointPair(); //implements ActionsClass
+        moduleActionsSingleAPI(request, response, actionEndpointArr, this.getServletName());
+    }
     
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void processRequest2(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         request = LPHttp.requestPreparation(request);
         response = LPHttp.responsePreparation(response);
 
@@ -206,11 +213,7 @@ public class EndpointHandlerFactory {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) {
-        try {
             processRequest(request, response);
-        } catch (ServletException | IOException e) {
-            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null, null);
-        }
     }
 
     /**
@@ -221,11 +224,7 @@ public class EndpointHandlerFactory {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) {
-        try {
             processRequest(request, response);
-        } catch (ServletException | IOException e) {
-            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null, null);
-        }
     }
 
     /**
