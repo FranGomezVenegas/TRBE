@@ -2,8 +2,6 @@ package trazit.procedureinstance.deployment.logic;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
-import databases.TblsData;
-import databases.TblsProcedure;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
@@ -84,8 +82,10 @@ public class ProcDefToInstanceCreateModuleTablesAndViews {
                             curTblJsonObj.put(GlobalAPIsParams.LBL_ERROR, tblDiagn.getErrorMsg());
                             //curTblJsonObj.put(GlobalAPIsParams.LBL_ERROR, tableCreationScriptTable);
                         } else {
-                            tblCreateScript = EnumIntViews.getViewScriptCreation(TblsProcedure.ViewsProcedure.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, false, fieldsToExclude);
-                            tblCreateScriptTesting = EnumIntViews.getViewScriptCreation(TblsData.ViewsData.valueOf(curTableName.toUpperCase()), procInstanceName, false, true, true, fieldsToExclude);
+                            tblCreateScript = EnumIntViews.getViewScriptCreation(tblDiagn.getViewObj(), procInstanceName, false, true, false, fieldsToExclude);
+                            if (Boolean.TRUE.equals(tblDiagn.getMirrorForTesting())) {
+                                tblCreateScriptTesting = EnumIntViews.getViewScriptCreation(tblDiagn.getViewObj(), procInstanceName, false, true, true, fieldsToExclude);
+                            }
                         }
                     }
                     if (tblCreateScript!=null&&tblCreateScript.length() > 0) {
