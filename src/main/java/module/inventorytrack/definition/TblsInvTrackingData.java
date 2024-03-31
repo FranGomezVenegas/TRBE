@@ -93,7 +93,7 @@ public class TblsInvTrackingData {
                 "(expiry_date_in_use is null and expiry_date < now()) " +
                   "or (expiry_date_in_use is not null and expiry_date_in_use < now()) " +
                   "or (expiry_date_in_use<expiry_date and expiry_date_in_use < now()) " +
-                ")", false),
+                ") GROUP BY s.category, s.name", false),
         REFERENCES_AVAILABLE_FOR_USE_UNDER_MIN("",
             null, "references_available_for_use_under_min", SCHEMA_NAME, true, TblsInvTrackingData.ViewReferencesAvailableForUseUnderMin.values(), "Lots which expiry_date or expiry_date_in_use is over", 
         new EnumIntTablesJoin[]{
@@ -105,7 +105,7 @@ public class TblsInvTrackingData {
                 "(expiry_date_in_use is null and expiry_date < now()) " +
                   "or (expiry_date_in_use is not null and expiry_date_in_use < now()) " +
                   "or (expiry_date_in_use<expiry_date and expiry_date_in_use < now()) " +
-                ")", false),
+                ") ", false),
         AVAILABLE_LOTS_PER_REFERENCE("",
             null, "available_lots_per_reference", SCHEMA_NAME, true, TblsInvTrackingData.ViewAvailableLotsPerReference.values(), "Lots which expiry_date or expiry_date_in_use is over", 
         new EnumIntTablesJoin[]{
@@ -342,13 +342,13 @@ public class TblsInvTrackingData {
     }        
 
     public enum ViewReferencesStockUnderMin implements EnumIntViewFields{
-        NAME("l", "name", "l."+"name", TblsInvTrackingConfig.Reference.NAME, null, null, null),
-        MIN_STOCK_TYPE("l", TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE.getName(), "l."+TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE.getName(), TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE, null, null, null),
-        CATEGORY("l", TblsInvTrackingConfig.Reference.CATEGORY.getName(), "l."+TblsInvTrackingConfig.Reference.CATEGORY.getName(), TblsInvTrackingConfig.Reference.CATEGORY, null, null, null),
-        MIN_STOCK("l", TblsInvTrackingConfig.Reference.MIN_STOCK.getName(), "l."+TblsInvTrackingConfig.Reference.MIN_STOCK.getName(), TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE, null, null, null),
-        CURRENT_STOCK("ref", "current_stock", "case when ref.min_stock_type='ITEMS' then count(l.*) " +
-            "when ref.min_stock_type='VOLUME' then sum(l.volume) " +
-            "else null end " +
+        NAME("s", "name", "s."+"name", TblsInvTrackingConfig.Reference.NAME, null, null, null),
+        MIN_STOCK_TYPE("s", TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE.getName(), "s."+TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE.getName(), TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE, null, null, null),
+        CATEGORY("s", TblsInvTrackingConfig.Reference.CATEGORY.getName(), "s."+TblsInvTrackingConfig.Reference.CATEGORY.getName(), TblsInvTrackingConfig.Reference.CATEGORY, null, null, null),
+        MIN_STOCK("s", TblsInvTrackingConfig.Reference.MIN_STOCK.getName(), "s."+TblsInvTrackingConfig.Reference.MIN_STOCK.getName(), TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE, null, null, null),
+        CURRENT_STOCK("s", "current_stock", "case when s.min_stock_type='ITEMS' then count(l.*)::real " +
+            "when s.min_stock_type='VOLUME' then sum(l.quantity) " +
+            "else null::real end " +
             "as current_stock ", Lot.LOCKED_REASON, null, null, null)
         ;
         private ViewReferencesStockUnderMin(String tblAliasInView, String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules){
@@ -366,7 +366,7 @@ public class TblsInvTrackingData {
         private final String fldMask;
         private final String fldComment;
         private final FldBusinessRules[] fldBusinessRules;
-private final String tblAliasInView;        
+        private final String tblAliasInView;        
         @Override public String getName() {return fldName;}
         @Override public String getFldViewAliasName() {return this.fldAliasInView;}
         @Override public String getFieldMask() {return this.fldMask;}
@@ -377,11 +377,11 @@ private final String tblAliasInView;
     }        
 
     public enum ViewReferencesAvailableForUseUnderMin implements EnumIntViewFields{
-        CATEGORY("l", TblsInvTrackingConfig.Reference.CATEGORY.getName(), "l."+TblsInvTrackingConfig.Reference.CATEGORY.getName(), TblsInvTrackingConfig.Reference.CATEGORY, null, null, null),
-        NAME("l", TblsInvTrackingConfig.Reference.NAME.getName(), "l."+TblsInvTrackingConfig.Reference.NAME.getName(), TblsInvTrackingConfig.Reference.NAME, null, null, null),
-        MIN_STOCK_AVAILABLE_FOR_USE("l", TblsInvTrackingConfig.Reference.MIN_AVAILABLES_FOR_USE.getName(), "l."+TblsInvTrackingConfig.Reference.MIN_AVAILABLES_FOR_USE.getName(), TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE, null, null, null),
-        MIN_AVAILABLES_FOR_USE_TYPE("l", TblsInvTrackingConfig.Reference.MIN_AVAILABLES_FOR_USE_TYPE.getName(), "l.min_availables_for_use_type", TblsInvTrackingConfig.Reference.MIN_AVAILABLES_FOR_USE_TYPE, null, null, null),
-        ALLOW_OPENING_SOME_AT_A_TIME("l", TblsInvTrackingConfig.Reference.ALLOW_OPENING_SOME_AT_A_TIME.getName(), "l."+TblsInvTrackingConfig.Reference.ALLOW_OPENING_SOME_AT_A_TIME.getName(), TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE, null, null, null),
+        CATEGORY("s", TblsInvTrackingConfig.Reference.CATEGORY.getName(), "s."+TblsInvTrackingConfig.Reference.CATEGORY.getName(), TblsInvTrackingConfig.Reference.CATEGORY, null, null, null),
+        NAME("s", TblsInvTrackingConfig.Reference.NAME.getName(), "s."+TblsInvTrackingConfig.Reference.NAME.getName(), TblsInvTrackingConfig.Reference.NAME, null, null, null),
+        MIN_STOCK_AVAILABLE_FOR_USE("s", TblsInvTrackingConfig.Reference.MIN_AVAILABLES_FOR_USE.getName(), "s."+TblsInvTrackingConfig.Reference.MIN_AVAILABLES_FOR_USE.getName(), TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE, null, null, null),
+        MIN_AVAILABLES_FOR_USE_TYPE("s", TblsInvTrackingConfig.Reference.MIN_AVAILABLES_FOR_USE_TYPE.getName(), "s.min_availables_for_use_type", TblsInvTrackingConfig.Reference.MIN_AVAILABLES_FOR_USE_TYPE, null, null, null),
+        ALLOW_OPENING_SOME_AT_A_TIME("s", TblsInvTrackingConfig.Reference.ALLOW_OPENING_SOME_AT_A_TIME.getName(), "s."+TblsInvTrackingConfig.Reference.ALLOW_OPENING_SOME_AT_A_TIME.getName(), TblsInvTrackingConfig.Reference.MIN_STOCK_TYPE, null, null, null),
         CURRENT_STOCK_AVAILABLE_FOR_USE("ref", "current_stock_available_for_use", "case when ref.min_availables_for_use_type='ITEMS' then count(l.*) " +
             "when ref.min_availables_for_use_type='VOLUME' then sum(l.volume) " +
             "else null end " +
