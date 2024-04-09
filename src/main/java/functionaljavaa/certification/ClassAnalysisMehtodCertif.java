@@ -24,7 +24,6 @@ import databases.TblsData;
 import trazit.session.ResponseMessages;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPNulls;
@@ -35,7 +34,7 @@ import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
-
+import trazit.enums.EnumIntEndpoints;
 /**
  *
  * @author User
@@ -79,8 +78,8 @@ public class ClassAnalysisMehtodCertif implements ActionsClass{
     private Boolean endpointExists = true;
     private Object[] diagnostic = new Object[0];
     private Boolean functionFound = false;
-
-    public ClassAnalysisMehtodCertif(HttpServletRequest request, HttpServletResponse response, CertifyAnalysisMethodAPI.CertifyAnalysisMethodAPIactionsEndpoints endPoint) {
+    private EnumIntEndpoints enumConstantByName;
+    public ClassAnalysisMehtodCertif(HttpServletRequest request, CertifyAnalysisMethodAPI.CertifyAnalysisMethodAPIactionsEndpoints endPoint) {
         RelatedObjects rObj = RelatedObjects.getInstanceForActions();
         try {
             ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, null);
@@ -92,6 +91,7 @@ public class ClassAnalysisMehtodCertif implements ActionsClass{
             this.diagnosticObj = null;
             Object[] dynamicDataObjects = new Object[]{};
             this.functionFound = true;
+            this.enumConstantByName=endPoint;
             Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
                 this.diagnostic = (Object[]) argValues[1];
@@ -156,7 +156,7 @@ public class ClassAnalysisMehtodCertif implements ActionsClass{
                     diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
                     break;
                 default:
-                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getClass().getSimpleName()}, language, this.getClass().getSimpleName());
+                    LPFrontEnd.servletReturnResponseError(request, null,LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getClass().getSimpleName()}, language, this.getClass().getSimpleName());
                     return;
             }
             if (actionDiagnoses != null && LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())) {
@@ -185,5 +185,6 @@ public class ClassAnalysisMehtodCertif implements ActionsClass{
 
         }
     }
-
+    @Override    public StringBuilder getRowArgsRows() {        return null;    }
+    @Override    public EnumIntEndpoints getEndpointObj(){        return enumConstantByName;    }
 }

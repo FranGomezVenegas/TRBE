@@ -121,8 +121,7 @@ public class InvestigationAPIfrontend extends HttpServlet {
                     }
                     instanceForQueries.killIt();                
                     LPFrontEnd.servletReturnSuccess(request, response, investigationJArr);
-                    return;                  
-                  
+                    return;                                    
                 case INVESTIGATION_RESULTS_PENDING_DECISION:
                     String statusClosed=DataProgramCorrectiveAction.ProgramCorrectiveActionStatuses.STATUS_CLOSED.getStatusCode();
                     if (Boolean.FALSE.equals(isProgramCorrectiveActionEnable(procInstanceName))){
@@ -137,8 +136,6 @@ public class InvestigationAPIfrontend extends HttpServlet {
                             new String[]{statusClosed}, 
                             new String[]{TblsProcedure.ProgramCorrectiveAction.PROGRAM_NAME.getName()});
                       if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationResultsPendingDecision[0][0].toString()))LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
-
-
                       for (Object[] curRow: investigationResultsPendingDecision){
                         JSONObject jObj=LPJson.convertArrayRowToJSONObject(getAllFieldNames(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableFields()), curRow);
                         jArray.add(jObj);

@@ -6,29 +6,32 @@
 package module.monitoring.definition;
 
 import com.labplanet.servicios.moduleenvmonit.EnvMonIncubatorAPIactions.EnvMonIncubatorAPIactionsEndpoints;
+import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPArray;
-import org.json.simple.JSONArray;
-
+import trazit.enums.ActionsClass;
+import trazit.session.InternalMessage;
+import trazit.enums.EnumIntEndpoints;
 /**
  *
  * @author User
  */
-public class ClassEnvMonIncubatorController {
+public class ClassEnvMonIncubatorController implements ActionsClass{
     private StringBuilder rowArgsRows=new StringBuilder(0);
-    private Object[] functionDiagn=new Object[0];
-    private JSONArray functionRelatedObjects=new JSONArray();
+    private InternalMessage diagnosticObj=null;
+    private RelatedObjects functionRelatedObjects=null;
     private Boolean functionFound=false;
-    
-    public ClassEnvMonIncubatorController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
+    private EnumIntEndpoints enumConstantByName;
+    public ClassEnvMonIncubatorController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs, Integer auditReasonPosic) {
         
         Object[] argsForLogFiles=new Object[0];
         EnvMonIncubatorAPIactionsEndpoints endPoint = null;
         try{
+            this.enumConstantByName=endPoint;
             endPoint = EnvMonIncubatorAPIactionsEndpoints.valueOf(actionName.toUpperCase());
                     HashMap<HttpServletRequest, Object[]> hmQuery = endPoint.testingSetAttributesAndBuildArgsArray(request, testingContent, iLines);
                     HttpServletRequest query= hmQuery.keySet().iterator().next();   
@@ -37,42 +40,23 @@ public class ClassEnvMonIncubatorController {
                 argsForLogFiles=LPArray.addValueToArray1D(argsForLogFiles, "");
             }
             this.functionFound=true;
+            
             this.rowArgsRows=this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));
             ClassEnvMonIncubator clss=new ClassEnvMonIncubator(request, endPoint);
-            this.functionDiagn=clss.getDiagnostic();
-            this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject();              
+            this.diagnosticObj=clss.getDiagnosticObj();
+            this.functionRelatedObjects=clss.getRelatedObj();
         } catch (Exception ex) {
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    /**
-     * @return the rowArgsRows
-     */
-    public StringBuilder getRowArgsRows() {
-        return rowArgsRows;
-    }
-
-    /**
-     * @return the functionDiagn
-     */
-    public Object getFunctionDiagn() {
-        return functionDiagn;
-    }
-
-    /**
-     * @return the functionRelatedObjects
-     */
-    public JSONArray getFunctionRelatedObjects() {
-        return functionRelatedObjects;
-    }
-
-    /**
-     * @return the functionFound
-     */
-    public Boolean getFunctionFound() {
-        return functionFound;
-    }
+    public StringBuilder getRowArgsRows() {        return rowArgsRows;    }
+    @Override    public InternalMessage getDiagnosticObj() {        return diagnosticObj;    }
+    @Override    public RelatedObjects getRelatedObj() {        return functionRelatedObjects;    }
+    @Override    public Object[] getDiagnostic() {        return null;    }
+    @Override    public Object[] getMessageDynamicData() {        return diagnosticObj.getMessageCodeVariables();    }
+    public Boolean getFunctionFound() {        return functionFound;    }
+    @Override    public EnumIntEndpoints getEndpointObj(){        return enumConstantByName;    }
 }
 
                 

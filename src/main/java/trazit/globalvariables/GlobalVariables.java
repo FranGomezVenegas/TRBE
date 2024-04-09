@@ -12,7 +12,10 @@ import com.labplanet.servicios.moduleenvmonit.EnvMonIncubatorAPIactions;
 import com.labplanet.servicios.moduleenvmonit.EnvMonProdLotAPI;
 import com.labplanet.servicios.moduleenvmonit.EnvMonSampleAPI;
 import com.labplanet.servicios.modulesample.ClassSample;
+import com.labplanet.servicios.modulesample.ClassSampleController;
+import com.labplanet.servicios.modulesample.ClassSampleQueriesController;
 import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIactionsEndpoints;
+import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIqueriesEndpoints;
 import databases.TblsCnfg.TablesConfig;
 import databases.TblsCnfgAudit;
 import databases.TblsData;
@@ -21,23 +24,31 @@ import databases.TblsProcedure;
 import databases.TblsProcedureAudit.TablesProcedureAudit;
 import functionaljavaa.certification.ClassAnalysisMehtodCertif;
 import functionaljavaa.investigation.ClassInvestigation;
+import functionaljavaa.investigation.ClassInvestigationController;
 import module.clinicalstudies.apis.GenomaProjectAPI.GenomaProjectAPIactionsEndPoints;
 import module.clinicalstudies.apis.GenomaStudyAPI.GenomaStudyAPIactionsEndPoints;
 import module.clinicalstudies.definition.TblsGenomaConfig;
 import module.clinicalstudies.definition.TblsGenomaData;
 import module.clinicalstudies.definition.TblsGenomaDataAudit;
 import module.clinicalstudies.logic.ClassProject;
+import module.clinicalstudies.logic.ClassProjectController;
 import module.clinicalstudies.logic.ClassStudy;
+import module.clinicalstudies.logic.ClassStudyController;
 import module.clinicalstudies.logic.ClinicalStudiesFrontendMasterData;
+import module.inspectionlot.rawmaterial.definition.ClassInspLotRMController;
+import module.inspectionlot.rawmaterial.definition.ClassInspLotRMQueriesController;
 import module.inspectionlot.rawmaterial.definition.ClassInspLotRMactions;
 import module.inspectionlot.rawmaterial.definition.InspLotRMEnums;
+import module.inspectionlot.rawmaterial.definition.InspLotRMEnums.InspLotRMAPIactionsEndpoints;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMConfig;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMData;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMDataAudit;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMProcedure;
 import module.inspectionlot.rawmaterial.logic.InspLotRawMaterialMasterData;
 import module.instrumentsmanagement.definition.ClassInstruments;
+import module.instrumentsmanagement.definition.ClassInstrumentsController;
 import module.instrumentsmanagement.definition.InstrumentsEnums;
+import module.instrumentsmanagement.definition.InstrumentsEnums.InstrumentsAPIactionsEndpoints;
 import module.instrumentsmanagement.definition.TblsInstrumentsConfig.TablesInstrumentsConfig;
 import module.instrumentsmanagement.definition.TblsInstrumentsConfigAudit;
 import module.instrumentsmanagement.definition.TblsInstrumentsData;
@@ -45,6 +56,7 @@ import module.instrumentsmanagement.definition.TblsInstrumentsDataAudit;
 import module.instrumentsmanagement.definition.TblsInstrumentsProcedure;
 import module.instrumentsmanagement.logic.InstrumentsFrontendMasterData;
 import module.inventorytrack.definition.ClassInvTracking;
+import module.inventorytrack.definition.ClassInvTrackingController;
 import module.inventorytrack.definition.InvTrackingEnums;
 import module.inventorytrack.definition.TblsInvTrackingConfig;
 import module.inventorytrack.definition.TblsInvTrackingData;
@@ -52,9 +64,15 @@ import module.inventorytrack.definition.TblsInvTrackingDataAudit;
 import module.inventorytrack.definition.TblsInvTrackingProcedure;
 import module.inventorytrack.logic.InvTrackingFrontendMasterData;
 import module.monitoring.definition.ClassEnvMon;
+import module.monitoring.definition.ClassEnvMonController;
 import module.monitoring.definition.ClassEnvMonIncubator;
+import module.monitoring.definition.ClassEnvMonIncubatorController;
 import module.monitoring.definition.ClassEnvMonProdLot;
+import module.monitoring.definition.ClassEnvMonProdLotController;
 import module.monitoring.definition.ClassEnvMonSample;
+import module.monitoring.definition.ClassEnvMonSampleController;
+import module.monitoring.definition.ClassEnvMonSampleFrontend;
+import module.monitoring.definition.ClassEnvMonSampleFrontendController;
 import module.monitoring.definition.TblsEnvMonitConfig;
 import module.monitoring.definition.TblsEnvMonitConfigAudit;
 import module.monitoring.definition.TblsEnvMonitData;
@@ -120,7 +138,11 @@ public class GlobalVariables {
             null, null, InvTrackingFrontendMasterData.class,
             new ActionsEndpointPair[]{
                 new ActionsEndpointPair(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.class.getName(), ClassInvTracking.class.getName()),
-                new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigation.class.getName())}                      
+                new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigation.class.getName())},
+            new ActionsEndpointPair[]{
+                new ActionsEndpointPair(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.class.getName(), ClassInvTrackingController.class.getName()),
+                new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigationController.class.getName())},
+            "Action Name;Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; Arg11; Arg12; Arg13; Arg14; Arg15; esign Provided; confirmUser provided; confirmUser PWD provided"
         ), 
         INSTRUMENTS(TblsInstrumentsConfigAudit.TablesInstrumentsConfigAudit.values(), TablesInstrumentsConfig.values(),
             TblsInstrumentsDataAudit.TablesInstrumentsDataAudit.values(), TblsInstrumentsData.TablesInstrumentsData.values(),
@@ -130,7 +152,11 @@ public class GlobalVariables {
               null, null, InstrumentsFrontendMasterData.class,
             new ActionsEndpointPair[]{
                 new ActionsEndpointPair(InstrumentsEnums.InstrumentsAPIactionsEndpoints.class.getName(), ClassInstruments.class.getName()),
-                new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigation.class.getName())}
+                new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigation.class.getName())},
+            new ActionsEndpointPair[]{
+                new ActionsEndpointPair(InstrumentsAPIactionsEndpoints.class.getName(), ClassInstrumentsController.class.getName()),
+                new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigationController.class.getName())},
+            "Action Name;Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided"
         ), 
         MONITORING(TblsEnvMonitConfigAudit.TablesEnvMonitConfigAudit.values(), TblsEnvMonitConfig.TablesEnvMonitConfig.values(),
                 TblsEnvMonitDataAudit.TablesEnvMonitDataAudit.values(), TblsEnvMonitData.TablesEnvMonitData.values(),
@@ -144,7 +170,16 @@ public class GlobalVariables {
                     new ActionsEndpointPair(EnvMonProdLotAPI.EnvMonProdLotAPIactionsEndpoints.class.getName(), ClassEnvMonProdLot.class.getName()),
                     new ActionsEndpointPair(EnvMonIncubatorAPIactions.EnvMonIncubatorAPIactionsEndpoints.class.getName(), ClassEnvMonIncubator.class.getName()),
                     new ActionsEndpointPair(SampleAPIactionsEndpoints.class.getName(), ClassSample.class.getName()),
-                    new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigation.class.getName())}                      
+                    new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigation.class.getName())},
+                new ActionsEndpointPair[]{
+                    new ActionsEndpointPair(EnvMonAPIactionsEndpoints.class.getName(), ClassEnvMonController.class.getName()),
+                    new ActionsEndpointPair(EnvMonSampleAPI.EnvMonSampleAPIactionsEndpoints.class.getName(), ClassEnvMonSampleController.class.getName()),
+                    new ActionsEndpointPair(ClassEnvMonSampleFrontend.EnvMonSampleAPIqueriesEndpoints.class.getName(), ClassEnvMonSampleFrontendController.class.getName()),
+                    new ActionsEndpointPair(EnvMonProdLotAPI.EnvMonProdLotAPIactionsEndpoints.class.getName(), ClassEnvMonProdLotController.class.getName()),
+                    new ActionsEndpointPair(EnvMonIncubatorAPIactions.EnvMonIncubatorAPIactionsEndpoints.class.getName(), ClassEnvMonIncubatorController.class.getName()),
+                    new ActionsEndpointPair(SampleAPIactionsEndpoints.class.getName(), ClassSampleController.class.getName()),
+                    new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigationController.class.getName())},
+                "Action Name;Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided"
         ), 
         CLINICAL_STUDIES(null, TblsGenomaConfig.TablesGenomaConfig.values(), 
                 TblsGenomaDataAudit.TablesGenomaDataAudit.values(), TblsGenomaData.TablesGenomaData.values(),
@@ -153,9 +188,13 @@ public class GlobalVariables {
                 null, null, null, null, ClinicalStudiesFrontendMasterData.class,
                 new ActionsEndpointPair[]{
                     new ActionsEndpointPair(GenomaProjectAPIactionsEndPoints.class.getName(), ClassProject.class.getName()),
-                    new ActionsEndpointPair(GenomaStudyAPIactionsEndPoints.class.getName(), ClassStudy.class.getName())}        
+                    new ActionsEndpointPair(GenomaStudyAPIactionsEndPoints.class.getName(), ClassStudy.class.getName())},
+            new ActionsEndpointPair[]{
+                new ActionsEndpointPair(GenomaProjectAPIactionsEndPoints.class.getName(), ClassProjectController.class.getName()),
+                new ActionsEndpointPair(GenomaStudyAPIactionsEndPoints.class.getName(), ClassStudyController.class.getName())},
+            "Action Name;Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided"
         ), 
-        PLATFORM_ADMIN(null, null, null, null, null, null, null, null, null, null, null, null, null, null), 
+        PLATFORM_ADMIN(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null), 
         SAMPLES_MANAGEMENT(TblsCnfgAudit.TablesCfgAudit.values(), TablesConfig.values(),
             TblsDataAudit.TablesDataAudit.values(), TblsData.TablesData.values(), 
             TablesProcedureAudit.values(), TblsProcedure.TablesProcedure.values(),
@@ -164,7 +203,13 @@ public class GlobalVariables {
             null, TblsProcedure.ViewsProcedure.values(), null,
             new ActionsEndpointPair[]{
                 new ActionsEndpointPair(SampleAPIactionsEndpoints.class.getName(), ClassSample.class.getName()),
-                new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigation.class.getName())}                      
+                new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigation.class.getName()),
+                new ActionsEndpointPair(SampleAPIqueriesEndpoints.class.getName(), ClassSampleQueriesController.class.getName())},
+            new ActionsEndpointPair[]{
+                new ActionsEndpointPair(SampleAPIactionsEndpoints.class.getName(), ClassSampleController.class.getName()),
+                new ActionsEndpointPair(SampleAPIqueriesEndpoints.class.getName(), ClassSampleQueriesController.class.getName()),
+                new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigationController.class.getName())},
+            "Action Name;Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided"                
         ), 
         INSPECTION_LOTS(null, TblsInspLotRMConfig.TablesInspLotRMConfig.values(),
                 TblsInspLotRMDataAudit.TablesInspLotRMDataAudit.values(), TblsInspLotRMData.TablesInspLotRMData.values(),
@@ -178,12 +223,20 @@ public class GlobalVariables {
                     new ActionsEndpointPair(CertifyAnalysisMethodAPIactionsEndpoints.class.getName(), ClassAnalysisMehtodCertif.class.getName()),
                     new ActionsEndpointPair(MasterDataSpecActionsEndpoints.class.getName(), ClassSpec.class.getName()),
                     new ActionsEndpointPair(MasterDataAnalysisActionsEndpoints.class.getName(), ClassAnalysis.class.getName()),
-                    new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigation.class.getName())}      
+                    new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigation.class.getName())},
+                new ActionsEndpointPair[]{
+                    new ActionsEndpointPair(InspLotRMAPIactionsEndpoints.class.getName(), ClassInspLotRMController.class.getName()),
+                    new ActionsEndpointPair(EnvMonSampleAPI.EnvMonSampleAPIactionsEndpoints.class.getName(), ClassInspLotRMQueriesController.class.getName()),
+                    new ActionsEndpointPair(SampleAPIactionsEndpoints.class.getName(), ClassSampleController.class.getName()),
+                    new ActionsEndpointPair(SampleAPIqueriesEndpoints.class.getName(), ClassSampleQueriesController.class.getName()),
+                    new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigationController.class.getName())},
+                "Action Name;Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided"
         )
         ;
         TrazitModules(EnumIntTables[] configAudit, EnumIntTables[] config, EnumIntTables[] dataAudit, EnumIntTables[] data, EnumIntTables[] procAudit, EnumIntTables[] proc,
             EnumIntViews[] configAuditVw, EnumIntViews[] configVw, EnumIntViews[] dataAuditVw, EnumIntViews[] dataVw, EnumIntViews[] procAuditVw, EnumIntViews[] procVw,
-            Class<? extends FrontendMasterData> masterDataClass, ActionsEndpointPair[] actionsEndpointPair){
+            Class<? extends FrontendMasterData> masterDataClass, ActionsEndpointPair[] actionsEndpointPair, ActionsEndpointPair[] actionsEndpointsPairForTesting,
+            String tablesHeaders){
                 this.configAuditTbls=configAudit;
                 this.configTbls=config;
                 this.dataAuditTbls=dataAudit;
@@ -198,6 +251,7 @@ public class GlobalVariables {
                 this.procedureVws=procVw;
                 this.masterDataClass=masterDataClass;
                 this.actionsEndpointsPair=actionsEndpointPair;
+                this.actionsEndpointsPairForTesting=actionsEndpointsPairForTesting;
         }
         private final EnumIntTables[] configAuditTbls;
         public EnumIntTables[] getConfigAuditTbls(){return configAuditTbls;}
@@ -228,6 +282,10 @@ public class GlobalVariables {
         public Class<? extends FrontendMasterData> getModuleMasterDataClass(){return masterDataClass;}
         private final ActionsEndpointPair[] actionsEndpointsPair;
         public ActionsEndpointPair[] getActionsEndpointPair(){return actionsEndpointsPair;}
+        private final ActionsEndpointPair[] actionsEndpointsPairForTesting;
+        public ActionsEndpointPair[] getActionsEndpointPairForTesting(){return actionsEndpointsPairForTesting;}
+        private final String tablesHeaders="";
+        public String getTablesHeaders(){            return this.tablesHeaders;        }
     }
     
     public enum ServletsResponse{SUCCESS("/ResponseSuccess", "response"), ERROR("/ResponseError", "errorDetail");

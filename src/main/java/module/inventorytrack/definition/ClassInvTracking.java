@@ -10,7 +10,6 @@ import functionaljavaa.requirement.masterdata.ClassMasterData;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.math.BigDecimal;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
@@ -36,6 +35,7 @@ import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
+import trazit.enums.EnumIntEndpoints;
 
 public class ClassInvTracking implements ActionsClass{
 
@@ -46,8 +46,8 @@ public class ClassInvTracking implements ActionsClass{
     InternalMessage actionDiagnosesObj = null;
     private Boolean functionFound = false;
     private Boolean isSuccess;
-
-    public ClassInvTracking(HttpServletRequest request, HttpServletResponse response, InventoryTrackAPIactionsEndpoints endPoint) {
+    private EnumIntEndpoints enumConstantByName;
+    public ClassInvTracking(HttpServletRequest request, InventoryTrackAPIactionsEndpoints endPoint) {
         this.functionFound = true;
 
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
@@ -103,6 +103,7 @@ public class ClassInvTracking implements ActionsClass{
                 return;
             }
         }
+        this.enumConstantByName=endPoint;
         this.functionFound = true;
         switch (endPoint) {
             case NEW_INVENTORY_LOT:
@@ -471,5 +472,7 @@ public class ClassInvTracking implements ActionsClass{
     public Boolean getFunctionFound() {
         return functionFound;
     }
+    @Override    public StringBuilder getRowArgsRows() {        return null;    }
+    @Override    public EnumIntEndpoints getEndpointObj(){        return enumConstantByName;    }
 
 }

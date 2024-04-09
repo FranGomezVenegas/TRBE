@@ -9,6 +9,7 @@ import com.labplanet.servicios.moduleenvmonit.EnvMonSampleAPI.EnvMonSampleAPIact
 import module.monitoring.definition.TblsEnvMonitConfig;
 import module.monitoring.definition.TblsEnvMonitData;
 import databases.Rdbms;
+import databases.Rdbms.RdbmsErrorTrapping;
 import static databases.Rdbms.dbTableExists;
 import databases.RdbmsObject;
 import databases.SqlStatement;
@@ -29,13 +30,13 @@ import java.util.logging.Logger;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import lbplanet.utilities.TrazitUtiilitiesEnums;
 import module.inventorytrack.logic.DataInventory;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntViewFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.queries.QueryUtilitiesEnums;
-import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 /**
  *
@@ -53,15 +54,15 @@ public class DataProgramSample{
      * @param programLocation
      * @return
      */
-    public Object[] logProgramSample(String programTemplate, Integer programTemplateVersion, String[] fieldName, Object[] fieldValue, String programName, String programLocation) {
+    public InternalMessage logProgramSample(String programTemplate, Integer programTemplateVersion, String[] fieldName, Object[] fieldValue, String programName, String programLocation) {
         return logProgramSample(programTemplate, programTemplateVersion, fieldName, fieldValue, programName, programLocation, null); 
     }
 
-    public Object[] logProgramSample(String programTemplate, Integer programTemplateVersion, String[] fieldName, Object[] fieldValue, String programName, String programLocation, Integer numSamplesToLog) {
+    public InternalMessage logProgramSample(String programTemplate, Integer programTemplateVersion, String[] fieldName, Object[] fieldValue, String programName, String programLocation, Integer numSamplesToLog) {
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
         String procInstanceName=instanceForActions.getProcedureInstance();
         ResponseMessages messages = instanceForActions.getMessages();
-        Object[] newProjSample = new Object[0];
+        InternalMessage newProjSample= null;
         String samplerTemplateCode=null;
         Integer samplerTemplateCodeVersion=null;
         try {
@@ -90,7 +91,7 @@ public class DataProgramSample{
                 new String[]{TblsEnvMonitConfig.Program.SAMPLE_CONFIG_CODE.getName(), TblsEnvMonitConfig.Program.SAMPLE_CONFIG_CODE_VERSION.getName(),
                     TblsEnvMonitConfig.Program.PERSONAL_SAMPLE_CONFIG_CODE.getName(), TblsEnvMonitConfig.Program.PERSONAL_SAMPLE_CONFIG_CODE_VERSION.getName()}, true);            
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programInfo[0][0].toString()))
-               return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, EnvMonitErrorTrapping.LOGSAMPLE_PROGRAM_OR_LOCATION_NOTFOUND, new Object[]{programName, programLocation, procInstanceName});    
+               return new InternalMessage(LPPlatform.LAB_FALSE, EnvMonitErrorTrapping.LOGSAMPLE_PROGRAM_OR_LOCATION_NOTFOUND, new Object[]{programName, programLocation, procInstanceName});    
             String sampleTemplateCode=programInfo[0][0].toString();
             Integer sampleTemplateCodeVersion=(LPNulls.replaceNull(programInfo[0][1].toString()).length()==0)
                 ? 1 : Integer.valueOf(programInfo[0][1].toString());
@@ -104,7 +105,7 @@ public class DataProgramSample{
                 new Object[]{programName, programLocation}, 
                 specFldNames, true);            
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0][0].toString()))
-               return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, EnvMonitErrorTrapping.LOGSAMPLE_PROGRAM_OR_LOCATION_NOTFOUND, new Object[]{programName, programLocation, procInstanceName});    
+               return new InternalMessage(LPPlatform.LAB_FALSE, EnvMonitErrorTrapping.LOGSAMPLE_PROGRAM_OR_LOCATION_NOTFOUND, new Object[]{programName, programLocation, procInstanceName});    
             for (int i=0;i<specFldNames.length;i++){
                 if (diagnosis[0][i]!=null && diagnosis[0][i].toString().length()>0){
                     Integer fieldPosic=LPArray.valuePosicInArray(fieldName, specFldNames[i]);
@@ -118,33 +119,36 @@ public class DataProgramSample{
             if (numSamplesToLog==null)
                 numSamplesToLog=1;
             newProjSample = ds.logSample(sampleTemplateCode, sampleTemplateCodeVersion, fieldName, fieldValue, numSamplesToLog, TblsEnvMonitData.TablesEnvMonitData.SAMPLE); 
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newProjSample[0].toString()))
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newProjSample.getDiagnostic()))
                 return newProjSample; 
             messages.addMainForSuccess(EnvMonSampleAPIactionsEndpoints.LOGSAMPLE, 
-                new Object[]{newProjSample[newProjSample.length-1], programName, programLocation});            
+                new Object[]{newProjSample.getNewObjectId(), programName, programLocation});            
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(DataProgram.class.getName()).log(Level.SEVERE, null, ex);
         }
-        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(newProjSample[0].toString())))
-            logProgramSamplerSample(samplerTemplateCode, samplerTemplateCodeVersion, fieldName, fieldValue, programName, programLocation, Integer.valueOf(newProjSample[newProjSample.length-1].toString()));
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(newProjSample.getDiagnostic())))
+            logProgramSamplerSample(samplerTemplateCode, samplerTemplateCodeVersion, fieldName, fieldValue, programName, 
+                    programLocation, Integer.valueOf(newProjSample.getNewObjectId().toString()));
         return newProjSample;
     }
 
-    public static Object[] logProgramSamplerSample(String samplerSmpTemplate, Integer samplerSmpTemplateVersion, String[] fieldName, Object[] fieldValue, String programName, String programLocation, Integer programSampleId){        
+    public static InternalMessage logProgramSamplerSample(String samplerSmpTemplate, Integer samplerSmpTemplateVersion, String[] fieldName, Object[] fieldValue, String programName, String programLocation, Integer programSampleId){        
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[][] programLocationPersonalInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_LOCATION.getTableName(), 
                 new String[]{TblsEnvMonitConfig.ProgramLocation.PROGRAM_NAME.getName(), TblsEnvMonitConfig.ProgramLocation.LOCATION_NAME.getName()}, 
                 new Object[]{programName, programLocation}, 
                 new String[]{TblsEnvMonitConfig.ProgramLocation.REQUIRES_PERSON_ANA.getName(), TblsEnvMonitConfig.ProgramLocation.PERSON_ANA_DEFINITION.getName()});
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programLocationPersonalInfo[0][0].toString())) return new Object[]{LPPlatform.LAB_TRUE};
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programLocationPersonalInfo[0][0].toString())) 
+            return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{samplerSmpTemplate, samplerSmpTemplateVersion});
         Boolean requiresPersonalAnalysis=Boolean.valueOf(LPNulls.replaceNull(programLocationPersonalInfo[0][0]).toString());
-        if (Boolean.FALSE.equals(requiresPersonalAnalysis)) return new Object[]{LPPlatform.LAB_TRUE};
+        if (Boolean.FALSE.equals(requiresPersonalAnalysis)) 
+            return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, null);
         
         String samplerArea = programLocationPersonalInfo[0][1].toString();
         if ((samplerArea==null) || (samplerArea!=null && samplerArea.length()==0) ) 
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, EnvMonitErrorTrapping.PERSONAL_ANALYSIS_REQUIRED_NOT_DEFINED, null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, EnvMonitErrorTrapping.PERSONAL_ANALYSIS_REQUIRED_NOT_DEFINED, null);
         String[] samplerAreas = samplerArea.split("\\|");
-        Object[] newProjSample= new Object[0];
+        InternalMessage newProjSample= null;
         for (String curArea: samplerAreas){
             
             DataProgramSampleAnalysis dsProgramAna = new DataProgramSampleAnalysis();
@@ -175,7 +179,7 @@ public class DataProgramSample{
      * @param items
      * @return
      */
-    public static Object[] addSampleMicroorganism(Integer sampleId, String microorganismName, Integer items){
+    public static InternalMessage addSampleMicroorganism(Integer sampleId, String microorganismName, Integer items){
         if (items==null)items=1;
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         RdbmsObject insertRecordInTable = null;
@@ -191,9 +195,7 @@ public class DataProgramSample{
                   sampleId, sampleId, null, null, fieldsForAudit, fieldsForAudit);
             }
         }
-        if (insertRecordInTable==null)
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "nothingToAdd", null);
-        return insertRecordInTable.getApiMessage();
+        return new InternalMessage(insertRecordInTable.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables());
     }
     /**
      *
@@ -202,7 +204,7 @@ public class DataProgramSample{
      * @param items
      * @return
      */
-    public static Object[] removeSampleMicroorganism(Integer sampleId, String microorganismName, Integer items){
+    public static InternalMessage removeSampleMicroorganism(Integer sampleId, String microorganismName, Integer items){
         if (items==null)items=1;
         RdbmsObject removeRecordInTable=null;
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
@@ -212,7 +214,7 @@ public class DataProgramSample{
                 new String[]{TblsEnvMonitData.SampleMicroorganism.ID.getName()},
                 new String[]{TblsEnvMonitData.SampleMicroorganism.ID.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleMicroOrgRow[0][0].toString())) 
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE,  EnvMonitErrorTrapping.MICROORGANISM_FOUND, new  Object[]{microorganismName, sampleId});
+            return new InternalMessage(LPPlatform.LAB_FALSE,  EnvMonitErrorTrapping.MICROORGANISM_FOUND, new  Object[]{microorganismName, sampleId});
         for (int i=0;i<items;i++){
             SqlWhere where =new SqlWhere();
             where.addConstraint(TblsEnvMonitData.SampleMicroorganism.SAMPLE_ID, null, new Object[]{sampleId}, null);
@@ -225,9 +227,9 @@ public class DataProgramSample{
                 smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.MICROORGANISM_REMOVED, TblsData.TablesData.SAMPLE.getTableName(), sampleId, sampleId, null, null, fieldsForAudit, fieldsForAudit);
             }
         }
-      return removeRecordInTable.getApiMessage();
+        return new InternalMessage(removeRecordInTable.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, removeRecordInTable.getErrorMessageCode(), removeRecordInTable.getErrorMessageVariables());
     }
-    public  Object[] logProgramSampleScheduled(String programName, LocalDateTime dateStart, LocalDateTime dateEnd) {
+    public  InternalMessage logProgramSampleScheduled(String programName, LocalDateTime dateStart, LocalDateTime dateEnd) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String[] fieldsToRetrieve = new String[]{TblsEnvMonitConfig.ViewProgramScheduledLocations.PROGRAM_NAME.getName(), TblsEnvMonitConfig.ViewProgramScheduledLocations.DATE.getName(),
             TblsEnvMonitConfig.ViewProgramScheduledLocations.PROGRAM_DAY_ID.getName(), TblsEnvMonitConfig.ViewProgramScheduledLocations.PROGRAM_DAY_DATE.getName(),
@@ -274,7 +276,7 @@ public class DataProgramSample{
             sWhere, //new SqlWhere(TblsEnvMonitConfig.ViewsEnvMonConfig.PROG_SCHED_LOCATIONS_VIEW, whereFieldNames, whereFieldValues), 
             new String[]{TblsEnvMonitConfig.ViewProgramScheduledLocations.DATE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programCalendarDatePending[0][0].toString()))
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Nothing pending in procedure "+procInstanceName+" for the filter "+programCalendarDatePending[0][6].toString(), new Object[]{});
+            return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{programCalendarDatePending[0][6].toString()});            
         StringBuilder newSamplesLogged=new StringBuilder();
         Integer newSamplesCounter=0;
         for (Object[] curRecord: programCalendarDatePending){
@@ -284,27 +286,28 @@ public class DataProgramSample{
                 if (fldPosic!=-1)                    
                     fieldValue=LPArray.addValueToArray1D(fieldValue, curRecord[fldPosic]);
             }
-            Object[] diagn=logProgramSample(
+            InternalMessage diagn=logProgramSample(
                     curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitConfig.ViewProgramScheduledLocations.SAMPLE_CONFIG_CODE.getName())].toString(), 
                     (Integer) curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitConfig.ViewProgramScheduledLocations.SAMPLE_CONFIG_CODE_VERSION.getName())], 
                     fieldName, fieldValue, 
                     curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitConfig.ViewProgramScheduledLocations.PROGRAM_NAME.getName())].toString(), 
                     curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitConfig.ViewProgramScheduledLocations.LOCATION_NAME.getName())].toString());
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString())){
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn.getDiagnostic())){
                 newSamplesCounter++;
-                newSamplesLogged.append(" ").append(diagn[diagn.length-1].toString());
+                newSamplesLogged.append(" ").append(diagn.getNewObjectId().toString());
                 Integer idPosic = LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitConfig.ViewProgramScheduledLocations.PROGRAM_DAY_ID.getName());
                 EnumIntTableFields[] updateFieldNames = EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_CALENDAR_DATE, 
                         TblsEnvMonitConfig.ProgramCalendarDate.SAMPLE_ID);
                 sWhere=new SqlWhere();
                 sWhere.addConstraint(TblsEnvMonitConfig.ProgramCalendarDate.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{curRecord[idPosic]}, null);
                 
-                Rdbms.updateTableRecordFieldsByFilter(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_CALENDAR_DATE, updateFieldNames, new Object[]{diagn[diagn.length-1]}, 
+                Rdbms.updateTableRecordFieldsByFilter(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_CALENDAR_DATE, updateFieldNames, new Object[]{diagn.getNewObjectId()}, 
                     sWhere, procInstanceName);
             }            
         }
-        if (newSamplesCounter>0) return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "Logged "+newSamplesCounter.toString()+" new samples. Ids: "+newSamplesLogged, new Object[]{});
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, this.getClass().getName()+" not implemented yet!", new Object[]{});
+        if (newSamplesCounter>0) 
+            return new InternalMessage(LPPlatform.LAB_TRUE, EnvMonSampleAPIactionsEndpoints.LOGSAMPLE, new Object[]{newSamplesLogged.toString()});
+        return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, new Object[]{});
     }
     public static InternalMessage assignCultureMedia(Integer sampleId, String referenceLot, String reference, String category, BigDecimal nwVolume, String nwVolumeUom, String externalProcInstanceName, Boolean useOpenReferenceLot){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();

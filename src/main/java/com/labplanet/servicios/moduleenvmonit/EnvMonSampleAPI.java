@@ -34,6 +34,7 @@ import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
 import trazit.globalvariables.GlobalVariables.ApiUrls;
+import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -293,9 +294,9 @@ public class EnvMonSampleAPI extends HttpServlet {
         Integer resultId=0;
         if (resultIdStr!=null && resultIdStr.length()>0) sampleId=Integer.valueOf(resultIdStr);
 
-        Object[] sampleAuditRevision=sampleAuditRevisionPassByAction(procInstanceName, actionName, sampleId, testId, resultId);     
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditRevision[0].toString())){  
-            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, sampleAuditRevision);
+        InternalMessage sampleAuditRevision=sampleAuditRevisionPassByAction(procInstanceName, actionName, sampleId, testId, resultId);     
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditRevision.getDiagnostic())){  
+            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, sampleAuditRevision.getMessageCodeObj(), sampleAuditRevision.getMessageCodeVariables());
             return;                             
         }  
         try (PrintWriter out = response.getWriter()) {

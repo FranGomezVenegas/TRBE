@@ -101,7 +101,45 @@ public class LPMath {
         }
         return new Object[]{LPPlatform.LAB_TRUE, conclusionMsg, portion};
     }
+    public static InternalMessage extractPortionInternalMessage(String procInstanceName, BigDecimal volume, String volumeUOM, Integer volumeObjectId, BigDecimal portion, String portionUOM, Integer portionObjectId) {
+        volumeUOM = volumeUOM == null ? "" : volumeUOM;
+        Object[] errorDetailVariables = new Object[0];
 
+        if (volume == null) {
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, "");
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, "");
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
+            return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.VOLUME_CANNOTBE_NULL, errorDetailVariables);
+        }
+        UnitsOfMeasurement uom = new UnitsOfMeasurement(portion, portionUOM);
+        if (portionUOM == null ? volumeUOM != null : !portionUOM.equals(volumeUOM)) {
+            uom.convertValue(volumeUOM);
+            portion = uom.getConvertedQuantity();
+        }
+
+        if (portion.compareTo(BigDecimal.ZERO) < 1) {
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, portion.toString());
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, portionObjectId.toString());
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
+            return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.PORTION_NOT_ZERO_OR_NEGATIVE, errorDetailVariables);
+        }
+        volume = volume.add(portion.negate());
+        if (volume.compareTo(BigDecimal.ZERO) < 0) {
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, "aliquot  " + volumeObjectId.toString());
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, volume.toString());
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, "subaliquoting");
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, portion.toString());
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, procInstanceName);
+            return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.VOLUME_NOT_ZERO_OR_NEGATIVE, errorDetailVariables);
+        }
+        String conclusionMsg = "It is possible to extract ";
+        if (volumeUOM.equalsIgnoreCase(portionUOM)) {
+            conclusionMsg = conclusionMsg + portion.toString() + " from " + volume.toString() + " expressed in " + volumeUOM;
+        } else {
+            conclusionMsg = conclusionMsg + portion.toString() + " of " + portionUOM + " from " + volume.toString() + " of " + volumeUOM;
+        }
+        return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, new Object[]{conclusionMsg, portion}, portion);
+    }    
     public static Object[] isNumeric(String strNum) {
         if (strNum == null || strNum.length() == 0) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.VALUE_EMPTY, null);

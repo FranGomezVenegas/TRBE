@@ -6,6 +6,8 @@
 package functionaljavaa.audit;
 
 import databases.Rdbms;
+import databases.Rdbms.RdbmsErrorTrapping;
+import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.SqlWhere;
@@ -29,7 +31,7 @@ import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.queries.QueryUtilitiesEnums;
-import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 /**
  * 
  * @author Fran Gomez
@@ -122,12 +124,12 @@ public class SampleAudit {
      * @param fldValues
  * @return  
  */    
-    public Object[] sampleAuditAdd(EnumIntAuditEvents action, String tableName, Integer tableId, 
+    public InternalMessage sampleAuditAdd(EnumIntAuditEvents action, String tableName, Integer tableId, 
                         Integer sampleId, Integer testId, Integer resultId, String[] fldNames, Object[] fldValues) {
         return sampleAuditAdd(action, tableName, tableId, 
             sampleId, testId, resultId, fldNames, fldValues, null, null);
     }
-    public Object[] sampleAuditAdd(EnumIntAuditEvents action2, String tableName, Integer tableId, 
+    public InternalMessage sampleAuditAdd(EnumIntAuditEvents action2, String tableName, Integer tableId, 
                         Integer sampleId, Integer testId, Integer resultId, String[] fldNames, Object[] fldValues, String alternativeAuditEntry, String alternativeAuditClass) {
 /*        String fileName="dataSampleAuditEvents";
         if (testId!=null)
@@ -139,7 +141,7 @@ public class SampleAudit {
             action=alternativeAuditEntry;
         }*/
         GenericAuditFields gAuditFlds=new GenericAuditFields(action2, TblsDataAudit.TablesDataAudit.SAMPLE, fldNames, fldValues);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetailObj();
         String[] fieldNames=gAuditFlds.getFieldNames();
         Object[] fieldValues=gAuditFlds.getFieldValues();
         
@@ -200,7 +202,7 @@ public class SampleAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.RESULT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, resultId);
         }    
-        return AuditUtilities.applyTheInsert(gAuditFlds, TblsDataAudit.TablesDataAudit.SAMPLE, fieldNames, fieldValues);
+        return AuditUtilities.applyTheInsertInternalMessage(gAuditFlds, TblsDataAudit.TablesDataAudit.SAMPLE, fieldNames, fieldValues);
     }
     /**
      *
@@ -215,7 +217,7 @@ public class SampleAudit {
      * @param auditlog
      * @return 
      */
-    public Object[] sampleAliquotingAuditAdd(EnumIntAuditEvents action, String tableName, Integer tableId, Integer subaliquotId, Integer aliquotId, Integer sampleId, Integer testId, Integer resultId, Object[] auditlog) {
+    public InternalMessage sampleAliquotingAuditAdd(EnumIntAuditEvents action, String tableName, Integer tableId, Integer subaliquotId, Integer aliquotId, Integer sampleId, Integer testId, Integer resultId, Object[] auditlog) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         
@@ -225,7 +227,7 @@ public class SampleAudit {
 
         Object[] fldValues = new Object[]{LPDate.getCurrentTimeStamp(), action, tableName, tableId, Arrays.toString(auditlog), token.getUserRole(), token.getPersonName(), Rdbms.getTransactionId()};
         GenericAuditFields gAuditFlds=new GenericAuditFields(action, TblsDataAudit.TablesDataAudit.SAMPLE, fldNames, fldValues);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetailObj();
         String[] fieldNames=gAuditFlds.getFieldNames();
         Object[] fieldValues=gAuditFlds.getFieldValues();
 
@@ -265,7 +267,7 @@ public class SampleAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsDataAudit.Sample.REASON.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());
         }  
-        return AuditUtilities.applyTheInsert(gAuditFlds, TblsDataAudit.TablesDataAudit.SAMPLE, fieldNames, fieldValues);        
+        return AuditUtilities.applyTheInsertInternalMessage(gAuditFlds, TblsDataAudit.TablesDataAudit.SAMPLE, fieldNames, fieldValues);        
     }
     /**
      *
@@ -274,39 +276,40 @@ public class SampleAudit {
      * @param personName
      * @return
      */
-    public static Object[] sampleAuditSetAuditRecordAsReviewed(String procInstanceName, Integer auditId, String personName){
+    public static InternalMessage sampleAuditSetAuditRecordAsReviewed(String procInstanceName, Integer auditId, String personName){
         String auditAuthorCanBeReviewerMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleAuditBusinessRules.REVISION_MODE.getAreaName(), SampleAuditBusinessRules.REVISION_MODE.getTagName());  
         Object[][] auditInfo=QueryUtilitiesEnums.getTableData(TblsDataAudit.TablesDataAudit.SAMPLE, 
             EnumIntTableFields.getTableFieldsFromString(TblsDataAudit.TablesDataAudit.SAMPLE, new String[]{TblsDataAudit.Sample.PERSON.getName(), TblsDataAudit.Sample.REVIEWED.getName()}),                
             new String[]{TblsDataAudit.Sample.AUDIT_ID.getName()}, new Object[]{auditId}, 
             new String[]{TblsDataAudit.Sample.AUDIT_ID.getName()});
         if (Boolean.FALSE.equals(isTagValueOneOfEnableOnes(auditAuthorCanBeReviewerMode))){
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(auditInfo[0][0].toString())) return LPArray.array2dTo1d(auditInfo);
-            if (personName.equalsIgnoreCase(auditInfo[0][0].toString())) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUTHOR_CANNOT_BE_REVIEWER, new Object[]{});
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditInfo[0][0].toString()))
+                return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{auditId, personName});
+            if (personName.equalsIgnoreCase(auditInfo[0][0].toString())) return new InternalMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUTHOR_CANNOT_BE_REVIEWER, new Object[]{});
         }
         if (Boolean.TRUE.equals(Boolean.valueOf(auditInfo[0][1].toString()))){
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUDIT_RECORD_ALREADY_REVIEWED, new Object[]{auditId});              
+            return new InternalMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUDIT_RECORD_ALREADY_REVIEWED, new Object[]{auditId});              
         }
         String[] updFieldName=new String[]{TblsDataAudit.Sample.REVIEWED.getName(), TblsDataAudit.Sample.REVIEWED_BY.getName(), TblsDataAudit.Sample.REVIEWED_ON.getName()};
         Object[] updFieldValue=new Object[]{true, personName, LPDate.getCurrentTimeStamp()};
 	SqlWhere sqlWhere = new SqlWhere();
 	sqlWhere.addConstraint(TblsDataAudit.Sample.AUDIT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{auditId}, "");
-	return Rdbms.updateRecordFieldsByFilter(TblsDataAudit.TablesDataAudit.SAMPLE,
-		EnumIntTableFields.getTableFieldsFromString(TblsDataAudit.TablesDataAudit.SAMPLE, updFieldName), updFieldValue, sqlWhere, null);
-        
+        RdbmsObject diagnoseObj = Rdbms.updateTableRecordFieldsByFilter(TblsDataAudit.TablesDataAudit.SAMPLE,
+                EnumIntTableFields.getTableFieldsFromString(TblsDataAudit.TablesDataAudit.SAMPLE, updFieldName), updFieldValue, sqlWhere, null);
+        return new InternalMessage(diagnoseObj.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, diagnoseObj.getErrorMessageCode(), diagnoseObj.getErrorMessageVariables());
     }    
     /**
      *
      * @param sampleId
      * @return
      */
-    public static Object[] sampleAuditRevisionPass(Integer sampleId){
+    public static InternalMessage sampleAuditRevisionPass(Integer sampleId){
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String[] auditRevisionModesRequired=new String[]{"ENABLED", "DISABLED", "ENABLE", "DISABLE", "YES", "NO"};
         String auditRevisionMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleAuditBusinessRules.REVISION_MODE.getAreaName(), SampleAuditBusinessRules.REVISION_MODE.getTagName());  
         String auditRevisionChildRequired = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleAuditBusinessRules.CHILD_REVISION_REQUIRED.getAreaName(), SampleAuditBusinessRules.CHILD_REVISION_REQUIRED.getTagName());   
-        if (auditRevisionMode==null || auditRevisionMode.length()==0) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.PARAMETER_MISSING, 
+        if (auditRevisionMode==null || auditRevisionMode.length()==0) return new InternalMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.PARAMETER_MISSING, 
                   new Object[]{SampleAuditBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName(), procInstanceName});
         String[] auditRevisionModeArr= auditRevisionMode.split("\\|");
         Boolean auditRevisionModeRecognized=false;
@@ -314,24 +317,24 @@ public class SampleAudit {
           if (LPArray.valuePosicInArray(auditRevisionModeArr, curModeRequired)>-1) auditRevisionModeRecognized= true; 
         }
         if (Boolean.FALSE.equals(auditRevisionModeRecognized))
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.PARAMETER_MISSING,
+            return new InternalMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.PARAMETER_MISSING,
                   new Object[]{SampleAuditBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName(), procInstanceName});
         if (LPArray.valuePosicInArray(auditRevisionModeArr, "DISABLE")>-1||LPArray.valuePosicInArray(auditRevisionModeArr, "DISABLED")>-1)
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SampleAuditErrorTrapping.DISABLED, 
+            return new InternalMessage(LPPlatform.LAB_TRUE, SampleAuditErrorTrapping.DISABLED, 
                   new Object[]{SampleAuditBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName(), procInstanceName});
         if (LPArray.valuePosicInArray(auditRevisionModeArr, "STAGES")>-1){
             DataSampleStages smpStages = new DataSampleStages();
             if (Boolean.FALSE.equals(smpStages.isSampleStagesEnable()))
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.STAGESDETECTED_BUT_SAMPLESTAGES_NOT_ENABLED, 
+                return new InternalMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.STAGESDETECTED_BUT_SAMPLESTAGES_NOT_ENABLED, 
                     new Object[]{SampleAuditBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName(), procInstanceName});
             Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
                 new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId}, 
                 new String[]{TblsData.Sample.CURRENT_STAGE.getName()});
             String sampleCurrentStage=sampleInfo[0][0].toString();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleCurrentStage)) 
-                return LPArray.array2dTo1d(sampleInfo);
+                return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{sampleId});
             if (LPArray.valuePosicInArray(auditRevisionModeArr, sampleInfo[0][0].toString())==-1) 
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SampleAuditErrorTrapping.CURRENTSAMPLESTAGE_NOTREQUIRES_SAMPLEAUDITREVISION, 
+                return new InternalMessage(LPPlatform.LAB_TRUE, SampleAuditErrorTrapping.CURRENTSAMPLESTAGE_NOTREQUIRES_SAMPLEAUDITREVISION, 
                     new Object[]{sampleCurrentStage, sampleId, SampleAuditBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName(), procInstanceName});
         }
         String[] whereFieldName=new String[]{TblsDataAudit.Sample.SAMPLE_ID.getName()};
@@ -344,13 +347,13 @@ public class SampleAudit {
             whereFieldName, whereFieldValue, new String[]{TblsDataAudit.Sample.AUDIT_ID.getName(), TblsDataAudit.Sample.REVIEWED.getName()});
         for (Object[] curSampleInfo: sampleInfo){
           if (Boolean.FALSE.equals("true".equalsIgnoreCase(curSampleInfo[1].toString()))) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUDIT_RECORDS_PENDING_REVISION, 
+            return new InternalMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUDIT_RECORDS_PENDING_REVISION, 
             new Object[]{sampleId, procInstanceName});
           }
         }      
     //      Object[] sampleAuditReviewedValues=LPArray.getUniquesArray(sampleInfoReviewed1D);
     //      if ( (sampleAuditReviewedValues.length!=1) || ( (sampleAuditReviewedValues.length==1) && !("true".equalsIgnoreCase(sampleAuditReviewedValues[0].toString())) ) )
-        return new Object[]{LPPlatform.LAB_TRUE, "All reviewed"};
+        return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, null);
     }  
     
     /**
@@ -362,26 +365,26 @@ public class SampleAudit {
      * @param resultId
      * @return
      */
-    public static Object[] sampleAuditRevisionPassByAction(String procInstanceName, String actionName, Integer sampleId, Integer testId, Integer resultId){
+    public static InternalMessage sampleAuditRevisionPassByAction(String procInstanceName, String actionName, Integer sampleId, Integer testId, Integer resultId){
         if ( (sampleId==null || sampleId==0) && (testId==null || testId==0) && (resultId==null || resultId==0) )
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SampleAuditErrorTrapping.ACTION_HAS_NO_SAMPLE_TEST_RESULT_LINKED, new Object[]{actionName});
+                return new InternalMessage(LPPlatform.LAB_TRUE, SampleAuditErrorTrapping.ACTION_HAS_NO_SAMPLE_TEST_RESULT_LINKED, new Object[]{actionName});
         String[] auditRevisionModesRequired=new String[]{"ENABLED", "DISABLED", "ENABLE", "DISABLE", "YES", "NO"};
         String auditRevisionMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleAuditBusinessRules.REVISION_MODE.getAreaName(), SampleAuditBusinessRules.REVISION_MODE.getTagName());  
         String auditChildRevisionMode = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleAuditBusinessRules.CHILD_REVISION_REQUIRED.getAreaName(), SampleAuditBusinessRules.CHILD_REVISION_REQUIRED.getTagName());  
         String[] auditRevisionModeArr= auditRevisionMode.split("\\|");
-        if (auditRevisionMode==null || auditRevisionMode.length()==0) return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.PARAMETER_MISSING, 
+        if (auditRevisionMode==null || auditRevisionMode.length()==0) return new InternalMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.PARAMETER_MISSING, 
                   new Object[]{SampleAuditBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName(), procInstanceName});
         if (LPArray.valuePosicInArray(auditRevisionModeArr, "DISABLE")>-1||LPArray.valuePosicInArray(auditRevisionModeArr, "DISABLED")>-1)
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "auditRevisionModeDisabled", null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, LPPlatform.LpPlatformSuccess.USRROLACTIONDISABLED_DISABLED, new Object[]{"auditRevisionModeDisabled"});
         Boolean auditRevisionModeRecognized=false;
         for (String curModeRequired: auditRevisionModesRequired){
           if (LPArray.valuePosicInArray(auditRevisionModeArr, curModeRequired)>-1) auditRevisionModeRecognized= true; 
         }
-        if (Boolean.FALSE.equals(auditRevisionModeRecognized))return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.PARAMETER_MISSING, 
+        if (Boolean.FALSE.equals(auditRevisionModeRecognized))return new InternalMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.PARAMETER_MISSING, 
                   new Object[]{SampleAuditBusinessRules.AUTHOR_CAN_REVIEW_AUDIT_TOO.getTagName(), procInstanceName});
         if ((LPArray.valuePosicInArray(auditRevisionModeArr, "ACTIONS")>-1) && (LPArray.valuePosicInArray(auditRevisionModeArr, actionName)==-1)) {
             
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SampleAuditErrorTrapping.AUDIT_RECORDS_PENDING_REVISION, new Object[]{sampleId, procInstanceName});
+            return new InternalMessage(LPPlatform.LAB_TRUE, SampleAuditErrorTrapping.AUDIT_RECORDS_PENDING_REVISION, new Object[]{sampleId, procInstanceName});
         }
         String[] whereFieldName=new String[]{TblsDataAudit.Sample.REVIEWED.getName()};
         Object[] whereFieldValue=new Object[]{false};
@@ -405,12 +408,12 @@ public class SampleAudit {
                 new String[]{TblsDataAudit.Sample.AUDIT_ID.getName(), TblsDataAudit.Sample.REVIEWED.getName()});
         for (Object[] curSampleInfo: sampleAuditInfo){
           if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(curSampleInfo[0].toString()))) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUDIT_RECORDS_PENDING_REVISION, 
+            return new InternalMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUDIT_RECORDS_PENDING_REVISION, 
             new Object[]{sampleId, procInstanceName});
           }
         }      
     //      Object[] sampleAuditReviewedValues=LPArray.getUniquesArray(sampleInfoReviewed1D);
     //      if ( (sampleAuditReviewedValues.length!=1) || ( (sampleAuditReviewedValues.length==1) && !("true".equalsIgnoreCase(sampleAuditReviewedValues[0].toString())) ) )
-        return new Object[]{LPPlatform.LAB_TRUE, "All reviewed"};
+        return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, null);
     }  
 }

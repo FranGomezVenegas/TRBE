@@ -10,12 +10,13 @@ import databases.SqlStatement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import trazit.procedureinstance.definition.definition.TblsReqs;
 import lbplanet.utilities.LPArray;
+import trazit.procedureinstance.definition.definition.TblsReqs;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
 import org.json.JSONArray;
 import trazit.globalvariables.GlobalVariables;
+import trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.ReqSolutionTypes;
 
 /**
  *
@@ -26,23 +27,23 @@ public class ClassReqProcedUserAndActionsForQueries {
     
 
     public static JSONArray actionsByRoles(String procInstanceName, Object[][] procRoles) {
-        String[] roleActionsFldsArr = new String[]{TblsReqs.viewProcReqSolutionActions.ENTITY.getName(), TblsReqs.viewProcReqSolutionActions.WINDOW_ACTION.getName(), TblsReqs.viewProcReqSolutionActions.WINDOW_ACTION.getName(), TblsReqs.viewProcReqSolutionActions.ROLES.getName(),
-            TblsReqs.viewProcReqSolutionActions.MOD_ORDER_NUMBER.getName(), TblsReqs.viewProcReqSolutionActions.WINDOW_ACTION.getName()};
-        Object[][] roleActions2d = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_ACTIONS.getViewName(),
-                new String[]{TblsReqs.viewProcReqSolutionActions.PROC_INSTANCE_NAME.getName(), TblsReqs.viewProcReqSolutionActions.WINDOW_ACTION.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
-                new Object[]{procInstanceName, ""}, roleActionsFldsArr,
-                new String[]{TblsReqs.viewProcReqSolutionActions.ENTITY.getName(), TblsReqs.viewProcReqSolutionActions.MOD_ORDER_NUMBER.getName(), TblsReqs.viewProcReqSolutionActions.WINDOW_ACTION.getName()}, true);
-        return LPJson.pivotTable(roleActions2d, 0, 3, procRoles, "Views / Roles", "Pantallas / Roles", "name");
+String[] roleActionsFldsArr = new String[]{TblsReqs.ProcedureReqSolution.WINDOW_ACTION.getName(), TblsReqs.ProcedureReqSolution.WINDOW_ACTION.getName(), TblsReqs.ProcedureReqSolution.WINDOW_ACTION.getName(), TblsReqs.ProcedureReqSolution.ROLES.getName()};
+        Object[][] roleActions2d = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableName(),
+                new String[]{TblsReqs.ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureReqSolution.TYPE.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause()},
+                new Object[]{procInstanceName, ReqSolutionTypes.TABLE_ROW_BUTTON.getTagValue() + "|" + ReqSolutionTypes.WINDOW_BUTTON.getTagValue()}, 
+                roleActionsFldsArr,
+                new String[]{TblsReqs.ProcedureReqSolution.ORDER_NUMBER.getName(), TblsReqs.ProcedureReqSolution.WINDOW_ACTION.getName()});
+        return LPJson.pivotTable(roleActions2d, 0, 3, procRoles, "Actions / Roles", "Acciones / Roles", "name");        
     }
 
-    public static JSONArray viewsByRoles(String procInstanceName, Object[][] procViewRoles) {
+    public static JSONArray viewsByRoles(String procInstanceName, Object[][] procRoles) {
         String[] roleActionsFldsArr = new String[]{TblsReqs.ProcedureReqSolution.WINDOW_NAME.getName(), TblsReqs.ProcedureReqSolution.WINDOW_NAME.getName(), TblsReqs.ProcedureReqSolution.WINDOW_NAME.getName(), TblsReqs.ProcedureReqSolution.ROLES.getName()};
         Object[][] roleActions2d = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableName(),
                 new String[]{TblsReqs.ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureReqSolution.TYPE.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.LIKE.getSqlClause()},
                 new Object[]{procInstanceName, "%indow"}, roleActionsFldsArr,
                 new String[]{TblsReqs.ProcedureReqSolution.ORDER_NUMBER.getName(), TblsReqs.ProcedureReqSolution.WINDOW_NAME.getName()});
 
-        return LPJson.pivotTable(roleActions2d, 0, 3, procViewRoles, "Views / Roles", "Pantallas / Roles", "name");
+        return LPJson.pivotTable(roleActions2d, 0, 3, procRoles, "Views / Roles", "Pantallas / Roles", "name");
     }
 
     public static JSONArray sopsByRoles(String procInstanceName, Object[][] procRoles) {

@@ -38,6 +38,8 @@ public class TrazitUtiilitiesEnums {
         TESTING_CONFIRM_DIALOG_WRONG_JUSTIF_PHRASE("testingConfirmDialogWrongJustifPhrase", "<*1*>", "<*1*>"),
         TESTING_CONFIRM_DIALOG_ESIGN_REQUIRED("testingConfirmDialogEsignRequired", "<*1*>", "<*1*>"),
         TESTING_CONFIRM_DIALOG_USER_CREDENTIALS_REQUIRED("testingConfirmDialogUserCredentialsRequired", "<*1*>", "<*1*>"),
+        QUERIES_HAVE_NO_MSG_CODE("queriesHaveNoMsgCode", "<*1*>", "<*1*>"),
+        
         ;
         private TrazitUtilitiesErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;

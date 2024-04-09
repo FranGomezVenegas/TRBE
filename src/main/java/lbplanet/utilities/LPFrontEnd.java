@@ -363,12 +363,12 @@ public class LPFrontEnd {
     }
 
     /**
-     * En mucho uso
+     * En mucho uso, CANDIDATO A BORRAR
      *
      * @param request
      * @param response
      * @param lPFalseObject
-     */
+     */  
     public static final void servletReturnResponseErrorLPFalseDiagnostic(HttpServletRequest request, HttpServletResponse response, Object[] lPFalseObject) {
         JSONObject errJSONMsg = LPFrontEnd.responseJSONDiagnosticLPFalse(lPFalseObject);
         request.setAttribute(GlobalVariables.ServletsResponse.ERROR.getAttributeName(), errJSONMsg.toString());

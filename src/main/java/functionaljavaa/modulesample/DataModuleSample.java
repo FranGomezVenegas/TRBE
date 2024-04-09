@@ -8,6 +8,7 @@ package functionaljavaa.modulesample;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lbplanet.utilities.LPArray;
+import trazit.session.InternalMessage;
 
 /**
  *
@@ -25,14 +26,14 @@ public class DataModuleSample{
      * @param programLocation
      * @return
      */
-    public Object[] logSample(String programTemplate, Integer programTemplateVersion, String[] fieldName, Object[] fieldValue, String programName, String programLocation) {
-        Object[] newProjSample = new Object[0];
+    public InternalMessage logSample(String programTemplate, Integer programTemplateVersion, String[] fieldName, Object[] fieldValue, String programName, String programLocation) {
+        InternalMessage newProjSample = null;
         try {
             DataModuleSampleAnalysis dsAna = new DataModuleSampleAnalysis();
             functionaljavaa.samplestructure.DataSample ds = new functionaljavaa.samplestructure.DataSample(dsAna);
             fieldName = LPArray.addValueToArray1D(fieldName, "program_name");
             fieldValue = LPArray.addValueToArray1D(fieldValue, programName);
-            newProjSample = ds.logSample(programTemplate, programTemplateVersion, fieldName, fieldValue);
+            return ds.logSample(programTemplate, programTemplateVersion, fieldName, fieldValue);
                         
             /*if (!newProjSample[3].equalsIgnoreCase(LPPlatform.LAB_FALSE)){
             String schemaDataNameProj = GlobalVariables.Schemas.DATA.getName();

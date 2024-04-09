@@ -16,6 +16,7 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.InternalMessage;
 /**
  *
  * @author User
@@ -31,12 +32,12 @@ public final class SampleAPIlogic {
         String objectIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_TEST_ID);
         int testId = Integer.parseInt(objectIdStr);     
                     String newAnalyst = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_NEW_ANALYST);
-        Object[] dataSample = DataSampleAnalysis.sampleAnalysisAssignAnalyst(testId, newAnalyst);
+        InternalMessage dataSample = DataSampleAnalysis.sampleAnalysisAssignAnalyst(testId, newAnalyst);
         Object sampleId=null;
                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);                            
         Object[] messageDynamicData = new Object[]{sampleId}; 
         JSONObject dataSampleJSONMsg=new JSONObject();
-        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(dataSample[0].toString()))){  
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(dataSample.getDiagnostic()))){  
             dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, messageDynamicData, rObj.getRelatedObject());
         }
         rObj.killInstance();

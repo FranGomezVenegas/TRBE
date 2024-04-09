@@ -202,13 +202,13 @@ public class DataIncubatorNoteBook {
             if (LPNulls.replaceNull(instrInfo[0][LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitConfig.InstrIncubator.IS_MAX_STRICT.getName())]).toString().length() > 0) {
                 maxIsStrict = Boolean.valueOf(instrInfo[0][LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitConfig.InstrIncubator.IS_MAX_STRICT.getName())].toString());
             }
-            Object[] resultCheck = dtSpec.resultCheck(temperature, minVal, maxVal, minIsStrict, maxIsStrict, null, null);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultCheck[0].toString())) {
-                return new InternalMessage(LPPlatform.LAB_FALSE,(EnumIntMessages) resultCheck[resultCheck.length-1],new Object[]{temperature});
+            InternalMessage resultCheck = dtSpec.resultCheck(temperature, minVal, maxVal, minIsStrict, maxIsStrict, null, null);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultCheck.getDiagnostic())) {
+                return resultCheck;
             }
-            EnumIntMessages checkMsgCode = (EnumIntMessages) resultCheck[resultCheck.length - 1];
+            EnumIntMessages checkMsgCode = (EnumIntMessages) resultCheck.getNewObjectId();
             specEval = checkMsgCode.getErrorCode();
-            specEvalDetail = (String) resultCheck[resultCheck.length - 2];
+            specEvalDetail = (String) resultCheck.getMessageCodeObj().getErrorCode();
             insFldsName = LPArray.addValueToArray1D(insFldsName, new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.SPEC_EVAL.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.SPEC_EVAL_DETAIL.getName()});
             insFldsValue = LPArray.addValueToArray1D(insFldsValue, new Object[]{specEval, specEvalDetail});
         }

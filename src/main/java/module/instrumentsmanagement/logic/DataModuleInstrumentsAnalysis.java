@@ -5,17 +5,16 @@
  */
 package module.instrumentsmanagement.logic;
 
-import databases.Rdbms;
-import databases.TblsCnfg;
 import databases.TblsData;
 import functionaljavaa.samplestructure.DataSample;
 import functionaljavaa.samplestructure.DataSampleAnalysisStrategy;
-import java.util.Arrays;
+import functionaljavaa.samplestructure.DataSampleStructureEnums;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
+import lbplanet.utilities.TrazitUtiilitiesEnums;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
-import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 /**
  *
  * @author Administrator
@@ -32,7 +31,7 @@ public class DataModuleInstrumentsAnalysis implements DataSampleAnalysisStrategy
      * @return
      */
     @Override
-  public Object[] autoSampleAnalysisAdd(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue) {
+  public InternalMessage autoSampleAnalysisAdd(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[][] anaName =new Object[2][3];
                 anaName[0][0] = "pH";
@@ -48,7 +47,7 @@ public class DataModuleInstrumentsAnalysis implements DataSampleAnalysisStrategy
             functionaljavaa.samplestructure.DataSampleAnalysis.sampleAnalysisAddtoSample(sampleId, fieldsName, fieldsValue);
             analysisAdded.append(LPArray.convertArrayToString(anaName1, ",", ""));
         }        
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "autoSampleAnalysisAdded_success", new String[]{analysisAdded.toString(), sampleId.toString(), procInstanceName});        
+        return new InternalMessage(LPPlatform.LAB_TRUE, DataSampleStructureEnums.DataSampleStructureSuccess.AUTOSAMPLEANALYSIS_ADDED_SUCCESS, new String[]{"Added analysis " + analysisAdded.toString() + " to the sample " + sampleId.toString() + " for schema " + procInstanceName});
   }
 
     /**
@@ -60,12 +59,13 @@ public class DataModuleInstrumentsAnalysis implements DataSampleAnalysisStrategy
      * @return
      */
   @Override
-    public String specialFieldCheckSampleAnalysisAnalyst(String template, Integer templateVersion, DataSample dataSample) {
+    public InternalMessage specialFieldCheckSampleAnalysisAnalyst(String template, Integer templateVersion, DataSample dataSample) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String schemaConfigName = GlobalVariables.Schemas.CONFIG.getName();
         schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, schemaConfigName);
-if (1 == 1) 
+        return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
+/*if (1 == 1) 
             return"ERROR: specialFieldCheckSampleAnalysisAnalyst not implemented yet.";
         
         Integer specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(TblsData.SampleAnalysis.STATUS.getName());
@@ -95,5 +95,5 @@ if (1 == 1)
         }
     }
 
-  
-}
+  */
+}}

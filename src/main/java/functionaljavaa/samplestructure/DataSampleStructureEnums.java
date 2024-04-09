@@ -41,6 +41,7 @@ public class DataSampleStructureEnums {
         EVALUATION_UPON_CONTROL_MAX("inAlertMax", "", ""), 
         QUANTITATIVE_LESS_THAN_MIN_VAL_ALLOWED("lessThanMinAllowedValue", "", ""),
         QUANTITATIVE_GREATER_THAN_MAX_VAL_ALLOWED("greaterThanMaxAllowedValue", "", ""),
+        AUTOSAMPLEANALYSIS_ADDED_SUCCESS("autoSampleAnalysisAdded_success", "", ""),
         ;
 
         DataSampleStructureSuccess(String cl, String msgEn, String msgEs) {
@@ -93,7 +94,14 @@ public class DataSampleStructureEnums {
         NOT_IMPLEMENTED("notImplementedWhenSetReadyForRevisionNotSetToTrue", "NOT IMPLEMENTED YET WHEN SET READY FOR REVISION NOT TRUE YET", ""),
         SAMPLE_ALREADY_REVIEWED("sampleAlreadyReviewed", "", ""),
         SAMPLE_ALREADY_READY_FOR_REVISION("alreadyReadyForRevision", "", ""),
-        SAMPLE_CANNOT_BE_UNCANCELLED("DataSample_sampleCannotBeUncanceled", "", ""),;
+        SAMPLE_CANNOT_BE_UNCANCELLED("DataSample_sampleCannotBeUncanceled", "", ""),
+        AUTOSAMPLEANALYSISADD_CASE_NOT_DETECTED("autoSampleAnalysisAdd_caseNotDetected", "", ""),
+        TEST_NOT_REVIEWED("testNotReviewed", "", ""),
+        SAMPLE_NOT_SET_AS_READY_FOR_REVISION("sampleNotSetAsReadyForRevision", "", ""),
+        
+        
+        
+        ;
 
         private DataSampleErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs) {
             this.errorCode = errCode;

@@ -153,19 +153,18 @@ public class TestingAssert {
     public Object[] evaluate(Integer numEvaluationArguments, TestingAssertSummary tstAssertSummary, InternalMessage diagnosesObj, Integer codeEvalPosic){
         String sintaxisIcon = ""; 
         String codeIcon = "";
-        
         String errorCode="";
-        if (diagnosesObj.getMessageCodeObj()!=null){
-            errorCode=diagnosesObj.getMessageCodeObj().getErrorCode();
-        }else{
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesObj.getDiagnostic()))
-                errorCode=diagnosesObj.getMessageCodeEndpoint().getSuccessMessageCode();
-        }
 
         if (diagnosesObj==null){
             this.evalSyntaxisDiagnostic=EvalCodes.WITH_NO_DIAGNOSTIC.toString();
             this.evalCodeDiagnostic=EvalCodes.WITH_NO_DIAGNOSTIC.toString();
         }else{
+            if (diagnosesObj.getMessageCodeObj()!=null){
+                errorCode=diagnosesObj.getMessageCodeObj().getErrorCode();
+            }else{
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesObj.getDiagnostic()))
+                    errorCode=diagnosesObj.getMessageCodeEndpoint().getSuccessMessageCode();
+            }
             if (numEvaluationArguments>=1){
                 if ( ((this.getEvalSyntaxis()==null) || (this.getEvalSyntaxis().length()==0) ||("".equals(this.getEvalSyntaxis())))
                     &&   (this.getEvalSyntaxisB()==null) ){

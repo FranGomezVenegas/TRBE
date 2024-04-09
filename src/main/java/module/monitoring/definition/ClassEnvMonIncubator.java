@@ -23,7 +23,7 @@ import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
-
+import trazit.enums.EnumIntEndpoints;
 /**
  *
  * @author User
@@ -33,9 +33,9 @@ public class ClassEnvMonIncubator implements ActionsClass{
     private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
     private Boolean endpointExists=true;
     private Object[] diagnostic=new Object[0];
-    private InternalMessage diagnosticObj=null;
-    
+    private InternalMessage diagnosticObj=null;    
     private Boolean functionFound=false;
+    private EnumIntEndpoints enumConstantByName;
 
     public ClassEnvMonIncubator(HttpServletRequest request, EnvMonIncubatorAPIactions.EnvMonIncubatorAPIactionsEndpoints endPoint){
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
@@ -49,7 +49,7 @@ public class ClassEnvMonIncubator implements ActionsClass{
             this.messageDynamicData=new Object[]{argValues[2].toString()};
             return;                        
         }         
-        
+        this.enumConstantByName=endPoint;
         String instrName="";
         BigDecimal temperature=null;
         switch (endPoint){
@@ -143,5 +143,6 @@ public class ClassEnvMonIncubator implements ActionsClass{
     public Boolean getFunctionFound() {
         return functionFound;
     }
-    
+    @Override    public StringBuilder getRowArgsRows() {        return null;    }
+    @Override    public EnumIntEndpoints getEndpointObj(){        return enumConstantByName;    }
 }

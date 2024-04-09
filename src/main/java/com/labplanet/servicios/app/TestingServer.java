@@ -34,13 +34,10 @@ import functionaljavaa.certification.AnalysisMethodCertifQueries;
 import static functionaljavaa.certification.FrontendCertifObjsUtilities.certifObjCertifModeOwnUserAction;
 import functionaljavaa.datatransfer.FromInstanceToInstance;
 import functionaljavaa.intervals.IntervalsUtilities;
-import functionaljavaa.inventory.batch.DataBatchIncubator;
-import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.platform.doc.EndPointsToRequirements.getDocInfoForEndPoint;
 import functionaljavaa.samplestructure.DataSampleRevisionTestingGroup;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
-import static functionaljavaa.testingscripts.LPTestingOutFormat.csvExtractFieldValueBigDecimal;
 import functionaljavaa.testingscripts.TestingCoverage;
 import functionaljavaa.user.UserAndRolesViews;
 import io.github.classgraph.ClassGraph;
@@ -105,12 +102,14 @@ import trazit.thirdparties.sap.ExcelExporter;
 import trazit.thirdparties.sap.Mosquitto;
 import trazit.thirdparties.sap.PDFDataExtractor;
 import java.util.Set;
+import lbplanet.utilities.Mailing;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMData.ViewsInspLotRMData;
 import trazit.platforminstance.logic.CreatePlatform;
 import trazit.procedureinstance.definition.apis.ReqProcedureDefinitionQueries;
 import static trazit.procedureinstance.definition.apis.prodDefQueriesViewDetail.getProcedureViews;
 import trazit.procedureinstance.definition.logic.ClassReqProcedureQueries;
 import static trazit.procedureinstance.definition.logic.ReqProcDefTestingCoverageSummary.procInstanceTestingInfo;
+import static trazit.procedureinstance.definition.logic.ReqProcedureFrontendMasterData.getActiveModulesJSON;
 import trazit.procedureinstance.deployment.logic.ModuleTableOrViewGet;
 /**
  *
@@ -132,6 +131,54 @@ public class TestingServer extends HttpServlet {
         request = LPHttp.requestPreparation(request);
         response = LPHttp.responsePreparation(response);
         try (PrintWriter out = response.getWriter()) {
+/*            out.println(lbplanet.utilities.LPMailing.mailAI("localhost", "25"));
+            out.println(lbplanet.utilities.LPMailing.mailAI("localhost", "587"));
+            out.println(lbplanet.utilities.LPMailing.mailAI("localhost", "465"));
+            out.println(lbplanet.utilities.LPMailing.mailAI("localhost", "2525"));
+            out.println(lbplanet.utilities.LPMailing.mailAI("mail.trazit.net", "25"));
+            out.println(lbplanet.utilities.LPMailing.mailAI("mail.trazit.net", "587"));
+            out.println(lbplanet.utilities.LPMailing.mailAI("mail.trazit.net", "465"));
+            out.println(lbplanet.utilities.LPMailing.mailAI("mail.trazit.net", "2525"));
+*/
+        String dbName="demo_v0_9_2";
+        Rdbms.stablishDBConection(dbName);
+                Rdbms.stablishDBConection("labplanet");
+                InvTrackingFrontendMasterData mdObj = new InvTrackingFrontendMasterData();
+                JSONObject masterDataJsonObject = mdObj.getMasterDataJsonObject("inv-draft");
+                out.println(masterDataJsonObject.toJSONString());
+                out.println("************ ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE testing. Begin");
+                out.println(EnumIntViews.getViewScriptCreation(ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE, "inv-draft", false, false, true, null));
+                out.println("************ ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE testing. End");
+                out.println("************ ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE NO testing. Begin");
+                out.println(EnumIntViews.getViewScriptCreation(ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE, "inv-draft", false, false, false, null));
+                out.println("************ ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE NO testing. End");
+if (1==1)return;                
+
+        getActiveModulesJSON("stock", null);
+if (1==1)return;        
+        //procActionsWithConfirmUser("inspection_lot");
+if(1==1)return;        
+        Mailing mail=new Mailing();
+        Integer[] portsArr=new Integer[]{25, 587, 465, 2525};
+        for (Integer curPort: portsArr){
+            mail.sendMailViaSSL("prueba SSL", "SSL esto es una prueba "+curPort, new String[]{"info.fran.gomez@gmail.com"},
+                    null, null, null, curPort);
+            out.println("SSL Mail sent without attachment "+curPort);
+            mail.sendMailViaSSL("prueba SSL", "SSL esto es una prueba "+curPort, new String[]{"info.fran.gomez@gmail.com"},
+                    null, null, new String[]{"d:/FE Refactoring LP.xlsx"}, curPort);
+            out.println("SSL Mail sent with attachment "+curPort);
+            mail.sendMailViaTLS("prueba", "esto es una prueba desde Trazit "+curPort,
+                    new String[]{"info.fran.gomez@gmail.com", "fgomez@trazit.net", "jmallorqui@trazit.net"},
+                    null, null, new String[]{}, curPort);
+            out.println("TLS Mail sent "+curPort);
+            mail.sendMailViaTLS("prueba", "esto es una prueba "+curPort,
+                    new String[]{"info.fran.gomez@gmail.com", "fgomez@trazit.net", "jmallorqui@trazit.net"},
+                    null, null, new String[]{}, curPort); //"d:/FE Refactoring LP.xlsx", "D:/LP-Documentacion/hexagon-white-blue-light.jpg"});
+            out.println("TLS Mail sent "+curPort);
+        }
+            if (1 == 1) {
+                return;
+            }
             
         String moduleName="STOCKS";
         Integer moduleVersion=1;
@@ -139,7 +186,7 @@ public class TestingServer extends HttpServlet {
         Integer procedureVersion=1;
         String procInstanceName="stock";
         
-        String dbName="demo_v0_9_2";
+        dbName="demo_v0_9_2";
         Rdbms.stablishDBConection(dbName);
         
         out.println(ReqProcedureDefinitionQueries.procReqSolutionTree("instruments"));
@@ -510,9 +557,9 @@ if (1==1)return;
             }
             if (1 == 2) {
                 Rdbms.stablishDBConection("labplanet");
-                InvTrackingFrontendMasterData mdObj = new InvTrackingFrontendMasterData();
-                JSONObject masterDataJsonObject = mdObj.getMasterDataJsonObject("inv-draft");
-                out.println(masterDataJsonObject.toJSONString());
+                InvTrackingFrontendMasterData mdObj2 = new InvTrackingFrontendMasterData();
+                JSONObject masterDataJsonObject2 = mdObj2.getMasterDataJsonObject("inv-draft");
+                out.println(masterDataJsonObject2.toJSONString());
                 out.println("************ ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE testing. Begin");
                 out.println(EnumIntViews.getViewScriptCreation(ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE, "inv-draft", false, false, true, null));
                 out.println("************ ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE testing. End");
@@ -525,16 +572,16 @@ if (1==1)return;
                 }
             }
 
-//lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueba", new String[]{"info.fran.gomez@gmail.com"}, 
+//mail.sendMailViaSSL("prueba SSL", "SSL esto es una prueba", new String[]{"info.fran.gomez@gmail.com"}, 
 //null, null, null);
-            out.println(lbplanet.utilities.LPMailing.mailAI("localhost", "25"));
-            out.println(lbplanet.utilities.LPMailing.mailAI("localhost", "587"));
-            out.println(lbplanet.utilities.LPMailing.mailAI("localhost", "465"));
-            out.println(lbplanet.utilities.LPMailing.mailAI("localhost", "2525"));
-            out.println(lbplanet.utilities.LPMailing.mailAI("mail.trazit.net", "25"));
-            out.println(lbplanet.utilities.LPMailing.mailAI("mail.trazit.net", "587"));
-            out.println(lbplanet.utilities.LPMailing.mailAI("mail.trazit.net", "465"));
-            out.println(lbplanet.utilities.LPMailing.mailAI("mail.trazit.net", "2525"));
+            out.println(mail.mailAI("localhost", "25"));
+            out.println(mail.mailAI("localhost", "587"));
+            out.println(mail.mailAI("localhost", "465"));
+            out.println(mail.mailAI("localhost", "2525"));
+            out.println(mail.mailAI("mail.trazit.net", "25"));
+            out.println(mail.mailAI("mail.trazit.net", "587"));
+            out.println(mail.mailAI("mail.trazit.net", "465"));
+            out.println(mail.mailAI("mail.trazit.net", "2525"));
             if (1 == 1) {
                 return;
             }
@@ -552,20 +599,20 @@ if (1==1)return;
             out.println("Value: " + valueToDecrypt);
             Object[] decryptVal = DbEncryption.decryptValue(valueToDecrypt);
             out.println("Decrypted back: " + decryptVal[decryptVal.length - 1].toString());
-            lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueba", new String[]{"info.fran.gomez@gmail.com"},
-                    null, null, null);
+            mail.sendMailViaSSL("prueba SSL", "SSL esto es una prueba", new String[]{"info.fran.gomez@gmail.com"},
+                    null, null, null, null);
             out.println("SSL Mail sent without attachment");
-            lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueba", new String[]{"info.fran.gomez@gmail.com"},
-                    null, null, new String[]{"d:/FE Refactoring LP.xlsx"});
+            mail.sendMailViaSSL("prueba SSL", "SSL esto es una prueba", new String[]{"info.fran.gomez@gmail.com"},
+                    null, null, new String[]{"d:/FE Refactoring LP.xlsx"}, null);
             out.println("SSL Mail sent with attachment");
 
-            lbplanet.utilities.LPMailing.sendMailViaTLS("prueba", "esto es una prueba desde Trazit",
+            mail.sendMailViaTLS("prueba", "esto es una prueba desde Trazit",
                     new String[]{"info.fran.gomez@gmail.com", "fgomez@trazit.net", "jmallorqui@trazit.net"},
-                    null, null, new String[]{});
+                    null, null, new String[]{}, null);
             out.println("TLS Mail sent");
-            lbplanet.utilities.LPMailing.sendMailViaTLS("prueba", "esto es una prueba",
+            mail.sendMailViaTLS("prueba", "esto es una prueba",
                     new String[]{"info.fran.gomez@gmail.com", "fgomez@trazit.net", "jmallorqui@trazit.net"},
-                    null, null, new String[]{}); //"d:/FE Refactoring LP.xlsx", "D:/LP-Documentacion/hexagon-white-blue-light.jpg"});
+                    null, null, new String[]{}, null); //"d:/FE Refactoring LP.xlsx", "D:/LP-Documentacion/hexagon-white-blue-light.jpg"});
             out.println("TLS Mail sent");
 
             if (1 == 1) {
@@ -820,13 +867,13 @@ out.println("************ ViewsData.USER_AND_META_DATA_SOP_VIEW NO testing. End"
                 if (1 == 1) {
                     return;
                 }
-                lbplanet.utilities.LPMailing.sendMailViaTLS("prueba", "esto es una prueba desde Trazit", new String[]{"info.fran.gomez@gmail.com", "joel.sada.nillni@gmail.com"},
-                        null, null, new String[]{});
-                lbplanet.utilities.LPMailing.sendMailViaTLS("prueba", "esto es una prueba", new String[]{"info.fran.gomez@gmail.com"},
-                        null, null, new String[]{}); //"d:/FE Refactoring LP.xlsx", "D:/LP-Documentacion/hexagon-white-blue-light.jpg"});
-//lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueba", new String[]{"info.fran.gomez@gmail.com"}, 
+                mail.sendMailViaTLS("prueba", "esto es una prueba desde Trazit", new String[]{"info.fran.gomez@gmail.com", "joel.sada.nillni@gmail.com"},
+                        null, null, new String[]{}, null);
+                mail.sendMailViaTLS("prueba", "esto es una prueba", new String[]{"info.fran.gomez@gmail.com"},
+                        null, null, new String[]{}, null); //"d:/FE Refactoring LP.xlsx", "D:/LP-Documentacion/hexagon-white-blue-light.jpg"});
+//mail.sendMailViaSSL("prueba SSL", "SSL esto es una prueba", new String[]{"info.fran.gomez@gmail.com"}, 
 //        null, null, new String[]{"d:/FE Refactoring LP.xlsx"});
-//lbplanet.utilities.LPMailing.otroMailViaSSL();
+//mail.otroMailViaSSL();
 
                 /*             javax.json.JsonObject empObject = Json.createObjectBuilder().add("empName", "Jai")
                                  .add("empAge", "25")
@@ -957,8 +1004,9 @@ if (1==1) return;*/
                 out.println(e.getMessage());
                 return;
             }
+/*
             ConfigSpecRule mSpec = new ConfigSpecRule();
-            Object[] resSpecEvaluation = mSpec.specLimitIsCorrectQuantitative(
+            InternalMessage resSpecEvaluation = mSpec.specLimitIsCorrectQuantitative(
                     csvExtractFieldValueBigDecimal(-2.5), csvExtractFieldValueBigDecimal(5), csvExtractFieldValueBigDecimal(5), null);
             out.println(Arrays.toString(resSpecEvaluation));
             resSpecEvaluation = mSpec.specLimitIsCorrectQuantitative(
@@ -967,6 +1015,7 @@ if (1==1) return;*/
             if (1 == 1) {
                 return;
             }
+*/            
             procInstanceName = "em-air-allv2";
             Rdbms.stablishDBConection("labplanet");
 
@@ -996,11 +1045,11 @@ if (1==1) return;*/
 //        String tblCreateScript2=TblsApp.VideoTutorial.createTableScript(new String[]{""});
 //        Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 //if  (1==1)      return;
-//lbplanet.utilities.LPMailing.sendMailViaTLS("prueba", "esto es una prueba", new String[]{"info.fran.gomez@gmail.com"}, 
+//mail.sendMailViaTLS("prueba", "esto es una prueba", new String[]{"info.fran.gomez@gmail.com"}, 
 //        null, null, new String[]{"d:/FE Refactoring LP.xlsx", "D:/LP-Documentacion/hexagon-white-blue-light.jpg"});
-//lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueba", new String[]{"info.fran.gomez@gmail.com"}, 
+//mail.sendMailViaSSL("prueba SSL", "SSL esto es una prueba", new String[]{"info.fran.gomez@gmail.com"}, 
 //        null, null, new String[]{"d:/FE Refactoring LP.xlsx"});
-//lbplanet.utilities.LPMailing.otroMailViaSSL();
+//mail.otroMailViaSSL();
 //LPFilesTools.fromCsvToArray("D:\\LP\\testingRepository-20200203\\spec_limits.csv", '.');
 //LPFilesTools.toCsvFromArray(true, "D:\\LP\\home\\toCsvFromArray.csv", new String[]{"bien bien", "bien"});
 //TblsReqs.ProcedureUserRequirements.
@@ -1330,7 +1379,7 @@ String holidaysCalendar="España Comunidad X 2019";
             //tblCreateScript=TblsEnvMonitData.ProductionLot.createTableScript(schemaNamePrefix, new String[]{""});
 //            Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
 //Structured Batches. Begin
-            Object[] diagn = new Object[0];
+            Object[] diagObj = new Object[0];
             out.println("Start testing for Structured Batches");
             procInstanceName = "em-demo-a";
             String previousBatchName = "Testeo Estructurada10";
@@ -1350,8 +1399,8 @@ String holidaysCalendar="España Comunidad X 2019";
 //    diagn=DataBatchIncubator.removeBatch(batchName);
 //    out.println("removeBatch"+diagn[0]+diagn[diagn.length-1]);
 
-            diagn = DataBatchIncubator.createBatch(batchName, batchTemplate, batchTemplateVersion, null, null);
-            out.println("createBatch" + diagn[0] + diagn[diagn.length - 1]);
+            //InternalMessage diagObj = DataBatchIncubator.createBatch(batchName, batchTemplate, batchTemplateVersion, null, null);
+            //out.println("createBatch" + diagObj[0] + diagObj.getNewObjectId());
 
             /*    
     diagn=DataBatchIncubator.batchRemoveSample(batchName, batchTemplate, batchTemplateVersion, smpls[0]);
@@ -1363,23 +1412,24 @@ String holidaysCalendar="España Comunidad X 2019";
     diagn=DataBatchIncubator.batchRemoveSample(batchName, batchTemplate, batchTemplateVersion, smpls[3]);
     out.println("batchRemoveSample"+diagn[0]+diagn[diagn.length-1]);
              */
-            diagn = DataBatchIncubator.batchAddSample(batchName, batchTemplate, batchTemplateVersion, smpls[4], 2, 1, true);
-            out.println("batchAddSample" + diagn[0] + diagn[diagn.length - 1]);
-            diagn = DataBatchIncubator.batchAddSample(batchName, batchTemplate, batchTemplateVersion, smpls[5], 1, 2, false);
-            out.println("batchAddSample" + diagn[0] + diagn[diagn.length - 1]);
-            diagn = DataBatchIncubator.batchAddSample(batchName, batchTemplate, batchTemplateVersion, smpls[6], 5, 5, false);
-            out.println("batchAddSample" + diagn[0] + diagn[diagn.length - 1]);
-            diagn = DataBatchIncubator.batchRemoveSample(batchName, batchTemplate, batchTemplateVersion, smpls[5]);
-            out.println("batchRemoveSample" + diagn[0] + diagn[diagn.length - 1]);
-            diagn = DataBatchIncubator.batchMoveSample(batchName, batchTemplate, batchTemplateVersion, smpls[5], 5, 5, false);
-            out.println("batchMoveSample" + diagn[0] + diagn[diagn.length - 1]);
-            diagn = DataBatchIncubator.batchAddSample(batchName, batchTemplate, batchTemplateVersion, smpls[7], 3, 3, true);
-            out.println("batchAddSample" + diagn[0] + diagn[diagn.length - 1]);
-            diagn = DataBatchIncubator.batchAddSample(batchName, batchTemplate, batchTemplateVersion, smpls[8], 2, 3, true);
-            out.println("batchAddSample" + diagn[0] + diagn[diagn.length - 1]);
-            diagn = DataBatchIncubator.batchMoveSample(batchName, batchTemplate, batchTemplateVersion, smpls[8], 3, 3, true);
-            out.println("batchMoveSample" + diagn[0] + diagn[diagn.length - 1]);
-
+/*            
+            diagObj = DataBatchIncubator.batchAddSample(batchName, batchTemplate, batchTemplateVersion, smpls[4], 2, 1, true);
+            out.println("batchAddSample" + diagObj[0] + diagObj.getNewObjectId());
+            diagObj = DataBatchIncubator.batchAddSample(batchName, batchTemplate, batchTemplateVersion, smpls[5], 1, 2, false);
+            out.println("batchAddSample" + diagObj[0] + diagObj.getNewObjectId());
+            diagObj = DataBatchIncubator.batchAddSample(batchName, batchTemplate, batchTemplateVersion, smpls[6], 5, 5, false);
+            out.println("batchAddSample" + diagObj[0] + diagObj.getNewObjectId());
+            diagObj = DataBatchIncubator.batchRemoveSample(batchName, batchTemplate, batchTemplateVersion, smpls[5]);
+            out.println("batchRemoveSample" + diagObj[0] + diagObj.getNewObjectId());
+            diagObj = DataBatchIncubator.batchMoveSample(batchName, batchTemplate, batchTemplateVersion, smpls[5], 5, 5, false);
+            out.println("batchMoveSample" + diagObj[0] + diagObj.getNewObjectId());
+            diagObj = DataBatchIncubator.batchAddSample(batchName, batchTemplate, batchTemplateVersion, smpls[7], 3, 3, true);
+            out.println("batchAddSample" + diagObj[0] + diagObj.getNewObjectId());
+            diagObj = DataBatchIncubator.batchAddSample(batchName, batchTemplate, batchTemplateVersion, smpls[8], 2, 3, true);
+            out.println("batchAddSample" + diagObj[0] + diagObj.getNewObjectId());
+            diagObj = DataBatchIncubator.batchMoveSample(batchName, batchTemplate, batchTemplateVersion, smpls[8], 3, 3, true);
+            out.println("batchMoveSample" + diagObj[0] + diagObj.getNewObjectId());
+*/
 //Structured Batches. End
             out.println("Before creating the token");
             String myToken2 = token.createToken(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW, "3", "Admin", "", "", "", null, "");

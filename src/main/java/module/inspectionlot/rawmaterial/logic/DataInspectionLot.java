@@ -279,8 +279,8 @@ public class DataInspectionLot {
 
         if (LPArray.valuePosicInArray(lotFieldName, TblsInspLotRMData.Lot.CUSTODIAN.getName()) == -1) {
             ChangeOfCustody coc = new ChangeOfCustody();
-            Object[] changeOfCustodyEnable = coc.isChangeOfCustodyEnable(TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName());
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(changeOfCustodyEnable[0].toString())) {
+            InternalMessage changeOfCustodyEnable = coc.isChangeOfCustodyEnable(TblsInspLotRMData.TablesInspLotRMData.LOT.getTableName());
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(changeOfCustodyEnable.getDiagnostic())) {
                 lotFieldName = LPArray.addValueToArray1D(lotFieldName, TblsInspLotRMData.Lot.CUSTODIAN.getName());
                 lotFieldValue = LPArray.addValueToArray1D(lotFieldValue, token.getPersonName());
             }
@@ -420,10 +420,7 @@ public class DataInspectionLot {
                 numSamples = spEntryItem.getQuantity();
             }
             if (bulkName == null || (bulkName != null && i == 0)) {
-                Object[] newProjSample = ds.logSample("smpTemplate", 1, fieldName, fieldValue, numSamples, TblsInspLotRMData.TablesInspLotRMData.SAMPLE);
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newProjSample[0].toString())) {
-                    return new InternalMessage(LPPlatform.LAB_FALSE, InspLotRMEnums.InspLotRMAPIactionsEndpoints.NEW_LOT, new Object[]{newProjSample[newProjSample.length - 1]});
-                }
+                return ds.logSample("smpTemplate", 1, fieldName, fieldValue, numSamples, TblsInspLotRMData.TablesInspLotRMData.SAMPLE);
             }
         }
         return new InternalMessage(LPPlatform.LAB_TRUE, InspLotRMEnums.InspLotRMAPIactionsEndpoints.NEW_LOT, null);

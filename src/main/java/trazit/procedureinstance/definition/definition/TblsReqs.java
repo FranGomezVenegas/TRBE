@@ -378,17 +378,18 @@ public class TblsReqs {
                 }, " and procInfo.module_name = modAct.module_name", false),
         BUSINESS_RULES_IN_SOLUTION("SELECT busRules.module_name, busRules.module_version, procinfo.procedure_name, procinfo.procedure_version, procinfo.proc_instance_name, busRules.rule_name, busRules.is_mandatory,\n" +
                         " 		busRules.api_name,	busRules.area, busRules.prerequite,\n" +
-                	" busrules.values_list, busrules.tip_en, busrules.tip_es,\n" +
+                	" busrules.values_list, busrules.tip_en, busrules.tip_es, sol.business_rule_value,\n" +
                         "    COALESCE(count(sol.business_rule), 0::bigint) AS present,\n" +
                         "    sstring_agg(COALESCE(sol.code::text, sol.parent_code::text), ', ') AS requirements_list \n" +
                         "   FROM requirements.module_business_rules busRules\n" +
                         "   JOIN requirements.procedure_info procinfo ON busrules.module_name::text = procinfo.module_name::text "+
-                        "   LEFT JOIN (select reqsol.business_rule, usr.procedure_name, usr.procedure_version, usr.proc_instance_name, usr.parent_code, usr.code \n" +
+                        "   LEFT JOIN (select reqsol.business_rule, usr.procedure_name, usr.procedure_version, usr.proc_instance_name, usr.parent_code, usr.code,\n" +
+"			reqsol.business_rule_value \n" +
                         "          		from requirements.procedure_req_solution reqsol, requirements.procedure_user_requirements usr\n" +
                         "			  where reqsol.req_id=usr.req_id AND upper(reqsol.window_element_type::text) =upper("+ReqSolutionTypes.BUSINESS_RULE.getTagValue()+")) sol\n" +
                         "	  ON busRules.rule_name::text = sol.business_rule::text and procinfo.proc_instance_name=sol.proc_instance_name\n" +
-                        "  GROUP BY busRules.module_name, busRules.module_version, sol.procedure_name, sol.procedure_version, sol.proc_instance_name, busRules.rule_name, busRules.is_mandatory, busRules.api_name,	busRules.area, busRules.prerequite\n" +
-                        "  ORDER BY (COALESCE(count(sol.business_rule), 0::bigint)), busRules.rule_name; ",
+                        "  GROUP BY busRules.module_name, busRules.module_version, sol.procedure_name, sol.procedure_version, sol.proc_instance_name, busRules.rule_name, busRules.is_mandatory, busRules.api_name,	busRules.area, busRules.prerequite, sol.business_rule_value \n" +
+                        "  ORDER BY (COALESCE(count(sol.business_rule), 0::bigint)), busRules.rule_name, sol.business_rule_value; ",
                 null, "business_rules_in_solution", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsReqs.viewBusinessRulesInSolution.values(), "viewBusinessRulesInSolution",
                 null, " and procInfo.module_name = modAct.module_name", false),
         ACTIONS_IN_SOLUTION("SELECT act.module_name, act.module_version, procinfo.procedure_name, procinfo.procedure_version, procinfo.proc_instance_name, act.entity, act.endpoint_name,\n" +
@@ -399,7 +400,9 @@ public class TblsReqs {
                         "   JOIN requirements.procedure_info procinfo ON act.module_name::text = procinfo.module_name::text"+
                         "   LEFT JOIN (select reqsol.window_action, usr.code, usr.parent_code, usr.procedure_name, usr.procedure_version, usr.proc_instance_name \n" +
                         "          		from requirements.procedure_req_solution reqsol, requirements.procedure_user_requirements usr\n" +
-                        "			  where reqsol.req_id=usr.req_id and upper(window_element_type)=upper("+ReqSolutionTypes.WINDOW_BUTTON.getTagValue()+")) sol\n" +
+                        "			  where reqsol.req_id=usr.req_id and ( (upper(window_element_type)=upper("+ReqSolutionTypes.WINDOW_BUTTON.getTagValue()+")) "+
+                                " or (upper(window_element_type)=upper("+ReqSolutionTypes.TABLE_ROW_BUTTON.getTagValue()+"))"+
+                                 ") ) sol\n" +
                         "	  ON act.endpoint_name::text = sol.window_action::text and procinfo.proc_instance_name=sol.proc_instance_name\n" +
                         "	WHERE upper(act.api_name::text) ~~ '%ACTION%'::text OR upper(act.api_name::text) ~~ '%QUER%'::text AND act.query_for_button = true" +
                         "  GROUP BY act.module_name, act.module_version, act.entity, act.endpoint_name, sol.procedure_name, sol.procedure_version, sol.proc_instance_name,\n" +
@@ -2415,6 +2418,8 @@ null, "procedure_req_solution_view", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, viewPro
         TIP_ES("busRules", ModuleBusinessRules.TIP_ES.getName(), "busRules.tip_es as tip_es", ModuleBusinessRules.TIP_ES, null, null, null),
         PRESENT("sol", "present", "sol.present as present", ModuleBusinessRules.MODULE_VERSION, null, null, null),
         REQUIREMENTS_LIST("sol", "requirements_list", "sol.requirements_list as requirements_list", ModuleBusinessRules.PREREQUISITE, null, null, null),
+        BUSINESS_RULE_VALUE("reqsol", "business_rule_value", "reqsol.business_rule_value as business_rule_value", TblsReqs.ProcedureReqSolution.BUSINESS_RULE_VALUE, null, null, null),
+
         ;
         private viewBusinessRulesInSolution(String tblAliasInView, String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules) {
             this.fldName = name;

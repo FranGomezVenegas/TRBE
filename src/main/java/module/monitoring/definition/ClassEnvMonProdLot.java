@@ -21,6 +21,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import trazit.enums.ActionsClass;
+import trazit.enums.EnumIntEndpoints;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.InternalMessage;
@@ -36,15 +37,13 @@ public class ClassEnvMonProdLot implements ActionsClass{
     private Object[] diagnostic=new Object[0];
     private InternalMessage diagnosticObj;
     private Boolean functionFound=false;
+    private EnumIntEndpoints enumConstantByName;
 
     public ClassEnvMonProdLot(HttpServletRequest request, EnvMonProdLotAPIactionsEndpoints endPoint){
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-
         RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-
-        
+        this.enumConstantByName=endPoint;
         InternalMessage actionDiagnosesObj = null;
-        Object[] actionDiagnoses = null;
         this.functionFound=true;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments()); 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
@@ -63,7 +62,7 @@ public class ClassEnvMonProdLot implements ActionsClass{
                     Object[] fieldValueArr=new Object[0];
                     if (fieldValue!=null && fieldValue.length()>0) fieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                                                                    
                     if (fieldValueArr!=null && fieldValueArr.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValueArr[0].toString())){
-                        actionDiagnoses=fieldValueArr;
+                        actionDiagnosesObj= (InternalMessage)fieldValueArr[1];
                         break;
                     }
                     actionDiagnosesObj=DataProgramProductionLot.newProgramProductionLot(lotName, fieldNameArr, fieldValueArr);
@@ -95,8 +94,7 @@ public class ClassEnvMonProdLot implements ActionsClass{
                     Logger.getLogger(ClassEnvMonProdLot.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-        this.diagnosticObj=actionDiagnosesObj;
-        this.diagnostic=actionDiagnoses;
+        this.diagnosticObj=actionDiagnosesObj;        
         this.relatedObj=rObj;
         rObj.killInstance();
     }
@@ -139,5 +137,7 @@ public class ClassEnvMonProdLot implements ActionsClass{
     public Boolean getFunctionFound() {
         return functionFound;
     }
+    @Override    public StringBuilder getRowArgsRows() {        return null;    }
+    @Override    public EnumIntEndpoints getEndpointObj(){        return enumConstantByName;    }
     
 }

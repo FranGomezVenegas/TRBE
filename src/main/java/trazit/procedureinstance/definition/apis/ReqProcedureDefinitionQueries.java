@@ -416,7 +416,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                 TblsReqs.viewBusinessRulesInSolution.RULE_NAME.getName(), TblsReqs.viewBusinessRulesInSolution.PRESENT.getName(), TblsReqs.viewBusinessRulesInSolution.REQUIREMENTS_LIST.getName(),
                 TblsReqs.viewBusinessRulesInSolution.PREREQUISITE.getName(), TblsReqs.viewBusinessRulesInSolution.IS_MANDATORY.getName(),
                 TblsReqs.viewBusinessRulesInSolution.VALUES_LIST.getName(), TblsReqs.viewBusinessRulesInSolution.TIP_EN.getName(),
-                TblsReqs.viewBusinessRulesInSolution.TIP_ES.getName()},
+                TblsReqs.viewBusinessRulesInSolution.TIP_ES.getName(), TblsReqs.viewBusinessRulesInSolution.BUSINESS_RULE_VALUE.getName()},
             new String[]{TblsReqs.ModuleBusinessRules.MODULE_NAME.getName(), TblsReqs.ModuleBusinessRules.MODULE_VERSION.getName(), TblsReqs.viewBusinessRulesInSolution.PROC_INSTANCE_NAME.getName()},
             new Object[]{moduleName, moduleVersion, procInstanceName},
             new String[]{TblsReqs.viewBusinessRulesInSolution.PRESENT.getName()+" desc",  TblsReqs.viewBusinessRulesInSolution.AREA.getName(), TblsReqs.viewBusinessRulesInSolution.RULE_NAME.getName()},
@@ -441,7 +441,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                 new Object[]{moduleName, moduleVersion, procInstanceName},
                 new String[]{TblsReqs.viewQueriesInSolution.PRESENT.getName()+" desc",  TblsReqs.viewQueriesInSolution.ENTITY.getName(), TblsReqs.viewActionsInSolution.API_NAME.getName(), TblsReqs.viewQueriesInSolution.ENDPOINT_NAME.getName()},
                 new String[]{}, true, true);
-        JSONArray dbRowsToJsonFinalArr=new JSONArray();
+/*        JSONArray dbRowsToJsonFinalArr=new JSONArray();
         for (int i=0;i<dbRowsToJsonArr.size();i++){
             JSONObject curRow = (JSONObject) dbRowsToJsonArr.get(i);     
             String curEndpointName=curRow.get("endpoint_name").toString();
@@ -454,8 +454,9 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
             //    curRow.get(TblsTrazitDocTrazit.EndpointsDeclaration.ARGUMENTS_ARRAY.getName()).toString());
             //curRow.put(TblsTrazitDocTrazit.EndpointsDeclaration.ARGUMENTS_ARRAY.getName(), argArrayToJson);
             //dbRowsToJsonFinalArr.add(curRow);
-        }        
-        jMainObj.put("module_in_solution_queries", dbRowsToJsonFinalArr);
+        }  
+        jMainObj.put("module_in_solution_queries", dbRowsToJsonFinalArr);*/
+        jMainObj.put("module_in_solution_queries", dbRowsToJsonArr);
         
         dbRowsToJsonArr=QueryUtilities.dbRowsToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.SPECIAL_VIEWS_IN_SOLUTION.getViewName(),
             new String[]{TblsReqs.viewSpecialViewsInSolution.PRETTY_EN.getName(), TblsReqs.viewSpecialViewsInSolution.PRETTY_ES.getName(),
@@ -464,8 +465,9 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
             new String[]{TblsReqs.viewSpecialViewsInSolution.MODULE_NAME.getName(), TblsReqs.viewSpecialViewsInSolution.MODULE_VERSION.getName(), TblsReqs.viewSpecialViewsInSolution.PROC_INSTANCE_NAME.getName()},
             new Object[]{moduleName, moduleVersion, procInstanceName},
             new String[]{TblsReqs.viewSpecialViewsInSolution.PRESENT.getName()+" desc",  TblsReqs.viewSpecialViewsInSolution.ENTITY.getName(), TblsReqs.viewSpecialViewsInSolution.VIEW_NAME.getName()},
-            new String[]{}, true, true);        
-        dbRowsToJsonFinalArr=new JSONArray();
+            new String[]{}, true, true);  
+        jMainObj.put("module_in_solution_special_views", dbRowsToJsonArr);
+        /*dbRowsToJsonFinalArr=new JSONArray();
         for (int i=0;i<dbRowsToJsonArr.size();i++){
             JSONObject curRow = (JSONObject) dbRowsToJsonArr.get(i);     
             String curEndpointName=curRow.get(TblsReqs.viewSpecialViewsInSolution.VIEW_NAME.getName()).toString();
@@ -479,7 +481,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
             //curRow.put(TblsTrazitDocTrazit.EndpointsDeclaration.ARGUMENTS_ARRAY.getName(), argArrayToJson);
             //dbRowsToJsonFinalArr.add(curRow);
         }            
-        jMainObj.put("module_in_solution_special_views", dbRowsToJsonFinalArr);
+        jMainObj.put("module_in_solution_special_views", dbRowsToJsonFinalArr);*/
         jMainObj.put("procedure_tables", QueryUtilities.dbRowsToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableName(),
             new String[]{TblsReqs.ProcedureModuleTables.SCHEMA_NAME.getName(), TblsReqs.ProcedureModuleTables.ORDER_NUMBER.getName(),
                 TblsReqs.ProcedureModuleTables.IS_MANDATORY.getName(), TblsReqs.ProcedureModuleTables.IS_VIEW.getName(), 

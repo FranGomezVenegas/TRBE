@@ -308,11 +308,11 @@ public class InvTrackingAPIqueries extends HttpServlet {
 
                     if (category.length() > 0) {
                         sWhere.addConstraint(TblsInvTrackingData.ViewExpiredLots.CATEGORY,
-                                category.contains("%") ? SqlStatement.WHERECLAUSE_TYPES.LIKE : SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{category}, null);
+                                category.contains("%") ? SqlStatement.WHERECLAUSE_TYPES.LIKE : SqlStatement.WHERECLAUSE_TYPES.IN, category.split("\\|"), null);
                     }
                     if (reference.length() > 0) {
                         sWhere.addConstraint(TblsInvTrackingData.ViewExpiredLots.REFERENCE,
-                                reference.contains("%") ? SqlStatement.WHERECLAUSE_TYPES.LIKE : SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{reference}, null);
+                                reference.contains("%") ? SqlStatement.WHERECLAUSE_TYPES.LIKE : SqlStatement.WHERECLAUSE_TYPES.IN, reference.split("\\|"), null);
                     }
                     if (lotName.length() > 0) {
                         sWhere.addConstraint(TblsInvTrackingData.ViewExpiredLots.LOT_NAME,
@@ -359,7 +359,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     reference = LPNulls.replaceNull(argValues[1]).toString();
                     if (category.length() > 0) {
                         sWhere.addConstraint(TblsInvTrackingData.ViewReferencesStockUnderMin.CATEGORY,
-                                category.contains("%") ? SqlStatement.WHERECLAUSE_TYPES.LIKE : SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{category.split("\\|")}, "|");
+                                category.contains("%") ? SqlStatement.WHERECLAUSE_TYPES.LIKE : SqlStatement.WHERECLAUSE_TYPES.IN, category.split("\\|"), "|");
                     }
                     if (reference.length() > 0) {
                         if (reference.contains("%")) {
@@ -367,7 +367,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                                     SqlStatement.WHERECLAUSE_TYPES.LIKE, new Object[]{reference}, null);
                         } else {
                             sWhere.addConstraint(TblsInvTrackingData.ViewReferencesStockUnderMin.NAME,
-                                    SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{reference.split("\\|")}, "|");
+                                    SqlStatement.WHERECLAUSE_TYPES.IN, reference.split("\\|"), "|");
                         }
                     }
                     fieldsToRetrieve = EnumIntViewFields.getAllFieldNames(TblsInvTrackingData.ViewsInvTrackingData.REFERENCES_STOCK_UNDER_MIN.getViewFields());

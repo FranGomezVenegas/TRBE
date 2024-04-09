@@ -23,7 +23,7 @@ import trazit.globalvariables.GlobalVariables;
 import trazit.procedureinstance.definition.definition.TblsReqs;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
-
+import trazit.enums.EnumIntEndpoints;
 /**
  *
  * @author User
@@ -36,6 +36,8 @@ public class ClassProject  implements ActionsClass{
     InternalMessage actionDiagnosesObj;
     private Boolean functionFound=false;
     EnumIntMessages diagnosticObjIntMsg;
+    private EnumIntEndpoints enumConstantByName;
+    
     public ClassProject(HttpServletRequest request, GenomaProjectAPIactionsEndPoints endPoint){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         String procInstanceName=procReqSession.getProcedureInstance();
@@ -43,7 +45,7 @@ public class ClassProject  implements ActionsClass{
 
         ClinicalStudyDataProject prj = new ClinicalStudyDataProject();
         String projectName = "";
-        
+        this.enumConstantByName=endPoint;
         Object[] actionDiagnoses = null;
         InternalMessage actionDiagnosesObj = null;
         this.functionFound=true;
@@ -179,7 +181,9 @@ public class ClassProject  implements ActionsClass{
 
     @Override
     public InternalMessage getDiagnosticObj() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return null;
     }
+    @Override    public StringBuilder getRowArgsRows() {        return null;    }
+    @Override    public EnumIntEndpoints getEndpointObj(){        return enumConstantByName;    }
     
 }

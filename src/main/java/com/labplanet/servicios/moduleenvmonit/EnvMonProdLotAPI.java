@@ -32,6 +32,7 @@ import trazit.enums.EnumIntEndpoints;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.globalvariables.GlobalVariables.ApiUrls;
+import static trazit.session.ActionsServletCommons.publishResult;
 
 /**
  *
@@ -162,19 +163,13 @@ public class EnvMonProdLotAPI extends HttpServlet {
                 return;
             }
             ClassEnvMonProdLot clss = new ClassEnvMonProdLot(request, endPoint);
-            if (Boolean.TRUE.equals(clss.getEndpointExists())) {
-                Object[] diagnostic = clss.getDiagnostic();
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
-                    String errorCode = diagnostic[4].toString();
-                    Object[] msgVariables = clss.getMessageDynamicData();
-                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, errorCode, msgVariables);
-                } else {
-                    JSONObject dataSampleJSONMsg = new JSONObject();
-                    if (endPoint != null) {
-                        dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());
-                    }
-                    LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
-                }
+            if (clss.getFunctionFound()){
+                publishResult(request, response, procReqInstance, clss.getEndpointObj(), clss.getDiagnostic(), clss.getDiagnosticObj(), 
+                    clss.getMessageDynamicData(), clss.getRelatedObj());
+            }else{
+                procReqInstance.killIt();
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, clss.getMessageDynamicData());
+                return;                
             }
         } catch (Exception e) {
             procReqInstance.killIt();

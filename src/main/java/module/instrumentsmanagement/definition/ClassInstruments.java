@@ -31,7 +31,6 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPMath;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import lbplanet.utilities.TrazitUtiilitiesEnums;
 import module.instrumentsmanagement.definition.InstrumentsEnums.InstrEventsErrorTrapping;
 import module.instrumentsmanagement.definition.InstrumentsEnums.InstrumentsErrorTrapping;
 import module.instrumentsmanagement.logic.ConfigInstrumentsFamily;
@@ -41,11 +40,10 @@ import trazit.enums.ActionsClass;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.queries.QueryUtilitiesEnums;
-import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 import trazit.session.ResponseMessages;
-
+import trazit.enums.EnumIntEndpoints;
 /**
  *
  * @author User
@@ -55,33 +53,20 @@ public class ClassInstruments implements ActionsClass{
     private Object[] messageDynamicData = new Object[]{};
     private RelatedObjects relatedObj = RelatedObjects.getInstanceForActions();
     private Boolean endpointExists = true;
-    private Object[] diagnostic = new Object[0];
     InternalMessage actionDiagnosesObj = null;
     private Boolean functionFound = false;
-
+    private EnumIntEndpoints enumConstantByName;
     public ClassInstruments(HttpServletRequest request, InstrumentsAPIactionsEndpoints endPoint) {
 
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         RelatedObjects rObj = RelatedObjects.getInstanceForActions();
         InternalMessage actionDiagnoses = null;
         Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
-
+        this.enumConstantByName=endPoint;
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
             ResponseMessages mainMessage = procReqSession.getMessages();
             mainMessage.addMainForError(ConfigAnalysisStructure.ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{argValues[2].toString()});
-            this.diagnostic = (Object[]) argValues[1];
-            this.messageDynamicData = new Object[]{argValues[2].toString()};
-            return;
-        }
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
-            this.diagnostic = ApiMessageReturn.trapMessage(argValues[0].toString(), argValues[1].toString(), new Object[]{argValues[2].toString()});
-            this.relatedObj = rObj;
-            rObj.killInstance();
-            return;
-        }
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
-            this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE,
-                    argValues[1].toString(), new Object[]{argValues[2].toString()});
+            this.actionDiagnosesObj = new InternalMessage(LPPlatform.LAB_FALSE, ConfigAnalysisStructure.ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{argValues[2].toString()});
             this.messageDynamicData = new Object[]{argValues[2].toString()};
             return;
         }
@@ -92,7 +77,6 @@ public class ClassInstruments implements ActionsClass{
             instr = new DataInstruments(instrName);
             if (Boolean.TRUE.equals(instr.getHasError())) {
                 this.actionDiagnosesObj = instr.getErrorDetail();
-                this.diagnostic = ApiMessageReturn.trapMessage(instr.getErrorDetail().getDiagnostic(), instr.getErrorDetail().getMessageCodeObj(), instr.getErrorDetail().getMessageCodeVariables());
                 this.relatedObj = rObj;
                 rObj.killInstance();
                 return;
@@ -106,7 +90,6 @@ public class ClassInstruments implements ActionsClass{
             }
             if (responsiblesArr.length > 0 && Boolean.FALSE.equals(LPArray.valueInArray(responsiblesArr, procReqSession.getToken().getPersonName()))) {
                 this.actionDiagnosesObj = instr.getErrorDetail();
-                this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ONLY_RESPONSIBLE_OR_BACKUP, new Object[]{});
                 this.actionDiagnosesObj = new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.ONLY_RESPONSIBLE_OR_BACKUP, new Object[]{});
                 this.relatedObj = rObj;
                 rObj.killInstance();
@@ -134,7 +117,6 @@ public class ClassInstruments implements ActionsClass{
                     fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"),
                             TblsInstrumentsData.TablesInstrumentsData.INSTRUMENTS, fieldNames);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
-                        this.diagnostic = fieldValues;
                         this.actionDiagnosesObj = (InternalMessage) fieldValues[1];
                         this.messageDynamicData = this.actionDiagnosesObj.getMessageCodeVariables();
                         return;
@@ -170,7 +152,6 @@ public class ClassInstruments implements ActionsClass{
                 if (fldPosic > -1) {
                     Object[] personByUser = UserAndRolesViews.getPersonByUser(fieldValues[fldPosic].toString());
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUser[0].toString())) {
-                        diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.USER_NOT_FOUND_TOBE_RESPONSIBLE, new Object[]{fieldValues[fldPosic].toString()});
                         this.actionDiagnosesObj = new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.USER_NOT_FOUND_TOBE_RESPONSIBLE, new Object[]{fieldValues[fldPosic].toString()});
                         this.messageDynamicData = new Object[]{fieldValues[fldPosic].toString()};
                         return;
@@ -182,7 +163,6 @@ public class ClassInstruments implements ActionsClass{
                 if (fldPosic > -1) {
                     Object[] personByUser = UserAndRolesViews.getPersonByUser(fieldValues[fldPosic].toString());
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personByUser[0].toString())) {
-                        diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.USER_NOT_FOUND_TOBE_RESPONSIBLE_BACKUP, new Object[]{fieldValues[fldPosic].toString()});
                         this.actionDiagnosesObj = new InternalMessage(LPPlatform.LAB_FALSE, InstrumentsErrorTrapping.USER_NOT_FOUND_TOBE_RESPONSIBLE_BACKUP, new Object[]{fieldValues[fldPosic].toString()});
                         this.messageDynamicData = new Object[]{fieldValues[fldPosic].toString()};
                         return;
@@ -196,7 +176,6 @@ public class ClassInstruments implements ActionsClass{
                 }
                 break;
             case CHANGE_INSTRUMENT_FAMILY:
-                diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
                 this.relatedObj = rObj;
                 rObj.killInstance();
                 return;
@@ -608,7 +587,7 @@ public class ClassInstruments implements ActionsClass{
                     fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
                 }
                 actionDiagnoses=null;
-                if (eventName.length()>0){
+                if (eventName.length()>0&&(intervalType.length()>0||intervalNumber.length()>0)){
                     switch (eventName){
                         case "calib":
                             fieldNames=LPArray.addValueToArray1D(fieldNames, TblsInstrumentsConfig.InstrumentsFamily.CALIB_INTERVAL.getName());
@@ -619,11 +598,10 @@ public class ClassInstruments implements ActionsClass{
                         default: 
                             actionDiagnoses=new InternalMessage(LPPlatform.LAB_FALSE, InstrEventsErrorTrapping.CONFIG_EVENT_NAME_NOT_RECOGNIZED, new Object[]{eventName, "calib, pm"});
                             break;
-                    }
-                    
+                    }                    
                     if (intervalType.length()==0||intervalNumber.length()==0){
                         actionDiagnoses=new InternalMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING, new Object[]{"intervalType, eventName"});                        
-                    }else{
+                    }else{                            
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(LPMath.isNumeric(intervalNumber, false).getDiagnostic())){
                             actionDiagnoses=LPMath.isNumeric(intervalNumber, false);
                         }
@@ -632,7 +610,7 @@ public class ClassInstruments implements ActionsClass{
                             actionDiagnoses=intervalTypeOneRecognized;
                         }                        
                         fieldValues=LPArray.addValueToArray1D(fieldValues, intervalType+"*"+intervalNumber);
-                    }
+                    }                            
                 }
                 if (actionDiagnoses==null){
                     if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
@@ -695,11 +673,6 @@ public class ClassInstruments implements ActionsClass{
         }
         if (actionDiagnoses != null) {
             this.actionDiagnosesObj = actionDiagnoses;
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
-                this.diagnostic = ApiMessageReturn.trapMessage(actionDiagnoses.getDiagnostic(), actionDiagnoses.getMessageCodeObj(), actionDiagnoses.getMessageCodeVariables());
-            } else {
-                this.diagnostic = ApiMessageReturn.trapMessage(actionDiagnoses.getDiagnostic(), endPoint, actionDiagnoses.getMessageCodeVariables());
-            }
             this.relatedObj = rObj;
             rObj.killInstance();
         }
@@ -730,7 +703,7 @@ public class ClassInstruments implements ActionsClass{
      * @return the diagnostic
      */
     public Object[] getDiagnostic() {
-        return diagnostic;
+        return null;
     }
 
     public InternalMessage getDiagnosticObj() {
@@ -743,5 +716,7 @@ public class ClassInstruments implements ActionsClass{
     public Boolean getFunctionFound() {
         return functionFound;
     }
+    @Override    public StringBuilder getRowArgsRows() {        return null;    }
+    @Override    public EnumIntEndpoints getEndpointObj(){        return enumConstantByName;    }
 
 }

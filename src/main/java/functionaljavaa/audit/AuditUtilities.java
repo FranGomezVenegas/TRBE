@@ -16,6 +16,7 @@ import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntTables;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 import trazit.session.SessionAuditActions;
 
@@ -43,6 +44,23 @@ public final class AuditUtilities {
             return LPArray.addValueToArray1D(trapMessage, insertDiagn);
         } else {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
+        }
+    }
+    public static InternalMessage applyTheInsertInternalMessage(GenericAuditFields gAuditFlds, EnumIntTables tblObj, String[] fldN, Object[] fldV) {
+        return applyTheInsertInternalMessage(gAuditFlds, tblObj, fldN, fldV, null);
+    }
+
+    public static InternalMessage applyTheInsertInternalMessage(GenericAuditFields gAuditFlds, EnumIntTables tblObj, String[] fldN, Object[] fldV, String externalProcInstanceName) {
+        RdbmsObject insertDiagn = Rdbms.insertRecord(tblObj, fldN, fldV, externalProcInstanceName);
+        if (Boolean.TRUE.equals(insertDiagn.getRunSuccess())) {
+            SessionAuditActions auditActions = ProcedureRequestSession.getInstanceForActions(null, null, null).getAuditActions();
+            auditActions.addAuditAction(Integer.valueOf(insertDiagn.getNewRowId().toString()),
+                    gAuditFlds.getActionName(), gAuditFlds.getActionPrettyNameEn(), gAuditFlds.getActionPrettyNameEs());
+            Object[] trapMessage = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
+            return new InternalMessage(insertDiagn.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), 
+                insertDiagn.getErrorMessageVariables());
+        } else {
+            return new InternalMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
         }
     }
 

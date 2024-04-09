@@ -52,7 +52,9 @@ public class InternalMessage {
         this.messageCodeVariables=msgCodeVars;
         this.newObjectId=theNew;
     }
-
+    public void addTheNew(Object theNew){
+        this.newObjectId=theNew;
+    }
     public String getDiagnostic() {return diagnostic;}
     //public String getMessageCode() {return messageCode;}
     public Object[] getMessageCodeVariables() {return messageCodeVariables;}

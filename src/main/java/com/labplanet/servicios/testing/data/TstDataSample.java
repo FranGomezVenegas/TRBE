@@ -103,6 +103,7 @@ public class TstDataSample extends HttpServlet {
         String csvFileName = "dataSampleStructure.txt";      
         Object[][] dataSample2D = new Object[1][6];
         Object[] dataSample = new Object[6];
+        InternalMessage dataSampleObj = null;
         DataModuleSampleAnalysis smpAna = new DataModuleSampleAnalysis();   
         DataModuleSampleAnalysisResult moduleSmpAnaRes = new DataModuleSampleAnalysisResult();   
         DataSample smp = new DataSample(smpAna);   
@@ -194,7 +195,7 @@ public class TstDataSample extends HttpServlet {
                                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                                         new Object[]{"templateName, templateVersion, fieldNames, fieldValues", 
                                             sampleTemplate+", "+sampleTemplateVersion.toString()+", "+Arrays.toString(fieldName)+", "+Arrays.toString(fieldValue)}));                              
-                                    dataSample = smp.logSample(sampleTemplate, sampleTemplateVersion, fieldName, fieldValue, null);
+                                    dataSampleObj = smp.logSample(sampleTemplate, sampleTemplateVersion, fieldName, fieldValue, null);
                                     break;
                                 case RECEIVESAMPLE:  
                                     Integer sampleId = null;
@@ -202,7 +203,7 @@ public class TstDataSample extends HttpServlet {
                                         sampleId = LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
                                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                                         new Object[]{"sampleId, receiver", LPNulls.replaceNull(sampleId).toString()+", "+userName}));                              
-                                    dataSample = smp.sampleReception(sampleId);
+                                    dataSampleObj = smp.sampleReception(sampleId);
                                     break;       
                                 case CHANGESAMPLINGDATE:
                                     sampleId = null;
@@ -214,7 +215,7 @@ public class TstDataSample extends HttpServlet {
                                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                                         new Object[]{"sampleId, userName, newDate", 
                                             LPNulls.replaceNull(sampleId).toString()+", "+userName+", "+LPNulls.replaceNull(newDate).toString()}));                              
-                                    dataSample = smp.changeSamplingDate(sampleId, newDate);
+                                    dataSampleObj = smp.changeSamplingDate(sampleId, newDate);
                                     break;       
                                 case SAMPLINGCOMMENTADD:
                                     sampleId = null;
@@ -225,7 +226,7 @@ public class TstDataSample extends HttpServlet {
                                         comment = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);
                                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                                         new Object[]{"sampleId, userName, comment", LPNulls.replaceNull(sampleId).toString()+", "+userName+", "+comment}));                              
-                                    dataSample = smp.sampleReceptionCommentAdd(sampleId, comment);
+                                    dataSampleObj = smp.sampleReceptionCommentAdd(sampleId, comment);
                                     break;       
                                 case SAMPLINGCOMMENTREMOVE:
                                     sampleId = null;
@@ -233,7 +234,7 @@ public class TstDataSample extends HttpServlet {
                                         sampleId = LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
                                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                                         new Object[]{"sampleId, userName, comment", LPNulls.replaceNull(sampleId).toString()+", "+userName}));                              
-                                    dataSample = smp.sampleReceptionCommentRemove(sampleId);
+                                    dataSampleObj = smp.sampleReceptionCommentRemove(sampleId);
                                     break;       
                                 case INCUBATIONSTART:
                                     sampleId = null;
@@ -243,7 +244,7 @@ public class TstDataSample extends HttpServlet {
                                         new Object[]{"sampleId, userName", LPNulls.replaceNull(sampleId).toString()+", "+userName}));                   
                                     String incubName=null;
                                     BigDecimal tempReading=null;
-                                    dataSample = DataSampleIncubation.setSampleStartIncubationDateTime(sampleId, 1, incubName, tempReading);
+                                    dataSampleObj = DataSampleIncubation.setSampleStartIncubationDateTime(sampleId, 1, incubName, tempReading);
                                     break;       
                                 case INCUBATIONEND:
                                     sampleId = null;
@@ -253,7 +254,7 @@ public class TstDataSample extends HttpServlet {
                                         new Object[]{"sampleId, userName", LPNulls.replaceNull(sampleId).toString()+", "+userName})); 
                                     incubName=null;
                                     tempReading=null;
-                                    dataSample = DataSampleIncubation.setSampleEndIncubationDateTime(sampleId, 1, incubName, tempReading, null);
+                                    dataSampleObj = DataSampleIncubation.setSampleEndIncubationDateTime(sampleId, 1, incubName, tempReading, null);
                                     dataSample=(Object[])dataSample[0];
                                     break;       
                                 case SAMPLEANALYSISADD:
@@ -270,7 +271,7 @@ public class TstDataSample extends HttpServlet {
                                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                                         new Object[]{"sampleId, userName, fieldNames, fieldValues", 
                                             LPNulls.replaceNull(sampleId).toString()+", "+userName+", "+Arrays.toString(fieldName)+", "+Arrays.toString(fieldValueObjArr)}));                              
-                                    dataSample = DataSampleAnalysis.sampleAnalysisAddtoSample(sampleId, fieldName, fieldValueObjArr);
+                                    dataSampleObj = DataSampleAnalysis.sampleAnalysisAddtoSample(sampleId, fieldName, fieldValueObjArr);
                                     break;              
                                 case ENTERRESULT:
                                     Integer resultId = 0;
@@ -281,8 +282,7 @@ public class TstDataSample extends HttpServlet {
                                         rawValueResult=LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);
                                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                                         new Object[]{"resultId, userName, fieldNames, rawValueResult", resultId.toString()+", "+userName+", "+rawValueResult}));  
-                                    Object[] actionDiagnoses = smpAnaRes.sampleAnalysisResultEntry(resultId, rawValueResult, smp);
-                                    dataSample=(Object[]) actionDiagnoses[0]; 
+                                    dataSampleObj = smpAnaRes.sampleAnalysisResultEntry(resultId, rawValueResult, smp);
                                     break;  
                                 case REVIEWRESULT:
                                     Integer objectId = 0;
@@ -297,7 +297,7 @@ public class TstDataSample extends HttpServlet {
                                     if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_SAMPLE)){sampleId=objectId;}
                                     if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_TEST)){testId=objectId;}
                                     if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_RESULT)){resultId=objectId;}
-                                    dataSample = smpAnaRes.sampleAnalysisResultReview(sampleId, testId, resultId);
+                                    dataSampleObj = smpAnaRes.sampleAnalysisResultReview(sampleId, testId, resultId);
                                     break;                                     
                                 case CANCELRESULT:
                                     objectId = 0;
@@ -312,7 +312,7 @@ public class TstDataSample extends HttpServlet {
                                     if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_SAMPLE)){sampleId = objectId;}
                                     if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_TEST)){testId = objectId;}
                                     if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_RESULT)){resultId = objectId;}
-                                    dataSample = smpAnaRes.sampleAnalysisResultCancel(sampleId, testId, resultId);
+                                    dataSampleObj = smpAnaRes.sampleAnalysisResultCancel(sampleId, testId, resultId);
                                     break;                            
                                 case UNCANCELRESULT: 
                                     objectId = 0;
@@ -328,7 +328,7 @@ public class TstDataSample extends HttpServlet {
                                     if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_SAMPLE)){sampleId = objectId;}
                                     if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_TEST)){testId = objectId;}
                                     if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_RESULT)){resultId = objectId;}
-                                    dataSample = smpAnaRes.sampleAnalysisResultUnCancel(sampleId, testId, resultId);
+                                    dataSampleObj = smpAnaRes.sampleAnalysisResultUnCancel(sampleId, testId, resultId);
                                     break;       
                                 case TESTASSIGNMENT: 
                                     testId = 0;
@@ -339,7 +339,7 @@ public class TstDataSample extends HttpServlet {
                                         newAnalyst=LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);
                                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                                         new Object[]{"testId, userName, newAnalyst", testId.toString()+", "+userName+", "+newAnalyst}));                              
-                                    dataSample = DataSampleAnalysis.sampleAnalysisAssignAnalyst(testId, newAnalyst);
+                                    dataSampleObj = DataSampleAnalysis.sampleAnalysisAssignAnalyst(testId, newAnalyst);
                                     break;   
                                 case GETSAMPLEINFO:                            
                                     String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());                     
@@ -379,7 +379,7 @@ public class TstDataSample extends HttpServlet {
                                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                                         new Object[]{"sampleId, custodianCandidate", sampleId.toString()+", "+custodianCandidate}));                              
                                     ChangeOfCustody coc =  new ChangeOfCustody();
-                                    dataSample = coc.cocStartChange(TblsData.TablesData.SAMPLE_COC, TblsData.SampleCoc.SAMPLE_ID, sampleId, 
+                                    dataSampleObj = coc.cocStartChange(TblsData.TablesData.SAMPLE_COC, TblsData.SampleCoc.SAMPLE_ID, sampleId, 
                                             custodianCandidate);
                                     break;
                                 case COC_CONFIRMCHANGE:
@@ -392,7 +392,7 @@ public class TstDataSample extends HttpServlet {
                                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                                         new Object[]{"sampleId, comment", sampleId.toString()+", "+comment}));                                                          
                                     coc =  new ChangeOfCustody();
-                                    dataSample = coc.cocConfirmedChange(TblsData.TablesData.SAMPLE_COC, TblsData.SampleCoc.SAMPLE_ID, sampleId, comment);
+                                    dataSampleObj = coc.cocConfirmedChange(TblsData.TablesData.SAMPLE_COC, TblsData.SampleCoc.SAMPLE_ID, sampleId, comment);
                                     break;
                                 case COC_ABORTCHANGE:
                                     sampleId = 0;
@@ -404,7 +404,7 @@ public class TstDataSample extends HttpServlet {
                                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                                         new Object[]{"sampleId, comment", sampleId.toString()+", "+comment}));                                                          
                                     coc =  new ChangeOfCustody();
-                                    dataSample = coc.cocAbortedChange(TblsData.TablesData.SAMPLE_COC, TblsData.SampleCoc.SAMPLE_ID, sampleId, comment);
+                                    dataSampleObj = coc.cocAbortedChange(TblsData.TablesData.SAMPLE_COC, TblsData.SampleCoc.SAMPLE_ID, sampleId, comment);
                                     break;
                                 case RESULT_CHANGE_UOM:
                                     resultId = 0;
@@ -415,7 +415,7 @@ public class TstDataSample extends HttpServlet {
                                         newUOM=LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);
                                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                                         new Object[]{"resultId, newUOM", resultId.toString()+", "+newUOM}));                                  
-                                    dataSample = smpAnaRes.sarChangeUom(resultId, newUOM, smp);
+                                    dataSampleObj = smpAnaRes.sarChangeUom(resultId, newUOM, smp);
                                     break;
                                 case LOGALIQUOT:
                                     sampleId = 0;
@@ -431,7 +431,7 @@ public class TstDataSample extends HttpServlet {
 
                                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                                         new Object[]{"sample_id, fieldNames, fieldValues", sampleId.toString()+", "+Arrays.toString(fieldName)+", "+Arrays.toString(fieldValueStrArr)}));                                                                                      
-                                    dataSample = smp.logSampleAliquot(sampleId, 
+                                    dataSampleObj = smp.logSampleAliquot(sampleId, 
                                             // sampleTemplate, sampleTemplateVersion, 
                                             fieldName, fieldValueObjArr);
                                     break;                     
@@ -449,7 +449,7 @@ public class TstDataSample extends HttpServlet {
 
                                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                                         new Object[]{"aliquot_id, fieldNames, fieldValues", aliquotId.toString()+", "+Arrays.toString(fieldName)+", "+Arrays.toString(fieldValueStrArr)}));                                                                                                                  
-                                    dataSample = smp.logSampleSubAliquot(aliquotId, 
+                                    dataSampleObj = smp.logSampleSubAliquot(aliquotId, 
                                             // sampleTemplate, sampleTemplateVersion, 
                                             fieldName, fieldValueObjArr);
                                     break;                     

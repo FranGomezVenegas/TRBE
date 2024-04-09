@@ -55,6 +55,7 @@ import static trazit.globalvariables.GlobalVariables.VALIDATION_MODE_REPO;
 import trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections;
 import trazit.session.ApiMessageReturn;
 import trazit.session.DbLogSummary;
+import trazit.session.InternalMessage;
 
 /**
  *
@@ -2039,43 +2040,6 @@ public class Rdbms {
     public static Object[] dbTableExists(String procInstanceName, String schemaName, String tableName) {
         return dbTableExists(procInstanceName, schemaName, tableName, null);
     }
-/*
-    public static Object[][] dbTablesInGivenSchema(String schemaName, String tableName, String fieldName) {
-        String schema = schemaName.replace("\"", "");
-        schemaName = addSuffixIfItIsForTesting(schemaName, tableName);
-        String query = "select table_schema, table_name from INFORMATION_SCHEMA.COLUMNS "
-                + " where table_schema like ?";
-        if (tableName != null) {
-            query = query + " and table_name like ?";
-        }
-        if (fieldName != null) {
-            query = query + " and column_name like ?";
-        }
-        try {
-            String[] filter = new String[]{schema};
-            if (tableName != null) {
-                filter = LPArray.addValueToArray1D(filter, tableName);
-            }            
-            if (fieldName != null) {
-                filter = LPArray.addValueToArray1D(filter, fieldName);
-            }
-            ResultSet res = Rdbms.prepRdQuery(query, filter);
-            if (res == null) {
-                return new Object[]{ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL, query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES + Arrays.toString(filter)})};
-            }
-            res.first();
-            Integer numRows = res.getRow();
-            if (numRows > 0) {
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.RDBMS_TABLE_FOUND, new Object[]{tableName, schemaName});
-            } else {
-                return new Object[]{ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_TABLE_NOT_FOUND, new Object[]{tableName, schemaName})};
-            }
-        } catch (SQLException er) {
-            Logger.getLogger(query).log(Level.SEVERE, null, er);
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{er.getLocalizedMessage() + er.getCause(), query});
-        }
-    }
-    */
     public static Object[] dbTableExists(String procInstanceName, String schemaName, String tableName, String fieldName) {
         String schema = schemaName.replace("\"", "");
         schemaName = addSuffixIfItIsForTesting(procInstanceName, schemaName, tableName);
@@ -2106,6 +2070,40 @@ public class Rdbms {
         }
     }
 
+    public static InternalMessage dbTableExistsInternalMessage(String procInstanceName, String schemaName, String tableName) {
+        return dbTableExistsInternalMessage(procInstanceName, schemaName, tableName, null);
+    }
+    
+    public static InternalMessage dbTableExistsInternalMessage(String procInstanceName, String schemaName, String tableName, String fieldName) {
+        String schema = schemaName.replace("\"", "");
+        schemaName = addSuffixIfItIsForTesting(procInstanceName, schemaName, tableName);
+        String query = "select table_schema from INFORMATION_SCHEMA.COLUMNS "
+                + " where table_name=? " + " and table_schema=?";
+        if (fieldName != null) {
+            query = query + " and column_name=?";
+        }
+        try {
+            String[] filter = new String[]{tableName, schema};
+            if (fieldName != null) {
+                filter = LPArray.addValueToArray1D(filter, fieldName);
+            }
+            ResultSet res = Rdbms.prepRdQuery(query, filter);
+            if (res == null) {
+                return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL, query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES + Arrays.toString(filter)});
+            }
+            res.first();
+            Integer numRows = res.getRow();
+            if (numRows > 0) {
+                return new InternalMessage(LPPlatform.LAB_TRUE, RdbmsSuccess.RDBMS_TABLE_FOUND, new Object[]{tableName, schemaName});
+            } else {
+                return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_TABLE_NOT_FOUND, new Object[]{tableName, schemaName});
+            }
+        } catch (SQLException er) {
+            Logger.getLogger(query).log(Level.SEVERE, null, er);
+            return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{er.getLocalizedMessage() + er.getCause(), query});
+        }
+    }
+    
     public static Object[] dbSchemaAndTestingSchemaTablesAndFieldsIsMirror(String procInstanceName, String schemaName1) {
         String schema = LPPlatform.buildSchemaName(procInstanceName, schemaName1).replace("\"", "");
         String[] filter = new String[]{schema};

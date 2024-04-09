@@ -26,6 +26,7 @@ import lbplanet.utilities.LPPlatform;
 import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -418,22 +419,24 @@ public class AnalysisCalculations {
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
             
         DataSpec resChkSpec = new DataSpec();
-        Object[] resSpecEvaluation = null;
+        InternalMessage resSpecEvaluation = null;
         ConfigSpecRule specRule = new ConfigSpecRule();
         specRule.specLimitsRule(calcResultSpecLimitId, null);
         String specEval = "";
+        Object[] messageCodeVariables = null;
         if (Boolean.TRUE.equals(specRule.getRuleIsQualitative())) {
             resSpecEvaluation = resChkSpec.resultCheck((String) calculatedResultValue.toString(), specRule.getQualitativeRule(),
                     specRule.getQualitativeRuleValues(), specRule.getQualitativeRuleSeparator(), specRule.getQualitativeRuleListName());
-            EnumIntMessages checkMsgCode = (EnumIntMessages) resSpecEvaluation[resSpecEvaluation.length - 1];
+            EnumIntMessages checkMsgCode = (EnumIntMessages) resSpecEvaluation.getMessageCodeObj();
+            messageCodeVariables = resSpecEvaluation.getMessageCodeVariables();
             specEval = checkMsgCode.getErrorCode();
 
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluation[0].toString())) {
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluation.getDiagnostic())) {
                 return;
             }
             fieldsName = LPArray.addValueToArray1D(fieldsName, new String[]{TblsData.SampleAnalysisResult.SPEC_EVAL.getName(), TblsData.SampleAnalysisResult.SPEC_EVAL_DETAIL.getName(),
                 TblsData.SampleAnalysisResult.ENTERED_BY.getName(), TblsData.SampleAnalysisResult.ENTERED_ON.getName(), TblsData.SampleAnalysisResult.STATUS.getName()});
-            fieldsValue = LPArray.addValueToArray1D(fieldsValue, new Object[]{specEval, resSpecEvaluation[resSpecEvaluation.length - 2],
+            fieldsValue = LPArray.addValueToArray1D(fieldsValue, new Object[]{specEval, messageCodeVariables[messageCodeVariables.length - 2],
                 instanceForActions.getToken().getPersonName(), LPDate.getCurrentTimeStamp(), newResultStatus});
             if (calcResultSpecLimitId == null || Boolean.FALSE.equals(Objects.equals(calcResultSpecLimitId, calcResultSpecLimitId))) {
                 fieldsName = LPArray.addValueToArray1D(fieldsName, TblsData.SampleAnalysisResult.LIMIT_ID.getName());
@@ -464,10 +467,10 @@ public class AnalysisCalculations {
 
                 Object[] sampleFieldValue = new Object[]{sampleId, sampleConfigCode, sampleConfigCodeVersion};
 
-                if ((resSpecEvaluation[resSpecEvaluation.length - 1]).toString().contains(ConfigSpecRule.SPEC_WORD_FOR_UPON_CONTROL)) {
+                if ((messageCodeVariables[messageCodeVariables.length - 1]).toString().contains(ConfigSpecRule.SPEC_WORD_FOR_UPON_CONTROL)) {
                     sar.sarControlAction(resultId, sampleFieldName, sampleFieldValue, fieldsName, fieldsValue);
                 }
-                if ((resSpecEvaluation[resSpecEvaluation.length - 1]).toString().contains(ConfigSpecRule.SPEC_WORD_FOR_OOS)) {
+                if ((messageCodeVariables[messageCodeVariables.length - 1]).toString().contains(ConfigSpecRule.SPEC_WORD_FOR_OOS)) {
                     sar.sarOOSAction(resultId, sampleFieldName, sampleFieldValue, fieldsName, fieldsValue);
                 }
             }
@@ -475,7 +478,7 @@ public class AnalysisCalculations {
         }
         if (calcResultSpecLimitId == null || Boolean.FALSE.equals(Objects.equals(calcResultSpecLimitId, calcResultSpecLimitId))) {
             fieldsName = LPArray.addValueToArray1D(fieldsName, new String[]{TblsData.SampleAnalysisResult.SPEC_EVAL.getName(), TblsData.SampleAnalysisResult.SPEC_EVAL_DETAIL.getName(), TblsData.SampleAnalysisResult.LIMIT_ID.getName()});
-            fieldsValue = LPArray.addValueToArray1D(fieldsValue, new Object[]{specEval, resSpecEvaluation[resSpecEvaluation.length - 2], calcResultSpecLimitId});
+            fieldsValue = LPArray.addValueToArray1D(fieldsValue, new Object[]{specEval, messageCodeVariables[messageCodeVariables.length - 2], calcResultSpecLimitId});
         }
 
     }

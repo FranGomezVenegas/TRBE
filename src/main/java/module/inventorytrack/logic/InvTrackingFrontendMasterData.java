@@ -16,6 +16,7 @@ import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.FrontendMasterData;
+import trazit.queries.QueryUtilities;
 import trazit.queries.QueryUtilitiesEnums;
 
 /**
@@ -69,6 +70,16 @@ public class InvTrackingFrontendMasterData implements FrontendMasterData{
             }
         }                
         jSummaryObj.put("category_and_references", jSummaryArr);
+        jSummaryObj.put(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName(),
+            QueryUtilities.dbRowsToJsonArr(alternativeProcInstanceName, 
+            LPPlatform.buildSchemaName(alternativeProcInstanceName, TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getRepositoryName()),
+            TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName(),
+                EnumIntTableFields.getAllFieldNames(EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE, alternativeProcInstanceName)),
+                new String[]{TblsInvTrackingConfig.Reference.NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
+                new Object[]{},
+                new String[]{TblsInvTrackingConfig.Reference.NAME.getName()},
+                new String[]{}, true, true)
+        );
         return jSummaryObj;
     }
     

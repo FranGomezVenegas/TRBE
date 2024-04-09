@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Response;
+import trazit.session.InternalMessage;
 /**
  *
  * @author Administrator
@@ -127,6 +128,7 @@ public class TstDataEnvMonit extends HttpServlet {
             DataProgramSampleAnalysis dsProgramAna = new DataProgramSampleAnalysis();
             DataSample ds = new DataSample(dsProgramAna);
             Object[] dataSample = null;
+            InternalMessage dataSampleObj = null;
             
             switch (actionName.toUpperCase()){
                 case "LOGPROGRAMSAMPLE":
@@ -154,9 +156,9 @@ public class TstDataEnvMonit extends HttpServlet {
                     if (numSamplesToLogStr!=null){numSamplesToLog = Integer.parseInt(numSamplesToLogStr);}
 
                     if (numSamplesToLogStr==null){
-                        dataSample = ds.logSample(sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues);
+                        dataSampleObj = ds.logSample(sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues);
                     }else{
-                        dataSample = ds.logSample(sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, numSamplesToLog);
+                        dataSampleObj = ds.logSample(sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, numSamplesToLog);
                     }
                     break;
                 default:      

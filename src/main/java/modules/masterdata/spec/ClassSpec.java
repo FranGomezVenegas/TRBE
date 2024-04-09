@@ -16,7 +16,6 @@ import functionaljavaa.materialspec.ConfigSpecStructure;
 import trazit.session.ResponseMessages;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
@@ -29,7 +28,7 @@ import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
-
+import trazit.enums.EnumIntEndpoints;
 /**
  *
  * @author User
@@ -73,8 +72,9 @@ public class ClassSpec implements ActionsClass{
     private Boolean endpointExists = true;
     private Object[] diagnostic = new Object[0];
     private Boolean functionFound = false;
-
-    public ClassSpec(HttpServletRequest request, HttpServletResponse response, MasterDataSpecActionsEndpoints endPoint) {
+    private EnumIntEndpoints enumConstantByName;
+    
+    public ClassSpec(HttpServletRequest request, MasterDataSpecActionsEndpoints endPoint) {
         RelatedObjects rObj = RelatedObjects.getInstanceForActions();
         try {
             ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, false, false);
@@ -217,7 +217,7 @@ public class ClassSpec implements ActionsClass{
                     }
                     break;  
                 default:
-                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getClass().getSimpleName()}, language, this.getClass().getSimpleName());
+                    LPFrontEnd.servletReturnResponseError(request, null, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getClass().getSimpleName()}, language, this.getClass().getSimpleName());
                     return;
             }
             if (actionDiagnoses != null && LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())) {
@@ -233,6 +233,7 @@ public class ClassSpec implements ActionsClass{
             }
             this.diagnostic = actionDiagnoses;
             this.relatedObj = rObj;
+            this.enumConstantByName=endPoint;
             if (this.diagnosticObj!=null)
                 this.messageDynamicData = this.diagnosticObj.getMessageCodeVariables();
             else
@@ -247,5 +248,6 @@ public class ClassSpec implements ActionsClass{
 
         }
     }
-
+    @Override    public StringBuilder getRowArgsRows() {        return null;    }
+    @Override    public EnumIntEndpoints getEndpointObj(){        return enumConstantByName;    }
 }

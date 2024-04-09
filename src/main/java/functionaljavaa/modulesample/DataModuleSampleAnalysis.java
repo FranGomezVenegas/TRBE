@@ -6,19 +6,20 @@
 package functionaljavaa.modulesample;
 
 import databases.Rdbms;
+import databases.Rdbms.RdbmsErrorTrapping;
 import databases.TblsCnfg;
 import databases.TblsData;
 import functionaljavaa.samplestructure.DataSample;
 import functionaljavaa.samplestructure.DataSampleAnalysis;
 import functionaljavaa.samplestructure.DataSampleAnalysisStrategy;
 import functionaljavaa.samplestructure.DataSampleRevisionTestingGroup;
-import java.util.Arrays;
+import functionaljavaa.samplestructure.DataSampleStructureEnums;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPParadigm;
 import lbplanet.utilities.LPPlatform;
+import lbplanet.utilities.TrazitUtiilitiesEnums;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
-import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 /**
  *
@@ -36,11 +37,11 @@ public class DataModuleSampleAnalysis implements DataSampleAnalysisStrategy{
      * @return
      */
     @Override
-    public Object[] autoSampleAnalysisAdd(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue) {
+    public InternalMessage autoSampleAnalysisAdd(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(sampleFieldName, sampleFieldValue);
         if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic())))
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
+            return new InternalMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
 
         Object[][] anaName = new Object[0][0];
         String otro = DataSampleAnalysis.DataSampleAnalyisAutoAddLevel.SPEC_VARIATION.getName();
@@ -59,7 +60,10 @@ public class DataModuleSampleAnalysis implements DataSampleAnalysisStrategy{
                 if (specMissingFields.length>0){
                     Object[][] sampleSpecInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), 
                             new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId}, specMissingFields);
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleSpecInfo[0][0].toString())){return LPArray.array2dTo1d(sampleSpecInfo);}
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleSpecInfo[0][0].toString()))
+                    {
+                        return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{sampleId});
+                    }
 //                      for (String specMissingField : specMissingFields) {
                         // Pasar de sampleSpecInfo a specFields estando los datos en  specMissingFields
 //                      }
@@ -81,12 +85,14 @@ public class DataModuleSampleAnalysis implements DataSampleAnalysisStrategy{
                 anaName=Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(), 
                         specWhereFieldName, specWhereFieldValue, 
                         new String[]{TblsCnfg.SpecLimits.ANALYSIS.getName(), TblsCnfg.SpecLimits.METHOD_NAME.getName(), TblsCnfg.SpecLimits.METHOD_VERSION.getName(), TblsCnfg.SpecLimits.TESTING_GROUP.getName()});
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(anaName[0][0].toString())){return LPArray.array2dTo1d(anaName);}
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(anaName[0][0].toString())){
+                    return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{sampleId});
+                }
                 
                 break;
             case SPEC:
             default:
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "autoSampleAnalysisAdd_caseNotDetected", new String[]{autoAddAnalysisLevel+" not implemented yet."});
+                return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleStructureEnums.DataSampleErrorTrapping.AUTOSAMPLEANALYSISADD_CASE_NOT_DETECTED, new String[]{autoAddAnalysisLevel + " not implemented yet."});
         }
         StringBuilder analysisAdded = new StringBuilder();
         for (Object[] anaName1 : anaName) {
@@ -101,7 +107,7 @@ public class DataModuleSampleAnalysis implements DataSampleAnalysisStrategy{
             DataSampleAnalysis.sampleAnalysisAddtoSample(sampleId, fieldsName, fieldsValue);
             analysisAdded.append(LPArray.convertArrayToString(anaName1, ",", ""));
         }        
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "autoSampleAnalysisAdded_success", new String[]{"Added analysis "+analysisAdded.toString()+" to the sample "+sampleId.toString()+" for schema "+procInstanceName});        
+        return new InternalMessage(LPPlatform.LAB_TRUE, DataSampleStructureEnums.DataSampleStructureSuccess.AUTOSAMPLEANALYSIS_ADDED_SUCCESS, new String[]{"Added analysis " + analysisAdded.toString() + " to the sample " + sampleId.toString() + " for schema " + procInstanceName});
     }
 
 
@@ -112,13 +118,14 @@ public class DataModuleSampleAnalysis implements DataSampleAnalysisStrategy{
      * @param dataSample
      * @return
      */
-  @Override
-    public String specialFieldCheckSampleAnalysisAnalyst(String template, Integer templateVersion, DataSample dataSample) {
+    @Override
+    public InternalMessage specialFieldCheckSampleAnalysisAnalyst(String template, Integer templateVersion, DataSample dataSample) {
         String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String schemaConfigName = GlobalVariables.Schemas.CONFIG.getName();
         schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, schemaConfigName);
-if (1 == 1) 
+        return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
+/*if (1 == 1) 
             return"ERROR: specialFieldCheckSampleAnalysisAnalyst not implemented yet.";
         
         Integer specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(TblsData.SampleAnalysis.STATUS.getName());
@@ -146,7 +153,7 @@ if (1 == 1)
         } else {
             return "ERROR: The status " + status + " is not of one the defined status (" + statuses + " for the template " + template + " exists but the rule record is missing in the schema " + schemaConfigName;
         }
+    
+*/  
     }
-
-  
 }

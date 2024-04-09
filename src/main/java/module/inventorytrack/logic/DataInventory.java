@@ -351,7 +351,10 @@ public class DataInventory {
             String reqQualification = referenceInfo[0][EnumIntTableFields.getFldPosicInArray(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableFields(),
                     TblsInvTrackingConfig.Reference.LOT_REQUIRES_QUALIF.getName())].toString();
             if (reqQualification == null || Boolean.TRUE.equals(Boolean.valueOf(reqQualification))) {
-                DataInventoryQualif.createInventoryLotQualif(newName, category, reference, Boolean.valueOf(reqQualification));
+                InternalMessage createInventoryLotQualif = DataInventoryQualif.createInventoryLotQualif(newName, category, reference, Boolean.valueOf(reqQualification));
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(createInventoryLotQualif.getDiagnostic())){
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT_QUALIFICATION.getTableName(), createInventoryLotQualif.getNewObjectId());
+                }
             }
             messages.addMinorForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.NEW_INVENTORY_LOT, new Object[]{newName, category, reference});
             rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), newName);

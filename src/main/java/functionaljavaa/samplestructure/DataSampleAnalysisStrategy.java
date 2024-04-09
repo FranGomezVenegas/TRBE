@@ -5,6 +5,8 @@
  */
 package functionaljavaa.samplestructure;
 
+import trazit.session.InternalMessage;
+
 /**
  *
  * @author Administrator
@@ -18,7 +20,7 @@ public interface DataSampleAnalysisStrategy {
      * @param sampleFieldValue
      * @return
      */
-    public abstract Object[] autoSampleAnalysisAdd(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue);
+    public abstract InternalMessage autoSampleAnalysisAdd(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue);
 
     /**
      *
@@ -27,6 +29,6 @@ public interface DataSampleAnalysisStrategy {
      * @param dataSample
      * @return
      */
-    public abstract String specialFieldCheckSampleAnalysisAnalyst(String template, Integer templateVersion, DataSample dataSample);
+    public abstract InternalMessage specialFieldCheckSampleAnalysisAnalyst(String template, Integer templateVersion, DataSample dataSample);
   
 }

@@ -26,6 +26,7 @@ import trazit.enums.EnumIntTables;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.globalvariables.GlobalVariables.DEFAULTLANGUAGE;
 import trazit.queries.QueryUtilitiesEnums;
+import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 import trazit.session.SessionAuditActions;
 
@@ -38,6 +39,7 @@ public class GenericAuditFields {
     private Object[] fieldValues;
     private String evaluation;
     private Object[] errorDetail;
+    private InternalMessage errorDetailObj;    
     private String actionName;
     private String actionPrettyNameEn;
     private String actionPrettyNameEs;
@@ -202,6 +204,9 @@ public class GenericAuditFields {
      */
     public Object[] getErrorDetail() {
         return errorDetail;
+    }
+    public InternalMessage getErrorDetailObj() {
+        return errorDetailObj;
     }
 
     /**

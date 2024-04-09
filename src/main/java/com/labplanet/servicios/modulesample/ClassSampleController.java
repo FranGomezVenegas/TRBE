@@ -5,23 +5,26 @@
  */
 package com.labplanet.servicios.modulesample;
 
+import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPArray;
-import org.json.simple.JSONArray;
-
+import trazit.enums.ActionsClass;
+import trazit.session.InternalMessage;
+import trazit.enums.EnumIntEndpoints;
 /**
  *
  * @author User
  */
-public class ClassSampleController {
+public class ClassSampleController implements ActionsClass{
     private StringBuilder rowArgsRows=new StringBuilder(0);
-    private Object[] functionDiagn=new Object[0];
-    private JSONArray functionRelatedObjects=new JSONArray();
+    private InternalMessage diagnosticObj=null;
+    private RelatedObjects functionRelatedObjects=null;
     private Boolean functionFound=false;
-
-    public ClassSampleController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {        
+    private EnumIntEndpoints enumConstantByName;
+    
+    public ClassSampleController(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs, Integer auditReasonPosic) {        
         Object[] argsForLogFiles=new Object[0];
         SampleAPIParams.SampleAPIactionsEndpoints endPoint = null;
         try{
@@ -33,41 +36,22 @@ public class ClassSampleController {
                 argsForLogFiles=LPArray.addValueToArray1D(argsForLogFiles, "");
             }
             this.functionFound=true;
+            this.enumConstantByName=endPoint;
             this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));
             ClassSample clss=new ClassSample(request, endPoint);
-            this.functionDiagn=clss.getDiagnostic();
-            this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject();  
+            this.diagnosticObj=clss.getDiagnosticObj();
+            this.functionRelatedObjects=clss.getRelatedObj();
         }catch(Exception e){
             this.functionFound=false;
         }
     }
 
-    /**
-     * @return the rowArgsRows
-     */
-    public StringBuilder getRowArgsRows() {
-        return rowArgsRows;
-    }
-
-    /**
-     * @return the functionDiagn
-     */
-    public Object getFunctionDiagn() {
-        return functionDiagn;
-    }
-
-    /**
-     * @return the functionRelatedObjects
-     */
-    public JSONArray getFunctionRelatedObjects() {
-        return functionRelatedObjects;
-    }
-
-    /**
-     * @return the functionFound
-     */
-    public Boolean getFunctionFound() {
-        return functionFound;
-    }    
+    public StringBuilder getRowArgsRows() {        return rowArgsRows;    }
+    @Override    public InternalMessage getDiagnosticObj() {        return diagnosticObj;    }
+    @Override    public RelatedObjects getRelatedObj() {        return functionRelatedObjects;    }
+    @Override    public Object[] getDiagnostic() {        return null;    }
+    @Override    public Object[] getMessageDynamicData() {        return diagnosticObj.getMessageCodeVariables();    }
+    public Boolean getFunctionFound() {        return functionFound;    }    
+    @Override    public EnumIntEndpoints getEndpointObj(){        return enumConstantByName;    }
     
 }

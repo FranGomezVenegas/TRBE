@@ -43,6 +43,7 @@ import lbplanet.utilities.LPAPIArguments;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static lbplanet.utilities.LPSession.frontEndIpChecker;
+import lbplanet.utilities.Mailing;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 import trazit.session.ResponseMessages;
@@ -321,8 +322,9 @@ public class AuthenticationAPI extends HttpServlet {
                     LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
                     return;
                 case USER_CHANGE_PSWD_SEND_MAIL:
-                    lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueba", new String[]{"info.fran.gomez@gmail.com"},
-                            null, null, new String[]{"d:/FE Refactoring LP.xlsx"});
+                    Mailing mail=new Mailing();
+                    mail.sendMailViaSSL("prueba SSL", "SSL esto es una prueba", new String[]{"info.fran.gomez@gmail.com"},
+                            null, null, new String[]{"d:/FE Refactoring LP.xlsx"}, null);
                     Rdbms.closeRdbms();
                     return;
                 case USER_CHANGE_PSWD_BY_MAIL:

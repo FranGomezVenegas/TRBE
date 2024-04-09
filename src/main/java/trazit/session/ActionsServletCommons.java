@@ -14,10 +14,12 @@ import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPPlatform;
+import modules.masterdata.analysis.ConfigAnalysisStructure;
 import org.json.simple.JSONObject;
 import trazit.enums.ActionsClass;
 import trazit.enums.ActionsEndpointPair;
 import trazit.enums.EnumIntEndpoints;
+import trazit.enums.EnumIntMessages;
 
 /**
  *
@@ -58,28 +60,94 @@ public class ActionsServletCommons {
     
     Boolean endpointFound;
     EnumIntEndpoints enumConstantByName;
+    private InternalMessage diagnosticObj;
+    private Object[] messageVariables;
     ActionsClass actionClass;
+    private EnumIntMessages errorCodeObj;
+    private StringBuilder rowArgsRows=new StringBuilder(0);
+    private RelatedObjects relatedObj;
     public ActionsServletCommons(HttpServletRequest request, ActionsEndpointPair[] endpointsArr, String actionName){
         endpointFound=false;
+        String className="";
         for (ActionsEndpointPair curActionsEndpointPair: endpointsArr){
             EnumIntEndpoints endpoint = getEnumConstantByName(curActionsEndpointPair.getEndpoint(), actionName);
             this.enumConstantByName=endpoint;
             if (endpoint!=null){
                 try {
-                    endpointFound=true;
-                    
-                    Class<?> clazz = Class.forName(curActionsEndpointPair.getAction());
+                    endpointFound=true;                    
+                    Class<?> clazz = Class.forName(curActionsEndpointPair.getAction());    
+                    className=clazz.getSimpleName();
+                    Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endpoint.getArguments());
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
+                        this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ConfigAnalysisStructure.ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{argValues[2].toString()});
+                        this.messageVariables = new Object[]{argValues[2].toString()};
+                        return;
+                    }                    
                     Constructor<?> constructor = clazz.getConstructor(HttpServletRequest.class, endpoint.getClass());
                     actionClass = (ActionsClass) constructor.newInstance(request, endpoint);
+                    rowArgsRows=actionClass.getRowArgsRows();
+                    relatedObj=actionClass.getRelatedObj();
                     return;
                 } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
                     endpointFound=false;
                     Logger.getLogger(ActionsServletCommons.class.getName()).log(Level.SEVERE, null, ex);
+                    this.errorCodeObj=LPPlatform.ApiErrorTraping.EXCEPTION_RAISED;
+                    this.diagnosticObj=new InternalMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.EXCEPTION_RAISED, new Object[]{ex.getMessage()});
+                    this.messageVariables=new Object[]{actionName+": "+className+"-"+ex.getMessage()};
+                    rowArgsRows=null;
+                    relatedObj=null;
+                    return;
                 }
             }
         }
+        this.messageVariables=new Object[]{actionName};
+        this.errorCodeObj=LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND;
+        this.diagnosticObj=new InternalMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, this.getMessageVariables());
     }
     
+    public ActionsServletCommons(HttpServletRequest request, ActionsEndpointPair[] endpointsArr, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs, Integer auditReasonPosic){
+        endpointFound=false;
+        String className="";
+        for (ActionsEndpointPair curActionsEndpointPair: endpointsArr){
+            EnumIntEndpoints endpoint = getEnumConstantByName(curActionsEndpointPair.getEndpoint(), actionName);
+            this.enumConstantByName=endpoint;
+            if (endpoint!=null){
+                try {
+                    endpointFound=true;                    
+                    Class<?> clazz = Class.forName(curActionsEndpointPair.getAction());    
+                    className=clazz.getSimpleName();
+                    /*Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endpoint.getArguments());
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
+                        this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ConfigAnalysisStructure.ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{argValues[2].toString()});
+                        this.messageVariables = new Object[]{argValues[2].toString()};
+                        RelatedObjects rObj = RelatedObjects.getInstanceForActions();
+                        this.relatedObj=rObj;
+                        rObj.killInstance();
+                        return;
+                    }*/                    
+                    Constructor<?> constructor = clazz.getConstructor(HttpServletRequest.class, String.class, Object[][].class, Integer.class, Integer.class, Integer.class);
+                    actionClass = (ActionsClass) constructor.newInstance(request, actionName, testingContent, iLines, table1NumArgs, auditReasonPosic);
+                    rowArgsRows=actionClass.getRowArgsRows();
+                    this.diagnosticObj=actionClass.getDiagnosticObj();
+                    relatedObj=actionClass.getRelatedObj();
+                    return;
+                } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+                    endpointFound=false;
+                    Logger.getLogger(ActionsServletCommons.class.getName()).log(Level.SEVERE, null, ex);
+                    this.errorCodeObj=LPPlatform.ApiErrorTraping.EXCEPTION_RAISED;
+                    this.diagnosticObj=new InternalMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.EXCEPTION_RAISED, new Object[]{ex.getMessage()});
+                    this.messageVariables=new Object[]{actionName+": "+className+"-"+ex.getMessage()};
+                    rowArgsRows=null;
+                    relatedObj=null;
+                    return;
+                }
+            }
+        }
+        this.messageVariables=new Object[]{actionName};
+        this.errorCodeObj=LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND;
+        this.diagnosticObj=new InternalMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, this.getMessageVariables());
+    }
+
     public Boolean getEndpointFound(){        
         return endpointFound;
     }    
@@ -101,6 +169,33 @@ public class ActionsServletCommons {
     }
     public ActionsClass getActionClassRun(){
         return actionClass;
+    }
+
+    /**
+     * @return the diagnosticObj
+     */
+    public InternalMessage getDiagnosticObj() {
+        return diagnosticObj;
+    }
+
+    /**
+     * @return the messageVariables
+     */
+    public Object[] getMessageVariables() {
+        return messageVariables;
+    }
+
+    /**
+     * @return the errorCodeObj
+     */
+    public EnumIntMessages getErrorCodeObj() {
+        return errorCodeObj;
+    }
+    public StringBuilder getRowArgsRows() {
+        return rowArgsRows;
+    }
+    public RelatedObjects getRelatedObj() {
+        return relatedObj;
     }
     
 }

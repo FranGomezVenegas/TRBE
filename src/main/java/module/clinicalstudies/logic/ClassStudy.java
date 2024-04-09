@@ -32,7 +32,7 @@ import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
-
+import trazit.enums.EnumIntEndpoints;
 /**
  *
  * @author User
@@ -44,6 +44,8 @@ public class ClassStudy implements ActionsClass{
     private Object[] diagnostic=new Object[0];
     InternalMessage actionDiagnosesObj;
     private Boolean functionFound=false;
+    private EnumIntEndpoints enumConstantByName;
+    
 static final String NAME_SUFFIX="_name";
     public ClassStudy(HttpServletRequest request, GenomaStudyAPI.GenomaStudyAPIactionsEndPoints endPoint){
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
@@ -57,7 +59,7 @@ static final String NAME_SUFFIX="_name";
         ClinicalStudyDataStudySamplesSet prjStudySampleSet = new ClinicalStudyDataStudySamplesSet();
         ClinicalStudyDataStudyFamily prjStudyFamily = new ClinicalStudyDataStudyFamily();
         ClinicalStudyDataStudyCohort prjStudyCohort = new ClinicalStudyDataStudyCohort();
-        
+        this.enumConstantByName=endPoint;
         String studyName = "";
         String projectName = "";
         try{
@@ -522,5 +524,7 @@ static final String NAME_SUFFIX="_name";
     public InternalMessage getDiagnosticObj() {
         return this.actionDiagnosesObj;
     }
-    
+        @Override    public StringBuilder getRowArgsRows() {        return null;    }
+        @Override    public EnumIntEndpoints getEndpointObj(){        return enumConstantByName;    }
+
 }

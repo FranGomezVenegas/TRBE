@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.InternalMessage;
 
 /**
  *
@@ -66,7 +67,7 @@ public interface DataSampleAnalysisResultStrategy {
      * @param sarFieldValue
      * @return
      */
-    public abstract Object[] sarControlAction(Integer resultId, String[] sampleFieldName, Object[] sampleFieldValue, String[] sarFieldName, Object[] sarFieldValue);
+    public abstract InternalMessage sarControlAction(Integer resultId, String[] sampleFieldName, Object[] sampleFieldValue, String[] sarFieldName, Object[] sarFieldValue);
 
     /**
      *
@@ -77,5 +78,5 @@ public interface DataSampleAnalysisResultStrategy {
      * @param sarFieldValue
      * @return
      */
-    public abstract Object[] sarOOSAction(Integer resultId, String[] sampleFieldName, Object[] sampleFieldValue, String[] sarFieldName, Object[] sarFieldValue);
+    public abstract InternalMessage sarOOSAction(Integer resultId, String[] sampleFieldName, Object[] sampleFieldValue, String[] sarFieldName, Object[] sarFieldValue);
 }

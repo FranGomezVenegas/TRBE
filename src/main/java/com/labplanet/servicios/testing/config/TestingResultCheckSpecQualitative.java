@@ -21,10 +21,10 @@ import functionaljavaa.testingscripts.TestingAssert;
 import functionaljavaa.testingscripts.TestingAssertSummary;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Map;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPDate;
+import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -134,13 +134,13 @@ public class TestingResultCheckSpecQualitative extends HttpServlet {
                 if (lineNumCols>=numEvaluationArguments+4) listName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+4]);
 
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, result, ruleType, values, separator, listName}));                    
-                Object[] resSpecEvaluation = resChkSpec.resultCheck(result, ruleType, values, separator, listName);
+                InternalMessage resSpecEvaluation = resChkSpec.resultCheck(result, ruleType, values, separator, listName);
 
                 BigDecimal secondsInDateRange = LPDate.secondsInDateRange(timeStartedStep, LPDate.getCurrentTimeStamp(), true);
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(String.valueOf(secondsInDateRange)));
                 
                 if (numEvaluationArguments<=0){                    
-                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(Arrays.toString(resSpecEvaluation)));
+                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(resSpecEvaluation.getMessageCodeObj().getErrorCode()));
                 }else{
                     Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, resSpecEvaluation, 4);
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate));

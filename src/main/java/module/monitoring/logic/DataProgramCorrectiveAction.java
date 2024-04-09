@@ -6,6 +6,7 @@
 package module.monitoring.logic;
 
 import databases.Rdbms;
+import databases.Rdbms.RdbmsErrorTrapping;
 import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
@@ -13,6 +14,8 @@ import databases.SqlWhere;
 import databases.TblsData;
 import databases.TblsProcedure;
 import databases.features.Token;
+import functionaljavaa.investigation.Investigation;
+import functionaljavaa.investigation.Investigation.InvestigationErrorTrapping;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.parameter.Parameter.isTagValueOneOfDisableOnes;
@@ -29,7 +32,7 @@ import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
-import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 
 /**
  *
@@ -168,14 +171,14 @@ public class DataProgramCorrectiveAction {
      * @param sarFieldValues
      * @return
      */
-    public static Object[] createNew(Integer resultId, String[] sampleFieldNames, Object[] sampleFieldValues, String[] sarFieldNames, Object[] sarFieldValues) {
+    public static InternalMessage createNew(Integer resultId, String[] sampleFieldNames, Object[] sampleFieldValues, String[] sarFieldNames, Object[] sarFieldValues) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
 
         Object[] existsRecord = Rdbms.existsRecord(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(),
                 new String[]{TblsProcedure.ProgramCorrectiveAction.RESULT_ID.getName()}, new Object[]{resultId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ProgramCorrectiveActionErrorTrapping.RECORD_ALREADY_EXISTS, new Object[]{resultId, procInstanceName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, ProgramCorrectiveActionErrorTrapping.RECORD_ALREADY_EXISTS, new Object[]{resultId, procInstanceName});
         }
 
         String statusFirst = ProgramCorrectiveActionStatuses.getStatusFirstCode();
@@ -209,14 +212,14 @@ public class DataProgramCorrectiveAction {
         if (posicInArray == -1) {
             posicInArray = LPArray.valuePosicInArray(sampleFieldNames, TblsProcedure.ProgramCorrectiveAction.SAMPLE_ID.getName());
             if (posicInArray == -1) {
-                return new Object[]{LPPlatform.LAB_FALSE};
+                return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{});
             }
             sampleId = Integer.valueOf(LPNulls.replaceNull(sampleFieldValues[posicInArray].toString()));
             Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(),
                     new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId},
                     new String[]{TblsProcedure.ProgramCorrectiveAction.PROGRAM_NAME.getName()});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) {
-                return LPArray.array2dTo1d(sampleInfo);
+                return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{sampleId});
             }
             programName = sampleInfo[0][0].toString();
         } else {
@@ -283,8 +286,9 @@ public class DataProgramCorrectiveAction {
         } else {
             myFldValue[posicInArray] = LPDate.getCurrentTimeStamp();
         }
-        RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION, myFldName, myFldValue);
-        return insertRecordInTable.getApiMessage();
+        RdbmsObject diagnoseObj = Rdbms.insertRecordInTable(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION, myFldName, myFldValue);
+        return new InternalMessage(diagnoseObj.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, diagnoseObj.getErrorMessageCode(), diagnoseObj.getErrorMessageVariables());
+
     }
 
     /**
@@ -292,11 +296,11 @@ public class DataProgramCorrectiveAction {
      * @param correctiveActionId
      * @return
      */
-    public static Object[] markAsCompleted(Integer correctiveActionId) {
+    public static InternalMessage markAsCompleted(Integer correctiveActionId) {
         return markAsCompleted(correctiveActionId, null);
     }
 
-    public static Object[] markAsCompleted(Integer correctiveActionId, Integer investId) {
+    public static InternalMessage markAsCompleted(Integer correctiveActionId, Integer investId) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String statusClosed = ProgramCorrectiveActionStatuses.STATUS_CLOSED.getStatusCode();
@@ -304,10 +308,10 @@ public class DataProgramCorrectiveAction {
                 new String[]{TblsProcedure.ProgramCorrectiveAction.ID.getName()}, new Object[]{correctiveActionId},
                 new String[]{TblsProcedure.ProgramCorrectiveAction.STATUS.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(correctiveActionInfo[0][0].toString())) {
-            return correctiveActionInfo[0];
+            return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{correctiveActionId});
         }
         if (statusClosed.equalsIgnoreCase(correctiveActionInfo[0][0].toString())) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ProgramCorrectiveActionErrorTrapping.ACTION_CLOSED, new Object[]{correctiveActionId});
+            return new InternalMessage(LPPlatform.LAB_FALSE, ProgramCorrectiveActionErrorTrapping.ACTION_CLOSED, new Object[]{correctiveActionId});
         }
         String[] updFldName = new String[]{TblsProcedure.ProgramCorrectiveAction.STATUS.getName()};
         Object[] updFldValue = new Object[]{statusClosed};
@@ -317,8 +321,9 @@ public class DataProgramCorrectiveAction {
         }
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsProcedure.ProgramCorrectiveAction.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{correctiveActionId}, "");
-        return Rdbms.updateRecordFieldsByFilter(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION,
+        RdbmsObject diagnoseObj = Rdbms.updateTableRecordFieldsByFilter(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION,
                 EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION, updFldName), updFldValue, sqlWhere, null);
+        return new InternalMessage(diagnoseObj.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, diagnoseObj.getErrorMessageCode(), diagnoseObj.getErrorMessageVariables());
     }
 
     
@@ -327,7 +332,7 @@ public class DataProgramCorrectiveAction {
         //return "ENABLE".equalsIgnoreCase(Parameter.getBusinessRuleProcedureFile(procInstanceName, DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getAreaName(), DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getTagName()));
     }
 
-    public static Object[] markAsAddedToInvestigation(Integer investId, String objectType, Object objectId) {
+    public static InternalMessage markAsAddedToInvestigation(Integer investId, String objectType, Object objectId) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String statusClosed = ProgramCorrectiveActionStatuses.STATUS_CLOSED.getStatusCode();
@@ -343,7 +348,7 @@ public class DataProgramCorrectiveAction {
             fieldToFindRecord = TblsProcedure.ProgramCorrectiveAction.RESULT_ID.getName();
         }
         if (fieldToFindRecord == null) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "Object Type <*1*> not recognized", new Object[]{objectType});
+            return new InternalMessage(LPPlatform.LAB_FALSE, Investigation.InvestigationErrorTrapping.OBJECT_TYPE_NOT_RECOGNIZED, new Object[]{objectType});
         } else {
             objectIdClass = LPDatabase.integer();
         }
@@ -358,27 +363,27 @@ public class DataProgramCorrectiveAction {
                     new String[]{TblsProcedure.ProgramCorrectiveAction.ID.getName(), TblsProcedure.ProgramCorrectiveAction.INVEST_ID.getName()});
         }
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programCorrectiveActionsToMarkAsCompleted[0][0].toString())) {
-            return LPArray.array2dTo1d(programCorrectiveActionsToMarkAsCompleted);
+            return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{objectId.toString(), objectType});
         }
-        Object[] diagnostic = null;
+        InternalMessage diagnostic = null;
         for (Object[] curObj : programCorrectiveActionsToMarkAsCompleted) {
             if (statusClosed.equalsIgnoreCase(curObj[1].toString())) {
-                diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "<*1*> is closed, cannot be added to the investigation", new Object[]{investId});
+                diagnostic = new InternalMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.IS_CLOSED, new Object[]{investId});
             }
-            Object[] diagn = markAsCompleted(Integer.valueOf(curObj[0].toString()), investId);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) {
+            InternalMessage diagn = markAsCompleted(Integer.valueOf(curObj[0].toString()), investId);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn.getDiagnostic())) {
                 diagnostic = diagn;
             }
             SqlWhere sqlWhere = new SqlWhere();
             sqlWhere.addConstraint(TblsProcedure.ProgramCorrectiveAction.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{Integer.valueOf(curObj[0].toString())}, "");
-            diagn = Rdbms.updateRecordFieldsByFilter(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION,
+            RdbmsObject diagnoseObj = Rdbms.updateTableRecordFieldsByFilter(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION,
                     EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION, new String[]{TblsProcedure.ProgramCorrectiveAction.INVEST_ID.getName()}), new Object[]{investId}, sqlWhere, null);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) {
+            if (Boolean.FALSE.equals(diagnoseObj.getRunSuccess())) {
                 diagnostic = diagn;
             }
         }
         if (diagnostic == null) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "allMarkedAsAdded <*1*>", new Object[]{Arrays.toString(programCorrectiveActionsToMarkAsCompleted)});
+            return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, new Object[]{Arrays.toString(programCorrectiveActionsToMarkAsCompleted)});
         } else {
             return diagnostic;
         }

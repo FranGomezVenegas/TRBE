@@ -318,16 +318,16 @@ public class ConfigSpecStructure {
                     return myDiagnoses;
                 }
                 ConfigSpecRule qualSpec = new ConfigSpecRule();
-                Object[] isCorrect = null;
+                InternalMessage isCorrect = null;
                 if (ruleVariablesArr.length == 2) {
                     isCorrect = qualSpec.specLimitIsCorrectQualitative(ruleVariablesArr[0], ruleVariablesArr[1], null);
                 } else {
                     isCorrect = qualSpec.specLimitIsCorrectQualitative(ruleVariablesArr[0], ruleVariablesArr[1], ruleVariablesArr[2]);
                 }
-                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isCorrect[0].toString())) {
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isCorrect.getDiagnostic())) {
                     myDiagnoses = DIAGNOSES_SUCCESS;
                 } else {
-                    myDiagnoses = ERROR_TRAPING_ARG_VALUE_LBL_ERROR + isCorrect[1];
+                    myDiagnoses = ERROR_TRAPING_ARG_VALUE_LBL_ERROR + isCorrect.getMessageCodeObj().getErrorCode();
                 }
                 break;
             case "QUANTITATIVE":
@@ -371,10 +371,10 @@ public class ConfigSpecStructure {
                 }
                 ConfigSpecRule quantSpec2 = new ConfigSpecRule();
                 isCorrect = quantSpec2.specLimitIsCorrectQuantitative(minSpec, maxSpec, minControl, maxControl);
-                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isCorrect[0].toString())) {
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isCorrect.getDiagnostic())) {
                     myDiagnoses = DIAGNOSES_SUCCESS;
                 } else {
-                    myDiagnoses = ERROR_TRAPING_ARG_VALUE_LBL_ERROR + isCorrect[1];
+                    myDiagnoses = ERROR_TRAPING_ARG_VALUE_LBL_ERROR + isCorrect.getMessageCodeObj().getErrorCode();
                 }
                 break;
             default:

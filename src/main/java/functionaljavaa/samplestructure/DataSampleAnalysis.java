@@ -14,6 +14,7 @@ import lbplanet.utilities.LPPlatform;
 import databases.DataDataIntegrity;
 import databases.TblsCnfg;
 import databases.Rdbms;
+import databases.Rdbms.RdbmsErrorTrapping;
 import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.SqlWhere;
@@ -37,7 +38,6 @@ import functionaljavaa.samplestructure.DataSampleStructureStatuses.SampleAnalysi
 import lbplanet.utilities.TrazitUtiilitiesEnums;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntTableFields;
-import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 import trazit.session.ResponseMessages;
 
@@ -66,7 +66,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
      * @param testId
      * @return diagnoses
      */
-    public static Object[] sampleAnalysisReview(Integer sampleId, Integer testId) {
+    public static InternalMessage sampleAnalysisReview(Integer sampleId, Integer testId) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
@@ -85,34 +85,34 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
             Object[] updateFldValues = new Object[]{sampleAnalysisStatusReviewed, currStatus};
             SqlWhere sqlWhere = new SqlWhere();
             sqlWhere.addConstraint(TblsData.SampleAnalysis.TEST_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{testId}, "");
-            Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS,
+            RdbmsObject diagnoses = Rdbms.updateTableRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS,
                     EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS, updateFldNames), updateFldValues, sqlWhere, null);
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
+            if (Boolean.TRUE.equals(diagnoses.getRunSuccess())) {
                 SampleAudit smpAudit = new SampleAudit();
                 smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_REVIEWED, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), testId, sampleId, testId, null, updateFldNames, updateFldValues);
                 sampleAnalysisEvaluateStatusAutomatismForReview(sampleId, testId);
             }
-            return diagnoses;
+            return new InternalMessage(diagnoses.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, diagnoses.getErrorMessageCode(), diagnoses.getErrorMessageVariables());
         } else {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.RESULT_NOT_REVIEWABLE, new Object[]{LPNulls.replaceNull(testId), schemaDataName, currStatus});
+            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.RESULT_NOT_REVIEWABLE, new Object[]{LPNulls.replaceNull(testId), schemaDataName, currStatus});
         }
     }
 
-    public static Object[] sampleAnalysisEvaluateStatusAutomatismForReview(Integer sampleId, Integer testId) {
+    public static InternalMessage sampleAnalysisEvaluateStatusAutomatismForReview(Integer sampleId, Integer testId) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String[] whereFieldName = new String[]{};
         Object[] whereFieldValue = new Object[]{};
         Object[][] testInfo = new Object[][]{{}};
-        Object[] isRevisionTestinGroupRequired = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, DataSampleAnalysisBusinessRules.REVISION_TESTINGGROUP_REQUIRED.getAreaName(), DataSampleAnalysisBusinessRules.REVISION_TESTINGGROUP_REQUIRED.getTagName());
+        InternalMessage isRevisionTestinGroupRequired = LPPlatform.isProcedureBusinessRuleEnableInternalMessage(procInstanceName, DataSampleAnalysisBusinessRules.REVISION_TESTINGGROUP_REQUIRED.getAreaName(), DataSampleAnalysisBusinessRules.REVISION_TESTINGGROUP_REQUIRED.getTagName());
         Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP.getTableName());
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())) {
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isRevisionTestinGroupRequired[0].toString())) {
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isRevisionTestinGroupRequired.getDiagnostic())) {
                 testInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
                         new String[]{TblsData.SampleAnalysis.TEST_ID.getName()}, new Object[]{testId},
                         new String[]{TblsData.SampleAnalysis.TESTING_GROUP.getName(), TblsData.SampleAnalysis.SAMPLE_ID.getName()});
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(testInfo[0][0].toString())) {
-                    return LPArray.array2dTo1d(testInfo);
+                    return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{sampleId, testId});
                 }
                 whereFieldName = LPArray.addValueToArray1D(whereFieldName, TblsData.SampleAnalysis.TESTING_GROUP.getName());
                 whereFieldValue = LPArray.addValueToArray1D(whereFieldValue, testInfo[0][0].toString());
@@ -120,11 +120,11 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
             if (sampleId == null) {
                 sampleId = Integer.valueOf(LPNulls.replaceNull(testInfo[0][1].toString()));
             }
-            Object[] areAllsampleAnalysisReviewed = isAllsampleAnalysisReviewed(sampleId, whereFieldName, whereFieldValue);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areAllsampleAnalysisReviewed[0].toString())) {
+            InternalMessage areAllsampleAnalysisReviewed = isAllsampleAnalysisReviewed(sampleId, whereFieldName, whereFieldValue);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areAllsampleAnalysisReviewed.getDiagnostic())) {
                 return areAllsampleAnalysisReviewed;
             }
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isRevisionTestinGroupRequired[0].toString())) {
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isRevisionTestinGroupRequired.getDiagnostic())) {
                 return DataSampleRevisionTestingGroup.setReadyForRevision(sampleId, testInfo[0][0].toString());
             } else {
                 return DataSample.setReadyForRevision(sampleId);
@@ -139,10 +139,10 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
      * @param testId
      * @return
      */
-    public static Object[] setReadyForRevision(Integer sampleId, Integer testId) {
+    public static InternalMessage setReadyForRevision(Integer sampleId, Integer testId) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), TblsData.SampleAnalysis.READY_FOR_REVISION.getName());
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())) {
+        InternalMessage dbTableExists = Rdbms.dbTableExistsInternalMessage(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), TblsData.SampleAnalysis.READY_FOR_REVISION.getName());
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists.getDiagnostic())) {
             return dbTableExists;
         }
         EnumIntAuditEvents auditActionName = SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_SET_READY_FOR_REVISION;
@@ -153,20 +153,20 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         Object[][] sampleAnalysisInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
                 new String[]{TblsData.SampleAnalysis.TEST_ID.getName()}, new Object[]{testId}, sampleAnalysisFieldName);
         if ("TRUE".equalsIgnoreCase(sampleAnalysisInfo[0][0].toString())) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ALREADY_READYFORREVISION, new Object[]{testId, sampleId, procInstanceName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ALREADY_READYFORREVISION, new Object[]{testId, sampleId, procInstanceName});
         }
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsData.SampleAnalysis.TEST_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{testId}, "");
-        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS,
+        RdbmsObject diagnoses = Rdbms.updateTableRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS,
                 EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS, sampleAnalysisFieldName), sampleAnalysisFieldValue, sqlWhere, null);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
+        if (Boolean.TRUE.equals(diagnoses.getRunSuccess())) {
             SampleAudit smpAudit = new SampleAudit();
             smpAudit.sampleAuditAdd(auditActionName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), testId, sampleId, null, null, sampleAnalysisFieldName, sampleAnalysisFieldValue);
         }
-        return diagnoses;
+        return new InternalMessage(diagnoses.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, diagnoses.getErrorMessageCode(), diagnoses.getErrorMessageVariables());
     }
 
-    public static Object[] isReadyForRevision(Integer testId) {
+    public static InternalMessage isReadyForRevision(Integer testId) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String sampleAnalysisStatusCanceled = SampleAnalysisStatuses.CANCELED.getStatusCode("");
         String sampleAnalysisStatusReviewed = SampleAnalysisStatuses.REVIEWED.getStatusCode("");
@@ -177,14 +177,15 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         String sampleIdStr = sampleAnalysisInfo[0][0].toString();
         String currStatus = sampleAnalysisInfo[0][1].toString();
         if (sampleAnalysisStatusCanceled.equalsIgnoreCase(currStatus)) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureSuccess.SAMPLEANALYSIS_CANCELED, new Object[]{testId, Integer.valueOf(sampleIdStr), procInstanceName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleStructureSuccess.SAMPLEANALYSIS_CANCELED,
+                    new Object[]{testId, Integer.valueOf(sampleIdStr), procInstanceName});
         }
         if (sampleAnalysisStatusReviewed.equalsIgnoreCase(currStatus)) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ALREADY_REVIEWED, new Object[]{testId, Integer.valueOf(sampleIdStr), procInstanceName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ALREADY_REVIEWED, new Object[]{testId, Integer.valueOf(sampleIdStr), procInstanceName});
         }
 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAnalysisInfo[0][0].toString())) {
-            return LPArray.array2dTo1d(sampleAnalysisInfo);
+            return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{testId});
         }
         return isReadyForRevision(Integer.valueOf(LPNulls.replaceNull(sampleAnalysisInfo[0][0].toString())), testId);
     }
@@ -195,19 +196,19 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
      * @param testId
      * @return
      */
-    public static Object[] isReadyForRevision(Integer sampleId, Integer testId) {
+    public static InternalMessage isReadyForRevision(Integer sampleId, Integer testId) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] dbTableExists = Rdbms.dbTableExists(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), TblsData.SampleAnalysis.READY_FOR_REVISION.getName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleAnalysisErrorTrapping.NOT_IMPLEMENTED, new Object[]{testId, sampleId, procInstanceName});
+            return new InternalMessage(LPPlatform.LAB_TRUE, DataSampleAnalysisErrorTrapping.NOT_IMPLEMENTED, new Object[]{testId, sampleId, procInstanceName});
         }
         String[] sampleAnalysisFieldToRetrieve = new String[]{TblsData.SampleAnalysis.READY_FOR_REVISION.getName()};
         Object[][] sampleAnalysisInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
                 new String[]{TblsData.SampleAnalysis.TEST_ID.getName()}, new Object[]{testId}, sampleAnalysisFieldToRetrieve);
         if ("TRUE".equalsIgnoreCase(sampleAnalysisInfo[0][0].toString())) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleAnalysisErrorTrapping.READY_FOR_REVISION, new Object[]{testId, sampleId, procInstanceName});
+            return new InternalMessage(LPPlatform.LAB_TRUE, DataSampleAnalysisErrorTrapping.READY_FOR_REVISION, new Object[]{testId, sampleId, procInstanceName});
         }
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleAnalysisErrorTrapping.NOT_IMPLEMENTED, new Object[]{testId, sampleId, procInstanceName});
+        return new InternalMessage(LPPlatform.LAB_TRUE, DataSampleAnalysisErrorTrapping.NOT_IMPLEMENTED, new Object[]{testId, sampleId, procInstanceName});
     }
 
     /**
@@ -216,7 +217,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
      * @param testId
      * @return
      */
-    public static Object[] sampleAnalysisEvaluateStatus(Integer sampleId, Integer testId) {
+    public static InternalMessage sampleAnalysisEvaluateStatus(Integer sampleId, Integer testId) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
@@ -235,13 +236,13 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         Object[][] sampleAnalysisInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), new String[]{TblsData.SampleAnalysis.TEST_ID.getName()},
                 new Object[]{testId}, new String[]{TblsData.SampleAnalysis.STATUS.getName()});
         if (sampleAnalysisInfo[0][0].toString().equalsIgnoreCase(smpAnaNewStatus)) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "noChangeRequired", null);
+            return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, null);
         }
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsData.SampleAnalysis.TEST_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{testId}, "");
-        diagnoses = Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS,
+        RdbmsObject diagnoseObj = Rdbms.updateTableRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS,
                 EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS, new String[]{TblsData.SampleAnalysis.STATUS.getName()}), new Object[]{smpAnaNewStatus}, sqlWhere, null);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
+        if (Boolean.TRUE.equals(diagnoseObj.getRunSuccess())) {
             if (sampleAnalysisStatusComplete.equalsIgnoreCase(smpAnaNewStatus)) {
                 sampleAnalysisEvaluateStatusAutomatismForComplete(sampleId, testId);
             }
@@ -250,14 +251,14 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
                     testId, sampleId, testId, null, new String[]{TblsData.SampleAnalysis.STATUS.getName()}, new Object[]{smpAnaNewStatus});
             if (sampleAnalysisStatusComplete.equalsIgnoreCase(smpAnaNewStatus)) {
                 sampleAnalysisEvaluateStatusAutomatismForAutoApprove(sampleId, testId);
-                return diagnoses;
+                return new InternalMessage(diagnoseObj.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, diagnoseObj.getErrorMessageCode(), diagnoseObj.getErrorMessageVariables());
             }
         }
         DataSample.sampleEvaluateStatus(sampleId);
-        return diagnoses;
+        return new InternalMessage(diagnoseObj.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, diagnoseObj.getErrorMessageCode(), diagnoseObj.getErrorMessageVariables());
     }
 
-    public static Object[] sampleAnalysisEvaluateStatusAutomatismForComplete(Integer sampleId, Integer testId) {
+    public static InternalMessage sampleAnalysisEvaluateStatusAutomatismForComplete(Integer sampleId, Integer testId) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[] isRevisionSampleAnalysisMarkAsReadyForRevisionWhenAllResultsEntered = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, DataSampleAnalysisBusinessRules.MARK_READYFORREVISION_WHENALLRESULTSENTERED.getAreaName(), DataSampleAnalysisBusinessRules.MARK_READYFORREVISION_WHENALLRESULTSENTERED.getTagName());
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isRevisionSampleAnalysisMarkAsReadyForRevisionWhenAllResultsEntered[0].toString())) {
@@ -267,7 +268,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isRevisionSampleAnalysisMarkAsReviewedWhenAllResultsEntered[0].toString())) {
             return sampleAnalysisReview(sampleId, testId);
         }
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "markAsReadyForRevisionWhenAllResultsEnteredNotActive", null);
+        return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, null);
     }
 
     public static void sampleAnalysisEvaluateStatusAutomatismForAutoApprove(Integer sampleId, Integer testId) {
@@ -287,7 +288,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
      * @param newAnalyst
      * @return
      */
-    public static Object[] sampleAnalysisAssignAnalyst(Integer testId, String newAnalyst) {
+    public static InternalMessage sampleAnalysisAssignAnalyst(Integer testId, String newAnalyst) {
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
@@ -302,7 +303,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
                 new Object[]{testId}, new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName(), TblsData.SampleAnalysis.STATUS.getName(), TblsData.SampleAnalysis.ANALYST.getName(),
                     TblsData.SampleAnalysis.ANALYSIS.getName(), TblsData.SampleAnalysis.METHOD_NAME.getName(), TblsData.SampleAnalysis.METHOD_VERSION.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(testData[0][0].toString())) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLEANALYSIS_NOTFOUND, new Object[]{testId, procInstanceName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLEANALYSIS_NOTFOUND, new Object[]{testId, procInstanceName});
         }
         Integer sampleId = Integer.valueOf(LPNulls.replaceNull(testData[0][0].toString()));
         String testStatus = (String) testData[0][1];
@@ -311,11 +312,11 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         String testMethodName = (String) testData[0][4];
         Integer testMethodVersion = Integer.valueOf(LPNulls.replaceNull(testData[0][5].toString()));
         if (testCurrAnalyst == null ? newAnalyst == null : testCurrAnalyst.equals(newAnalyst)) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAME_ANALYST, new Object[]{testCurrAnalyst, testId, procInstanceName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAME_ANALYST, new Object[]{testCurrAnalyst, testId, procInstanceName});
         }
         // the test status cannot be reviewed or canceled, should be checked
         if ((testCurrAnalyst != null) && (testStatus.equalsIgnoreCase(testStatusReviewed) || testStatus.equalsIgnoreCase(testStatusCanceled))) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLEANALYSIS_LOCKED, new Object[]{testStatus, testId, newAnalyst, procInstanceName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLEANALYSIS_LOCKED, new Object[]{testStatus, testId, newAnalyst, procInstanceName});
         }
         Object[][] sampleData = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaDataName, TblsData.TablesData.SAMPLE.getTableName(),
                 new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId},
@@ -331,7 +332,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
             testAssignmentMode = "null";
         }
         if (Boolean.FALSE.equals(assignmentModes.contains(testAssignmentMode))) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLEANALYSISASSIGNED_MODENOTRECOGNIZED,
+            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLEANALYSISASSIGNED_MODENOTRECOGNIZED,
                     new Object[]{TblsCnfg.SampleRules.ANALYST_ASSIGNMENT_MODE.getName(), sampleConfigCode, sampleConfigCodeVersion, testAssignmentMode, assignmentModes, procInstanceName,
                         testId, newAnalyst});
         }
@@ -345,7 +346,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
             String[] userMethodModesArr = userCertifiedModes.split("\\|");
             assignTestAnalyst = LPArray.valueInArray(userMethodModesArr, userMethodCertificationMode);
             if (Boolean.FALSE.equals(assignTestAnalyst)) {
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLEANALYSISASSIGNED_MODENOTIMPLEMENTED, new Object[]{testAssignmentMode, Arrays.toString(userMethodModesArr), userMethodCertificationMode, schemaDataName});
+                return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLEANALYSISASSIGNED_MODENOTIMPLEMENTED, new Object[]{testAssignmentMode, Arrays.toString(userMethodModesArr), userMethodCertificationMode, schemaDataName});
             }
         }
         if (Boolean.TRUE.equals(assignTestAnalyst)) {
@@ -353,24 +354,21 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
             Object[] updateFieldValue = new Object[]{newAnalyst, LPDate.getCurrentTimeStamp(), token.getUserName()};
             SqlWhere sqlWhere = new SqlWhere();
             sqlWhere.addConstraint(TblsData.SampleAnalysis.TEST_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{testId}, "");
-            Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS,
+            RdbmsObject diagnoses = Rdbms.updateTableRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS,
                     EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS, updateFieldName), updateFieldValue, sqlWhere, null);
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
-                diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleStructureSuccess.SAMPLEANALYSISASSIGNED_SUCCESS, new Object[]{testId, newAnalyst, sampleId});
+           if (Boolean.TRUE.equals(diagnoses.getRunSuccess())) {               
                 SampleAudit smpAudit = new SampleAudit();
                 smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_ANALYST_ASSIGNMENT, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
                         testId, sampleId, testId, null, updateFieldName, updateFieldValue);
-                return diagnoses;
+                return new InternalMessage(LPPlatform.LAB_TRUE, DataSampleStructureSuccess.SAMPLEANALYSISASSIGNED_SUCCESS, new Object[]{testId, newAnalyst, sampleId});
             }
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.DB_RETURNEDERROR, new Object[]{testId, newAnalyst, schemaDataName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.DB_RETURNEDERROR, new Object[]{testId, newAnalyst, schemaDataName});
         }
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ESCAPE_UNHANDLEDEXCEPTION, new Object[]{procInstanceName, token.getUserName(), testId, newAnalyst, token.getUserRole()});
+        return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ESCAPE_UNHANDLEDEXCEPTION, new Object[]{procInstanceName, token.getUserName(), testId, newAnalyst, token.getUserRole()});
     }
 
     /**
      *
-     * @param procInstanceName
-     * @param dataSample
      * @return
      */
     /*    public String specialFieldCheckSampleAnalysisMethod(String procInstanceName, DataSample dataSample) {
@@ -410,17 +408,17 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         return myDiagnoses;
     }
      */
-    public static Object[] sampleAnalysisRemovetoSample(Integer sampleId, Integer testId, String[] fieldName, Object[] fieldValue) {
+    public static InternalMessage sampleAnalysisRemovetoSample(Integer sampleId, Integer testId, String[] fieldName, Object[] fieldValue) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
         String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
         String[] mandatoryFields = null;
         DataDataIntegrity labIntChecker = new DataDataIntegrity();
         if (sampleId == null) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
         }
         if (testId == null && fieldName == null) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
         }
         String[] wFldName = null;
         Object[] wFldValue = null;
@@ -433,7 +431,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
             wFldValue = new Object[]{sampleId};
             InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldName, fieldValue);
             if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))) {
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
+                return new InternalMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
             }
             String[] fieldNeed = new String[]{TblsData.SampleAnalysis.ANALYSIS.getName(), TblsData.SampleAnalysis.METHOD_NAME.getName(), TblsData.SampleAnalysis.METHOD_VERSION.getName()};
             for (String curFld : fieldNeed) {
@@ -441,7 +439,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
                 if (specialFieldIndex == -1) {
                     specialFieldIndex = Arrays.asList(fieldName).indexOf(curFld);
                     if (specialFieldIndex == -1) {
-                        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS,
+                        return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS,
                                 new String[]{Arrays.toString(fieldNeed), schemaDataName});
                     }
                     value = fieldValue[specialFieldIndex];
@@ -458,13 +456,13 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
                 new String[]{TblsData.SampleAnalysis.STATUS.getName(), TblsData.SampleAnalysis.TEST_ID.getName(), TblsData.SampleAnalysis.ANALYSIS.getName()});
         if (Boolean.TRUE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleData[0][0].toString()))) {
             messages.addMainForError(DataSampleAnalysisErrorTrapping.SAMPLEANALYSIS_NOTFOUND, new Object[]{testId != null ? testId : fieldValue[Arrays.asList(mandatoryFields).indexOf(TblsData.SampleAnalysis.ANALYSIS.getName())], sampleId, schemaDataName});
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLEANALYSIS_NOTFOUND, new Object[]{testId != null ? testId : fieldValue[Arrays.asList(mandatoryFields).indexOf(TblsData.SampleAnalysis.ANALYSIS.getName())], sampleId, schemaDataName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLEANALYSIS_NOTFOUND, new Object[]{testId != null ? testId : fieldValue[Arrays.asList(mandatoryFields).indexOf(TblsData.SampleAnalysis.ANALYSIS.getName())], sampleId, schemaDataName});
         }
         String statusCode = DataSampleStructureStatuses.SampleAnalysisStatuses.NOT_STARTED.getStatusCode("");
         if (Boolean.FALSE.equals(LPNulls.replaceNull(sampleData[0][0]).toString().equalsIgnoreCase(statusCode))) {
             messages.addMainForError(DataSampleAnalysisErrorTrapping.SAMPLEANALYSIS_NOTFOUND, new Object[]{LPNulls.replaceNull(sampleData[0][2]).toString(), sampleId, schemaDataName});
             messages.addMainForError(DataSampleAnalysisErrorTrapping.SAMPLE_ANALYSIS_CANNOT_BE_REMOVED, new Object[]{LPNulls.replaceNull(sampleData[0][2]).toString(), sampleData[0][0], sampleId, schemaDataName});
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLE_ANALYSIS_CANNOT_BE_REMOVED, new Object[]{LPNulls.replaceNull(sampleData[0][2]).toString(), sampleData[0][0], sampleId, schemaDataName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLE_ANALYSIS_CANNOT_BE_REMOVED, new Object[]{LPNulls.replaceNull(sampleData[0][2]).toString(), sampleData[0][0], sampleId, schemaDataName});
         }
         testId = Integer.valueOf(sampleData[0][1].toString());
         String tableName = TblsData.TablesData.SAMPLE_ANALYSIS.getTableName();
@@ -473,20 +471,20 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         mandatoryFields = labIntChecker.getTableMandatoryFields(sampleLevel + tableName, actionName);
         InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldName, fieldValue);
         if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
+            return new InternalMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
         }
         String[] remFlds = new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName(), TblsData.SampleAnalysis.TEST_ID.getName()};
         Object[] remFldsV = new Object[]{sampleId, testId};
         RdbmsObject newResultRdbmsDiagnObj = Rdbms.removeRecordInTable(TblsData.TablesData.SAMPLE_ANALYSIS,
                 new SqlWhere(TblsData.TablesData.SAMPLE_ANALYSIS, remFlds, remFldsV), null);
         if (Boolean.FALSE.equals(newResultRdbmsDiagnObj.getRunSuccess())) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, newResultRdbmsDiagnObj.getErrorMessageCode(), newResultRdbmsDiagnObj.getErrorMessageVariables());
+            return new InternalMessage(LPPlatform.LAB_FALSE, newResultRdbmsDiagnObj.getErrorMessageCode(), newResultRdbmsDiagnObj.getErrorMessageVariables());
         }
         SampleAudit smpAudit = new SampleAudit();
         smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_REMOVED, sampleLevel + TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
                 testId, sampleId, testId, null, remFlds, remFldsV);
 
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, SampleAPIactionsEndpoints.SAMPLEANALYSISREMOVE.getSuccessMessageCode(), new Object[]{fieldValue[0], sampleId});
+        return new InternalMessage(LPPlatform.LAB_TRUE, SampleAPIactionsEndpoints.SAMPLEANALYSISREMOVE, new Object[]{fieldValue[0], sampleId});
     }
 
     /**
@@ -496,7 +494,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
      * @param fieldValue
      * @return
      */
-    public static Object[] sampleAnalysisAddtoSample(Integer sampleId, String[] fieldName, Object[] fieldValue) {
+    public static InternalMessage sampleAnalysisAddtoSample(Integer sampleId, String[] fieldName, Object[] fieldValue) {
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String[] mandatoryFields = null;
@@ -511,7 +509,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         mandatoryFields = labIntChecker.getTableMandatoryFields(sampleLevel + tableName, actionName);
         InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldName, fieldValue);
         if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
+            return new InternalMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
         }
         mandatoryFieldsValue = new Object[mandatoryFields.length];
         StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
@@ -530,7 +528,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
             }
         }
         if (mandatoryFieldsMissingBuilder.length() > 0) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS,
+            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS,
                     new String[]{mandatoryFieldsMissingBuilder.toString(), Arrays.toString(fieldName), schemaConfigName});
         }
         // set first status. Begin
@@ -547,7 +545,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         Object[][] sampleData = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaDataName, TblsData.TablesData.SAMPLE.getTableName(), new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId},
                 new String[]{TblsData.Sample.SAMPLE_ID.getName(), TblsData.Sample.STATUS.getName(), TblsData.Sample.CONFIG_CODE.getName(), TblsData.Sample.CONFIG_CODE_VERSION.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleData[0][0].toString())) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_NOT_FOUND, new Object[]{sampleId, schemaDataName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_NOT_FOUND, new Object[]{sampleId, schemaDataName});
         }
         String sampleCode=LPNulls.replaceNull(sampleData[0][2]).toString();
         Integer sampleCodeVersion=Integer.valueOf(LPNulls.replaceNull(sampleData[0][3]).toString());        
@@ -556,7 +554,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
             new Object[]{sampleCode, sampleCodeVersion}, new String[]{TblsCnfg.SampleRules.ALLOW_SAMPLE_ANALYSIS_MORE_THAN_ONE.getName(), 
                 TblsCnfg.SampleRules.CODE.getName(), TblsCnfg.SampleRules.CODE_VERSION.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleRules[0][0].toString())) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SPECRULE_NOTFOUND, new Object[]{sampleCode, sampleCodeVersion, schemaDataName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SPECRULE_NOTFOUND, new Object[]{sampleCode, sampleCodeVersion, schemaDataName});
         }
         String analysisName=LPNulls.replaceNull(fieldValue[LPArray.valuePosicInArray(fieldName, "analysis")]).toString(); 
         if (Boolean.FALSE.equals(sampleRules[0][0])){
@@ -564,7 +562,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
                 new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName(), TblsData.SampleAnalysis.ANALYSIS.getName()},
                 new Object[]{sampleId, analysisName}, null);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsRecord[0].toString())){
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLE_ANALYSIS_ALREADY_PRESENT, new Object[]{sampleId, analysisName, schemaDataName});                 
+                return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLE_ANALYSIS_ALREADY_PRESENT, new Object[]{sampleId, analysisName, schemaDataName});                 
             }
         }        
         String sampleSpecCode = "";
@@ -584,7 +582,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
                         new Object[]{sampleSpecCode, sampleSpecCodeVersion}, new String[]{TblsCnfg.SpecRules.ALLOW_OTHER_ANALYSIS.getName(), TblsCnfg.SpecRules.ALLOW_MULTI_SPEC.getName(),
                             TblsCnfg.SpecRules.CODE.getName(), TblsCnfg.SpecRules.CONFIG_VERSION.getName()});
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(specRules[0][0].toString())) {
-                    return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SPECRULE_NOTFOUND, new Object[]{sampleSpecCode, sampleSpecCodeVersion, schemaDataName});
+                    return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SPECRULE_NOTFOUND, new Object[]{sampleSpecCode, sampleSpecCodeVersion, schemaDataName});
                 }
                 if (Boolean.FALSE.equals(Boolean.valueOf(specRules[0][0].toString()))) {
                     String[] specAnalysisFieldName = new String[]{TblsCnfg.SpecLimits.ANALYSIS.getName(), TblsCnfg.SpecLimits.METHOD_NAME.getName(), TblsCnfg.SpecLimits.METHOD_VERSION.getName()};
@@ -602,7 +600,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
                         }
                     }
                     if (nullValues) {
-                        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SPECRULE_NOTFOUND, nullValuesArr);
+                        return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SPECRULE_NOTFOUND, nullValuesArr);
                     }
                     specAnalysisFieldName = LPArray.addValueToArray1D(specAnalysisFieldName,
                             new String[]{TblsCnfg.SpecLimits.CODE.getName(), TblsCnfg.SpecLimits.CONFIG_VERSION.getName()});
@@ -624,7 +622,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
 //                                sW,
 //                                new String[]{TblsCnfg.SpecLimits.TESTING_GROUP.getName()});
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisTestingGroup[0][0].toString())) {
-                            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SPECLIMIT_NOTFOUND, new Object[]{Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(specAnalysisFieldName, specAnalysisFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR)), schemaDataName});
+                            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SPECLIMIT_NOTFOUND, new Object[]{Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(specAnalysisFieldName, specAnalysisFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR)), schemaDataName});
                         }
                         specAnalysisTestingGroup = analysisTestingGroup[0][0].toString();
                     }
@@ -676,7 +674,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         if (specialFieldIndex == -1) {
             specialFieldIndex = Arrays.asList(fieldName).indexOf(fieldNeed);
             if (specialFieldIndex == -1) {
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS,
+                return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS,
                         new String[]{fieldNeed, Arrays.toString(mandatoryFields), schemaDataName});
             }
             value = fieldValue[specialFieldIndex];
@@ -690,7 +688,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         if (specialFieldIndex == -1) {
             specialFieldIndex = Arrays.asList(fieldName).indexOf(fieldNeed);
             if (specialFieldIndex == -1) {
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS,
+                return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS,
                         new String[]{fieldNeed, Arrays.toString(mandatoryFields), schemaDataName});
             }
             value = fieldValue[specialFieldIndex];
@@ -704,7 +702,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         if (specialFieldIndex == -1) {
             specialFieldIndex = Arrays.asList(fieldName).indexOf(fieldNeed);
             if (specialFieldIndex == -1) {
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS,
+                return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS,
                         new String[]{fieldNeed, Arrays.toString(mandatoryFields), schemaDataName});
             }
             value = fieldValue[specialFieldIndex];
@@ -717,7 +715,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         Object[][] resultFieldRecords = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaConfigName, TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(),
                 whereResultFieldName, whereResultFieldValue, getResultFieldsBeforeEach, new String[]{TblsCnfg.AnalysisMethodParams.ORDER_NUMBER.getName(), TblsCnfg.AnalysisMethodParams.PARAM_NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultFieldRecords[0][0].toString())) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ANALYSISMETHOD_PARAMSNOTFOUND, new Object[]{Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(whereResultFieldName, whereResultFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR)), schemaDataName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ANALYSISMETHOD_PARAMSNOTFOUND, new Object[]{Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(whereResultFieldName, whereResultFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR)), schemaDataName});
         }
         resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, sampleId);
         getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.SAMPLE_ID.getName());
@@ -755,7 +753,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
             }
         }
         if (resultMandatoryFieldsMissingBuilder.length() > 0) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{resultMandatoryFieldsMissingBuilder, schemaDataName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{resultMandatoryFieldsMissingBuilder, schemaDataName});
         }
         fieldName = LPArray.addValueToArray1D(fieldName, new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName(), TblsData.SampleAnalysis.ADDED_ON.getName(), TblsData.SampleAnalysis.ADDED_BY.getName()});
         fieldValue = LPArray.addValueToArray1D(fieldValue, new Object[]{sampleId, Rdbms.getCurrentDate(), token.getUserName()});
@@ -873,7 +871,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
                 RdbmsObject newResultRdbmsDiagnObj = Rdbms.insertRecordInTable(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT,
                         getResultFields, fieldVal);
                 if (Boolean.FALSE.equals(newResultRdbmsDiagnObj.getRunSuccess())) {
-                    return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, newResultRdbmsDiagnObj.getErrorMessageCode(), newResultRdbmsDiagnObj.getErrorMessageVariables());
+                    return new InternalMessage(LPPlatform.LAB_FALSE, newResultRdbmsDiagnObj.getErrorMessageCode(), newResultRdbmsDiagnObj.getErrorMessageVariables());
                 }
                 Integer resultId = Integer.parseInt(newResultRdbmsDiagnObj.getNewRowId().toString());
                 smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ADDED, sampleLevel + TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
@@ -891,15 +889,15 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
             }
         }
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isReviewByTestingGroupEnable[0].toString())) {
-            Object[] addSampleRevisionByTestingGroup = DataSampleRevisionTestingGroup.addSampleRevisionByTestingGroup(sampleId, testId, specAnalysisTestingGroup);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(addSampleRevisionByTestingGroup[0].toString())) {
+            InternalMessage addSampleRevisionByTestingGroup = DataSampleRevisionTestingGroup.addSampleRevisionByTestingGroup(sampleId, testId, specAnalysisTestingGroup);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(addSampleRevisionByTestingGroup.getDiagnostic())) {
                 return addSampleRevisionByTestingGroup;
             }
         }
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleStructureSuccess.SAMPLE_ANALYSIS_ADDED_SUCCESS, new Object[]{"", testId, schemaDataName});
+        return new InternalMessage(LPPlatform.LAB_TRUE, DataSampleStructureSuccess.SAMPLE_ANALYSIS_ADDED_SUCCESS, new Object[]{"", testId, schemaDataName});
     }
 
-    public static Object[] sampleAnalysisAddtoSampleNoSpecCheck(Integer sampleId, String[] fieldName, Object[] fieldValue,
+    public static InternalMessage sampleAnalysisAddtoSampleNoSpecCheck(Integer sampleId, String[] fieldName, Object[] fieldValue,
             String sampleSpecCode, Integer sampleSpecCodeVersion, String sampleSpecVariationName, String specAnalysisTestingGroup) {
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
@@ -915,7 +913,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         mandatoryFields = labIntChecker.getTableMandatoryFields(sampleLevel + tableName, actionName);
         InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldName, fieldValue);
         if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
+            return new InternalMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
         }
         mandatoryFieldsValue = new Object[mandatoryFields.length];
         StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
@@ -934,7 +932,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
             }
         }
         if (mandatoryFieldsMissingBuilder.length() > 0) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS,
+            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS,
                     new String[]{mandatoryFieldsMissingBuilder.toString(), Arrays.toString(fieldName), schemaConfigName});
         }
         // set first status. Begin
@@ -951,7 +949,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         Object[][] sampleData = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaDataName, TblsData.TablesData.SAMPLE.getTableName(), new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId},
                 new String[]{TblsData.Sample.SAMPLE_ID.getName(), TblsData.Sample.STATUS.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleData[0][0].toString())) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_NOT_FOUND, new Object[]{sampleId, schemaDataName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_NOT_FOUND, new Object[]{sampleId, schemaDataName});
         }
         String[] specialFields = labIntChecker.getStructureSpecialFields(sampleLevel + "Structure");
         String[] specialFieldsFunction = labIntChecker.getStructureSpecialFieldsFunction(sampleLevel + "Structure");
@@ -997,7 +995,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         if (specialFieldIndex == -1) {
             specialFieldIndex = Arrays.asList(fieldName).indexOf(fieldNeed);
             if (specialFieldIndex == -1) {
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS,
+                return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS,
                         new String[]{fieldNeed, Arrays.toString(mandatoryFields), schemaDataName});
             }
             value = fieldValue[specialFieldIndex];
@@ -1011,7 +1009,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         if (specialFieldIndex == -1) {
             specialFieldIndex = Arrays.asList(fieldName).indexOf(fieldNeed);
             if (specialFieldIndex == -1) {
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS,
+                return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS,
                         new String[]{fieldNeed, Arrays.toString(mandatoryFields), schemaDataName});
             }
             value = fieldValue[specialFieldIndex];
@@ -1025,7 +1023,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         if (specialFieldIndex == -1) {
             specialFieldIndex = Arrays.asList(fieldName).indexOf(fieldNeed);
             if (specialFieldIndex == -1) {
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS,
+                return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS,
                         new String[]{fieldNeed, Arrays.toString(mandatoryFields), schemaDataName});
             }
             value = fieldValue[specialFieldIndex];
@@ -1038,7 +1036,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         Object[][] resultFieldRecords = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaConfigName, TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(),
                 whereResultFieldName, whereResultFieldValue, getResultFieldsBeforeEach, new String[]{TblsCnfg.AnalysisMethodParams.ORDER_NUMBER.getName(), TblsCnfg.AnalysisMethodParams.PARAM_NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultFieldRecords[0][0].toString())) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ANALYSISMETHOD_PARAMSNOTFOUND, new Object[]{Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(whereResultFieldName, whereResultFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR)), schemaDataName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ANALYSISMETHOD_PARAMSNOTFOUND, new Object[]{Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(whereResultFieldName, whereResultFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR)), schemaDataName});
         }
         resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, sampleId);
         getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.SAMPLE_ID.getName());
@@ -1076,7 +1074,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
             }
         }
         if (resultMandatoryFieldsMissingBuilder.length() > 0) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{resultMandatoryFieldsMissingBuilder, schemaDataName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{resultMandatoryFieldsMissingBuilder, schemaDataName});
         }
         fieldName = LPArray.addValueToArray1D(fieldName, new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName(), TblsData.SampleAnalysis.ADDED_ON.getName(), TblsData.SampleAnalysis.ADDED_BY.getName()});
         fieldValue = LPArray.addValueToArray1D(fieldValue, new Object[]{sampleId, Rdbms.getCurrentDate(), token.getUserName()});
@@ -1194,7 +1192,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
                 RdbmsObject newResultRdbmsDiagnObj = Rdbms.insertRecordInTable(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT,
                         getResultFields, fieldVal);
                 if (Boolean.FALSE.equals(newResultRdbmsDiagnObj.getRunSuccess())) {
-                    return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, newResultRdbmsDiagnObj.getErrorMessageCode(), newResultRdbmsDiagnObj.getErrorMessageVariables());
+                    return new InternalMessage(LPPlatform.LAB_FALSE, newResultRdbmsDiagnObj.getErrorMessageCode(), newResultRdbmsDiagnObj.getErrorMessageVariables());
                 }
                 Integer resultId = Integer.parseInt(newResultRdbmsDiagnObj.getNewRowId().toString());
                 smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ADDED, sampleLevel + TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
@@ -1212,15 +1210,15 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
             }
         }
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isReviewByTestingGroupEnable[0].toString())) {
-            Object[] addSampleRevisionByTestingGroup = DataSampleRevisionTestingGroup.addSampleRevisionByTestingGroup(sampleId, testId, specAnalysisTestingGroup);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(addSampleRevisionByTestingGroup[0].toString())) {
+            InternalMessage addSampleRevisionByTestingGroup = DataSampleRevisionTestingGroup.addSampleRevisionByTestingGroup(sampleId, testId, specAnalysisTestingGroup);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(addSampleRevisionByTestingGroup.getDiagnostic())) {
                 return addSampleRevisionByTestingGroup;
             }
         }
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleStructureSuccess.SAMPLE_ANALYSIS_ADDED_SUCCESS, new Object[]{"", testId, schemaDataName});
+        return new InternalMessage(LPPlatform.LAB_TRUE, DataSampleStructureSuccess.SAMPLE_ANALYSIS_ADDED_SUCCESS, new Object[]{"", testId, schemaDataName});
     }
 
-    public static Object[] isAllsampleAnalysisReviewed(Integer sampleId, String[] whereFieldName, Object[] whereFieldValue) {
+    public static InternalMessage isAllsampleAnalysisReviewed(Integer sampleId, String[] whereFieldName, Object[] whereFieldValue) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String sampleAnalysisStatusReviewed = SampleAnalysisStatuses.REVIEWED.getStatusCode("");
         if (whereFieldName == null) {
@@ -1231,22 +1229,22 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         }
         Object[] isRevisionSampleAnalysisRequired = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, DataSampleAnalysisBusinessRules.REVISION_SAMPLEANALYSIS_REQUIRED.getAreaName(), DataSampleAnalysisBusinessRules.REVISION_SAMPLEANALYSIS_REQUIRED.getTagName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isRevisionSampleAnalysisRequired[0].toString())) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "", null);
+            return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, null);
         }
         whereFieldName = LPArray.addValueToArray1D(whereFieldName, TblsData.SampleAnalysis.SAMPLE_ID.getName());
         whereFieldValue = LPArray.addValueToArray1D(whereFieldValue, sampleId);
         Object[][] grouper = Rdbms.getGrouper(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
                 new String[]{TblsData.SampleAnalysis.STATUS.getName()}, whereFieldName, whereFieldValue, null);
         if (grouper.length != 1) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.PENDING_REVISION, null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.PENDING_REVISION, null);
         }
         if (Boolean.FALSE.equals(grouper[0][0].toString().equalsIgnoreCase(sampleAnalysisStatusReviewed))) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.PENDING_REVISION, null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.PENDING_REVISION, null);
         }
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "", null);
+        return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, null);
     }
 
-    public static Object[] addSampleAnalysisWithResults(Integer sampleId, String[] fieldName, Object[] fieldValue, String specCode, Integer specCodeVersion, String paramName, Integer specLimitId, String specAnalysisTestingGroup) {
+    public static InternalMessage addSampleAnalysisWithResults(Integer sampleId, String[] fieldName, Object[] fieldValue, String specCode, Integer specCodeVersion, String paramName, Integer specLimitId, String specAnalysisTestingGroup) {
         try {
             Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
             String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
@@ -1272,7 +1270,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
                 if (specialFieldIndex == -1) {
                     specialFieldIndex = Arrays.asList(fieldName).indexOf(fieldNeed);
                     if (specialFieldIndex == -1) {
-                        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS,
+                        return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ADD_TO_SAMPLE_MISSING_MANDATORY_FIELDS,
                                 new String[]{fieldNeed, Arrays.toString(mandatoryFields), schemaDataName});
                     }
                     value = fieldValue[specialFieldIndex];
@@ -1289,7 +1287,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
             Object[][] resultFieldRecords = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaConfigName, TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(),
                     whereResultFieldName, whereResultFieldValue, getResultFieldsBeforeEach, new String[]{TblsCnfg.AnalysisMethodParams.ORDER_NUMBER.getName(), TblsCnfg.AnalysisMethodParams.PARAM_NAME.getName()});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultFieldRecords[0][0].toString())) {
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ANALYSISMETHOD_PARAMSNOTFOUND, new Object[]{Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(whereResultFieldName, whereResultFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR)), schemaDataName});
+                return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.ANALYSISMETHOD_PARAMSNOTFOUND, new Object[]{Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(whereResultFieldName, whereResultFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR)), schemaDataName});
             }
             resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, sampleId);
             getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.SAMPLE_ID.getName());
@@ -1328,12 +1326,12 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
             }
 
             if (resultMandatoryFieldsMissingBuilder.length() > 0) {
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{resultMandatoryFieldsMissingBuilder, schemaDataName});
+                return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{resultMandatoryFieldsMissingBuilder, schemaDataName});
             }
             fieldName = LPArray.addValueToArray1D(fieldName, new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName(), TblsData.SampleAnalysis.ADDED_ON.getName(), TblsData.SampleAnalysis.ADDED_BY.getName()});
             fieldValue = LPArray.addValueToArray1D(fieldValue, new Object[]{sampleId, Rdbms.getCurrentDate(), token.getUserName()});
-            Object[] isReviewByTestingGroupEnable = LPPlatform.isProcedureBusinessRuleEnable(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName(), DataSampleRevisionTestingGroup.DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP.getTagName());
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isReviewByTestingGroupEnable[0].toString())
+            InternalMessage isReviewByTestingGroupEnable = LPPlatform.isProcedureBusinessRuleEnableInternalMessage(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName(), DataSampleRevisionTestingGroup.DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP.getTagName());
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isReviewByTestingGroupEnable.getDiagnostic())
                     && Boolean.FALSE.equals(LPArray.valueInArray(fieldName, TblsData.SampleAnalysis.TESTING_GROUP.getName()))) {
                 fieldName = LPArray.addValueToArray1D(fieldName, TblsData.SampleAnalysis.TESTING_GROUP.getName());
                 fieldValue = LPArray.addValueToArray1D(fieldValue, specAnalysisTestingGroup);
@@ -1409,7 +1407,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
                     RdbmsObject newResultRdbmsDiagnObj = Rdbms.insertRecordInTable(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT,
                             getResultFields, fieldVal);
                     if (Boolean.FALSE.equals(newResultRdbmsDiagnObj.getRunSuccess())) {
-                        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, newResultRdbmsDiagnObj.getErrorMessageCode(), newResultRdbmsDiagnObj.getErrorMessageVariables());
+                        return new InternalMessage(LPPlatform.LAB_FALSE, newResultRdbmsDiagnObj.getErrorMessageCode(), newResultRdbmsDiagnObj.getErrorMessageVariables());
                     }
                     Integer resultId = Integer.parseInt(newResultRdbmsDiagnObj.getNewRowId().toString());
                     smpAudit = new SampleAudit();
@@ -1427,16 +1425,16 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
                     }
                 }
             }
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isReviewByTestingGroupEnable[0].toString())) {
-                Object[] addSampleRevisionByTestingGroup = DataSampleRevisionTestingGroup.addSampleRevisionByTestingGroup(sampleId, testId, specAnalysisTestingGroup);
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(addSampleRevisionByTestingGroup[0].toString())) {
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isReviewByTestingGroupEnable.getDiagnostic())) {
+                InternalMessage addSampleRevisionByTestingGroup = DataSampleRevisionTestingGroup.addSampleRevisionByTestingGroup(sampleId, testId, specAnalysisTestingGroup);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(addSampleRevisionByTestingGroup.getDiagnostic())) {
                     return addSampleRevisionByTestingGroup;
                 }
             }
 
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, DataSampleStructureSuccess.SAMPLE_ANALYSIS_ADDED_SUCCESS, new Object[]{"", testId, schemaDataName});
+            return new InternalMessage(LPPlatform.LAB_TRUE, DataSampleStructureSuccess.SAMPLE_ANALYSIS_ADDED_SUCCESS, new Object[]{"", testId, schemaDataName});
         } catch (Exception e) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, e.getMessage(), new Object[]{e.getMessage()});
+            return new InternalMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.EXCEPTION_RAISED, new Object[]{e.getMessage()});
         }
     }
 

@@ -28,7 +28,7 @@ import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
-
+import trazit.enums.EnumIntEndpoints;
 /**
  *
  * @author User
@@ -41,14 +41,15 @@ public class ClassInspLotRMactions implements ActionsClass{
     private Object[] diagnostic = null;
     InternalMessage actionDiagnosesObj = null;
     private Boolean functionFound = false;
-
+    private EnumIntEndpoints enumConstantByName;
+    
     public ClassInspLotRMactions(HttpServletRequest request, InspLotRMEnums.InspLotRMAPIactionsEndpoints endPoint) {
         RelatedObjects rObj = RelatedObjects.getInstanceForActions();
         DataInspectionLot insplot = new DataInspectionLot();
         DataInspectionLotDecision insplotDecision = new DataInspectionLotDecision();
 
         this.actionDiagnosesObj = null;
-
+        this.enumConstantByName=endPoint;
         InternalMessage actionDiagnoses = null;
         Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
         this.functionFound = true;
@@ -275,18 +276,16 @@ public class ClassInspLotRMactions implements ActionsClass{
                 String sampleLot = lotInfo[0][sampleLotFldPosic].toString();
                 DataModuleSampleAnalysisResult moduleSmpAnaRes = new DataModuleSampleAnalysisResult();
                 DataSampleAnalysisResult smpAnaRes = new DataSampleAnalysisResult(moduleSmpAnaRes);
-                Object[] diagn = smpAnaRes.sampleAnalysisResultReview(sampleId, null, null);
+                this.actionDiagnosesObj = smpAnaRes.sampleAnalysisResultReview(sampleId, null, null);
 
-                if (LPPlatform.LAB_TRUE.equals(diagn[0].toString())) {
+                if (LPPlatform.LAB_TRUE.equals(actionDiagnoses.getDiagnostic())) {
                     DataInspectionLotDecision.setLotReadyForRevision(sampleLot);
                 }
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
                 this.messageDynamicData = new Object[]{sampleId};
-                if (diagn != null && LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString())) {
-                    diagn = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{argValues[0], ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance()});
+                if (this.actionDiagnosesObj != null && LPPlatform.LAB_TRUE.equalsIgnoreCase(this.actionDiagnosesObj.getDiagnostic())) {
+                    this.actionDiagnosesObj = new InternalMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{argValues[0], ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance()});
                 }
-                this.diagnostic = diagn;
-
                 break;
 
             case LOT_TAKE_USAGE_DECISION:
@@ -395,5 +394,6 @@ public class ClassInspLotRMactions implements ActionsClass{
     public Boolean getFunctionFound() {
         return functionFound;
     }
-
+    @Override    public StringBuilder getRowArgsRows() {        return null;    }
+    @Override    public EnumIntEndpoints getEndpointObj(){        return enumConstantByName;    }
 }

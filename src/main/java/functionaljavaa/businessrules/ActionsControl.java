@@ -70,7 +70,7 @@ public class ActionsControl {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())&&LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString())) {
             return jArr;
         }
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString()))){
             for (Object[] curAction : ruleValue) {
                 JSONObject jActionObj = new JSONObject();
                 jActionObj.put(curAction[0], actionDetailInTable(curAction[0], curAction[1], curAction[2], curAction[3]));
@@ -78,7 +78,7 @@ public class ActionsControl {
                 jArr.add(curAction[0]);
             }
         }
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString()))){
             for (Object[] curAction : ruleValueMasterData) {
                 JSONObject jActionObj = new JSONObject();
                 jActionObj.put(curAction[0], actionDetailInTable(curAction[0], curAction[1], curAction[2], curAction[3]));
@@ -113,7 +113,7 @@ public class ActionsControl {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())&&LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString())) {
             return jArr;
         }
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString()))){
             for (Object[] curAction : ruleValue) {
                 JSONObject jActionObj = new JSONObject();
                 jActionObj.put(curAction[0], actionDetailInTable(curAction[0], curAction[1], curAction[2], curAction[3]));
@@ -121,7 +121,7 @@ public class ActionsControl {
                 jArr.add(curAction[0]);
             }
         }
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString()))){
             for (Object[] curAction : ruleValueMasterData) {
                 JSONObject jActionObj = new JSONObject();
                 jActionObj.put(curAction[0], actionDetailInTable(curAction[0], curAction[1], curAction[2], curAction[3]));
@@ -162,7 +162,7 @@ public class ActionsControl {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())&&LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString())) {
             return jArr;
         }
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString()))){
             for (Object[] curAction : ruleValue) {
                 JSONObject jActionObj = new JSONObject();
                 jActionObj.put(curAction[0], actionDetailInTable(curAction[0], curAction[1], curAction[2], curAction[3]));
@@ -170,7 +170,7 @@ public class ActionsControl {
                 jArr.add(curAction[0]);
             }
         }
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString()))){
             for (Object[] curAction : ruleValueMasterData) {
                 JSONObject jActionObj = new JSONObject();
                 jActionObj.put(curAction[0], actionDetailInTable(curAction[0], curAction[1], curAction[2], curAction[3]));
@@ -210,7 +210,7 @@ public class ActionsControl {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())&&LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString())) {
             return jArr;
         }
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString()))){
             for (Object[] curAction : ruleValue) {
                 JSONObject jActionObj = new JSONObject();
                 jActionObj.put(curAction[0], actionDetailInTable(curAction[0], curAction[1], curAction[2], curAction[3]));
@@ -218,7 +218,7 @@ public class ActionsControl {
                 jArr.add(curAction[0]);
             }
         }
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString())){
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString()))){
             for (Object[] curAction : ruleValueMasterData) {
                 JSONObject jActionObj = new JSONObject();
                 jActionObj.put(curAction[0], actionDetailInTable(curAction[0], curAction[1], curAction[2], curAction[3]));

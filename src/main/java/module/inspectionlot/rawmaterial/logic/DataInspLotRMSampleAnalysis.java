@@ -6,12 +6,15 @@
 package module.inspectionlot.rawmaterial.logic;
 
 import databases.Rdbms;
+import databases.Rdbms.RdbmsErrorTrapping;
 import databases.TblsCnfg;
 import databases.TblsData;
 import functionaljavaa.materialspec.SpecFrontEndUtilities;
 import functionaljavaa.samplestructure.DataSample;
 import functionaljavaa.samplestructure.DataSampleAnalysis;
 import functionaljavaa.samplestructure.DataSampleAnalysisStrategy;
+import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleErrorTrapping;
+import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleStructureSuccess;
 import java.util.Iterator;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPParadigm;
@@ -21,7 +24,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
-import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 
 /**
@@ -31,11 +33,11 @@ import trazit.session.InternalMessage;
 public class DataInspLotRMSampleAnalysis implements DataSampleAnalysisStrategy {
 
     @Override
-    public Object[] autoSampleAnalysisAdd(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue) {
+    public InternalMessage autoSampleAnalysisAdd(Integer sampleId, String[] sampleFieldName, Object[] sampleFieldValue) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         InternalMessage fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(sampleFieldName, sampleFieldValue);
         if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
+            return new InternalMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
         }
 
         String otro = DataSampleAnalysis.DataSampleAnalyisAutoAddLevel.SPEC_VARIATION.getName();
@@ -61,7 +63,7 @@ public class DataInspLotRMSampleAnalysis implements DataSampleAnalysisStrategy {
                     Object[][] sampleSpecInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(),
                             new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId}, specMissingFields);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleSpecInfo[0][0].toString())) {
-                        return LPArray.array2dTo1d(sampleSpecInfo);
+                        return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{sampleId}, sampleId);
                     }
                 }
                 String[] specFlds = new String[]{
@@ -74,7 +76,7 @@ public class DataInspLotRMSampleAnalysis implements DataSampleAnalysisStrategy {
                 break;
             case SPEC:
             default:
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "autoSampleAnalysisAdd_caseNotDetected", new String[]{autoAddAnalysisLevel + " not implemented yet."});
+                return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.AUTOSAMPLEANALYSISADD_CASE_NOT_DETECTED, new String[]{autoAddAnalysisLevel + " not implemented yet."});
         }
         try {
             StringBuilder analysisAdded = new StringBuilder(0);
@@ -84,27 +86,27 @@ public class DataInspLotRMSampleAnalysis implements DataSampleAnalysisStrategy {
                 Object[] fieldsValue = new Object[]{(String) jLotInfoObj.get(TblsData.SampleAnalysis.ANALYSIS.getName()),
                     (String) jLotInfoObj.get(TblsData.SampleAnalysis.METHOD_NAME.getName()), (Integer) jLotInfoObj.get(TblsData.SampleAnalysis.METHOD_VERSION.getName()),
                     (String) jLotInfoObj.get(TblsData.SampleAnalysis.TESTING_GROUP.getName())};
-                Object[] sampleAnalysisAddtoSample = DataSampleAnalysis.addSampleAnalysisWithResults(sampleId, fieldsName, fieldsValue,
+                InternalMessage sampleAnalysisAddtoSample = DataSampleAnalysis.addSampleAnalysisWithResults(sampleId, fieldsName, fieldsValue,
                         specFieldsValues[0].toString(), Integer.valueOf(specFieldsValues[1].toString()), jLotInfoObj.get(TblsCnfg.SpecLimits.PARAMETER.getName()).toString(),
                         (Integer) jLotInfoObj.get(TblsCnfg.SpecLimits.LIMIT_ID.getName()), (String) jLotInfoObj.get(TblsData.SampleAnalysis.TESTING_GROUP.getName()));
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAnalysisAddtoSample[0].toString())) {
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAnalysisAddtoSample.getDiagnostic())) {
                     return sampleAnalysisAddtoSample;
                 }
                 analysisAdded.append(jLotInfoObj.get(TblsData.SampleAnalysis.ANALYSIS.getName()));
             }
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "autoSampleAnalysisAdded_success", new String[]{"Added analysis " + analysisAdded.toString() + " to the sample " + sampleId.toString() + " for schema " + procInstanceName});
+            return new InternalMessage(LPPlatform.LAB_TRUE, DataSampleStructureSuccess.AUTOSAMPLEANALYSIS_ADDED_SUCCESS, new String[]{"Added analysis " + analysisAdded.toString() + " to the sample " + sampleId.toString() + " for schema " + procInstanceName});
         }catch(Exception e){
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, e.getMessage(), new Object[]{e.getMessage()});        
+            return new InternalMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.EXCEPTION_RAISED, new Object[]{e.getMessage()});        
         }
     }
 
         @Override
-        public String specialFieldCheckSampleAnalysisAnalyst
+        public InternalMessage specialFieldCheckSampleAnalysisAnalyst
         (String template, Integer templateVersion
         , DataSample dataSample
         
             ) {
-        return "";
+        return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, null);
 
         }
 

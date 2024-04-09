@@ -25,6 +25,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPMath;
+import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 
 /**
  *
@@ -86,7 +88,8 @@ public class TestingConfigSpecQuantitativeRuleFormat extends HttpServlet {
                 if (testingContent[iLines][1] == null) {
                     tstAssertSummary.increasetotalLabPlanetErrorCodeUndefined();
                 }
-                Object[] resSpecEvaluation = new Object[0];
+                InternalMessage resSpecEvaluationObj = null;
+                Object[] resSpecEvaluation = null;
                 BigDecimal minSpec = null;
                 BigDecimal minControl = null;
                 BigDecimal maxControl = null;
@@ -95,9 +98,9 @@ public class TestingConfigSpecQuantitativeRuleFormat extends HttpServlet {
                 Boolean hasErrors = false;
                 for (int i = 0; i < 4; i++) {
                     if (testingContent[iLines][tstOut.getActionNamePosic() + i].toString().length() > 0) {
-                        Object[] isNumeric = LPMath.isNumeric(testingContent[iLines][tstOut.getActionNamePosic() + i].toString());
-                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isNumeric[0].toString())) {
-                            resSpecEvaluation = isNumeric;
+                        InternalMessage isNumeric = LPMath.isNumeric(testingContent[iLines][tstOut.getActionNamePosic() + i].toString(), false);
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isNumeric.getDiagnostic())) {
+                            resSpecEvaluationObj = isNumeric;
                             hasErrors = true;
                         }
                     }
@@ -126,12 +129,13 @@ public class TestingConfigSpecQuantitativeRuleFormat extends HttpServlet {
                 } else {
                     if (minControl == null && maxControl == null) {
                         fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines - numHeaderLines + 1, getprettyValue(minSpec, false, "MIN"), getprettyValue(maxSpec, false, "MAX")}));
-                        resSpecEvaluation = mSpec.specLimitIsCorrectQuantitative(minSpec, maxSpec, minControl, maxControl);
+                        resSpecEvaluationObj = mSpec.specLimitIsCorrectQuantitative(minSpec, maxSpec, minControl, maxControl);
                     } else {
                         fileContentTable2Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines - numHeaderLines + 1, getprettyValue(minSpec, false, "MIN"), getprettyValue(minControl, false, "MIN"), getprettyValue(maxControl, false, "MAX"), getprettyValue(maxSpec, false, "MAX")}));
-                        resSpecEvaluation = mSpec.specLimitIsCorrectQuantitative(minSpec, maxSpec, minControl, maxControl);
+                        resSpecEvaluationObj = mSpec.specLimitIsCorrectQuantitative(minSpec, maxSpec, minControl, maxControl);
                     }
                 }
+                resSpecEvaluation=ApiMessageReturn.trapMessage(resSpecEvaluationObj.getDiagnostic(), resSpecEvaluationObj.getMessageCodeObj(), resSpecEvaluationObj.getMessageCodeVariables());
                 BigDecimal secondsInDateRange = LPDate.secondsInDateRange(timeStartedStep, LPDate.getCurrentTimeStamp(), true);
                 if (numEvaluationArguments == 0) {
                     if (minControl == null && maxControl == null) {

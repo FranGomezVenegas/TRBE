@@ -8,6 +8,7 @@ package functionaljavaa.inventory.batch;
 import module.monitoring.definition.TblsEnvMonitConfig;
 import module.monitoring.definition.TblsEnvMonitData;
 import databases.Rdbms;
+import databases.Rdbms.RdbmsErrorTrapping;
 import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.SqlWhere;
@@ -22,10 +23,11 @@ import java.util.Objects;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import lbplanet.utilities.TrazitUtiilitiesEnums;
 import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
-import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 
 /**
  *
@@ -59,7 +61,7 @@ public final class DataBatchIncubatorStructured {
                      TblsEnvMonitData.IncubBatch.STRUCT_TOTAL_OBJECTS.getName(), TblsEnvMonitData.IncubBatch.STRUCT_TOTAL_POSITIONS.getName()});
     }
 
-    static Object[] createBatchStructured(String bName, Integer bTemplateId, Integer bTemplateVersion, String[] fldName, Object[] fldValue) {
+    static InternalMessage createBatchStructured(String bName, Integer bTemplateId, Integer bTemplateVersion, String[] fldName, Object[] fldValue) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         if (fldName == null) {
@@ -98,7 +100,7 @@ public final class DataBatchIncubatorStructured {
                 new String[]{TblsEnvMonitConfig.IncubBatch.INCUB_BATCH_CONFIG_ID.getName(), TblsEnvMonitConfig.IncubBatch.INCUB_BATCH_VERSION.getName()},
                 new Object[]{bTemplateId, bTemplateVersion}, templateFldsToPropagate);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(templateDefInfo[0][0].toString())) {
-            return LPArray.array2dTo1d(templateDefInfo);
+            return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{bTemplateId, bTemplateVersion});
         }
         for (int i = 0; i < templateFldsToPropagate.length; i++) {
             fldName = LPArray.addValueToArray1D(fldName, templateFldsToPropagate[i]);
@@ -116,21 +118,21 @@ public final class DataBatchIncubatorStructured {
         if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess())) {
             IncubBatchAudit.incubBatchAuditAdd(DataBatchIncubator.DataBatchAuditEvents.BATCH_CREATED.toString(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), bName, LPArray.joinTwo1DArraysInOneOf1DString(fldName, fldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
         }
-        return insertRecordInTable.getApiMessage();
+        return new InternalMessage(insertRecordInTable.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables());
     }
 
-    static Object[] batchAddSampleStructured(String batchName, Integer sampleId, Integer pendingIncubationStage, Integer row, Integer col, Boolean override) {
+    static InternalMessage batchAddSampleStructured(String batchName, Integer sampleId, Integer pendingIncubationStage, Integer row, Integer col, Boolean override) {
         return batchAddSampleStructured(batchName, sampleId, pendingIncubationStage, row, col, override, false);
     }
 
-    static Object[] batchAddSampleStructured(String batchName, Integer sampleId, Integer pendingIncubationStage, Integer row, Integer col, Boolean override, Boolean byMovement) {
+    static InternalMessage batchAddSampleStructured(String batchName, Integer sampleId, Integer pendingIncubationStage, Integer row, Integer col, Boolean override, Boolean byMovement) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         if ((row == null) || (col == null)) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.STRUCTURED_BATCH_WRONGDIMENSION, new Object[]{LPNulls.replaceNull(row), LPNulls.replaceNull(col)});
+            return new InternalMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.STRUCTURED_BATCH_WRONGDIMENSION, new Object[]{LPNulls.replaceNull(row), LPNulls.replaceNull(col)});
         }
-        Object[] batchSampleIsAddable = batchSampleIsAddable(batchName, sampleId, pendingIncubationStage, row, col, override, byMovement);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchSampleIsAddable[0].toString())) {
+        InternalMessage batchSampleIsAddable = batchSampleIsAddable(batchName, sampleId, pendingIncubationStage, row, col, override, byMovement);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchSampleIsAddable.getDiagnostic())) {
             return batchSampleIsAddable;
         }
 
@@ -140,7 +142,7 @@ public final class DataBatchIncubatorStructured {
                 new String[]{TblsEnvMonitData.IncubBatch.NAME.getName()},
                 new Object[]{batchName}, batchFldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchInfo[0][0].toString())) {
-            return LPArray.array2dTo1d(batchInfo);
+            return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{batchName});
         }
         Integer batchNumRows = (Integer) batchInfo[0][0];
         Integer batchNumCols = (Integer) batchInfo[0][1];
@@ -178,7 +180,7 @@ public final class DataBatchIncubatorStructured {
         }
         String batchFldName = "";
         if (null == pendingIncubationStage) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.STAGE_NOT_RECOGNIZED, new Object[]{pendingIncubationStage, procInstanceName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.STAGE_NOT_RECOGNIZED, new Object[]{pendingIncubationStage, procInstanceName});
         } else {
             switch (pendingIncubationStage) {
                 case 1:
@@ -188,14 +190,14 @@ public final class DataBatchIncubatorStructured {
                     batchFldName = TblsEnvMonitData.Sample.INCUBATION2_BATCH.getName();
                     break;
                 default:
-                    return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.STAGE_NOT_RECOGNIZED, new Object[]{pendingIncubationStage, procInstanceName});
+                    return new InternalMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.STAGE_NOT_RECOGNIZED, new Object[]{pendingIncubationStage, procInstanceName});
             }
         }
         sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsEnvMonitData.Sample.SAMPLE_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sampleId}, "");
-        Object[] updateSampleInfo = Rdbms.updateRecordFieldsByFilter(TblsEnvMonitData.TablesEnvMonitData.SAMPLE,
+        RdbmsObject updateSampleInfo = Rdbms.updateTableRecordFieldsByFilter(TblsEnvMonitData.TablesEnvMonitData.SAMPLE,
                 EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.SAMPLE, new String[]{batchFldName}), new Object[]{batchName}, sqlWhere, null);
-        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSampleInfo[0].toString()))) {
+        if (Boolean.TRUE.equals(updateSampleInfo.getRunSuccess())) {
             SampleAudit smpAudit = new SampleAudit();
             if (byMovement != null && !byMovement) {
                 smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.BATCH_SAMPLE_ADDED, TblsData.TablesData.SAMPLE.getTableName(), sampleId, sampleId, null, null, updFieldName, updFieldValue);
@@ -203,10 +205,10 @@ public final class DataBatchIncubatorStructured {
                 smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.BATCH_SAMPLE_MOVED_TO, TblsData.TablesData.SAMPLE.getTableName(), sampleId, sampleId, null, null, updFieldName, updFieldValue);
             }
         }
-        return updateSampleInfo;
+        return new InternalMessage(updateSampleInfo.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, updateSampleInfo.getErrorMessageCode(), updateSampleInfo.getErrorMessageVariables());
     }
 
-    private static Object[] batchSampleIsAddable(String batchName, Integer sampleId, Integer pendingIncubationStage, Integer row, Integer col, Boolean override, Boolean byMovement) {
+    private static InternalMessage batchSampleIsAddable(String batchName, Integer sampleId, Integer pendingIncubationStage, Integer row, Integer col, Boolean override, Boolean byMovement) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String[] batchFldsToRetrieve = new String[]{TblsEnvMonitData.IncubBatch.STRUCT_NUM_ROWS.getName(), TblsEnvMonitData.IncubBatch.STRUCT_NUM_COLS.getName(),
@@ -215,7 +217,7 @@ public final class DataBatchIncubatorStructured {
                 new String[]{TblsEnvMonitData.IncubBatch.NAME.getName()},
                 new Object[]{batchName}, batchFldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchInfo[0][0].toString())) {
-            return LPArray.array2dTo1d(batchInfo);
+            return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{batchName});
         }
         Integer batchNumRows = (Integer) batchInfo[0][0];
         Integer batchNumCols = (Integer) batchInfo[0][1];
@@ -223,11 +225,11 @@ public final class DataBatchIncubatorStructured {
 
         String[][] batchContent2D = new String[0][0];
         if (row > batchNumRows) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.STRUCTURED_POSITION_OVER_DIMENSION,
+            return new InternalMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.STRUCTURED_POSITION_OVER_DIMENSION,
                     new Object[]{"row", row, "row", batchNumRows, batchName, procInstanceName});
         }
         if (col > batchNumCols) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.STRUCTURED_POSITION_OVER_DIMENSION,
+            return new InternalMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.STRUCTURED_POSITION_OVER_DIMENSION,
                     new Object[]{"col", col, "col", batchNumCols, batchName, procInstanceName});
         }
         if ((batchContentStr == null) || (batchContentStr.length() == 0)) {
@@ -243,28 +245,28 @@ public final class DataBatchIncubatorStructured {
         String posicContent = batchContent2D[row - 1][col - 1];
         if ((LPNulls.replaceNull(posicContent).length() > 0) && (!BATCHCONTENTEMPTYPOSITIONVALUE.equalsIgnoreCase(LPNulls.replaceNull(posicContent)))
                 && (Boolean.FALSE.equals(override))) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.STRUCTURED_BATCH_POSITIONOCCUPIED, new Object[]{row, col, batchName, procInstanceName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.STRUCTURED_BATCH_POSITIONOCCUPIED, new Object[]{row, col, batchName, procInstanceName});
         }
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "", null);
+        return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, null);
     }
 
-    static Object[] batchMoveSampleStructured(String batchName, Integer sampleId, Integer pendingIncubationStage, Integer newRow, Integer newCol, Boolean override) {
-        Object[] sampleAddable = batchSampleIsAddable(batchName, sampleId, pendingIncubationStage, newRow, newCol, override, true);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAddable[0].toString())) {
+    static InternalMessage batchMoveSampleStructured(String batchName, Integer sampleId, Integer pendingIncubationStage, Integer newRow, Integer newCol, Boolean override) {
+        InternalMessage sampleAddable = batchSampleIsAddable(batchName, sampleId, pendingIncubationStage, newRow, newCol, override, true);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAddable.getDiagnostic())) {
             return sampleAddable;
         }
-        Object[] moveDiagn = batchRemoveSampleStructured(batchName, sampleId, pendingIncubationStage, true);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(moveDiagn[0].toString())) {
+        InternalMessage moveDiagn = batchRemoveSampleStructured(batchName, sampleId, pendingIncubationStage, true);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(moveDiagn.getDiagnostic())) {
             return moveDiagn;
         }
         return batchAddSampleStructured(batchName, sampleId, pendingIncubationStage, newRow, newCol, override, true);
     }
 
-    static Object[] batchRemoveSampleStructured(String batchName, Integer sampleId, Integer pendingIncubationStage) {
+    static InternalMessage batchRemoveSampleStructured(String batchName, Integer sampleId, Integer pendingIncubationStage) {
         return batchRemoveSampleStructured(batchName, sampleId, pendingIncubationStage, false);
     }
 
-    static Object[] batchRemoveSampleStructured(String batchName, Integer sampleId, Integer pendingIncubationStage, Boolean byMovement) {
+    static InternalMessage batchRemoveSampleStructured(String batchName, Integer sampleId, Integer pendingIncubationStage, Boolean byMovement) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String[] batchFldsToRetrieve = new String[]{TblsEnvMonitData.IncubBatch.STRUCT_NUM_COLS.getName(), TblsEnvMonitData.IncubBatch.STRUCT_TOTAL_POSITIONS.getName(),
             TblsEnvMonitData.IncubBatch.STRUCT_TOTAL_OBJECTS.getName(), TblsEnvMonitData.IncubBatch.STRUCT_CONTENT.getName()};
@@ -272,7 +274,7 @@ public final class DataBatchIncubatorStructured {
                 new String[]{TblsEnvMonitData.IncubBatch.NAME.getName()},
                 new Object[]{batchName}, batchFldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchInfo[0][0].toString())) {
-            return LPArray.array2dTo1d(batchInfo);
+            return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{batchName});
         }
         Integer batchNumCols = (Integer) batchInfo[0][0];
         Integer batchTotalObjects = LPNulls.replaceNull(batchInfo[0][2]).toString().length() == 0 ? 0 : Integer.valueOf(batchInfo[0][2].toString());
@@ -280,13 +282,13 @@ public final class DataBatchIncubatorStructured {
         String positionValueToFind = buildBatchPositionValue(sampleId, pendingIncubationStage);
 
         if ((batchContentStr == null) || (batchContentStr.length() == 0)) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.EMPTY_BATCH, new Object[]{batchName, procInstanceName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.EMPTY_BATCH, new Object[]{batchName, procInstanceName});
         }
 
         String[] batchContent1D = batchContentStr.split(BTCHCNTNT_SEPRTRSTRUCTUREDBATCH);
         Integer valuePosition = LPArray.valuePosicInArray(batchContent1D, positionValueToFind);
         if (valuePosition == -1) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.SAMPLE_NOTFOUND_IN_BATCH, new Object[]{sampleId, batchName, procInstanceName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.SAMPLE_NOTFOUND_IN_BATCH, new Object[]{sampleId, batchName, procInstanceName});
         }
         batchContent1D[valuePosition] = "";
         String[][] batchContent2D = LPArray.array1dTo2d(batchContent1D, batchNumCols);
@@ -298,10 +300,10 @@ public final class DataBatchIncubatorStructured {
         Object[] updFieldValue = new Object[]{batchTotalObjects, batchContentStr};
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsEnvMonitData.IncubBatch.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{batchName}, "");
-        Object[] updateBatchContentDiagn = Rdbms.updateRecordFieldsByFilter(TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH,
+        RdbmsObject updateBatchContentDiagn = Rdbms.updateTableRecordFieldsByFilter(TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH,
                 EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH, updFieldName), updFieldValue, sqlWhere, null);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateBatchContentDiagn[0].toString())) {
-            return updateBatchContentDiagn;
+        if (Boolean.FALSE.equals(updateBatchContentDiagn.getRunSuccess())) {
+            return new InternalMessage(LPPlatform.LAB_FALSE, updateBatchContentDiagn.getErrorMessageCode(), updateBatchContentDiagn.getErrorMessageVariables());
         }
         if (byMovement == null || !byMovement) {
             IncubBatchAudit.incubBatchAuditAdd(DataBatchIncubator.DataBatchAuditEvents.BATCH_SAMPLE_REMOVED.toString(), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), batchName, LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null);
@@ -309,7 +311,7 @@ public final class DataBatchIncubatorStructured {
 
         String batchFldName = "";
         if (null == pendingIncubationStage) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.STAGE_NOT_RECOGNIZED, new Object[]{pendingIncubationStage, procInstanceName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.STAGE_NOT_RECOGNIZED, new Object[]{pendingIncubationStage, procInstanceName});
         } else {
             switch (pendingIncubationStage) {
                 case 1:
@@ -319,15 +321,15 @@ public final class DataBatchIncubatorStructured {
                     batchFldName = TblsEnvMonitData.Sample.INCUBATION2_BATCH.getName();
                     break;
                 default:
-                    return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.STAGE_NOT_RECOGNIZED, new Object[]{pendingIncubationStage, procInstanceName});
+                    return new InternalMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.STAGE_NOT_RECOGNIZED, new Object[]{pendingIncubationStage, procInstanceName});
             }
         }
         sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsEnvMonitData.Sample.SAMPLE_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sampleId}, "");
-        Object[] updateSampleInfo = Rdbms.updateRecordFieldsByFilter(TblsEnvMonitData.TablesEnvMonitData.SAMPLE,
+        RdbmsObject updateSampleInfo = Rdbms.updateTableRecordFieldsByFilter(TblsEnvMonitData.TablesEnvMonitData.SAMPLE,
                 EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.SAMPLE, new String[]{batchFldName}), new Object[]{null}, sqlWhere, null);
 
-        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSampleInfo[0].toString()))) {
+        if (Boolean.TRUE.equals(updateSampleInfo.getRunSuccess())) {
             SampleAudit smpAudit = new SampleAudit();
             if (byMovement != null && !byMovement) {
                 smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.BATCH_SAMPLE_REMOVED, TblsData.TablesData.SAMPLE.getTableName(),
@@ -341,71 +343,71 @@ public final class DataBatchIncubatorStructured {
                         sampleId, sampleId, null, null, updFieldName, updFieldValue);
             }
         }
-        return updateSampleInfo;
+        return new InternalMessage(updateSampleInfo.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, updateSampleInfo.getErrorMessageCode(), updateSampleInfo.getErrorMessageVariables());
     }
 
-    static Object[] batchSampleIncubStartedStructured() {
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "batchSampleIncubStartedStructured not implemented yet", null);
+    static InternalMessage batchSampleIncubStartedStructured() {
+        return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
     }
 
-    static Object[] batchSampleIncubStartedStructured(String batchName, String incubName) {
+    static InternalMessage batchSampleIncubStartedStructured(String batchName, String incubName) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String[] sampleInfoFieldsToRetrieve = new String[]{TblsEnvMonitData.IncubBatch.STRUCT_CONTENT.getName()};
         Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), new String[]{TblsEnvMonitData.IncubBatch.NAME.getName()}, new Object[]{batchName}, sampleInfoFieldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) {
-            return LPArray.array2dTo1d(sampleInfo);
+            return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{batchName});
         }
         String batchSamples = LPNulls.replaceNull(sampleInfo[0][0]).toString();
         if (batchSamples.length() == 0) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.EMPTY_BATCH, new Object[]{batchName, procInstanceName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.EMPTY_BATCH, new Object[]{batchName, procInstanceName});
         }
         String[] batchSamplesArr = batchSamples.split("\\|");
         for (String currSample : batchSamplesArr) {
             String[] currSampleArr = currSample.split("\\*");
             if (currSampleArr.length != 2) {
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.PARSE_ERROR_STRUCTUREDBATCH, new Object[]{"Starting Batch", currSample, batchSamples, procInstanceName});
+                return new InternalMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.PARSE_ERROR_STRUCTUREDBATCH, new Object[]{"Starting Batch", currSample, batchSamples, procInstanceName});
             }
             Integer sampleId = Integer.valueOf(currSampleArr[0]);
             Integer incubStage = Integer.valueOf(currSampleArr[1]);
             BigDecimal tempReading = null;
-            Object[] setSampleIncubStarted = DataSampleIncubation.setSampleStartIncubationDateTime(sampleId, incubStage, incubName, tempReading, batchName);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(setSampleIncubStarted[0].toString())) {
+            InternalMessage setSampleIncubStarted = DataSampleIncubation.setSampleStartIncubationDateTime(sampleId, incubStage, incubName, tempReading, batchName);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(setSampleIncubStarted.getDiagnostic())) {
                 return setSampleIncubStarted;
             }
         }
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, IncubatorBatchSuccess.SAMPLES_IN_BATCH_SET_AS_BATCHSTARTED, new Object[]{batchName});
+        return new InternalMessage(LPPlatform.LAB_TRUE, IncubatorBatchSuccess.SAMPLES_IN_BATCH_SET_AS_BATCHSTARTED, new Object[]{batchName});
     }
 
-    static Object[] batchSampleIncubEndedStructured(String batchName, String incubName) {
+    static InternalMessage batchSampleIncubEndedStructured(String batchName, String incubName) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         String[] sampleInfoFieldsToRetrieve = new String[]{TblsEnvMonitData.IncubBatch.STRUCT_CONTENT.getName()};
         Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH.getTableName(), new String[]{TblsEnvMonitData.IncubBatch.NAME.getName()}, new Object[]{batchName}, sampleInfoFieldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) {
-            return LPArray.array2dTo1d(sampleInfo);
+            return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{batchName});
         }
         String batchSamples = LPNulls.replaceNull(sampleInfo[0][0]).toString();
         String[] batchSamplesArr = batchSamples.split("\\|");
         for (String currSample : batchSamplesArr) {
             String[] currSampleArr = currSample.split("\\*");
             if (currSampleArr.length != 2) {
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.PARSE_ERROR_STRUCTUREDBATCH, new Object[]{"Ending Batch", currSample, batchSamples, procInstanceName});
+                return new InternalMessage(LPPlatform.LAB_FALSE, IncubatorBatchErrorTrapping.PARSE_ERROR_STRUCTUREDBATCH, new Object[]{"Ending Batch", currSample, batchSamples, procInstanceName});
             }
             Integer sampleId = Integer.valueOf(currSampleArr[0]);
             Integer incubStage = Integer.valueOf(currSampleArr[1]);
             BigDecimal tempReading = null;
-            Object[] setSampleIncubEnded = DataSampleIncubation.setSampleEndIncubationDateTime(sampleId, incubStage, incubName, tempReading, batchName);
-            setSampleIncubEnded = (Object[]) setSampleIncubEnded[0];
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(setSampleIncubEnded[0].toString())) {
+            InternalMessage setSampleIncubEnded = DataSampleIncubation.setSampleEndIncubationDateTime(sampleId, incubStage, incubName, tempReading, batchName);
+            //setSampleIncubEnded = (Object[]) setSampleIncubEnded[0];
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(setSampleIncubEnded.getDiagnostic())) {
                 return setSampleIncubEnded;
             }
         }
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, IncubatorBatchSuccess.SAMPLES_IN_BATCH_SET_AS_BATCHENDED, new Object[]{batchName});
+        return new InternalMessage(LPPlatform.LAB_TRUE, IncubatorBatchSuccess.SAMPLES_IN_BATCH_SET_AS_BATCHENDED, new Object[]{batchName});
     }
 
-    static Object[] batchSampleIncubEndedStructured() {
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "batchRemoveSampleStructured not implemented yet", null);
+    static InternalMessage batchSampleIncubEndedStructured() {
+        return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, null);
     }
 
     public static String buildBatchPositionValue(Integer sampleId, Integer pendingIncubationStage) {

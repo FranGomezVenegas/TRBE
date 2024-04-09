@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -26,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
+import trazit.session.InternalMessage;
 
 /**
  *
@@ -104,13 +104,13 @@ public class TestingConfigSpecQualitativeRuleFormat extends HttpServlet {
 
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines - numHeaderLines + 1, ruleType, specText, separator}));
 
-                Object[] functionEvaluation = mSpec.specLimitIsCorrectQualitative(ruleType, specText, separator);
+                InternalMessage functionEvaluation = mSpec.specLimitIsCorrectQualitative(ruleType, specText, separator);
 
                 BigDecimal secondsInDateRange = LPDate.secondsInDateRange(timeStartedStep, LPDate.getCurrentTimeStamp(), true);
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(String.valueOf(secondsInDateRange)));
 
                 if (numEvaluationArguments == 0) {
-                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(Arrays.toString(functionEvaluation)));
+                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(functionEvaluation.getMessageCodeObj().getErrorCode()));
                 }
                 if (numEvaluationArguments > 0) {
                     Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, functionEvaluation, 4);
@@ -129,7 +129,7 @@ public class TestingConfigSpecQualitativeRuleFormat extends HttpServlet {
                     }
                 }
                 if (tstOut.getStopSyntaxisFalsePosic() > -1 && Boolean.TRUE.equals(Boolean.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStopSyntaxisFalsePosic()]).toString()))
-                        && LPPlatform.LAB_FALSE.equalsIgnoreCase(functionEvaluation[0].toString())) {
+                        && LPPlatform.LAB_FALSE.equalsIgnoreCase(functionEvaluation.getDiagnostic())) {
                     out.println(fileContentBuilder.toString());
                     stopPhrase = "Interrupted by evaluation returning false in step " + (iLines + 1) + " of " + testingContent.length;
 //                        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName.toString(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT.getTableName(), 

@@ -16,6 +16,6 @@ public interface ActionsClass {
     public InternalMessage getDiagnosticObj();
     public RelatedObjects getRelatedObj();
     public Object[] getMessageDynamicData();
-    
-    
+    public StringBuilder getRowArgsRows();    
+    public EnumIntEndpoints getEndpointObj();
 }

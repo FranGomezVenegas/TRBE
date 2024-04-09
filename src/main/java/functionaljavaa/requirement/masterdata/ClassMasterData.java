@@ -318,7 +318,7 @@ public class ClassMasterData {
                             }
                         }
                         String ruleType = jO.getAsJsonObject().get(TblsCnfg.SpecLimits.RULE_TYPE.getName()).getAsString();
-                        Object[] resSpecEvaluation = new Object[0];
+                        InternalMessage resSpecEvaluation = null;
                         ConfigSpecRule mSpec = new ConfigSpecRule();
                         String curFldName = "";
                         if ("quantitative".equalsIgnoreCase(ruleType)) {
@@ -378,17 +378,17 @@ public class ClassMasterData {
                                 fieldValue = LPArray.addValueToArray1D(fieldValue, LPNulls.replaceNull(paramUOM[0][1].toString()));
                             }
                         }
-                        Object[] diagn = resSpecEvaluation;
-                        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluation[0].toString()))) {
+                        InternalMessage diagn = resSpecEvaluation;
+                        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluation.getDiagnostic()))) {
                             curFldName = TblsCnfg.SpecLimits.RULE_VARIABLES.getName();
                             fieldName = LPArray.addValueToArray1D(fieldName, curFldName);
                             fieldValue = LPArray.addValueToArray1D(fieldValue, ruleValues);
                             this.diagnostic = cSpec.specLimitNew(jO.getAsJsonObject().get(TblsCnfg.SpecLimits.CODE.getName()).getAsString(), 1, fieldName, fieldValue);
                             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.diagnostic.getDiagnostic())) {
-                                globalDiagn = diagn[0].toString();
+                                globalDiagn = diagn.getDiagnostic();
                             }
                         }else{
-                            jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, resSpecEvaluation[0].toString());
+                            jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, resSpecEvaluation.getDiagnostic());
                         }
                         jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, this.diagnostic.getDiagnostic());
                         jLogArr.add(jLog);

@@ -90,9 +90,9 @@ public class InspLotRMAPIqueries extends HttpServlet {
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false);
         try (PrintWriter out = response.getWriter()) {
             String actionName=procReqInstance.getActionName();           
-            ClassInspLotRMQueriesController clssInspLotRMQueries=new ClassInspLotRMQueriesController(request, response, actionName.toUpperCase(), null, null, null);
+            ClassInspLotRMQueriesController clssInspLotRMQueries=new ClassInspLotRMQueriesController(request, response, actionName.toUpperCase(), null, null, null, null);
             if (Boolean.FALSE.equals(clssInspLotRMQueries.getFunctionFound())){
-                ClassSampleQueriesController clssInspLotRMQueriesController=new ClassSampleQueriesController(request, response, actionName, null, null, null);
+                ClassSampleQueriesController clssInspLotRMQueriesController=new ClassSampleQueriesController(request, response, actionName, null, null, null, null);
                 if (Boolean.FALSE.equals(clssInspLotRMQueriesController.getFunctionFound())){
                     procReqInstance.killIt();
                     LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());                    

@@ -81,6 +81,8 @@ public class ClassReqProcedureQueries {
         allContentArr1D=LPArray.addValueToArray1D(allContentArr1D, jBlockArr);
 //        jBlockArr.put("user_role", jBlockArr);
 
+        allContentArr1D=LPArray.addValueToArray1D(allContentArr1D, "access_roles_views");
+        allContentArr1D=LPArray.addValueToArray1D(allContentArr1D, viewsByRoles(procInstanceName, procRoles));
         allContentArr1D=LPArray.addValueToArray1D(allContentArr1D, "access_roles_actions");
         allContentArr1D=LPArray.addValueToArray1D(allContentArr1D, actionsByRoles(procInstanceName, procRoles));
 //        jBlockArr.put("roles_actions", actionsByRoles(procInstanceName, procRoles));

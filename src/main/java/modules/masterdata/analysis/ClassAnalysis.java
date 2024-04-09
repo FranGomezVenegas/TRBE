@@ -15,7 +15,6 @@ import databases.TblsData;
 import trazit.session.ResponseMessages;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
@@ -28,7 +27,7 @@ import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
-
+import trazit.enums.EnumIntEndpoints;
 /**
  *
  * @author User
@@ -72,8 +71,9 @@ public class ClassAnalysis implements ActionsClass{
     private Boolean endpointExists = true;
     private Object[] diagnostic = new Object[0];
     private Boolean functionFound = false;
-
-    public ClassAnalysis(HttpServletRequest request, HttpServletResponse response, MasterDataAnalysisActionsEndpoints endPoint) {
+    private EnumIntEndpoints enumConstantByName;
+    
+    public ClassAnalysis(HttpServletRequest request, MasterDataAnalysisActionsEndpoints endPoint) {
         RelatedObjects rObj = RelatedObjects.getInstanceForActions();
         try {
             ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, false, false);
@@ -303,7 +303,7 @@ public class ClassAnalysis implements ActionsClass{
                     }
                     break;  
                 default:
-                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getClass().getSimpleName()}, language, this.getClass().getSimpleName());
+                    LPFrontEnd.servletReturnResponseError(request, null, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getClass().getSimpleName()}, language, this.getClass().getSimpleName());
                     return;
             }
             if (actionDiagnoses != null && LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())) {
@@ -317,6 +317,7 @@ public class ClassAnalysis implements ActionsClass{
                 rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), sopName);
                 rObj.killInstance();
             }
+            this.enumConstantByName=endPoint;
             this.diagnostic = actionDiagnoses;
             this.relatedObj = rObj;
             if (this.diagnosticObj!=null)
@@ -333,5 +334,6 @@ public class ClassAnalysis implements ActionsClass{
 
         }
     }
-
+    @Override    public StringBuilder getRowArgsRows() {        return null;    }
+    @Override    public EnumIntEndpoints getEndpointObj(){        return enumConstantByName;    }
 }

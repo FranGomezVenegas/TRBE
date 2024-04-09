@@ -75,7 +75,7 @@ public class DataInventoryQualif {
 
         RdbmsObject invLotQualifCreationDiagn = Rdbms.insertRecordInTable(TablesInvTrackingData.LOT_QUALIFICATION, fldNames, fldValues);
         if (Boolean.FALSE.equals(invLotQualifCreationDiagn.getRunSuccess())) {
-            return new InternalMessage(LPPlatform.LAB_FALSE, invLotQualifCreationDiagn.getErrorMessageCode(), new Object[]{lotName}, null);
+            return new InternalMessage(LPPlatform.LAB_FALSE, invLotQualifCreationDiagn.getErrorMessageCode(), new Object[]{lotName}, invLotQualifCreationDiagn.getNewRowId());
         }
         inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.CREATED_QUALIFICATION, lotName, reference, category, TablesInvTrackingData.LOT.getTableName(), lotName,
                 fldNames, fldValues);

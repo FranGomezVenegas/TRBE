@@ -5,7 +5,6 @@ import functionaljavaa.materialspec.DataSpec;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
-import java.util.Arrays;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
+import trazit.session.InternalMessage;
 /**
  *
  * @author Administrator
@@ -162,7 +162,7 @@ public class TestingResultCheckSpecQuantitative extends HttpServlet {
                 if (lineNumCols>=numEvaluationArguments+8)
                     {maxControlStrict = LPTestingOutFormat.csvExtractFieldValueBoolean(testingContent[iLines][tstOut.getActionNamePosic()+8]);}
                     
-                Object[] resSpecEvaluation = new Object[0];
+                InternalMessage resSpecEvaluation = null;
                 if (minControl==null){
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, result, getprettyValue(minSpec, minStrict, "MIN"), getprettyValue(maxSpec, maxStrict, "MAX")}));
                     resSpecEvaluation = resChkSpec.resultCheck(result, minSpec, maxSpec, minStrict, maxStrict, null, null);
@@ -177,9 +177,9 @@ public class TestingResultCheckSpecQuantitative extends HttpServlet {
 
                 if (numEvaluationArguments==0){                    
                     if (minControl==null){
-                        fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(Arrays.toString(resSpecEvaluation)));
+                        fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(resSpecEvaluation.getMessageCodeObj().getErrorCode()));
                     }else{
-                        fileContentTable2Builder.append(LPTestingOutFormat.rowAddField(Arrays.toString(resSpecEvaluation)));
+                        fileContentTable2Builder.append(LPTestingOutFormat.rowAddField(resSpecEvaluation.getMessageCodeObj().getErrorCode()));
                     }
                 }                
                 if (numEvaluationArguments>0){                    

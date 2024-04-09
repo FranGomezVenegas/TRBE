@@ -45,6 +45,7 @@ import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 
 /**
  *
@@ -183,10 +184,10 @@ public class DataSampleStages {
 
     public Object[] moveToNextStage(Integer sampleId, String currStage, String nextStageFromPull) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Object[] sampleAuditRevision = SampleAudit.sampleAuditRevisionPass(sampleId);
+        InternalMessage sampleAuditRevision = SampleAudit.sampleAuditRevisionPass(sampleId);
 
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditRevision[0].toString())) {
-            return sampleAuditRevision;
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditRevision.getDiagnostic())) {
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, sampleAuditRevision.getMessageCodeObj(), new Object[]{sampleId, currStage});
         }
         Object[] javaScriptDiagnostic = moveStageChecker(sampleId, currStage, "Next");
 

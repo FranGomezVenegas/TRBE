@@ -55,6 +55,8 @@ public class TblsApp {
             new String[]{TblsProcedure.ProcedureViews.NAME.getName(), TblsProcedure.ProcedureViews.ROLE_NAME.getName()}, null, "App Procedure Events entries table"),
         LDAP_SETTINGS(null, "ldap_setting", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, LdapSetting.values(), null,
             new String[]{LdapSetting.NAME.getName()}, null, "LDAP Settings declaration"),
+        MAILING(null, "mailing", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Mailing.values(), null,
+            new String[]{Mailing.SENDER_USER.getName()}, null, "Mailing Settings"),
         ;
         private TablesApp(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){
@@ -386,6 +388,34 @@ public class TblsApp {
         LDAP_SEC_AUTHENTICATION("ldap_security_authentication", LPDatabase.string(),null, null, "", null)
         ;
         private LdapSetting(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName; @Override        public String getName(){return this.fieldName;}
+        private final String fieldType; @Override        public String getFieldType() {return this.fieldType;}
+        private final String fieldMask; @Override        public String getFieldMask() {return this.fieldMask;}
+        private final ReferenceFld reference; @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
+        private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }    
+
+    public enum Mailing implements EnumIntTableFields{
+        SENDER_USER("sender_user", LPDatabase.stringNotNull(),null, null, "", null),
+        SENDER_PWD("sender_pwd", LPDatabase.string(),null, null, "", null),
+        ACTIVE("active", LPDatabase.booleanFld(true),null, null, "", null),
+        SENDER_ALIAS("sender_alias", LPDatabase.string(),null, null, "", null),
+        SMTP_HOST("smtp_host", LPDatabase.string(),null, null, "", null),
+        SMTP_AUTH("smtp_auth", LPDatabase.booleanFld(true),null, null, "", null),
+        SMTP_TYPE("smtp_type", LPDatabase.string(),null, null, "ssl or tls", null),
+        SMTP_PORT_SSL("smtp_port_ssl", LPDatabase.integer(),null, null, "", null),
+        SMTP_PORT_TLS("smtp_port_tls", LPDatabase.integer(),null, null, "", null)
+        ;
+        private Mailing(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
             this.fieldName=dbObjName;
             this.fieldType=dbObjType;

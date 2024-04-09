@@ -78,6 +78,8 @@ public final class Investigation {
     public enum InvestigationErrorTrapping implements EnumIntMessages {
         AAA_FILE_NAME("errorTrapping", "", ""),
         OBJECT_NOT_RECOGNIZED("objectNotRecognized", "ObjectNotRecognized <*1*>, should be two pieces of data separated by *", ""),
+        OBJECT_TYPE_NOT_RECOGNIZED("objectTypeNotRecognized", "ObjectNotRecognized <*1*>, should be two pieces of data separated by *", ""),
+        OBJECT_CLOSED_CANNOT_BE_ADDED("objectClosedCannotBeAdded", "ObjectNotRecognized <*1*>, should be two pieces of data separated by *", ""),
         OBJECT_ALREADY_ADDED("Investigation_objectAlreadyAdded", "<*1*> <*2*> already added in the investigation <*3*>", ""),
         NOT_FOUND("InvestigationNotFound", "InvestigationNotFound <*1*>", ""),
         IS_CLOSED("InvestigationAlreadyClosed", "InvestigationAlreadyClosed  <*1*>", ""),
@@ -193,7 +195,7 @@ public final class Investigation {
         }
         String[] baseFieldName = new String[]{TblsProcedure.InvestObjects.INVEST_ID.getName(), TblsProcedure.InvestObjects.ADDED_ON.getName(), TblsProcedure.InvestObjects.ADDED_BY.getName()};
         Object[] baseFieldValue = new Object[]{investId, LPDate.getCurrentTimeStamp(), token.getPersonName()};
-        Object[] diagnostic = new Object[0];
+        InternalMessage diagnostic = null;
 
         for (String curObj : objectsToAdd.split("\\|")) {
             Object[] decodeObjectDetail = decodeObjectInfo(curObj);
@@ -223,11 +225,11 @@ public final class Investigation {
 
             RdbmsObject insertRecordInTable = Rdbms.insertRecord(TblsProcedure.TablesProcedure.INVEST_OBJECTS,
                     updFieldName, updFieldValue, procReqSession.getProcedureInstance());
-            diagnostic = insertRecordInTable.getApiMessage();
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
+            diagnostic=new InternalMessage(insertRecordInTable.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables());
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic.getDiagnostic())) {
                 return new InternalMessage(insertRecordInTable.getApiMessage()[0].toString(), insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), insertRecordInTable.getNewRowId());
             }            
-            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
+            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic.getDiagnostic())) {
 
                 String moduleNameFromProcInstance = token.getModuleNameFromProcInstance(procReqSession.getProcedureInstance());
                 TrazitModules moduleNameObj = TrazitModules.valueOf(moduleNameFromProcInstance);
@@ -247,17 +249,17 @@ public final class Investigation {
                     default:
                         return new InternalMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.OBJECT_NOT_RECOGNIZED, new Object[]{moduleNameFromProcInstance}, null);
                 }
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
-                    return new InternalMessage(LPPlatform.LAB_FALSE, diagnostic[diagnostic.length - 1].toString(), null, null);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic.getDiagnostic())) {
+                    return new InternalMessage(LPPlatform.LAB_FALSE, diagnostic.getMessageCodeObj(), diagnostic.getMessageCodeVariables(), null);
                 }
 
-                incIdStr = diagnostic[diagnostic.length - 1].toString();
+                incIdStr = diagnostic.getNewObjectId().toString();
                 ProcedureInvestigationAudit.investigationAuditAdd(DataInvestigationAuditEvents.OBJECT_ADDED_TO_INVESTIGATION.toString(), TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(), investId, incIdStr,
                         LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), parentAuditId, null);
                 addAuditRecordForObject(curObj, investId, SampleAudit.DataSampleAuditEvents.ADDED_TO_INVESTIGATION);                
             }
         }
-        return new InternalMessage(diagnostic[0].toString(), InvestigationAPIactionsEndpoints.ADD_INVEST_OBJECTS, new Object[]{investId}, investId);
+        return new InternalMessage(diagnostic.getDiagnostic(), InvestigationAPIactionsEndpoints.ADD_INVEST_OBJECTS, new Object[]{investId}, investId);
     }
 
     public static InternalMessage newInvestigationChecks(String[] fldNames, Object[] fldValues, String objectsToAdd) {
@@ -370,6 +372,45 @@ public final class Investigation {
         return diagnostic;
     }
 
+    public static InternalMessage capaDecisionInternalMessage(Integer investId, Boolean capaRequired, String[] capaFieldName, String[] capaFieldValue, Boolean closeInvestigation) {
+        Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
+        Object[] capaFieldValues = LPArray.convertStringWithDataTypeToObjectArray(capaFieldValue);
+        if (capaFieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(capaFieldValues[0].toString())) {
+            return (InternalMessage) capaFieldValues[1];
+        }
+        InternalMessage areCapaFields = isCapaFieldInternalMessage(capaFieldName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areCapaFields.getDiagnostic())) {
+            return areCapaFields;
+        }
+        InternalMessage investigationClosed = isInvestigationClosed(investId);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationClosed.getDiagnostic())) {
+            return new InternalMessage(LPPlatform.LAB_TRUE, investigationClosed.getMessageCodeObj(), investigationClosed.getMessageCodeVariables());
+        }
+        String[] updFieldName = new String[]{TblsProcedure.Investigation.CAPA_REQUIRED.getName(), TblsProcedure.Investigation.CAPA_DECISION_ON.getName(), TblsProcedure.Investigation.CAPA_DECISION_BY.getName()};
+        Object[] updFieldValue = new Object[]{capaRequired, LPDate.getCurrentTimeStamp(), token.getPersonName()};
+        if (capaFieldName != null) {
+            updFieldName = LPArray.addValueToArray1D(updFieldName, capaFieldName);
+        }
+        if (capaFieldValue != null) {
+            updFieldValue = LPArray.addValueToArray1D(updFieldValue, capaFieldValues);
+        }
+        SqlWhere sqlWhere = new SqlWhere();
+        sqlWhere.addConstraint(TblsProcedure.Investigation.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{investId}, "");
+        RdbmsObject diagnoseObj = Rdbms.updateTableRecordFieldsByFilter(TblsProcedure.TablesProcedure.INVESTIGATION,
+                EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.INVESTIGATION, updFieldName), updFieldValue, sqlWhere, null);
+        if (Boolean.FALSE.equals(diagnoseObj.getRunSuccess())) {
+            return new InternalMessage(LPPlatform.LAB_FALSE, diagnoseObj.getErrorMessageCode(), diagnoseObj.getErrorMessageVariables());
+        }
+        ProcedureInvestigationAudit.investigationAuditAdd(
+                DataInvestigationAuditEvents.CAPA_DECISION.toString(), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(),
+                investId, investId.toString(),
+                LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), null, null);
+        if (Boolean.TRUE.equals(closeInvestigation)) {
+            closeInvestigation(investId);
+        }
+        return new InternalMessage(diagnoseObj.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, diagnoseObj.getErrorMessageCode(), diagnoseObj.getErrorMessageVariables());
+    }
+
     private static InternalMessage isInvestigationClosed(Integer investId) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[][] investigationInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(),
@@ -393,7 +434,15 @@ public final class Investigation {
         }
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "AllCapaFields:  <*1*>", new Object[]{Arrays.toString(fields)});
     }
-
+    private static InternalMessage isCapaFieldInternalMessage(String[] fields) {
+        String[] allFieldNames = getAllFieldNames(TblsProcedure.TablesProcedure.INVESTIGATION.getTableFields());
+        for (String curFld : fields) {
+            if (Boolean.FALSE.equals(LPArray.valueInArray(allFieldNames, curFld))) {
+                return new InternalMessage(LPPlatform.LAB_FALSE, InvestigationErrorTrapping.NOT_CAPA_FIELD, new Object[]{curFld});
+            }
+        }
+        return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, new Object[]{Arrays.toString(fields)});
+    }
     public static void addAuditRecordForObject(String curObj, Integer investId, EnumIntAuditEvents auditActionName) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Integer sampleId = null;

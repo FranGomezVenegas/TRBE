@@ -30,6 +30,7 @@ import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.globalvariables.GlobalVariables.VALIDATION_MODE_REPO;
 import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -181,6 +182,7 @@ public class LPPlatform {
     }
 
     public enum LpPlatformSuccess implements EnumIntMessages {
+        USRROLACTIONDISABLED_DISABLED("userRoleActionEnabled_disabled", "", ""),
         USRROLACTIONENABLED_ENABLED("userRoleActionEnabled_enabled", "", ""),
         USRROLACTIONENABLED_ENABLED_BYALL("userRoleActionEnabled_ALL", "", ""),
         VERIFYUSERREQUIRED_ENABLED_BY_ALL("verifyUserRequired_ALL", "", ""),
@@ -226,6 +228,7 @@ public class LPPlatform {
 
     public enum LpPlatformErrorTrapping implements EnumIntMessages {
         RULE_NAME_VALUE("LpPlatform_ruleNameValue", "Rule name = <*1*>", "Nombre de la regla = <*1*>"),
+        BUS_RUL_IS_DISABLED("LpPlatform_BusinessRuleDisabled", "", ""),
         BUS_RUL_NOT_FOUND("LpPlatform_BusinessRuleNotFound", "sampleTestingByGroup_ReviewByTestingGroup not found or not define", "Regla de negocio sampleTestingByGroup_ReviewByTestingGroup no encontrada o no definida"),
         BUS_RUL_REVIEWBYTESTINGGROUP_NOT_FOUND("LpPlatform_BusinessRulesampleTestingByGroup_ReviewByTestingGroupNotFound", "sampleTestingByGroup_ReviewByTestingGroup not found or not define", "Regla de negocio sampleTestingByGroup_ReviewByTestingGroup no encontrada o no definida"),
         USER_NOTASSIGNED_TOPROCEDURE("userNotAssignedToProcedure", "", ""),
@@ -989,4 +992,36 @@ public class LPPlatform {
         }
         return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.RULE_NAME_VALUE, new Object[]{ruleName, ruleValue});
     }
+
+    public static InternalMessage isProcedureBusinessRuleDisableInternalMessage(String procName, String fileSchemaRepository, String ruleName) {
+        String disableValuesStr = getBusinessRuleAppFile("businessRulesDisableValues", true);
+        String[] disableRuleValues = disableValuesStr.split("\\|");
+        String ruleValue = Parameter.getBusinessRuleProcedureFile(procName, fileSchemaRepository, ruleName);
+        if (ruleValue.length() == 0) {
+            return new InternalMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.BUS_RUL_REVIEWBYTESTINGGROUP_NOT_FOUND, null);
+        }
+        for (String curVal : disableRuleValues) {
+            if (curVal.equalsIgnoreCase(ruleValue)) {
+                return new InternalMessage(LPPlatform.LAB_TRUE, LpPlatformErrorTrapping.RULE_NAME_VALUE, new Object[]{ruleName, ruleValue});
+            }
+        }
+        return new InternalMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.RULE_NAME_VALUE, new Object[]{ruleName, ruleValue});
+    }
+
+    public static InternalMessage isProcedureBusinessRuleEnableInternalMessage(String procName, String fileSchemaRepository, String ruleName) {
+        String enableValuesStr = getBusinessRuleAppFile("businessRulesEnableValues", true);
+        String[] enableRuleValues = enableValuesStr.split("\\|");
+        String ruleValue = Parameter.getBusinessRuleProcedureFile(procName, fileSchemaRepository, ruleName);
+        if (ruleValue.length() == 0) {
+            return new InternalMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.BUS_RUL_NOT_FOUND, new Object[]{ruleName});
+        }
+        for (String curVal : enableRuleValues) {
+            if (curVal.equalsIgnoreCase(ruleValue)) {
+                return new InternalMessage(LPPlatform.LAB_TRUE, LpPlatformErrorTrapping.RULE_NAME_VALUE, new Object[]{ruleName, ruleValue});
+            }
+        }
+        return new InternalMessage(LPPlatform.LAB_FALSE, LpPlatformErrorTrapping.RULE_NAME_VALUE, new Object[]{ruleName, ruleValue});
+    }
+
+    
 }

@@ -34,9 +34,9 @@ public class MonitoringAPIqueries extends HttpServlet {
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(request, response, false);
         try (PrintWriter out = response.getWriter()) {
             String actionName=procReqInstance.getActionName();           
-            ClassEnvMonSampleFrontendController clssEnvMonSampleQueries=new ClassEnvMonSampleFrontendController(request, response, actionName.toUpperCase(), null, null, null);
+            ClassEnvMonSampleFrontendController clssEnvMonSampleQueries=new ClassEnvMonSampleFrontendController(request, response, actionName.toUpperCase(), null, null, null, null);
             if (Boolean.FALSE.equals(clssEnvMonSampleQueries.getFunctionFound())){
-                ClassSampleQueriesController clssSampleQueriesController=new ClassSampleQueriesController(request, response, actionName, null, null, null);
+                ClassSampleQueriesController clssSampleQueriesController=new ClassSampleQueriesController(request, response, actionName, null, null, null, null);
                 if (Boolean.FALSE.equals(clssSampleQueriesController.getFunctionFound())){
                     ClassEnvMonQueriesController clssEnvMonQueriesController=new ClassEnvMonQueriesController(request, response, actionName, null, null, null);
                     if (Boolean.FALSE.equals(clssEnvMonQueriesController.getFunctionFound())){

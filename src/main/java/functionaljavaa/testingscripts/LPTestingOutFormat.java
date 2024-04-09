@@ -49,7 +49,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
-import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 
@@ -1151,7 +1150,7 @@ public class LPTestingOutFormat {
         return numEvaluationArguments;
     }
 
-    public Object[] checkMissingMandatoryParamValuesByCall(LPAPIArguments[] args, Object[] testingRowValues) {
+    public InternalMessage checkMissingMandatoryParamValuesByCall(LPAPIArguments[] args, Object[] testingRowValues) {
         StringBuilder missingValues = new StringBuilder(0);
         for (int i = 0; i < args.length; i++) {
             String curArgValue = LPTestingOutFormat.csvExtractFieldValueString(testingRowValues[getActionNamePosic() + i]);
@@ -1163,9 +1162,9 @@ public class LPTestingOutFormat {
             }
         }
         if (missingValues.length() == 0) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_FINE, null);
+            return new InternalMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_FINE, null);
         } else {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ApiErrorTraping.MANDATORY_PARAMS_MISSING, new Object[]{missingValues});
+            return new InternalMessage(LPPlatform.LAB_FALSE, ApiErrorTraping.MANDATORY_PARAMS_MISSING, new Object[]{missingValues});
         }
     }
 
@@ -1395,10 +1394,10 @@ public class LPTestingOutFormat {
         return totalTimeConsume;
     }
     
-    public Object[] passConfirmDialogValidation(HttpServletRequest request, LPTestingOutFormat tstOut, String curActionName, Object[] curActionInfo){
+    public InternalMessage passConfirmDialogValidation(HttpServletRequest request, LPTestingOutFormat tstOut, String curActionName, Object[] curActionInfo){
         Boolean confirmDialogShouldBeValidated = Boolean.valueOf(request.getAttribute(LPTestingParams.CONFIRM_DIALOG_SHOULD_BE_VALIDATED).toString());
         if (Boolean.FALSE.equals(confirmDialogShouldBeValidated))
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.TESTING_CONFIRM_DIALOG_VALIDATION_DISABLED, null);
+            return new InternalMessage(LPPlatform.LAB_TRUE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.TESTING_CONFIRM_DIALOG_VALIDATION_DISABLED, null);
         String procInstanceName = request.getParameter("procInstanceName");
         JSONArray actionsWithESign = ActionsControl.procActionsWithESign(procInstanceName);      
         boolean actionHasConfirmEsignDialog = LPJson.JSONArraycontainsValue((actionsWithESign), curActionName);       
@@ -1419,17 +1418,17 @@ public class LPTestingOutFormat {
                     new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName()}, new Object[]{curActionName}, 
                     new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName()});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())) {
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_FINE, null);
+                return new InternalMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_FINE, null);
             }
             if ("LIST".equalsIgnoreCase(LPNulls.replaceNull(ruleValue[0][1]).toString())){
                 if (LPNulls.replaceNull(curActionInfo[tstOut.getAuditReasonPosic()]).toString().length()==0) 
-                    return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.TESTING_CONFIRM_DIALOG_JUSTIF_PHRASE_REQUIRED, null);
+                    return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.TESTING_CONFIRM_DIALOG_JUSTIF_PHRASE_REQUIRED, null);
                 if (Boolean.FALSE.equals((LPArray.valueInArray(ruleValue[0][2].toString().split("\\|"), LPNulls.replaceNull(curActionInfo[tstOut.getAuditReasonPosic()]).toString()))
                     || (LPArray.valueInArray(ruleValue[0][3].toString().split("\\|"), LPNulls.replaceNull(curActionInfo[tstOut.getAuditReasonPosic()]).toString())) ) )
-                    return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.TESTING_CONFIRM_DIALOG_WRONG_JUSTIF_PHRASE, null);
+                    return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.TESTING_CONFIRM_DIALOG_WRONG_JUSTIF_PHRASE, null);
             }            
         }
-        return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_FINE, null);
+        return new InternalMessage(LPPlatform.LAB_TRUE, LpPlatformSuccess.ALL_FINE, null);
     }
 
 }

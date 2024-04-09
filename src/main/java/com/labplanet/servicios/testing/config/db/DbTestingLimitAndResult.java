@@ -47,6 +47,7 @@ import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.globalvariables.GlobalVariables.ApiUrls;
 import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 
 public class DbTestingLimitAndResult extends HttpServlet {
 
@@ -126,6 +127,7 @@ public class DbTestingLimitAndResult extends HttpServlet {
         response = LPTestingOutFormat.responsePreparation(response);
         DataSpec resChkSpec = new DataSpec();
         Object[] resSpecEvaluation = null;
+        InternalMessage resSpecEvaluationObj = null;
         LocalDateTime timeStarted=LPDate.getCurrentTimeStamp();
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForUAT(request, response, true, "");
         if (Boolean.TRUE.equals(procReqInstance.getHasErrors())) {
@@ -222,8 +224,9 @@ public class DbTestingLimitAndResult extends HttpServlet {
                 }
                 argIndex++;
 
-                resSpecEvaluation = tstOut.checkMissingMandatoryParamValuesByCall(arguments, testingContent[iLines]);
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluation[0].toString())) {
+                resSpecEvaluationObj = tstOut.checkMissingMandatoryParamValuesByCall(arguments, testingContent[iLines]);
+                resSpecEvaluation=ApiMessageReturn.trapMessage(resSpecEvaluationObj.getDiagnostic(), resSpecEvaluationObj.getMessageCodeObj(), resSpecEvaluationObj.getMessageCodeVariables());
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluationObj.getDiagnostic())) {
                     Integer stepId = Integer.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStepIdPosic()]).toString());
                     fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, resSpecEvaluation, new JSONArray(), tstAssert, timeStartedStep));
                 } else {
@@ -238,9 +241,9 @@ public class DbTestingLimitAndResult extends HttpServlet {
                             fldsNull = LPArray.addValueToArray1D(fldsNull, "methodVersion");
                         }
                         if ((specCodeVersion == null && specCodeVersionStr == null) || (methodVersion == null && methodVersionStr == null)) {
-                            resSpecEvaluation = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ApiErrorTraping.MANDATORY_PARAMS_MISSING, fldsNull);
+                            resSpecEvaluationObj = new InternalMessage(LPPlatform.LAB_FALSE, ApiErrorTraping.MANDATORY_PARAMS_MISSING, fldsNull);
                         } else {
-                            resSpecEvaluation = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.VALUE_NOT_NUMERIC, fldsNull);
+                            resSpecEvaluationObj = new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.VALUE_NOT_NUMERIC, fldsNull);
                         }
                         resSpecEvaluation = LPArray.addValueToArray1D(resSpecEvaluation, "numeric field(s) empty");
                     } else {
@@ -259,16 +262,16 @@ public class DbTestingLimitAndResult extends HttpServlet {
                             ConfigSpecRule specRule = new ConfigSpecRule();
                             specRule.specLimitsRule(limitId, null);
                             if (Boolean.FALSE.equals(specRule.getRuleIsQualitative()) && Boolean.FALSE.equals(specRule.getRuleIsQuantitative())) {
-                                resSpecEvaluation = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, qualitativeRulesErrors.QUALITATIVE_RULE_NOT_RECOGNIZED, null);
+                                resSpecEvaluationObj = new InternalMessage(LPPlatform.LAB_FALSE, qualitativeRulesErrors.QUALITATIVE_RULE_NOT_RECOGNIZED, null);
                             }
                             if (Boolean.TRUE.equals(specRule.getRuleIsQualitative())) {
-                                resSpecEvaluation = resChkSpec.resultCheck(resultValue, specRule.getQualitativeRule(),
+                                resSpecEvaluationObj = resChkSpec.resultCheck(resultValue, specRule.getQualitativeRule(),
                                         specRule.getQualitativeRuleValues(), specRule.getQualitativeRuleSeparator(), specRule.getQualitativeRuleListName());
                             }
                             if (Boolean.TRUE.equals(specRule.getRuleIsQuantitative())) {
-                                Object[] isNumeric = isNumeric(resultValue);
-                                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isNumeric[0].toString())) {
-                                    resSpecEvaluation = isNumeric;
+                                InternalMessage isNumeric = isNumeric(resultValue, false);
+                                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isNumeric.getDiagnostic())) {
+                                    resSpecEvaluationObj = isNumeric;
                                 } else {
                                     Boolean requiresUnitsConversion = true;
                                     BigDecimal resultConverted = null;
@@ -282,7 +285,7 @@ public class DbTestingLimitAndResult extends HttpServlet {
                                     if (Boolean.TRUE.equals(requiresUnitsConversion) && specUomName != null && specUomName.length() > 0) {
                                         uom.convertValue(specUomName);
                                         if (Boolean.FALSE.equals(uom.getConvertedFine())) {
-                                            resSpecEvaluation = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataInvRetErrorTrapping.CONVERTER_FALSE, new Object[]{limitId.toString(), "", schemaDataName});
+                                            resSpecEvaluationObj = new InternalMessage(LPPlatform.LAB_FALSE, DataInvRetErrorTrapping.CONVERTER_FALSE, new Object[]{limitId.toString(), "", schemaDataName});
                                         } else {
                                             resultConverted = new BigDecimal((String) uom.getConversionErrorDetail()[1]);
                                         }
@@ -290,16 +293,16 @@ public class DbTestingLimitAndResult extends HttpServlet {
                                     if (Boolean.FALSE.equals(requiresUnitsConversion) || (Boolean.TRUE.equals(requiresUnitsConversion) && uom.getConvertedFine())) {
                                         if (Boolean.TRUE.equals(specRule.getQuantitativeHasControl())) {
                                             if (Boolean.TRUE.equals(requiresUnitsConversion)) {
-                                                resSpecEvaluation = resChkSpec.resultCheck(resultConverted, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
+                                                resSpecEvaluationObj = resChkSpec.resultCheck(resultConverted, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
                                             } else {
-                                                resSpecEvaluation = resChkSpec.resultCheck(resultValueBigDecimal, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
+                                                resSpecEvaluationObj = resChkSpec.resultCheck(resultValueBigDecimal, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
                                             }
                                             resSpecEvaluation = LPArray.addValueToArray1D(resSpecEvaluation, "Regla: " + specRule.getQualitativeRuleRepresentation());
                                         } else {
                                             if (Boolean.TRUE.equals(requiresUnitsConversion)) {
-                                                resSpecEvaluation = resChkSpec.resultCheck(resultConverted, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
+                                                resSpecEvaluationObj = resChkSpec.resultCheck(resultConverted, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
                                             } else {
-                                                resSpecEvaluation = resChkSpec.resultCheck(resultValueBigDecimal, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
+                                                resSpecEvaluationObj = resChkSpec.resultCheck(resultValueBigDecimal, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
                                             }
                                         }
                                     }
@@ -325,7 +328,7 @@ public class DbTestingLimitAndResult extends HttpServlet {
                     }                    
                 }
                 if (tstOut.getStopSyntaxisFalsePosic()>-1 && Boolean.TRUE.equals(Boolean.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStopSyntaxisFalsePosic()]).toString()))
-                    && LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluation[0].toString())){
+                    && LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluationObj.getDiagnostic())){
                         out.println(fileContentBuilder.toString()); 
                         stopPhrase="Interrupted by evaluation returning false in step "+(iLines+1)+" of "+testingContent.length;
                     break;
