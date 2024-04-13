@@ -176,7 +176,7 @@ public class ModuleDefinitionAPI extends HttpServlet {
         }
         try (PrintWriter out = response.getWriter()) {
             ClassTrazitCodeDoc clss = new ClassTrazitCodeDoc(request, response, endPoint);
-            Object[] diagnostic = clss.getDiagnostic();
+            Object[] diagnostic = clss.getDiagnosticObj();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clss.getMessageDynamicData());
             } else {
