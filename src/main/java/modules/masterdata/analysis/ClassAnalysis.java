@@ -15,6 +15,7 @@ import databases.TblsData;
 import trazit.session.ResponseMessages;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
@@ -37,6 +38,7 @@ public class ClassAnalysis implements ActionsClass{
     /**
      * @return the messageDynamicData
      */
+    @Override
     public Object[] getMessageDynamicData() {
         return this.messageDynamicData;
     }
@@ -44,6 +46,7 @@ public class ClassAnalysis implements ActionsClass{
     /**
      * @return the rObj
      */
+    @Override
     public RelatedObjects getRelatedObj() {
         return this.relatedObj;
     }
@@ -72,6 +75,7 @@ public class ClassAnalysis implements ActionsClass{
     private Object[] diagnostic = new Object[0];
     private Boolean functionFound = false;
     private EnumIntEndpoints enumConstantByName;
+    
     
     public ClassAnalysis(HttpServletRequest request, MasterDataAnalysisActionsEndpoints endPoint) {
         RelatedObjects rObj = RelatedObjects.getInstanceForActions();
@@ -289,7 +293,7 @@ public class ClassAnalysis implements ActionsClass{
                     anaFieldName = argValues[2].toString();
                     anaFieldValue = argValues[3].toString();
                     anaFieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(anaFieldValue.split("\\|"));
-                    if (anaFieldValueArr != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(anaFieldValueArr[0].toString())) {
+                    if (anaFieldValueArr != null && anaFieldValueArr.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(anaFieldValueArr[0].toString())) {
                         Object[] diagn = anaFieldValueArr;
                         this.diagnosticObj=new InternalMessage(diagn[0].toString(), diagn[diagn.length-1].toString(), null, null);
                     } else {
@@ -336,4 +340,13 @@ public class ClassAnalysis implements ActionsClass{
     }
     @Override    public StringBuilder getRowArgsRows() {        return null;    }
     @Override    public EnumIntEndpoints getEndpointObj(){        return enumConstantByName;    }
+
+    @Override    public void initializeEndpoint(String actionName) {        throw new UnsupportedOperationException("Not supported yet.");}
+    @Override    public void createClassEnvMonAndHandleExceptions(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs, Integer auditReasonPosic) {        throw new UnsupportedOperationException("Not supported yet.");}
+
+    @Override
+    public HttpServletResponse getHttpResponse() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
+

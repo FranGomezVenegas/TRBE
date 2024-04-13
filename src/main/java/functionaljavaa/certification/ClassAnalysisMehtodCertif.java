@@ -24,6 +24,7 @@ import databases.TblsData;
 import trazit.session.ResponseMessages;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPNulls;
@@ -44,6 +45,7 @@ public class ClassAnalysisMehtodCertif implements ActionsClass{
     /**
      * @return the messageDynamicData
      */
+    @Override
     public Object[] getMessageDynamicData() {
         return this.messageDynamicData;
     }
@@ -51,6 +53,7 @@ public class ClassAnalysisMehtodCertif implements ActionsClass{
     /**
      * @return the rObj
      */
+    @Override
     public RelatedObjects getRelatedObj() {
         return this.relatedObj;
     }
@@ -65,10 +68,12 @@ public class ClassAnalysisMehtodCertif implements ActionsClass{
     /**
      * @return the diagnostic
      */
+    @Override
     public Object[] getDiagnostic() {
         return this.diagnostic;
     }
 
+    @Override
     public InternalMessage getDiagnosticObj() {
         return this.diagnosticObj;
     }
@@ -79,6 +84,7 @@ public class ClassAnalysisMehtodCertif implements ActionsClass{
     private Object[] diagnostic = new Object[0];
     private Boolean functionFound = false;
     private EnumIntEndpoints enumConstantByName;
+    
     public ClassAnalysisMehtodCertif(HttpServletRequest request, CertifyAnalysisMethodAPI.CertifyAnalysisMethodAPIactionsEndpoints endPoint) {
         RelatedObjects rObj = RelatedObjects.getInstanceForActions();
         try {
@@ -187,4 +193,12 @@ public class ClassAnalysisMehtodCertif implements ActionsClass{
     }
     @Override    public StringBuilder getRowArgsRows() {        return null;    }
     @Override    public EnumIntEndpoints getEndpointObj(){        return enumConstantByName;    }
+
+    @Override    public void initializeEndpoint(String actionName) {        throw new UnsupportedOperationException("Not supported yet.");}
+    @Override    public void createClassEnvMonAndHandleExceptions(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs, Integer auditReasonPosic) {        throw new UnsupportedOperationException("Not supported yet.");}
+
+    @Override
+    public HttpServletResponse getHttpResponse() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

@@ -21,6 +21,7 @@ import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPMath;
@@ -527,4 +528,12 @@ static final String NAME_SUFFIX="_name";
         @Override    public StringBuilder getRowArgsRows() {        return null;    }
         @Override    public EnumIntEndpoints getEndpointObj(){        return enumConstantByName;    }
 
+    
+    @Override    public void initializeEndpoint(String actionName) {        throw new UnsupportedOperationException("Not supported yet.");}
+    @Override    public void createClassEnvMonAndHandleExceptions(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs, Integer auditReasonPosic) {        throw new UnsupportedOperationException("Not supported yet.");}
+
+    @Override
+    public HttpServletResponse getHttpResponse() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

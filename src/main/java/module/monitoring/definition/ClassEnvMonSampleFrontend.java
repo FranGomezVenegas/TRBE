@@ -265,8 +265,8 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
             this.devCommentTag = LPNulls.replaceNull(devCommentTag);
         }
 
-        public Map<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex) {
-            Map<HttpServletRequest, Object[]> hm = new HashMap<>();
+        public HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex) {
+            HashMap<HttpServletRequest, Object[]> hm = new HashMap<>();
             Object[] argValues = new Object[0];
             for (LPAPIArguments curArg : this.arguments) {
                 argValues = LPArray.addValueToArray1D(argValues, curArg.getName() + ":" + getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
@@ -275,6 +275,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
             hm.put(request, argValues);
             return hm;
         }
+        
         @Override public String getEntity() {return "sample";}
         @Override
         public String getName() {
@@ -1989,9 +1990,6 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
         return functionFound;
     }
 
-    /**
-     * @return the isSuccess
-     */
     @Override
     public Boolean getIsSuccess() {
         return isSuccess;

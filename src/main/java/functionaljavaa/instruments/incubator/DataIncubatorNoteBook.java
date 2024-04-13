@@ -206,8 +206,8 @@ public class DataIncubatorNoteBook {
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultCheck.getDiagnostic())) {
                 return resultCheck;
             }
-            EnumIntMessages checkMsgCode = (EnumIntMessages) resultCheck.getNewObjectId();
-            specEval = checkMsgCode.getErrorCode();
+            //EnumIntMessages checkMsgCode = (EnumIntMessages) resultCheck.getNewObjectId();
+            specEval = resultCheck.getMessageCodeObj().getErrorCode();
             specEvalDetail = (String) resultCheck.getMessageCodeObj().getErrorCode();
             insFldsName = LPArray.addValueToArray1D(insFldsName, new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.SPEC_EVAL.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.SPEC_EVAL_DETAIL.getName()});
             insFldsValue = LPArray.addValueToArray1D(insFldsValue, new Object[]{specEval, specEvalDetail});
@@ -219,7 +219,7 @@ public class DataIncubatorNoteBook {
 
         incubatorLocking(instName, new Object[]{specEval, specEvalDetail}, fieldsToRetrieve, instrInfo[0]);
 
-        return new InternalMessage(LPPlatform.LAB_TRUE, EnvMonIncubatorAPIactionsEndpoints.EM_INCUBATOR_ADD_TEMP_READING, new Object[]{instName, procInstanceName});
+        return new InternalMessage(LPPlatform.LAB_TRUE, EnvMonIncubatorAPIactionsEndpoints.EM_INCUBATOR_ADD_TEMP_READING, new Object[]{instName, procInstanceName}, insertRecordInTable.getNewRowId());
     }
 
     /**

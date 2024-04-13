@@ -233,14 +233,14 @@ public class DataSampleRevisionTestingGroup {
         }
 
         InternalMessage isReviewByTestingGroupEnable = LPPlatform.isProcedureBusinessRuleDisableInternalMessage(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName(), DataSampleRevisionTestingGroupBusinessRules.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP.getTagName());
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isReviewByTestingGroupEnable.getDiagnostic())) {
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isReviewByTestingGroupEnable.getDiagnostic())) {
             return new InternalMessage(LPPlatform.LAB_TRUE, DataSampleRevisionTestingGroupErrorTrapping.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP_NOT_ACTIVE, null);
         }
         InternalMessage sampleRevisionByTestingGroupReviewed = isSampleRevisionByTestingGroupReviewed(sampleId, testingGroup);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(sampleRevisionByTestingGroupReviewed.getDiagnostic())) {
             return new InternalMessage(LPPlatform.LAB_TRUE, sampleRevisionByTestingGroupReviewed.getMessageCodeObj(), sampleRevisionByTestingGroupReviewed.getMessageCodeVariables());
         }
-
+        
         Object[] existsPendingAnalysis = Rdbms.existsRecord(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName(),
                 new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.SAMPLE_ID.getName(), TblsData.ViewSampleAnalysisResultWithSpecLimits.TESTING_GROUP.getName(), TblsData.ViewSampleAnalysisResultWithSpecLimits.MANDATORY.getName(), TblsData.ViewSampleAnalysisResultWithSpecLimits.RAW_VALUE.getName() + " is null"},
                 new Object[]{sampleId, testingGroup, true});

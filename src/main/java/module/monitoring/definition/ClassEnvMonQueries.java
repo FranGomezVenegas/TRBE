@@ -72,18 +72,23 @@ import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;
 import com.labplanet.servicios.moduleenvmonit.EnvMonFrontEndUtilities;
+import trazit.enums.EnumIntQueriesObj;
 /**
  *
  * @author User
  */
-public class ClassEnvMonQueries {
+public class ClassEnvMonQueries implements EnumIntQueriesObj{
 
     private Object[] messageDynamicData = new Object[]{};
     private RelatedObjects relatedObj = RelatedObjects.getInstanceForActions();
     private Boolean endpointExists = true;
     private Object[] diagnostic = new Object[0];
     private Boolean functionFound = false;
-
+    private Boolean isSuccess = false;
+    private JSONObject responseSuccessJObj = null;
+    private JSONArray responseSuccessJArr = null;
+    private Object[] responseError = null;
+    
     public ClassEnvMonQueries(HttpServletRequest request, EnvMonAPI.EnvMonQueriesAPIEndpoints endPoint, HttpServletResponse response) {
         try {
             //Rdbms.stablishDBConection(false);
@@ -114,14 +119,21 @@ public class ClassEnvMonQueries {
                             EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.SAMPLE, fieldsToRetrieve),
                             new String[]{TblsEnvMonitData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId},
                             new String[]{TblsEnvMonitData.Sample.SAMPLE_ID.getName()});
+                    JSONArray jArr = new JSONArray();
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) {
                         actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, sampleInfo[sampleInfo.length - 1][0].toString(), new Object[]{sampleId});
                     } else {
+                        for (Object[] curRow : sampleInfo) {
+                            JSONObject row = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curRow);
+                            jArr.add(row);
+                        }                        
                         for (Object[] curSample : sampleInfo) {
                             rObj.addSimpleNode(GlobalVariables.Schemas.DATA.getName(), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), curSample[0], fieldsToRetrieve, curSample);
                         }
                         actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{sampleId});
                     }
+                    this.isSuccess = true;
+                    this.responseSuccessJArr = jArr;                    
                     this.messageDynamicData = new Object[]{sampleId};
                     break;
                 case GET_SAMPLE_RESULTS:
@@ -147,17 +159,19 @@ public class ClassEnvMonQueries {
                     }
                     Object[][] resultInfo = null;
                     if ("GET_SAMPLE_RESULTS_SECONDENTRY".equalsIgnoreCase(endPoint.getName())) {
+                        fieldsToRetrieve=new String[]{TblsData.SampleAnalysisResultSecondEntry.RESULT_ID.getName()};
                         resultInfo = QueryUtilitiesEnums.getTableData(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT_SECONDENTRY,
-                                EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT_SECONDENTRY, new String[]{TblsData.SampleAnalysisResultSecondEntry.RESULT_ID.getName()}),
+                                EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT_SECONDENTRY, fieldsToRetrieve),
                                 whereFieldNames, whereFieldValues,
                                 new String[]{TblsData.SampleAnalysisResultSecondEntry.RESULT_ID.getName()});
                     } else {
+                        fieldsToRetrieve=new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()};
                         resultInfo = QueryUtilitiesEnums.getTableData(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT,
-                                EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}),
+                                EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, fieldsToRetrieve),
                                 whereFieldNames, whereFieldValues,
                                 new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()});
                     }
-
+                    jArr = new JSONArray();
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultInfo[0][0].toString())) {
                         actionDiagnoses = resultInfo[0];
                     } else {
@@ -166,10 +180,18 @@ public class ClassEnvMonQueries {
                         }
                         actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{sampleId});
                     }
+                    for (Object[] curRow : resultInfo) {
+                        JSONObject row = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curRow);
+                        jArr.add(row);
+                    }                                            
                     this.messageDynamicData = new Object[]{sampleId};
+                    this.isSuccess = true;
+                    this.responseSuccessJArr = jArr;                    
                     break;
                 case GET_MASTER_DATA:
-                    LPFrontEnd.servletReturnSuccess(request, response, ConfigMasterData.getMasterData(procInstanceName, null));
+                    this.isSuccess = true;
+                    this.responseSuccessJObj = ConfigMasterData.getMasterData(procInstanceName, null);
+                    //LPFrontEnd.servletReturnSuccess(request, response, ConfigMasterData.getMasterData(procInstanceName, null));
                     return;
                 case PROGRAMS_LIST:
                     String[] programFldNameArray = getFieldsListToRetrieve(argValues[0].toString(), EnumIntTableFields.getAllFieldNames(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM.getTableFields()));
@@ -398,7 +420,9 @@ public class ClassEnvMonQueries {
                     }
                     JSONObject programsListObj = new JSONObject();
                     programsListObj.put(JSON_TAG_GROUP_NAME_CARD_PROGRAMS_LIST, programsJsonArr);
-                    LPFrontEnd.servletReturnSuccess(request, response, programsListObj);
+                    this.isSuccess = true;
+                    this.responseSuccessJObj = programsListObj;
+  //                    LPFrontEnd.servletReturnSuccess(request, response, programsListObj);
                     return;
                 case PROGRAMS_CORRECTIVE_ACTION_LIST:
                     String statusClosed = DataProgramCorrectiveAction.ProgramCorrectiveActionStatuses.STATUS_CLOSED.getStatusCode();
@@ -412,7 +436,7 @@ public class ClassEnvMonQueries {
                             argValues[1].toString(), getAllFieldNames(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableFields()),
                             new String[]{TblsProcedure.ProgramCorrectiveAction.PROGRAM_NAME.getName(), TblsProcedure.ProgramCorrectiveAction.STATUS.getName() + "<>"},
                             new String[]{programName, statusClosed}, progCorrFldSortArray);
-                    JSONArray jArr = new JSONArray();
+                    jArr = new JSONArray();
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(progCorrInfo[0][0].toString())) {
                         LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     }
@@ -420,7 +444,9 @@ public class ClassEnvMonQueries {
                         JSONObject jObj = LPJson.convertArrayRowToJSONObject(progCorrFldNameList, curProgCorr);
                         jArr.add(jObj);
                     }
-                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                    this.isSuccess = true;
+                    this.responseSuccessJArr = jArr;
+//                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     return;
                 case GET_ACTIVE_PRODUCTION_LOTS:
                 case GET_ALL_PRODUCTION_LOTS:
@@ -444,7 +470,9 @@ public class ClassEnvMonQueries {
                         JSONObject jObj = LPJson.convertArrayRowToJSONObject(prodLotFldToRetrieve, curProgram);
                         jArr.add(jObj);
                     }
-                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                    this.isSuccess = true;
+                    this.responseSuccessJArr = jArr;
+//                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     return;
                 case DEACTIVATED_PRODUCTION_LOTS_LAST_N_DAYS:
                     String numDays = LPNulls.replaceNull(argValues[0]).toString();
@@ -457,7 +485,9 @@ public class ClassEnvMonQueries {
                             new Object[]{false}, 
                             new String[]{TblsEnvMonitData.ProductionLot.CLOSED_ON.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                     Rdbms.closeRdbms();
-                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                    this.isSuccess = true;
+                    this.responseSuccessJArr = jArr;
+//                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     return;
                 case GET_SCHEDULED_SAMPLES:
                     SqlWhere wObj = new SqlWhere();
@@ -499,7 +529,9 @@ public class ClassEnvMonQueries {
                     JSONObject jObjMainObject = new JSONObject();
                     jObjMainObject.put(RESPONSE_JSON_DATATABLE, sampleJsonArr);
                     jObjMainObject.put(GlobalAPIsParams.LBL_TABLE, "GET_SCHEDULED_SAMPLES v1");
-                    LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
+                    this.isSuccess = true;
+                    this.responseSuccessJObj = jObjMainObject;
+                    //LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
                     break;    
                 case GET_STAGES_TIMING_CAPTURE_DATA:
                     jObjMainObject = new JSONObject();
@@ -665,7 +697,9 @@ public class ClassEnvMonQueries {
                     jObjMainObject.put("violations_percentage", sampleJsonArr);
 
                     //jObjMainObject.put(GlobalAPIsParams.LBL_TABLE, "GET_SCHEDULED_SAMPLES v1"); 
-                    LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
+                    this.isSuccess = true;
+                    this.responseSuccessJObj = jObjMainObject;
+//                    LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
                     break;                
                 default:
                     break;
@@ -681,35 +715,55 @@ public class ClassEnvMonQueries {
     /**
      * @return the messageDynamicData
      */
-    public Object[] getMessageDynamicData() {
+    @Override public Object[] getMessageDynamicData() {
         return messageDynamicData;
     }
 
     /**
      * @return the relatedObj
      */
-    public RelatedObjects getRelatedObj() {
+    @Override public RelatedObjects getRelatedObj() {
         return relatedObj;
     }
 
     /**
      * @return the endpointExists
      */
-    public Boolean getEndpointExists() {
+    @Override public Boolean getEndpointExists() {
         return endpointExists;
     }
 
     /**
      * @return the diagnostic
      */
-    public Object[] getDiagnostic() {
+    @Override public Object[] getDiagnostic() {
         return diagnostic;
     }
 
     /**
      * @return the functionFound
      */
-    public Boolean getFunctionFound() {
+    @Override public Boolean getFunctionFound() {
         return functionFound;
+    }
+
+    @Override
+    public Boolean getIsSuccess() {
+        return isSuccess;
+    }
+
+    @Override
+    public JSONObject getResponseSuccessJObj() {
+        return this.responseSuccessJObj;
+    }
+
+    @Override
+    public JSONArray getResponseSuccessJArr() {
+        return this.responseSuccessJArr;
+    }
+
+    @Override
+    public Object[] getResponseError() {
+        return this.responseError;
     }
 }

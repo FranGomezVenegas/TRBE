@@ -43,6 +43,10 @@ import trazit.session.ProcedureRequestSession;
  */
 public class EnvMonAPI extends HttpServlet {
 
+    public static class EnvMonSampleAPIactionsEndpoints {
+
+    }
+
     public enum EnvMonAPIactionsEndpoints implements EnumIntEndpoints{ //, EndpointHandler  {
         /**
          *
@@ -266,6 +270,10 @@ public class EnvMonAPI extends HttpServlet {
 
         public HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex) {
             HashMap<HttpServletRequest, Object[]> hm = new HashMap<>();
+            ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, null);
+            if (Boolean.FALSE.equals(procReqInstance.getIsForTesting())){            
+                return hm;
+            }
             Object[] argValues = new Object[0];
             for (LPAPIArguments curArg : this.arguments) {
                 argValues = LPArray.addValueToArray1D(argValues, curArg.getName() + ":" + getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));

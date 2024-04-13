@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
@@ -194,7 +195,7 @@ public class ClassInstruments implements ActionsClass{
                 if (fieldValue != null) {
                     fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
                 }
-                if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                     actionDiagnoses = (InternalMessage) fieldValues[1];
                 } else if (LPNulls.replaceNull(modelNumber).length() > 0) {
                     fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInstrumentsData.Instruments.MODEL_NUMBER.getName());
@@ -239,7 +240,7 @@ public class ClassInstruments implements ActionsClass{
                 if (fieldValue != null) {
                     fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
                 }
-                if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                     actionDiagnoses = (InternalMessage) fieldValues[1];
                 }
                 fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInstrumentsData.Instruments.RESPONSIBLE.getName());
@@ -267,7 +268,7 @@ public class ClassInstruments implements ActionsClass{
                 if (fieldValue != null) {
                     fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
                 }
-                if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                     actionDiagnoses = (InternalMessage) fieldValues[1];
                 }
                 fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInstrumentsData.Instruments.RESPONSIBLE.getName());
@@ -300,7 +301,7 @@ public class ClassInstruments implements ActionsClass{
                 if (fieldValue != null) {
                     fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
                 }
-                if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                     actionDiagnoses = (InternalMessage) fieldValues[1];
                 }
                 fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInstrumentsData.Instruments.RESPONSIBLE.getName());
@@ -328,7 +329,7 @@ public class ClassInstruments implements ActionsClass{
                 if (fieldValue != null) {
                     fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
                 }
-                if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                     actionDiagnoses = (InternalMessage) fieldValues[1];
                 }
                 fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInstrumentsData.Instruments.RESPONSIBLE.getName());
@@ -349,7 +350,7 @@ public class ClassInstruments implements ActionsClass{
                     }
                     fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
                 }
-                if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                     actionDiagnoses = (InternalMessage) fieldValues[1];
                 } else {
                     actionDiagnoses = instr.decommissionInstrument(fieldNames, fieldValues);
@@ -369,7 +370,7 @@ public class ClassInstruments implements ActionsClass{
                     }
                     fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
                 }
-                if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                     actionDiagnoses = (InternalMessage) fieldValues[1];
                 } else {
                     actionDiagnoses = instr.unDecommissionInstrument(fieldNames, fieldValues);
@@ -389,7 +390,7 @@ public class ClassInstruments implements ActionsClass{
                     }
                     fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
                 }
-                if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                     actionDiagnoses = (InternalMessage) fieldValues[1];
                 } else {
                     actionDiagnoses = instr.turnOnLine(fieldNames, fieldValues);
@@ -409,7 +410,7 @@ public class ClassInstruments implements ActionsClass{
                     }
                     fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
                 }
-                if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                     actionDiagnoses = (InternalMessage) fieldValues[1];
                 } else {
                     instr = new DataInstruments(instrName);
@@ -561,7 +562,7 @@ public class ClassInstruments implements ActionsClass{
                     }
                     fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
                 }
-                if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                     actionDiagnoses = (InternalMessage) fieldValues[1];
                 } else {
                     actionDiagnoses = ConfigInstrumentsFamily.configNewInstrumentFamily(instrName, fieldNames, fieldValues);
@@ -613,7 +614,7 @@ public class ClassInstruments implements ActionsClass{
                     }                            
                 }
                 if (actionDiagnoses==null){
-                    if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                    if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                         actionDiagnoses = (InternalMessage) fieldValues[1];
                     } else {
                         actionDiagnoses = ConfigInstrumentsFamily.configUpdateInstrumentFamily(instrName, fieldNames, fieldValues);
@@ -719,4 +720,11 @@ public class ClassInstruments implements ActionsClass{
     @Override    public StringBuilder getRowArgsRows() {        return null;    }
     @Override    public EnumIntEndpoints getEndpointObj(){        return enumConstantByName;    }
 
+    @Override    public void initializeEndpoint(String actionName) {        throw new UnsupportedOperationException("Not supported yet.");}
+    @Override    public void createClassEnvMonAndHandleExceptions(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs, Integer auditReasonPosic) {        throw new UnsupportedOperationException("Not supported yet.");}
+
+    @Override
+    public HttpServletResponse getHttpResponse() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

@@ -27,12 +27,14 @@ import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPMath;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import static module.monitoring.logic.ConfigMicroorganisms.adhocMicroorganismAdd;
+import modules.masterdata.analysis.ConfigAnalysisStructure;
 import trazit.enums.ActionsClass;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -48,14 +50,14 @@ public class ClassEnvMonSample implements ActionsClass{
     /**
      * @return the messageDynamicData
      */
-    public Object[] getMessageDynamicData() {
+    @Override    public Object[] getMessageDynamicData() {
         return this.messageDynamicData;
     }
 
     /**
      * @return the rObj
      */
-    public RelatedObjects getRelatedObj() {
+    @Override    public RelatedObjects getRelatedObj() {
         return this.relatedObj;
     }
 
@@ -69,16 +71,16 @@ public class ClassEnvMonSample implements ActionsClass{
     /**
      * @return the diagnostic
      */
-    public Object[] getDiagnostic() {
-        return this.diagnostic;
+    @Override    public Object[] getDiagnostic() {
+        return null;
     }
-    public InternalMessage getDiagnosticObj() {
+    @Override    public InternalMessage getDiagnosticObj() {
         return diagnosticObj;
     }    
     private Object[] messageDynamicData = new Object[]{};
     private RelatedObjects relatedObj = RelatedObjects.getInstanceForActions();
     private Boolean endpointExists = true;
-    private Object[] diagnostic = new Object[0];
+    //private Object[] diagnostic = new Object[0];
     private InternalMessage diagnosticObj=null;
     private Boolean isSuccess = false;
     private Object[] responseError = null;
@@ -94,15 +96,16 @@ public class ClassEnvMonSample implements ActionsClass{
         Object[] dynamicDataObjects = new Object[]{};
         InternalMessage actionDiagnosesObj = null;
         this.functionFound = true;
+        RelatedObjects rObj = RelatedObjects.getInstanceForActions();
         Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
-            this.isSuccess = false;
-            this.diagnostic = (Object[]) argValues[1];
-            this.responseError = this.diagnostic;
+            
+            this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ConfigAnalysisStructure.ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{argValues[2].toString()});
             this.messageDynamicData = new Object[]{argValues[2].toString()};
+            this.relatedObj = rObj;
+            rObj.killInstance();
             return;
         }
-        RelatedObjects rObj = RelatedObjects.getInstanceForActions();
         try {
             DataProgramSampleAnalysis prgSmpAna = new DataProgramSampleAnalysis();
             DataProgramSampleAnalysisResult prgSmpAnaRes = new DataProgramSampleAnalysisResult();
@@ -208,6 +211,8 @@ public class ClassEnvMonSample implements ActionsClass{
                         messages.addMainForSuccess(endPoint, new Object[]{resultInfo[0][0], procInstanceName});
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), resultInfo[0][0]);
                     }
+                    if (LPPlatform.LAB_TRUE.equals(actionDiagnosesObj.getDiagnostic()))
+                        actionDiagnosesObj=new InternalMessage(LPPlatform.LAB_TRUE, endPoint, actionDiagnosesObj.getMessageCodeVariables());                
                     break;
 
                 case ENTER_PLATE_READING_SECONDENTRY:
@@ -265,6 +270,8 @@ public class ClassEnvMonSample implements ActionsClass{
                         messages.addMainForSuccess(endPoint, new Object[]{resultInfo[0][0], procInstanceName});
                         rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), resultInfo[0][0]);
                     }
+                    if (LPPlatform.LAB_TRUE.equals(actionDiagnosesObj.getDiagnostic()))
+                        actionDiagnosesObj=new InternalMessage(LPPlatform.LAB_TRUE, endPoint, actionDiagnosesObj.getMessageCodeVariables());                                    
                     break;
                 case ADD_SAMPLE_MICROORGANISM:
                 case ADD_ADHOC_SAMPLE_MICROORGANISM:
@@ -433,4 +440,12 @@ public class ClassEnvMonSample implements ActionsClass{
     }
     @Override    public StringBuilder getRowArgsRows() {        return null;    }
     @Override    public EnumIntEndpoints getEndpointObj(){        return enumConstantByName;    }
+
+    @Override    public void initializeEndpoint(String actionName) {        throw new UnsupportedOperationException("Not supported yet.");}
+    @Override    public void createClassEnvMonAndHandleExceptions(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs, Integer auditReasonPosic) {        throw new UnsupportedOperationException("Not supported yet.");}
+
+    @Override
+    public HttpServletResponse getHttpResponse() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

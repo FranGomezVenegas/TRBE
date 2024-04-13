@@ -5,8 +5,8 @@
  */
 package module.monitoring.definition;
 
-import module.monitoring.definition.TblsEnvMonitData;
 import com.labplanet.servicios.moduleenvmonit.EnvMonAPI.EnvMonAPIactionsEndpoints;
+import module.monitoring.definition.TblsEnvMonitData;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
 import databases.TblsProcedure;
@@ -17,11 +17,13 @@ import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import modules.masterdata.analysis.ConfigAnalysisStructure;
 import trazit.enums.ActionsClass;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -35,7 +37,6 @@ public class ClassEnvMon implements ActionsClass{
     private Object[] messageDynamicData=new Object[]{};
     private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
     private Boolean endpointExists=true;
-    private Object[] diagnostic=new Object[0];
     private InternalMessage diagnosticObj=null;
     private Boolean functionFound=false;
     private EnumIntEndpoints enumConstantByName;
@@ -52,12 +53,14 @@ public class ClassEnvMon implements ActionsClass{
         InternalMessage actionDiagnosesObj = null;
         this.functionFound=true;
         this.enumConstantByName=endPoint;
-        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
-            this.diagnostic=(Object[]) argValues[1];
-            this.messageDynamicData=new Object[]{argValues[2].toString()};
-            return;                        
-        }         
+        Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
+            this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ConfigAnalysisStructure.ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{argValues[2].toString()});
+            this.messageDynamicData = new Object[]{argValues[2].toString()};
+            this.relatedObj = rObj;
+            rObj.killInstance();
+            return;
+        }      
         
             switch (endPoint){
                 case CORRECTIVE_ACTION_COMPLETE:
@@ -85,7 +88,7 @@ public class ClassEnvMon implements ActionsClass{
                     Object[] fieldValues=new Object[0];
                     if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            
                     if (fieldValue!=null && fieldValue.length()>0) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                                                
-                    if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                    if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                         actionDiagnosesObj = (InternalMessage) fieldValues[1];
                         break;
                     }
@@ -125,7 +128,7 @@ public class ClassEnvMon implements ActionsClass{
                     String[] fieldsName = fieldName.split("\\|");
                     fieldValue = argValues[2].toString();
                     fieldValues= LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
-                    if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                    if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                         actionDiagnosesObj = (InternalMessage) fieldValues[1];
                         break;
                     }else
@@ -205,7 +208,7 @@ public class ClassEnvMon implements ActionsClass{
      * @return the diagnostic
      */
     public Object[] getDiagnostic() {
-        return diagnostic;
+        return null;
     }
     public InternalMessage getDiagnosticObj() {
         return diagnosticObj;
@@ -218,4 +221,12 @@ public class ClassEnvMon implements ActionsClass{
         return functionFound;
     }
     @Override    public EnumIntEndpoints getEndpointObj(){        return enumConstantByName;    }
+
+    @Override    public void initializeEndpoint(String actionName) {        throw new UnsupportedOperationException("Not supported yet.");}
+    @Override    public void createClassEnvMonAndHandleExceptions(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs, Integer auditReasonPosic) {        throw new UnsupportedOperationException("Not supported yet.");}
+
+    @Override
+    public HttpServletResponse getHttpResponse() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

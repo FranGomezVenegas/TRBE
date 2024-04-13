@@ -38,7 +38,7 @@ public class MonitoringAPIqueries extends HttpServlet {
             if (Boolean.FALSE.equals(clssEnvMonSampleQueries.getFunctionFound())){
                 ClassSampleQueriesController clssSampleQueriesController=new ClassSampleQueriesController(request, response, actionName, null, null, null, null);
                 if (Boolean.FALSE.equals(clssSampleQueriesController.getFunctionFound())){
-                    ClassEnvMonQueriesController clssEnvMonQueriesController=new ClassEnvMonQueriesController(request, response, actionName, null, null, null);
+                    ClassEnvMonQueriesController clssEnvMonQueriesController=new ClassEnvMonQueriesController(request, response, actionName, null, null, null, null);
                     if (Boolean.FALSE.equals(clssEnvMonQueriesController.getFunctionFound())){
                         procReqInstance.killIt();
                         LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());                                        

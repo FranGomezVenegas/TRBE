@@ -14,14 +14,15 @@ import functionaljavaa.instruments.incubator.DataIncubatorNoteBook;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.math.BigDecimal;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import modules.masterdata.analysis.ConfigAnalysisStructure;
 import trazit.enums.ActionsClass;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
-import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 import trazit.enums.EnumIntEndpoints;
 /**
@@ -32,7 +33,6 @@ public class ClassEnvMonIncubator implements ActionsClass{
     private Object[] messageDynamicData=new Object[]{};
     private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
     private Boolean endpointExists=true;
-    private Object[] diagnostic=new Object[0];
     private InternalMessage diagnosticObj=null;    
     private Boolean functionFound=false;
     private EnumIntEndpoints enumConstantByName;
@@ -45,10 +45,12 @@ public class ClassEnvMonIncubator implements ActionsClass{
         this.functionFound=true;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());   
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
-            this.diagnostic=(Object[]) argValues[1];
-            this.messageDynamicData=new Object[]{argValues[2].toString()};
-            return;                        
-        }         
+            this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ConfigAnalysisStructure.ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{argValues[2].toString()});
+            this.messageDynamicData = new Object[]{argValues[2].toString()};
+            this.relatedObj = rObj;
+            rObj.killInstance();
+            return;
+        }
         this.enumConstantByName=endPoint;
         String instrName="";
         BigDecimal temperature=null;
@@ -89,18 +91,10 @@ public class ClassEnvMonIncubator implements ActionsClass{
                     temperature=(BigDecimal) argValues[1];
                     actionDiagnosesObj=DataIncubatorNoteBook.newTemperatureReading(instrName, token.getPersonName(),temperature);                    
                     rObj.addSimpleNode(GlobalVariables.Schemas.CONFIG.getName(), TblsEnvMonitConfig.TablesEnvMonitConfig.INSTRUMENT_INCUBATOR.getTableName(), instrName);                
-                    rObj.addSimpleNode(GlobalVariables.Schemas.DATA.getName(), TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK.getTableName(), actionDiagnoses[actionDiagnoses.length-1]);                
+                    rObj.addSimpleNode(GlobalVariables.Schemas.DATA.getName(), TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK.getTableName(), actionDiagnosesObj.getNewObjectId());                
                     this.messageDynamicData=new Object[]{temperature, instrName};
                     break;      
         }
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses[0].toString()))
-            this.diagnostic=ApiMessageReturn.trapMessage(
-                    actionDiagnoses[0].toString(),
-                    actionDiagnoses[actionDiagnoses.length-1].toString(), this.messageDynamicData);
-        else
-            this.diagnostic=ApiMessageReturn.trapMessage(actionDiagnoses[0].toString(),endPoint, new Object[]{instrName, temperature});
-        
-        this.diagnostic=actionDiagnoses;
         this.diagnosticObj=actionDiagnosesObj;
         this.relatedObj=rObj;        
         rObj.killInstance();
@@ -131,7 +125,7 @@ public class ClassEnvMonIncubator implements ActionsClass{
      * @return the diagnostic
      */
     public Object[] getDiagnostic() {
-        return diagnostic;
+        return null;
     }
     public InternalMessage getDiagnosticObj() {
         return diagnosticObj;
@@ -145,4 +139,12 @@ public class ClassEnvMonIncubator implements ActionsClass{
     }
     @Override    public StringBuilder getRowArgsRows() {        return null;    }
     @Override    public EnumIntEndpoints getEndpointObj(){        return enumConstantByName;    }
+
+    @Override    public void initializeEndpoint(String actionName) {        throw new UnsupportedOperationException("Not supported yet.");}
+    @Override    public void createClassEnvMonAndHandleExceptions(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs, Integer auditReasonPosic) {        throw new UnsupportedOperationException("Not supported yet.");}
+
+    @Override
+    public HttpServletResponse getHttpResponse() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPPlatform;
-import modules.masterdata.analysis.ConfigAnalysisStructure;
 import org.json.simple.JSONObject;
 import trazit.enums.ActionsClass;
 import trazit.enums.ActionsEndpointPair;
@@ -66,7 +65,7 @@ public class ActionsServletCommons {
     private EnumIntMessages errorCodeObj;
     private StringBuilder rowArgsRows=new StringBuilder(0);
     private RelatedObjects relatedObj;
-    public ActionsServletCommons(HttpServletRequest request, ActionsEndpointPair[] endpointsArr, String actionName){
+    public ActionsServletCommons(HttpServletRequest request, HttpServletResponse response, ActionsEndpointPair[] endpointsArr, String actionName){
         endpointFound=false;
         String className="";
         for (ActionsEndpointPair curActionsEndpointPair: endpointsArr){
@@ -77,19 +76,20 @@ public class ActionsServletCommons {
                     endpointFound=true;                    
                     Class<?> clazz = Class.forName(curActionsEndpointPair.getAction());    
                     className=clazz.getSimpleName();
-                    Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endpoint.getArguments());
+                    /*Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endpoint.getArguments());
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
                         this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ConfigAnalysisStructure.ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{argValues[2].toString()});
                         this.messageVariables = new Object[]{argValues[2].toString()};
+                        relatedObj = RelatedObjects.getInstanceForActions();
                         return;
-                    }                    
+                    }*/                    
                     Constructor<?> constructor = clazz.getConstructor(HttpServletRequest.class, endpoint.getClass());
                     actionClass = (ActionsClass) constructor.newInstance(request, endpoint);
                     rowArgsRows=actionClass.getRowArgsRows();
                     relatedObj=actionClass.getRelatedObj();
                     return;
                 } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
-                    endpointFound=false;
+                    endpointFound=false;                    
                     Logger.getLogger(ActionsServletCommons.class.getName()).log(Level.SEVERE, null, ex);
                     this.errorCodeObj=LPPlatform.ApiErrorTraping.EXCEPTION_RAISED;
                     this.diagnosticObj=new InternalMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.EXCEPTION_RAISED, new Object[]{ex.getMessage()});
@@ -105,7 +105,7 @@ public class ActionsServletCommons {
         this.diagnosticObj=new InternalMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, this.getMessageVariables());
     }
     
-    public ActionsServletCommons(HttpServletRequest request, ActionsEndpointPair[] endpointsArr, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs, Integer auditReasonPosic){
+    public ActionsServletCommons(HttpServletRequest request, HttpServletResponse response, ActionsEndpointPair[] endpointsArr, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs, Integer auditReasonPosic){
         endpointFound=false;
         String className="";
         for (ActionsEndpointPair curActionsEndpointPair: endpointsArr){
@@ -125,8 +125,8 @@ public class ActionsServletCommons {
                         rObj.killInstance();
                         return;
                     }*/                    
-                    Constructor<?> constructor = clazz.getConstructor(HttpServletRequest.class, String.class, Object[][].class, Integer.class, Integer.class, Integer.class);
-                    actionClass = (ActionsClass) constructor.newInstance(request, actionName, testingContent, iLines, table1NumArgs, auditReasonPosic);
+                    Constructor<?> constructor = clazz.getConstructor(HttpServletRequest.class, HttpServletResponse.class, String.class, Object[][].class, Integer.class, Integer.class, Integer.class);
+                    actionClass = (ActionsClass) constructor.newInstance(request, response, actionName, testingContent, iLines, table1NumArgs, auditReasonPosic);
                     rowArgsRows=actionClass.getRowArgsRows();
                     this.diagnosticObj=actionClass.getDiagnosticObj();
                     relatedObj=actionClass.getRelatedObj();

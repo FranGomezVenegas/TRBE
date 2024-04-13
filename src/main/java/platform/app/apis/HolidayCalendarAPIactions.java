@@ -110,7 +110,7 @@ public class HolidayCalendarAPIactions extends HttpServlet {
                     Object[] fieldValues=null;
                     if (fieldName!=null&&fieldName.length()>0) fieldNames = fieldName.split("\\|");
                     if (fieldValue!=null&&fieldValue.length()>0) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
-                    if (fieldValues!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
+                    if (fieldValues!=null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
                         actionDiagnoses=new InternalMessage(LPPlatform.LAB_FALSE, fieldValues[fieldValues.length-1].toString(), null, null);                                
                         break;
                     }                    

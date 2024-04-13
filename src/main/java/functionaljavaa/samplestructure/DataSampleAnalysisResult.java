@@ -8,7 +8,6 @@ package functionaljavaa.samplestructure;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import databases.DataDataIntegrity;
 import databases.Rdbms;
 import databases.Rdbms.RdbmsErrorTrapping;
 import databases.RdbmsObject;
@@ -33,8 +32,9 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Objects;
 import lbplanet.utilities.LPDate;
+import lbplanet.utilities.LPFrontEnd;
+import org.json.simple.JSONObject;
 import trazit.enums.EnumIntAuditEvents;
-import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
@@ -47,8 +47,6 @@ import trazit.session.ResponseMessages;
  */
 public class DataSampleAnalysisResult {
 
-    DataDataIntegrity labIntChecker = new DataDataIntegrity();
-    String errorCode = "";
     Object[] errorDetailVariables = new Object[0];
     DataSampleAnalysisResultStrategy sar;
 
@@ -223,6 +221,7 @@ public class DataSampleAnalysisResult {
     }
 
     public InternalMessage sampleAnalysisResultEntry(Integer resultId, Object resultValue, DataSample dataSample, String alternativeAuditEntry, String alternativeAuditClass) {
+    try{
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
         Token token = instanceForActions.getToken();
         String procInstanceName = instanceForActions.getProcedureInstance();
@@ -435,9 +434,11 @@ public class DataSampleAnalysisResult {
         if (Boolean.TRUE.equals(specRule.getRuleIsQualitative())) {
             resSpecEvaluation = resChkSpec.resultCheck((String) resultValue, specRule.getQualitativeRule(),
                     specRule.getQualitativeRuleValues(), specRule.getQualitativeRuleSeparator(), specRule.getQualitativeRuleListName());
-            EnumIntMessages checkMsgCode = (EnumIntMessages) resSpecEvaluation;
+            //EnumIntMessages checkMsgCode = (EnumIntMessages) resSpecEvaluation;
             messageCodeVariables = resSpecEvaluation.getMessageCodeVariables();
-            String specEval = checkMsgCode.getErrorCode();
+            //String specEval = resSpecEvaluation.getMessageCodeObj().getErrorCode();
+            JSONObject responseJSONDiagnosticLPFalse = LPFrontEnd.responseJSONDiagnosticLPFalse(resSpecEvaluation.getMessageCodeObj().getErrorCode(), resSpecEvaluation.getMessageCodeVariables());
+            String specEval = responseJSONDiagnosticLPFalse.get(LPFrontEnd.ResponseTags.MESSAGE.getLabelName() + "_en").toString();
 
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluation.getDiagnostic())) {
                 return resSpecEvaluation;
@@ -498,9 +499,10 @@ public class DataSampleAnalysisResult {
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluation.getDiagnostic())) {
                 return resSpecEvaluation;
             }
-            EnumIntMessages checkMsgCode = (EnumIntMessages) resSpecEvaluation.getMessageCodeObj();
-            String specEval = checkMsgCode.getErrorCode();
-            String specEvalDetail = (String) resSpecEvaluation.getMessageCodeVariables()[resSpecEvaluation.getMessageCodeVariables().length-1];
+            //EnumIntMessages checkMsgCode = (EnumIntMessages) resSpecEvaluation.getMessageCodeObj();
+            String specEval = resSpecEvaluation.getMessageCodeObj().getErrorCode();
+            JSONObject responseJSONDiagnosticLPFalse = LPFrontEnd.responseJSONDiagnosticLPFalse(resSpecEvaluation.getMessageCodeObj().getErrorCode(), resSpecEvaluation.getMessageCodeVariables());
+            String specEvalDetail = responseJSONDiagnosticLPFalse.get(LPFrontEnd.ResponseTags.MESSAGE.getLabelName() + "_en").toString();
             if (Boolean.TRUE.equals(requiresUnitsConversion)) {
                 specEvalDetail = specEvalDetail + " in " + specUomName;
             }
@@ -530,23 +532,26 @@ public class DataSampleAnalysisResult {
                 DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId);
             }
             if (Boolean.TRUE.equals(diagnoseObj.getRunSuccess())) {
-                checkMsgCode = (EnumIntMessages) resSpecEvaluation.getMessageCodeObj();
+                //checkMsgCode = (EnumIntMessages) resSpecEvaluation.getMessageCodeObj();
                 messageCodeVariables = resSpecEvaluation.getMessageCodeVariables();
-                specEval = checkMsgCode.getErrorCode();
+                specEval = resSpecEvaluation.getMessageCodeObj().getErrorCode();
                 if (specEval.toUpperCase().contains(ConfigSpecRule.SPEC_WORD_FOR_UPON_CONTROL)) {
                     this.sar.sarControlAction(resultId, sampleFieldName, sampleFieldValue, fieldsName, fieldsValue);
                 }
-                if ((messageCodeVariables[messageCodeVariables.length - 1]).toString().toUpperCase().contains(ConfigSpecRule.SPEC_WORD_FOR_OOS)) {
+                if ((resSpecEvaluation.getMessageCodeObj().getErrorCode()).toString().toUpperCase().contains(ConfigSpecRule.SPEC_WORD_FOR_OOS)) {
                     this.sar.sarOOSAction(resultId, sampleFieldName, sampleFieldValue, fieldsName, fieldsValue);
                 }
             }
             return new InternalMessage(diagnoseObj.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, diagnoseObj.getErrorMessageCode(), diagnoseObj.getErrorMessageVariables());
         }
         return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.SPECRULE_NOTIMPLEMENTED, new Object[]{resultId.toString(), schemaDataName, ruleType});
+    } catch (Exception e) {
+        return new InternalMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.EXCEPTION_RAISED, new Object[]{e.getMessage()});
     }
-
+    }
+    
     public InternalMessage sampleAnalysisResultEntrySecondEntry(Integer resultId, Object resultValue, DataSample dataSample, String alternativeAuditEntry, String alternativeAuditClass) {
-        try {
+    try {
             ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
             Token token = instanceForActions.getToken();
             String procInstanceName = instanceForActions.getProcedureInstance();
@@ -745,9 +750,11 @@ public class DataSampleAnalysisResult {
             if (Boolean.TRUE.equals(specRule.getRuleIsQualitative())) {
                 resSpecEvaluation = resChkSpec.resultCheck((String) resultValue, specRule.getQualitativeRule(),
                         specRule.getQualitativeRuleValues(), specRule.getQualitativeRuleSeparator(), specRule.getQualitativeRuleListName());
-                EnumIntMessages checkMsgCode = (EnumIntMessages) resSpecEvaluation.getMessageCodeObj();
+                //EnumIntMessages checkMsgCode = (EnumIntMessages) resSpecEvaluation.getMessageCodeObj();
                 messageCodeVariables = resSpecEvaluation.getMessageCodeVariables();
-                String specEval = checkMsgCode.getErrorCode();
+                //String specEval = resSpecEvaluation.getMessageCodeObj().getErrorCode();
+                JSONObject responseJSONDiagnosticLPFalse = LPFrontEnd.responseJSONDiagnosticLPFalse(resSpecEvaluation.getMessageCodeObj().getErrorCode(), resSpecEvaluation.getMessageCodeVariables());
+                String specEval = responseJSONDiagnosticLPFalse.get(LPFrontEnd.ResponseTags.MESSAGE.getLabelName() + "_en").toString();
 
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluation.getDiagnostic())) {
                     return resSpecEvaluation;
@@ -804,10 +811,13 @@ public class DataSampleAnalysisResult {
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluation.getDiagnostic())) {
                     return resSpecEvaluation;
                 }
-                EnumIntMessages checkMsgCode = (EnumIntMessages) resSpecEvaluation.getMessageCodeObj();
-                messageCodeVariables = resSpecEvaluation.getMessageCodeVariables();
-                String specEval = checkMsgCode.getErrorCode();
-                String specEvalDetail = (String) messageCodeVariables[messageCodeVariables.length - 2];
+                //EnumIntMessages checkMsgCode = (EnumIntMessages) resSpecEvaluation.getMessageCodeObj();
+                String specEval = resSpecEvaluation.getMessageCodeObj().getErrorCode();
+                JSONObject responseJSONDiagnosticLPFalse = LPFrontEnd.responseJSONDiagnosticLPFalse(resSpecEvaluation.getMessageCodeObj().getErrorCode(), resSpecEvaluation.getMessageCodeVariables());
+                String specEvalDetail = responseJSONDiagnosticLPFalse.get(LPFrontEnd.ResponseTags.MESSAGE.getLabelName() + "_en").toString();
+                if (Boolean.TRUE.equals(requiresUnitsConversion)) {
+                    specEvalDetail = specEvalDetail + " in " + specUomName;
+                }
                 if (Boolean.TRUE.equals(requiresUnitsConversion)) {
                     specEvalDetail = specEvalDetail + " in " + specUomName;
                 }
@@ -834,20 +844,20 @@ public class DataSampleAnalysisResult {
                     DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId);
                 }
                 if (Boolean.TRUE.equals(diagnoseObj.getRunSuccess())) {
-                    checkMsgCode = (EnumIntMessages) resSpecEvaluation.getMessageCodeObj();
+                    //checkMsgCode = (EnumIntMessages) resSpecEvaluation.getMessageCodeObj();
                     messageCodeVariables = resSpecEvaluation.getMessageCodeVariables();
-                    specEval = checkMsgCode.getErrorCode();
+                    specEval = resSpecEvaluation.getMessageCodeObj().getErrorCode();
                     if (specEval.toUpperCase().contains(ConfigSpecRule.SPEC_WORD_FOR_UPON_CONTROL)) {
                         this.sar.sarControlAction(resultId, sampleFieldName, sampleFieldValue, fieldsName, fieldsValue);
                     }
-                    if ((messageCodeVariables[messageCodeVariables.length - 1]).toString().toUpperCase().contains(ConfigSpecRule.SPEC_WORD_FOR_OOS)) {
+                    if ((resSpecEvaluation.getMessageCodeObj().getErrorCode()).toString().toUpperCase().contains(ConfigSpecRule.SPEC_WORD_FOR_OOS)) {
                         this.sar.sarOOSAction(resultId, sampleFieldName, sampleFieldValue, fieldsName, fieldsValue);
                     }
                 }
                 return new InternalMessage(diagnoseObj.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, diagnoseObj.getErrorMessageCode(), diagnoseObj.getErrorMessageVariables());
             }
             return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.SPECRULE_NOTIMPLEMENTED, new Object[]{resultId.toString(), schemaDataName, ruleType});
-        } catch (NumberFormatException e) {
+        } catch (Exception e) {
             return new InternalMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.EXCEPTION_RAISED, new Object[]{e.getMessage()});
         }
     }
@@ -938,7 +948,6 @@ public class DataSampleAnalysisResult {
         if (Boolean.TRUE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(objectInfo[0][0].toString()))) {
             String[] filter = new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName() + LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR + LPNulls.replaceNull(sampleId).toString() + " " + TblsData.SampleAnalysisResult.TEST_ID.getName() + LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR + LPNulls.replaceNull(testId).toString()
                 + " " + TblsData.SampleAnalysisResult.RESULT_ID.getName() + LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR + LPNulls.replaceNull(resultId).toString()};
-            errorCode = DataSampleErrorTrapping.SAMPLE_NOT_FOUND.getErrorCode();
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, new Object[]{Arrays.toString(filter), schemaDataName});
         } else {
             if (TblsData.TablesData.SAMPLE_ANALYSIS.getTableName().equalsIgnoreCase(cancelScopeTable) || TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName().equalsIgnoreCase(cancelScopeTable)) {
@@ -1075,7 +1084,6 @@ public class DataSampleAnalysisResult {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultInfo[0][0].toString())) {
             String[] filter = new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName() + LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR + LPNulls.replaceNull(sampleId).toString() + " " + TblsData.SampleAnalysisResult.TEST_ID.getName() + LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR + LPNulls.replaceNull(testId).toString()
                 + " " + TblsData.SampleAnalysisResult.RESULT_ID.getName() + LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR + LPNulls.replaceNull(resultId).toString()};
-            errorCode = DataSampleErrorTrapping.SAMPLE_NOT_FOUND.getErrorCode();
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, new Object[]{Arrays.toString(filter), schemaDataName});
         } else {
             if (TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName().equalsIgnoreCase(cancelScopeTable)) {

@@ -23,7 +23,6 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPMath;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.InternalMessage;
@@ -427,9 +426,11 @@ public class AnalysisCalculations {
         if (Boolean.TRUE.equals(specRule.getRuleIsQualitative())) {
             resSpecEvaluation = resChkSpec.resultCheck((String) calculatedResultValue.toString(), specRule.getQualitativeRule(),
                     specRule.getQualitativeRuleValues(), specRule.getQualitativeRuleSeparator(), specRule.getQualitativeRuleListName());
-            EnumIntMessages checkMsgCode = (EnumIntMessages) resSpecEvaluation.getMessageCodeObj();
+            //EnumIntMessages checkMsgCode = (EnumIntMessages) resSpecEvaluation.getMessageCodeObj();
             messageCodeVariables = resSpecEvaluation.getMessageCodeVariables();
-            specEval = checkMsgCode.getErrorCode();
+                        //EnumIntMessages checkMsgCode = (EnumIntMessages) resultCheck.getNewObjectId();
+            specEval = resSpecEvaluation.getMessageCodeObj().getErrorCode();
+
 
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluation.getDiagnostic())) {
                 return;

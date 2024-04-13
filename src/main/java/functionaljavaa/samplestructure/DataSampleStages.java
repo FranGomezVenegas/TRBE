@@ -9,6 +9,7 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.moduleenvmonit.ProcedureSampleStage;
 import com.labplanet.servicios.moduleenvmonit.ProcedureSampleStage.ProcedureSampleStageErrorTrapping;
 import databases.Rdbms;
+import databases.Rdbms.RdbmsErrorTrapping;
 import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.SqlWhere;
@@ -182,42 +183,43 @@ public class DataSampleStages {
         return this.isSampleStagesEnable;
     }
 
-    public Object[] moveToNextStage(Integer sampleId, String currStage, String nextStageFromPull) {
+    public InternalMessage moveToNextStage(Integer sampleId, String currStage, String nextStageFromPull) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         InternalMessage sampleAuditRevision = SampleAudit.sampleAuditRevisionPass(sampleId);
 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditRevision.getDiagnostic())) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, sampleAuditRevision.getMessageCodeObj(), new Object[]{sampleId, currStage});
+            return new InternalMessage(LPPlatform.LAB_FALSE, sampleAuditRevision.getMessageCodeObj(), new Object[]{sampleId, currStage});
         }
-        Object[] javaScriptDiagnostic = moveStageChecker(sampleId, currStage, "Next");
+        InternalMessage javaScriptDiagnostic = moveStageChecker(sampleId, currStage, "Next");
 
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(javaScriptDiagnostic[0].toString())) {
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(javaScriptDiagnostic.getDiagnostic())) {
             return javaScriptDiagnostic;
         }
-        if (Boolean.FALSE.equals(javaScriptDiagnostic[0].toString().contains(LPPlatform.LAB_TRUE))) {
+        if (Boolean.FALSE.equals(javaScriptDiagnostic.getNewObjectId().toString().contains(LPPlatform.LAB_TRUE))) {
             return javaScriptDiagnostic;
         }
 
-        String[] javaScriptDiagnosticArr = javaScriptDiagnostic[0].toString().split("\\|");
+        String[] javaScriptDiagnosticArr = javaScriptDiagnostic.getNewObjectId().toString().split("\\|");
         if (javaScriptDiagnosticArr.length > 1) {
             String newStageProposedByChecker = javaScriptDiagnosticArr[1];
-            return new Object[]{LPPlatform.LAB_TRUE, newStageProposedByChecker};
+            return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, null, newStageProposedByChecker);
         }
 
         String sampleStageNextStage = Parameter.getBusinessRuleProcedureFile(procInstanceName, GlobalVariables.Schemas.DATA.getName(), LBL_PREFIX_SAMPLE_STAGE + currStage + "Next");
         if (sampleStageNextStage.length() == 0||"NULL".equalsIgnoreCase(sampleStageNextStage)) {
-            return new Object[]{LPPlatform.LAB_FALSE, "Next Stage is blank for " + currStage};
+            return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.ERRORTRAPPING_EXCEPTION, new Object[]{"Next Stage is blank for " + currStage});
         }
 
         String[] nextStageArr = sampleStageNextStage.split("\\|");
         if (nextStageArr.length == 1) {
-            return new Object[]{LPPlatform.LAB_TRUE, sampleStageNextStage};
+            return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, null, sampleStageNextStage);
+            //return new Object[]{LPPlatform.LAB_TRUE, sampleStageNextStage};
         }
         Integer posicInArr = LPArray.valuePosicInArray(nextStageArr, nextStageFromPull);
         if (posicInArr == -1) {
-            return new Object[]{LPPlatform.LAB_FALSE, "Proposed next Stage, " + nextStageFromPull + ", is not on the list of next stages, " + Arrays.toString(nextStageArr) + " for the stage " + currStage};
+            return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.ERRORTRAPPING_EXCEPTION, new Object[]{"Proposed next Stage, " + nextStageFromPull + ", is not on the list of next stages, " + Arrays.toString(nextStageArr) + " for the stage " + currStage});
         }
-        return new Object[]{LPPlatform.LAB_TRUE, nextStageFromPull};
+        return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, null, nextStageFromPull);        
     }
 
     /**
@@ -227,59 +229,62 @@ public class DataSampleStages {
      * @param previousStageFromPull
      * @return
      */
-    public Object[] moveToPreviousStage(Integer sampleId, String currStage, String previousStageFromPull) {
+    public InternalMessage moveToPreviousStage(Integer sampleId, String currStage, String previousStageFromPull) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
-        Object[] javaScriptDiagnostic = moveStageChecker(sampleId, currStage, "Previous");
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(javaScriptDiagnostic[0].toString())) {
+        InternalMessage javaScriptDiagnostic = moveStageChecker(sampleId, currStage, "Previous");
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(javaScriptDiagnostic.getDiagnostic())) {
             return javaScriptDiagnostic;
         }
 
         String sampleStagePreviousStage = Parameter.getBusinessRuleProcedureFile(procInstanceName, GlobalVariables.Schemas.DATA.getName(), LBL_PREFIX_SAMPLE_STAGE + currStage + "Previous");
         if (sampleStagePreviousStage.length() == 0||"NULL".equalsIgnoreCase(sampleStagePreviousStage)) {
-            return new Object[]{LPPlatform.LAB_FALSE, "Previous Stage is blank for " + currStage};
+            return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.ERRORTRAPPING_EXCEPTION, new Object[]{"Previous Stage is blank for " + currStage});
         }
 
         String[] previousStageArr = sampleStagePreviousStage.split("\\|");
         if (previousStageArr.length == 1) {
-            return new Object[]{LPPlatform.LAB_TRUE, sampleStagePreviousStage};
+            return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, null, sampleStagePreviousStage);
+            //return new Object[]{LPPlatform.LAB_TRUE, sampleStagePreviousStage};
         }
         Integer posicInArr = LPArray.valuePosicInArray(previousStageArr, previousStageFromPull);
         if (posicInArr == -1) {
-            return new Object[]{LPPlatform.LAB_FALSE, "Proposed Previous Stage, " + previousStageFromPull + ", is not on the list of Previous stages, " + Arrays.toString(previousStageArr) + " for the stage " + currStage};
+            return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.ERRORTRAPPING_EXCEPTION, new Object[]{"Proposed Previous Stage, " + previousStageFromPull + ", is not on the list of Previous stages, " + Arrays.toString(previousStageArr) + " for the stage " + currStage});
         }
-        return new Object[]{LPPlatform.LAB_TRUE, previousStageFromPull};
+        return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, null, previousStageFromPull);
+        //return new Object[]{LPPlatform.LAB_TRUE, previousStageFromPull};
     }
 
-    public Object[] dataSampleActionAutoMoveToNext(String actionName, Integer sampleId) {
+    public InternalMessage dataSampleActionAutoMoveToNext(String actionName, Integer sampleId) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
 
         Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(),
                 new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId},
                 new String[]{TblsData.Sample.CURRENT_STAGE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) {
-            return sampleInfo;
+            return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{sampleId});
         }
         String sampleCurrStage = sampleInfo[0][0].toString();
         String sampleStagesActionAutoMoveToNext = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.ACTION_AUTOMOVETONEXT.getAreaName(), SampleStageBusinessRules.ACTION_AUTOMOVETONEXT.getTagName());
         if (LPArray.valuePosicInArray(sampleStagesActionAutoMoveToNext.split("\\|"), actionName) == -1) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, DataSampleStructureSuccess.ACTIONNOTDECLARED_TOPERFORMAUTOMOVETONEXT, new Object[]{actionName, procInstanceName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleStructureSuccess.ACTIONNOTDECLARED_TOPERFORMAUTOMOVETONEXT, new Object[]{actionName, procInstanceName});
         }
 
         if ("END".equalsIgnoreCase(sampleCurrStage)) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "SAMPLE LAST STAGE", new Object[]{actionName, procInstanceName});
+            return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.ERRORTRAPPING_EXCEPTION, new Object[]{"SAMPLE LAST STAGE "+actionName+" "+sampleId.toString()});
+            //return new InternalMessage(LPPlatform.LAB_FALSE, , new Object[]{actionName, procInstanceName});
         }
 
-        Object[] moveDiagn = moveToNextStage(sampleId, sampleCurrStage, null);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(moveDiagn[0].toString())) {
+        InternalMessage moveDiagn = moveToNextStage(sampleId, sampleCurrStage, null);
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(moveDiagn.getDiagnostic())) {
             dataSampleStagesTimingCapture(sampleId, sampleCurrStage, SampleStageTimingCapturePhases.END.toString());
             String[] sampleFieldName = new String[]{TblsData.Sample.CURRENT_STAGE.getName(), TblsData.Sample.PREVIOUS_STAGE.getName()};
-            Object[] sampleFieldValue = new Object[]{moveDiagn[moveDiagn.length - 1], sampleCurrStage};
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(moveDiagn[0].toString())) {
+            Object[] sampleFieldValue = new Object[]{moveDiagn.getNewObjectId(), sampleCurrStage};
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(moveDiagn.getDiagnostic())) {
                 SqlWhere sqlWhere = new SqlWhere();
                 sqlWhere.addConstraint(TblsData.Sample.SAMPLE_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{sampleId}, "");
                 Rdbms.updateRecordFieldsByFilter(TblsData.TablesData.SAMPLE,
                         EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, sampleFieldName), sampleFieldValue, sqlWhere, null);
-                dataSampleStagesTimingCapture(sampleId, moveDiagn[moveDiagn.length - 1].toString(), SampleStageTimingCapturePhases.START.toString());
+                dataSampleStagesTimingCapture(sampleId, moveDiagn.getNewObjectId().toString(), SampleStageTimingCapturePhases.START.toString());
                 SampleAudit smpAudit = new SampleAudit();
                 smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.SAMPLESTAGE_MOVETONEXT, TblsData.TablesData.SAMPLE.getTableName(),
                         sampleId, sampleId, null, null, sampleFieldName, sampleFieldValue);
@@ -293,7 +298,7 @@ public class DataSampleStages {
         return moveDiagn;
     }
 
-    private Object[] moveStageChecker(Integer sampleId, String currStage, String moveDirection) {
+    private InternalMessage moveStageChecker(Integer sampleId, String currStage, String moveDirection) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         String sampleStagesType = Parameter.getBusinessRuleProcedureFile(procInstanceName, SampleStageBusinessRules.SAMPLE_STAGE_TYPE.getAreaName(), SampleStageBusinessRules.SAMPLE_STAGE_TYPE.getTagName());
         if (SampleStagesTypes.JAVA.toString().equalsIgnoreCase(sampleStagesType)) {
@@ -303,7 +308,7 @@ public class DataSampleStages {
         }
     }
 
-    private Object[] moveStageCheckerJava(Integer sampleId, String currStage, String moveDirection) {
+    private InternalMessage moveStageCheckerJava(Integer sampleId, String currStage, String moveDirection) {
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
         String procInstanceName = instanceForActions.getProcedureInstance();
         String jsonarrayf = DataSample.sampleEntireStructureData(procInstanceName, sampleId, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS,
@@ -316,7 +321,7 @@ public class DataSampleStages {
             Class<?>[] paramTypes = {String.class, Integer.class, String.class};
             method = ProcedureSampleStage.class.getDeclaredMethod(functionName, paramTypes);
         } catch (NoSuchMethodException | SecurityException ex) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.ERRORTRAPPING_EXCEPTION, new Object[]{ex.getMessage()});
+            return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.ERRORTRAPPING_EXCEPTION, new Object[]{ex.getMessage()});
         }
         Object specialFunctionReturn = null;
         try {
@@ -327,7 +332,7 @@ public class DataSampleStages {
             Logger.getLogger(DataSample.class.getName()).log(Level.SEVERE, null, ex);
         }
         if ((specialFunctionReturn == null) || (specialFunctionReturn != null && specialFunctionReturn.toString().contains("ERROR"))) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.SPECIAL_FUNCTION_RETURNED_ERROR, new Object[]{functionName, LPNulls.replaceNull(specialFunctionReturn)});
+            return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.SPECIAL_FUNCTION_RETURNED_ERROR, new Object[]{functionName, LPNulls.replaceNull(specialFunctionReturn)});
         }
         if ((specialFunctionReturn == null) || (specialFunctionReturn != null && !specialFunctionReturn.toString().contains("TRUE"))) {
             String errorCode = LPNulls.replaceNull(specialFunctionReturn).toString().replace(LPPlatform.LAB_FALSE, "");
@@ -343,23 +348,25 @@ public class DataSampleStages {
                 errorCodeArr[0] = smpStgErr.getErrorCode();
                 
             } catch (Exception e) {
-                return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "StageChecker_"+errorCodeArr[0].toUpperCase(), new Object[]{e.getMessage()});
+                return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.SPECIAL_FUNCTION_RETURNED_ERROR, new Object[]{"StageChecker_"+errorCodeArr[0].toUpperCase()+". "+labelMsgError + e.getMessage()});
+//                return new InternalMessage(LPPlatform.LAB_FALSE, "StageChecker_"+errorCodeArr[0].toUpperCase(), new Object[]{e.getMessage()});
             }
             if (messages.getMainMessage() == null) {
                 messages.addMainForError(errorCodeArr[0], msgVariables, null);
             } else {
                 messages.addMinorForError(smpStgErr, msgVariables);                
-                Object[] trapMessage = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, smpStgErr, msgVariables);
-                trapMessage[trapMessage.length-1]=errorCodeArr[1];
-                return trapMessage;
+                return new InternalMessage(LPPlatform.LAB_FALSE, smpStgErr, msgVariables);
+                //trapMessage[trapMessage.length-1]=errorCodeArr[1];
+                //return trapMessage;
             }
-
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "SpecialFunctionReturnedFALSE", new Object[]{errorCode});
+            return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.SPECIAL_FUNCTION_RETURNED_ERROR, new Object[]{errorCode});
+            
         }
-        return new Object[]{specialFunctionReturn};
+        return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, null, specialFunctionReturn);
+        //return new Object[]{specialFunctionReturn};
     }
 
-    private Object[] moveStageCheckerJavaScript(Integer sampleId, String currStage, String moveDirection) {
+    private InternalMessage moveStageCheckerJavaScript(Integer sampleId, String currStage, String moveDirection) {
         try {
             String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
             String jsonarrayf = DataSample.sampleEntireStructureData(procInstanceName, sampleId, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS,
@@ -374,7 +381,7 @@ public class DataSampleStages {
                     engine.eval(new FileReader(fileName));
                 } catch (ScriptException ex) {
                     Logger.getLogger(DataSampleStages.class.getName()).log(Level.SEVERE, null, ex);
-                    return new Object[]{LPPlatform.LAB_FALSE, "FileNotFoundException", labelMsgError + ex.getMessage()};
+                    return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.SPECIAL_FUNCTION_RETURNED_ERROR, new Object[]{labelMsgError + ex.getMessage()});
                 }
             } catch (FileNotFoundException ex) {
                 try {
@@ -384,20 +391,20 @@ public class DataSampleStages {
                     engine.eval(new FileReader(fileName));
                 } catch (FileNotFoundException ex2) {
                     Logger.getLogger(DataSampleStages.class.getName()).log(Level.SEVERE, null, ex2);
-                    return new Object[]{LPPlatform.LAB_FALSE, "FileNotFoundException", labelMsgError + ex2.getMessage()
-                        + "(tried two paths: " + "/app/" + procInstanceName + "-sample-stage.js" + " and " + LOD_JAVASCRIPT_LOCAL_FORMULA.replace(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME, procInstanceName) + ") "};
+                    return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.SPECIAL_FUNCTION_RETURNED_ERROR, new Object[]{"FileNotFoundException", labelMsgError + ex2.getMessage()
+                        + "(tried two paths: " + "/app/" + procInstanceName + "-sample-stage.js" + " and " + LOD_JAVASCRIPT_LOCAL_FORMULA.replace(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME, procInstanceName) + ") "});                    
                 }
             }
             Invocable invocable = (Invocable) engine;
             Object result;
             result = invocable.invokeFunction(functionName, sampleId, jsonarrayf);
             if (result.toString().equalsIgnoreCase(LPPlatform.LAB_TRUE)) {
-                return new Object[]{LPPlatform.LAB_TRUE};
+                return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, null, result);
             }
-            return new Object[]{LPPlatform.LAB_FALSE, result};
+            return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.SPECIAL_FUNCTION_RETURNED_ERROR, new Object[]{result});                    
         } catch (ScriptException | NoSuchMethodException ex) {
             Logger.getLogger(DataSampleStages.class.getName()).log(Level.SEVERE, null, ex);
-            return new Object[]{LPPlatform.LAB_FALSE, ex.getCause().toString(), labelMsgError + ex.getMessage()};
+            return new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.SPECIAL_FUNCTION_RETURNED_ERROR, new Object[]{labelMsgError + ex.getMessage()});                    
         }
     }
 

@@ -15,6 +15,7 @@ import databases.TblsProcedure;
 import databases.features.Token;
 import functionaljavaa.audit.ProcedureInvestigationAudit;
 import functionaljavaa.audit.SampleAudit;
+import functionaljavaa.responserelatedobjects.RelatedObjects;
 import module.monitoring.logic.DataProgramCorrectiveAction;
 import trazit.session.ResponseMessages;
 import java.util.Arrays;
@@ -142,6 +143,8 @@ public final class Investigation {
             if (objectsToAdd != null && objectsToAdd.length() > 0) {
                 addInvestObjects(Integer.valueOf(investIdStr), objectsToAdd, Integer.valueOf(auditObjDiagn.getNewRowId().toString()));
             }
+            RelatedObjects rObj = RelatedObjects.getInstanceForActions();
+            rObj.addSimpleNode(LPPlatform.buildSchemaName(instanceForActions.getProcedureInstance(), TblsProcedure.TablesProcedure.INVESTIGATION.getRepositoryName()), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(), investIdStr);
             return new InternalMessage(LPPlatform.LAB_TRUE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables(), investIdStr);
         } else {
             return new InternalMessage(LPPlatform.LAB_FALSE, insertDiagn.getErrorMessageCode(), insertDiagn.getErrorMessageVariables());
@@ -180,6 +183,8 @@ public final class Investigation {
                 } else {
                     curObj = curObj + curInvObj[2].toString();
                 }
+                RelatedObjects rObj = RelatedObjects.getInstanceForActions();
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, TblsProcedure.TablesProcedure.INVESTIGATION.getRepositoryName()), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(), investId.toString());
                 addAuditRecordForObject(curObj, investId, SampleAudit.DataSampleAuditEvents.INVESTIGATION_CLOSED);
             }
         }
@@ -252,9 +257,10 @@ public final class Investigation {
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic.getDiagnostic())) {
                     return new InternalMessage(LPPlatform.LAB_FALSE, diagnostic.getMessageCodeObj(), diagnostic.getMessageCodeVariables(), null);
                 }
-
-                incIdStr = diagnostic.getNewObjectId().toString();
-                ProcedureInvestigationAudit.investigationAuditAdd(DataInvestigationAuditEvents.OBJECT_ADDED_TO_INVESTIGATION.toString(), TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(), investId, incIdStr,
+                RelatedObjects rObj = RelatedObjects.getInstanceForActions();
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), TblsProcedure.TablesProcedure.INVESTIGATION.getRepositoryName()), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(), investId.toString());
+//                incIdStr = diagnostic.getNewObjectId().toString();
+                ProcedureInvestigationAudit.investigationAuditAdd(DataInvestigationAuditEvents.OBJECT_ADDED_TO_INVESTIGATION.toString(), TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(), investId, curObjDetail[1],
                         LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR), parentAuditId, null);
                 addAuditRecordForObject(curObj, investId, SampleAudit.DataSampleAuditEvents.ADDED_TO_INVESTIGATION);                
             }
@@ -336,7 +342,7 @@ public final class Investigation {
     public static Object[] capaDecision(Integer investId, Boolean capaRequired, String[] capaFieldName, String[] capaFieldValue, Boolean closeInvestigation) {
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         Object[] capaFieldValues = LPArray.convertStringWithDataTypeToObjectArray(capaFieldValue);
-        if (capaFieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(capaFieldValues[0].toString())) {
+        if (capaFieldValues != null && capaFieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(capaFieldValues[0].toString())) {
             return capaFieldValues;
         }
         Object[] areCapaFields = isCapaField(capaFieldName);
@@ -375,7 +381,7 @@ public final class Investigation {
     public static InternalMessage capaDecisionInternalMessage(Integer investId, Boolean capaRequired, String[] capaFieldName, String[] capaFieldValue, Boolean closeInvestigation) {
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         Object[] capaFieldValues = LPArray.convertStringWithDataTypeToObjectArray(capaFieldValue);
-        if (capaFieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(capaFieldValues[0].toString())) {
+        if (capaFieldValues != null && capaFieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(capaFieldValues[0].toString())) {
             return (InternalMessage) capaFieldValues[1];
         }
         InternalMessage areCapaFields = isCapaFieldInternalMessage(capaFieldName);

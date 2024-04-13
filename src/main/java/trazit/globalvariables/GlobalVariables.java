@@ -8,6 +8,7 @@ package trazit.globalvariables;
 import com.labplanet.servicios.app.CertifyAnalysisMethodAPI.CertifyAnalysisMethodAPIactionsEndpoints;
 import com.labplanet.servicios.app.InvestigationAPI.InvestigationAPIactionsEndpoints;
 import com.labplanet.servicios.moduleenvmonit.EnvMonAPI.EnvMonAPIactionsEndpoints;
+import com.labplanet.servicios.moduleenvmonit.EnvMonAPI.EnvMonQueriesAPIEndpoints;
 import com.labplanet.servicios.moduleenvmonit.EnvMonIncubatorAPIactions;
 import com.labplanet.servicios.moduleenvmonit.EnvMonProdLotAPI;
 import com.labplanet.servicios.moduleenvmonit.EnvMonSampleAPI;
@@ -69,6 +70,7 @@ import module.monitoring.definition.ClassEnvMonIncubator;
 import module.monitoring.definition.ClassEnvMonIncubatorController;
 import module.monitoring.definition.ClassEnvMonProdLot;
 import module.monitoring.definition.ClassEnvMonProdLotController;
+import module.monitoring.definition.ClassEnvMonQueriesController;
 import module.monitoring.definition.ClassEnvMonSample;
 import module.monitoring.definition.ClassEnvMonSampleController;
 import module.monitoring.definition.ClassEnvMonSampleFrontend;
@@ -173,11 +175,14 @@ public class GlobalVariables {
                     new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigation.class.getName())},
                 new ActionsEndpointPair[]{
                     new ActionsEndpointPair(EnvMonAPIactionsEndpoints.class.getName(), ClassEnvMonController.class.getName()),
-                    new ActionsEndpointPair(EnvMonSampleAPI.EnvMonSampleAPIactionsEndpoints.class.getName(), ClassEnvMonSampleController.class.getName()),
-                    new ActionsEndpointPair(ClassEnvMonSampleFrontend.EnvMonSampleAPIqueriesEndpoints.class.getName(), ClassEnvMonSampleFrontendController.class.getName()),
+                    new ActionsEndpointPair(EnvMonSampleAPI.EnvMonSampleAPIactionsEndpoints.class.getName(), ClassEnvMonSampleController.class.getName()),                    
                     new ActionsEndpointPair(EnvMonProdLotAPI.EnvMonProdLotAPIactionsEndpoints.class.getName(), ClassEnvMonProdLotController.class.getName()),
                     new ActionsEndpointPair(EnvMonIncubatorAPIactions.EnvMonIncubatorAPIactionsEndpoints.class.getName(), ClassEnvMonIncubatorController.class.getName()),
                     new ActionsEndpointPair(SampleAPIactionsEndpoints.class.getName(), ClassSampleController.class.getName()),
+                    new ActionsEndpointPair(SampleAPIactionsEndpoints.class.getName(), ClassSampleController.class.getName()),
+                    new ActionsEndpointPair(EnvMonQueriesAPIEndpoints.class.getName(), ClassEnvMonQueriesController.class.getName()),
+                    new ActionsEndpointPair(ClassEnvMonSampleFrontend.EnvMonSampleAPIqueriesEndpoints.class.getName(), ClassEnvMonSampleFrontendController.class.getName()),
+                    new ActionsEndpointPair(SampleAPIqueriesEndpoints.class.getName(), ClassSampleQueriesController.class.getName()),
                     new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigationController.class.getName())},
                 "Action Name;Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided"
         ), 

@@ -137,7 +137,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(confirmDialogVerifObj.getDiagnostic())){
                         functionRelatedObjects=new JSONArray();
                     }else{                        
-                        clss=new ActionsServletCommons(request, TrazitModules.MONITORING.getActionsEndpointPair(), actionName.toString());
+                        clss=new ActionsServletCommons(request, response, TrazitModules.MONITORING.getActionsEndpointPair(), actionName.toString());
                         if (clss.getEndpointFound()){
                             functionRelatedObjects = clss.getRelatedObj().getRelatedObject();                            
                             testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;

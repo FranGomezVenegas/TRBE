@@ -30,6 +30,7 @@ import functionaljavaa.samplestructure.DataSampleStructureStatuses;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
@@ -60,10 +61,9 @@ public class ClassSample implements ActionsClass{
     private Object[] diagnostic = new Object[0];
     private InternalMessage diagnosticObj=null;
     private Boolean functionFound = false;
-    private Boolean isSuccess = false;
-    private Object[] responseError = null;        
     private EnumIntEndpoints enumConstantByName; 
     
+
     public ClassSample(HttpServletRequest request, SampleAPIactionsEndpoints endPoint) {
 
         String[] exceptionsToSampleReviewArr = new String[]{"UNCANCELSAMPLE", "UNREVIEWSAMPLE", "SAMPLESTAGE_MOVETONEXT"};
@@ -73,14 +73,12 @@ public class ClassSample implements ActionsClass{
 
         ResponseMessages messages = procReqSession.getMessages();
         RelatedObjects rObj = RelatedObjects.getInstanceForActions();
-        String schemaDataName = "";
         DataModuleSampleAnalysis smpAna = new DataModuleSampleAnalysis();
         DataModuleSampleAnalysisResult moduleSmpAnaRes = new DataModuleSampleAnalysisResult();
         DataSample smp = new DataSample(smpAna);
         DataSampleAnalysisResult smpAnaRes = new DataSampleAnalysisResult(moduleSmpAnaRes);
         Integer incubationStage = null;
         Integer sampleId = null;
-        //Object[] diagn = null;
         InternalMessage actionDiagnosesObj = null;
         this.functionFound = true;
         Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
@@ -137,7 +135,7 @@ public class ClassSample implements ActionsClass{
                 if (fieldValue != null && fieldValue.length() > 0) {
                     fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
                 }
-                if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                     actionDiagnosesObj = (InternalMessage) fieldValues[1];
                     break;
                 }
@@ -279,7 +277,7 @@ public class ClassSample implements ActionsClass{
                 fieldValue = argValues[2].toString();
                 fieldValueArr = fieldValue.split("\\|");
                 fieldValueArr = LPArray.convertStringWithDataTypeToObjectArray((String[]) fieldValueArr);
-                if (fieldValueArr != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValueArr[0].toString())) {
+                if (fieldValueArr != null && fieldValueArr.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValueArr[0].toString())) {
                     actionDiagnosesObj = (InternalMessage) fieldValueArr[1];
                     break;
                 }                actionDiagnosesObj = DataSampleAnalysis.sampleAnalysisAddtoSample(sampleId, fieldNameArr, fieldValueArr);
@@ -296,7 +294,7 @@ public class ClassSample implements ActionsClass{
                 fieldValue = argValues[3].toString();
                 fieldValueArr = fieldValue.split("\\|");
                 fieldValueArr = LPArray.convertStringWithDataTypeToObjectArray((String[]) fieldValueArr);
-                if (fieldValueArr != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValueArr[0].toString())) {
+                if (fieldValueArr != null && fieldValueArr.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValueArr[0].toString())) {
                     actionDiagnosesObj = (InternalMessage) fieldValueArr[1];
                     break;
                 }
@@ -478,7 +476,7 @@ public class ClassSample implements ActionsClass{
                 String sampleFieldToRetrieve = argValues[1].toString();
 
                 String[] sampleFieldToRetrieveArr = sampleFieldToRetrieve.split("\\|");
-                schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
+                String schemaDataName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName());
 
                 String[] sortFieldsNameArr = null;
                 String sortFieldsName = argValues[2].toString();
@@ -534,7 +532,7 @@ public class ClassSample implements ActionsClass{
                 if (fieldValue != null) {
                     fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
                 }
-                if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                     actionDiagnosesObj = (InternalMessage) fieldValues[1];
                     break;
                 }
@@ -557,7 +555,7 @@ public class ClassSample implements ActionsClass{
                 if (fieldValue != null) {
                     fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
                 }
-                if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                     actionDiagnosesObj = (InternalMessage) fieldValues[1];
                     break;
                 }
@@ -570,7 +568,7 @@ public class ClassSample implements ActionsClass{
                 break;
             case SAMPLESTAGE_MOVETOPREVIOUS:
             case SAMPLESTAGE_MOVETONEXT:
-                Object[] actionDiagnoses=null;
+                //Object[] actionDiagnoses=null;
                 DataSampleStages smpStage = new DataSampleStages();
                 if (Boolean.FALSE.equals(smpStage.isSampleStagesEnable())) {
                     LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, null,
@@ -598,10 +596,10 @@ public class ClassSample implements ActionsClass{
                     sampleStage = sampleInfo[0][0].toString();
                 }
                 if (SampleAPIactionsEndpoints.SAMPLESTAGE_MOVETONEXT.getName().equalsIgnoreCase(endPoint.getName())) {
-                    actionDiagnoses = smpStage.moveToNextStage(sampleId, sampleStage, sampleStageNext);
+                    actionDiagnosesObj = smpStage.moveToNextStage(sampleId, sampleStage, sampleStageNext);
                 }
                 if (SampleAPIactionsEndpoints.SAMPLESTAGE_MOVETOPREVIOUS.getName().equalsIgnoreCase(endPoint.getName())) {
-                    actionDiagnoses = smpStage.moveToPreviousStage(sampleId, sampleStage, sampleStageNext);
+                    actionDiagnosesObj = smpStage.moveToPreviousStage(sampleId, sampleStage, sampleStageNext);
                 }
                 String[] sampleFieldName = new String[]{TblsData.Sample.CURRENT_STAGE.getName(), TblsData.Sample.PREVIOUS_STAGE.getName()};
                 Object[] sampleFieldValue = new Object[0];
@@ -677,5 +675,13 @@ public class ClassSample implements ActionsClass{
     public Boolean getEndpointExists() {        return this.endpointExists;    }
     @Override    public Object[] getDiagnostic() {        return this.diagnostic;    }
     public Boolean getFunctionFound() {        return functionFound;    }
+
+    @Override    public void initializeEndpoint(String actionName) {        throw new UnsupportedOperationException("Not supported yet.");}
+    @Override    public void createClassEnvMonAndHandleExceptions(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs, Integer auditReasonPosic) {        throw new UnsupportedOperationException("Not supported yet.");}
+
+    @Override
+    public HttpServletResponse getHttpResponse() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 
 }

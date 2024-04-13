@@ -299,7 +299,7 @@ public class SavedQueriesAPI extends HttpServlet {
             switch (endPoint) {
                 case CREATE_SAVED_QUERY:
                     Object[] fieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(argValues[3].toString().split(("\\|")));
-                    if (fieldValueArr != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValueArr[0].toString())) {
+                    if (fieldValueArr != null && fieldValueArr.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValueArr[0].toString())) {
                         actionDiagnoses = fieldValueArr;
                     } else {
                         actionDiagnoses = SaveQueries.newSavedQuery(argValues[0].toString(), argValues[1].toString(), argValues[2].toString().split(("\\|")), fieldValueArr);

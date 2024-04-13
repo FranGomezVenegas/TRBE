@@ -13,11 +13,13 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.TrazitUtiilitiesEnums;
 import trazit.enums.ActionsClass;
 import trazit.session.InternalMessage;
 import trazit.enums.EnumIntEndpoints;
+import trazit.session.ProcedureRequestSession;
 /**
  *
  * @author User
@@ -29,30 +31,64 @@ public class ClassInspLotRMQueriesController  implements ActionsClass{
     private Object[] argsWithNamesAndValues;
     private Boolean functionFound=false;
     private Boolean isSuccess=false;
+    private HttpServletResponse response;
+
     ClassInspLotRMQueries clss=null;
     private EnumIntEndpoints enumConstantByName;
     public ClassInspLotRMQueriesController(HttpServletRequest request, HttpServletResponse response, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs, Integer auditReasonPosic) {
-        InspLotRMEnums.InspLotRMQueriesAPIEndpoints endPoint = null;
-        try{
-            endPoint = InspLotRMEnums.InspLotRMQueriesAPIEndpoints.valueOf(actionName.toUpperCase());
-            this.enumConstantByName=endPoint;
-            this.functionFound=true;
-            if (table1NumArgs!=null){
-                HashMap<HttpServletRequest, Object[]> hmQuery = endPoint.testingSetAttributesAndBuildArgsArray(request, testingContent, iLines);
-                HttpServletRequest query= hmQuery.keySet().iterator().next();   
-                argsWithNamesAndValues = hmQuery.get(query);
-                for (int inumArg=argsWithNamesAndValues.length+3;inumArg<table1NumArgs;inumArg++){
-                    argsWithNamesAndValues=LPArray.addValueToArray1D(argsWithNamesAndValues, "");
-                }
-                this.rowArgsRows=this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsWithNamesAndValues));
-            }
-            ClassInspLotRMQueries clss=new ClassInspLotRMQueries(request, response, endPoint);
-            this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.QUERIES_HAVE_NO_MSG_CODE, null);
-            this.functionRelatedObjects=clss.getRelatedObj();
+       this.response=response;
+       initializeEndpoint(actionName);
+        if (Boolean.FALSE.equals(this.functionFound)){
+            this.functionFound=false;
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, "");
+            return;
+        }
+        createClassEnvMonAndHandleExceptions(request, actionName, testingContent, iLines, table1NumArgs, auditReasonPosic);
+    }
+    @Override public void initializeEndpoint(String actionName) {
+        try {
+            this.enumConstantByName = InspLotRMEnums.InspLotRMQueriesAPIEndpoints.valueOf(actionName.toUpperCase());
+            this.functionFound = true;
         } catch (Exception ex) {
+            this.functionFound = false;
             Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+    @Override    public void createClassEnvMonAndHandleExceptions(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs, Integer auditReasonPosic) {   
+        ClassInspLotRMQueries clss = null;
+        try {            
+            InspLotRMEnums.InspLotRMQueriesAPIEndpoints endPoint = InspLotRMEnums.InspLotRMQueriesAPIEndpoints.valueOf(actionName.toUpperCase());
+            ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, null);
+            if (Boolean.TRUE.equals(procReqInstance.getIsForTesting())){
+                HashMap<HttpServletRequest, Object[]> hmQuery = endPoint.testingSetAttributesAndBuildArgsArray(request, testingContent, iLines);
+                HttpServletRequest query= hmQuery.keySet().iterator().next();   
+                Object[] argsForLogFiles = hmQuery.get(query);
+                for (int inumArg=argsForLogFiles.length+3;inumArg<table1NumArgs;inumArg++){
+                    argsForLogFiles=LPArray.addValueToArray1D(argsForLogFiles, "");
+                }  
+                this.rowArgsRows=this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));
+            }
+            clss = new ClassInspLotRMQueries(request, null, endPoint);            
+            this.functionRelatedObjects = clss.getRelatedObj();
+            if (Boolean.TRUE.equals(clss.getIsSuccess()))
+                this.diagnosticObj=new InternalMessage(LPPlatform.LAB_TRUE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.QUERIES_HAVE_NO_MSG_CODE, null);
+            else
+                this.diagnosticObj=new InternalMessage(LPPlatform.LAB_FALSE,  TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.QUERIES_HAVE_NO_MSG_CODE, null);
+            this.functionRelatedObjects=clss.getRelatedObj();
+            if (Boolean.FALSE.equals(procReqInstance.getIsForTesting())){
+                if (clss.getResponseSuccessJArr()!=null && (Boolean.FALSE.equals(clss.getResponseSuccessJArr().isEmpty())) ){
+                    LPFrontEnd.servletReturnSuccess(request, this.response, clss.getResponseSuccessJArr());
+                }else{
+                    LPFrontEnd.servletReturnSuccess(request, this.response, clss.getResponseSuccessJObj());
+                }
+            }            
+        } catch (Exception ex) {
+            this.functionRelatedObjects = RelatedObjects.getInstanceForActions();
+            Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+        }
+    }            
+
     public StringBuilder getRowArgsRows() {        return rowArgsRows;    }
     @Override    public InternalMessage getDiagnosticObj() {        return diagnosticObj;    }
     @Override    public RelatedObjects getRelatedObj() {        return functionRelatedObjects;    }
@@ -61,6 +97,11 @@ public class ClassInspLotRMQueriesController  implements ActionsClass{
     @Override    public Object[] getMessageDynamicData() {        return diagnosticObj.getMessageCodeVariables();    }
     public Object[] getArgsWithNamesAndValues() {return argsWithNamesAndValues;}
     @Override    public EnumIntEndpoints getEndpointObj(){        return enumConstantByName;    }
+
+    @Override
+    public HttpServletResponse getHttpResponse() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
 
                 

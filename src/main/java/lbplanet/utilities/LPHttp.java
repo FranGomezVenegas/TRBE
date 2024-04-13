@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
 import org.json.simple.JSONArray;
 import trazit.enums.ActionsEndpointPair;
-import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables.TrazitModules;
 import trazit.procedureinstance.definition.definition.ReqProcedureEnums;
 import trazit.session.ActionsServletCommons;
@@ -204,11 +203,9 @@ public class LPHttp {
             return;
         }
         String actionName=procReqInstance.getActionName();
-        String language=procReqInstance.getLanguage();
-        EnumIntEndpoints endPoint = null;
-        try (PrintWriter out = response.getWriter()) {
+        try {
             
-            ActionsServletCommons clss=new ActionsServletCommons(request, actionEndpointArr, actionName);
+            ActionsServletCommons clss=new ActionsServletCommons(request, response, actionEndpointArr, actionName);
             if (clss.getEndpointFound()){
                 publishResult(request, response, procReqInstance, clss.getEndpointObj(), 
                     clss.getActionClassRun().getDiagnostic(), clss.getActionClassRun().getDiagnosticObj(), 
@@ -217,9 +214,9 @@ public class LPHttp {
             }else{
                 procReqInstance.killIt();
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, clss.getErrorCodeObj(), clss.getMessageVariables());
-                return;                
             }
         }catch(Exception e){  
+            procReqInstance.killIt();
             Logger.getLogger(thisServletName).log(Level.SEVERE, null, e);
         } finally {
             // release database resources
@@ -238,7 +235,6 @@ public class LPHttp {
         Integer table1NumArgs=13;
         LocalDateTime timeStarted=LPDate.getCurrentTimeStamp();
         JSONArray functionRelatedObjects=new JSONArray();        
-        InternalMessage functionDiagnosticObj=null;        
         Integer scriptId=Integer.valueOf(LPNulls.replaceNull(request.getParameter("scriptId")));
 
         response = LPTestingOutFormat.responsePreparation(response);        
@@ -255,11 +251,8 @@ public class LPHttp {
         testingContent=LPArray.addColumnToArray2D(testingContent, new JSONArray());
         
         String stopPhrase=null;
-        
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActions(null, null, null);
         try (PrintWriter out = response.getWriter()) {
-            ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
-           
-            String procInstanceName=instanceForActions.getProcedureInstance();
             if (csvHeaderTags.containsKey(LPPlatform.LAB_FALSE)){
                 fileContentBuilder.append("There are missing tags in the file header: ").append(csvHeaderTags.get(LPPlatform.LAB_FALSE));
                 out.println(fileContentBuilder.toString()); 
@@ -280,7 +273,7 @@ public class LPHttp {
 
                 Object actionName = LPNulls.replaceNull(testingContent[iLines][5]).toString();
                 request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, actionName);
-                instanceForActions.setActionNameForTesting(scriptId, iLines, actionName.toString());                
+                procReqInstance.setActionNameForTesting(scriptId, iLines, actionName.toString());                
                 if (tstOut.getAuditReasonPosic()!=-1)
                     request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE, LPNulls.replaceNull(testingContent[iLines][tstOut.getAuditReasonPosic()]).toString());
 
@@ -288,6 +281,7 @@ public class LPHttp {
                     new Object[]{iLines-numHeaderLines+1, LPNulls.replaceNull(testingContent[iLines][5]).toString()})); //print actionName   
                 ActionsServletCommons clss=null;
                 if (actionName.toString().equalsIgnoreCase(ReqProcedureEnums.ProcedureDefinitionAPIActionsEndpoints.SET_PROCEDURE_BUSINESS_RULES.getName())){
+                    String procInstanceName=procReqInstance.getProcedureInstance();
                     procInstanceName=LPNulls.replaceNull(testingContent[iLines][6]).toString();
                     fileContentTable1Builder.append(procInstanceName);                    
                     String suffixName=LPNulls.replaceNull(testingContent[iLines][7]).toString();
@@ -297,13 +291,8 @@ public class LPHttp {
                     String propValue=LPNulls.replaceNull(testingContent[iLines][9]).toString();
                     fileContentTable1Builder.append(propValue);                    
                     Parameter parm=new Parameter();
-                    String diagn=parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(),  
-                        procInstanceName+"-"+suffixName, propName, propValue);
+                    parm.addTagInPropertiesFile(Parameter.PropertyFilesType.PROCEDURE_BUSINESS_RULES_DIR_PATH.name(), procInstanceName+"-"+suffixName, propName, propValue);
                     functionRelatedObjects=new JSONArray();                      
-                    if (diagn.toUpperCase().contains("CREATED"))
-                        functionDiagnosticObj=new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.PROPERTY_CREATED, new Object[]{diagn});
-                    else
-                        functionDiagnosticObj=new InternalMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.PROPERTY_NOT_CREATED, new Object[]{diagn});
                     testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                     
                 }else{  
@@ -311,7 +300,7 @@ public class LPHttp {
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(confirmDialogVerifObj.getDiagnostic())){
                         functionRelatedObjects=new JSONArray();
                     }else{
-                        clss=new ActionsServletCommons(request, moduleDef.getActionsEndpointPairForTesting(), actionName.toString(), testingContent, iLines, table1NumArgs, tstOut.getAuditReasonPosic());
+                        clss=new ActionsServletCommons(request, response, moduleDef.getActionsEndpointPairForTesting(), actionName.toString(), testingContent, iLines, table1NumArgs, tstOut.getAuditReasonPosic());
                         if (clss.getEndpointFound()){
                             functionRelatedObjects = clss.getRelatedObj().getRelatedObject();                            
                             testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
@@ -334,13 +323,13 @@ public class LPHttp {
                 BigDecimal secondsInDateRange = LPDate.secondsInDateRange(timeStartedStep, LPDate.getCurrentTimeStamp(), true);
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(String.valueOf(secondsInDateRange)));
                 if (numEvaluationArguments==0){                    
-                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(clss.getDiagnosticObj().getMessageCodeObj().getErrorCode()));
+                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(null==clss?null:clss.getDiagnosticObj().getMessageCodeObj().getErrorCode()));
                 }                                
                 if (numEvaluationArguments>0){                    
-                    Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, clss.getDiagnosticObj(), 4);   
+                    Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, null==clss?null:clss.getDiagnosticObj(), 4);   
                         
                     Integer stepId=Integer.valueOf(testingContent[iLines][tstOut.getStepIdPosic()].toString());
-                    fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, clss.getDiagnosticObj(), functionRelatedObjects, tstAssert, timeStartedStep));                    
+                    fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, null==clss?null:clss.getDiagnosticObj(), functionRelatedObjects, tstAssert, timeStartedStep));                    
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate));                        
                     if ( tstOut.getStopSyntaxisUnmatchPosic()>-1 && Boolean.TRUE.equals(Boolean.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStopSyntaxisUnmatchPosic()]).toString())) &&
                             Boolean.FALSE.equals(TestingAssert.EvalCodes.MATCH.toString().equalsIgnoreCase(tstAssert.getEvalSyntaxisDiagnostic())) ){
@@ -350,16 +339,13 @@ public class LPHttp {
                     }
                 }
                 if (tstOut.getStopSyntaxisFalsePosic()>-1 && Boolean.TRUE.equals(Boolean.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStopSyntaxisFalsePosic()]).toString()))
-                    && LPPlatform.LAB_FALSE.equalsIgnoreCase(clss.getDiagnosticObj().getDiagnostic())){
+                    && LPPlatform.LAB_FALSE.equalsIgnoreCase(null==clss?null:clss.getDiagnosticObj().getDiagnostic())){
                         out.println(fileContentBuilder.toString()); 
                         stopPhrase="Interrupted by evaluation returning false in step "+(iLines+1)+" of "+testingContent.length;
-//                        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(procInstanceName.toString(), GlobalVariables.Schemas.TESTING.getName()), TblsTesting.TablesTesting.SCRIPT.getTableName(), 
-//                                new String[]{TblsTesting.Script.RUN_SUMMARY.getName()}, new Object[]{"Interrupted by evaluation returning false "+(iLines+1)+" of "+testingContent.length}, 
-//                                new String[]{TblsTesting.Script.SCRIPT_ID.getName()}, new Object[]{6}); //testingContent[iLines][tstOut.getScriptIdPosic()]});
                     break;
                 }
                 fileContentTable1Builder.append(LPTestingOutFormat.ROW_END);   
-                instanceForActions.auditActionsKill();
+                procReqInstance.auditActionsKill();
             }    
             fileContentTable1Builder.append(LPTestingOutFormat.TABLE_END);
             fileContentTable1Builder.append(LPTestingOutFormat.businessRulesTable());
@@ -367,14 +353,13 @@ public class LPHttp {
             fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.BODY_END).append(LPTestingOutFormat.HTML_END);
 
             out.println(fileContentBuilder.toString());            
-            tstAssertSummary=null; 
         }
         catch(IOException error){
-            tstAssertSummary=null; 
+            procReqInstance.killIt();
             String exceptionMessage = error.getMessage();     
             LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null, null);                    
         } finally {    
-            // release database resources
+            procReqInstance.killIt();
         }               
     }   
 

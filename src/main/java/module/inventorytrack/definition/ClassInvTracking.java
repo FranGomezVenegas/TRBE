@@ -10,6 +10,7 @@ import functionaljavaa.requirement.masterdata.ClassMasterData;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.math.BigDecimal;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
@@ -25,6 +26,7 @@ import module.inventorytrack.definition.TblsInvTrackingConfig.TablesInvTrackingC
 import static module.inventorytrack.logic.DataInventoryQualif.invTrackingAuditSetAuditRecordAsReviewed;
 import static module.inventorytrack.logic.DataInventoryQualif.objectVariableChangeValue;
 import static module.inventorytrack.logic.DataInventoryQualif.objectVariableSetValue;
+import modules.masterdata.analysis.ConfigAnalysisStructure;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.ActionsClass;
@@ -32,7 +34,6 @@ import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.globalvariables.GlobalVariables.TrazitModules;
 import trazit.queries.QueryUtilitiesEnums;
-import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 import trazit.enums.EnumIntEndpoints;
@@ -42,11 +43,12 @@ public class ClassInvTracking implements ActionsClass{
     private Object[] messageDynamicData = new Object[]{};
     private RelatedObjects relatedObj = RelatedObjects.getInstanceForActions();
     private Boolean endpointExists = true;
-    private Object[] diagnostic = new Object[0];
+    //private Object[] diagnostic = new Object[0];
     InternalMessage actionDiagnosesObj = null;
     private Boolean functionFound = false;
     private Boolean isSuccess;
     private EnumIntEndpoints enumConstantByName;
+    private HttpServletResponse response;
     public ClassInvTracking(HttpServletRequest request, InventoryTrackAPIactionsEndpoints endPoint) {
         this.functionFound = true;
 
@@ -65,23 +67,12 @@ public class ClassInvTracking implements ActionsClass{
 */
         Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
-            this.diagnostic = (Object[]) argValues[1];
+            this.actionDiagnosesObj = new InternalMessage(LPPlatform.LAB_FALSE, ConfigAnalysisStructure.ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{argValues[2].toString()});
             this.messageDynamicData = new Object[]{argValues[2].toString()};
-            return;
-        }
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
-            this.diagnostic = ApiMessageReturn.trapMessage(argValues[0].toString(), argValues[1].toString(), new Object[]{argValues[2].toString()});
             this.relatedObj = rObj;
             rObj.killInstance();
             return;
-        }
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
-            this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE,
-                    argValues[1].toString(), new Object[]{argValues[2].toString()});
-            this.messageDynamicData = new Object[]{argValues[2].toString()};
-            return;
-        }
-        DataInventory invLot = null;
+        }        DataInventory invLot = null;
         String lotName = "";
         String category = "";
         String reference = "";
@@ -96,7 +87,6 @@ public class ClassInvTracking implements ActionsClass{
             invLot = new DataInventory(lotName, reference, category, null);
             if (Boolean.TRUE.equals(invLot.getHasError())) {
                 this.actionDiagnosesObj = invLot.getErrorDetail();
-                this.diagnostic = ApiMessageReturn.trapMessage(invLot.getErrorDetail().getDiagnostic(), invLot.getErrorDetail().getMessageCodeObj(), invLot.getErrorDetail().getMessageCodeVariables());
                 this.relatedObj = rObj;
                 rObj.killInstance();
                 invLot = null;
@@ -130,7 +120,7 @@ public class ClassInvTracking implements ActionsClass{
                     fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fldValuesStr.split("\\|"));
                     fieldNames = fldNamesStr.split("\\|");
                 }
-                if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                     actionDiagnoses = (InternalMessage) fieldValues[1];
                 } else if (LPNulls.replaceNull(expiryDate).length() > 0) {
                     fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInvTrackingData.Lot.EXPIRY_DATE.getName());
@@ -179,7 +169,7 @@ public class ClassInvTracking implements ActionsClass{
                     fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fldValuesStr.split("\\|"));
                     fieldNames = fldNamesStr.split("\\|");
                 }
-                if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                     actionDiagnoses = (InternalMessage) fieldValues[1];
                 } else {
                     if (invLot == null) {
@@ -197,7 +187,7 @@ public class ClassInvTracking implements ActionsClass{
                     fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fldValuesStr.split("\\|"));
                     fieldNames = fldNamesStr.split("\\|");
                 }
-                if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                     actionDiagnoses = (InternalMessage) fieldValues[1];
                 } else {
                     if (invLot == null) {
@@ -221,7 +211,7 @@ public class ClassInvTracking implements ActionsClass{
                 if (purity != null) {
                     fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(purity.split("\\|"));
                 }
-                if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                     actionDiagnoses = (InternalMessage) fieldValues[1];
                 } else if (LPNulls.replaceNull(category).length() > 0) {
                     fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInvTrackingData.Lot.CATEGORY.getName());
@@ -256,7 +246,7 @@ public class ClassInvTracking implements ActionsClass{
                     fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fldValuesStr.split("\\|"));
                     fieldNames = fldNamesStr.split("\\|");
                 }
-                if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                     actionDiagnoses = (InternalMessage) fieldValues[1];
                 } else {
                     if (invLot == null) {
@@ -274,7 +264,7 @@ public class ClassInvTracking implements ActionsClass{
                     fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fldValuesStr.split("\\|"));
                     fieldNames = fldNamesStr.split("\\|");
                 }
-                if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                     actionDiagnoses = (InternalMessage) fieldValues[1];
                 } else {
                     if (invLot == null) {
@@ -419,15 +409,6 @@ public class ClassInvTracking implements ActionsClass{
         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), lotName);
         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TablesInvTrackingConfig.INV_REFERENCE.getTableName(), reference);
         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TablesInvTrackingConfig.INV_CATEGORY.getTableName(), category);
-        if (actionDiagnoses
-                != null) {
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
-                this.diagnostic = ApiMessageReturn.trapMessage(actionDiagnoses.getDiagnostic(), actionDiagnoses.getMessageCodeObj(), actionDiagnoses.getMessageCodeVariables());
-            } else {
-                this.diagnostic = ApiMessageReturn.trapMessage(actionDiagnoses.getDiagnostic(), endPoint, actionDiagnoses.getMessageCodeVariables());
-            }
-        }
-
         this.relatedObj = rObj;
         invLot = null;
 
@@ -459,7 +440,7 @@ public class ClassInvTracking implements ActionsClass{
      * @return the diagnostic
      */
     public Object[] getDiagnostic() {
-        return diagnostic;
+        return null;
     }
 
     public InternalMessage getDiagnosticObj() {
@@ -474,5 +455,11 @@ public class ClassInvTracking implements ActionsClass{
     }
     @Override    public StringBuilder getRowArgsRows() {        return null;    }
     @Override    public EnumIntEndpoints getEndpointObj(){        return enumConstantByName;    }
+    @Override    public void initializeEndpoint(String actionName) {        throw new UnsupportedOperationException("Not supported yet.");}
+    @Override    public void createClassEnvMonAndHandleExceptions(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs, Integer auditReasonPosic) {        throw new UnsupportedOperationException("Not supported yet.");}
 
+    @Override
+    public HttpServletResponse getHttpResponse() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

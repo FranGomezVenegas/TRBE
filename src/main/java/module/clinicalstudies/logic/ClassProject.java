@@ -12,12 +12,12 @@ import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import static lbplanet.utilities.LPArray.convertStringWithDataTypeToObjectArrayInternalMessage;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import trazit.enums.ActionsClass;
-import trazit.enums.EnumIntMessages;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.procedureinstance.definition.definition.TblsReqs;
@@ -35,7 +35,6 @@ public class ClassProject  implements ActionsClass{
     private Object[] diagnostic=new Object[0];
     InternalMessage actionDiagnosesObj;
     private Boolean functionFound=false;
-    EnumIntMessages diagnosticObjIntMsg;
     private EnumIntEndpoints enumConstantByName;
     
     public ClassProject(HttpServletRequest request, GenomaProjectAPIactionsEndPoints endPoint){
@@ -70,8 +69,7 @@ public class ClassProject  implements ActionsClass{
                     if (fieldValues!=null && fieldValues.length>0 && fieldValues[0].toString().length()>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
                         InternalMessage errMsg=(InternalMessage)fieldValues[1];
                         actionDiagnoses=null;                         
-                        this.actionDiagnosesObj=new InternalMessage(LPPlatform.LAB_FALSE, errMsg.getMessageCodeObj(), errMsg.getMessageCodeVariables());
-                        this.diagnosticObjIntMsg=errMsg.getMessageCodeObj();
+                        this.actionDiagnosesObj=new InternalMessage(LPPlatform.LAB_FALSE, errMsg.getMessageCodeObj(), errMsg.getMessageCodeVariables());                        
                         break;
                     }else{
                         if ("PROJECT_NEW".equalsIgnoreCase(endPoint.getName())){
@@ -185,5 +183,12 @@ public class ClassProject  implements ActionsClass{
     }
     @Override    public StringBuilder getRowArgsRows() {        return null;    }
     @Override    public EnumIntEndpoints getEndpointObj(){        return enumConstantByName;    }
-    
+
+    @Override    public void initializeEndpoint(String actionName) {        throw new UnsupportedOperationException("Not supported yet.");}
+    @Override    public void createClassEnvMonAndHandleExceptions(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs, Integer auditReasonPosic) {        throw new UnsupportedOperationException("Not supported yet.");}
+
+    @Override
+    public HttpServletResponse getHttpResponse() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

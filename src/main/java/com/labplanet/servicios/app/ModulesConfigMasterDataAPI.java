@@ -230,7 +230,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                         specFieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|"));
                     }
                     specFieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|"));
-                    if (specFieldValueArr != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(specFieldValueArr[0].toString())) {
+                    if (specFieldValueArr != null && specFieldValueArr.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(specFieldValueArr[0].toString())) {
                         Object[] diagn = specFieldValueArr;
                         diagnostic=new InternalMessage(diagn[0].toString(), diagn[diagn.length-1].toString(), null, null);
                     } else {
@@ -257,7 +257,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     if (specFieldValue != null && specFieldValue.length() > 0) {
                         specFieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|"));
                     }
-                    if (specFieldValueArr != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(specFieldValueArr[0].toString())) {
+                    if (specFieldValueArr != null && specFieldValueArr.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(specFieldValueArr[0].toString())) {
                         Object[] diagn = specFieldValueArr;
                         diagnostic=new InternalMessage(diagn[0].toString(), diagn[diagn.length-1].toString(), null, null);
                     } else {
@@ -277,7 +277,7 @@ public class ModulesConfigMasterDataAPI extends HttpServlet {
                     specFieldName = argValues[2].toString();
                     specFieldValue = argValues[3].toString();
                     specFieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(specFieldValue.split("\\|"));
-                    if (specFieldValueArr != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(specFieldValueArr[0].toString())) {
+                    if (specFieldValueArr != null && specFieldValueArr.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(specFieldValueArr[0].toString())) {
                         Object[] diagn = specFieldValueArr;
                         diagnostic=new InternalMessage(diagn[0].toString(), diagn[diagn.length-1].toString(), null, null);
                     } else {

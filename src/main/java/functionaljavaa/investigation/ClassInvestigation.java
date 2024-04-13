@@ -16,6 +16,7 @@ import databases.TblsProcedure;
 import trazit.session.ResponseMessages;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
@@ -35,6 +36,7 @@ public class ClassInvestigation implements ActionsClass {
     /**
      * @return the messageDynamicData
      */
+    @Override
     public Object[] getMessageDynamicData() {
         return this.messageDynamicData;
     }
@@ -42,6 +44,7 @@ public class ClassInvestigation implements ActionsClass {
     /**
      * @return the rObj
      */
+    @Override
     public RelatedObjects getRelatedObj() {
         return this.relatedObj;
     }
@@ -58,7 +61,6 @@ public class ClassInvestigation implements ActionsClass {
      */
     public Object[] getDiagnostic() {
         return null;
-        //return this.diagnostic;
     }
 
     public InternalMessage getDiagnosticObj() {
@@ -68,26 +70,25 @@ public class ClassInvestigation implements ActionsClass {
     private Object[] messageDynamicData = new Object[]{};
     private RelatedObjects relatedObj = RelatedObjects.getInstanceForActions();
     private Boolean endpointExists = true;
-    //private Object[] diagnostic = new Object[0];
     private Boolean functionFound = false;
     private EnumIntEndpoints enumConstantByName;
+    
     public ClassInvestigation(HttpServletRequest request, InvestigationAPIactionsEndpoints endPoint) {
         RelatedObjects rObj = RelatedObjects.getInstanceForActions();
         try {
             this.enumConstantByName=endPoint;
             ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
             ResponseMessages messages = procReqSession.getMessages();
-            //InternalMessage actionDiagnosesObj=null;
-            //Object[] actionDiagnoses = null;            
             this.diagnosticObj = null;
             Object[] dynamicDataObjects = new Object[]{};
             this.functionFound = true;
             
             Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
-    //            this.diagnostic = (Object[]) argValues[1];
                 this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ConfigAnalysisStructure.ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{argValues[2].toString()});
                 this.messageDynamicData = new Object[]{argValues[2].toString()};
+                this.relatedObj = rObj;
+                rObj.killInstance();
                 return;
             }
             Integer investigationId = null;
@@ -102,7 +103,7 @@ public class ClassInvestigation implements ActionsClass {
                         fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(argValues[1].toString().split("\\|"),
                                 TblsProcedure.TablesProcedure.INVESTIGATION, fieldNames);
                     }
-                    if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                    if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                         diagnosticObj = (InternalMessage) fieldValues[1];
                     }
                     String objectsToAdd = "";
@@ -190,20 +191,6 @@ public class ClassInvestigation implements ActionsClass {
                     }
                     break;
             }
-/*            if (actionDiagnoses != null && LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())) {
-                actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, dynamicDataObjects);
-            }
-/*
-            if (actionDiagnoses != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses[0].toString())) {
-
-            } else {
-                rObj = RelatedObjects.getInstanceForActions();
-                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(), investigationId);
-//            JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(endPoint.getClass().getSimpleName(), endPoint, new Object[]{incId}, rObj.getRelatedObject());
-                rObj.killInstance();
-//            LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
-            }
-            this.diagnostic = actionDiagnoses;*/
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosticObj.getDiagnostic())) {
                 diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, endPoint,messageDynamicData, diagnosticObj.getNewObjectId());                
             }            
@@ -222,4 +209,11 @@ public class ClassInvestigation implements ActionsClass {
     @Override    public StringBuilder getRowArgsRows() {        return null;    }
     @Override    public EnumIntEndpoints getEndpointObj(){        return enumConstantByName;    }
 
+    @Override    public void initializeEndpoint(String actionName) {        throw new UnsupportedOperationException("Not supported yet.");}
+    @Override    public void createClassEnvMonAndHandleExceptions(HttpServletRequest request, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs, Integer auditReasonPosic) {        throw new UnsupportedOperationException("Not supported yet.");}
+
+    @Override
+    public HttpServletResponse getHttpResponse() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }
