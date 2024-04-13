@@ -293,14 +293,13 @@ public class TestingRegressionUAT extends HttpServlet {
     private StringBuilder procedureRepositoryMirrorsTable(String procInstanceName, Integer scriptId) {
         StringBuilder fileContentBuilder = new StringBuilder(0);
         try {
-            Object[] allMismatchesDiagnAll = procedureRepositoryMirrors(procInstanceName);
-            Object[] allMismatchesDiagn = (Object[]) allMismatchesDiagnAll[0];
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(allMismatchesDiagn[0].toString())) {
+            InternalMessage allMismatchesDiagn = procedureRepositoryMirrors(procInstanceName);            
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(allMismatchesDiagn.getDiagnostic())) {
                 return fileContentBuilder;
             }
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allMismatchesDiagn[0].toString())) {
-                Object[][] allMismatches = (Object[][]) allMismatchesDiagnAll[1];
-                fileContentBuilder.append(allMismatchesDiagn[allMismatchesDiagn.length - 1]).append("<br>");
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allMismatchesDiagn.getDiagnostic())) {
+                Object[][] allMismatches = (Object[][]) allMismatchesDiagn.getNewObjectId();
+                fileContentBuilder.append(allMismatchesDiagn.getMessageCodeObj().getErrorCode()).append("<br>");
                 for (int i = 1; i < allMismatches.length; i++) {
                     for (int iCols = 0; iCols < allMismatches[0].length; iCols++) {
                         fileContentBuilder.append(allMismatches[0][iCols]).append(":").append(allMismatches[i][iCols]).append("<br>");
@@ -308,7 +307,7 @@ public class TestingRegressionUAT extends HttpServlet {
                 }
                 return fileContentBuilder;
             }
-            Object[][] allMismatches = (Object[][]) allMismatchesDiagnAll[1];
+            Object[][] allMismatches = (Object[][]) allMismatchesDiagn.getNewObjectId();
             if (allMismatches != null && allMismatches.length > 0) {
                 fileContentBuilder.append(procInstanceName).append(" has mirror mismatches, ").append(allMismatches.length).append(", further detail below:");
 
@@ -332,8 +331,7 @@ public class TestingRegressionUAT extends HttpServlet {
         }
     }
 
-    public static Object[] procedureRepositoryMirrors(String procInstanceName) {
-        Object[] summaryInfo = new Object[3];
+    public static InternalMessage procedureRepositoryMirrors(String procInstanceName) {        
         String[][] schemasToCheck = new String[][]{{GlobalVariables.Schemas.DATA.getName(), GlobalVariables.Schemas.DATA_TESTING.getName()},
         {GlobalVariables.Schemas.DATA_AUDIT.getName(), GlobalVariables.Schemas.DATA_AUDIT_TESTING.getName()},
         {GlobalVariables.Schemas.PROCEDURE.getName(), GlobalVariables.Schemas.PROCEDURE_TESTING.getName()},
@@ -352,15 +350,9 @@ public class TestingRegressionUAT extends HttpServlet {
             }
         }
         if (allMismatches != null && allMismatches.length > 0) {
-            Object[] trapMessage = ApiMessageReturn.trapMessage(LAB_FALSE, LpPlatformErrorTrapping.MIRROR_MISMATCHES, null);
-            summaryInfo[0] = trapMessage;
-            summaryInfo[1] = allMismatches;
-            return summaryInfo; //LPArray.addValueToArray1D(trapMessage, allMismatches);
+            return new InternalMessage(LAB_FALSE, LpPlatformErrorTrapping.MIRROR_MISMATCHES, null, new Object[]{allMismatches});
         }
-        Object[] trapMessage = ApiMessageReturn.trapMessage(LAB_TRUE, LpPlatformSuccess.ALL_THE_SAME, null);
-        summaryInfo[0] = trapMessage;
-        //summaryInfo[1]=allMismatches;
-        return summaryInfo; //LPArray.addValueToArray1D(trapMessage, allMismatches);        
+        return new InternalMessage(LAB_TRUE, LpPlatformSuccess.ALL_THE_SAME, null);
     }
 
     public static Boolean actionIsOneQuery(String actionName) {

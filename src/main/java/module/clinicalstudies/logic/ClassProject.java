@@ -17,11 +17,11 @@ import lbplanet.utilities.LPAPIArguments;
 import static lbplanet.utilities.LPArray.convertStringWithDataTypeToObjectArrayInternalMessage;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import modules.masterdata.analysis.ConfigAnalysisStructure;
 import trazit.enums.ActionsClass;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.procedureinstance.definition.definition.TblsReqs;
-import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 import trazit.enums.EnumIntEndpoints;
 /**
@@ -32,8 +32,7 @@ public class ClassProject  implements ActionsClass{
     private Object[] messageDynamicData=new Object[]{};
     private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
     private Boolean endpointExists=true;
-    private Object[] diagnostic=new Object[0];
-    InternalMessage actionDiagnosesObj;
+    InternalMessage diagnosticObj;
     private Boolean functionFound=false;
     private EnumIntEndpoints enumConstantByName;
     
@@ -45,16 +44,16 @@ public class ClassProject  implements ActionsClass{
         ClinicalStudyDataProject prj = new ClinicalStudyDataProject();
         String projectName = "";
         this.enumConstantByName=endPoint;
-        Object[] actionDiagnoses = null;
-        InternalMessage actionDiagnosesObj = null;
+        InternalMessage diagnosticObj = null;
         this.functionFound=true;
-        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())){
-            //procReqSession.killIt();
-            this.diagnostic=(Object[]) argValues[1];
-            this.messageDynamicData=new Object[]{argValues[2].toString()};
-            return;                        
-        } 
+        Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
+            this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ConfigAnalysisStructure.ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{argValues[2].toString()});
+            this.messageDynamicData = new Object[]{argValues[2].toString()};
+            this.relatedObj = rObj;
+            rObj.killInstance();
+            return;
+        }
         try{
             switch (endPoint){
                 case PROJECT_NEW:
@@ -67,17 +66,14 @@ public class ClassProject  implements ActionsClass{
                     if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            
                     if (fieldValue!=null && fieldValue.length()>0) fieldValues = convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"), TblsReqs.TablesReqs.PROCEDURE_SOP_META_DATA, fieldName.split("\\|"));
                     if (fieldValues!=null && fieldValues.length>0 && fieldValues[0].toString().length()>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())){
-                        InternalMessage errMsg=(InternalMessage)fieldValues[1];
-                        actionDiagnoses=null;                         
-                        this.actionDiagnosesObj=new InternalMessage(LPPlatform.LAB_FALSE, errMsg.getMessageCodeObj(), errMsg.getMessageCodeVariables());                        
+                        this.diagnosticObj=(InternalMessage)fieldValues[1];
                         break;
                     }else{
                         if ("PROJECT_NEW".equalsIgnoreCase(endPoint.getName())){
-                            actionDiagnosesObj= prj.createProject(endPoint, projectName, fieldNames, fieldValues,  false);
-                            actionDiagnoses=ApiMessageReturn.trapMessage(actionDiagnosesObj.getDiagnostic(), actionDiagnosesObj.getMessageCodeObj(), actionDiagnosesObj.getMessageCodeVariables());
+                            diagnosticObj= prj.createProject(endPoint, projectName, fieldNames, fieldValues,  false);
                         }
                         if ("PROJECT_UPDATE".equalsIgnoreCase(endPoint.getName()))
-                            this.actionDiagnosesObj= prj.projectUpdate(endPoint, projectName, fieldNames, fieldValues);
+                            this.diagnosticObj= prj.projectUpdate(endPoint, projectName, fieldNames, fieldValues);
                         rObj.addSimpleNode(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.PROJECT.getTableName(), projectName);                
                         this.messageDynamicData=new Object[]{projectName, procInstanceName};                    
                     }
@@ -86,9 +82,9 @@ public class ClassProject  implements ActionsClass{
                 case PROJECT_DEACTIVATE:
                     projectName = argValues[0].toString();
                     if ("PROJECT_ACTIVATE".equalsIgnoreCase(endPoint.getName()))
-                        this.actionDiagnosesObj =prj.projectActivate(endPoint, projectName);
+                        this.diagnosticObj =prj.projectActivate(endPoint, projectName);
                     else if ("PROJECT_DEACTIVATE".equalsIgnoreCase(endPoint.getName()))
-                        this.actionDiagnosesObj =prj.projectDeActivate(endPoint, projectName);                    
+                        this.diagnosticObj =prj.projectDeActivate(endPoint, projectName);                    
                     rObj.addSimpleNode(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.PROJECT.getTableName(), projectName);                
                     break;
                 case PROJECT_ADD_USER:
@@ -99,7 +95,7 @@ public class ClassProject  implements ActionsClass{
                     projectName = argValues[0].toString();
                     String userName=argValues[1].toString();
                     String userRole=argValues[2].toString();
-                    this.actionDiagnosesObj =prj.projectUserManagement(endPoint, projectName, userName, userRole);
+                    this.diagnosticObj =prj.projectUserManagement(endPoint, projectName, userName, userRole);
                     this.messageDynamicData=new Object[]{userName, projectName, userName, userRole, procInstanceName};
                     rObj.addSimpleNode(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.PROJECT.getTableName(), projectName);
                     rObj.addSimpleNode(GlobalVariables.Schemas.DATA.getName(), TblsGenomaData.TablesGenomaData.PROJECT_USERS.getTableName(), userName);
@@ -125,9 +121,6 @@ public class ClassProject  implements ActionsClass{
                 default:
                     break;
             }    
-        if (actionDiagnoses!=null && LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
-            actionDiagnoses=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, this.messageDynamicData);                    
-        this.diagnostic=actionDiagnoses;
         this.relatedObj=rObj;
         rObj.killInstance();
     }catch(Exception e){
@@ -167,7 +160,7 @@ public class ClassProject  implements ActionsClass{
      * @return the diagnostic
      */
     public Object[] getDiagnostic() {
-        return diagnostic;
+        return null;
     }
 
     /**

@@ -29,6 +29,7 @@ import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntViews;
 import trazit.globalvariables.GlobalVariables;
+import trazit.session.InternalMessage;
 
 public class ProcedureDefinitionToInstanceSections {
 
@@ -735,10 +736,9 @@ public class ProcedureDefinitionToInstanceSections {
 
     public static final JSONObject deployMasterData(String procedure, Integer procVersion, String instanceName, String moduleName) {
         JSONObject jsonObjSummary = new JSONObject();
-        Object[] allMismatchesDiagnAll = TestingRegressionUAT.procedureRepositoryMirrors(instanceName);
-        Object[] allMismatchesDiagn = (Object[]) allMismatchesDiagnAll[0];
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allMismatchesDiagn[0].toString())) {
-            Object[][] allMismatches = (Object[][]) allMismatchesDiagnAll[1];
+        InternalMessage allMismatchesDiagnAll = TestingRegressionUAT.procedureRepositoryMirrors(instanceName);        
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allMismatchesDiagnAll.getDiagnostic())) {
+            Object[][] allMismatches = (Object[][]) allMismatchesDiagnAll.getNewObjectId();
             JSONArray jArr = new JSONArray();
             for (int i = 1; i < allMismatches.length; i++) {
                 jArr.add(LPJson.convertArrayRowToJSONObject(LPArray.convertObjectArrayToStringArray(allMismatches[0]), allMismatches[i]));

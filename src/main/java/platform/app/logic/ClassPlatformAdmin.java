@@ -19,10 +19,9 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.ApiErrorTraping;
-import trazit.enums.EnumIntMessages;
+import modules.masterdata.analysis.ConfigAnalysisStructure;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
-import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 
@@ -35,7 +34,6 @@ public class ClassPlatformAdmin {
     private Object[] messageDynamicData = new Object[]{};
     private RelatedObjects relatedObj = RelatedObjects.getInstanceForActions();
     private Boolean endpointExists = true;
-    private Object[] diagnostic = new Object[0];
     InternalMessage actionDiagnosesObj = null;
     private Boolean functionFound = false;
 
@@ -47,9 +45,10 @@ public class ClassPlatformAdmin {
         this.functionFound = true;
         Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
-            this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE,
-                    (EnumIntMessages) argValues[1], new Object[]{argValues[2].toString()});
+            this.actionDiagnosesObj = new InternalMessage(LPPlatform.LAB_FALSE, ConfigAnalysisStructure.ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{argValues[2].toString()});
             this.messageDynamicData = new Object[]{argValues[2].toString()};
+            this.relatedObj = rObj;
+            rObj.killInstance();
             return;
         }
         switch (endPoint) {
@@ -191,7 +190,6 @@ public class ClassPlatformAdmin {
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, null, ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, null);
                 return;
         }
-        this.diagnostic = ApiMessageReturn.trapMessage(actionDiagnoses.getDiagnostic(), endPoint, actionDiagnoses.getMessageCodeVariables());
         this.relatedObj = rObj;
         this.actionDiagnosesObj = actionDiagnoses;
     }
@@ -221,7 +219,7 @@ public class ClassPlatformAdmin {
      * @return the diagnostic
      */
     public Object[] getDiagnostic() {
-        return diagnostic;
+        return null;
     }
 
     public InternalMessage getDiagnosticObj() {

@@ -48,6 +48,7 @@ import trazit.procedureinstance.definition.logic.ReqProcDefTestingCoverageSummar
 import static trazit.procedureinstance.definition.logic.ReqProcedureFrontendMasterData.getActiveModulesJSON;
 import trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.ReqSolutionTypes;
 import trazit.queries.QueryUtilities;
+import trazit.session.InternalMessage;
 
 public class ReqProcedureDefinitionQueries extends HttpServlet {
 
@@ -215,14 +216,11 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                 case PROC_DEPLOY_TESTING_COVERAGE_SUMMARY:
                     procInstanceName = argValues[2].toString();
                     JSONObject jObj = new JSONObject();
-                    jMainObj = new JSONObject();
-                    mainObjectName = "testing_coverage_summary";
-                    Object[] actionDiagnosesAll = TestingRegressionUAT.procedureRepositoryMirrors(procInstanceName);
-                    Object[] allMismatchesDiagn = (Object[]) actionDiagnosesAll[0];
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allMismatchesDiagn[0].toString())) {
+                    InternalMessage actionDiagnosesAll = TestingRegressionUAT.procedureRepositoryMirrors(procInstanceName);
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnosesAll.getDiagnostic())) {
                         jObj.put("Error_found", "Not mirrors");
                         jArr = new JSONArray();
-                        Object[][] mismatchTables = (Object[][]) actionDiagnosesAll[1];
+                        Object[][] mismatchTables = (Object[][]) actionDiagnosesAll.getNewObjectId();
                         for (int i = 1; i < mismatchTables.length; i++) {
                             jArr.add(LPJson.convertArrayRowToJSONObject(LPArray.convertObjectArrayToStringArray(mismatchTables[0]), mismatchTables[i]));
                         }
@@ -290,6 +288,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                     }
                     LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
                     return;
+
 
                 case GET_ALL_ACTIVE_MODULES:
                         jMainObj = new JSONObject();

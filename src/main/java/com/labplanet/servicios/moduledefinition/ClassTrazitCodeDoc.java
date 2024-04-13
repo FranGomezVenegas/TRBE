@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
-import trazit.session.ApiMessageReturn;
+import trazit.session.InternalMessage;
 
 /**
  *
@@ -23,13 +23,11 @@ public class ClassTrazitCodeDoc {
     private Object[] messageDynamicData=new Object[]{};
     private RelatedObjects relatedObj=RelatedObjects.getInstanceForActions();
     private Boolean endpointExists=true;
-    private Object[] diagnostic=new Object[0];
+    private InternalMessage diagnosticObj=null;
     private Boolean functionFound=false;
 
     public ClassTrazitCodeDoc(HttpServletRequest request, HttpServletResponse response, ModuleDefinitionAPIactionsEndpoints endPoint){
-        RelatedObjects rObj=RelatedObjects.getInstanceForActions();
-
-        Object[] actionDiagnoses = null;
+        RelatedObjects rObj=RelatedObjects.getInstanceForActions();        
         this.functionFound=true;
             switch (endPoint){
                 case DOC_API_ENDPOINTS_IN_DB:         
@@ -75,10 +73,7 @@ public class ClassTrazitCodeDoc {
                     LPFrontEnd.servletReturnSuccess(request, response, mainObj);
                     break;
             }    
-        if (actionDiagnoses!=null)
-            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{actionDiagnoses[0]});
-        else
-            this.diagnostic=ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, null);
+        this.diagnosticObj=new InternalMessage(LPPlatform.LAB_TRUE, endPoint, null);
         this.relatedObj=rObj;
         rObj.killInstance();
     }
@@ -108,7 +103,7 @@ public class ClassTrazitCodeDoc {
      * @return the diagnostic
      */
     public Object[] getDiagnostic() {
-        return diagnostic;
+        return null;
     }
 
     /**

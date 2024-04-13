@@ -28,6 +28,7 @@ import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntTables;
+import trazit.session.InternalMessage;
 
 public class ProcDeployCheckerLogic {
     private ProcDeployCheckerLogic() {throw new IllegalStateException("Utility class");}
@@ -476,10 +477,9 @@ public class ProcDeployCheckerLogic {
         Boolean anyMismatch=false;
         JSONObject detailsObj=new JSONObject();
         JSONObject mismatchesObj=new JSONObject();        
-        Object[] allMismatchesDiagnAll = TestingRegressionUAT.procedureRepositoryMirrors(procInstanceName);
-        Object[] allMismatchesDiagn=(Object[]) allMismatchesDiagnAll[0];
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allMismatchesDiagn[0].toString())){
-            Object[][] allMismatches= (Object[][])allMismatchesDiagnAll[1];
+        InternalMessage allMismatchesDiagnAll = TestingRegressionUAT.procedureRepositoryMirrors(procInstanceName);        
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allMismatchesDiagnAll.getDiagnostic())) {
+            Object[][] allMismatches = (Object[][]) allMismatchesDiagnAll.getNewObjectId();
             JSONArray jArr=new JSONArray();
             for (int i=1;i<allMismatches.length;i++){
                     jArr.add(LPJson.convertArrayRowToJSONObject(LPArray.convertObjectArrayToStringArray(allMismatches[0]), allMismatches[i]));

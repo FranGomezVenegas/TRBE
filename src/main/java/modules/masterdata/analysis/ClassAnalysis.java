@@ -25,7 +25,6 @@ import lbplanet.utilities.TrazitUtiilitiesEnums;
 import modules.masterdata.analysis.MasterDataAnalysisEnums.MasterDataAnalysisActionsEndpoints;
 import trazit.enums.ActionsClass;
 import trazit.globalvariables.GlobalVariables;
-import trazit.session.ApiMessageReturn;
 import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 import trazit.enums.EnumIntEndpoints;
@@ -62,7 +61,7 @@ public class ClassAnalysis implements ActionsClass{
      * @return the diagnostic
      */
     public Object[] getDiagnostic() {
-        return this.diagnostic;
+        return null;
     }
 
     public InternalMessage getDiagnosticObj() {
@@ -72,7 +71,6 @@ public class ClassAnalysis implements ActionsClass{
     private Object[] messageDynamicData = new Object[]{};
     private RelatedObjects relatedObj = RelatedObjects.getInstanceForActions();
     private Boolean endpointExists = true;
-    private Object[] diagnostic = new Object[0];
     private Boolean functionFound = false;
     private EnumIntEndpoints enumConstantByName;
     
@@ -85,14 +83,15 @@ public class ClassAnalysis implements ActionsClass{
             String actionName = procReqInstance.getActionName();
             String language = procReqInstance.getLanguage();
             
-            Object[] actionDiagnoses = null;
             this.diagnosticObj = null;
             Object[] dynamicDataObjects = new Object[]{};
             this.functionFound = true;
             Object[] argValues = LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(argValues[0].toString())) {
-                this.diagnostic = (Object[]) argValues[1];
+                this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ConfigAnalysisStructure.ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{argValues[2].toString()});
                 this.messageDynamicData = new Object[]{argValues[2].toString()};
+                this.relatedObj = rObj;
+                rObj.killInstance();
                 return;
             }
             String sopName = "";
@@ -310,19 +309,11 @@ public class ClassAnalysis implements ActionsClass{
                     LPFrontEnd.servletReturnResponseError(request, null, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getClass().getSimpleName()}, language, this.getClass().getSimpleName());
                     return;
             }
-            if (actionDiagnoses != null && LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())) {
-                actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, endPoint, dynamicDataObjects);
-            }
 
-            if (actionDiagnoses != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses[0].toString())) {
-
-            } else {
-                rObj = RelatedObjects.getInstanceForActions();
-                rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), sopName);
-                rObj.killInstance();
-            }
+            rObj = RelatedObjects.getInstanceForActions();
+            rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.TablesData.CERTIF_USER_ANALYSIS_METHOD.getTableName(), sopName);
+            rObj.killInstance();
             this.enumConstantByName=endPoint;
-            this.diagnostic = actionDiagnoses;
             this.relatedObj = rObj;
             if (this.diagnosticObj!=null)
                 this.messageDynamicData = this.diagnosticObj.getMessageCodeVariables();
@@ -330,7 +321,6 @@ public class ClassAnalysis implements ActionsClass{
                 this.messageDynamicData = dynamicDataObjects;
             rObj.killInstance();
         } catch (Exception e) {
-            this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.UNHANDLED_EXCEPTION, new Object[]{e.getMessage()});
             this.relatedObj = rObj;
             this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.UNHANDLED_EXCEPTION, new Object[]{endPoint.getName() + ", Error:" + e.getMessage()}, null);
             this.messageDynamicData = new Object[]{e.getMessage()};
