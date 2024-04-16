@@ -541,6 +541,123 @@ public class DataInventory {
         if (LPPlatform.LAB_FALSE.equals(volumeIsPositive.getDiagnostic())) return volumeIsPositive;
         return DataInventoryMovements.adjustInventoryLotQuantity(this, nwVolume, nwVolumeUom);
     }
+    public InternalMessage addAttachment(Integer qualifId, String attachUrl, String briefSummary) {
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        if (Boolean.TRUE.equals(this.isLocked)) {
+            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.ALREADY_RETIRED, new Object[]{this.getLotName()}, null);
+        }
+        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
+        if (qualifId != null) {
+            Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION.getTableName(),
+                    new String[]{TblsInvTrackingData.LotQualification.LOT_NAME.getName(), TblsInvTrackingData.LotQualification.QUALIF_ID.getName()},
+                    new Object[]{this.getLotName(), qualifId},
+                    new String[]{TblsInvTrackingData.LotQualification.COMPLETED_ON.getName(), TblsInvTrackingData.LotQualification.COMPLETED_DECISION.getName()});
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())) {
+                messages.addMainForError(InvTrackingEnums.InventoryTrackingErrorTrapping.NOT_FOUND, new Object[]{getLotName()});
+                return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.NOT_FOUND, new Object[]{getLotName()}, getLotName());
+            }
+            RelatedObjects rObj = RelatedObjects.getInstanceForActions();
+            rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION.getTableName(), qualifId);
+        }
+        String[] fldNames = new String[]{TblsInvTrackingData.LotAttachments.LOT_NAME.getName(), TblsInvTrackingData.LotAttachments.FILE_LINK.getName(), 
+            TblsInvTrackingData.LotAttachments.CREATED_ON.getName(), TblsInvTrackingData.LotAttachments.CREATED_BY.getName()};        
+        Object[] fldValues = new Object[]{this.getLotName(), attachUrl, LPDate.getCurrentTimeStamp(), procReqSession.getToken().getPersonName()};
+        if (qualifId != null) {
+            fldNames=LPArray.addValueToArray1D(fldNames, TblsInvTrackingData.LotAttachments.QUALIF_ID.getName());
+            fldValues=LPArray.addValueToArray1D(fldValues, qualifId);
+        }
+        if (briefSummary != null) {
+            fldNames=LPArray.addValueToArray1D(fldNames, TblsInvTrackingData.LotAttachments.BRIEF_SUMMARY.getName());
+            fldValues=LPArray.addValueToArray1D(fldValues, briefSummary);
+        }
+        RdbmsObject insertRecordInTable = Rdbms.insertRecord(TblsInvTrackingData.TablesInvTrackingData.LOT_ATTACHMENT, 
+                fldNames, fldValues, procReqSession.getProcedureInstance());
+        if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess())) {
+            return new InternalMessage(LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), null);
+        }
+        AppInventoryLotAudit.inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.ADDED_ATTACHMENT, getLotName(), TblsInvTrackingData.TablesInvTrackingData.LOT.getTableName(), getLotName(),
+                this.getReference(), this.getCategory(), fldNames, fldValues);
+        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ADD_ATTACHMENT, new Object[]{getLotName()});
+        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ADD_ATTACHMENT, new Object[]{getLotName()}, getLotName());
+    }
+    public InternalMessage removeAttachment(Integer qualifId, Integer attachmentId) {
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        if (Boolean.TRUE.equals(this.isLocked)) {
+            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.ALREADY_RETIRED, new Object[]{this.getLotName()}, null);
+        }
+        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
+        if (qualifId != null) {
+            Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION.getTableName(),
+                    new String[]{TblsInvTrackingData.LotQualification.LOT_NAME.getName(), TblsInvTrackingData.LotQualification.QUALIF_ID.getName()},
+                    new Object[]{this.getLotName(), qualifId},
+                    new String[]{TblsInvTrackingData.LotQualification.COMPLETED_ON.getName(), TblsInvTrackingData.LotQualification.COMPLETED_DECISION.getName()});
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())) {
+                messages.addMainForError(InvTrackingEnums.InventoryTrackingErrorTrapping.NOT_FOUND, new Object[]{getLotName()});
+                return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.NOT_FOUND, new Object[]{getLotName()}, getLotName());
+            }
+            RelatedObjects rObj = RelatedObjects.getInstanceForActions();
+            rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION.getTableName(), qualifId);
+        }
+        EnumIntTableFields[] fldNamesObj = new EnumIntTableFields[]{TblsInvTrackingData.LotAttachments.REMOVED};
+        Object[] fldValues = new Object[]{true};
+        SqlWhere sqlWhere = new SqlWhere();
+        sqlWhere.addConstraint(TblsInvTrackingData.LotAttachments.LOT_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{this.getLotName()}, "");
+        sqlWhere.addConstraint(TblsInvTrackingData.LotAttachments.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{attachmentId}, "");
+        if (qualifId != null) {
+        sqlWhere.addConstraint(TblsInvTrackingData.LotAttachments.QUALIF_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{qualifId}, "");    
+        }
+        
+        RdbmsObject updateRecordInTable = Rdbms.updateTableRecordFieldsByFilter(TblsInvTrackingData.TablesInvTrackingData.LOT_ATTACHMENT, 
+                fldNamesObj, fldValues, sqlWhere, null);
+        if (Boolean.FALSE.equals(updateRecordInTable.getRunSuccess())) {
+            return new InternalMessage(LPPlatform.LAB_FALSE, updateRecordInTable.getErrorMessageCode(), updateRecordInTable.getErrorMessageVariables(), null);
+        }
+        AppInventoryLotAudit.inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.REMOVED_ATTACHMENT, getLotName(), TblsInvTrackingData.TablesInvTrackingData.LOT.getTableName(), getLotName(),
+                this.getReference(), this.getCategory(), EnumIntTableFields.getAllFieldNames(fldNamesObj), fldValues);
+        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.REMOVE_ATTACHMENT, new Object[]{getLotName()});
+        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.REMOVE_ATTACHMENT, new Object[]{getLotName()}, getLotName());
+    }
+    public InternalMessage reactivateAttachment(Integer qualifId, Integer attachmentId) {
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        if (Boolean.TRUE.equals(this.isLocked)) {
+            return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.ALREADY_RETIRED, new Object[]{this.getLotName()}, null);
+        }
+        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
+        if (qualifId != null) {
+            Object[][] instrEventInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION.getTableName(),
+                    new String[]{TblsInvTrackingData.LotQualification.LOT_NAME.getName(), TblsInvTrackingData.LotQualification.QUALIF_ID.getName()},
+                    new Object[]{this.getLotName(), qualifId},
+                    new String[]{TblsInvTrackingData.LotQualification.COMPLETED_ON.getName(), TblsInvTrackingData.LotQualification.COMPLETED_DECISION.getName()});
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventInfo[0][0].toString())) {
+                messages.addMainForError(InvTrackingEnums.InventoryTrackingErrorTrapping.NOT_FOUND, new Object[]{getLotName()});
+                return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InventoryTrackingErrorTrapping.NOT_FOUND, new Object[]{getLotName()}, getLotName());
+            }
+            RelatedObjects rObj = RelatedObjects.getInstanceForActions();
+            rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsInvTrackingData.TablesInvTrackingData.LOT_QUALIFICATION.getTableName(), qualifId);
+            /*if (eventCompletedOn.length() > 0 || eventDecision.length() > 0) {
+                messages.addMainForError(InvTrackingEnums.InstrumentsErrorTrapping.ALREADY_INPROGRESS, new Object[]{instrEventId});
+                return new InternalMessage(LPPlatform.LAB_FALSE, InvTrackingEnums.InstrumentsErrorTrapping.ALREADY_INPROGRESS, new Object[]{instrEventId}, name);
+            }*/
+        }
+        EnumIntTableFields[] fldNamesObj = new EnumIntTableFields[]{TblsInvTrackingData.LotAttachments.REMOVED};
+        Object[] fldValues = new Object[]{false};
+        SqlWhere sqlWhere = new SqlWhere();
+        sqlWhere.addConstraint(TblsInvTrackingData.LotAttachments.LOT_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{this.getLotName()}, "");
+        sqlWhere.addConstraint(TblsInvTrackingData.LotAttachments.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{attachmentId}, "");
+        if (qualifId != null) {
+        sqlWhere.addConstraint(TblsInvTrackingData.LotAttachments.QUALIF_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{qualifId}, "");    
+        }
+        
+            RdbmsObject updateRecordInTable = Rdbms.updateTableRecordFieldsByFilter(TblsInvTrackingData.TablesInvTrackingData.LOT_ATTACHMENT, 
+                fldNamesObj, fldValues, sqlWhere, null);
+        if (Boolean.FALSE.equals(updateRecordInTable.getRunSuccess())) {
+            return new InternalMessage(LPPlatform.LAB_FALSE, updateRecordInTable.getErrorMessageCode(), updateRecordInTable.getErrorMessageVariables(), null);
+        }
+        AppInventoryLotAudit.inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.REACTIVATED_ATTACHMENT, getLotName(), TblsInvTrackingData.TablesInvTrackingData.LOT.getTableName(), getLotName(),
+                this.getReference(), this.getCategory(), EnumIntTableFields.getAllFieldNames(fldNamesObj), fldValues);
+        messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.REACTIVATE_ATTACHMENT, new Object[]{getLotName()});
+        return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.REACTIVATE_ATTACHMENT, new Object[]{getLotName()}, getLotName());
+    }
 
     public Boolean getHasError() {
         return hasError;
