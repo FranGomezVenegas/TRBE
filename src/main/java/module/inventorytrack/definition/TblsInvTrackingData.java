@@ -28,13 +28,15 @@ public class TblsInvTrackingData {
     
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.DATA.getName();
     private static final Boolean IS_PRODEDURE_INSTANCE = true;
-    public enum TablesInvTrackingData implements EnumIntTables{        
+    public enum TablesInvTrackingData implements EnumIntTables{
         LOT(null, "lot", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsInvTrackingData.Lot.values(), null,
             new String[]{Lot.LOT_NAME.getName(), Lot.REFERENCE.getName(), Lot.CATEGORY.getName()}, null, "lot table"),
         LOT_QUALIFICATION(null, "lot_qualification", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsInvTrackingData.LotQualification.values(), 
             TblsInvTrackingData.LotQualification.QUALIF_ID.getName(),new String[]{TblsInvTrackingData.LotQualification.QUALIF_ID.getName()}, null, ""),
         LOT_QUALIFICATION_VARIABLE_VALUES(null, "lot_qualification_variable_values", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, LotQualificationVariableValues.values(), 
             LotQualificationVariableValues.ID.getName(), new String[]{LotQualificationVariableValues.ID.getName()}, null, ""),
+        LOT_ATTACHMENT(null, "lot_attachment", SCHEMA_NAME, true, LotAttachments.values(), LotAttachments.ID.getName(),
+            new String[]{LotAttachments.ID.getName()}, null, "LotAttachments"),
 
         ;
         ;private TablesInvTrackingData(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
@@ -442,5 +444,33 @@ private final String tblAliasInView;
         @Override public EnumIntTableFields getTableField() {return this.fldObj;}
         @Override public String getTblAliasInView() {return this.tblAliasInView;}
     }        
+
+    public enum LotAttachments implements EnumIntTableFields{
+        ID("id", LPDatabase.integerNotNull(), null, null, null, null),
+        LOT_NAME("lot_name", LPDatabase.stringNotNull(), null, null, null, null),
+        QUALIF_ID("qualif_id", LPDatabase.integer(), null, null, null, null),        
+        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
+        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.dateTime(), null, null, null, null),
+        FILE_LINK("file_link", LPDatabase.string(), null, null, null, null),
+        DB_FILE("db_file", LPDatabase.embeddedFile(), null, null, null, null),
+        BRIEF_SUMMARY("brief_summary", LPDatabase.string(), null, null, null, null),
+        REMOVED("removed", LPDatabase.booleanFld(false), null, null, null, null),
+        ;
+        private LotAttachments(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName; @Override        public String getName(){return this.fieldName;}
+        private final String fieldType; @Override        public String getFieldType() {return this.fieldType;}
+        private final String fieldMask; @Override        public String getFieldMask() {return this.fieldMask;}
+        private final ReferenceFld reference; @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
+        private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }                
     
 }

@@ -10,7 +10,9 @@ import functionaljavaa.audit.GenericAuditFields;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import module.inventorytrack.definition.TblsInvTrackingDataAudit;
+import module.inventorytrack.definition.TblsInvTrackingConfigAudit;
 import trazit.enums.EnumIntAuditEvents;
+import trazit.enums.EnumIntTables;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -52,6 +54,18 @@ public final class AppInventoryLotAudit {
         }else        
             return AuditUtilities.applyTheInsert(gAuditFlds, TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT, fieldNames, fieldValues);
         
+    }
+    public static Object[] inventoryLotConfigAuditAdd(EnumIntAuditEvents action, EnumIntTables tableObj, String tableKey,
+                        String[] fldNames, Object[] fldValues) {
+        GenericAuditFields gAuditFlds=new GenericAuditFields(action, tableObj, fldNames, fldValues);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();
+        String[] fieldNames=gAuditFlds.getFieldNames();
+        Object[] fieldValues=gAuditFlds.getFieldValues();
+
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInvTrackingConfigAudit.Reference.NAME.getName());
+        fieldValues = LPArray.addValueToArray1D(fieldValues, tableKey);
+        return AuditUtilities.applyTheInsert(gAuditFlds, tableObj, fieldNames, fieldValues);
     }    
+    
     
  }

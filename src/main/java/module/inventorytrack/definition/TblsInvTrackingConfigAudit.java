@@ -5,10 +5,14 @@
  */
 package module.inventorytrack.definition;
 
+import databases.TblsAppConfig;
 import databases.TblsCnfgAudit;
+import lbplanet.utilities.LPDatabase;
+import static lbplanet.utilities.LPDatabase.dateTime;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
 import trazit.enums.FldBusinessRules;
+import trazit.enums.ReferenceFld;
 import trazit.globalvariables.GlobalVariables;
 
 
@@ -23,6 +27,8 @@ public class TblsInvTrackingConfigAudit {
             new String[]{TblsCnfgAudit.Analysis.AUDIT_ID.getName()}, null, "Analysis Audit Trial"),
         SPEC(null, "spec", SCHEMA_NAME, true, TblsCnfgAudit.Spec.values(), TblsCnfgAudit.Spec.AUDIT_ID.getName(),
             new String[]{TblsCnfgAudit.Spec.AUDIT_ID.getName()}, null, "Spec Audit Trial"),        
+        REFERENCE(null, "inv_reference", SCHEMA_NAME, true, Reference.values(), Reference.AUDIT_ID.getName(),
+            new String[]{Reference.AUDIT_ID.getName()}, null, "Audit for Inv Reference"),
         ;
         private TablesInvTrackingConfigAudit(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){
@@ -55,12 +61,46 @@ public class TblsInvTrackingConfigAudit {
         private final Object[] foreignkey;
         private final String tableComment;        
     }
-/*    public static final String getTableCreationScriptFromConfigAuditTableEnvMonit(String tableName, String schemaNamePrefix, String[] fields){
-        switch (tableName.toUpperCase()){
-            case "ANALYSIS": return createTableScript(TblsCnfgAudit.TablesCfgAudit.ANALYSIS, schemaNamePrefix);
-            case "SPEC": return createTableScript(TblsCnfgAudit.TablesCfgAudit.SPEC, schemaNamePrefix);
-            default: return "TABLE "+tableName+" NOT IN ENVMONIT_TBLSCNFGAUDITENVMONIT"+LPPlatform.LAB_FALSE;            
-        }        
+    public enum Reference implements EnumIntTableFields{
+        AUDIT_ID("audit_id", LPDatabase.integerNotNull(), null, null, null, null),
+        NAME("name", LPDatabase.stringNotNull(), null, null, null, null),
+        TRANSACTION_ID("transaction_id", LPDatabase.integer(), null, null, null, null),
+        DATE("date", LPDatabase.dateTime(), null, null, null, null),
+        PERSON("person", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), "", null),
+        ACTION_NAME("action_name", LPDatabase.string(), null, null, null, null),
+        FIELDS_UPDATED("fields_updated", LPDatabase.string(), null, null, null, null),
+        CODE("code", LPDatabase.string(), null, null, null, null),
+        CONFIG_VERSION("config_version", LPDatabase.integer(), null, null, null, null),
+        USER_ROLE("user_role", LPDatabase.string(), null, null, null, null),
+        PROCEDURE("procedure", LPDatabase.string(), null, null, null, null),
+        PROCEDURE_VERSION("procedure_version", LPDatabase.integer(), null, null, null, null),
+        PROCEDURE_HASH_CODE("procedure_hash_code", LPDatabase.stringNotNull(), null, null, null, null),
+        APP_SESSION_ID("app_session_id", LPDatabase.integer(), null, null, null, null),
+        PICTURE_BEFORE("picture_before", "json", null, null, null, null),
+        PICTURE_AFTER("picture_after", "json", null, null, null, null),
+        REVIEWED("reviewed", LPDatabase.booleanFld(false), null, null, null, null),
+        REVIEWED_BY("reviewed_by", LPDatabase.string(), null, null, null, null),
+        REVIEWED_ON("reviewed_on", dateTime(), null, null, null, null),        
+        PARENT_AUDIT_ID("parent_audit_id", LPDatabase.integer(), null, null, null, null),
+        REASON("reason", LPDatabase.string(), null, null, null, null),
+        ACTION_PRETTY_EN("action_pretty_en", LPDatabase.string(), null, null, null, null),
+        ACTION_PRETTY_ES("action_pretty_es", LPDatabase.string(), null, null, null, null),
+        ;
+        private Reference(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName; @Override        public String getName(){return this.fieldName;}
+        private final String fieldType; @Override        public String getFieldType() {return this.fieldType;}
+        private final String fieldMask; @Override        public String getFieldMask() {return this.fieldMask;}
+        private final ReferenceFld reference; @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
+        private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }
-  */  
+ 
 }

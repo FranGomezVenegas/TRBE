@@ -46,14 +46,17 @@ public class InvTrackingEnums {
     public enum InvReferenceStockControlTypes {
         QUANTITY, ITEMS
     }
-
+    public enum AppConfigInventoryTrackingAuditEvents implements EnumIntAuditEvents {
+        REFERENCE_UPDATED, REFERENCE_CREATED
+    }
     public enum AppInventoryTrackingAuditEvents implements EnumIntAuditEvents {
         CREATION, UOM_CONVERSION_ON_CREATION, TURN_AVAILABLE, TURN_UNAVAILABLE,
         RETIRED, UNRETIRED,
         CREATED_QUALIFICATION, ADDED_VARIABLE, COMPLETE_QUALIFICATION, REOPEN_QUALIFICATION, UNLOCK_LOT_ONCE_QUALIFIED, TURN_AVAILABLE_ONCE_QUALIFIED,
         LOT_QUANTITY_ADJUSTED, LOT_QUANTITY_CONSUMED, LOT_QUANTITY_ADDITION,
         UPDATE_INVENTORY_LOT,
-        VALUE_ENTERED, VALUE_REENTERED
+        VALUE_ENTERED, VALUE_REENTERED,
+        ADDED_ATTACHMENT, REMOVED_ATTACHMENT, REACTIVATED_ATTACHMENT   
     }
 
     public enum InvLotStatuses {
@@ -225,8 +228,39 @@ public class InvTrackingEnums {
                 },
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TablesInvTrackingData.LOT.getTableName()).build()).build(),
-                null, null),;
-
+                null, null),
+        CONFIG_UPDATE_REFERENCE("CONFIG_UPDATE_REFERENCE", REQUEST_PARAM_LOT_NAME, "", "configInstrumentFamilyUpdated_success",
+                new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
+                    new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 8)
+                }, 
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
+                        .add(GlobalAPIsParams.LBL_TABLE, TablesInvTrackingData.LOT.getTableName()).build()).build(),
+                null, null),  
+        ADD_ATTACHMENT("ADD_ATTACHMENT", REQUEST_PARAM_LOT_NAME, "", "attachmentAdded_success",
+                new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments("qualifId", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),
+                new LPAPIArguments("fileUrl", LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
+                new LPAPIArguments("briefSummary", LPAPIArguments.ArgumentType.STRING.toString(), false, 9)},
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
+                        .add(GlobalAPIsParams.LBL_TABLE, TablesInvTrackingData.LOT.getTableName()).build()).build(),
+                "Provides the ability for adding attachment for a given lot or even for a given event if the event id (optional) is added as part of the request", null),        
+        REMOVE_ATTACHMENT("REMOVE_ATTACHMENT", REQUEST_PARAM_LOT_NAME, "", "attachmentRemoved_success",
+                new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments("qualifId", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),
+                new LPAPIArguments("attachmentId", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 8)},
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
+                        .add(GlobalAPIsParams.LBL_TABLE, TablesInvTrackingData.LOT.getTableName()).build()).build(),
+                "Provides the ability for removing attachment for a given lot or even for a given event if the event id (optional) is added as part of the request", null),        
+        REACTIVATE_ATTACHMENT("REACTIVATE_ATTACHMENT", REQUEST_PARAM_LOT_NAME, "", "attachmentReactivated_success",
+                new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments("qualifId", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),
+                new LPAPIArguments("attachmentId", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 8)},
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
+                        .add(GlobalAPIsParams.LBL_TABLE, TablesInvTrackingData.LOT.getTableName()).build()).build(),
+                "Provides the ability for reactivate one previously removed attachment for a given lot or even for a given event if the event id (optional) is added as part of the request", null),        
+        
+        ;
         private InventoryTrackAPIactionsEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
             this.name = name;
             this.mandatoryParams = mandatoryParams;

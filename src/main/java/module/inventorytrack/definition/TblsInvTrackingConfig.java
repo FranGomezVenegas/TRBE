@@ -128,7 +128,7 @@ public class TblsInvTrackingConfig {
     public enum Reference implements EnumIntTableFields{
         NAME("name",LPDatabase.stringNotNull(), null, null, null, null),
         ACTIVE("active",LPDatabase.booleanFld(false), null, null, null, null),
-//        CATEGORY("category",LPDatabase.stringNotNull(), null, new ReferenceFld(SCHEMA_NAME, TablesInvTrackingConfig.INV_CATEGORY.getTableName() , Category.NAME.getName()), null, null),
+        HASHCODE("hashcode", LPDatabase.string(), null, null, null, null),
         CATEGORY("category",LPDatabase.stringNotNull(), null, null, null, null),
         LOT_REQUIRES_QUALIF("lot_requires_qualif",LPDatabase.booleanFld(false), null, null, null, null),
         QUALIF_VARIABLES_SET("qualif_variables_set", LPDatabase.string(), null, null, null, null),

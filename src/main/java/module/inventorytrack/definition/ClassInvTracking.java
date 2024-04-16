@@ -14,7 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
+import static lbplanet.utilities.LPDate.isIntervalTypeOneRecognized;
 import lbplanet.utilities.LPFrontEnd;
+import lbplanet.utilities.LPMath;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.ApiErrorTraping;
@@ -23,6 +25,7 @@ import module.inventorytrack.definition.TblsInvTrackingData.TablesInvTrackingDat
 import module.inventorytrack.logic.DataInventory;
 import module.inventorytrack.definition.InvTrackingEnums.InventoryTrackAPIactionsEndpoints;
 import module.inventorytrack.definition.TblsInvTrackingConfig.TablesInvTrackingConfig;
+import module.inventorytrack.logic.ConfigInvTracking;
 import static module.inventorytrack.logic.DataInventoryQualif.invTrackingAuditSetAuditRecordAsReviewed;
 import static module.inventorytrack.logic.DataInventoryQualif.objectVariableChangeValue;
 import static module.inventorytrack.logic.DataInventoryQualif.objectVariableSetValue;
@@ -397,7 +400,76 @@ public class ClassInvTracking implements ActionsClass{
                     }
                 }
                 break;
+            case CONFIG_UPDATE_REFERENCE:
+                lotName = argValues[0].toString();
+                String fieldName = argValues[1].toString();
+                String fieldValue = argValues[2].toString();
+                fieldNames = null;
+                fieldValues = null;
+                if (fieldValue != null && fieldValue.length() > 0) {
+                    if (fieldName != null) {
+                        fieldNames = fieldName.split("\\|");
+                    }
+                    fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fieldValue.split("\\|"));
+                }
+                actionDiagnoses=null;
+                if (actionDiagnoses==null){
+                    if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                        actionDiagnoses = (InternalMessage) fieldValues[1];
+                    } else {
+                        actionDiagnoses = ConfigInvTracking.configUpdateReference(lotName, fieldNames, fieldValues);
+                    }                
+                }
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), lotName);
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT_QUALIFICATION.getTableName(), actionDiagnoses.getNewObjectId());
+                }
+                break;
 
+
+            case ADD_ATTACHMENT:
+                lotName = argValues[0].toString();
+                lotQualifId = LPNulls.replaceNull(argValues[1]).toString().length() > 0 ? (Integer) argValues[1] : null;
+                String attachUrl = argValues[2].toString();
+                String briefSummary = argValues[3].toString();
+                if (lotName != null) {
+                    actionDiagnoses = invLot.addAttachment(lotQualifId, attachUrl, briefSummary);
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), lotName);
+                        if (lotQualifId != null) {
+                            rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT_QUALIFICATION.getTableName(), lotQualifId);
+                        }
+                    }
+                }
+                break;
+            case REMOVE_ATTACHMENT:
+                lotName = argValues[0].toString();
+                lotQualifId = LPNulls.replaceNull(argValues[1]).toString().length() > 0 ? (Integer) argValues[1] : null;
+                Integer attachmentId = LPNulls.replaceNull(argValues[2]).toString().length() > 0 ? (Integer) argValues[2] : null;
+                if (lotName != null) {
+                    actionDiagnoses = invLot.removeAttachment(lotQualifId, attachmentId);
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), lotName);
+                        if (lotQualifId != null) {
+                            rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT_QUALIFICATION.getTableName(), lotQualifId);
+                        }
+                    }
+                }
+                break;
+            case REACTIVATE_ATTACHMENT:
+                lotName = argValues[0].toString();
+                lotQualifId = LPNulls.replaceNull(argValues[1]).toString().length() > 0 ? (Integer) argValues[1] : null;
+                attachmentId = LPNulls.replaceNull(argValues[2]).toString().length() > 0 ? (Integer) argValues[2] : null;
+                if (lotName != null) {
+                    actionDiagnoses = invLot.reactivateAttachment(lotQualifId, attachmentId);
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), lotName);
+                        if (lotQualifId != null) {
+                            rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT_QUALIFICATION.getTableName(), lotQualifId);
+                        }
+                    }
+                }
+                break;
             default:
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, null, ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND, null);
                 invLot = null;
