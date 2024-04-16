@@ -53,10 +53,10 @@ public class AuditAndUserValidation {
 
     private static AuditAndUserValidation auditUserVal;
 
-     public static AuditAndUserValidation getInstanceForActions(HttpServletRequest request, String language, BusinessRules busRulesProcInstance, Boolean isPlatform) { 
+     public static AuditAndUserValidation getInstanceForActions(HttpServletRequest request, String language, BusinessRules busRulesProcInstance, Boolean isPlatform, Boolean isForProcManagement) { 
         if (auditUserVal == null) {
             if (request==null) return null;
-            auditUserVal = new AuditAndUserValidation(request, language, busRulesProcInstance, isPlatform);
+            auditUserVal = new AuditAndUserValidation(request, language, busRulesProcInstance, isPlatform, isForProcManagement);
             return auditUserVal;
         } else {
          return auditUserVal;
@@ -82,7 +82,7 @@ public class AuditAndUserValidation {
     private String auditReasonPhrase="";
     private Object[] checkUserValidationPassesDiag;
     
-    private AuditAndUserValidation(HttpServletRequest request, String language, BusinessRules busRulesProcInstance, Boolean isPlatform){
+    private AuditAndUserValidation(HttpServletRequest request, String language, BusinessRules busRulesProcInstance, Boolean isPlatform, Boolean isForProcManagement){
         
         String[] mandatoryParams = new String[]{};
         LPAPIArguments[] argsDef=null;
@@ -102,6 +102,10 @@ public class AuditAndUserValidation {
         String procInstanceName=null;
         if (Boolean.FALSE.equals(isPlatform))
             procInstanceName=requestArgValues[2].toString();
+        if (isForProcManagement){
+            procInstanceName="app";
+        }
+        
         //String procInstanceName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME);            
         //String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
         //String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
@@ -115,6 +119,7 @@ public class AuditAndUserValidation {
             this.checkUserValidationPassesDiag= ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, "notActionPassed", null);
             return;
         }
+        
         BusinessRules bi=new BusinessRules(procInstanceName, null);   
         Object[] procActionRequiresUserConfirmation = ActionsControl.procActionRequiresUserConfirmation(procInstanceName, actionName, bi);
         if (procActionRequiresUserConfirmation[0].toString().contains(LPPlatform.LAB_TRUE)){     

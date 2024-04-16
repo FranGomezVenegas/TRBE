@@ -209,7 +209,9 @@ public class ProcedureRequestSession {
             if (Boolean.FALSE.equals(isPlatform)&&Boolean.FALSE.equals(isForProcManagement)) {
                 this.busRulesProcInstance = new BusinessRules(procInstanceName, null);
             }
-
+            if (this.isForProcManagement){
+                this.busRulesProcInstance = new BusinessRules("app", null);
+            }
             if (Boolean.FALSE.equals(isForUAT) && Boolean.FALSE.equals(isForDocumentation)) {
                 finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
                 if (finalToken != null) {
@@ -231,6 +233,33 @@ public class ProcedureRequestSession {
                     this.errorMessage = "procInstanceName argument not found and is mandatory";
                     return;                
                 }
+            }
+            if (Boolean.FALSE.equals(isForTesting) && Boolean.FALSE.equals(isForUAT) && Boolean.FALSE.equals(isQuery) && Boolean.FALSE.equals(isForDocumentation)
+                    &&Boolean.FALSE.equals(this.isPlatform)) {
+                String prvProcInstance=this.procedureInstance;
+                if (this.isForProcManagement){
+                   this.procedureInstance="app";
+                }
+                this.auditAndUsrValid = AuditAndUserValidation.getInstanceForActions(request, language, this.busRulesProcInstance, this.isPlatform, this.isForProcManagement);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())) {
+                    this.hasErrors = true;
+                    
+                    this.errorMessage = this.auditAndUsrValid.getCheckUserValidationPassesDiag()[this.auditAndUsrValid.getCheckUserValidationPassesDiag().length - 1].toString();
+                    return;
+                }
+                if (this.isForProcManagement){
+                   this.procedureInstance=prvProcInstance;
+                }
+                if (Boolean.FALSE.equals(isPlatform)&&Boolean.FALSE.equals(isForProcManagement)) {
+                    this.busRulesProcInstance = new BusinessRules(procInstanceName, null);
+                }                
+                String schemaConfigName = null;
+                if (Boolean.TRUE.equals(isPlatform)) {
+                    schemaConfigName = GlobalVariables.Schemas.CONFIG.getName();
+                } else {
+                    schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
+                }
+                Rdbms.setTransactionId(schemaConfigName);
             }
             if (this.token != null && !isPlatform && !this.isForDocumentation) {
                 this.procedureVersion = this.token.getProcedureInstanceVersion(procInstanceName);
@@ -266,24 +295,7 @@ public class ProcedureRequestSession {
                     this.errorMessageCodeObj=actionEnabled.getMessageCodeObj();
                     return;
                 }
-            }
-            if (Boolean.FALSE.equals(isForTesting) && Boolean.FALSE.equals(isForUAT) && Boolean.FALSE.equals(isQuery) && Boolean.FALSE.equals(isForDocumentation)
-                    &&Boolean.FALSE.equals(isForProcManagement)&&Boolean.FALSE.equals(this.isPlatform)) {
-                this.auditAndUsrValid = AuditAndUserValidation.getInstanceForActions(request, language, this.busRulesProcInstance, this.isPlatform);
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())) {
-                    this.hasErrors = true;
-                    
-                    this.errorMessage = this.auditAndUsrValid.getCheckUserValidationPassesDiag()[this.auditAndUsrValid.getCheckUserValidationPassesDiag().length - 1].toString();
-                    return;
-                }
-                String schemaConfigName = null;
-                if (Boolean.TRUE.equals(isPlatform)) {
-                    schemaConfigName = GlobalVariables.Schemas.CONFIG.getName();
-                } else {
-                    schemaConfigName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName());
-                }
-                Rdbms.setTransactionId(schemaConfigName);
-            }
+            }            
             if (Boolean.TRUE.equals(isForTesting)) {
                 this.tstAuditObj = TestingAuditIds.getInstance();
                 this.busRuleVisited = TestingBusinessRulesVisited.getInstance();
@@ -557,7 +569,7 @@ public class ProcedureRequestSession {
     }
     public static ProcedureRequestSession getInstanceForProcManagement(HttpServletRequest req, HttpServletResponse resp,  Boolean isTesting) {
         if (theSession == null || theSession.getTokenString() == null) {
-            theSession = new ProcedureRequestSession(req, resp, null, isTesting, true, false, null, false, false, true);
+            theSession = new ProcedureRequestSession(req, resp, null, isTesting, false, false, null, false, false, true);
         }
         return theSession;
     }

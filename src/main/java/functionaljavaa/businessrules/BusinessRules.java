@@ -93,6 +93,9 @@ public class BusinessRules {
     }    
 
     public static Object[] getProcInstanceActionsMasterDataInfo(String procedureInstanceName){
+        Object[] dbTableExists = Rdbms.dbTableExists(procedureInstanceName, procedureInstanceName + "-procedure", 
+            TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS_MASTER_DATA.getTableName());
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())) {return dbTableExists;}
         String[] fldNames=new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.ROLES_NAME.getName(),
             TblsProcedure.ProcedureActions.ARE_YOU_SURE_REQUIRED.getName(), TblsProcedure.ProcedureActions.JUSTIF_REASON_REQUIRED.getName(), TblsProcedure.ProcedureActions.ESIGN_REQUIRED.getName(),
             TblsProcedure.ProcedureActions.USER_CREDENTIAL_REQUIRED.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(),
@@ -104,7 +107,7 @@ public class BusinessRules {
     }
     private void setActionsMasterData(String procedureInstanceName){
         Object[] dbTableExists = Rdbms.dbTableExists(procedureInstanceName, procedureInstanceName + "-procedure", 
-                TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName());
+                TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS_MASTER_DATA.getTableName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString())) {return;}
         JSONArray jArr = new JSONArray();
         Object[] procInstanceActionsListAll=getProcInstanceActionsMasterDataInfo(procedureInstanceName);

@@ -143,7 +143,6 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
 
                             }
                             proceduresList.add(curProcObj);
-
                         }
                     }
                     jMainObj.put(mainObjectName, proceduresList);

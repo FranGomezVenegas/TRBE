@@ -132,6 +132,7 @@ public class AppProcedureListAPI extends HttpServlet {
             String[] procFldNameArray = PROC_FLD_NAME.split("\\|");
 
             JSONArray procedures = new JSONArray();
+
             for (Object curProc : allUserProcedurePrefix) {
                 try {
                     if (Boolean.FALSE.equals(GlobalVariables.PROC_MANAGEMENT_SPECIAL_ROLE.equalsIgnoreCase(curProc.toString()))) {
@@ -180,7 +181,7 @@ public class AppProcedureListAPI extends HttpServlet {
                             procedure.put("procModel", procModel(curProc.toString(), sizeValue, token.getUserRole()));
                         }
                         procedure.put("master_data", getMasterData(token, curProc.toString()));
-                        procedures.add(procedure);
+                        procedures.add(procedure);                                            
                     }
                 } catch (Exception e) {
                     JSONObject procWithError = new JSONObject();

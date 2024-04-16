@@ -66,8 +66,13 @@ public class ActionsControl {
     private static JSONArray procActionsWithJustifReasonInTable(String procInstanceName) {
         JSONArray jArr = new JSONArray();
         Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName(), new String[]{TblsProcedure.ProcedureActions.JUSTIF_REASON_REQUIRED.getName()}, new Object[]{true}, new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName()});
-        Object[][] ruleValueMasterData = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS_MASTER_DATA.getTableName(), new String[]{TblsProcedure.ProcedureActions.JUSTIF_REASON_REQUIRED.getName()}, new Object[]{true}, new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName()});
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())&&LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString())) {
+        
+        Object[][] ruleValueMasterData = null;
+        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS_MASTER_DATA.getTableName());
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())) {
+            ruleValueMasterData = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS_MASTER_DATA.getTableName(), new String[]{TblsProcedure.ProcedureActions.JUSTIF_REASON_REQUIRED.getName()}, new Object[]{true}, new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName()});
+        }
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())&&(ruleValueMasterData==null||LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString()))) {       
             return jArr;
         }
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString()))){
@@ -78,7 +83,7 @@ public class ActionsControl {
                 jArr.add(curAction[0]);
             }
         }
-        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString()))){
+        if (ruleValueMasterData!=null&&Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString()))){
             for (Object[] curAction : ruleValueMasterData) {
                 JSONObject jActionObj = new JSONObject();
                 jActionObj.put(curAction[0], actionDetailInTable(curAction[0], curAction[1], curAction[2], curAction[3]));
@@ -109,8 +114,13 @@ public class ActionsControl {
     private static JSONArray procActionsWithActionConfirmInTable(String procInstanceName) {
         JSONArray jArr = new JSONArray();
         Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName(), new String[]{TblsProcedure.ProcedureActions.ARE_YOU_SURE_REQUIRED.getName()}, new Object[]{true}, new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName()});
-        Object[][] ruleValueMasterData = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS_MASTER_DATA.getTableName(), new String[]{TblsProcedure.ProcedureActions.ARE_YOU_SURE_REQUIRED.getName()}, new Object[]{true}, new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName()});
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())&&LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString())) {
+        
+        Object[][] ruleValueMasterData = null;
+        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS_MASTER_DATA.getTableName());
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())) {
+            ruleValueMasterData = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS_MASTER_DATA.getTableName(), new String[]{TblsProcedure.ProcedureActions.ARE_YOU_SURE_REQUIRED.getName()}, new Object[]{true}, new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName()});
+        }
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())&&(ruleValueMasterData==null||LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString()))) {       
             return jArr;
         }
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString()))){
@@ -121,7 +131,7 @@ public class ActionsControl {
                 jArr.add(curAction[0]);
             }
         }
-        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString()))){
+        if (ruleValueMasterData!=null&&Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString()))){
             for (Object[] curAction : ruleValueMasterData) {
                 JSONObject jActionObj = new JSONObject();
                 jActionObj.put(curAction[0], actionDetailInTable(curAction[0], curAction[1], curAction[2], curAction[3]));
@@ -157,9 +167,12 @@ public class ActionsControl {
     private static JSONArray procActionsWithESignInTable(String procInstanceName) {
         JSONArray jArr = new JSONArray();
         Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName(), new String[]{TblsProcedure.ProcedureActions.ESIGN_REQUIRED.getName()}, new Object[]{true}, new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName()});
-        Object[][] ruleValueMasterData = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS_MASTER_DATA.getTableName(), new String[]{TblsProcedure.ProcedureActions.ESIGN_REQUIRED.getName()}, new Object[]{true}, new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName()});
-
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())&&LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString())) {
+        Object[][] ruleValueMasterData = null;
+        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS_MASTER_DATA.getTableName());
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())) {
+            ruleValueMasterData = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS_MASTER_DATA.getTableName(), new String[]{TblsProcedure.ProcedureActions.ESIGN_REQUIRED.getName()}, new Object[]{true}, new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName()});
+        }
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())&&(ruleValueMasterData==null||LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString()))) {
             return jArr;
         }
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString()))){
@@ -170,7 +183,7 @@ public class ActionsControl {
                 jArr.add(curAction[0]);
             }
         }
-        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString()))){
+        if (ruleValueMasterData!=null&&Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString()))){
             for (Object[] curAction : ruleValueMasterData) {
                 JSONObject jActionObj = new JSONObject();
                 jActionObj.put(curAction[0], actionDetailInTable(curAction[0], curAction[1], curAction[2], curAction[3]));
@@ -205,9 +218,13 @@ public class ActionsControl {
     }
     private static JSONArray procActionsWithConfirmUserInTable(String procInstanceName) {
         JSONArray jArr = new JSONArray();
-        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName(), new String[]{TblsProcedure.ProcedureActions.USER_CREDENTIAL_REQUIRED.getName()}, new Object[]{true}, new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName()});
-        Object[][] ruleValueMasterData = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS_MASTER_DATA.getTableName(), new String[]{TblsProcedure.ProcedureActions.USER_CREDENTIAL_REQUIRED.getName()}, new Object[]{true}, new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName()});
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())&&LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString())) {
+        Object[][] ruleValue = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS.getTableName(), new String[]{TblsProcedure.ProcedureActions.USER_CREDENTIAL_REQUIRED.getName()}, new Object[]{true}, new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName()});        
+        Object[][] ruleValueMasterData = null;
+        Object[] dbTableExists = Rdbms.dbTableExists(procInstanceName, procInstanceName + "-procedure", TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS_MASTER_DATA.getTableName());
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dbTableExists[0].toString())) {
+            ruleValueMasterData = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.PROCEDURE_ACTIONS_MASTER_DATA.getTableName(), new String[]{TblsProcedure.ProcedureActions.USER_CREDENTIAL_REQUIRED.getName()}, new Object[]{true}, new String[]{TblsProcedure.ProcedureActions.ACTION_NAME.getName(), TblsProcedure.ProcedureActions.AUDIT_REASON_TYPE.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_EN.getName(), TblsProcedure.ProcedureActions.AUDIT_LIST_ES.getName()});
+        }
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())&&(ruleValueMasterData==null||LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString()))) {       
             return jArr;
         }
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString()))){
@@ -218,7 +235,7 @@ public class ActionsControl {
                 jArr.add(curAction[0]);
             }
         }
-        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString()))){
+        if (ruleValueMasterData!=null&&Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString()))){
             for (Object[] curAction : ruleValueMasterData) {
                 JSONObject jActionObj = new JSONObject();
                 jActionObj.put(curAction[0], actionDetailInTable(curAction[0], curAction[1], curAction[2], curAction[3]));
@@ -260,7 +277,7 @@ public class ActionsControl {
             jObjListEntries.addAll(Arrays.asList(listEsArr));
             jObj.put("list_entries_es", jObjListEntries);
         }
-        return jObj;
+        return jObj; 
     }
 
     public static InternalMessage isTheProcActionEnabled(Token tokn, String procInstanceName, String actionNm, BusinessRules procBusinessRules) {
@@ -392,7 +409,7 @@ public class ActionsControl {
             actionDefinition = procBusinessRules.getActionDefinitionMasterData(actionName);
         
         if (actionDefinition==null) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_DENIED_RULENOTFOUND, new Object[]{procInstanceName, actionDefinition.getActionName()});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_DENIED_RULENOTFOUND, new Object[]{procInstanceName, null});
         } else if (Boolean.FALSE.equals(actionDefinition.getJustifReasonReqd())) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.LpPlatformErrorTrapping.JUSTIFPHRASEREQUIRED_DENIED, new Object[]{actionName, procInstanceName, actionDefinition.getActionName()});
         } else {
@@ -411,7 +428,7 @@ public class ActionsControl {
             actionDefinition = procBusinessRules.getActionDefinitionMasterData(actionName);
 
         if (actionDefinition==null) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.LpPlatformErrorTrapping.ESIGNREQUIRED_DENIED_RULENOTFOUND, new Object[]{procInstanceName, actionDefinition.getActionName()});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.LpPlatformErrorTrapping.ESIGNREQUIRED_DENIED_RULENOTFOUND, new Object[]{procInstanceName, null});
         } else if (Boolean.FALSE.equals(actionDefinition.getEsignReqd())) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.LpPlatformErrorTrapping.ESIGNREQUIRED_DENIED, new Object[]{actionName, procInstanceName, actionDefinition.getActionName()});
         } else {
@@ -430,7 +447,7 @@ public class ActionsControl {
         if (actionDefinition==null) 
             actionDefinition = procBusinessRules.getActionDefinitionMasterData(actionName);
         if (actionDefinition==null) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.LpPlatformErrorTrapping.VERIFYUSERREQUIRED_DENIED_RULENOTFOUND, new Object[]{procInstanceName, actionDefinition.getActionName()});
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.LpPlatformErrorTrapping.VERIFYUSERREQUIRED_DENIED_RULENOTFOUND, new Object[]{procInstanceName, actionName});
         } else if (Boolean.FALSE.equals(actionDefinition.getUserConfirmReqd())) {
             return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, LPPlatform.LpPlatformErrorTrapping.VERIFYUSERREQUIRED_DENIED, new Object[]{actionName, procInstanceName, actionDefinition.getActionName()});
         } else {
