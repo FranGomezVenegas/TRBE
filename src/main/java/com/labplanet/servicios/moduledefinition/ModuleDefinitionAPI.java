@@ -25,9 +25,10 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
+import static trazit.session.ActionsServletCommons.publishResult;
+import trazit.session.InternalMessage;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -176,14 +177,18 @@ public class ModuleDefinitionAPI extends HttpServlet {
         }
         try (PrintWriter out = response.getWriter()) {
             ClassTrazitCodeDoc clss = new ClassTrazitCodeDoc(request, response, endPoint);
-            Object[] diagnostic = clss.getDiagnosticObj();
+            InternalMessage diagnostic = clss.getDiagnosticObj();
+            
+            publishResult(request, response, procReqInstance, endPoint, null, clss.getDiagnosticObj(), 
+                    clss.getMessageDynamicData(), clss.getRelatedObj());            
+/*            
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clss.getMessageDynamicData());
+                LPFrontEnd.(request, response, diagnostic[4].toString(), clss.getMessageDynamicData());
             } else {
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
             }
-
+*/
         } catch (Exception e) {
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, LPPlatform.ApiErrorTraping.EXCEPTION_RAISED, new Object[]{e.getMessage()});
         } finally {

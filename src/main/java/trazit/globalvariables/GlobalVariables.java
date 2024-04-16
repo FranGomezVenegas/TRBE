@@ -60,6 +60,7 @@ import module.inventorytrack.definition.ClassInvTracking;
 import module.inventorytrack.definition.ClassInvTrackingController;
 import module.inventorytrack.definition.InvTrackingEnums;
 import module.inventorytrack.definition.TblsInvTrackingConfig;
+import module.inventorytrack.definition.TblsInvTrackingConfigAudit;
 import module.inventorytrack.definition.TblsInvTrackingData;
 import module.inventorytrack.definition.TblsInvTrackingDataAudit;
 import module.inventorytrack.definition.TblsInvTrackingProcedure;
@@ -132,10 +133,10 @@ public class GlobalVariables {
     }    
     
     public enum TrazitModules{
-        STOCKS(null,TblsInvTrackingConfig.TablesInvTrackingConfig.values(),
+        STOCKS(TblsInvTrackingConfigAudit.TablesInvTrackingConfigAudit.values(),TblsInvTrackingConfig.TablesInvTrackingConfig.values(),
             TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.values(), TblsInvTrackingData.TablesInvTrackingData.values(),
             null, TblsInvTrackingProcedure.TablesInvTrackingProcedure.values(),
-            null,TblsInvTrackingConfig.ViewsInvTrackingConfig.values(),
+            null, TblsInvTrackingConfig.ViewsInvTrackingConfig.values(),
             null, TblsInvTrackingData.ViewsInvTrackingData.values(),
             null, null, InvTrackingFrontendMasterData.class,
             new ActionsEndpointPair[]{
