@@ -102,8 +102,8 @@ public class ClassTrazitCodeDoc {
     /**
      * @return the diagnostic
      */
-    public Object[] getDiagnostic() {
-        return null;
+    public InternalMessage getDiagnosticObj() {
+        return this.diagnosticObj;
     }
 
     /**

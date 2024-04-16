@@ -78,7 +78,7 @@ public class ClassSampleController implements ActionsClass{
         }
     }    
 
-    public StringBuilder getRowArgsRows() {        return rowArgsRows;    }
+    @Override    public StringBuilder getRowArgsRows() {        return rowArgsRows;    }
     @Override    public InternalMessage getDiagnosticObj() {        return diagnosticObj;    }
     @Override    public RelatedObjects getRelatedObj() {        return functionRelatedObjects;    }
     @Override    public Object[] getDiagnostic() {        return null;    }
@@ -86,8 +86,7 @@ public class ClassSampleController implements ActionsClass{
     public Boolean getFunctionFound() {        return functionFound;    }    
     @Override    public EnumIntEndpoints getEndpointObj(){        return enumConstantByName;    }
 
-    @Override
-    public HttpServletResponse getHttpResponse() {
+    @Override    public HttpServletResponse getHttpResponse() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
