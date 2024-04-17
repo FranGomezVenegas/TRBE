@@ -122,11 +122,11 @@ public class ProcedureDefinitionToInstanceUtility {
         return LPArray.getColumnFromArray2D(procedureRolesListArr, 0);
     }
 
-    public static final Object[][] procedureParentAndUserRequirementsList(String procInstanceName, Integer procVersion, EnumIntTableFields fldObj){
+    public static final Object[][] procedureParentAndUserRequirementsList(String procInstanceName, Integer procVersion, EnumIntTableFields[] fldObj){
         Object[][] procedureRolesListArr = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS.getTableName(), 
                 new String[]{TblsReqs.ProcedureUserRequirements.PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRequirements.PROCEDURE_VERSION.getName()}, 
                 new Object[]{procInstanceName, procVersion}, 
-                new String[]{fldObj.getName(), TblsReqs.ProcedureUserRequirements.CODE.getName()}, new String[]{TblsReqs.ProcedureUserRequirements.PARENT_CODE.getName()});
+                EnumIntTableFields.getAllFieldNames(fldObj), new String[]{TblsReqs.ProcedureUserRequirements.PARENT_CODE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procedureRolesListArr[0][0].toString()))
             return new Object[][]{{}};
         return procedureRolesListArr; //LPArray.getColumnFromArray2D(procedureRolesListArr, 0);
