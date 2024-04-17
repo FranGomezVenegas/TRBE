@@ -634,7 +634,7 @@ public class ClassReqProcedureActions {
                 i++;
                 String in_system = argValues[i].toString();
                 i++;
-                Object[][] procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, TblsReqs.ProcedureUserRequirements.PARENT_CODE);
+                Object[][] procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, new EnumIntTableFields[]{TblsReqs.ProcedureUserRequirements.PARENT_CODE});
                 int[] valuePosicArray2D=null;
                 if (code.length()==0){
                     valuePosicArray2D = valuePosicArray2D(procedureParentUserAndReqList, new Object[][]{{0, parentCode}});
@@ -794,7 +794,7 @@ public class ClassReqProcedureActions {
                 String newParentCode = argValues[i].toString();
                 i++;
                 String newCode = argValues[i].toString();
-                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, TblsReqs.ProcedureUserRequirements.PARENT_CODE);
+                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, new EnumIntTableFields[]{TblsReqs.ProcedureUserRequirements.PARENT_CODE, TblsReqs.ProcedureUserRequirements.CODE});
                 valuePosicArray2D = valuePosicArray2D(procedureParentUserAndReqList, new Object[][]{{0, parentCode},{1, code}});                        
                 if (valuePosicArray2D.length==0) {
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND, new Object[]{parentCode+"-"+code, procedureName, procedureVersion});
@@ -865,7 +865,7 @@ public class ClassReqProcedureActions {
                 i++;
                 fieldValue = argValues[i].toString();
                 i++;*/
-                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, TblsReqs.ProcedureUserRequirements.REQ_ID);                
+                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, new EnumIntTableFields[]{TblsReqs.ProcedureUserRequirements.REQ_ID});                
                 valuePosicArray2D = valuePosicArray2D(procedureParentUserAndReqList, new Object[][]{{0, Integer.valueOf(reqId)}});
                 if (valuePosicArray2D.length==0){
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.RISK_REQUIREMENT_NOT_FOUND, new Object[]{reqId, procedureName, procedureVersion});
@@ -966,7 +966,7 @@ public class ClassReqProcedureActions {
             case REMOVE_RISK:
                 reqId = argValues[3].toString();
                 riskId = argValues[4].toString();
-                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, TblsReqs.ProcedureUserRequirements.REQ_ID);                
+                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, new EnumIntTableFields[]{TblsReqs.ProcedureUserRequirements.REQ_ID});
                 valuePosicArray2D = valuePosicArray2D(procedureParentUserAndReqList, new Object[][]{{0, Integer.valueOf(reqId)}});
                 if (valuePosicArray2D.length==0){
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND, new Object[]{reqId, procedureName, procedureVersion});
@@ -1004,7 +1004,7 @@ public class ClassReqProcedureActions {
                 i++;
                 fieldValue = argValues[i].toString();
                 i++;
-                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, TblsReqs.ProcedureUserRequirements.REQ_ID);                
+                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, new EnumIntTableFields[]{TblsReqs.ProcedureUserRequirements.REQ_ID});
                 valuePosicArray2D = valuePosicArray2D(procedureParentUserAndReqList, new Object[][]{{0, Integer.valueOf(reqId)}});
                 if (valuePosicArray2D.length==0){
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND, new Object[]{reqId, procedureName, procedureVersion});
@@ -1086,7 +1086,7 @@ public class ClassReqProcedureActions {
                     this.messageDynamicData = new Object[]{roleName, procedureName, procedureVersion};
                     break;
                 }
-                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, TblsReqs.ProcedureUserRequirements.REQ_ID);                
+                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, new EnumIntTableFields[]{TblsReqs.ProcedureUserRequirements.REQ_ID});
                 valuePosicArray2D = valuePosicArray2D(procedureParentUserAndReqList, new Object[][]{{0, Integer.valueOf(reqId)}});
                 if (valuePosicArray2D.length==0){
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND, new Object[]{reqId, procedureName, procedureVersion});
@@ -1200,7 +1200,7 @@ public class ClassReqProcedureActions {
                     this.messageDynamicData = new Object[]{roleName, procedureName, procedureVersion};
                     break;
                 }
-                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, TblsReqs.ProcedureUserRequirements.REQ_ID);                
+                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, new EnumIntTableFields[]{TblsReqs.ProcedureUserRequirements.REQ_ID});
                 valuePosicArray2D = valuePosicArray2D(procedureParentUserAndReqList, new Object[][]{{0, Integer.valueOf(reqId)}});
                 if (valuePosicArray2D.length==0){
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND, new Object[]{reqId, procedureName, procedureVersion});
@@ -1293,8 +1293,9 @@ public class ClassReqProcedureActions {
                     break;
                 }
 
-                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, TblsReqs.ProcedureUserRequirements.REQ_ID);                
-                valuePosicArray2D = valuePosicArray2D(procedureParentUserAndReqList, new Object[][]{{0, Integer.valueOf(reqId)}});
+                EnumIntTableFields[] procUserReqsFlds = TblsReqs.TablesReqs.PROCEDURE_USER_REQS.getTableFields();
+                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, procUserReqsFlds);
+                valuePosicArray2D = valuePosicArray2D(procedureParentUserAndReqList, new Object[][]{{EnumIntTableFields.getFldPosicInArray(procUserReqsFlds, TblsReqs.ProcedureUserRequirements.REQ_ID.getName()), Integer.valueOf(reqId)}});
                 if (valuePosicArray2D.length==0){
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND, new Object[]{reqId, procedureName, procedureVersion});
                     this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND, new Object[]{reqId, procedureName, procedureVersion});
@@ -1340,6 +1341,7 @@ public class ClassReqProcedureActions {
                     removeDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION,
                         fieldNames, fieldValues);
                     if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
+                        
                         JSONObject speViewDefinition=new JSONObject(isModuleSpecialWindowAvailableDiagn[2].toString());
                         //speViewDefinition=(JSONObject) speViewDefinition.get("requirementsInfo");
                         if (Boolean.TRUE.equals(speViewDefinition.has("window_actions"))){
@@ -1348,12 +1350,29 @@ public class ClassReqProcedureActions {
                                 JSONObject curAction = (JSONObject) speViewDefinitionActions.get(i);                            
                                 windowActionName = curAction.get("actionName").toString();
 
+                                String[] newChildReqFldN= EnumIntTableFields.getAllFieldNames(procUserReqsFlds);
+                                Object[] newChildReqFldV=procedureParentUserAndReqList[valuePosicArray2D[0]];
+                                Integer parentCodeFldPosic=EnumIntTableFields.getFldPosicInArray(procUserReqsFlds, TblsReqs.ProcedureUserRequirements.PARENT_CODE.getName());
+                                Integer codeFldPosic=EnumIntTableFields.getFldPosicInArray(procUserReqsFlds, TblsReqs.ProcedureUserRequirements.CODE.getName());
+                                newChildReqFldV[codeFldPosic]=newChildReqFldV[parentCodeFldPosic].toString()+"."+(i+1);
+                                String[] newChildReqFldsNoNulls=new String[]{};
+                                Object[] newChildReqFldsValuesNoNulls=new Object[]{};
+                                for (int iFld=0;iFld<newChildReqFldV.length;iFld++){
+                                    if ((LPNulls.replaceNull(newChildReqFldV[iFld]).toString().length()>0)&&(!TblsReqs.ProcedureUserRequirements.REQ_ID.getName().equalsIgnoreCase(newChildReqFldN[iFld]))){
+                                        newChildReqFldsNoNulls=LPArray.addValueToArray1D(newChildReqFldsNoNulls, newChildReqFldN[iFld]);
+                                        newChildReqFldsValuesNoNulls=LPArray.addValueToArray1D(newChildReqFldsValuesNoNulls, newChildReqFldV[iFld]);
+                                    }
+                                }
+                                RdbmsObject newChildReq = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_USER_REQS, newChildReqFldsNoNulls, newChildReqFldsValuesNoNulls);
+                                String newReqId=newChildReq.getNewRowId().toString();
+                                
+        
                                 fieldNames=new String[]{TblsReqs.ProcedureReqSolution.PROCEDURE_NAME.getName(), TblsReqs.ProcedureReqSolution.PROCEDURE_VERSION.getName(),
                                     TblsReqs.ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureReqSolution.REQ_ID.getName(), TblsReqs.ProcedureReqSolution.TYPE.getName(),
-                                    TblsReqs.ProcedureReqSolution.WINDOW_ACTION.getName(), TblsReqs.ProcedureReqSolution.ROLES.getName()};                        
+                                    TblsReqs.ProcedureReqSolution.WINDOW_ACTION.getName(), TblsReqs.ProcedureReqSolution.ROLES.getName(), TblsReqs.ProcedureReqSolution.ORDER_NUMBER.getName()};                        
 
                                 fieldValues=new Object[]{procedureName, procedureVersion, procInstanceName, 
-                                    Integer.valueOf(reqId), ProcedureDefinitionToInstanceSections.ReqSolutionTypes.WINDOW_BUTTON.getTagValue(), windowActionName, roleName};
+                                    Integer.valueOf(newReqId.length()>0?newReqId: reqId), ProcedureDefinitionToInstanceSections.ReqSolutionTypes.WINDOW_BUTTON.getTagValue(), windowActionName, roleName, (i+1)};
                                 /*if (confirmDialog.length()>0){
                                     fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{TblsReqs.ProcedureReqSolution.CONFIRM_DIALOG.getName(), TblsReqs.ProcedureReqSolution.CONFIRM_DIALOG_DETAIL.getName()});
                                     fieldValues=LPArray.addValueToArray1D(fieldValues,new Object[]{confirmDialog, confirmDialogDetail});
@@ -1372,6 +1391,7 @@ public class ClassReqProcedureActions {
                     }
                 }
                 break;
+
             case UPDATE_REQ_SOLUTION: 
                 reqId = argValues[i].toString();
                 i++;
@@ -1395,7 +1415,7 @@ public class ClassReqProcedureActions {
                     this.diagnosticObjIntMsg=errMsg.getMessageCodeObj();
                     break;
                 }                
-                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, TblsReqs.ProcedureUserRequirements.REQ_ID);                
+                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, new EnumIntTableFields[]{TblsReqs.ProcedureUserRequirements.REQ_ID});
                 valuePosicArray2D = valuePosicArray2D(procedureParentUserAndReqList, new Object[][]{{0, Integer.valueOf(reqId)}});
                 if (valuePosicArray2D.length==0){
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND, new Object[]{reqId, procedureName, procedureVersion});
@@ -1474,7 +1494,7 @@ public class ClassReqProcedureActions {
                     this.diagnosticObjIntMsg=errMsg.getMessageCodeObj();
                     break;
                 }                
-                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, TblsReqs.ProcedureUserRequirements.REQ_ID);                
+                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, new EnumIntTableFields[]{TblsReqs.ProcedureUserRequirements.REQ_ID});
                 valuePosicArray2D = valuePosicArray2D(procedureParentUserAndReqList, new Object[][]{{0, Integer.valueOf(reqId)}});
                 if (valuePosicArray2D.length==0){
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND, new Object[]{reqId, procedureName, procedureVersion});
@@ -1527,7 +1547,7 @@ public class ClassReqProcedureActions {
                     this.diagnosticObjIntMsg=errMsg.getMessageCodeObj();
                     break;
                 }                
-                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, TblsReqs.ProcedureUserRequirements.REQ_ID);                
+                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, new EnumIntTableFields[]{TblsReqs.ProcedureUserRequirements.REQ_ID});
                 valuePosicArray2D = valuePosicArray2D(procedureParentUserAndReqList, new Object[][]{{0, Integer.valueOf(reqId)}});
                 if (valuePosicArray2D.length==0){
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND, new Object[]{reqId, procedureName, procedureVersion});
@@ -1568,7 +1588,7 @@ public class ClassReqProcedureActions {
                     this.diagnosticObjIntMsg=errMsg.getMessageCodeObj();
                     break;
                 }                
-                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, TblsReqs.ProcedureUserRequirements.REQ_ID);                
+                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, new EnumIntTableFields[]{TblsReqs.ProcedureUserRequirements.REQ_ID});
                 valuePosicArray2D = valuePosicArray2D(procedureParentUserAndReqList, new Object[][]{{0, Integer.valueOf(reqId)}});
                 if (valuePosicArray2D.length==0){
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND, new Object[]{reqId, procedureName, procedureVersion});
@@ -1607,7 +1627,7 @@ public class ClassReqProcedureActions {
                     this.diagnosticObjIntMsg=errMsg.getMessageCodeObj();
                     break;
                 }                
-                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, TblsReqs.ProcedureUserRequirements.REQ_ID);                
+                procedureParentUserAndReqList = procedureParentAndUserRequirementsList(procedureName, procedureVersion, new EnumIntTableFields[]{TblsReqs.ProcedureUserRequirements.REQ_ID});
                 valuePosicArray2D = valuePosicArray2D(procedureParentUserAndReqList, new Object[][]{{0, Integer.valueOf(reqId)}});
                 if (valuePosicArray2D.length==0){
                     actionDiagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.USER_REQUIREMENT_NOT_FOUND, new Object[]{reqId, procedureName, procedureVersion});
