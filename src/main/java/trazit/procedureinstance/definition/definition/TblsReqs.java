@@ -322,8 +322,8 @@ public class TblsReqs {
 "   FROM requirements.procedure_req_solution reqs\n" +
 "     JOIN requirements.procedure_user_requirements urs ON urs.req_id = reqs.req_id\n" +
 "     JOIN requirements.procedure_info procinfo ON reqs.proc_instance_name::text = procinfo.proc_instance_name::text\n" +
-"     JOIN requirements.module_actions_and_queries modact ON reqs.window_query::text = modact.endpoint_name::text AND procinfo.module_name::text = modact.module_name::text\n" +
-"  WHERE reqs.type::text = '"+ReqSolutionTypes.WINDOW.getTagValue()+"'::text;",
+"     LEFT OUTER JOIN requirements.module_actions_and_queries modact ON reqs.window_query::text = modact.endpoint_name::text AND procinfo.module_name::text = modact.module_name::text\n" +
+"  WHERE reqs.type::text = '"+ReqSolutionTypes.WINDOW.getTagValue()+"'::text OR reqs.type::text = '"+ReqSolutionTypes.SPECIAL_VIEW.getTagValue()+"'::text;",
                 null, "proc_req_solution_windows", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsReqs.viewProcReqSolutionViews.values(), "proc_req_user_requirements_actions",
                 new EnumIntTablesJoin[]{
                     new EnumIntTablesJoin(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, "reqs", TblsReqs.TablesReqs.PROCEDURE_USER_REQS, "urs", false,
