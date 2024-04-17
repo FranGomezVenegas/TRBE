@@ -893,10 +893,13 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         JSONArray parentCodeArr = QueryUtilities.dbRowsToJsonArr(procInstanceName, GlobalVariables.Schemas.REQUIREMENTS.getName(), 
                 TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_VIEW, TblsReqs.viewProcReqAndSolutionView.values(), 
                 parentCodeWhereObj, new String[]{TblsReqs.viewProcReqSolutionViews.PARENT_CODE.getName(), TblsReqs.viewProcReqSolutionViews.CODE.getName()}, null, false);        
-
+        JSONObject curRow=(JSONObject) parentCodeArr.get(0);
+        if (Boolean.TRUE.equals(curRow.containsKey("No Data"))){
+            return parentCodeArr;
+        }
 
         for (int i=0;i<parentCodeArr.size();i++){
-            JSONObject curRow=(JSONObject) parentCodeArr.get(i);
+            curRow=(JSONObject) parentCodeArr.get(i);
             if (Boolean.FALSE.equals(curRow.containsKey(TblsReqs.ProcedureUserRequirements.REQ_ID.getName())))
                 return parentCodeFinalArr;
 
