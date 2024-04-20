@@ -28,8 +28,11 @@ public class AppIncidentEnums {
          *
          */
         NEW_INCIDENT("NEW_INCIDENT", "incidentTitle|incidentDetail", "", "incidentNewIncident_success",
-                new LPAPIArguments[]{new LPAPIArguments(IncidentAPIactions.ParamsList.INCIDENT_TITLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                    new LPAPIArguments(IncidentAPIactions.ParamsList.INCIDENT_DETAIL.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),},
+                new LPAPIArguments[]{new LPAPIArguments("category", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments(IncidentAPIactions.ParamsList.INCIDENT_TITLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
+                    new LPAPIArguments("incidentProcedure", LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
+                    new LPAPIArguments("priority", LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
+                    new LPAPIArguments(IncidentAPIactions.ParamsList.INCIDENT_DETAIL.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 10)},
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TblsApp.TablesApp.INCIDENT.getTableName()).build()).build(),
                  null, null),

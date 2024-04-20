@@ -298,10 +298,13 @@ public class TblsApp {
         USER_NAME("user_name", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), "", null),
         PERSON_NAME("person_name", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), "", null),
         USER_ROLE("user_role", LPDatabase.string(), null, null, "", null),
+        CATEGORY("category", LPDatabase.string(), null, null, "", null),
         TITLE("item_title", LPDatabase.string(), null, null, "", null),
         DETAIL("item_detail", LPDatabase.string(), null, null, "", null),
+        INCIDENT_PROCEDURE("incident_procedure", LPDatabase.string(), null, null, "", null),
+        PRIORITY("priority", LPDatabase.string(), null, null, "", null),
         SESSION_INFO("session_info", LPDatabase.string(), null, null, "", null),
-        ;
+        ; 
         private Incident(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
             this.fieldName=dbObjName;

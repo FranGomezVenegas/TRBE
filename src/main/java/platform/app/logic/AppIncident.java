@@ -80,14 +80,15 @@ public class AppIncident {
             
     }
     
-    public static RdbmsObject newIncident(String incTitle, String incDetail, JsonObject sessionInfo){ 
+    public static RdbmsObject newIncident(String category, String incTitle, String incidentProcedure, String priority, String incDetail, JsonObject sessionInfo){ 
         Token token=ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
         String[] updFieldName=new String[]{TblsApp.Incident.DATE_CREATION.getName(), TblsApp.Incident.PERSON_CREATION.getName(), TblsApp.Incident.TITLE.getName(), TblsApp.Incident.DETAIL.getName(),
                 TblsApp.Incident.USER_NAME.getName(), TblsApp.Incident.USER_ROLE.getName(), TblsApp.Incident.PERSON_NAME.getName(),
-                TblsApp.Incident.STATUS.getName(), TblsApp.Incident.SESSION_INFO.getName()};
+                TblsApp.Incident.STATUS.getName(), TblsApp.Incident.SESSION_INFO.getName(),  
+                TblsApp.Incident.CATEGORY.getName(), TblsApp.Incident.INCIDENT_PROCEDURE.getName(), TblsApp.Incident.PRIORITY.getName()};
         Object[] updFieldValue=new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName(), incTitle, incDetail,
                 token.getUserName(), token.getUserRole(), token.getPersonName(), 
-                IncidentStatuses.LOGGED.toString(), sessionInfo};
+                IncidentStatuses.LOGGED.toString(), sessionInfo, category, incidentProcedure, priority};
         RdbmsObject diagnostic = Rdbms.insertRecordInTable(TblsApp.TablesApp.INCIDENT, updFieldName, updFieldValue);
         if (Boolean.TRUE.equals(diagnostic.getRunSuccess())){
             String incIdStr=diagnostic.getNewRowId().toString();

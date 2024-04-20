@@ -36,7 +36,6 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
-import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import static trazit.globalvariables.GlobalVariables.DEFAULTLANGUAGE;
 import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ProcedureRequestSession;
@@ -97,16 +96,16 @@ public class IncidentAPIqueries extends HttpServlet {
 
         switch (endPoint){
             case USER_OPEN_INCIDENTS:              
-                String[] fieldsToRetrieve=getAllFieldNames(TblsApp.TablesApp.INCIDENT.getTableFields());
+                EnumIntTableFields[] fieldsToRetrieve=TblsApp.TablesApp.INCIDENT.getTableFields();
                 Object[][] incidentsClosedLastDays=QueryUtilitiesEnums.getTableData(TblsApp.TablesApp.INCIDENT, 
-                        EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.INCIDENT, "ALL"),
+                        fieldsToRetrieve,
                         new String[]{TblsApp.Incident.STATUS.getName()+"<>", TblsApp.Incident.PERSON_CREATION.getName()}, 
                         new Object[]{AppIncident.IncidentStatuses.CLOSED.toString(), token.getPersonName()}, 
                         new String[]{TblsApp.Incident.ID.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                 JSONArray jArr = new JSONArray();
                 if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsClosedLastDays[0][0].toString()))){
                     for (Object[] currIncident: incidentsClosedLastDays){
-                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
+                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(fieldsToRetrieve), currIncident);
                         jArr.add(jObj);
                     }
                 }
@@ -118,16 +117,16 @@ public class IncidentAPIqueries extends HttpServlet {
                 String incIdStr=LPNulls.replaceNull(argValues[0]).toString();
                 if (incIdStr!=null && incIdStr.length()>0) incId=Integer.valueOf(incIdStr);
 
-                fieldsToRetrieve=getAllFieldNames(TblsAppAudit.TablesAppAudit.INCIDENT.getTableFields());
+                fieldsToRetrieve=TblsAppAudit.TablesAppAudit.INCIDENT.getTableFields();
                 incidentsClosedLastDays=QueryUtilitiesEnums.getTableData(TblsAppAudit.TablesAppAudit.INCIDENT, 
-                    EnumIntTableFields.getTableFieldsFromString(TblsAppAudit.TablesAppAudit.INCIDENT, "ALL"),
+                    fieldsToRetrieve,
                     new String[]{TblsAppAudit.Incident.INCIDENT_ID.getName()}, new Object[]{incId}, 
                     new String[]{TblsAppAudit.Incident.DATE.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                 jArr = new JSONArray();
                 Integer actionPosic=LPArray.valuePosicInArray(fieldsToRetrieve, TblsAppAudit.Incident.ACTION_NAME.getName());
                 if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsClosedLastDays[0][0].toString()))){
                     for (Object[] currIncident: incidentsClosedLastDays){
-                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
+                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(fieldsToRetrieve), currIncident);
                         if (actionPosic>-1){
                             String action=LPNulls.replaceNull(currIncident[actionPosic]).toString();
                             String propValue = Parameter.getMessageCodeValue(Parameter.PropertyFilesType.AUDITEVENTS.toString(), 
@@ -159,16 +158,16 @@ public class IncidentAPIqueries extends HttpServlet {
                 String numDays = LPNulls.replaceNull(argValues[0]).toString();
                 if (numDays.length()==0) numDays=String.valueOf(7);
                 int numDaysInt=0-Integer.valueOf(numDays);               
-                fieldsToRetrieve=getAllFieldNames(TblsApp.TablesApp.INCIDENT.getTableFields());
+                fieldsToRetrieve=TblsApp.TablesApp.INCIDENT.getTableFields();
                 incidentsClosedLastDays=QueryUtilitiesEnums.getTableData(TblsApp.TablesApp.INCIDENT, 
-                    EnumIntTableFields.getTableFieldsFromString(TblsApp.TablesApp.INCIDENT, "ALL"),
+                    fieldsToRetrieve,
                     new String[]{TblsApp.Incident.STATUS.getName(), TblsApp.Incident.DATE_RESOLUTION.getName()+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause()}, 
                     new Object[]{AppIncident.IncidentStatuses.CLOSED.toString(), LPDate.addDays(LPDate.getCurrentDateWithNoTime(), numDaysInt)}, 
                     new String[]{TblsApp.Incident.DATE_RESOLUTION.getName()+SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                 jArr = new JSONArray();
                 if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsClosedLastDays[0][0].toString()))){
                     for (Object[] currIncident: incidentsClosedLastDays){
-                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
+                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(fieldsToRetrieve), currIncident);
                         jArr.add(jObj);
                     }
                 }
