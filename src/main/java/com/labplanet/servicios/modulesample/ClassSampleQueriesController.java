@@ -70,7 +70,7 @@ public class ClassSampleQueriesController implements ActionsClass{
                 }     
                 this.rowArgsRows=this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));
             }
-            clss = new ClassSampleQueries(request, null, endPoint);            
+            clss = new ClassSampleQueries(request, response, endPoint);            
             this.functionRelatedObjects = clss.getRelatedObj();
             if (Boolean.TRUE.equals(clss.getIsSuccess()))
                 this.diagnosticObj=new InternalMessage(LPPlatform.LAB_TRUE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.QUERIES_HAVE_NO_MSG_CODE, null);

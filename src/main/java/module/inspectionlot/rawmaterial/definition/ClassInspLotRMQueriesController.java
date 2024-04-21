@@ -69,7 +69,7 @@ public class ClassInspLotRMQueriesController  implements ActionsClass{
                 }  
                 this.rowArgsRows=this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));
             }
-            clss = new ClassInspLotRMQueries(request, null, endPoint);            
+            clss = new ClassInspLotRMQueries(request, response, endPoint);            
             this.functionRelatedObjects = clss.getRelatedObj();
             if (Boolean.TRUE.equals(clss.getIsSuccess()))
                 this.diagnosticObj=new InternalMessage(LPPlatform.LAB_TRUE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.QUERIES_HAVE_NO_MSG_CODE, null);
