@@ -185,13 +185,11 @@ public class ProcedureRequestSession {
                 }
             } else {
                 this.actionName = theActionName;
-            }
-            
+            }            
             String procInstanceName = (String) request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME);
             if (procInstanceName == null || procInstanceName.length() == 0) {
                 procInstanceName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PROCINSTANCENAME);
-            }
-            
+            }            
             if (dbNameProp == null || dbNameProp.length() == 0) {
                 Rdbms.stablishDBConection();
             } else {
@@ -206,7 +204,7 @@ public class ProcedureRequestSession {
             if (Boolean.FALSE.equals(isPlatform)) {
                 this.procedureEncryptFields = getEncryptFields(dbNameProp, false, procInstanceName);
             }
-            if (Boolean.FALSE.equals(isPlatform)&&Boolean.FALSE.equals(isForProcManagement)) {
+            if ( (Boolean.FALSE.equals(isForTesting))&&(Boolean.FALSE.equals(isPlatform))&&(Boolean.FALSE.equals(isForProcManagement))) {
                 this.busRulesProcInstance = new BusinessRules(procInstanceName, null);
             }
             if (this.isForProcManagement){
@@ -242,8 +240,7 @@ public class ProcedureRequestSession {
                 }
                 this.auditAndUsrValid = AuditAndUserValidation.getInstanceForActions(request, language, this.busRulesProcInstance, this.isPlatform, this.isForProcManagement);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(this.auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())) {
-                    this.hasErrors = true;
-                    
+                    this.hasErrors = true;                    
                     this.errorMessage = this.auditAndUsrValid.getCheckUserValidationPassesDiag()[this.auditAndUsrValid.getCheckUserValidationPassesDiag().length - 1].toString();
                     return;
                 }
@@ -308,6 +305,12 @@ public class ProcedureRequestSession {
             }
             rspMessages = ResponseMessages.getInstance();
         } catch (Exception e) {
+             StackTraceElement[] stackTrace = e.getStackTrace();
+            if (stackTrace.length > 0) {
+                StackTraceElement element = stackTrace[0]; 
+                this.errorMessage=e.getMessage()+" in line "+element.getLineNumber();
+                return;
+            }
             this.hasErrors = true;
             if (this.rspMessages == null) {
                 this.errorMessage = e.getMessage();
