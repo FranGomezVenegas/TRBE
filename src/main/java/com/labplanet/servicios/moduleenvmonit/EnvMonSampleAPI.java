@@ -5,20 +5,12 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
-import module.monitoring.definition.ClassEnvMonSample;
 import module.monitoring.definition.TblsEnvMonitData;
 import lbplanet.utilities.LPArray;
-import lbplanet.utilities.LPFrontEnd;
-import lbplanet.utilities.LPHttp;
-import lbplanet.utilities.LPPlatform;
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import com.labplanet.servicios.modulesample.ClassSample;
-import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIactionsEndpoints;
 import databases.TblsData;
-import static functionaljavaa.audit.SampleAudit.sampleAuditRevisionPassByAction;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,13 +21,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
+import static lbplanet.utilities.LPHttp.moduleActionsSingleAPI;
 import lbplanet.utilities.LPNulls;
-import org.json.simple.JSONObject;
+import trazit.enums.ActionsEndpointPair;
 import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
 import trazit.globalvariables.GlobalVariables.ApiUrls;
-import trazit.session.InternalMessage;
-import trazit.session.ProcedureRequestSession;
 
 /**
  *
@@ -238,125 +229,8 @@ public class EnvMonSampleAPI extends HttpServlet {
    * @throws IOException if an I/O error occurs
    */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {
-        request=LPHttp.requestPreparation(request);
-        response=LPHttp.responsePreparation(response);
-
-        String actionName = (String) request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-        if (actionName==null || actionName.length()==0)
-            actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-        String language = LPFrontEnd.setLanguage(request); 
-        EnvMonSampleAPIactionsEndpoints endPoint = null;
-        try{
-            endPoint = EnvMonSampleAPIactionsEndpoints.valueOf(actionName.toUpperCase());
-        }catch(Exception e){
-            SampleAPIactionsEndpoints endPointSmp = null;
-            try{
-                endPointSmp = SampleAPIactionsEndpoints.valueOf(actionName.toUpperCase());
-            }catch(Exception er){
-                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
-                return;                   
-            }                
-            ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActionsWithEndpoint(request, response, endPoint, false);
-            if (Boolean.TRUE.equals(procReqInstance.getHasErrors())){
-                procReqInstance.killIt();
-                LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
-                return;
-            }
-            ClassSample clssSmp=new ClassSample(request, endPointSmp);
-            if (Boolean.TRUE.equals(clssSmp.getEndpointExists())){
-                Object[] diagnostic=clssSmp.getDiagnostic();
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clssSmp.getMessageDynamicData());           
-                }else{
-                    JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPointSmp, clssSmp.getMessageDynamicData(), clssSmp.getRelatedObj().getRelatedObject());                
-                    LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
-                } 
-            }                
-        }        
-        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForActionsWithEndpoint(request, response, endPoint, false);
-        if (Boolean.TRUE.equals(procReqInstance.getHasErrors())){
-            procReqInstance.killIt();
-            LPFrontEnd.servletReturnResponseError(request, response, procReqInstance.getErrorMessage(), new Object[]{procReqInstance.getErrorMessage(), this.getServletName()}, procReqInstance.getLanguage(), null);                   
-            return;
-        }
-        actionName=procReqInstance.getActionName();
-        language=procReqInstance.getLanguage();
-        String procInstanceName = procReqInstance.getProcedureInstance();
-        
-        String[] errObject = new String[]{"Servlet programAPI at " + request.getServletPath()};   
-
-        String sampleIdStr=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
-        Integer sampleId=0;
-        if (sampleIdStr!=null && sampleIdStr.length()>0) sampleId=Integer.valueOf(sampleIdStr);
-        String testIdStr=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_TEST_ID);
-        Integer testId=0;
-        if (testIdStr!=null && testIdStr.length()>0) testId=Integer.valueOf(testIdStr);
-        String resultIdStr=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID);
-        Integer resultId=0;
-        if (resultIdStr!=null && resultIdStr.length()>0) sampleId=Integer.valueOf(resultIdStr);
-
-        InternalMessage sampleAuditRevision=sampleAuditRevisionPassByAction(procInstanceName, actionName, sampleId, testId, resultId);     
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditRevision.getDiagnostic())){  
-            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, sampleAuditRevision.getMessageCodeObj(), sampleAuditRevision.getMessageCodeVariables());
-            return;                             
-        }  
-        try (PrintWriter out = response.getWriter()) {
-
-            Object[] areMandatoryParamsInResponse=new Object[]{};
-            if (endPoint!=null && endPoint.getArguments()!=null)
-                areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                procReqInstance.killIt();
-                LPFrontEnd.servletReturnResponseError(request, response,
-                        LPPlatform.ApiErrorTraping.MANDATORY_PARAMS_MISSING.getErrorCode(), new Object[]{areMandatoryParamsInResponse[1].toString()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());
-                return;
-            }                            
-            ClassEnvMonSample clss=new ClassEnvMonSample(request, endPoint);
-            if (Boolean.TRUE.equals(clss.getEndpointExists())){
-                Object[] diagnostic=clss.getDiagnostic();
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-                    String errorCode =diagnostic[4].toString();
-                    Object[] msgVariables=clss.getMessageDynamicData();
-                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, errorCode, msgVariables);               
-//                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
-                }else{
-                    JSONObject dataSampleJSONMsg =new JSONObject();
-                    if (endPoint!=null)
-                        dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
-                    
-                    LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
-                }            
-            }else{
-                SampleAPIactionsEndpoints endPointSmp = null;
-                try{
-                    endPointSmp = SampleAPIactionsEndpoints.valueOf(actionName.toUpperCase());
-                }catch(Exception e){
-                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.ApiErrorTraping.PROPERTY_ENDPOINT_NOT_FOUND.getErrorCode(), new Object[]{actionName, this.getServletName()}, language, LPPlatform.ApiErrorTraping.class.getSimpleName());              
-                    return;                   
-                }                
-                ClassSample clssSmp=new ClassSample(request, endPointSmp);
-                if (Boolean.TRUE.equals(clssSmp.getEndpointExists())){
-                    Object[] diagnostic=clssSmp.getDiagnostic();
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-                        LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
-                    }else{
-                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, clssSmp.getMessageDynamicData(), clssSmp.getRelatedObj().getRelatedObject());                
-                        LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
-                    } 
-                }
-            }
-        }catch(Exception e){   
-            procReqInstance.killIt();
-            errObject = new String[]{e.getMessage()};
-            LPFrontEnd.responseError(errObject);
-        } finally {
-            // release database resources
-            try {
-                procReqInstance.killIt();
-            } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
-            }
-        }                
-  
+        ActionsEndpointPair[] actionEndpointArr = GlobalVariables.TrazitModules.MONITORING.getActionsEndpointPair(); //implements ActionsClass
+        moduleActionsSingleAPI(request, response, actionEndpointArr, this.getServletName()); 
     }
 
   // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
