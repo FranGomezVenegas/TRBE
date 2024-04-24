@@ -378,11 +378,11 @@ public class TblsReqs {
                 }, " and procInfo.module_name = modAct.module_name", false),
         BUSINESS_RULES_IN_SOLUTION("SELECT busRules.module_name, busRules.module_version, procinfo.procedure_name, procinfo.procedure_version, procinfo.proc_instance_name, busRules.rule_name, busRules.is_mandatory,\n" +
                         " 		busRules.api_name,	busRules.area, busRules.prerequite,\n" +
-                	" busrules.values_list, busrules.tip_en, busrules.tip_es, sol.business_rule_value,\n" +
+                	" busrules.values_list, busrules.purpose_en, busrules.purpose_es, sol.business_rule_value,\n" +
                         "    COALESCE(count(sol.business_rule), 0::bigint) AS present,\n" +
                         "    sstring_agg(COALESCE(sol.code::text, sol.parent_code::text), ', ') AS requirements_list \n" +
                         "   FROM requirements.module_business_rules busRules\n" +
-                        "   JOIN requirements.procedure_info procinfo ON busrules.module_name::text = procinfo.module_name::text "+
+                        "   JOIN requirements.procedure<_info procinfo ON busrules.module_name::text = procinfo.module_name::text "+
                         "   LEFT JOIN (select reqsol.business_rule, usr.procedure_name, usr.procedure_version, usr.proc_instance_name, usr.parent_code, usr.code,\n" +
 "			reqsol.business_rule_value \n" +
                         "          		from requirements.procedure_req_solution reqsol, requirements.procedure_user_requirements usr\n" +
@@ -395,7 +395,9 @@ public class TblsReqs {
         ACTIONS_IN_SOLUTION("SELECT act.module_name, act.module_version, procinfo.procedure_name, procinfo.procedure_version, procinfo.proc_instance_name, act.entity, act.endpoint_name,\n" +
                         " 		act.api_name,	act.pretty_name_en, act.pretty_name_es,	act.query_for_button, act.extra_actions, act.arguments_array,\n" +
                         "    COALESCE(count(sol.window_action), 0::bigint) AS present,\n" +
-                        "   string_agg(COALESCE(sol.code::text, sol.parent_code::text), ', ') AS requirements_list, act.output_object_types \n" +
+                        "   string_agg(COALESCE(sol.code::text, sol.parent_code::text), ', ') AS requirements_list, act.output_object_types, \n" +
+                        "	act.purpose_en, \n" +
+                        "	act.purpose_es " +
                         "   FROM requirements.module_actions_and_queries act\n" +
                         "   JOIN requirements.procedure_info procinfo ON act.module_name::text = procinfo.module_name::text"+
                         "   LEFT JOIN (select reqsol.window_action, usr.code, usr.parent_code, usr.procedure_name, usr.procedure_version, usr.proc_instance_name \n" +
@@ -413,7 +415,9 @@ public class TblsReqs {
         QUERIES_IN_SOLUTION("SELECT act.module_name, act.module_version, procinfo.procedure_name, procinfo.procedure_version, procinfo.proc_instance_name, act.entity, act.endpoint_name,\n" +
                         " 		act.api_name,	act.pretty_name_en, act.pretty_name_es,	act.arguments_array,	\n" +
                         "    COALESCE(count(sol.window_query), 0::bigint) AS present,\n" +
-                        "    string_agg(COALESCE(sol.code::text, sol.parent_code::text), ', ') AS requirements_list, act.output_object_types, act.json_model \n" +
+                        "    string_agg(COALESCE(sol.code::text, sol.parent_code::text), ', ') AS requirements_list, act.output_object_types, act.json_model, \n" +                
+                        "	act.purpose_en, \n" +
+                        "	act.purpose_es " +
                         "   FROM requirements.module_actions_and_queries act\n" +
                         "   LEFT JOIN (select reqsol.window_query, usr.procedure_name, usr.procedure_version, usr.proc_instance_name, usr.parent_code, usr.code \n" +
                         "          		from requirements.procedure_req_solution reqsol, requirements.procedure_user_requirements usr\n" +
@@ -435,7 +439,9 @@ public class TblsReqs {
                         "    spvw.pretty_name_en,\n" +
                         "    spvw.pretty_name_es,\n" +
                         "    COALESCE(count(sol.parent_code), 0::bigint) AS present,\n" +
-                        "    string_agg(COALESCE(sol.code::text, sol.parent_code::text), ', ') AS requirements_list \n" +
+                        "    string_agg(COALESCE(sol.code::text, sol.parent_code::text), ', ') AS requirements_list,\n" +
+                        "	spvw.purpose_en, \n" +
+                        "	spvw.purpose_es " +
                         "   FROM requirements.module_special_views spvw\n" +
                         "     JOIN requirements.procedure_info procinfo ON spvw.module_name::text = procinfo.module_name::text\n" +
                         "     LEFT JOIN ( SELECT reqsol.special_view_name,\n" +
@@ -675,7 +681,9 @@ null, "procedure_req_solution_view", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, viewPro
         QUERY_FOR_BUTTON("query_for_button", LPDatabase.booleanFld(false), null, null, null, null),
         EXTRA_ACTIONS("extra_actions", LPDatabase.stringNotNull(), null, null, null, null),
         ARGUMENTS_ARRAY("arguments_array", LPDatabase.string(), null, null, null, null),
-        OUTPUT_OBJECT_TYPES("output_object_types", LPDatabase.string(), null, null, null, null)
+        OUTPUT_OBJECT_TYPES("output_object_types", LPDatabase.string(), null, null, null, null),
+        PURPOSE_EN("purpose_en", LPDatabase.string(), null, null, null, null),
+        PURPOSE_ES("purpose_es", LPDatabase.string(), null, null, null, null)        
         ;
         private ModuleActionsAndQueries(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules) {
@@ -734,8 +742,8 @@ null, "procedure_req_solution_view", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, viewPro
         IS_MANDATORY("is_mandatory", LPDatabase.booleanFld(true), null, null, null, null),
         PREREQUISITE("prerequite",LPDatabase.string(), null, null, null, null),
         VALUES_LIST("values_list",LPDatabase.json(), null, null, null, null),        
-        TIP_EN("tip_en",LPDatabase.string(), null, null, null, null),        
-        TIP_ES("tip_es",LPDatabase.string(), null, null, null, null)
+        PURPOSE_EN("purpose_en", LPDatabase.string(), null, null, null, null),
+        PURPOSE_ES("purpose_es", LPDatabase.string(), null, null, null, null)        
         ;
         private ModuleBusinessRules(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules) {
@@ -794,7 +802,9 @@ null, "procedure_req_solution_view", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, viewPro
         JSON_REQUIREMENTS("json_requirements", LPDatabase.json(), null, null, null, null),
         WINDOW_TYPE("window_type", LPDatabase.string(), null, null, null, null),
         PRETTY_EN("pretty_name_en", LPDatabase.string(), null, null, null, null),
-        PRETTY_ES("pretty_name_es", LPDatabase.string(), null, null, null, null)
+        PRETTY_ES("pretty_name_es", LPDatabase.string(), null, null, null, null),
+        PURPOSE_EN("purpose_en", LPDatabase.string(), null, null, null, null),
+        PURPOSE_ES("purpose_es", LPDatabase.string(), null, null, null, null)        
         ;
         private ModuleSpecialViews(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules) {
@@ -2414,8 +2424,8 @@ null, "procedure_req_solution_view", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, viewPro
         AREA("busRules", ModuleBusinessRules.AREA.getName(), "busRules.area as area", ModuleBusinessRules.AREA, null, null, null),
         PREREQUISITE("busRules", ModuleBusinessRules.PREREQUISITE.getName(), "busRules.prerequite as prerequite", ModuleBusinessRules.PREREQUISITE, null, null, null),
         VALUES_LIST("busRules", ModuleBusinessRules.VALUES_LIST.getName(), "busRules.values_list as values_list", ModuleBusinessRules.VALUES_LIST, null, null, null),
-        TIP_EN("busRules", ModuleBusinessRules.TIP_EN.getName(), "busRules.tip_en as tip_en", ModuleBusinessRules.TIP_EN, null, null, null),
-        TIP_ES("busRules", ModuleBusinessRules.TIP_ES.getName(), "busRules.tip_es as tip_es", ModuleBusinessRules.TIP_ES, null, null, null),
+        PURPOSE_EN("busRules", ModuleBusinessRules.PURPOSE_EN.getName(), "busRules.purpose_en as purpose_en", ModuleBusinessRules.PURPOSE_EN, null, null, null),
+        PURPOSE_ES("busRules", ModuleBusinessRules.PURPOSE_ES.getName(), "busRules.purpose_es as purpose_es", ModuleBusinessRules.PURPOSE_ES, null, null, null),
         PRESENT("sol", "present", "sol.present as present", ModuleBusinessRules.MODULE_VERSION, null, null, null),
         REQUIREMENTS_LIST("sol", "requirements_list", "sol.requirements_list as requirements_list", ModuleBusinessRules.PREREQUISITE, null, null, null),
         BUSINESS_RULE_VALUE("reqsol", "business_rule_value", "reqsol.business_rule_value as business_rule_value", TblsReqs.ProcedureReqSolution.BUSINESS_RULE_VALUE, null, null, null),
@@ -2486,7 +2496,9 @@ null, "procedure_req_solution_view", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, viewPro
         PRESENT("sol", "present", "sol.present as present", ModuleBusinessRules.MODULE_VERSION, null, null, null),
         REQUIREMENTS_LIST("sol", "requirements_list", "sol.requirements_list as requirements_list", ModuleBusinessRules.PREREQUISITE, null, null, null),
         ARGUMENTS_ARRAY("act", ModuleActionsAndQueries.ARGUMENTS_ARRAY.getName(), "act.arguments_array as arguments_array", ModuleActionsAndQueries.ARGUMENTS_ARRAY, null, null, null),
-        JSON_MODEL("act", ModuleActionsAndQueries.JSON_MODEL.getName(), "act.json_model as json_model", ModuleActionsAndQueries.JSON_MODEL, null, null, null)
+        JSON_MODEL("act", ModuleActionsAndQueries.JSON_MODEL.getName(), "act.json_model as json_model", ModuleActionsAndQueries.JSON_MODEL, null, null, null),
+        PURPOSE_EN("act", ModuleActionsAndQueries.PURPOSE_EN.getName(), "act.purpose_en as purpose_en", ModuleActionsAndQueries.PURPOSE_EN, null, null, null),
+        PURPOSE_ES("act", ModuleActionsAndQueries.PURPOSE_ES.getName(), "act.purpose_es as purpose_es", ModuleActionsAndQueries.PURPOSE_ES, null, null, null)        
         ;
         private viewActionsInSolution(String tblAliasInView, String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules) {
             this.fldName = name;
@@ -2549,7 +2561,9 @@ null, "procedure_req_solution_view", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, viewPro
         PRETTY_ES("act", ModuleActionsAndQueries.PRETTY_ES.getName(), "act.pretty_name_eS as pretty_name_eS", ModuleActionsAndQueries.PRETTY_ES, null, null, null),
         PRESENT("sol", "present", "sol.present as present", ModuleBusinessRules.MODULE_VERSION, null, null, null),
         REQUIREMENTS_LIST("sol", "requirements_list", "sol.requirements_list as requirements_list", ModuleBusinessRules.PREREQUISITE, null, null, null),
-        ARGUMENTS_ARRAY("act", ModuleActionsAndQueries.ARGUMENTS_ARRAY.getName(), "act.arguments_array as arguments_array", ModuleActionsAndQueries.ARGUMENTS_ARRAY, null, null, null)
+        ARGUMENTS_ARRAY("act", ModuleActionsAndQueries.ARGUMENTS_ARRAY.getName(), "act.arguments_array as arguments_array", ModuleActionsAndQueries.ARGUMENTS_ARRAY, null, null, null),
+        PURPOSE_EN("act", ModuleActionsAndQueries.PURPOSE_EN.getName(), "act.purpose_en as purpose_en", ModuleActionsAndQueries.PURPOSE_EN, null, null, null),
+        PURPOSE_ES("act", ModuleActionsAndQueries.PURPOSE_ES.getName(), "act.purpose_es as purpose_es", ModuleActionsAndQueries.PURPOSE_ES, null, null, null)
         ;
         private viewQueriesInSolution(String tblAliasInView, String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules) {
             this.fldName = name;
@@ -2610,6 +2624,8 @@ null, "procedure_req_solution_view", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, viewPro
         PRETTY_ES("spvw", ModuleSpecialViews.PRETTY_ES.getName(), "spvw.pretty_name_eS as pretty_name_eS", ModuleSpecialViews.PRETTY_ES, null, null, null),
         PRESENT("sol", "present", "sol.present as present", ModuleBusinessRules.MODULE_VERSION, null, null, null),
         REQUIREMENTS_LIST("sol", "requirements_list", "sol.requirements_list as requirements_list", ModuleBusinessRules.PREREQUISITE, null, null, null),
+        PURPOSE_EN("spvw", ModuleSpecialViews.PURPOSE_EN.getName(), "spvw.purpose_en as purpose_en", ModuleSpecialViews.PURPOSE_EN, null, null, null),
+        PURPOSE_ES("spvw", ModuleSpecialViews.PURPOSE_ES.getName(), "spvw.purpose_es as purpose_es", ModuleSpecialViews.PURPOSE_ES, null, null, null)
         ;
         private viewSpecialViewsInSolution(String tblAliasInView, String name, String vwAliasName, EnumIntTableFields fldObj, String fldMask, String comment, FldBusinessRules[] busRules) {
             this.fldName = name;
