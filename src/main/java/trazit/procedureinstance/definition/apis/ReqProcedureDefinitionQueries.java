@@ -486,7 +486,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         jMainObj.put("procedure_tables", QueryUtilities.dbRowsToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableName(),
             new String[]{TblsReqs.ProcedureModuleTables.SCHEMA_NAME.getName(), TblsReqs.ProcedureModuleTables.ORDER_NUMBER.getName(),
                 TblsReqs.ProcedureModuleTables.IS_MANDATORY.getName(), TblsReqs.ProcedureModuleTables.IS_VIEW.getName(), 
-                TblsReqs.ProcedureModuleTables.TABLE_NAME.getName(), TblsReqs.ProcedureModuleTables.DEFINITION_EN.getName(), TblsReqs.ProcedureModuleTables.DEFINITION_ES.getName()},
+                TblsReqs.ProcedureModuleTables.TABLE_NAME.getName(), TblsReqs.ProcedureModuleTables.PURPOSE_EN.getName(), TblsReqs.ProcedureModuleTables.PURPOSE_ES.getName()},
             new String[]{TblsReqs.ProcedureModuleTables.PROC_INSTANCE_NAME.getName()},
             new Object[]{procInstanceName},
             new String[]{TblsReqs.ProcedureModuleTables.SCHEMA_NAME.getName()+" desc",  TblsReqs.ProcedureModuleTables.ORDER_NUMBER.getName(), TblsReqs.ProcedureModuleTables.TABLE_NAME.getName()},
@@ -545,7 +545,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
 
         jMainObj.put("tables", 
         QueryUtilities.dbRowsGroupedToJsonArr(TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableName(),
-                new String[]{TblsReqs.ProcedureModuleTables.SCHEMA_NAME.getName(), TblsReqs.ProcedureModuleTables.TABLE_NAME.getName(), TblsReqs.ProcedureModuleTables.DEFINITION_EN.getName(), TblsReqs.ProcedureModuleTables.DEFINITION_ES.getName(), TblsReqs.ProcedureModuleTables.IS_VIEW.getName()},
+                new String[]{TblsReqs.ProcedureModuleTables.SCHEMA_NAME.getName(), TblsReqs.ProcedureModuleTables.TABLE_NAME.getName(), TblsReqs.ProcedureModuleTables.PURPOSE_EN.getName(), TblsReqs.ProcedureModuleTables.PURPOSE_ES.getName(), TblsReqs.ProcedureModuleTables.IS_VIEW.getName()},
                 new String[]{TblsReqs.ProcedureModuleTables.PROC_INSTANCE_NAME.getName()}, new Object[]{procInstanceName},
                 new String[]{TblsReqs.ProcedureModuleTables.SCHEMA_NAME.getName(), TblsReqs.ProcedureModuleTables.ORDER_NUMBER.getName()}));
 

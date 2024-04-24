@@ -1054,25 +1054,25 @@ if (curBusRuleObj.getTagName().contains("certificationUserSOPMode")){
             if (missingAttr.length()>0){
                 curRowObj.put("Error", "missing mandatory attributes: "+missingAttr);
             }else{
-                String schemaName = currenRowOfData.getString("schema_name");
+                String schemaName = currenRowOfData.getString(TblsReqs.ModuleTablesAndViews.SCHEMA_NAME.getName());
                 fldsInTable = LPArray.addValueToArray1D(fldsInTable, TblsReqs.ModuleTablesAndViews.SCHEMA_NAME.getName());
                 fieldValues = LPArray.addValueToArray1D(fieldValues, schemaName);
-                String tableName = currenRowOfData.getString("table_name");
+                String tableName = currenRowOfData.getString(TblsReqs.ModuleTablesAndViews.NAME.getName());
                 fldsInTable = LPArray.addValueToArray1D(fldsInTable, TblsReqs.ModuleTablesAndViews.NAME.getName());
                 fieldValues = LPArray.addValueToArray1D(fieldValues, tableName);
-                Boolean isView = currenRowOfData.getBoolean("is_view");
+                Boolean isView = currenRowOfData.getBoolean(TblsReqs.ModuleTablesAndViews.IS_VIEW.getName());
                 fldsInTable = LPArray.addValueToArray1D(fldsInTable, TblsReqs.ModuleTablesAndViews.IS_VIEW.getName());
                 fieldValues = LPArray.addValueToArray1D(fieldValues, isView);
-                Integer orderNumber = currenRowOfData.getInt("order_number");
+                Integer orderNumber = currenRowOfData.getInt(TblsReqs.ModuleTablesAndViews.ORDER_NUMBER.getName());
                 fldsInTable = LPArray.addValueToArray1D(fldsInTable, TblsReqs.ModuleTablesAndViews.ORDER_NUMBER.getName());
                 fieldValues = LPArray.addValueToArray1D(fieldValues, orderNumber);
-                if (currenRowOfData.has("definition_en")){
-                    String prettyEn = currenRowOfData.getString("definition_en");
+                if (currenRowOfData.has(TblsReqs.ModuleTablesAndViews.PURPOSE_EN.getName())){
+                    String prettyEn = currenRowOfData.getString(TblsReqs.ModuleTablesAndViews.PURPOSE_EN.getName());
                     fldsInTable = LPArray.addValueToArray1D(fldsInTable, TblsReqs.ModuleTablesAndViews.PURPOSE_EN.getName());
                     fieldValues = LPArray.addValueToArray1D(fieldValues, prettyEn);
                 }
-                if (currenRowOfData.has("definition_es")){
-                    String prettyEs = currenRowOfData.getString("definition_es");
+                if (currenRowOfData.has(TblsReqs.ModuleTablesAndViews.PURPOSE_ES.getName())){
+                    String prettyEs = currenRowOfData.getString(TblsReqs.ModuleTablesAndViews.PURPOSE_ES.getName());
                     fldsInTable = LPArray.addValueToArray1D(fldsInTable, TblsReqs.ModuleTablesAndViews.PURPOSE_ES.getName());
                     fieldValues = LPArray.addValueToArray1D(fieldValues, prettyEs);
                 }

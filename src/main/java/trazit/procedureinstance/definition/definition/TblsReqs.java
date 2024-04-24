@@ -472,8 +472,8 @@ public class TblsReqs {
 "    dt.field_name,\n" +
 "    dt.fields_to_exclude,\n" +
 "    dt.order_number,\n" +
-"    dt.definition_en,\n" +
-"    dt.definition_es,\n" +
+"    dt.purpose_en,\n" +
+"    dt.purpose_es,\n" +
 "    dt.is_mandatory\n" +
 "   FROM requirements.procedure_module_tables dt\n" +
 "     LEFT JOIN information_schema.tables dc ON dc.table_schema::text = ((COALESCE(dt.proc_instance_name, ''::character varying)::text || '-'::text) || COALESCE(dt.schema_name, ''::character varying)::text) AND dt.name::text = dc.table_name::text AND dt.is_view = false\n" +
@@ -493,8 +493,8 @@ public class TblsReqs {
 "    dt.field_name,\n" +
 "    dt.fields_to_exclude,\n" +
 "    dt.order_number,\n" +
-"    dt.definition_en,\n" +
-"    dt.definition_es,\n" +
+"    dt.purpose_en,\n" +
+"    dt.purpose_es,\n" +
 "    dt.is_mandatory\n" +
 "   FROM requirements.procedure_module_tables dt\n" +
 "     LEFT JOIN information_schema.views dc ON dc.table_schema::text = ((COALESCE(dt.proc_instance_name, ''::character varying)::text || '-'::text) || COALESCE(dt.schema_name, ''::character varying)::text) "
@@ -1717,8 +1717,8 @@ null, "procedure_req_solution_view", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, viewPro
         IS_MANDATORY("is_mandatory", LPDatabase.booleanNotNull(true), null, null, null, null),
         FIELD_NAME(GlobalAPIsParams.LBL_FIELD_NAME, LPDatabase.string(), null, null, null, null),
         FIELDS_TO_EXCLUDE("fields_to_exclude", LPDatabase.string(), null, null, null, null),
-        DEFINITION_EN("definition_en", LPDatabase.string(), null, null, null, null),
-        DEFINITION_ES("definition_es", LPDatabase.string(), null, null, null, null)                
+        PURPOSE_EN("purpose_en", LPDatabase.string(), null, null, null, null),
+        PURPOSE_ES("purpose_es", LPDatabase.string(), null, null, null, null)                
         ;
         private ProcedureModuleTables(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules) {
@@ -2747,8 +2747,8 @@ null, "procedure_req_solution_view", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, viewPro
         IS_MANDATORY("", "is_mandatory", ProcedureModuleTables.IS_MANDATORY.getName(), ProcedureModuleTables.IS_MANDATORY, null, null, null),
         FIELD_NAME("", ProcedureModuleTables.FIELD_NAME.getName(), ProcedureModuleTables.FIELD_NAME.getName(), ProcedureModuleTables.FIELD_NAME, null, null, null),
         FIELDS_TO_EXCLUDE("", ProcedureModuleTables.FIELDS_TO_EXCLUDE.getName(), ProcedureModuleTables.FIELDS_TO_EXCLUDE.getName(), ProcedureModuleTables.FIELDS_TO_EXCLUDE, null, null, null),
-        DEFINITION_EN("", ProcedureModuleTables.DEFINITION_EN.getName(), ProcedureModuleTables.DEFINITION_EN.getName(), ProcedureModuleTables.DEFINITION_EN, null, null, null),
-        DEFINITION_ES("", ProcedureModuleTables.DEFINITION_ES.getName(), ProcedureModuleTables.DEFINITION_ES.getName(), ProcedureModuleTables.DEFINITION_ES, null, null, null),
+        PURPOSE_EN("", ProcedureModuleTables.PURPOSE_EN.getName(), ProcedureModuleTables.PURPOSE_EN.getName(), ProcedureModuleTables.PURPOSE_EN, null, null, null),
+        PURPOSE_ES("", ProcedureModuleTables.PURPOSE_ES.getName(), ProcedureModuleTables.PURPOSE_ES.getName(), ProcedureModuleTables.PURPOSE_ES, null, null, null),
         OBJECT_TYPE("", "object_type", "object_type", ProcedureModuleTables.PROCEDURE_NAME, null, null, null),
         DEPLOYMENT_STATUS("", "deployment_status", "deployment_status", ProcedureModuleTables.PROCEDURE_NAME, null, null, null),
         ;
