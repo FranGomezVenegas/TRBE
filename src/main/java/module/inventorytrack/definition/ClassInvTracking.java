@@ -14,9 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
-import static lbplanet.utilities.LPDate.isIntervalTypeOneRecognized;
 import lbplanet.utilities.LPFrontEnd;
-import lbplanet.utilities.LPMath;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.ApiErrorTraping;
@@ -25,6 +23,7 @@ import module.inventorytrack.definition.TblsInvTrackingData.TablesInvTrackingDat
 import module.inventorytrack.logic.DataInventory;
 import module.inventorytrack.definition.InvTrackingEnums.InventoryTrackAPIactionsEndpoints;
 import module.inventorytrack.definition.TblsInvTrackingConfig.TablesInvTrackingConfig;
+import module.inventorytrack.logic.AppInventoryLotAudit;
 import module.inventorytrack.logic.ConfigInvTracking;
 import static module.inventorytrack.logic.DataInventoryQualif.invTrackingAuditSetAuditRecordAsReviewed;
 import static module.inventorytrack.logic.DataInventoryQualif.objectVariableChangeValue;
@@ -76,18 +75,18 @@ public class ClassInvTracking implements ActionsClass{
             rObj.killInstance();
             return;
         }        DataInventory invLot = null;
-        String lotName = "";
+        String referenceName = "";
         String category = "";
         String reference = "";
         if (Boolean.FALSE.equals("LOTAUDIT_SET_AUDIT_ID_REVIEWED".equalsIgnoreCase(endPoint.getName()))) {
-            lotName = argValues[0].toString();
+            referenceName = argValues[0].toString();
             category = argValues[1].toString();
             reference = argValues[2].toString();
         }
         if (Boolean.FALSE.equals("NEW_INVENTORY_LOT".equalsIgnoreCase(endPoint.getName())) && Boolean.FALSE.equals("CONFIG_ADD_REFERENCE".equalsIgnoreCase(endPoint.getName()))
             && Boolean.FALSE.equals("LOTAUDIT_SET_AUDIT_ID_REVIEWED".equalsIgnoreCase(endPoint.getName()))                
             ) {
-            invLot = new DataInventory(lotName, reference, category, null);
+            invLot = new DataInventory(referenceName, reference, category, null);
             if (Boolean.TRUE.equals(invLot.getHasError())) {
                 this.actionDiagnosesObj = invLot.getErrorDetail();
                 this.relatedObj = rObj;
@@ -161,7 +160,7 @@ public class ClassInvTracking implements ActionsClass{
                     fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInvTrackingData.Lot.QUANTITY_UOM.getName());
                     fieldValues = LPArray.addValueToArray1D(fieldValues, volumeUom);
                 }
-                actionDiagnoses = DataInventory.createNewInventoryLot(lotName, reference, category, volume, volumeUom, fieldNames, fieldValues, numEntries, null);
+                actionDiagnoses = DataInventory.createNewInventoryLot(referenceName, reference, category, volume, volumeUom, fieldNames, fieldValues, numEntries, null);
                 break;
             case TURN_LOT_AVAILABLE:
                 fldNamesStr = argValues[3].toString();
@@ -237,7 +236,7 @@ public class ClassInvTracking implements ActionsClass{
                 }
                 actionDiagnoses = invLot.updateInventoryLot(fieldNames, fieldValues);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), lotName);
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), referenceName);
                 }
                 break;
             case RETIRE_LOT:
@@ -319,7 +318,7 @@ public class ClassInvTracking implements ActionsClass{
                 }
                 actionDiagnoses = invLot.completeQualification(decision, category, reference, Boolean.valueOf(turnAvailable));
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), lotName);
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), referenceName);
                 }
                 break;
             case REOPEN_QUALIFICATION:
@@ -328,7 +327,7 @@ public class ClassInvTracking implements ActionsClass{
                 }
                 actionDiagnoses = invLot.reopenQualification();
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), lotName);
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), referenceName);
                 }
                 break;
             case ENTER_EVENT_RESULT:
@@ -337,9 +336,9 @@ public class ClassInvTracking implements ActionsClass{
                 Integer lotQualifId = (Integer) argValues[3];
                 String variableName = argValues[4].toString();
                 String newValue = argValues[5].toString();
-                actionDiagnoses = objectVariableSetValue(lotName, category, reference, lotQualifId, variableName, newValue);
+                actionDiagnoses = objectVariableSetValue(referenceName, category, reference, lotQualifId, variableName, newValue);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), lotName);
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), referenceName);
                 }
                 break;
 
@@ -349,13 +348,13 @@ public class ClassInvTracking implements ActionsClass{
                 lotQualifId = (Integer) argValues[3];
                 variableName = argValues[4].toString();
                 newValue = argValues[5].toString();
-                actionDiagnoses = objectVariableChangeValue(lotName, category, reference, lotQualifId, variableName, newValue);
+                actionDiagnoses = objectVariableChangeValue(referenceName, category, reference, lotQualifId, variableName, newValue);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), lotName);
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), referenceName);
                 }
                 break;
             case LOTAUDIT_SET_AUDIT_ID_REVIEWED:
-                lotName = LPNulls.replaceNull(argValues[0]).toString();
+                referenceName = LPNulls.replaceNull(argValues[0]).toString();
                 Integer auditId = Integer.valueOf(LPNulls.replaceNull(argValues[1]).toString());
                 Object[][] auditInfo = QueryUtilitiesEnums.getTableData(TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT,
                         EnumIntTableFields.getTableFieldsFromString(TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT, new String[]{TblsInvTrackingDataAudit.Lot.LOT_NAME.getName()}),
@@ -363,10 +362,10 @@ public class ClassInvTracking implements ActionsClass{
                         new String[]{TblsInvTrackingDataAudit.Lot.AUDIT_ID.getName()});
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditInfo[0][0].toString())) {
                     actionDiagnoses = new InternalMessage(auditInfo[0][0].toString(), SampleAudit.SampleAuditErrorTrapping.AUDIT_RECORD_NOT_FOUND, new Object[]{auditId});
-                    lotName = null;
+                    referenceName = null;
                 } else {
                     actionDiagnoses = invTrackingAuditSetAuditRecordAsReviewed(auditId, ProcedureRequestSession.getInstanceForActions(null, null, null).getToken().getPersonName());
-                    this.messageDynamicData = new Object[]{auditId, lotName};
+                    this.messageDynamicData = new Object[]{auditId, referenceName};
                     break;
                 }
                 break;
@@ -397,13 +396,18 @@ public class ClassInvTracking implements ActionsClass{
                     this.messageDynamicData = new Object[]{argValues[0].toString()};
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(clss.getDiagnostic().getDiagnostic())) {
                         this.messageDynamicData = clss.getDiagnostic().getMessageCodeVariables();
+                    }else{
+                        AppInventoryLotAudit.inventoryLotConfigAuditAdd(InvTrackingEnums.AppConfigInventoryTrackingAuditEvents.REFERENCE_CREATED, TblsInvTrackingConfigAudit.TablesInvTrackingConfigAudit.REFERENCE, reference,
+                            category, tblFields, argValues);
+
                     }
                 }
                 break;
             case CONFIG_UPDATE_REFERENCE:
-                lotName = argValues[0].toString();
-                String fieldName = argValues[1].toString();
-                String fieldValue = argValues[2].toString();
+                referenceName = argValues[0].toString();
+                category = argValues[1].toString();
+                String fieldName = argValues[2].toString();
+                String fieldValue = argValues[3].toString();
                 fieldNames = null;
                 fieldValues = null;
                 if (fieldValue != null && fieldValue.length() > 0) {
@@ -417,25 +421,25 @@ public class ClassInvTracking implements ActionsClass{
                     if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                         actionDiagnoses = (InternalMessage) fieldValues[1];
                     } else {
-                        actionDiagnoses = ConfigInvTracking.configUpdateReference(lotName, fieldNames, fieldValues);
+                        actionDiagnoses = ConfigInvTracking.configUpdateReference(category, referenceName, fieldNames, fieldValues);
                     }                
                 }
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), lotName);
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), referenceName);
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT_QUALIFICATION.getTableName(), actionDiagnoses.getNewObjectId());
                 }
                 break;
 
 
             case ADD_ATTACHMENT:
-                lotName = argValues[0].toString();
+                referenceName = argValues[0].toString();
                 lotQualifId = LPNulls.replaceNull(argValues[1]).toString().length() > 0 ? (Integer) argValues[1] : null;
                 String attachUrl = argValues[2].toString();
                 String briefSummary = argValues[3].toString();
-                if (lotName != null) {
+                if (referenceName != null) {
                     actionDiagnoses = invLot.addAttachment(lotQualifId, attachUrl, briefSummary);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), lotName);
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), referenceName);
                         if (lotQualifId != null) {
                             rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT_QUALIFICATION.getTableName(), lotQualifId);
                         }
@@ -443,13 +447,13 @@ public class ClassInvTracking implements ActionsClass{
                 }
                 break;
             case REMOVE_ATTACHMENT:
-                lotName = argValues[0].toString();
+                referenceName = argValues[0].toString();
                 lotQualifId = LPNulls.replaceNull(argValues[1]).toString().length() > 0 ? (Integer) argValues[1] : null;
                 Integer attachmentId = LPNulls.replaceNull(argValues[2]).toString().length() > 0 ? (Integer) argValues[2] : null;
-                if (lotName != null) {
+                if (referenceName != null) {
                     actionDiagnoses = invLot.removeAttachment(lotQualifId, attachmentId);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), lotName);
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), referenceName);
                         if (lotQualifId != null) {
                             rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT_QUALIFICATION.getTableName(), lotQualifId);
                         }
@@ -457,13 +461,13 @@ public class ClassInvTracking implements ActionsClass{
                 }
                 break;
             case REACTIVATE_ATTACHMENT:
-                lotName = argValues[0].toString();
+                referenceName = argValues[0].toString();
                 lotQualifId = LPNulls.replaceNull(argValues[1]).toString().length() > 0 ? (Integer) argValues[1] : null;
                 attachmentId = LPNulls.replaceNull(argValues[2]).toString().length() > 0 ? (Integer) argValues[2] : null;
-                if (lotName != null) {
+                if (referenceName != null) {
                     actionDiagnoses = invLot.reactivateAttachment(lotQualifId, attachmentId);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), lotName);
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), referenceName);
                         if (lotQualifId != null) {
                             rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT_QUALIFICATION.getTableName(), lotQualifId);
                         }
@@ -478,7 +482,7 @@ public class ClassInvTracking implements ActionsClass{
 
         this.actionDiagnosesObj = actionDiagnoses;
 
-        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), lotName);
+        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), referenceName);
         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TablesInvTrackingConfig.INV_REFERENCE.getTableName(), reference);
         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.CONFIG.getName()), TablesInvTrackingConfig.INV_CATEGORY.getTableName(), category);
         this.relatedObj = rObj;
