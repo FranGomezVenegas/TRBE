@@ -27,9 +27,9 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
+import static trazit.session.ActionsServletCommons.publishResult;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -163,13 +163,9 @@ public class EnvMonIncubatorAPIactions extends HttpServlet {
                 return;
             }
             ClassEnvMonIncubator clss = new ClassEnvMonIncubator(request, endPoint);
-            Object[] diagnostic = clss.getDiagnostic();
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);
-            } else {
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());
-                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
-            }
+            publishResult(request, response, procReqInstance, clss.getEndpointObj(), 
+                    clss.getDiagnostic(), clss.getDiagnosticObj(), 
+                    clss.getMessageDynamicData(), clss.getRelatedObj());
         } catch (Exception e) {
             procReqInstance.killIt();
             errObject = new String[]{e.getMessage()};

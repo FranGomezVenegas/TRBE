@@ -31,10 +31,10 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import module.monitoring.definition.ClassEnvMon;
-import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables;
 import trazit.globalvariables.GlobalVariables.ApiUrls;
+import static trazit.session.ActionsServletCommons.publishResult;
 import trazit.session.ProcedureRequestSession;
 
 /**
@@ -370,14 +370,11 @@ public class EnvMonAPI extends HttpServlet {
         }
         try (PrintWriter out = response.getWriter()) {
             ClassEnvMon clss = new ClassEnvMon(request, endPoint);
-            Object[] diagnostic = clss.getDiagnostic();
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clss.getMessageDynamicData());
-            } else {
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());
-                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
+            if (clss.getFunctionFound()){
+                publishResult(request, response, procReqInstance, clss.getEndpointObj(), 
+                    clss.getDiagnostic(), clss.getDiagnosticObj(), 
+                    clss.getMessageDynamicData(), clss.getRelatedObj());
             }
-
         } catch (Exception e) {
             procReqInstance.killIt();
             LPFrontEnd.responseError(new String[]{"Servlet " + this.getClass().getSimpleName() + "Error: " + e.getMessage()});

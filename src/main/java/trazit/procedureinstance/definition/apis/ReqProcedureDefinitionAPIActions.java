@@ -15,8 +15,7 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
-import org.json.simple.JSONObject;
-import trazit.session.InternalMessage;
+import static trazit.session.ActionsServletCommons.publishResult;
 import trazit.session.ProcedureRequestSession;
 
 public class ReqProcedureDefinitionAPIActions extends HttpServlet {
@@ -68,31 +67,11 @@ public class ReqProcedureDefinitionAPIActions extends HttpServlet {
         }
         try (PrintWriter out = response.getWriter()) {
             ClassReqProcedureActions clss=new ClassReqProcedureActions(request, response, endPoint);
-            Object[] diagnostic=clss.getDiagnostic();
-            InternalMessage diagnosticObj = clss.getDiagnosticObj();
-            if (diagnosticObj != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosticObj.getDiagnostic())) {
-                procReqInstance.killIt();
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnosticObj.getMessageCodeObj(), diagnosticObj.getMessageCodeVariables());
-            } else if (diagnosticObj == null && LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) {
-                procReqInstance.killIt();
-                LPFrontEnd.responseError(diagnostic);
-            } else {
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());
-                procReqInstance.killIt();
-                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
-            }            
-/*            if (diagnostic==null){
-                return;
+            if (clss.getFunctionFound()){
+                publishResult(request, response, procReqInstance, endPoint,
+                    clss.getDiagnostic(), clss.getDiagnosticObj(),
+                    clss.getMessageDynamicData(), clss.getRelatedObj());
             }
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-                procReqInstance.killIt();
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clss.getMessageDynamicData());   
-            }else{
-                procReqInstance.killIt();
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(endPoint, clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
-                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
-            }   
-*/            
         }catch(Exception e){   
             procReqInstance.killIt();
             errObject = new String[]{e.getMessage()};

@@ -149,6 +149,10 @@ public class InvestigationAPI extends HttpServlet {
         /**
          *
          */
+        ALL_INVESTIGATIONS("ALL_INVESTIGATIONS", "", new LPAPIArguments[]{
+        
+        }, EndPointsToRequirements.endpointWithNoOutputObjects,
+                null, null),
         OPEN_INVESTIGATIONS("OPEN_INVESTIGATIONS", "", new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects,
                 null, null),
         INVESTIGATION_RESULTS_PENDING_DECISION("INVESTIGATION_RESULTS_PENDING_DECISION", "", new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects,

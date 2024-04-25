@@ -115,7 +115,6 @@ public class ClassInvestigation implements ActionsClass {
                         }
                     }
                     this.diagnosticObj = Investigation.newInvestigation(fieldNames, fieldValues, objectsToAdd);
-                   // actionDiagnoses = ApiMessageReturn.trapMessage(this.diagnosticObj.getDiagnostic(), this.diagnosticObj.getMessageCodeObj(), this.diagnosticObj.getMessageCodeVariables());
                     String investigationIdStr = "";
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())) {
                         investigationIdStr = this.diagnosticObj.getNewObjectId().toString();
@@ -140,12 +139,8 @@ public class ClassInvestigation implements ActionsClass {
                     this.diagnosticObj = Investigation.addInvestObjects(Integer.valueOf(argValues[0].toString()), objectsToAdd, null);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())) {
                         investigationId = Integer.valueOf(this.diagnosticObj.getNewObjectId().toString());
-                        //actionDiagnoses = ApiMessageReturn.trapMessage(this.diagnosticObj.getDiagnostic(),this.diagnosticObj.getMessageCodeEndpoint().getSuccessMessageCode(), this.diagnosticObj.getMessageCodeVariables());
                         messages.addMainForSuccess(endPoint, new Object[]{investigationId, objectsToAdd});
                         dynamicDataObjects = new Object[]{investigationId, objectsToAdd};
-                    //} else {
-                       // actionDiagnoses = ApiMessageReturn.trapMessage(this.diagnosticObj.getDiagnostic(),
-                       //         this.diagnosticObj.getMessageCodeObj(), this.diagnosticObj.getMessageCodeVariables());
                     }
                     break;
                 case CLOSE_INVESTIGATION:
@@ -155,11 +150,8 @@ public class ClassInvestigation implements ActionsClass {
                         investigationId = Integer.valueOf(investigationIdStr);
                     }
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())) {
-                        //actionDiagnoses = ApiMessageReturn.trapMessage(this.diagnosticObj.getDiagnostic(),this.diagnosticObj.getMessageCodeEndpoint().getSuccessMessageCode(), this.diagnosticObj.getMessageCodeVariables());
                         messages.addMainForSuccess(endPoint, new Object[]{investigationId});
                         dynamicDataObjects = new Object[]{investigationId};
-                    //}else{
-                        //actionDiagnoses = ApiMessageReturn.trapMessage(this.diagnosticObj.getDiagnostic(), this.diagnosticObj.getMessageCodeObj(), this.diagnosticObj.getMessageCodeVariables());
                     }
                     break;
                 case INVESTIGATION_CAPA_DECISION:
@@ -198,7 +190,6 @@ public class ClassInvestigation implements ActionsClass {
             this.messageDynamicData = dynamicDataObjects;
             rObj.killInstance();
         } catch (Exception e) {
-            //this.diagnostic = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.UNHANDLED_EXCEPTION, new Object[]{e.getMessage()});
             this.relatedObj = rObj;
             this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping.UNHANDLED_EXCEPTION, new Object[]{endPoint.getName() + ", Error:" + e.getMessage()}, null);
             this.messageDynamicData = new Object[]{e.getMessage()};
