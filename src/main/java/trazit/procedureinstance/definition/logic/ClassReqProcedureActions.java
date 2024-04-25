@@ -1280,6 +1280,8 @@ public class ClassReqProcedureActions {
                 i++;
                 roleName= argValues[i].toString();
                 i++;
+                orderNumber= LPNulls.replaceNull(argValues[i]).toString();
+                i++;
                 fieldName = argValues[i].toString();
                 i++;
                 fieldValue = argValues[i].toString();
@@ -1334,27 +1336,35 @@ public class ClassReqProcedureActions {
                         "TABLE_WITH_BUTTONS",
                         isModuleSpecialWindowAvailableDiagn[3].toString(), windowMode, isModuleSpecialWindowAvailableDiagn[1]});
                     if (LPNulls.replaceNull(isModuleSpecialWindowAvailableDiagn[4]).toString().length()>0){
-                        fieldNames=LPArray.addValueToArray1D(fieldNames, TblsReqs.ProcedureReqSolution.ORDER_NUMBER.getName());
-                        fieldValues=LPArray.addValueToArray1D(fieldValues, Integer.valueOf(isModuleSpecialWindowAvailableDiagn[4].toString()));
                     }
-                    
+                    if (orderNumber.length()>0){
+                        fieldNames=LPArray.addValueToArray1D(fieldNames, TblsReqs.ProcedureReqSolution.ORDER_NUMBER.getName());
+                        fieldValues=LPArray.addValueToArray1D(fieldValues, Integer.valueOf(orderNumber.toString()));                        
+                    }
                     removeDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION,
                         fieldNames, fieldValues);
                     if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
                         
                         JSONObject speViewDefinition=new JSONObject(isModuleSpecialWindowAvailableDiagn[2].toString());
-                        //speViewDefinition=(JSONObject) speViewDefinition.get("requirementsInfo");
                         if (Boolean.TRUE.equals(speViewDefinition.has("window_actions"))){
                             org.json.JSONArray speViewDefinitionActions=speViewDefinition.getJSONArray("window_actions");                       
                             for (i=0;i<speViewDefinitionActions.length();i++){
                                 JSONObject curAction = (JSONObject) speViewDefinitionActions.get(i);                            
                                 windowActionName = curAction.get("actionName").toString();
+                                String requirementDescription = curAction.has("requirementDescription")?LPNulls.replaceNull(curAction.get("requirementDescription")).toString():"";
+                                confirmDialog = curAction.has("confirmDialog")?LPNulls.replaceNull(curAction.get("confirmDialog")).toString():"";
+                                confirmDialogDetail = curAction.has("confirmDialogDetail")?LPNulls.replaceNull(curAction.get("confirmDialogDetail")).toString():"";
 
                                 String[] newChildReqFldN= EnumIntTableFields.getAllFieldNames(procUserReqsFlds);
                                 Object[] newChildReqFldV=procedureParentUserAndReqList[valuePosicArray2D[0]];
                                 Integer parentCodeFldPosic=EnumIntTableFields.getFldPosicInArray(procUserReqsFlds, TblsReqs.ProcedureUserRequirements.PARENT_CODE.getName());
                                 Integer codeFldPosic=EnumIntTableFields.getFldPosicInArray(procUserReqsFlds, TblsReqs.ProcedureUserRequirements.CODE.getName());
                                 newChildReqFldV[codeFldPosic]=newChildReqFldV[parentCodeFldPosic].toString()+"."+(i+1);
+                                Integer descriptionFldPosic=EnumIntTableFields.getFldPosicInArray(procUserReqsFlds, TblsReqs.ProcedureUserRequirements.DESCRIPTION.getName());
+                                newChildReqFldV[descriptionFldPosic]=windowActionName;
+                                if (requirementDescription.length()>0)
+                                    newChildReqFldV[descriptionFldPosic]=requirementDescription;
+                                
                                 String[] newChildReqFldsNoNulls=new String[]{};
                                 Object[] newChildReqFldsValuesNoNulls=new Object[]{};
                                 for (int iFld=0;iFld<newChildReqFldV.length;iFld++){
@@ -1364,8 +1374,7 @@ public class ClassReqProcedureActions {
                                     }
                                 }
                                 RdbmsObject newChildReq = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_USER_REQS, newChildReqFldsNoNulls, newChildReqFldsValuesNoNulls);
-                                String newReqId=newChildReq.getNewRowId().toString();
-                                
+                                String newReqId=newChildReq.getNewRowId().toString();                                
         
                                 fieldNames=new String[]{TblsReqs.ProcedureReqSolution.PROCEDURE_NAME.getName(), TblsReqs.ProcedureReqSolution.PROCEDURE_VERSION.getName(),
                                     TblsReqs.ProcedureReqSolution.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureReqSolution.REQ_ID.getName(), TblsReqs.ProcedureReqSolution.TYPE.getName(),
@@ -1373,10 +1382,14 @@ public class ClassReqProcedureActions {
 
                                 fieldValues=new Object[]{procedureName, procedureVersion, procInstanceName, 
                                     Integer.valueOf(newReqId.length()>0?newReqId: reqId), ProcedureDefinitionToInstanceSections.ReqSolutionTypes.WINDOW_BUTTON.getTagValue(), windowActionName, roleName, (i+1)};
-                                /*if (confirmDialog.length()>0){
-                                    fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{TblsReqs.ProcedureReqSolution.CONFIRM_DIALOG.getName(), TblsReqs.ProcedureReqSolution.CONFIRM_DIALOG_DETAIL.getName()});
-                                    fieldValues=LPArray.addValueToArray1D(fieldValues,new Object[]{confirmDialog, confirmDialogDetail});
-                                }*/
+                                if (confirmDialog.length()>0){
+                                    fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{TblsReqs.ProcedureReqSolution.CONFIRM_DIALOG.getName()});
+                                    fieldValues=LPArray.addValueToArray1D(fieldValues,new Object[]{confirmDialog});
+                                }
+                                if (confirmDialogDetail.length()>0){
+                                    fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{TblsReqs.ProcedureReqSolution.CONFIRM_DIALOG_DETAIL.getName()});
+                                    fieldValues=LPArray.addValueToArray1D(fieldValues,new Object[]{confirmDialogDetail});
+                                }
                                 removeDiagn = Rdbms.insertRecordInTable(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, fieldNames, fieldValues);
                             }
                         }
@@ -1403,7 +1416,6 @@ public class ClassReqProcedureActions {
                 i++;
                 fieldValue = argValues[i].toString();
                 i++;
-                
                 fieldNames=new String[0];
                 fieldValues=new Object[0];
                 if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            

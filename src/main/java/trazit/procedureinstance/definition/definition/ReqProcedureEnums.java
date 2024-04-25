@@ -393,8 +393,9 @@ public class ReqProcedureEnums {
                     new LPAPIArguments("specialWindowName", LPAPIArguments.ArgumentType.STRING.toString(), true, 10),
                     new LPAPIArguments("windowMode", LPAPIArguments.ArgumentType.STRING.toString(), true, 11),
                     new LPAPIArguments("roleName", LPAPIArguments.ArgumentType.STRING.toString(), true, 12),
-                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 13),
-                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 14)
+                    new LPAPIArguments("orderNumber", LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), false, 13),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 14),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 15)
                 }, EndPointsToRequirements.endpointWithNoOutputObjects,                null, null),
         REMOVE_REQ_SOLUTION("REMOVE_REQ_SOLUTION", "removeRequirementSolutionToProcedure_success",
                 new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
