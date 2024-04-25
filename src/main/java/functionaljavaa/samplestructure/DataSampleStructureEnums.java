@@ -98,9 +98,6 @@ public class DataSampleStructureEnums {
         AUTOSAMPLEANALYSISADD_CASE_NOT_DETECTED("autoSampleAnalysisAdd_caseNotDetected", "", ""),
         TEST_NOT_REVIEWED("testNotReviewed", "", ""),
         SAMPLE_NOT_SET_AS_READY_FOR_REVISION("sampleNotSetAsReadyForRevision", "", ""),
-        
-        
-        
         ;
 
         private DataSampleErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs) {
