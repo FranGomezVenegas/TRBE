@@ -357,6 +357,10 @@
         <servlet-name>ClinicalStudyAPIactions</servlet-name>
         <servlet-class>module.clinicalstudies.apis.ClinicalStudyAPIactions</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UserInterfaceTesting</servlet-name>
+        <servlet-class>trazit.testing.userinterface.apis.UserInterfaceTesting</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>AuthenticationAPIactions</servlet-name>
         <url-pattern>/app/AuthenticationAPIactions</url-pattern>
@@ -736,6 +740,10 @@
     <servlet-mapping>
         <servlet-name>ClinicalStudyAPIactions</servlet-name>
         <url-pattern>/moduleclinicalstudy/ClinicalStudyAPIactions</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UserInterfaceTesting</servlet-name>
+        <url-pattern>/userinterface/UserInterfaceTesting</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
