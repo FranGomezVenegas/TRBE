@@ -142,6 +142,12 @@ public class TestingServer extends HttpServlet {
 */
         String dbName="demo_v0_9_2";
         Rdbms.stablishDBConection(dbName);
+        
+        out.println(ReqProcedureDefinitionQueries.procReqSolutionTree("Demo"));
+if (1==1)return;                
+
+        dbName="demo_v0_9_2";
+        Rdbms.stablishDBConection(dbName);
                 Rdbms.stablishDBConection("labplanet");
                 InvTrackingFrontendMasterData mdObj = new InvTrackingFrontendMasterData();
                 JSONObject masterDataJsonObject = mdObj.getMasterDataJsonObject("inv-draft");
@@ -186,11 +192,6 @@ if(1==1)return;
         Integer procedureVersion=1;
         String procInstanceName="stock";
         
-        dbName="demo_v0_9_2";
-        Rdbms.stablishDBConection(dbName);
-        
-        out.println(ReqProcedureDefinitionQueries.procReqSolutionTree("instruments"));
-if (1==1)return;                
         
         
         out.println(ReqProcedureDefinitionQueries.procInstanceDefinitionInRequirements("Seminario1"));
