@@ -28,7 +28,7 @@ import module.inventorytrack.definition.TblsInvTrackingConfigAudit;
  */
 public class ConfigInvTracking {
 
-    public static InternalMessage configUpdateReference(String reference, String[] fieldNames, Object[] fieldValues) {
+    public static InternalMessage configUpdateReference(String reference, String category, String[] fieldNames, Object[] fieldValues) {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         ResponseMessages messages = procReqSession.getMessages();
         SqlWhere whereObj = new SqlWhere();
@@ -39,12 +39,13 @@ public class ConfigInvTracking {
             fieldValues = LPArray.addValueToArray1D(fieldValues, hashCode);
         }        
         whereObj.addConstraint(TblsInvTrackingConfig.Reference.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{reference}, null);
+        whereObj.addConstraint(TblsInvTrackingConfig.Reference.CATEGORY, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{category}, null);
         RdbmsObject updateTableRecordFieldsByFilter = Rdbms.updateTableRecordFieldsByFilter(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE,
                 EnumIntTableFields.getTableFieldsFromString(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE, fieldNames),
                 fieldValues, whereObj, null);
         if (updateTableRecordFieldsByFilter.getRunSuccess()) {
             AppInventoryLotAudit.inventoryLotConfigAuditAdd(InvTrackingEnums.AppConfigInventoryTrackingAuditEvents.REFERENCE_UPDATED, TblsInvTrackingConfigAudit.TablesInvTrackingConfigAudit.REFERENCE, reference,
-                    fieldNames, fieldValues);
+                    category, fieldNames, fieldValues);
             messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.CONFIG_UPDATE_REFERENCE, new Object[]{reference});
             return new InternalMessage(LPPlatform.LAB_TRUE, InstrumentsEnums.InstrEventsErrorTrapping.EVENT_NOTHING_PENDING, null, null);
         } else {

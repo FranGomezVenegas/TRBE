@@ -55,7 +55,7 @@ public final class AppInventoryLotAudit {
             return AuditUtilities.applyTheInsert(gAuditFlds, TblsInvTrackingDataAudit.TablesInvTrackingDataAudit.LOT, fieldNames, fieldValues);
         
     }
-    public static Object[] inventoryLotConfigAuditAdd(EnumIntAuditEvents action, EnumIntTables tableObj, String tableKey,
+    public static Object[] inventoryLotConfigAuditAdd(EnumIntAuditEvents action, EnumIntTables tableObj, String tableKey, String category,
                         String[] fldNames, Object[] fldValues) {
         GenericAuditFields gAuditFlds=new GenericAuditFields(action, tableObj, fldNames, fldValues);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();
@@ -64,6 +64,8 @@ public final class AppInventoryLotAudit {
 
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInvTrackingConfigAudit.Reference.NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableKey);
+        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInvTrackingConfigAudit.Reference.CATEGORY.getName());
+        fieldValues = LPArray.addValueToArray1D(fieldValues, category);
         return AuditUtilities.applyTheInsert(gAuditFlds, tableObj, fieldNames, fieldValues);
     }    
     

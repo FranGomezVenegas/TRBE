@@ -64,6 +64,7 @@ public class TblsInvTrackingConfigAudit {
     public enum Reference implements EnumIntTableFields{
         AUDIT_ID("audit_id", LPDatabase.integerNotNull(), null, null, null, null),
         NAME("name", LPDatabase.stringNotNull(), null, null, null, null),
+        CATEGORY("category", LPDatabase.stringNotNull(), null, null, null, null),
         TRANSACTION_ID("transaction_id", LPDatabase.integer(), null, null, null, null),
         DATE("date", LPDatabase.dateTime(), null, null, null, null),
         PERSON("person", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), "", null),
@@ -79,7 +80,7 @@ public class TblsInvTrackingConfigAudit {
         PICTURE_BEFORE("picture_before", "json", null, null, null, null),
         PICTURE_AFTER("picture_after", "json", null, null, null, null),
         REVIEWED("reviewed", LPDatabase.booleanFld(false), null, null, null, null),
-        REVIEWED_BY("reviewed_by", LPDatabase.string(), null, null, null, null),
+        REVIEWED_BY("reviewed_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         REVIEWED_ON("reviewed_on", dateTime(), null, null, null, null),        
         PARENT_AUDIT_ID("parent_audit_id", LPDatabase.integer(), null, null, null, null),
         REASON("reason", LPDatabase.string(), null, null, null, null),
