@@ -9,8 +9,8 @@
     "window_actions":[
         {"actionName": "NEW_INVESTIGATION"},
         {"actionName": "OPEN_INVESTIGATIONS"},
-        {"actionName": "INVESTIGATION_CAPA_DECISION"},
-        {"actionName": "CLOSE_INVESTIGATION", "confirmDialog":"confirm", "confirmDialogDetail": ""}
+        {"actionName": "INVESTIGATION_CAPA_DECISION", "requirementDescription":"The system should provide the ability to take one CAPA decision"},
+        {"actionName": "CLOSE_INVESTIGATION", "confirmDialog":"confirm", "confirmDialogDetail": "TEXT"}
     ]
     },    
     "jsonModel":{
