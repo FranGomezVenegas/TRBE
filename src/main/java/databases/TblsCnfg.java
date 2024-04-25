@@ -373,7 +373,7 @@ public class TblsCnfg {
         SOP_VERSION("sop_version", LPDatabase.integer(), null, null, null, null),
         SOP_REVISION("sop_revision", LPDatabase.integer(), null, null, null, null),
         CURRENT_STATUS("current_status", LPDatabase.string(), null, null, null, null),
-        ADDED_BY("added_by", LPDatabase.string(), null, null, null, null),
+        ADDED_BY("added_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         FILE_LINK("file_link", LPDatabase.string(), null, null, null, null),
         BRIEF_SUMMARY("brief_summary", LPDatabase.string(), null, null, null, null),
         EXPIRES("expires", LPDatabase.booleanFld(), null, null, null, null),

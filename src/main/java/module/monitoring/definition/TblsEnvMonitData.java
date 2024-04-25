@@ -141,7 +141,7 @@ public class TblsEnvMonitData {
         STATUS("status",LPDatabase.stringNotNull(), null, null, null, null, true),
         STATUS_PREVIOUS("status_previous",LPDatabase.string(), null, null, null, null, true),
         LOGGED_ON("logged_on", LPDatabase.date(), null, null, null, null, true),
-        LOGGED_BY("logged_by", LPDatabase.string(), null, null, null, null, true),
+        LOGGED_BY("logged_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null, true),
         RECEIVED_ON("received_on", LPDatabase.date(), null, null, null, null, true),
         RECEIVED_BY("received_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null, true),
         VOLUME(LPDatabase.FIELDS_NAMES_VOLUME, LPDatabase.real(), null, null, null, null, true),
@@ -197,7 +197,7 @@ public class TblsEnvMonitData {
         SAMPLING_DATE_END("sampling_date_end", dateTime(), null, null, null, null, true),
         REVIEWER("reviewer",LPDatabase.string(), null, null, null, null, true),
         REVIEWED("reviewed", LPDatabase.booleanFld(), null, null, null, null, true), 
-        REVIEWED_BY("reviewed_by", LPDatabase.string(), null, null, null, null, true), 
+        REVIEWED_BY("reviewed_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null, true), 
         REVIEWED_ON("reviewed_on", LPDatabase.dateTime(), null, null, null, null, true),
         CULTURE_MEDIA("culture_media", LPDatabase.string(), null, null, null, null, true)
         ;

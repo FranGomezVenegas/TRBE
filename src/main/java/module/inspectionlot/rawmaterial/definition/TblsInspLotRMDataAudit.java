@@ -5,6 +5,7 @@
  */
 package module.inspectionlot.rawmaterial.definition;
 
+import databases.TblsAppConfig;
 import lbplanet.utilities.LPDatabase;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
@@ -70,7 +71,7 @@ public class TblsInspLotRMDataAudit {
         PICTURE_AFTER("picture_after", LPDatabase.json(), null, null, null, null), 
         PARENT_AUDIT_ID("parent_audit_id", LPDatabase.integer(), null, null, null, null),
         REVIEWED("reviewed", LPDatabase.booleanFld(false), null, null, null, null),
-        REVIEWED_BY("reviewed_by", LPDatabase.string(), null, null, null, null),
+        REVIEWED_BY("reviewed_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         REVIEWED_ON("reviewed_on", LPDatabase.dateTime(), null, null, null, null),
         REVISION_NOTE("revision_note", LPDatabase.string(), null, null, null, null),
         REASON("reason", LPDatabase.string(), null, null, null, null),

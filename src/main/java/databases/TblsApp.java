@@ -93,8 +93,8 @@ public class TblsApp {
         ID("id", LPDatabase.integerNotNull(), null, null, null, null),
         ACTIVE("active", LPDatabase.booleanFld(), null, null, null, null), 
         DESCRIPTION("description", LPDatabase.string(), null, null, null, null), 
-        ADDED_ON("added_on", LPDatabase.dateTime(), null, null, null, null),
-        ADDED_BY("added_by", LPDatabase.string(), null, null, null, null), 
+        ADDED_ON("added_on", LPDatabase.dateTime(), "to_char(" + "added_on" + ",'YYYY-MM-DD HH:MI')", null, null, null),
+        ADDED_BY("added_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null), 
         IP_VALUE1("ip_value1", LPDatabase.stringNotNull(),null, null, "", null),
         IP_VALUE2("ip_value2", LPDatabase.stringNotNull(),null, null, "", null),
         IP_VALUE3("ip_value3", LPDatabase.stringNotNull(),null, null, "", null),
@@ -132,7 +132,7 @@ public class TblsApp {
         ID("id", LPDatabase.integerNotNull(), null, null, null, null),
         ACTIVE("active", LPDatabase.booleanFld(), null, null, null, null), 
         DESCRIPTION("description", LPDatabase.string(), null, null, null, null), 
-        ADDED_ON("added_on", LPDatabase.dateTime(), null, null, null, null),
+        ADDED_ON("added_on", LPDatabase.dateTime(), "to_char(" + "added_on" + ",'YYYY-MM-DD HH:MI')", null, null, null),
         ADDED_BY("added_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null), 
         IP_VALUE1("ip_value1", LPDatabase.stringNotNull(),null, null, "", null),
         IP_VALUE2("ip_value2", LPDatabase.stringNotNull(),null, null, "", null),
@@ -236,9 +236,9 @@ public class TblsApp {
     public enum HolidaysCalendar implements EnumIntTableFields{
         CODE("code", LPDatabase.string(),null, null, "", null),
         ACTIVE("active", LPDatabase.booleanFld(),null, null, "", null),
-        DEACTIVATED_ON("deactivated_on", LPDatabase.dateTime(),null, null, "", null),
+        DEACTIVATED_ON("deactivated_on", LPDatabase.dateTime(),"to_char(" + "deactivated_on" + ",'YYYY-MM-DD HH:MI')", null, "", null),
         DEACTIVATED_BY("deactivated_by", LPDatabase.string(),null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), "", null),
-        CREATED_ON("created_on", LPDatabase.dateTime(),null, null, "", null),
+        CREATED_ON("created_on", LPDatabase.dateTime(),"to_char(" + "created_on" + ",'YYYY-MM-DD HH:MI')", null, "", null),
         CREATED_BY("created_by", LPDatabase.string(),null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), "", null),
         DESCRIPTION("description", LPDatabase.string(),null, null, "", null)
         ;
@@ -263,7 +263,7 @@ public class TblsApp {
         CALENDAR_CODE("calendar_code", LPDatabase.string(),null, null, "", null),
         DATE("date", LPDatabase.date(),null, null, "", null),
         DAY_NAME("day_name", LPDatabase.string(),null, null, "", null),
-        CREATED_ON("created_on", LPDatabase.dateTime(),null, null, "", null),
+        CREATED_ON("created_on", LPDatabase.dateTime(),"to_char( created_on,'YYYY-MM-DD HH:MI')", null, "", null),
         CREATED_BY("created_by", LPDatabase.string(),null, null, "", null)
         ;
         private HolidaysCalendarDate(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
@@ -285,13 +285,13 @@ public class TblsApp {
 
     public enum Incident implements EnumIntTableFields{
         ID("id", LPDatabase.integerNotNull(), null, null, "", null),
-        DATE_CREATION("date_creation", LPDatabase.dateTime(), null, null, "", null),
+        DATE_CREATION("date_creation", LPDatabase.dateTime(), "to_char( date_creation,'YYYY-MM-DD HH:MI')", null, "", null),
         PERSON_CREATION("person_creation", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), "", null),
-        DATE_CONFIRMED("date_confirmed", LPDatabase.dateTime(), null, null, "", null),
+        DATE_CONFIRMED("date_confirmed", LPDatabase.dateTime(), "to_char( date_confirmed,'YYYY-MM-DD HH:MI')", null, "", null),
         PERSON_CONFIRMED("person_confirmed", LPDatabase.string(), null, null, "", null),
-        DATE_RESOLUTION("date_resolution", LPDatabase.dateTime(), null, null, "", null),
+        DATE_RESOLUTION("date_resolution", LPDatabase.dateTime(), "to_char( date_resolution,'YYYY-MM-DD HH:MI')", null, "", null),
         PERSON_RESOLUTION("person_resolution", LPDatabase.string(), null, null, "", null),
-        DATE_LAST_UPDATE("date_last_update", LPDatabase.dateTime(), null, null, "", null),
+        DATE_LAST_UPDATE("date_last_update", LPDatabase.dateTime(), "to_char( date_last_update,'YYYY-MM-DD HH:MI')", null, "", null),
         PERSON_LAST_UPDATE("person_last_update", LPDatabase.string(), null, null, "", null),
         STATUS("status", LPDatabase.string(), null, null, "", null),
         STATUS_PREVIOUS("status_previous", LPDatabase.string(), null, null, "", null),    
@@ -324,7 +324,7 @@ public class TblsApp {
     
     public enum VideoTutorial implements EnumIntTableFields{
         ID("id", LPDatabase.integerNotNull(), null, null, "", null),
-        DATE_CREATION("date_creation", LPDatabase.dateTime(), null, null, "", null),
+        DATE_CREATION("date_creation", LPDatabase.dateTime(), "to_char( date_creation,'YYYY-MM-DD HH:MI')", null, "", null),
         SOURCE("source", LPDatabase.string(), null, null, "", null),
         ACTIVE("active", LPDatabase.booleanFld(), null, null, "", null),
         INDEX_LEVEL("index_level", LPDatabase.string(), null, null, "", null),
@@ -380,7 +380,7 @@ public class TblsApp {
     public enum LdapSetting implements EnumIntTableFields{
         NAME("name", LPDatabase.stringNotNull(),null, null, "", null),
         ACTIVE("active", LPDatabase.booleanFld(),null, null, "", null),
-        CREATED_ON("created_on", LPDatabase.dateTime(),null, null, "", null),
+        CREATED_ON("created_on", LPDatabase.dateTime(),"to_char( created_on,'YYYY-MM-DD HH:MI')", null, "", null),
         CREATED_BY("created_by", LPDatabase.string(),null, null, "", null),
         DESCRIPTION("description", LPDatabase.string(),null, null, "", null),
         URL("url", LPDatabase.string(),null, null, "", null),

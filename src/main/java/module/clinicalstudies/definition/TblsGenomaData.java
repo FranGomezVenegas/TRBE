@@ -5,6 +5,7 @@
  */
 package module.clinicalstudies.definition;
 
+import databases.TblsAppConfig;
 import lbplanet.utilities.LPDatabase;
 import static lbplanet.utilities.LPDatabase.dateTime;
 import trazit.enums.EnumIntTableFields;
@@ -497,7 +498,7 @@ public class TblsGenomaData {
         OWNER_ID("owner_id", LPDatabase.stringNotNull(), null, null, null, null),
         DOC_NAME("doc_name", LPDatabase.stringNotNull(), null, null, null, null),
         ADDED_ON("added_on", dateTime(), null, null, null, null),
-        ADDED_BY("added_by", LPDatabase.string(), null, null, null, null),
+        ADDED_BY("added_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         FILE_LINK("file_link", LPDatabase.stringNotNull(), null, null, null, null),
         BRIEF_SUMMARY("brief_summary", LPDatabase.stringNotNull(), null, null, null, null),
         AUTHOR("author", LPDatabase.stringNotNull(), null, null, null, null),

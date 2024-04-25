@@ -882,15 +882,15 @@ public class TblsProcedure {
         ID("id", "bigint NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_id_seq'::regclass)", null, null, null, null, true),
         DESCRIPTION("description", LPDatabase.string(), null, null, null, null, false),
         CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null, true),
-        CREATED_BY("created_by", LPDatabase.string(), null, null, null, null, true),
+        CREATED_BY("created_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null, true),
         CLOSED("closed", LPDatabase.booleanFld(), null, null, null, null, true),
         CLOSED_ON("closed_on", LPDatabase.dateTime(), null, null, null, null, true),
-        CLOSED_BY("closed_by", LPDatabase.string(), null, null, null, null, true),
+        CLOSED_BY("closed_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null, true),
         EXTERNAL_SYSTEM_ID("external_system_id", LPDatabase.string(), null, null, null, null, true),
         EXTERNAL_SYSTEM_NAME("external_system_name", LPDatabase.string(), null, null, null, null, true),
         CAPA_REQUIRED("capa_required", LPDatabase.booleanFld(), null, null, null, null, true),
         CAPA_DECISION_ON("capa_decision_on", LPDatabase.dateTime(), null, null, null, null, true),
-        CAPA_DECISION_BY("capa_decision_by", LPDatabase.string(), null, null, null, null, true),
+        CAPA_DECISION_BY("capa_decision_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null, true),
         CAPA_OBSERVATION("capa_observation", LPDatabase.string(), null, null, null, null, true),
         CAPA_EXTERNAL_SYSTEM_ID("capa_external_system_id", LPDatabase.string(), null, null, null, null, true),
         CAPA_EXTERNAL_SYSTEM_NAME("capa_external_system_name", LPDatabase.string(), null, null, null, null, true),;
@@ -956,7 +956,7 @@ public class TblsProcedure {
         OBJECT_NAME("object_name", LPDatabase.string(), null, null, null, null),
         OBJECT_ID("object_id", LPDatabase.integer(), null, null, null, null),
         ADDED_ON("added_on", LPDatabase.dateTime(), null, null, null, null),
-        ADDED_BY("added_BY", LPDatabase.string(), null, null, null, null),
+        ADDED_BY("added_BY", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         DESCRIPTION("description", LPDatabase.string(), null, null, null, null),
         NOTES("notes", LPDatabase.string(), null, null, null, null),;
 
