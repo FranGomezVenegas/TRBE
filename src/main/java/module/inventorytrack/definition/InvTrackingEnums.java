@@ -229,10 +229,11 @@ public class InvTrackingEnums {
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TablesInvTrackingData.LOT.getTableName()).build()).build(),
                 null, null),
-        CONFIG_UPDATE_REFERENCE("CONFIG_UPDATE_REFERENCE", REQUEST_PARAM_LOT_NAME, "", "configInstrumentFamilyUpdated_success",
-                new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                    new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
-                    new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 8)
+        CONFIG_UPDATE_REFERENCE("CONFIG_UPDATE_REFERENCE", "referenceName", "", "configInstrumentFamilyUpdated_success",
+                new LPAPIArguments[]{new LPAPIArguments("referenceName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments("category", LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
+                    new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8),
+                    new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 9)
                 }, 
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TablesInvTrackingData.LOT.getTableName()).build()).build(),
