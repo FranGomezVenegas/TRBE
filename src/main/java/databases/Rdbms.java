@@ -2703,8 +2703,7 @@ private static final int CLIENT_CODE_STACK_INDEX;
             }
 
             SqlStatementEnums sql = new SqlStatementEnums();
-            sql.areMissingTableFieldsInTheStatement(tblObj, fieldNames);
-            Object[] areMissingDiagn = sql.areMissingTableFieldsInTheStatement(tblObj, fieldNames);
+            Object[] areMissingDiagn = sql.areMissingTableFieldsInTheStatement(tblObj, fieldNames, alternativeProcInstanceName);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMissingDiagn[0].toString())) {
                 return (RdbmsObject) areMissingDiagn[1];
             }

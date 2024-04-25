@@ -21,7 +21,6 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import trazit.enums.EnumIntTableFields;
-import static trazit.enums.EnumIntTableFields.getFldPosicInArray;
 import trazit.enums.EnumIntTables;
 import trazit.enums.EnumIntViewFields;
 import trazit.enums.EnumIntViews;
@@ -790,15 +789,16 @@ public class SqlStatementEnums {
         //return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, TrazitUtilitiesErrorTrapping.NOT_IMPLEMENTED_YET, new Object[]{});
     }
 
-    public Object[] areMissingTableFieldsInTheStatement(EnumIntTables tblObj, String[] fieldNames) {
+    public Object[] areMissingTableFieldsInTheStatement(EnumIntTables tblObj, String[] fieldNames, String alternativeProcInstanceName) {
         EnumIntTableFields[] fldNamesObj = new EnumIntTableFields[fieldNames.length];
         String[] missingFlds = new String[]{};
+        EnumIntTableFields[] allFieldNamesFromDatabase = EnumIntTableFields.getAllFieldNamesFromDatabase(tblObj, alternativeProcInstanceName);
         for (int iFld = 0; iFld < fieldNames.length; iFld++) {
-            Integer fldPosicInArray = getFldPosicInArray(tblObj.getTableFields(), fieldNames[iFld]);
+            Integer fldPosicInArray = EnumIntTableFields.getFldPosicInArray(allFieldNamesFromDatabase, fieldNames[iFld]);
             if (fldPosicInArray == -1) {
                 missingFlds = LPArray.addValueToArray1D(missingFlds, fieldNames[iFld]);
             } else {
-                fldNamesObj[iFld] = tblObj.getTableFields()[fldPosicInArray];
+                fldNamesObj[iFld] = allFieldNamesFromDatabase[fldPosicInArray];
             }
         }
         if (missingFlds.length > 0) {
