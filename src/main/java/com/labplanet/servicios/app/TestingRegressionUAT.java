@@ -350,7 +350,7 @@ public class TestingRegressionUAT extends HttpServlet {
             }
         }
         if (allMismatches != null && allMismatches.length > 0) {
-            return new InternalMessage(LAB_FALSE, LpPlatformErrorTrapping.MIRROR_MISMATCHES, null, new Object[]{allMismatches});
+            return new InternalMessage(LAB_FALSE, LpPlatformErrorTrapping.MIRROR_MISMATCHES, null, allMismatches);
         }
         return new InternalMessage(LAB_TRUE, LpPlatformSuccess.ALL_THE_SAME, null);
     }
