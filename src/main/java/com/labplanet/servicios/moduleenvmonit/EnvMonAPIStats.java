@@ -301,6 +301,9 @@ public class EnvMonAPIStats extends HttpServlet {
                 case QUERY_SAMPLING_HISTORY:
                     getSampleInfo = true;
                     getInvestigationInfo = false;
+                    prodLotName = argValues[0].toString();
+                    wObj.addConstraint(TblsData.ViewSampleAnalysisResultWithSpecLimits.PRODUCTION_LOT,
+                            prodLotName.contains("*") ? SqlStatement.WHERECLAUSE_TYPES.LIKE : SqlStatement.WHERECLAUSE_TYPES.IN, new Object[]{prodLotName}, null);                    
                     break;
                 case QUERY_READING_OUT_OF_RANGE:
                     getSampleInfo = true;
