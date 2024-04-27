@@ -790,14 +790,14 @@ public class ConfigSpecRule {
      * @return
      */
     public static Object[][] getSpecLimitLimitIdFromSpecVariables(String sampleSpecCode, Integer sampleSpecCodeVersion,
-            String sampleSpecVariationName, String analysis, String methodName, Integer methodVersion, String paramName, String[] fieldsToRetrieve) {
+            String sampleSpecVariationName, String analysis, String methodName, String paramName, String[] fieldsToRetrieve) {
 
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         return Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.CONFIG.getName()), TblsCnfg.TablesConfig.SPEC_LIMITS.getTableName(),
                 new String[]{TblsCnfg.SpecLimits.CODE.getName(), TblsCnfg.SpecLimits.CONFIG_VERSION.getName(), TblsCnfg.SpecLimits.VARIATION_NAME.getName(),
-                    TblsCnfg.SpecLimits.ANALYSIS.getName(), TblsCnfg.SpecLimits.METHOD_NAME.getName(), TblsCnfg.SpecLimits.METHOD_VERSION.getName(),
+                    TblsCnfg.SpecLimits.ANALYSIS.getName(), TblsCnfg.SpecLimits.METHOD_NAME.getName(),
                     TblsCnfg.SpecLimits.PARAMETER.getName()}, new Object[]{sampleSpecCode, sampleSpecCodeVersion, sampleSpecVariationName,
-            analysis, methodName, methodVersion, paramName},
+            analysis, methodName, paramName},
                 fieldsToRetrieve);
     }
 

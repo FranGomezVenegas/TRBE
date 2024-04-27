@@ -10,7 +10,6 @@ import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIactionsEndp
 import databases.Rdbms;
 import databases.RdbmsObject;
 import databases.SqlWhere;
-import databases.TblsCnfg;
 import databases.TblsData;
 import databases.TblsDataAudit;
 import functionaljavaa.audit.SampleAudit;
@@ -280,9 +279,10 @@ public class ClassSample implements ActionsClass{
                 if (fieldValueArr != null && fieldValueArr.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValueArr[0].toString())) {
                     actionDiagnosesObj = (InternalMessage) fieldValueArr[1];
                     break;
-                }                actionDiagnosesObj = DataSampleAnalysis.sampleAnalysisAddtoSample(sampleId, fieldNameArr, fieldValueArr);
+                }                
+                actionDiagnosesObj = DataSampleAnalysis.sampleAnalysisAddtoSample(sampleId, fieldNameArr, fieldValueArr);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
-                this.messageDynamicData = new Object[]{fieldValueArr[LPArray.valuePosicInArray(fieldNameArr, TblsCnfg.AnalysisMethod.ANALYSIS.getName())], sampleId};
+                this.messageDynamicData = actionDiagnosesObj.getMessageCodeVariables();
                 break;
             case SAMPLEANALYSISREMOVE:
                 sampleId = (Integer) argValues[0];
@@ -300,11 +300,7 @@ public class ClassSample implements ActionsClass{
                 }
                 actionDiagnosesObj = DataSampleAnalysis.sampleAnalysisRemovetoSample(sampleId, testId, fieldNameArr, fieldValueArr);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnosesObj.getDiagnostic())) {
-                    this.messageDynamicData = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages().getMainMessageVariables();
-                } else {
-                    this.messageDynamicData = new Object[]{sampleId, testId};
-                }
+                this.messageDynamicData = actionDiagnosesObj.getMessageCodeVariables();
                 break;
             case REENTERRESULT:
             case ENTERRESULT:

@@ -301,7 +301,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         Object[][] testData = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaDataName, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
                 new String[]{TblsData.SampleAnalysis.TEST_ID.getName()},
                 new Object[]{testId}, new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName(), TblsData.SampleAnalysis.STATUS.getName(), TblsData.SampleAnalysis.ANALYST.getName(),
-                    TblsData.SampleAnalysis.ANALYSIS.getName(), TblsData.SampleAnalysis.METHOD_NAME.getName(), TblsData.SampleAnalysis.METHOD_VERSION.getName()});
+                    TblsData.SampleAnalysis.ANALYSIS.getName(), TblsData.SampleAnalysis.METHOD_NAME.getName()}); //, TblsData.SampleAnalysis.METHOD_VERSION.getName()
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(testData[0][0].toString())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SAMPLEANALYSIS_NOTFOUND, new Object[]{testId, procInstanceName});
         }
@@ -433,7 +433,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
             if (Boolean.FALSE.equals(LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker.getDiagnostic()))) {
                 return new InternalMessage(LPPlatform.LAB_FALSE, fieldNameValueArrayChecker.getMessageCodeObj(), fieldNameValueArrayChecker.getMessageCodeVariables());
             }
-            String[] fieldNeed = new String[]{TblsData.SampleAnalysis.ANALYSIS.getName(), TblsData.SampleAnalysis.METHOD_NAME.getName(), TblsData.SampleAnalysis.METHOD_VERSION.getName()};
+            String[] fieldNeed = new String[]{TblsData.SampleAnalysis.ANALYSIS.getName(), TblsData.SampleAnalysis.METHOD_NAME.getName()}; //, TblsData.SampleAnalysis.METHOD_VERSION.getName()
             for (String curFld : fieldNeed) {
                 int specialFieldIndex = Arrays.asList(mandatoryFields).indexOf(curFld);
                 if (specialFieldIndex == -1) {
@@ -484,7 +484,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_REMOVED, sampleLevel + TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
                 testId, sampleId, testId, null, remFlds, remFldsV);
 
-        return new InternalMessage(LPPlatform.LAB_TRUE, SampleAPIactionsEndpoints.SAMPLEANALYSISREMOVE, new Object[]{fieldValue[0], sampleId});
+        return new InternalMessage(LPPlatform.LAB_TRUE, SampleAPIactionsEndpoints.SAMPLEANALYSISREMOVE, new Object[]{sampleData[0][2].toString(), sampleId}, testId);
     }
 
     /**
@@ -585,7 +585,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
                     return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SPECRULE_NOTFOUND, new Object[]{sampleSpecCode, sampleSpecCodeVersion, schemaDataName});
                 }
                 if (Boolean.FALSE.equals(Boolean.valueOf(specRules[0][0].toString()))) {
-                    String[] specAnalysisFieldName = new String[]{TblsCnfg.SpecLimits.ANALYSIS.getName(), TblsCnfg.SpecLimits.METHOD_NAME.getName(), TblsCnfg.SpecLimits.METHOD_VERSION.getName()};
+                    String[] specAnalysisFieldName = new String[]{TblsCnfg.SpecLimits.ANALYSIS.getName(), TblsCnfg.SpecLimits.METHOD_NAME.getName()}; //, TblsCnfg.SpecLimits.METHOD_VERSION.getName()
                     Object[] specAnalysisFieldValue = new Object[0];
                     Boolean nullValues = false;
                     String[] nullValuesArr = new String[]{};
@@ -622,7 +622,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
 //                                sW,
 //                                new String[]{TblsCnfg.SpecLimits.TESTING_GROUP.getName()});
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisTestingGroup[0][0].toString())) {
-                            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SPECLIMIT_NOTFOUND, new Object[]{Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(specAnalysisFieldName, specAnalysisFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR)), schemaDataName});
+                            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SPECLIMIT_NOTFOUND, new Object[]{sampleSpecCode, Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(specAnalysisFieldName, specAnalysisFieldValue, LPPlatform.AUDIT_FIELDS_UPDATED_SEPARATOR)), schemaDataName});
                         }
                         specAnalysisTestingGroup = analysisTestingGroup[0][0].toString();
                     }
@@ -695,6 +695,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         } else {
             value = mandatoryFieldsValue[specialFieldIndex];
         }
+        /*
         whereResultFieldValue = LPArray.addValueToArray1D(whereResultFieldValue, value);
         fieldNeed = TblsCnfg.AnalysisMethodParams.METHOD_VERSION.getName();
         whereResultFieldName = LPArray.addValueToArray1D(whereResultFieldName, fieldNeed);
@@ -708,7 +709,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
             value = fieldValue[specialFieldIndex];
         } else {
             value = mandatoryFieldsValue[specialFieldIndex];
-        }
+        }*/
         whereResultFieldValue = LPArray.addValueToArray1D(whereResultFieldValue, value);
         String[] getResultFieldsBeforeEach = new String[]{TblsCnfg.AnalysisMethodParams.PARAM_NAME.getName(), TblsCnfg.AnalysisMethodParams.MANDATORY.getName(), TblsCnfg.AnalysisMethodParams.ANALYSIS.getName(),
             TblsCnfg.AnalysisMethodParams.PARAM_TYPE.getName(), TblsCnfg.AnalysisMethodParams.NUM_REPLICAS.getName(), TblsCnfg.AnalysisMethodParams.UOM.getName(), TblsCnfg.AnalysisMethodParams.UOM_CONVERSION_MODE.getName(), TblsCnfg.AnalysisMethodParams.CALC_LINKED.getName(), TblsCnfg.AnalysisMethodParams.LIST_ENTRY.getName()};
@@ -780,11 +781,12 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
             resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.METHOD_NAME.getName())]);
             getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.METHOD_NAME.getName());
         }
+        /*
         valuePosic = Arrays.asList(getResultFieldsBeforeEach).indexOf(TblsData.SampleAnalysisResult.METHOD_VERSION.getName());
         if (valuePosic == -1) {
             resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.METHOD_VERSION.getName())]);
             getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.METHOD_VERSION.getName());
-        }
+        }*/
         for (Object[] resultFieldRecord : resultFieldRecords) {
             Object[] fieldVal = new Object[0];
             String[] getResultFields = getResultFieldsBeforeEach;
@@ -816,7 +818,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
                         sampleSpecVariationName,
                         fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.ANALYSIS.getName())].toString(),
                         fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.METHOD_NAME.getName())].toString(),
-                        Integer.valueOf(fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.METHOD_VERSION.getName())].toString()),
+                        //Integer.valueOf(fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.METHOD_VERSION.getName())].toString()),
                         fieldVal[Arrays.asList(getResultFields).indexOf(TblsData.SampleAnalysisResult.PARAM_NAME.getName())].toString(),
                         new String[]{TblsCnfg.SpecLimits.LIMIT_ID.getName(), TblsCnfg.SpecLimits.MAX_DP.getName(), TblsCnfg.SpecLimits.LIST_ENTRY.getName()});
                 Integer fldPosic = -1;
@@ -1016,6 +1018,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         } else {
             value = mandatoryFieldsValue[specialFieldIndex];
         }
+        /*
         whereResultFieldValue = LPArray.addValueToArray1D(whereResultFieldValue, value);
         fieldNeed = TblsCnfg.AnalysisMethodParams.METHOD_VERSION.getName();
         whereResultFieldName = LPArray.addValueToArray1D(whereResultFieldName, fieldNeed);
@@ -1030,6 +1033,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         } else {
             value = mandatoryFieldsValue[specialFieldIndex];
         }
+        */
         whereResultFieldValue = LPArray.addValueToArray1D(whereResultFieldValue, value);
         String[] getResultFieldsBeforeEach = new String[]{TblsCnfg.AnalysisMethodParams.PARAM_NAME.getName(), TblsCnfg.AnalysisMethodParams.MANDATORY.getName(), TblsCnfg.AnalysisMethodParams.ANALYSIS.getName(),
             TblsCnfg.AnalysisMethodParams.PARAM_TYPE.getName(), TblsCnfg.AnalysisMethodParams.NUM_REPLICAS.getName(), TblsCnfg.AnalysisMethodParams.UOM.getName(), TblsCnfg.AnalysisMethodParams.UOM_CONVERSION_MODE.getName(), TblsCnfg.AnalysisMethodParams.CALC_LINKED.getName(), TblsCnfg.AnalysisMethodParams.LIST_ENTRY.getName()};
@@ -1101,11 +1105,12 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
             resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.METHOD_NAME.getName())]);
             getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.METHOD_NAME.getName());
         }
+        /*
         valuePosic = Arrays.asList(getResultFieldsBeforeEach).indexOf(TblsData.SampleAnalysisResult.METHOD_VERSION.getName());
         if (valuePosic == -1) {
             resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.METHOD_VERSION.getName())]);
             getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.METHOD_VERSION.getName());
-        }
+        }*/
         for (Object[] resultFieldRecord : resultFieldRecords) {
             Object[] fieldVal = new Object[0];
             String[] getResultFields = getResultFieldsBeforeEach;
@@ -1137,7 +1142,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
                         sampleSpecVariationName,
                         fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.ANALYSIS.getName())].toString(),
                         fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.METHOD_NAME.getName())].toString(),
-                        Integer.valueOf(fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.METHOD_VERSION.getName())].toString()),
+                        //Integer.valueOf(fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.METHOD_VERSION.getName())].toString()),
                         fieldVal[Arrays.asList(getResultFields).indexOf(TblsData.SampleAnalysisResult.PARAM_NAME.getName())].toString(),
                         new String[]{TblsCnfg.SpecLimits.LIMIT_ID.getName(), TblsCnfg.SpecLimits.MAX_DP.getName(), TblsCnfg.SpecLimits.LIST_ENTRY.getName()});
                 Integer fldPosic = -1;
@@ -1260,8 +1265,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
             Object value = null;
 
             String[] whereResultFieldName = new String[0];
-            String[] fieldNeedArr = new String[]{TblsCnfg.AnalysisMethodParams.ANALYSIS.getName(), TblsCnfg.AnalysisMethodParams.METHOD_NAME.getName(),
-                TblsCnfg.AnalysisMethodParams.METHOD_VERSION.getName()};
+            String[] fieldNeedArr = new String[]{TblsCnfg.AnalysisMethodParams.ANALYSIS.getName(), TblsCnfg.AnalysisMethodParams.METHOD_NAME.getName()};//                TblsCnfg.AnalysisMethodParams.METHOD_VERSION.getName()};
             Object[] whereResultFieldValue = new Object[0];
             Object[] mandatoryFieldsValue = new Object[fieldNeedArr.length];
             for (String fieldNeed : fieldNeedArr) {
@@ -1361,11 +1365,13 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
                 resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.METHOD_NAME.getName())]);
                 getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.METHOD_NAME.getName());
             }
+            /*
             valuePosic = Arrays.asList(getResultFieldsBeforeEach).indexOf(TblsData.SampleAnalysisResult.METHOD_VERSION.getName());
             if (valuePosic == -1) {
                 resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.METHOD_VERSION.getName())]);
                 getResultFieldsBeforeEach = LPArray.addValueToArray1D(getResultFieldsBeforeEach, TblsData.SampleAnalysisResult.METHOD_VERSION.getName());
             }
+            */
             for (Object[] resultFieldRecord : resultFieldRecords) {
                 Object[] fieldVal = new Object[0];
                 String[] getResultFields = getResultFieldsBeforeEach;
