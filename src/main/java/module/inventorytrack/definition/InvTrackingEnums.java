@@ -60,7 +60,7 @@ public class InvTrackingEnums {
     }
 
     public enum InvLotStatuses {
-        NEW, QUARANTINE, QUARANTINE_ACCEPTED, QUARANTINE_REJECTED, RETIRED,
+        NEW, UNDER_QUALIFIFICATION, QUALIFIFICATION_ACCEPTED, QUALIFIFICATION_REJECTED, RETIRED,
         NOT_AVAILABLEFOR_USE, AVAILABLE_FOR_USE, CANCELED;
 
         public static String getStatusFirstCode(EnumIntTableFields[] invReferenceFlds, Object[] invReferenceVls) {
@@ -68,7 +68,7 @@ public class InvTrackingEnums {
             preReqs.add(0, new String[]{"data", "sampleStatusesByBusinessRules"});
             if (Boolean.TRUE.equals(Boolean.valueOf(
                     invReferenceVls[EnumIntTableFields.getFldPosicInArray(invReferenceFlds, TblsInvTrackingConfig.Reference.LOT_REQUIRES_QUALIF.getName())].toString()))) {
-                return QUARANTINE.toString();
+                return UNDER_QUALIFIFICATION.toString();
             } else {
                 return NEW.toString();
             }

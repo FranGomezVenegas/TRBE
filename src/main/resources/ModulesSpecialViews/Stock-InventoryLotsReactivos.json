@@ -198,7 +198,7 @@
 				  "requiresGridItemSelected": true,
 				  "xshowWhenSelectedItem": [
 					{"column": "is_locked", "value": false},
-					{"column": "status", "value": "NEW|QUARANTINE"}			
+					{"column": "status", "value": "NEW|UNDER_QUALIFIFICATION"}			
 				]
 				},
 				"endPointParams": [
@@ -228,7 +228,7 @@
 				  },
 				  "requiresGridItemSelected": true,
 				  "showWhenSelectedItem": 				
-					{"column": "status", "value": "QUARANTINE"}
+					{"column": "status", "value": "UNDER_QUALIFIFICATION"}
 				   
 				},
 				"endPointParams": [
@@ -505,7 +505,7 @@
 				  "requiresGridItemSelected": true,
 				  "xshowWhenSelectedItem": [
 					{"column": "is_locked", "value": false},
-					{"column": "status", "value": "NEW|QUARANTINE"}			
+					{"column": "status", "value": "NEW|UNDER_QUALIFIFICATION"}			
 				]
 				},
 				"endPointParams": [
@@ -535,7 +535,7 @@
 				  },
 				  "requiresGridItemSelected": true,
 				  "showWhenSelectedItem": 				
-					{"column": "status", "value": "QUARANTINE"}
+					{"column": "status", "value": "UNDER_QUALIFIFICATION"}
 				   
 				},
 				"endPointParams": [

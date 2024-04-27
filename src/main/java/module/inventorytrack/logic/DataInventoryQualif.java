@@ -126,7 +126,7 @@ public class DataInventoryQualif {
                 invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(),
                 invLot.getLotName(), fldNames, fldValues);
         fldNames = new String[]{TblsInvTrackingData.Lot.IS_LOCKED.getName(), TblsInvTrackingData.Lot.LOCKED_REASON.getName(), TblsInvTrackingData.Lot.STATUS.getName(), TblsInvTrackingData.Lot.STATUS_PREVIOUS.getName()};
-        fldValues = new Object[]{false, "", "QUARANTINE_" + decision.toUpperCase(), InvTrackingEnums.InvLotStatuses.QUARANTINE.toString()};
+        fldValues = new Object[]{false, "", "QUALIFIFICATION_" + decision.toUpperCase(), InvTrackingEnums.InvLotStatuses.UNDER_QUALIFIFICATION.toString()};
         invLot.updateInventoryLot(fldNames, fldValues, InvTrackingEnums.AppInventoryTrackingAuditEvents.UNLOCK_LOT_ONCE_QUALIFIED.toString());
         inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.UNLOCK_LOT_ONCE_QUALIFIED,
                 invLot.getLotName(), invLot.getReference(), invLot.getCategory(), TablesInvTrackingData.LOT.getTableName(),
