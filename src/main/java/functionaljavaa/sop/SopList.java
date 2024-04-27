@@ -181,7 +181,7 @@ public class SopList {
         for (Integer i=0;i<arrayPosic;i++){
             if (currSopAssignedValue[i] == null ? sopId == null : currSopAssignedValue[i].equals(sopId)){ 
                 Object[] diagnoses = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, "SOP FOUND IN SOP LIST", 
-                        new Object[]{"SOP <*1*> found in SOP List <*2*> in position <*3>", sopId, currSopAssignedValue, i});
+                        new Object[]{"SOP <*1*> found in SOP List <*2*> in position <*3*>", sopId, currSopAssignedValue, i});
                 diagnoses = LPArray.addValueToArray1D(diagnoses, i);
                 return diagnoses;
             }
