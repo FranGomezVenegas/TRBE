@@ -584,7 +584,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(specRules[0][0].toString())) {
                     return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisErrorTrapping.SPECRULE_NOTFOUND, new Object[]{sampleSpecCode, sampleSpecCodeVersion, schemaDataName});
                 }
-                if (Boolean.FALSE.equals(Boolean.valueOf(specRules[0][0].toString()))) {
+                //if (Boolean.FALSE.equals(Boolean.valueOf(specRules[0][0].toString()))) {
                     String[] specAnalysisFieldName = new String[]{TblsCnfg.SpecLimits.ANALYSIS.getName(), TblsCnfg.SpecLimits.METHOD_NAME.getName()}; //, TblsCnfg.SpecLimits.METHOD_VERSION.getName()
                     Object[] specAnalysisFieldValue = new Object[0];
                     Boolean nullValues = false;
@@ -626,7 +626,7 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
                         }
                         specAnalysisTestingGroup = analysisTestingGroup[0][0].toString();
                     }
-                }
+                //}
             }
         }
         // Spec Business Rule. Allow other analyses. End

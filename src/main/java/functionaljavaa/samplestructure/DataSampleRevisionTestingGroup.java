@@ -145,6 +145,7 @@ public class DataSampleRevisionTestingGroup {
                 return new InternalMessage(LPPlatform.LAB_TRUE, DataSampleRevisionTestingGroupErrorTrapping.SAMPLETESTINGBYGROUP_REVIEWBYTESTINGGROUP_NOT_FOUND, null);
             }
             if (LPNulls.replaceNull(testInfo[0][0]).toString().length() == 0) {
+
                 return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{testId});
             }
             specAnalysisTestingGroup = testInfo[0][0].toString();
@@ -153,7 +154,7 @@ public class DataSampleRevisionTestingGroup {
                 new String[]{TblsData.SampleRevisionTestingGroup.SAMPLE_ID.getName(), TblsData.SampleRevisionTestingGroup.TESTING_GROUP.getName()},
                 new Object[]{sampleId, specAnalysisTestingGroup});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsSampleRevisionTestingGroupRecord[0].toString())) {
-            return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{sampleId, specAnalysisTestingGroup});
+            return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, new Object[]{sampleId, specAnalysisTestingGroup});
         }
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP,
                 new String[]{TblsData.SampleRevisionTestingGroup.SAMPLE_ID.getName(), TblsData.SampleRevisionTestingGroup.TESTING_GROUP.getName(), TblsData.SampleRevisionTestingGroup.READY_FOR_REVISION.getName(), TblsData.SampleRevisionTestingGroup.REVIEWED.getName()},
