@@ -77,6 +77,7 @@ public class ReqProcedureFrontendMasterData implements FrontendMasterData{
                 curProcObj.put("module_in_solution_business_rules", dbRowsToJsonArr);                
                 dbRowsToJsonArr = QueryUtilities.dbRowsToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.ACTIONS_IN_SOLUTION.getViewName(),
                     new String[]{TblsReqs.viewActionsInSolution.PRETTY_EN.getName(), TblsReqs.viewActionsInSolution.PRETTY_ES.getName(),
+                        TblsReqs.viewActionsInSolution.PURPOSE_EN.getName(), TblsReqs.viewActionsInSolution.PURPOSE_ES.getName(),
                         TblsReqs.viewActionsInSolution.ENTITY.getName(), TblsReqs.viewActionsInSolution.PRESENT.getName(), TblsReqs.viewActionsInSolution.REQUIREMENTS_LIST.getName(),
                         TblsReqs.viewActionsInSolution.ENDPOINT_NAME.getName(), TblsReqs.viewActionsInSolution.API_NAME.getName(),
                         TblsReqs.viewActionsInSolution.ARGUMENTS_ARRAY.getName(), TblsReqs.viewActionsInSolution.OUTPUT_OBJECT_TYPES.getName()},
@@ -88,33 +89,43 @@ public class ReqProcedureFrontendMasterData implements FrontendMasterData{
                 Set<String> uniqueEndpointNames = new HashSet<>();
                 for (int i=0;i<dbRowsToJsonArr.size();i++){
                     JSONObject curRow = (JSONObject) dbRowsToJsonArr.get(i);     
-                    String curEndpointName=curRow.get("endpoint_name").toString();
+                    String curEndpointName=curRow.get(TblsReqs.viewActionsInSolution.ENDPOINT_NAME.getName()).toString();
                     if (!uniqueEndpointNames.contains(curEndpointName)) {
                         uniqueEndpointNames.add(curEndpointName);
                         JSONObject curRowObj = new JSONObject();
-                        curRowObj.put("endpoint_name", curEndpointName);
+                        curRowObj.put(TblsReqs.viewActionsInSolution.ENDPOINT_NAME.getName(), curEndpointName);
+                        curRowObj.put(TblsReqs.viewActionsInSolution.ARGUMENTS_ARRAY.getName(), LPJson.convertToJsonArrayStringedObject(curRow.get(TblsReqs.viewActionsInSolution.ARGUMENTS_ARRAY.getName()).toString()));
+                        curRowObj.put(TblsReqs.viewActionsInSolution.ENTITY.getName(), curRow.get(TblsReqs.viewActionsInSolution.ENTITY.getName()).toString());
+                        curRowObj.put(TblsReqs.viewActionsInSolution.PURPOSE_EN.getName(), curRow.get(TblsReqs.viewActionsInSolution.PURPOSE_EN.getName()).toString());
+                        curRowObj.put(TblsReqs.viewActionsInSolution.PURPOSE_ES.getName(), curRow.get(TblsReqs.viewActionsInSolution.PURPOSE_ES.getName()).toString());
                         dbRowsToJsonFinalArr.add(curRowObj);                        
                     }
                 }
                 curProcObj.put("module_in_solution_actions", dbRowsToJsonFinalArr);
+                
                 dbRowsToJsonArr = QueryUtilities.dbRowsToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.QUERIES_IN_SOLUTION.getViewName(),
-                    new String[]{TblsReqs.viewActionsInSolution.PRETTY_EN.getName(), TblsReqs.viewActionsInSolution.PRETTY_ES.getName(),
+                    new String[]{TblsReqs.viewQueriesInSolution.PRETTY_EN.getName(), TblsReqs.viewQueriesInSolution.PRETTY_ES.getName(),
+                        TblsReqs.viewQueriesInSolution.PURPOSE_EN.getName(), TblsReqs.viewQueriesInSolution.PURPOSE_ES.getName(),
                         TblsReqs.viewQueriesInSolution.ENTITY.getName(), TblsReqs.viewQueriesInSolution.PRESENT.getName(), TblsReqs.viewQueriesInSolution.REQUIREMENTS_LIST.getName(),
                         TblsReqs.viewQueriesInSolution.ENDPOINT_NAME.getName(), TblsReqs.viewQueriesInSolution.API_NAME.getName(),
-                        TblsReqs.viewActionsInSolution.ARGUMENTS_ARRAY.getName(), TblsReqs.viewActionsInSolution.OUTPUT_OBJECT_TYPES.getName()},
-                    new String[]{TblsReqs.viewActionsInSolution.MODULE_NAME.getName(), TblsReqs.viewActionsInSolution.MODULE_VERSION.getName()},
+                        TblsReqs.viewQueriesInSolution.ARGUMENTS_ARRAY.getName(), TblsReqs.viewQueriesInSolution.OUTPUT_OBJECT_TYPES.getName()},
+                    new String[]{TblsReqs.viewQueriesInSolution.MODULE_NAME.getName(), TblsReqs.viewQueriesInSolution.MODULE_VERSION.getName()},
                     new Object[]{moduleName, moduleVersion},
-                    new String[]{TblsReqs.viewQueriesInSolution.ENDPOINT_NAME.getName(),  TblsReqs.viewQueriesInSolution.ENTITY.getName(), TblsReqs.viewActionsInSolution.API_NAME.getName(), TblsReqs.viewQueriesInSolution.ENDPOINT_NAME.getName()},
+                    new String[]{TblsReqs.viewQueriesInSolution.ENDPOINT_NAME.getName(),  TblsReqs.viewQueriesInSolution.ENTITY.getName(), TblsReqs.viewQueriesInSolution.API_NAME.getName(), TblsReqs.viewQueriesInSolution.ENDPOINT_NAME.getName()},
                     new String[]{}, true, true);
                 dbRowsToJsonFinalArr = new JSONArray();
                 uniqueEndpointNames = new HashSet<>();
                 for (int i=0;i<dbRowsToJsonArr.size();i++){
                     JSONObject curRow = (JSONObject) dbRowsToJsonArr.get(i);     
-                    String curEndpointName=curRow.get("endpoint_name").toString();
+                    String curEndpointName=curRow.get(TblsReqs.viewQueriesInSolution.ENDPOINT_NAME.getName()).toString();
                     if (!uniqueEndpointNames.contains(curEndpointName)) {
                         uniqueEndpointNames.add(curEndpointName);
                         JSONObject curRowObj = new JSONObject();
-                        curRowObj.put("endpoint_name", curEndpointName);
+                        curRowObj.put(TblsReqs.viewQueriesInSolution.ENDPOINT_NAME.getName(), curEndpointName);
+                        curRowObj.put(TblsReqs.viewQueriesInSolution.ARGUMENTS_ARRAY.getName(), LPJson.convertToJsonArrayStringedObject(curRow.get(TblsReqs.viewQueriesInSolution.ARGUMENTS_ARRAY.getName()).toString()));
+                        curRowObj.put(TblsReqs.viewQueriesInSolution.ENTITY.getName(), curRow.get(TblsReqs.viewQueriesInSolution.ENTITY.getName()).toString());
+                        curRowObj.put(TblsReqs.viewQueriesInSolution.PURPOSE_EN.getName(), curRow.get(TblsReqs.viewQueriesInSolution.PURPOSE_EN.getName()).toString());
+                        curRowObj.put(TblsReqs.viewQueriesInSolution.PURPOSE_ES.getName(), curRow.get(TblsReqs.viewQueriesInSolution.PURPOSE_ES.getName()).toString());
                         dbRowsToJsonFinalArr.add(curRowObj);                        
                     }
                 }

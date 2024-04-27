@@ -7,6 +7,7 @@ package module.inventorytrack.logic;
 
 import databases.Rdbms;
 import databases.SqlStatement;
+import databases.TblsCnfg;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
@@ -29,6 +30,17 @@ public class InvTrackingFrontendMasterData implements FrontendMasterData{
     public JSONObject getMasterDataJsonObject(String alternativeProcInstanceName) {
         JSONObject jSummaryObj=new JSONObject();
         Object[] dbTableExists = Rdbms.dbTableExists(alternativeProcInstanceName, LPPlatform.buildSchemaName(alternativeProcInstanceName, 
+            TblsInvTrackingConfig.TablesInvTrackingConfig.UOM.getRepositoryName()), TblsInvTrackingConfig.TablesInvTrackingConfig.UOM.getTableName());
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))){
+            jSummaryObj.put(TblsInvTrackingConfig.TablesInvTrackingConfig.UOM.getTableName(),
+                QueryUtilities.dbRowsToJsonArr(alternativeProcInstanceName, 
+                LPPlatform.buildSchemaName(alternativeProcInstanceName, TblsInvTrackingConfig.TablesInvTrackingConfig.UOM.getRepositoryName()),
+                TblsInvTrackingConfig.TablesInvTrackingConfig.UOM.getTableName(),
+                    EnumIntTableFields.getAllFieldNames(EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInvTrackingConfig.TablesInvTrackingConfig.UOM, alternativeProcInstanceName)),
+                    new String[]{TblsCnfg.UnitsOfMeasurement.NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
+                    new Object[]{}, new String[]{TblsCnfg.UnitsOfMeasurement.NAME.getName()}, new String[]{}, true, true));        
+        }
+        dbTableExists = Rdbms.dbTableExists(alternativeProcInstanceName, LPPlatform.buildSchemaName(alternativeProcInstanceName, 
             TblsInvTrackingConfig.TablesInvTrackingConfig.INV_CATEGORY.getRepositoryName()), 
             TblsInvTrackingConfig.TablesInvTrackingConfig.INV_CATEGORY.getTableName());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))
@@ -47,8 +59,7 @@ public class InvTrackingFrontendMasterData implements FrontendMasterData{
         JSONArray jSummaryArr = new JSONArray();
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(categoryInfo[0][0].toString()))){
             for (Object[] currCategory: categoryInfo){
-                JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currCategory);
-                
+                JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currCategory);                
                 String[] fieldsToRetrieveLvl2 = getAllFieldNames(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE, alternativeProcInstanceName);
                 String curCategory=currCategory[LPArray.valuePosicInArray(fieldsToRetrieve, TblsInvTrackingConfig.Category.NAME.getName())].toString();
                 Object[][] catReferencesInfo=QueryUtilitiesEnums.getTableData(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE,
@@ -78,8 +89,7 @@ public class InvTrackingFrontendMasterData implements FrontendMasterData{
                 new String[]{TblsInvTrackingConfig.Reference.NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
                 new Object[]{},
                 new String[]{TblsInvTrackingConfig.Reference.NAME.getName()},
-                new String[]{}, true, true)
-        );
+                new String[]{}, true, true));
         return jSummaryObj;
     }
     
