@@ -25,6 +25,7 @@ public class TblsInvTrackingConfig {
         INV_REFERENCE(null, "inv_reference", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Reference.values(), null, new String[]{Reference.NAME.getName(), Reference.CATEGORY.getName()}, null, "Reference table"),
         VARIABLES(null, "variables", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsInvTrackingConfig.Variables.values(), null, new String[]{TblsInvTrackingConfig.Variables.PARAM_NAME.getName()}, null, "Variables table"),
         VARIABLES_SET(null, "variables_set", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsInvTrackingConfig.VariablesSet.values(), null, new String[]{VariablesSet.NAME.getName()}, null, "Variables Set table"),
+        UOM(null, TblsCnfg.TablesConfig.UOM.getTableName(), SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsCnfg.TablesConfig.UOM.getTableFields(), null, new String[]{TblsCnfg.UnitsOfMeasurement.NAME.getName()}, null, "UnitsOfMeasurement")        
         ;
         private TablesInvTrackingConfig(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){
