@@ -18,16 +18,19 @@ public class ReferenceFld {
     private String tableName;
     private String fieldName;
     private String values;
+    private Boolean isForeignKey;
     
     public ReferenceFld(String repo, String tbl, String fld){
         this.type=GlobalAPIsParams.LBL_TABLE;
         this.repository=repo;
         this.tableName=tbl;
         this.fieldName=fld;
+        this.isForeignKey=true;
     }
     public ReferenceFld(String values){
         this.type="values";
         this.values=values;
+        this.isForeignKey=false;
         //CHECK (element_type IN ('lesson', 'quiz')
     }
     public String getRepository(){return repository;}
@@ -35,6 +38,7 @@ public class ReferenceFld {
     public String getFieldName(){return fieldName;}
     public String getType(){return type;}
     public String getValues(){return values;}
+    public Boolean getIsForeignKey(){return isForeignKey;}
     
     
 }

@@ -235,6 +235,11 @@ public class DeployTables {
         for (EnumIntTableFields curFld : tableObj.getTableFields()) {
             if (Boolean.FALSE.equals(LPArray.valueInArray(fieldsToExcludeArr, curFld.getName()))) {
                 StringBuilder currFieldDefBuilder = new StringBuilder(curFld.getFieldType());
+                if (curFld.getReferenceTable()!=null&&Boolean.FALSE.equals(curFld.getReferenceTable().getIsForeignKey())){
+                    currFieldDefBuilder.append(", CHECK(").
+                            append(curFld.getName()).append(" IN ").append(curFld.getReferenceTable().getValues()).
+                            append(")");
+                }
                 String addFldToScript = addFldToScript(curFld, bi);
                 if (addFldToScript.equalsIgnoreCase(CreateFldTypes.ADD.name())) {
                     if (fieldsScript.length() > 0) {

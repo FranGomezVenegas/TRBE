@@ -22,6 +22,7 @@ import trazit.enums.ForeignkeyFld;
 import trazit.enums.ReferenceFld;
 import trazit.globalvariables.GlobalVariables;
 import trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.ReqSolutionTypes;
+import trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.ReqWindowContentType;
 
 /**
  *
@@ -1374,7 +1375,7 @@ null, "procedure_req_solution_view", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, viewPro
         //PARENT_NAME("parent_name", LPDatabase.string(), null, null, null, null),
         POSITION("position", LPDatabase.string(), null, null, null, null, false),
         MODE("mode", LPDatabase.string(), null, null, null, null, false),
-        TYPE("type", LPDatabase.string(), null, null, null, null, false),
+        TYPE("type", LPDatabase.string(), null, new ReferenceFld(ReqWindowContentType.getAllTagValues()), null, null, false),
         LABEL_EN("label_en", LPDatabase.string(), null, null, null, null, false),
         LABEL_ES("label_es", LPDatabase.string(), null, null, null, null, false),
         SOP("sop", LPDatabase.string(), null, null, null, null, false),

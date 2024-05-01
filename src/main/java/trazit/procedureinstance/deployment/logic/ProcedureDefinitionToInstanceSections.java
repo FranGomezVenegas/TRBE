@@ -77,16 +77,21 @@ public class ProcedureDefinitionToInstanceSections {
         public String getTagValue() {
             return this.tagValue;
         }
-        private final String tagValue;
-            public static ReqSolutionTypes getByTagValue(String tagValue) {
-        for (ReqSolutionTypes type : ReqSolutionTypes.values()) {
-            if (type.getTagValue().equals(tagValue)) {
-                return type;
-            }
+        public static String getAllTagValues() {
+            return "('"+String.join("', '", Arrays.stream(ReqWindowContentType.values())
+                                           .map(ReqWindowContentType::getTagValue)
+                                           .toArray(String[]::new))+"')";
         }
-        // If no matching enum is found, you can return null or throw an exception as per your requirement.
-        return null;
-    }
+        private final String tagValue;
+        public static ReqSolutionTypes getByTagValue(String tagValue) {
+            for (ReqSolutionTypes type : ReqSolutionTypes.values()) {
+                if (type.getTagValue().equals(tagValue)) {
+                    return type;
+                }
+            }
+            // If no matching enum is found, you can return null or throw an exception as per your requirement.
+            return null;
+        }
     }
 
     public enum JsonTags {
