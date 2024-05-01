@@ -32,11 +32,12 @@ public class ConfigInvTracking {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         ResponseMessages messages = procReqSession.getMessages();
         SqlWhere whereObj = new SqlWhere();
-        if (EnumIntTableFields.getFldPosicInArray(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableFields(), TblsInvTrackingConfig.Reference.HASHCODE.getName()) > -1) {
+        Integer fldPosic=EnumIntTableFields.getFldPosicInArray(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableFields(), TblsInvTrackingConfig.Reference.HASHCODE.getName());
+        if ( fldPosic> -1) {
             LocalDateTime currentTimeStamp = LPDate.getCurrentTimeStamp();
             int hashCode = currentTimeStamp.hashCode();
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInvTrackingConfig.Reference.HASHCODE.getName());
-            fieldValues = LPArray.addValueToArray1D(fieldValues, hashCode);
+            fieldValues = LPArray.addValueToArray1D(fieldValues, String.valueOf(hashCode));
         }        
         whereObj.addConstraint(TblsInvTrackingConfig.Reference.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{reference}, null);
         whereObj.addConstraint(TblsInvTrackingConfig.Reference.CATEGORY, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{category}, null);

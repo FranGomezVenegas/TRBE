@@ -83,7 +83,8 @@ public class ClassInvTracking implements ActionsClass{
             category = argValues[1].toString();
             reference = argValues[2].toString();
         }
-        if (Boolean.FALSE.equals("NEW_INVENTORY_LOT".equalsIgnoreCase(endPoint.getName())) && Boolean.FALSE.equals("CONFIG_ADD_REFERENCE".equalsIgnoreCase(endPoint.getName()))
+        if (Boolean.FALSE.equals("NEW_INVENTORY_LOT".equalsIgnoreCase(endPoint.getName())) 
+            && Boolean.FALSE.equals(endPoint.getName().toUpperCase().startsWith("CONFIG_"))
             && Boolean.FALSE.equals("LOTAUDIT_SET_AUDIT_ID_REVIEWED".equalsIgnoreCase(endPoint.getName()))                
             ) {
             invLot = new DataInventory(referenceName, reference, category, null);
@@ -421,7 +422,7 @@ public class ClassInvTracking implements ActionsClass{
                     if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                         actionDiagnoses = (InternalMessage) fieldValues[1];
                     } else {
-                        actionDiagnoses = ConfigInvTracking.configUpdateReference(category, referenceName, fieldNames, fieldValues);
+                        actionDiagnoses = ConfigInvTracking.configUpdateReference(referenceName, category, fieldNames, fieldValues);
                     }                
                 }
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {

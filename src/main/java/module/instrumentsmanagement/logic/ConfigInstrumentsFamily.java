@@ -67,7 +67,7 @@ public class ConfigInstrumentsFamily {
             LocalDateTime currentTimeStamp = LPDate.getCurrentTimeStamp();
             int hashCode = currentTimeStamp.hashCode();
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsInstrumentsConfig.InstrumentsFamily.HASHCODE.getName());
-            fieldValues = LPArray.addValueToArray1D(fieldValues, hashCode);
+            fieldValues = LPArray.addValueToArray1D(fieldValues, String.valueOf(hashCode));
         }        
         whereObj.addConstraint(TblsInstrumentsConfig.InstrumentsFamily.NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{family}, null);
         RdbmsObject updateTableRecordFieldsByFilter = Rdbms.updateTableRecordFieldsByFilter(TblsInstrumentsConfig.TablesInstrumentsConfig.INSTRUMENTS_FAMILY,
