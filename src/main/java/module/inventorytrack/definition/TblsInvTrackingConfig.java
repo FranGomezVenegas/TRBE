@@ -16,8 +16,7 @@ import trazit.enums.FldBusinessRules;
 import trazit.enums.ReferenceFld;
 import trazit.globalvariables.GlobalVariables;
 
-public class TblsInvTrackingConfig {
-    
+public class TblsInvTrackingConfig {    
     private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.CONFIG.getName();
     private static final Boolean IS_PRODEDURE_INSTANCE = true;
     public enum TablesInvTrackingConfig implements EnumIntTables{        
