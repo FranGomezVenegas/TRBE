@@ -2679,7 +2679,7 @@ private static final int CLIENT_CODE_STACK_INDEX;
      */
     public static RdbmsObject insertRecordInTable(EnumIntTables tblObj, String[] fieldNames, Object[] fieldValues) {        
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        return insertRecord(tblObj, fieldNames, fieldValues, procReqSession.getProcedureInstance(), false);
+        return insertRecord(tblObj, fieldNames, fieldValues, procReqSession.getIsForProcManagement()?"":procReqSession.getProcedureInstance(), false);
     }
 
     public static RdbmsObject insertRecordInTable(EnumIntTables tblObj, String[] fieldNames, Object[] fieldValues, Boolean encryptAllFlds) {
@@ -2848,4 +2848,48 @@ private static final int CLIENT_CODE_STACK_INDEX;
             return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
         }
     }    
+    public static Object[][] getRecordByDirectQuery(String query, Object[] whereFieldValues, String[] fieldsToRetrieve) {
+        StringBuilder fieldsToRetrieveStr = new StringBuilder(0);
+        for (String fn : fieldsToRetrieve) {
+            fieldsToRetrieveStr.append(fn).append(", ");
+        }
+        fieldsToRetrieveStr.deleteCharAt(fieldsToRetrieveStr.length() - 1);
+        fieldsToRetrieveStr.deleteCharAt(fieldsToRetrieveStr.length() - 1);
+        
+        Integer i = 1;
+        try {
+            ResultSet res = Rdbms.prepRdQuery(query.toString(), whereFieldValues);
+            if (res == null) {
+                Object[] errorLog = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{RdbmsErrorTrapping.ARG_VALUE_RES_NULL, query + RdbmsErrorTrapping.ARG_VALUE_LBL_VALUES.getErrorCode() + Arrays.toString(whereFieldValues)});
+                return LPArray.array1dTo2d(errorLog, 1);
+            }
+            res.last();
+
+            if (res.getRow() > 0) {
+                Integer totalLines = res.getRow();
+                res.first();
+                Integer icurrLine = 0;
+
+                Object[][] diagnoses2 = new Object[totalLines][fieldsToRetrieve.length];
+                while (icurrLine <= totalLines - 1) {
+                    for (Integer icurrCol = 0; icurrCol < fieldsToRetrieve.length; icurrCol++) {
+                        Object currValue = res.getObject(icurrCol + 1);
+                        diagnoses2[icurrLine][icurrCol] = currValue;
+                    }
+                    res.next();
+                    icurrLine++;
+                }
+                return diagnoses2;
+            } else {
+                String[] errorDetailVariables = new String[]{Arrays.toString(whereFieldValues), query};
+                Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, errorDetailVariables);
+                return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
+            }
+        } catch (SQLException er) {
+            Logger.getLogger(query.toString()).log(Level.SEVERE, null, er);
+            Object[] diagnosesError = ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new String[]{er.getLocalizedMessage() + er.getCause(), query.toString()});
+            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
+        }
+    }
+    
 }
