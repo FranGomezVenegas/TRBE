@@ -2679,7 +2679,7 @@ private static final int CLIENT_CODE_STACK_INDEX;
      */
     public static RdbmsObject insertRecordInTable(EnumIntTables tblObj, String[] fieldNames, Object[] fieldValues) {        
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        return insertRecord(tblObj, fieldNames, fieldValues, procReqSession.getIsForProcManagement()?"":procReqSession.getProcedureInstance(), false);
+        return insertRecord(tblObj, fieldNames, fieldValues, (procReqSession!=null&&procReqSession.getIsForProcManagement()!=null&&procReqSession.getIsForProcManagement())?"":procReqSession.getProcedureInstance(), false);
     }
 
     public static RdbmsObject insertRecordInTable(EnumIntTables tblObj, String[] fieldNames, Object[] fieldValues, Boolean encryptAllFlds) {
