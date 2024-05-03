@@ -49,7 +49,7 @@
           }
         },
         "viewQuery":{
-            "actionName": "INVESTIGATION_QUALIFICATIONS_PENDING_DECISION",
+            "actionName": "INVESTIGATION_EVENTS_PENDING_DECISION",
             "button": {
               "icon": "refresh",
               "title": {
