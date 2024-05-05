@@ -49,12 +49,10 @@
         {"schema_name":"procedure-audit", "table_name":"investigation", "is_view":false, "order_number":37, "purpose_en":"investigation audit history", "purpose_es":"historial de auditorí­a de investigación"},
         {"schema_name":"procedure-audit", "table_name":"proc_hashcodes_history", "is_view":false, "order_number":38, "purpose_en":"procedure instance hashcodes audit history", "purpose_es":"historial de auditorí­a de códigos hash de instancia de procedimiento"}
     ],    
-    "business_rules":[
-        {"type": "one_business_rule", "api_name": "DataProgramCorrectiveActionBusinessRules", "name": "correctiveActionMode", "mandatory": true},
-        {"type": "one_business_rule", "api_name": "DataProgramCorrectiveActionBusinessRules", "name": "correctiveActionNotifModeStillInProgress", "mandatory": false},
+    "business_rules":[       
         {"type": "one_business_rule", "api_name": "UserSopBusinessRules", "name": "userSopMode", "mandatory": true},
-        {"type": "one_business_rule", "api_name": "UserSopBusinessRules", "name": "windowOpenableWhenNotSopCertifiedUserSopCertification", "mandatory": true}
-
+        {"type": "one_business_rule", "api_name": "UserSopBusinessRules", "name": "windowOpenableWhenNotSopCertifiedUserSopCertification", "mandatory": true},
+        {"type": "all_business_rules", "api_name": "InventoryTrackBusinessRules", "name": "windowOpenableWhenNotSopCertifiedUserSopCertification", "mandatory": true}
     ],
     "manuals":[
         {"manual_name":"Auditoría", "manual_version": 1, "description":"La auditorí­a en Trazit", "file_link":"https://onedrive.live.com/embed?cid=FC113EC81E46401D&resid=FC113EC81E46401D%2125255&authkey=AL-4PNfH61-f-Pw&em=2", "is_video":false, "active":true, "area": "Usuario"},
