@@ -576,7 +576,7 @@ public class TblsCnfg {
         ERROR_MESSAGE("error_message", LPDatabase.stringNotNull(), null, null, null, null),
         CLASS_CALLER("class_caller_info", LPDatabase.string(), null, null, null, null),
         RESOLVED("resolved", LPDatabase.booleanFld(false), null, null, null, null),
-        RESOLUTION_NOTES("resolution_notes", LPDatabase.real(), null, null, null, null),
+        RESOLUTION_NOTES("resolution_notes", LPDatabase.string(), null, null, null, null),
         ;
         private zzzDbErrorLog(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
@@ -604,7 +604,7 @@ public class TblsCnfg {
         ACTION_NAME("action_name", LPDatabase.string(), null, null, null, null),
         CLASS_CALLER("class_caller_info", LPDatabase.string(), null, null, null, null),
         RESOLVED("resolved", LPDatabase.booleanFld(false), null, null, null, null),
-        RESOLUTION_NOTES("resolution_notes", LPDatabase.real(), null, null, null, null),
+        RESOLUTION_NOTES("resolution_notes", LPDatabase.string(), null, null, null, null),
         ;
         private zzzPropertiesMissing(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){
