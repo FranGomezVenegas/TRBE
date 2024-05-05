@@ -2804,7 +2804,7 @@ private static final int CLIENT_CODE_STACK_INDEX;
         Object[] keyFieldValueNew = hmQuery.get(query);
         Integer numr = Rdbms.prepUpQuery(query, keyFieldValueNew);
         if (numr > 0) {
-            return new RdbmsObject(true, query, RdbmsSuccess.RDBMS_RECORD_UPDATED, new Object[]{tblObj.getTableName(), Arrays.toString(whereObj.getAllWhereEntriesFldValues()), schemaName});
+            return new RdbmsObject(true, query, RdbmsSuccess.RDBMS_RECORD_UPDATED, new Object[]{tblObj.getTableName(), Arrays.toString(whereObj.getAllWhereEntriesFldValues()), schemaName}, numr);
         } else if (numr == -999) {
             dbLogSummary.setFailure(query, keyFieldValueNew);
             return new RdbmsObject(false, query, RdbmsErrorTrapping.RDBMS_DT_SQL_EXCEPTION, new Object[]{"The database cannot perform this sql statement: Schema: " + schemaName + ". Table: " + tblObj.getTableName() + ". Query: " + query + ", By the values " + Arrays.toString(keyFieldValueNew), query});
