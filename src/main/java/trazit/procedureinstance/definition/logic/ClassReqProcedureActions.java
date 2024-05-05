@@ -8,6 +8,7 @@ import static databases.Rdbms.insertRecordInTableFromTable;
 import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.SqlWhere;
+import databases.TblsCnfg;
 import databases.TblsTesting;
 import functionaljavaa.materialspec.DataSpec;
 import trazit.procedureinstance.definition.definition.TblsReqs;
@@ -1993,6 +1994,74 @@ public class ClassReqProcedureActions {
                 this.diagnosticObj = cov.unExcludeCoverageAction(action);
                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(this.diagnosticObj.getDiagnostic())){
                     this.messageDynamicData=new Object[]{action, coverageId};
+                }
+                break;
+            case INCIDENT_DB_RESOLUTION_BY_ID:
+                String incidentId = argValues[3].toString();
+                String note = argValues[4].toString();                
+                removeDiagn = Rdbms.updateTableRecordFieldsByFilter(TblsCnfg.TablesConfig.ZZZ_DB_ERROR,
+                        new EnumIntTableFields[]{TblsCnfg.zzzDbErrorLog.RESOLVED, TblsCnfg.zzzDbErrorLog.RESOLUTION_NOTES}, 
+                        new Object[]{true, note},
+                    new SqlWhere(TblsCnfg.TablesConfig.ZZZ_DB_ERROR,new String[]{TblsCnfg.zzzDbErrorLog.ID.getName()},
+                    new Object[]{Integer.valueOf(incidentId)}), procInstanceName);
+                if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{incidentId});
+                    this.messageDynamicData = new Object[]{incidentId};
+                } else {
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
+                    this.messageDynamicData = removeDiagn.getErrorMessageVariables();
+                }
+                break;
+            case INCIDENT_DB_RESOLUTION_BY_MESSAGE:
+                String incMessage = argValues[3].toString();
+                note = argValues[4].toString();                
+                removeDiagn = Rdbms.updateTableRecordFieldsByFilter(TblsCnfg.TablesConfig.ZZZ_DB_ERROR,
+                        new EnumIntTableFields[]{TblsCnfg.zzzDbErrorLog.RESOLVED, TblsCnfg.zzzDbErrorLog.RESOLUTION_NOTES}, 
+                        new Object[]{true, note},
+                    new SqlWhere(TblsCnfg.TablesConfig.ZZZ_DB_ERROR,new String[]{TblsCnfg.zzzDbErrorLog.ERROR_MESSAGE.getName()},
+                    new Object[]{incMessage}), procInstanceName);
+                if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{removeDiagn.getNewRowId(), incMessage});
+                    this.messageDynamicData = new Object[]{incMessage};
+                } else {
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
+                    this.messageDynamicData = removeDiagn.getErrorMessageVariables();
+                }
+                break;
+            case INCIDENT_BUSINESS_RULE_RESOLUTION_BY_ID:
+                incidentId = argValues[3].toString();
+                note = argValues[4].toString();                
+                removeDiagn = Rdbms.updateTableRecordFieldsByFilter(TblsCnfg.TablesConfig.ZZZ_PROPERTIES_ERROR,
+                        new EnumIntTableFields[]{TblsCnfg.zzzPropertiesMissing.RESOLVED, TblsCnfg.zzzPropertiesMissing.RESOLUTION_NOTES}, 
+                        new Object[]{true, note},
+                    new SqlWhere(TblsCnfg.TablesConfig.ZZZ_PROPERTIES_ERROR,new String[]{TblsCnfg.zzzPropertiesMissing.ID.getName()},
+                    new Object[]{Integer.valueOf(incidentId)}), procInstanceName);
+                if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{incidentId});
+                    this.messageDynamicData = new Object[]{incidentId};
+                } else {
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
+                    this.messageDynamicData = removeDiagn.getErrorMessageVariables();
+                }
+                break;
+            case INCIDENT_BUSINESS_RULE_RESOLUTION_BY_RULE:
+                String incBusinessRule = argValues[3].toString();
+                note = argValues[4].toString();                
+                removeDiagn = Rdbms.updateTableRecordFieldsByFilter(TblsCnfg.TablesConfig.ZZZ_PROPERTIES_ERROR,
+                        new EnumIntTableFields[]{TblsCnfg.zzzPropertiesMissing.RESOLVED, TblsCnfg.zzzPropertiesMissing.RESOLUTION_NOTES}, 
+                        new Object[]{true, note},
+                    new SqlWhere(TblsCnfg.TablesConfig.ZZZ_PROPERTIES_ERROR,new String[]{TblsCnfg.zzzPropertiesMissing.ID.getName()},
+                    new Object[]{incBusinessRule}), procInstanceName);
+                if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{removeDiagn.getNewRowId(), incBusinessRule});
+                    this.messageDynamicData = new Object[]{incBusinessRule};
+                } else {
+                    this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
+                    this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
+                    this.messageDynamicData = removeDiagn.getErrorMessageVariables();
                 }
                 break;
         }

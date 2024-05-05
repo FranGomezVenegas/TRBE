@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
+import platform.app.apis.IncidentAPIactions;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables.ApiUrls;
@@ -29,7 +30,7 @@ public class ReqProcedureEnums {
         MODULE_NAME("moduleName"), MODULE_VERSION("moduleVersion"), USER_NAME("userName"), ROLE_NAME("roleName"),
         REQ_PARENT_CODE("requirementParentCode"), REQ_CODE("requirementCode"),
         REQUIREMENT_ID("requirementId"), RISK_ID("riskId"), SOLUTION_ID("solutionId"),
-        COVERAGE_ID("coverageId"), SCRIPT_ID("scriptId"), STEP_ID("stepId"),
+        COVERAGE_ID("coverageId"), SCRIPT_ID("scriptId"), STEP_ID("stepId"), 
         UOM_NAME("uomName"), UOM_IMPORT_TYPE("importType"),
         CREATE_DATABASE("createDatabase"), CREATE_FILES("createFiles"), MAIN_PATH("mainPath"),
         NEW_FILE_CAMEL_LOWER("newFileCamelLower"), NEW_FILE_CAMEL("newFileCamel"),
@@ -621,6 +622,34 @@ public class ReqProcedureEnums {
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.COVERAGE_ID.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
                     new LPAPIArguments("action", LPAPIArguments.ArgumentType.STRING.toString(), true, 10)
                 }, EndPointsToRequirements.endpointWithNoOutputObjects,                null, null),        
+        INCIDENT_DB_RESOLUTION_BY_ID("INCIDENT_DB_RESOLUTION_BY_ID", "dbIncidentResolutionById_success",
+                new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
+                    new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROC_INSTANCENAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
+                    new LPAPIArguments(IncidentAPIactions.ParamsList.INCIDENT_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
+                    new LPAPIArguments(IncidentAPIactions.ParamsList.NOTE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 10)}, EndPointsToRequirements.endpointWithNoOutputObjects,
+                 null, null),
+        INCIDENT_DB_RESOLUTION_BY_MESSAGE("INCIDENT_DB_RESOLUTION_BY_MESSAGE", "dbIncidentResolutionByMessage_success",
+                new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
+                    new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROC_INSTANCENAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
+                    new LPAPIArguments("message", LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
+                    new LPAPIArguments(IncidentAPIactions.ParamsList.NOTE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 10)}, EndPointsToRequirements.endpointWithNoOutputObjects,
+                 null, null),
+        INCIDENT_BUSINESS_RULE_RESOLUTION_BY_ID("INCIDENT_BUSINESS_RULE_RESOLUTION_BY_ID", "businessRuleIncidentResolutionById_success",
+                new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
+                    new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROC_INSTANCENAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
+                    new LPAPIArguments(IncidentAPIactions.ParamsList.INCIDENT_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
+                    new LPAPIArguments(IncidentAPIactions.ParamsList.NOTE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 10)}, EndPointsToRequirements.endpointWithNoOutputObjects,
+                 null, null),
+        INCIDENT_BUSINESS_RULE_RESOLUTION_BY_RULE("INCIDENT_BUSINESS_RULE_RESOLUTION_BY_RULE", "businessRuleIncidentResolutionByRule_success",
+                new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
+                    new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROC_INSTANCENAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
+                    new LPAPIArguments("ruleName", LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
+                    new LPAPIArguments(IncidentAPIactions.ParamsList.NOTE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 10)}, EndPointsToRequirements.endpointWithNoOutputObjects,
+                 null, null),
         GET_UOM("GET_UOM", "addRoleToUser_success",
                 new LPAPIArguments[]{new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_NAME.getName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(ProcedureDefinitionpParametersEndpoints.PROCEDURE_VERSION.getName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
