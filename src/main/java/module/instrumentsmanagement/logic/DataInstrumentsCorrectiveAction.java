@@ -229,9 +229,11 @@ public class DataInstrumentsCorrectiveAction {
         } else {
             myFldValue[posicInArray] = LPDate.getCurrentTimeStamp();
         }
-        myFldName = LPArray.addValueToArray1D(myFldName, TblsInstrumentsProcedure.InstrumentsCorrectiveAction.OBJECT_TYPE.getName());
-        myFldValue = LPArray.addValueToArray1D(myFldValue, TblsInstrumentsData.TablesInstrumentsData.INSTRUMENT_EVENT.getTableName());
-
+        posicInArray = LPArray.valuePosicInArray(myFldName, TblsInstrumentsProcedure.InstrumentsCorrectiveAction.OBJECT_TYPE.getName());
+        if (posicInArray == -1) {
+            myFldName = LPArray.addValueToArray1D(myFldName, TblsInstrumentsProcedure.InstrumentsCorrectiveAction.OBJECT_TYPE.getName());
+            myFldValue = LPArray.addValueToArray1D(myFldValue, TblsInstrumentsData.TablesInstrumentsData.INSTRUMENT_EVENT.getTableName());
+        }
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsInstrumentsProcedure.TablesInstrumentsProcedure.INSTRUMENT_CORRECTIVE_ACTION, myFldName, myFldValue);
         return new InternalMessage(LPPlatform.LAB_TRUE,
                 endpoint, new Object[]{eventId}, insertRecordInTable.getNewRowId());
