@@ -2023,7 +2023,7 @@ public class ClassReqProcedureActions {
                     new Object[]{incMessage}), procInstanceName);
                 if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
                     this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{removeDiagn.getNewRowId(), incMessage});
-                    this.messageDynamicData = new Object[]{incMessage};
+                    this.messageDynamicData = new Object[]{removeDiagn.getNewRowId(), incMessage};
                 } else {
                     this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
                     this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
@@ -2057,7 +2057,7 @@ public class ClassReqProcedureActions {
                     new Object[]{incBusinessRule}), procInstanceName);
                 if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
                     this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{removeDiagn.getNewRowId(), incBusinessRule});
-                    this.messageDynamicData = new Object[]{incBusinessRule};
+                    this.messageDynamicData = new Object[]{removeDiagn.getNewRowId(), incBusinessRule};
                 } else {
                     this.diagnosticObj = new InternalMessage(LPPlatform.LAB_FALSE, removeDiagn.getErrorMessageCode(), removeDiagn.getErrorMessageVariables());
                     this.diagnosticObjIntMsg = removeDiagn.getErrorMessageCode();
