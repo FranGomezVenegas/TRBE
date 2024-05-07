@@ -229,7 +229,7 @@ public class InvTrackingEnums {
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TablesInvTrackingData.LOT.getTableName()).build()).build(),
                 null, null),
-        CONFIG_UPDATE_REFERENCE("CONFIG_UPDATE_REFERENCE", "referenceName", "", "configInstrumentFamilyUpdated_success",
+        CONFIG_UPDATE_REFERENCE("CONFIG_UPDATE_REFERENCE", "referenceName", "", "configReferenceUpdated_success",
                 new LPAPIArguments[]{new LPAPIArguments("referenceName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments("category", LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                     new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8),
@@ -386,9 +386,14 @@ public class InvTrackingEnums {
                 null, null),
         INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION("INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION", "", new LPAPIArguments[]{new LPAPIArguments(ParamsList.INVESTIGATION_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),}, EndPointsToRequirements.endpointWithNoOutputObjects,
                 null, null),
-        INVESTIGATION_RESULTS_PENDING_DECISION("INVESTIGATION_RESULTS_PENDING_DECISION", "", new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects,
-                null, null);
-
+        INVESTIGATION_RESULTS_PENDING_DECISION("INVESTIGATION_RESULTS_PENDING_DECISION", "", 
+                new LPAPIArguments[]{}, EndPointsToRequirements.endpointWithNoOutputObjects,
+                null, null),
+        GET_LOT_ATTACHMENTS("GET_LOT_ATTACHMENTS", "", new LPAPIArguments[]{
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments("lotQualifId", LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7)}, EndPointsToRequirements.endpointWithNoOutputObjects,
+                "Provides the ability to get all attachments for a given instrument or even for a given event if the event id (optional) is added as part of the request", null),                
+        ;
         private InventoryTrackAPIqueriesEndpoints(String name, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes,
                 String devComment, String devCommentTag) {
             this.name = name;
