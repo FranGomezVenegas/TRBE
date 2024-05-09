@@ -433,10 +433,10 @@ public class ClassInvTracking implements ActionsClass{
 
 
             case ADD_ATTACHMENT:
-                referenceName = argValues[0].toString();
-                lotQualifId = LPNulls.replaceNull(argValues[1]).toString().length() > 0 ? (Integer) argValues[1] : null;
-                String attachUrl = argValues[2].toString();
-                String briefSummary = argValues[3].toString();
+                //referenceName = argValues[0].toString();
+                lotQualifId = LPNulls.replaceNull(argValues[3]).toString().length() > 0 ? (Integer) argValues[3] : null;
+                String attachUrl = argValues[4].toString();
+                String briefSummary = argValues[5].toString();
                 if (referenceName != null) {
                     actionDiagnoses = invLot.addAttachment(lotQualifId, attachUrl, briefSummary);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
@@ -448,9 +448,9 @@ public class ClassInvTracking implements ActionsClass{
                 }
                 break;
             case REMOVE_ATTACHMENT:
-                referenceName = argValues[0].toString();
-                lotQualifId = LPNulls.replaceNull(argValues[1]).toString().length() > 0 ? (Integer) argValues[1] : null;
-                Integer attachmentId = LPNulls.replaceNull(argValues[2]).toString().length() > 0 ? (Integer) argValues[2] : null;
+                //referenceName = argValues[0].toString();
+                lotQualifId = LPNulls.replaceNull(argValues[3]).toString().length() > 0 ? (Integer) argValues[3] : null;
+                Integer attachmentId = LPNulls.replaceNull(argValues[4]).toString().length() > 0 ? (Integer) argValues[4] : null;
                 if (referenceName != null) {
                     actionDiagnoses = invLot.removeAttachment(lotQualifId, attachmentId);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
