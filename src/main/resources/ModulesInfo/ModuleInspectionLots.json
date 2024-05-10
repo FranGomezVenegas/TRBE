@@ -72,7 +72,7 @@
         ]
     },
     "picture": "/images/procedures_pictures/insp-lot-raw-material.jpg",
-    "apis":[ "InspLotRMQueriesAPIEndpoints", "InspLotRMAPIactionsEndpoints", "InvestigationAPIactionsEndpoints", "InvestigationAPIqueriesEndpoints",
+    "apis":[ "ConfigMasterDataAPIactionsEndpoints", "InspLotRMQueriesAPIEndpoints", "InspLotRMAPIactionsEndpoints", "InvestigationAPIactionsEndpoints", "InvestigationAPIqueriesEndpoints",
          "SampleAPIactionsEndpoints", "SampleAPIqueriesEndpoints", "SopUserAPIactionsEndpoints", "SopUserAPIqueriesEndpoints", "CertifyAnalysisMethodAPIactions"],
     "error_notifications":[
         {"api_name":"DataInspLotErrorTrapping"}, 

@@ -16,7 +16,7 @@
       ]
     },	
     "picture": "/images/procedures_pictures/clinical_studies.jpg",
-    "apis":[ "ConfigMasterDataAPIactionsEndpoints", "GenomaProjectAPIactionsEndPoints", "GenomaStudyAPIactionsEndPoints", 
+    "apis":[  "GenomaProjectAPIactionsEndPoints", "GenomaStudyAPIactionsEndPoints", 
         "GenomaStudyAPIqueriesEndpoints", "GenomaVariableAPIqueriesEndpoints", "SavedQueriesAPIEndpoints", "SavedQueriesAPIqueriesEndpoints",
         "SopUserAPIactionsEndpoints", "SopUserAPIqueriesEndpoints"
     ],
