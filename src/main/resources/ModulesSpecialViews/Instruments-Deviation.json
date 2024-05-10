@@ -7,10 +7,10 @@
     "windowType": "simple",
     "requirementsInfo":{
     "window_actions":[
-        {"actionName": "NEW_INVESTIGATION"},
-        {"actionName": "OPEN_INVESTIGATIONS"},
-        {"actionName": "INVESTIGATION_CAPA_DECISION", "requirementDescription":"The system should provide the ability to take one CAPA decision"},
-        {"actionName": "CLOSE_INVESTIGATION", "confirmDialog":"confirm", "confirmDialogDetail": "TEXT"}
+        {"actionName": "NEW_INVESTIGATION", "confirmDialog":"Confirmation", "requirementDescription":"The system should provide the way to create one new investigation for a given corrective action"},
+        {"actionName": "ADD_INVEST_OBJECTS", "confirmDialog":"Confirmation", "requirementDescription":"The system should provide the way to add the corrective action to an existing investigation"},
+        {"actionName": "INVESTIGATION_CAPA_DECISION", "confirmDialog":"Justification phrase", "requirementDescription":"The system should provide the ability to take one CAPA decision"},
+        {"actionName": "CLOSE_INVESTIGATION", "confirmDialog":"User Credential", "requirementDescription":"The investigation should be closed once a decision was taken"}
     ]
     },    
     "jsonModel":{
@@ -31,17 +31,11 @@
             }
           },
           "gridHeader": {
-            "qualif_id": {
-              "label_en": "qualif Id", "label_es": "Id qualif", "sort": false, "filter": true, "width": "10%"
+            "event_id": {
+              "label_en": "Event Id", "label_es": "Id Evento", "sort": false, "filter": true, "width": "10%"
             },
-            "lot_name": {
-              "label_en": "Lot Name", "label_es": "Nombre del lote", "sort": false, "filter": true, "width": "10%"
-            },
-            "reference": {
-              "label_en": "Reference", "label_es": "Referencia", "sort": true, "filter": false, "width": "15%"
-            },
-            "category": {
-              "label_en": "Category", "label_es": "Categoria", "sort": false, "filter": true, "width": "15%"
+            "instrument": {
+              "label_en": "Instrument", "label_es": "Instrumento", "sort": false, "filter": true, "width": "10%"
             },
             "object_type": {
               "label_en": "Object Type", "label_es": "Tipo de objeto", "sort": false, "filter": true, "width": "10%"
@@ -58,44 +52,56 @@
               "requiresGridItemSelected": true
             }		
 		},
-		"actions": [
-          {"actionName": "NEW_INVESTIGATION", 
-			"requiresDialog": false,
-            "button": {
-              "title": {
-                "label_en": "Create Investigation", "label_es": "Crear Investigación"
+        "actions": [
+            {"actionName": "NEW_INVESTIGATION", 
+                          "requiresDialog": false,
+              "button": {
+                "title": {
+                  "label_en": "Create Investigation", "label_es": "Crear Investigación"
+                },
+                "requiresGridItemSelected": true
               },
-              "requiresGridItemSelected": true
-            },
-            "endPointParams": [
-				{ "argumentName": "objectToAddObjectName", "selObjectPropertyName": "qualif_id" },
-				{ "argumentName": "objectToAddObjectType", "selObjectPropertyName": "object_type"}						
-            ]
-          },
-          {"actionName": "OPEN_INVESTIGATIONS",     
-			"requiresDialog": true,
-            "button": {
-              "title": {
-                "label_en": "Add to Investigation", "label_es": "Añadir a Investigación"
-              },
-              "requiresGridItemSelected": true
-            },
-            "dialogInfo": {
-			"name": "investigationDialog",
-			"subQueryName": "getOpenInvestigations",				
-              "automatic": true,
-              "action": [
-                {
-                  "actionName": "ADD_INVEST_OBJECTS",
-                  "clientMethod": "addInvestObjects",
-                  "endPointParams": [
-                    { "argumentName": "investigationId", "targetValue": true },
-                    { "argumentName": "objectsToAdd", "targetValue": true }
-                  ]
-                }
+              "endPointParams": [
+                  { "argumentName": "objectToAddObjectName", "selObjectPropertyName": "event_id" },
+                  { "argumentName": "objectToAddObjectType", "selObjectPropertyName": "object_type"}						
               ]
-            }
-          }
+            },
+            {"actionName": "ADD_INVEST_OBJECTS",          
+                "requiresDialog": true,
+                "button": {
+                  "title": {
+                    "label_en": "Add to Investigation", "label_es": "Añadir a Investigación"
+                  },
+                  "requiresGridItemSelected": true
+                },
+                "endPointParams": [
+                    {"argumentName": "investigationId", "getFromGrid": true, "selObjectPropertyName": "id"},
+                    { "argumentName": "objectToAddObjectType", "selObjectPropertyName": "object_type" },	
+                    { "argumentName": "objectToAddObjectName", "selObjectPropertyName": "event_id" }		
+                ],			
+                "dialogInfo": {
+                    "name": "genericDialog",
+                    "gridContent": true,			  
+                    "langConfig": {
+                        "gridHeader": [
+                            {"fldName": "id", "label_en": "Investigation", "label_es": "Investigación", "width": "40%",
+                                "sort": false, "filter": true, "align": "left"},
+                            {"fldName": "created_on", "label_en": "Created on", "label_es": "F.Creación", "width": "40%",
+                                "sort": true,"filter": false}			
+                        ]
+                    },			  
+                    "dialogQuery":{
+                            "actionName": "OPEN_INVESTIGATIONS",
+                            "button": {
+                            "icon": "refresh",
+                            "title": {
+                                  "label_en": "Reload", "label_es": "Recargar"
+                            },
+                            "requiresGridItemSelected": true
+                          }
+                    }		  
+                }
+            }        
         ]
       },	
       { "component":"TableWithButtons",  

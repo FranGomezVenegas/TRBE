@@ -6,12 +6,12 @@
     "windowType": "twoicons",
 	"entity": "sample",
     "requirementsInfo":{
-            "window_actions":[
-                {"actionName": "GET_SAMPLE_AUDIT"},
-				{"actionName": "SAMPLEANALYSISADD"},
-				{"actionName": "SAMPLEANALYSISREMOVE"},
-				{"actionName": "ENTERRESULT"}
-            ]
+        "window_actions":[
+            {"actionName": "GET_SAMPLE_AUDIT"},
+                {"actionName": "SAMPLEANALYSISADD", "confirmDialog":"Confirmation", "requirementDescription":"The system should provide the way for manually adding analysis to the given sample"},
+                {"actionName": "SAMPLEANALYSISREMOVE", "confirmDialog":"Confirmation", "requirementDescription":"The system should provide the way for manually removing analysis to the given sample"},
+                {"actionName": "ENTERRESULT", "requirementDescription":"The system should provide the way for entering sample results"}
+        ]
     },    
     "jsonModel":{
 		"component": "TableWithButtons",

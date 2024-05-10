@@ -72,30 +72,42 @@
 				{ "argumentName": "objectToAddObjectType", "selObjectPropertyName": "object_type"}						
             ]
           },
-          {"actionName": "OPEN_INVESTIGATIONS",     
-			"requiresDialog": true,
-            "button": {
-              "title": {
-                "label_en": "Add to Investigation", "label_es": "Añadir a Investigación"
-              },
-              "requiresGridItemSelected": true
-            },
-            "dialogInfo": {
-			"name": "investigationDialog",
-			"subQueryName": "getOpenInvestigations",				
-              "automatic": true,
-              "action": [
-                {
-                  "actionName": "ADD_INVEST_OBJECTS",
-                  "clientMethod": "addInvestObjects",
-                  "endPointParams": [
-                    { "argumentName": "investigationId", "targetValue": true },
-                    { "argumentName": "objectsToAdd", "targetValue": true }
-                  ]
+          {"actionName": "ADD_INVEST_OBJECTS",          
+                "requiresDialog": true,
+                "button": {
+                  "title": {
+                    "label_en": "Add to Investigation", "label_es": "Añadir a Investigación"
+                  },
+                  "requiresGridItemSelected": true
+                },
+                "endPointParams": [
+                    {"argumentName": "investigationId", "getFromGrid": true, "selObjectPropertyName": "id"},
+                    { "argumentName": "objectToAddObjectType", "selObjectPropertyName": "object_type" },	
+                    { "argumentName": "objectToAddObjectName", "selObjectPropertyName": "lot_qualification" }		
+                ],			
+                "dialogInfo": {
+                    "name": "genericDialog",
+                    "gridContent": true,			  
+                    "langConfig": {
+                        "gridHeader": [
+                            {"fldName": "id", "label_en": "Investigation", "label_es": "Investigación", "width": "40%",
+                                "sort": false, "filter": true, "align": "left"},
+                            {"fldName": "created_on", "label_en": "Created on", "label_es": "F.Creación", "width": "40%",
+                                "sort": true,"filter": false}			
+                        ]
+                    },			  
+                    "dialogQuery":{
+                            "actionName": "OPEN_INVESTIGATIONS",
+                            "button": {
+                            "icon": "refresh",
+                            "title": {
+                                  "label_en": "Reload", "label_es": "Recargar"
+                            },
+                            "requiresGridItemSelected": true
+                          }
+                    }		  
                 }
-              ]
             }
-          }
         ]
       },	
       { "component":"TableWithButtons",  

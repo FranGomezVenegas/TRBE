@@ -8,22 +8,20 @@
     "requirementsInfo":{
         "window_actions":[            
             {"actionName": "GET_LOT_AUDIT"},
-            {"actionName": "LOT_ALL_BULKS_TAKE_DECISION"},
-            {"actionName": "LOT_TAKE_USAGE_DECISION"},
-            {"actionName": "LOT_RETAIN_RECEPTION"},
-            {"actionName": "LOT_RETAIN_MOVEMENT"},
-            {"actionName": "LOT_RETAIN_EXTRACT"},
-            {"actionName": "LOT_RETAIN_LOCK"},
-            {"actionName": "LOT_RETAIN_UNLOCK"},
-            {"actionName": "LOT_RETAIN_LOCK"},
-            {"actionName": "LOT_BULK_ADJUST_QUANTITY"},
-            {"actionName": "LOT_BULK_ADJUST_SAMPLE_QUANTITY"},
-            {"actionName": "LOT_BULK_TAKE_DECISION"},
-            {"actionName": "GET_SAMPLE_AUDIT"},
-            {"actionName": "ENTERRESULT"},
-            {"actionName": "LOT_REMOVE_NOTANALYZED_PARAM"},
-            {"actionName": "LOT_ADD_NOTANALYZED_PARAM"},
-            {"actionName": "LOT_RETAIN_UNLOCK"}
+            {"actionName": "LOT_ALL_BULKS_TAKE_DECISION", "confirmDialog":"Justification phrase", "requirementDescription":"The system should provide the ability to take one usage decision for bulks inspection"},
+            {"actionName": "LOT_TAKE_USAGE_DECISION", "confirmDialog":"User Credential", "requirementDescription":"The system should provide the ability to take one usage decision for a given inspection lot"},
+            {"actionName": "LOT_RETAIN_RECEPTION", "confirmDialog":"Confirmation", "requirementDescription":"The system should provide the way to confirm the retain reception"},
+            {"actionName": "LOT_RETAIN_MOVEMENT", "confirmDialog":"Confirmation", "requirementDescription":"The system should provide the way for moving retain between locations"},
+            {"actionName": "LOT_RETAIN_EXTRACT", "confirmDialog":"Confirmation", "requirementDescription":"The system should provide the way to substrack part of a retain lot "},
+            {"actionName": "LOT_RETAIN_LOCK", "confirmDialog":"Confirmation", "requirementDescription":"The system should provide the way for locking one retain lot for not being updated"},
+            {"actionName": "LOT_RETAIN_UNLOCK", "confirmDialog":"Justification phrase", "requirementDescription":"The system should provide the way to unlock a locked retain lot to allow updates"},            
+            {"actionName": "LOT_BULK_ADJUST_QUANTITY", "confirmDialog":"Confirmation", "requirementDescription":"The system should provide the way to adjust the quantity independently of which is the current quantity is"},
+            {"actionName": "LOT_BULK_ADJUST_SAMPLE_QUANTITY", "requirementDescription":"The system should provide one way to adjust the pre-assigned sample quantity"},
+            {"actionName": "LOT_BULK_TAKE_DECISION", "confirmDialog":"Justification phrase", "requirementDescription":"The system should provide the ability to take one usage decision for one single bulk"},
+            {"actionName": "GET_SAMPLE_AUDIT", "requirementDescription":"The system should provide the way to see and even sign the audit trial"},
+            {"actionName": "ENTERRESULT", "requirementDescription":"The system should provide the way for entering sample results"},
+            {"actionName": "LOT_REMOVE_NOTANALYZED_PARAM", "confirmDialog":"Confirmation", "requirementDescription":"The system should provide the way for removing not analyzed params"},
+            {"actionName": "LOT_ADD_NOTANALYZED_PARAM", "confirmDialog":"Confirmation", "requirementDescription":"The system should provide the way for adding not analyzed params"}
         ]
     },    
     "jsonModel":{
