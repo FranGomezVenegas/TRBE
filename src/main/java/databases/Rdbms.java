@@ -1467,6 +1467,7 @@ public class Rdbms {
                         }
                     }
                 }
+                boolean closed = Rdbms.getConnection().isClosed();
                 buildPreparedStatement(filteredValoresConInterrogaciones, prepareStatement);
                 ResultSet res;
                 res = prepareStatement.executeQuery();
@@ -1475,7 +1476,8 @@ public class Rdbms {
             }
         } catch (Exception ex) {            
             ProcedureRequestSession instanceForDocumentation = ProcedureRequestSession.getInstanceForDocumentation(null, null);
-            if (instanceForDocumentation.getIsForProcManagement()) return null;
+            
+            if (instanceForDocumentation.getIsForProcManagement()!=null&&instanceForDocumentation.getIsForProcManagement()) return null;
             if (ex.getMessage().contains("current transaction is aborted")) return null;
             ResponseMessages messages = instanceForDocumentation.getMessages();
             messages.addMainForError(RdbmsErrorTrapping.DB_ERROR, new Object[]{ex.getMessage()+". Query:"+consultaconinterrogaciones+". Values:"+Arrays.toString(valoresinterrogaciones)});
