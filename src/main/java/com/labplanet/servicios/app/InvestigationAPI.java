@@ -149,7 +149,7 @@ public class InvestigationAPI extends HttpServlet {
         /**
          *
          */
-        ALL_INVESTIGATIONS("ALL_INVESTIGATIONS", "", new LPAPIArguments[]{
+        INVESTIGATIONS_QUERY("INVESTIGATIONS_QUERY", "", new LPAPIArguments[]{
         
         }, EndPointsToRequirements.endpointWithNoOutputObjects,
                 null, null),
