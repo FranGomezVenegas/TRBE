@@ -249,7 +249,7 @@ public class AppProcedureListAPI extends HttpServlet {
                     new String[]{TblsProcedure.ProcedureViews.ROLE_NAME.getName()},
                     new Object[]{roleName},
                     new String[]{TblsProcedure.ProcedureViews.NAME.getName(), TblsProcedure.ProcedureViews.JSON_MODEL.getName()});
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfoModSettings[0][0].toString())) {
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procViewModel[0][0].toString())) {
                 return jObj;
             }
             for (Object[] curRow: procViewModel){
