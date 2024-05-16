@@ -575,8 +575,8 @@ public class DataInventory {
         if (Boolean.FALSE.equals(insertRecordInTable.getRunSuccess())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), null);
         }
-        AppInventoryLotAudit.inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.ADDED_ATTACHMENT, getLotName(), TblsInvTrackingData.TablesInvTrackingData.LOT.getTableName(), getLotName(),
-                this.getReference(), this.getCategory(), fldNames, fldValues);
+        AppInventoryLotAudit.inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.ADDED_ATTACHMENT, getLotName(), this.getReference(), this.getCategory(), 
+                TblsInvTrackingData.TablesInvTrackingData.LOT.getTableName(), getLotName(), fldNames, fldValues);
         messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ADD_ATTACHMENT, new Object[]{getLotName()});
         return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.ADD_ATTACHMENT, new Object[]{getLotName()}, getLotName());
     }
@@ -612,8 +612,8 @@ public class DataInventory {
         if (Boolean.FALSE.equals(updateRecordInTable.getRunSuccess())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, updateRecordInTable.getErrorMessageCode(), updateRecordInTable.getErrorMessageVariables(), null);
         }
-        AppInventoryLotAudit.inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.REMOVED_ATTACHMENT, getLotName(), TblsInvTrackingData.TablesInvTrackingData.LOT.getTableName(), getLotName(),
-                this.getReference(), this.getCategory(), EnumIntTableFields.getAllFieldNames(fldNamesObj), fldValues);
+        AppInventoryLotAudit.inventoryLotAuditAdd(InvTrackingEnums.AppInventoryTrackingAuditEvents.REMOVED_ATTACHMENT, getLotName(), this.getReference(), this.getCategory(), 
+                TblsInvTrackingData.TablesInvTrackingData.LOT.getTableName(), getLotName(),EnumIntTableFields.getAllFieldNames(fldNamesObj), fldValues);
         messages.addMainForSuccess(InvTrackingEnums.InventoryTrackAPIactionsEndpoints.REMOVE_ATTACHMENT, new Object[]{getLotName()});
         return new InternalMessage(LPPlatform.LAB_TRUE, InvTrackingEnums.InventoryTrackAPIactionsEndpoints.REMOVE_ATTACHMENT, new Object[]{getLotName()}, getLotName());
     }
