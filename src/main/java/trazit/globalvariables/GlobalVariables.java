@@ -36,6 +36,10 @@ import module.clinicalstudies.logic.ClassProjectController;
 import module.clinicalstudies.logic.ClassStudy;
 import module.clinicalstudies.logic.ClassStudyController;
 import module.clinicalstudies.logic.ClinicalStudiesFrontendMasterData;
+import module.formulation.definition.ClassFormulation;
+import module.formulation.definition.FormulationEnums.FormulationAPIactionsEndpoints;
+import module.formulation.definition.TblsFormulationData;
+import module.formulation.definition.TblsFormulationDataAudit;
 import module.inspectionlot.rawmaterial.definition.ClassInspLotRMController;
 import module.inspectionlot.rawmaterial.definition.ClassInspLotRMQueriesController;
 import module.inspectionlot.rawmaterial.definition.ClassInspLotRMactions;
@@ -237,7 +241,51 @@ public class GlobalVariables {
                     new ActionsEndpointPair(SampleAPIqueriesEndpoints.class.getName(), ClassSampleQueriesController.class.getName()),
                     new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigationController.class.getName())},
                 "Action Name;Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided"
-        )
+        ),
+        PROJECT_RD(null, TblsInspLotRMConfig.TablesInspLotRMConfig.values(),
+                TblsInspLotRMDataAudit.TablesInspLotRMDataAudit.values(), TblsInspLotRMData.TablesInspLotRMData.values(),
+                null, TblsInspLotRMProcedure.TablesInspLotRMProcedure.values(),
+                null, null,
+                null, TblsInspLotRMData.ViewsInspLotRMData.values(),
+                null, null, InspLotRawMaterialMasterData.class,
+                new ActionsEndpointPair[]{
+                    new ActionsEndpointPair(InspLotRMEnums.InspLotRMAPIactionsEndpoints.class.getName(), ClassInspLotRMactions.class.getName()),
+                    new ActionsEndpointPair(FormulationAPIactionsEndpoints.class.getName(), ClassFormulation.class.getName()),
+                    new ActionsEndpointPair(SampleAPIactionsEndpoints.class.getName(), ClassSample.class.getName()),
+                    new ActionsEndpointPair(CertifyAnalysisMethodAPIactionsEndpoints.class.getName(), ClassAnalysisMehtodCertif.class.getName()),
+                    new ActionsEndpointPair(MasterDataSpecActionsEndpoints.class.getName(), ClassSpec.class.getName()),
+                    new ActionsEndpointPair(MasterDataAnalysisActionsEndpoints.class.getName(), ClassAnalysis.class.getName()),
+                    new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigation.class.getName())},
+                new ActionsEndpointPair[]{
+                    new ActionsEndpointPair(InspLotRMAPIactionsEndpoints.class.getName(), ClassInspLotRMController.class.getName()),
+                    new ActionsEndpointPair(FormulationAPIactionsEndpoints.class.getName(), ClassFormulation.class.getName()),
+                    new ActionsEndpointPair(EnvMonSampleAPI.EnvMonSampleAPIactionsEndpoints.class.getName(), ClassInspLotRMQueriesController.class.getName()),
+                    new ActionsEndpointPair(SampleAPIactionsEndpoints.class.getName(), ClassSampleController.class.getName()),
+                    new ActionsEndpointPair(SampleAPIqueriesEndpoints.class.getName(), ClassSampleQueriesController.class.getName()),
+                    new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigationController.class.getName())},
+                "Action Name;Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided"
+        ),
+        FORMULATION(null, TblsInspLotRMConfig.TablesInspLotRMConfig.values(),
+                TblsFormulationDataAudit.TablesFormulationDataAudit.values(), TblsFormulationData.TablesFormulationData.values(),
+                null, null,
+                null, null,
+                null, TblsInspLotRMData.ViewsInspLotRMData.values(),
+                null, null, InspLotRawMaterialMasterData.class,
+                new ActionsEndpointPair[]{                    
+                    new ActionsEndpointPair(FormulationAPIactionsEndpoints.class.getName(), ClassFormulation.class.getName()),
+                    new ActionsEndpointPair(CertifyAnalysisMethodAPIactionsEndpoints.class.getName(), ClassAnalysisMehtodCertif.class.getName()),
+                    new ActionsEndpointPair(MasterDataSpecActionsEndpoints.class.getName(), ClassSpec.class.getName()),
+                    new ActionsEndpointPair(MasterDataAnalysisActionsEndpoints.class.getName(), ClassAnalysis.class.getName()),
+                    new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigation.class.getName())},
+                new ActionsEndpointPair[]{
+                    new ActionsEndpointPair(FormulationAPIactionsEndpoints.class.getName(), ClassFormulation.class.getName()),
+                    new ActionsEndpointPair(InspLotRMAPIactionsEndpoints.class.getName(), ClassInspLotRMController.class.getName()),
+                    new ActionsEndpointPair(EnvMonSampleAPI.EnvMonSampleAPIactionsEndpoints.class.getName(), ClassInspLotRMQueriesController.class.getName()),
+                    new ActionsEndpointPair(SampleAPIactionsEndpoints.class.getName(), ClassSampleController.class.getName()),
+                    new ActionsEndpointPair(SampleAPIqueriesEndpoints.class.getName(), ClassSampleQueriesController.class.getName()),
+                    new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigationController.class.getName())},
+                "Action Name;Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided"
+        ),
         ;
         TrazitModules(EnumIntTables[] configAudit, EnumIntTables[] config, EnumIntTables[] dataAudit, EnumIntTables[] data, EnumIntTables[] procAudit, EnumIntTables[] proc,
             EnumIntViews[] configAuditVw, EnumIntViews[] configVw, EnumIntViews[] dataAuditVw, EnumIntViews[] dataVw, EnumIntViews[] procAuditVw, EnumIntViews[] procVw,
