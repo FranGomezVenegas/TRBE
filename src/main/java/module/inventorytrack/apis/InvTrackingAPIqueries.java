@@ -230,7 +230,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     }
                     Rdbms.closeRdbms();
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
-                    return;
+                    return; 
                 case QUALIFIFICATION_EVENT_VARIABLES:
                     String lotQualifIdStr = LPNulls.replaceNull(argValues[0]).toString();
                     category = LPNulls.replaceNull(argValues[1]).toString();
@@ -699,6 +699,13 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     Rdbms.closeRdbms();
                     LPFrontEnd.servletReturnSuccess(request, response, jArray);
                     break;
+                case GET_LOT_ATTACHMENTS:
+                    lotName = argValues[0].toString();
+                    Integer lotQualifId = LPNulls.replaceNull(argValues[1]).toString().length() > 0 ? (Integer) argValues[1] : null;
+                    jArr = lotAttachment(lotName, lotQualifId, null);
+                    Rdbms.closeRdbms();
+                    LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                    return;
                 default:
             }
         } catch (NumberFormatException e2) {
@@ -713,6 +720,26 @@ public class InvTrackingAPIqueries extends HttpServlet {
                 Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+    public static JSONArray lotAttachment(String lotName, Integer qualifId, String alternativeProcInstanceName) {
+        String[] fieldsToRetrieve = getAllFieldNames(TblsInvTrackingData.TablesInvTrackingData.LOT_ATTACHMENT, alternativeProcInstanceName);
+        String[] wFldN = new String[]{TblsInvTrackingData.LotAttachments.LOT_NAME.getName(), TblsInvTrackingData.LotAttachments.REMOVED.getName()};
+        Object[] wFldV = new Object[]{lotName, false};
+        if (qualifId != null && qualifId.toString().length() > 0) {
+            wFldN = LPArray.addValueToArray1D(wFldN, TblsInvTrackingData.LotAttachments.QUALIF_ID.getName());
+            wFldV = LPArray.addValueToArray1D(wFldV, qualifId);
+        }
+        Object[][] instrumentFamily = QueryUtilitiesEnums.getTableData(TblsInvTrackingData.TablesInvTrackingData.LOT_ATTACHMENT,
+                EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInvTrackingData.TablesInvTrackingData.LOT_ATTACHMENT, alternativeProcInstanceName),
+                wFldN, wFldV, new String[]{TblsInvTrackingData.LotAttachments.LOT_NAME.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()}, alternativeProcInstanceName);
+        JSONArray jArr = new JSONArray();
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentFamily[0][0].toString()))) {
+            for (Object[] currInstr : instrumentFamily) {
+                JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
+                jArr.add(jObj);
+            }
+        }
+        return jArr;
     }
 
     private JSONObject instrumentLockingInfo(String[] fieldsToRetrieve, Object[] currInstr) {
