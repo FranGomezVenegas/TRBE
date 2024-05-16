@@ -2053,7 +2053,7 @@ public class ClassReqProcedureActions {
                 removeDiagn = Rdbms.updateTableRecordFieldsByFilter(TblsCnfg.TablesConfig.ZZZ_PROPERTIES_ERROR,
                         new EnumIntTableFields[]{TblsCnfg.zzzPropertiesMissing.RESOLVED, TblsCnfg.zzzPropertiesMissing.RESOLUTION_NOTES}, 
                         new Object[]{true, note},
-                    new SqlWhere(TblsCnfg.TablesConfig.ZZZ_PROPERTIES_ERROR,new String[]{TblsCnfg.zzzPropertiesMissing.ID.getName()},
+                    new SqlWhere(TblsCnfg.TablesConfig.ZZZ_PROPERTIES_ERROR,new String[]{TblsCnfg.zzzPropertiesMissing.RULE_NAME.getName()},
                     new Object[]{incBusinessRule}), procInstanceName);
                 if (Boolean.TRUE.equals(removeDiagn.getRunSuccess())) {
                     this.diagnosticObj = new InternalMessage(LPPlatform.LAB_TRUE, removeDiagn.getErrorMessageCode(), new Object[]{removeDiagn.getNewRowId(), incBusinessRule});
