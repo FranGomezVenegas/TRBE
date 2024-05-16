@@ -154,9 +154,9 @@ public final class Investigation {
     public static InternalMessage closeInvestigation(Integer investId) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Token token = ProcedureRequestSession.getInstanceForActions(null, null, null).getToken();
-        InternalMessage investigationClosed = isInvestigationClosed(investId);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationClosed.getDiagnostic())) {
-            return new InternalMessage(LPPlatform.LAB_FALSE, investigationClosed.getMessageCodeObj(), investigationClosed.getMessageCodeVariables());
+        InternalMessage investigationIsOpen = isInvestigationOpen(investId);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationIsOpen.getDiagnostic())) {
+            return new InternalMessage(LPPlatform.LAB_FALSE, investigationIsOpen.getMessageCodeObj(), investigationIsOpen.getMessageCodeVariables());
         }
 
         String[] updFieldName = new String[]{TblsProcedure.Investigation.CLOSED.getName(), TblsProcedure.Investigation.CLOSED_ON.getName(), TblsProcedure.Investigation.CLOSED_BY.getName()};
@@ -194,9 +194,9 @@ public final class Investigation {
     public static InternalMessage addInvestObjects(Integer investId, String objectsToAdd, Integer parentAuditId) {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         Token token = procReqSession.getToken();
-        InternalMessage investigationClosed = isInvestigationClosed(investId);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationClosed.getDiagnostic())) {
-            return investigationClosed;
+        InternalMessage investigationIsOpen = isInvestigationOpen(investId);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationIsOpen.getDiagnostic())) {
+            return new InternalMessage(LPPlatform.LAB_FALSE, investigationIsOpen.getMessageCodeObj(), investigationIsOpen.getMessageCodeVariables());
         }
         String[] baseFieldName = new String[]{TblsProcedure.InvestObjects.INVEST_ID.getName(), TblsProcedure.InvestObjects.ADDED_ON.getName(), TblsProcedure.InvestObjects.ADDED_BY.getName()};
         Object[] baseFieldValue = new Object[]{investId, LPDate.getCurrentTimeStamp(), token.getPersonName()};
@@ -349,9 +349,9 @@ public final class Investigation {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areCapaFields[0].toString())) {
             return areCapaFields;
         }
-        InternalMessage investigationClosed = isInvestigationClosed(investId);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationClosed.getDiagnostic())) {
-            return ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, investigationClosed.getMessageCodeObj(), investigationClosed.getMessageCodeVariables());
+        InternalMessage investigationIsOpen = isInvestigationOpen(investId);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationIsOpen.getDiagnostic())) {
+            return ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, investigationIsOpen.getMessageCodeObj(), investigationIsOpen.getMessageCodeVariables());
         }
         String[] updFieldName = new String[]{TblsProcedure.Investigation.CAPA_REQUIRED.getName(), TblsProcedure.Investigation.CAPA_DECISION_ON.getName(), TblsProcedure.Investigation.CAPA_DECISION_BY.getName()};
         Object[] updFieldValue = new Object[]{capaRequired, LPDate.getCurrentTimeStamp(), token.getPersonName()};
@@ -388,9 +388,9 @@ public final class Investigation {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areCapaFields.getDiagnostic())) {
             return areCapaFields;
         }
-        InternalMessage investigationClosed = isInvestigationClosed(investId);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationClosed.getDiagnostic())) {
-            return new InternalMessage(LPPlatform.LAB_TRUE, investigationClosed.getMessageCodeObj(), investigationClosed.getMessageCodeVariables());
+        InternalMessage investigationIsOpen = isInvestigationOpen(investId);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationIsOpen.getDiagnostic())) {
+            return new InternalMessage(LPPlatform.LAB_FALSE, investigationIsOpen.getMessageCodeObj(), investigationIsOpen.getMessageCodeVariables());
         }
         String[] updFieldName = new String[]{TblsProcedure.Investigation.CAPA_REQUIRED.getName(), TblsProcedure.Investigation.CAPA_DECISION_ON.getName(), TblsProcedure.Investigation.CAPA_DECISION_BY.getName()};
         Object[] updFieldValue = new Object[]{capaRequired, LPDate.getCurrentTimeStamp(), token.getPersonName()};
@@ -417,7 +417,7 @@ public final class Investigation {
         return new InternalMessage(diagnoseObj.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, diagnoseObj.getErrorMessageCode(), diagnoseObj.getErrorMessageVariables());
     }
 
-    private static InternalMessage isInvestigationClosed(Integer investId) {
+    private static InternalMessage isInvestigationOpen(Integer investId) {
         String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
         Object[][] investigationInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.PROCEDURE.getName()), TblsProcedure.TablesProcedure.INVESTIGATION.getTableName(),
                 new String[]{TblsProcedure.Investigation.ID.getName()}, new Object[]{investId}, new String[]{TblsProcedure.Investigation.CLOSED.getName()});
