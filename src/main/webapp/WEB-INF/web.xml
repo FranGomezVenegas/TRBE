@@ -282,16 +282,28 @@
         <servlet-class>module.monitoring.apis.MonitoringAPIqueries</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>ProjectRnDAPIactions</servlet-name>
+        <servlet-class> module.projectrnd.apis.ProjectRnDAPIactions</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ProjectRnDAPIqueries</servlet-name>
+        <servlet-class> module.projectrnd.apis.ProjectRnDAPIqueries</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>formulationAPIactions</servlet-name>
+        <servlet-class> module.formulation.apis.formulationAPIactions</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>formulationAPIqueries</servlet-name>
+        <servlet-class> module.formulation.apis.formulationAPIqueries</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>InvestigationAPI</servlet-name>
         <servlet-class>com.labplanet.servicios.app.InvestigationAPI</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>InvestigationAPIqueries</servlet-name>
         <servlet-class>com.labplanet.servicios.app.InvestigationAPIfrontend</servlet-class>
-    </servlet>
-    <servlet>
-        <servlet-name>InvTrackingAPIactions</servlet-name>
-        <servlet-class>module.inventorytrack.apis.InvTrackingAPIactions</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>InvTrackingAPIqueries</servlet-name>
@@ -524,6 +536,22 @@
         <servlet-name>TestingEnvMonitSamples</servlet-name>
         <url-pattern>/testing/moduleEnvMonit/TestingEnvMonitSamples</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ProjectRnDAPIactions</servlet-name>
+        <url-pattern>/moduleProjectRnD/ProjectRnDAPIactions</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ProjectRnDAPIqueries</servlet-name>
+        <url-pattern>/moduleProjectRnD/ProjectRnDAPIqueries</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>formulationAPIactions</servlet-name>
+        <url-pattern>/moduleFormulation/formulationAPIactions</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>formulationAPIqueries</servlet-name>
+        <url-pattern>/moduleFormulation/formulationAPIqueries</url-pattern>
+    </servlet-mapping>
     <!-- Block 7.2 Environmental Monitoring Module End. -->
     <!-- Block 7.3 Genoma Module Begin. -->
     <servlet-mapping>
@@ -600,10 +628,6 @@
     </servlet-mapping>
     <!-- Block 8.2 Instruments Module End. -->
     <!-- Block 8.3 Instruments Module Begin. -->
-    <servlet-mapping>
-        <servlet-name>InvTrackingAPIactions</servlet-name>
-        <url-pattern>/app/procs/InvTrackingAPIactions</url-pattern>
-    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>InvTrackingAPIqueries</servlet-name>
         <url-pattern>/app/procs/InvTrackingAPIqueries</url-pattern>
