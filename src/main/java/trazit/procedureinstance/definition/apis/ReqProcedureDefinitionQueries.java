@@ -10,6 +10,8 @@ import trazit.procedureinstance.definition.definition.ReqProcedureEnums.ReqProce
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.SqlWhere;
+import databases.TblsApp;
+import databases.TblsCnfg;
 import databases.TblsTesting;
 import databases.features.Token;
 import static functionaljavaa.requirement.ProcedureDefinitionQueries.*;
@@ -140,7 +142,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                                 curProcObj.put("manuals", procInstanceManualsInRequirements(curProc[valuePosicProcInstanceNameInArray].toString()));
                                 curProcObj.put("frontend_testing", procInstanceFrontendTestingInRequirements(curProc[valuePosicProcInstanceNameInArray].toString()));
                                 curProcObj.put("definition", procInstanceDefinitionInRequirements(curProc[valuePosicProcInstanceNameInArray].toString()));
-
+                                curProcObj.put("support", procInstanceSupportInRequirements(curProc[valuePosicProcInstanceNameInArray].toString()));
                             }
                             proceduresList.add(curProcObj);
                         }
@@ -515,19 +517,19 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
 
         JSONObject jViewsAccObj = new JSONObject();
         jViewsAccObj.put("roles_views", ClassReqProcedureQueries.procViewsBlockInRequirements(procInstanceName));
-        jViewsAccObj.put("view_actions", QueryUtilities.dbRowsGroupedToJsonArr(TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_ACTIONS.getViewName(),
+        jViewsAccObj.put("view_actions", QueryUtilities.dbRowsGroupedToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_ACTIONS.getViewName(),
                 new String[]{TblsReqs.viewProcReqSolutionActions.WINDOW_NAME.getName(),TblsReqs.viewProcReqSolutionActions.WINDOW_NAME.getName(),
                     TblsReqs.viewProcReqSolutionActions.PRETTY_EN.getName(), TblsReqs.viewProcReqSolutionActions.PRETTY_ES.getName()},
                 new String[]{TblsReqs.viewProcReqSolutionActions.PROC_INSTANCE_NAME.getName(), TblsReqs.viewProcReqSolutionActions.WINDOW_ACTION.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
                 new Object[]{procInstanceName},
                 new String[]{TblsReqs.viewProcReqSolutionActions.ORDER_NUMBER.getName(), TblsReqs.viewProcReqSolutionActions.ENTITY.getName(), TblsReqs.viewProcReqSolutionActions.PRETTY_EN.getName()}));
-        jViewsAccObj.put("view_actions_en", QueryUtilities.dbRowsGroupedToJsonArr(TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_ACTIONS.getViewName(),
+        jViewsAccObj.put("view_actions_en", QueryUtilities.dbRowsGroupedToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_ACTIONS.getViewName(),
                 new String[]{TblsReqs.viewProcReqSolutionActions.WINDOW_LABEL_EN.getName(), TblsReqs.viewProcReqSolutionActions.WINDOW_LABEL_EN.getName(),
                     TblsReqs.viewProcReqSolutionActions.PRETTY_EN.getName(), TblsReqs.viewProcReqSolutionActions.PRETTY_ES.getName()},
                 new String[]{TblsReqs.viewProcReqSolutionActions.PROC_INSTANCE_NAME.getName(), TblsReqs.viewProcReqSolutionActions.WINDOW_ACTION.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
                 new Object[]{procInstanceName},
                 new String[]{TblsReqs.viewProcReqSolutionActions.ORDER_NUMBER.getName(), TblsReqs.viewProcReqSolutionActions.ENTITY.getName(),TblsReqs.viewProcReqSolutionActions.PRETTY_EN.getName()}));
-        jViewsAccObj.put("view_actions_es", QueryUtilities.dbRowsGroupedToJsonArr(TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_ACTIONS.getViewName(),
+        jViewsAccObj.put("view_actions_es", QueryUtilities.dbRowsGroupedToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_ACTIONS.getViewName(),
                 new String[]{TblsReqs.viewProcReqSolutionActions.WINDOW_LABEL_ES.getName(), TblsReqs.viewProcReqSolutionActions.WINDOW_LABEL_ES.getName(),
                     TblsReqs.viewProcReqSolutionActions.PRETTY_EN.getName(), TblsReqs.viewProcReqSolutionActions.PRETTY_ES.getName()},
                 new String[]{TblsReqs.viewProcReqSolutionActions.PROC_INSTANCE_NAME.getName(), TblsReqs.viewProcReqSolutionActions.WINDOW_ACTION.getName() + " " + SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
@@ -544,7 +546,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
             new Object[]{procInstanceName},new String[]{TblsReqs.ProcedureSopMetaData.SOP_NAME.getName()},null, true, true));
 
         jMainObj.put("tables", 
-        QueryUtilities.dbRowsGroupedToJsonArr(TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableName(),
+        QueryUtilities.dbRowsGroupedToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableName(),
                 new String[]{TblsReqs.ProcedureModuleTables.SCHEMA_NAME.getName(), TblsReqs.ProcedureModuleTables.TABLE_NAME.getName(), TblsReqs.ProcedureModuleTables.PURPOSE_EN.getName(), TblsReqs.ProcedureModuleTables.PURPOSE_ES.getName(), TblsReqs.ProcedureModuleTables.IS_VIEW.getName()},
                 new String[]{TblsReqs.ProcedureModuleTables.PROC_INSTANCE_NAME.getName()}, new Object[]{procInstanceName},
                 new String[]{TblsReqs.ProcedureModuleTables.SCHEMA_NAME.getName(), TblsReqs.ProcedureModuleTables.ORDER_NUMBER.getName()}));
@@ -569,6 +571,25 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         return QueryUtilities.dbRowsToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_MANUALS.getTableName(),
                 getAllFieldNames(TblsReqs.TablesReqs.PROC_MANUALS.getTableFields()), new String[]{TblsReqs.ProcedureManuals.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureManuals.ACTIVE.getName()}, new Object[]{procInstanceName, true},
                 new String[]{TblsReqs.ProcedureManuals.ORDER_NUMBER.getName()}, new String[]{}, true, true);       
+    }
+    
+    private static JSONObject procInstanceSupportInRequirements(String procInstanceName){
+        JSONObject supportData=new JSONObject();        
+        supportData.put(TblsCnfg.TablesConfig.ZZZ_PROPERTIES_ERROR.getTableName(),QueryUtilities.dbRowsGroupedToJsonArrForParentChild(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsCnfg.TablesConfig.ZZZ_PROPERTIES_ERROR.getRepositoryName()), TblsCnfg.TablesConfig.ZZZ_PROPERTIES_ERROR.getTableName(),
+                new String[]{TblsCnfg.zzzPropertiesMissing.RULE_NAME.getName(), TblsCnfg.zzzPropertiesMissing.ID.getName(), TblsCnfg.zzzPropertiesMissing.ACTION_NAME.getName(), TblsCnfg.zzzPropertiesMissing.CREATION_DATE.getName()},
+                new String[]{TblsCnfg.zzzPropertiesMissing.RESOLVED.getName()}, new Object[]{false},
+                new String[]{TblsCnfg.zzzPropertiesMissing.RULE_NAME.getName(), TblsCnfg.zzzPropertiesMissing.ID.getName()+" desc"}));
+
+        supportData.put(TblsCnfg.TablesConfig.ZZZ_DB_ERROR.getTableName(), QueryUtilities.dbRowsGroupedToJsonArrForParentChild(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsCnfg.TablesConfig.ZZZ_DB_ERROR.getRepositoryName()), TblsCnfg.TablesConfig.ZZZ_DB_ERROR.getTableName(),
+                new String[]{TblsCnfg.zzzDbErrorLog.ERROR_MESSAGE.getName(), TblsCnfg.zzzDbErrorLog.ID.getName(), TblsCnfg.zzzDbErrorLog.ACTION_NAME.getName(), TblsCnfg.zzzDbErrorLog.CREATION_DATE.getName(), TblsCnfg.zzzDbErrorLog.QUERY.getName(), TblsCnfg.zzzDbErrorLog.QUERY_PARAMETERS.getName()},
+                new String[]{TblsCnfg.zzzDbErrorLog.RESOLVED.getName()}, new Object[]{false},
+                new String[]{TblsCnfg.zzzDbErrorLog.ERROR_MESSAGE.getName(), TblsCnfg.zzzDbErrorLog.ID.getName()+" desc"}));
+
+        supportData.put(TblsApp.TablesApp.INCIDENT.getTableName(),QueryUtilities.dbRowsGroupedToJsonArr("app", LPPlatform.buildSchemaName("app", TblsApp.TablesApp.INCIDENT.getRepositoryName()), TblsApp.TablesApp.INCIDENT.getTableName(),
+                new String[]{TblsApp.Incident.CATEGORY.getName(), TblsApp.Incident.ID.getName(), TblsApp.Incident.TITLE.getName(), TblsApp.Incident.DETAIL.getName(), TblsApp.Incident.DATE_CREATION.getName(), TblsApp.Incident.STATUS.getName()},
+                new String[]{TblsApp.Incident.INCIDENT_PROCEDURE.getName(), TblsApp.Incident.DATE_RESOLUTION.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, new Object[]{procInstanceName},
+                new String[]{TblsApp.Incident.CATEGORY.getName(), TblsApp.Incident.ID.getName()+" desc"}));
+        return supportData;
     }
 
     public static JSONObject getScriptWithSteps(Integer scriptId, String procInstanceName, String[] fieldsToRetrieveScripts, Object[] curTest) {
