@@ -156,10 +156,12 @@ public class DataSample {
                 return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.MISSING_SPEC_CONFIG_CODE, new Object[]{sampleFieldValue[fieldIndexSpecCode], sampleFieldValue[fieldIndexSpecCodeVersion], procInstanceName});
             }
         } else {
-            if (fieldIndexSpecCode == -1) {
-                return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_FIELDNOTFOUND, new Object[]{TblsData.Sample.SPEC_CODE.getName()});
-            } else {
-                return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_FIELDNOTFOUND, new Object[]{TblsData.Sample.SPEC_CODE_VERSION.getName()});
+            if ((fieldIndexSpecCode != -1) || (fieldIndexSpecCodeVersion != -1)) {
+                if (fieldIndexSpecCode == -1) {
+                    return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_FIELDNOTFOUND, new Object[]{TblsData.Sample.SPEC_CODE.getName()});
+                } else {
+                    return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_FIELDNOTFOUND, new Object[]{TblsData.Sample.SPEC_CODE_VERSION.getName()});
+                }
             }
         }
         mandatoryFieldsValue = new Object[mandatoryFields.length];

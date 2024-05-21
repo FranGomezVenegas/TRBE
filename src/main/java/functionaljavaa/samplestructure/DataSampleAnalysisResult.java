@@ -266,7 +266,7 @@ public class DataSampleAnalysisResult {
         Integer testId = Integer.valueOf(LPNulls.replaceNull(resultData[0][1]).toString());
         String analysis = LPNulls.replaceNull(resultData[0][2]).toString();
         String methodName = LPNulls.replaceNull(resultData[0][3]).toString();
-        Integer methodVersion = Integer.valueOf(LPNulls.replaceNull(resultData[0][4]).toString());
+        //Integer methodVersion = Integer.valueOf(LPNulls.replaceNull(resultData[0][4]).toString());
         String paramName = LPNulls.replaceNull(resultData[0][5]).toString();
         String currResultStatus = LPNulls.replaceNull(resultData[0][6]).toString();
         String currRawValue = LPNulls.replaceNull(resultData[0][7]).toString();
@@ -306,12 +306,12 @@ public class DataSampleAnalysisResult {
         Object[][] sampleSpecData = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaDataName, TblsData.TablesData.SAMPLE.getTableName(),
                 new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId},
                 new String[]{TblsData.Sample.SPEC_CODE.getName(), TblsData.Sample.SPEC_CODE_VERSION.getName(), TblsData.Sample.SPEC_VARIATION_NAME.getName(),
-                    TblsData.Sample.STATUS.getName()});
-        String sampleSpecCode = null;
+                    TblsData.Sample.STATUS.getName()});        
         Integer sampleSpecCodeVersion = null;
         String sampleSpecVariationName = null;
-        if ((sampleSpecData[0][0] != null) && (!LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleSpecData[0][0].toString()))) {
-            sampleSpecCode = sampleSpecData[0][0].toString();
+        String sampleSpecCode = sampleSpecData[0][0].toString();
+        if ((sampleSpecData[0][0] != null) && (sampleSpecData[0][0].toString().length()>0) && (!LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleSpecData[0][0].toString()))) {
+            
             sampleSpecCodeVersion = Integer.valueOf(sampleSpecData[0][1].toString());
             sampleSpecVariationName = sampleSpecData[0][2].toString();
             sampleFieldName = LPArray.addValueToArray1D(sampleFieldName, new String[]{TblsData.Sample.SPEC_CODE.getName(), TblsData.Sample.SPEC_CODE_VERSION.getName(), TblsData.Sample.SPEC_VARIATION_NAME.getName()});
@@ -352,38 +352,13 @@ public class DataSampleAnalysisResult {
         } else {
             newResultStatus = resultStatusReEntered;
         }
-        if (sampleSpecCode == null) {
+        if (sampleSpecCode == null||sampleSpecCode.length()==0) {
             InternalMessage prettyValue = sarRawToPrettyResult(resultValue);
             fieldsName = LPArray.addValueToArray1D(fieldsName, new String[]{TblsData.SampleAnalysisResult.SPEC_EVAL.getName(), TblsData.SampleAnalysisResult.ENTERED_BY.getName(),
                 TblsData.SampleAnalysisResult.ENTERED_ON.getName(), TblsData.SampleAnalysisResult.STATUS.getName(), TblsData.SampleAnalysisResult.PRETTY_VALUE.getName()});
             fieldsValue = LPArray.addValueToArray1D(fieldsValue, 
                     new Object[]{specEvalNoSpec, token.getPersonName(), LPDate.getCurrentTimeStamp(), 
-                        newResultStatus, prettyValue.getMessageCodeVariables()[1]});
-            SqlWhere sqlWhere = new SqlWhere();
-            sqlWhere.addConstraint(TblsData.SampleAnalysisResult.RESULT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{resultId}, "");
-            RdbmsObject diagnosesObj = Rdbms.updateTableRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT,
-                    EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, fieldsName), fieldsValue, sqlWhere, null);
-            if (Boolean.TRUE.equals(diagnosesObj.getRunSuccess())) {
-                SampleAudit smpAudit = new SampleAudit();
-                smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
-                        resultId, sampleId, testId, resultId, fieldsName, fieldsValue, alternativeAuditEntry, alternativeAuditClass);
-            }
-            if (Boolean.TRUE.equals(diagnosesObj.getRunSuccess())) {
-                DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId);
-            }
-        }
-        Object[][] specLimits = ConfigSpecRule.getSpecLimitLimitIdFromSpecVariables(sampleSpecCode, sampleSpecCodeVersion, sampleSpecVariationName, analysis, methodName, paramName,
-                new String[]{TblsCnfg.SpecLimits.LIMIT_ID.getName(), TblsCnfg.SpecLimits.RULE_TYPE.getName(), TblsCnfg.SpecLimits.RULE_VARIABLES.getName(), TblsCnfg.SpecLimits.LIMIT_ID.getName(),
-                    TblsCnfg.SpecLimits.UOM.getName(), TblsCnfg.SpecLimits.UOM_CONVERSION_MODE.getName()});
-        if ((LPPlatform.LAB_FALSE.equalsIgnoreCase(specLimits[0][0].toString())) && (Boolean.FALSE.equals(Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode().equalsIgnoreCase(specLimits[0][4].toString())))) {
-            return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{});
-        }
-        if ((LPPlatform.LAB_FALSE.equalsIgnoreCase(specLimits[0][0].toString())) && (Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode().equalsIgnoreCase(specLimits[0][4].toString()))) {
-            InternalMessage prettyValue = sarRawToPrettyResult(resultValue);
-            fieldsName = LPArray.addValueToArray1D(fieldsName, new String[]{TblsData.SampleAnalysisResult.SPEC_EVAL.getName(), TblsData.SampleAnalysisResult.ENTERED_BY.getName(),
-                TblsData.SampleAnalysisResult.ENTERED_ON.getName(), TblsData.SampleAnalysisResult.STATUS.getName(), TblsData.SampleAnalysisResult.PRETTY_VALUE.getName()});
-            fieldsValue = LPArray.addValueToArray1D(fieldsValue,
-                    new Object[]{specEvalNoSpecParamLimit, token.getPersonName(), LPDate.getCurrentTimeStamp(), newResultStatus, prettyValue.getMessageCodeVariables()[1]});
+                        newResultStatus, prettyValue.getNewObjectId()});
             SqlWhere sqlWhere = new SqlWhere();
             sqlWhere.addConstraint(TblsData.SampleAnalysisResult.RESULT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{resultId}, "");
             RdbmsObject diagnosesObj = Rdbms.updateTableRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT,
@@ -400,151 +375,183 @@ public class DataSampleAnalysisResult {
             if (Boolean.TRUE.equals(diagnosesObj.getRunSuccess())) {
                 DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId);
             }
+            
             return new InternalMessage(diagnosesObj.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, diagnosesObj.getErrorMessageCode(), diagnosesObj.getErrorMessageVariables());
-        }
-        Integer specLimitId = Integer.valueOf(LPNulls.replaceNull(specLimits[0][0]).toString());
-        String ruleType = (String) specLimits[0][1];
-        String specUomName = (String) specLimits[0][4];
-        String specUomConversionMode = (String) specLimits[0][5];
-        Boolean requiresUnitsConversion = false;
-        BigDecimal resultConverted = null;
-        resultUomName = LPNulls.replaceNull(resultUomName);
-        if (resultUomName.length() > 0) {
-            if ((Boolean.FALSE.equals(resultUomName.equalsIgnoreCase(specUomName))) && (specUomConversionMode == null || specUomConversionMode.equalsIgnoreCase("DISABLED") || ((!specUomConversionMode.contains(resultUomName)) && !specUomConversionMode.equalsIgnoreCase("ALL")))) {
-                return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.CONVERSION_NOT_ALLOWED, new Object[]{specUomConversionMode, specUomName, resultUomName, specLimitId.toString(), schemaDataName});
+        }else{
+            Object[][] specLimits = ConfigSpecRule.getSpecLimitLimitIdFromSpecVariables(sampleSpecCode, sampleSpecCodeVersion, sampleSpecVariationName, analysis, methodName, paramName,
+                    new String[]{TblsCnfg.SpecLimits.LIMIT_ID.getName(), TblsCnfg.SpecLimits.RULE_TYPE.getName(), TblsCnfg.SpecLimits.RULE_VARIABLES.getName(), TblsCnfg.SpecLimits.LIMIT_ID.getName(),
+                        TblsCnfg.SpecLimits.UOM.getName(), TblsCnfg.SpecLimits.UOM_CONVERSION_MODE.getName()});
+            if ((LPPlatform.LAB_FALSE.equalsIgnoreCase(specLimits[0][0].toString())) && (Boolean.FALSE.equals(Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode().equalsIgnoreCase(specLimits[0][4].toString())))) {
+                return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{});
             }
-            if (resultUomName.equalsIgnoreCase(specUomName)) {
-                requiresUnitsConversion = false;
-                resultConverted = new BigDecimal(resultValue.toString());
-            } else {
-                requiresUnitsConversion = true;
-                UnitsOfMeasurement uom = new UnitsOfMeasurement(new BigDecimal(resultValue.toString()), resultUomName);
-                uom.convertValue(specUomName);
-                if (Boolean.FALSE.equals(uom.getConvertedFine())) {
-                    return new InternalMessage(LPPlatform.LAB_FALSE, DataInvRetErrorTrapping.CONVERTER_FALSE, new Object[]{resultId.toString(), uom.getConversionErrorDetail()[3].toString(), schemaDataName});
+            if ((LPPlatform.LAB_FALSE.equalsIgnoreCase(specLimits[0][0].toString())) && (Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND.getErrorCode().equalsIgnoreCase(specLimits[0][4].toString()))) {
+                InternalMessage prettyValue = sarRawToPrettyResult(resultValue);
+                fieldsName = LPArray.addValueToArray1D(fieldsName, new String[]{TblsData.SampleAnalysisResult.SPEC_EVAL.getName(), TblsData.SampleAnalysisResult.ENTERED_BY.getName(),
+                    TblsData.SampleAnalysisResult.ENTERED_ON.getName(), TblsData.SampleAnalysisResult.STATUS.getName(), TblsData.SampleAnalysisResult.PRETTY_VALUE.getName()});
+                fieldsValue = LPArray.addValueToArray1D(fieldsValue,
+                        new Object[]{specEvalNoSpecParamLimit, token.getPersonName(), LPDate.getCurrentTimeStamp(), newResultStatus, prettyValue.getMessageCodeVariables()[1]});
+                SqlWhere sqlWhere = new SqlWhere();
+                sqlWhere.addConstraint(TblsData.SampleAnalysisResult.RESULT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{resultId}, "");
+                RdbmsObject diagnosesObj = Rdbms.updateTableRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT,
+                        EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, fieldsName), fieldsValue, sqlWhere, null);
+                if (Boolean.TRUE.equals(diagnosesObj.getRunSuccess())) {
+                    SampleAudit smpAudit = new SampleAudit();
+                    smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
+                            resultId, sampleId, testId, resultId, fieldsName, fieldsValue, alternativeAuditEntry, alternativeAuditClass);
+                    if (calcLinkedFldPosicInArray > -1) {
+                        AnalysisCalculations anCalc=new AnalysisCalculations(resultId, testId, sampleId, resultFieldsArr, resultData[0], this.sar, alternativeAuditEntry, alternativeAuditClass);
+                        anCalc=null;
+                    }
                 }
-                resultConverted = uom.getConvertedQuantity();
-            }
-        }
-        DataSpec resChkSpec = new DataSpec();
-        InternalMessage resSpecEvaluation = null;
-        ConfigSpecRule specRule = new ConfigSpecRule();
-        specRule.specLimitsRule(specLimitId, null);
-        Object[] messageCodeVariables = null;
-        if (Boolean.TRUE.equals(specRule.getRuleIsQualitative())) {
-            resSpecEvaluation = resChkSpec.resultCheck((String) resultValue, specRule.getQualitativeRule(),
-                    specRule.getQualitativeRuleValues(), specRule.getQualitativeRuleSeparator(), specRule.getQualitativeRuleListName());
-            //EnumIntMessages checkMsgCode = (EnumIntMessages) resSpecEvaluation;
-            messageCodeVariables = resSpecEvaluation.getMessageCodeVariables();
-            //String specEval = resSpecEvaluation.getMessageCodeObj().getErrorCode();
-            JSONObject responseJSONDiagnosticLPFalse = LPFrontEnd.responseJSONDiagnosticLPFalse(resSpecEvaluation.getMessageCodeObj().getErrorCode(), resSpecEvaluation.getMessageCodeVariables());
-            String specEval = responseJSONDiagnosticLPFalse.get(LPFrontEnd.ResponseTags.MESSAGE.getLabelName() + "_en").toString();
-
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluation.getDiagnostic())) {
-                return resSpecEvaluation;
-            }
-            fieldsName = LPArray.addValueToArray1D(fieldsName, new String[]{TblsData.SampleAnalysisResult.SPEC_EVAL.getName(), TblsData.SampleAnalysisResult.SPEC_EVAL_DETAIL.getName(),
-                TblsData.SampleAnalysisResult.ENTERED_BY.getName(), TblsData.SampleAnalysisResult.ENTERED_ON.getName(), TblsData.SampleAnalysisResult.STATUS.getName()});
-            fieldsValue = LPArray.addValueToArray1D(fieldsValue, new Object[]{specEval, messageCodeVariables[messageCodeVariables.length - 2],
-                token.getPersonName(), LPDate.getCurrentTimeStamp(), newResultStatus});
-            if (limitId == null || Boolean.FALSE.equals(Objects.equals(limitId, specLimitId))) {
-                fieldsName = LPArray.addValueToArray1D(fieldsName, TblsData.SampleAnalysisResult.LIMIT_ID.getName());
-                fieldsValue = LPArray.addValueToArray1D(fieldsValue, specLimitId);
-            }
-            SqlWhere sqlWhere = new SqlWhere();
-            sqlWhere.addConstraint(TblsData.SampleAnalysisResult.RESULT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{resultId}, "");
-            RdbmsObject diagnoseObj = Rdbms.updateTableRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT,
-                    EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, fieldsName), fieldsValue, sqlWhere, null);
-            if (Boolean.TRUE.equals(diagnoseObj.getRunSuccess())) {
-                if (calcLinkedFldPosicInArray > -1) {
-                    AnalysisCalculations anCalc=new AnalysisCalculations(resultId, testId, sampleId, resultFieldsArr, resultData[0], this.sar, alternativeAuditEntry, alternativeAuditClass);
-                    anCalc=null;
+                if (Boolean.TRUE.equals(diagnosesObj.getRunSuccess())) {
+                    DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId);
                 }
-                SampleAudit smpAudit = new SampleAudit();
-                smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
-                        resultId, sampleId, testId, resultId, fieldsName, fieldsValue, alternativeAuditEntry, alternativeAuditClass);
+                return new InternalMessage(diagnosesObj.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, diagnosesObj.getErrorMessageCode(), diagnosesObj.getErrorMessageVariables());
             }
-            if (Boolean.TRUE.equals(diagnoseObj.getRunSuccess())) {
-                DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId);
-            }
-            if (Boolean.TRUE.equals(diagnoseObj.getRunSuccess())) {
-                if ((resSpecEvaluation.getMessageCodeObj()).toString().contains(ConfigSpecRule.SPEC_WORD_FOR_UPON_CONTROL)) {
-                    this.sar.sarControlAction(resultId, sampleFieldName, sampleFieldValue, fieldsName, fieldsValue);
+            Integer specLimitId = Integer.valueOf(LPNulls.replaceNull(specLimits[0][0]).toString());        
+            String ruleType = (String) specLimits[0][1];
+            String specUomName = (String) specLimits[0][4];
+            String specUomConversionMode = (String) specLimits[0][5];
+            Boolean requiresUnitsConversion = false;
+            BigDecimal resultConverted = null;
+            resultUomName = LPNulls.replaceNull(resultUomName);
+            if (resultUomName.length() > 0) {
+                if ((Boolean.FALSE.equals(resultUomName.equalsIgnoreCase(specUomName))) && (specUomConversionMode == null || specUomConversionMode.equalsIgnoreCase("DISABLED") || ((!specUomConversionMode.contains(resultUomName)) && !specUomConversionMode.equalsIgnoreCase("ALL")))) {
+                    return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.CONVERSION_NOT_ALLOWED, new Object[]{specUomConversionMode, specUomName, resultUomName, specLimitId.toString(), schemaDataName});
                 }
-                if ((resSpecEvaluation.getMessageCodeObj()).toString().contains(ConfigSpecRule.SPEC_WORD_FOR_OOS)) {
-                    this.sar.sarOOSAction(resultId, sampleFieldName, sampleFieldValue, fieldsName, fieldsValue);
-                }
-            }
-            return new InternalMessage(diagnoseObj.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, diagnoseObj.getErrorMessageCode(), diagnoseObj.getErrorMessageVariables());
-        }
-        if (Boolean.TRUE.equals(specRule.getRuleIsQuantitative())) {
-            try {
-                resultValue = new BigDecimal(resultValue.toString());
-            } catch (Exception e) {
-                return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.NOT_NUMERIC_VALUE, new Object[]{resultValue, specRule.getRuleRepresentation(), specLimitId.toString(), schemaDataName});
-            }
-            if (Boolean.TRUE.equals(specRule.getQuantitativeHasControl())) {
-                if (Boolean.TRUE.equals(requiresUnitsConversion)) {
-                    resSpecEvaluation = resChkSpec.resultCheck(resultConverted, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
+                if (resultUomName.equalsIgnoreCase(specUomName)) {
+                    requiresUnitsConversion = false;
+                    resultConverted = new BigDecimal(resultValue.toString());
                 } else {
-                    resSpecEvaluation = resChkSpec.resultCheck((BigDecimal) resultValue, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
-                }
-            } else {
-                if (Boolean.TRUE.equals(requiresUnitsConversion)) {
-                    resSpecEvaluation = resChkSpec.resultCheck(resultConverted, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
-                } else {
-                    resSpecEvaluation = resChkSpec.resultCheck((BigDecimal) resultValue, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
-                }
-            }
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluation.getDiagnostic())) {
-                return resSpecEvaluation;
-            }
-            //EnumIntMessages checkMsgCode = (EnumIntMessages) resSpecEvaluation.getMessageCodeObj();
-            String specEval = resSpecEvaluation.getMessageCodeObj().getErrorCode();
-            JSONObject responseJSONDiagnosticLPFalse = LPFrontEnd.responseJSONDiagnosticLPFalse(resSpecEvaluation.getMessageCodeObj().getErrorCode(), resSpecEvaluation.getMessageCodeVariables());
-            String specEvalDetail = responseJSONDiagnosticLPFalse.get(LPFrontEnd.ResponseTags.MESSAGE.getLabelName() + "_en").toString();
-            if (Boolean.TRUE.equals(requiresUnitsConversion)) {
-                specEvalDetail = specEvalDetail + " in " + specUomName;
-            }
-
-            fieldsName = LPArray.addValueToArray1D(fieldsName, new String[]{TblsData.SampleAnalysisResult.SPEC_EVAL.getName(), TblsData.SampleAnalysisResult.SPEC_EVAL_DETAIL.getName(),
-                TblsData.SampleAnalysisResult.ENTERED_BY.getName(), TblsData.SampleAnalysisResult.ENTERED_ON.getName(), TblsData.SampleAnalysisResult.STATUS.getName()});
-            fieldsValue = LPArray.addValueToArray1D(fieldsValue, new Object[]{specEval, specEvalDetail, token.getPersonName(), LPDate.getCurrentTimeStamp(), newResultStatus});
-            if (limitId == null || Boolean.FALSE.equals(Objects.equals(limitId, specLimitId))) {
-                fieldsName = LPArray.addValueToArray1D(fieldsName, TblsData.SampleAnalysisResult.LIMIT_ID.getName());
-                fieldsValue = LPArray.addValueToArray1D(fieldsValue, specLimitId);
-            }
-            SqlWhere sqlWhere = new SqlWhere();
-            sqlWhere.addConstraint(TblsData.SampleAnalysisResult.RESULT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{resultId}, "");
-            RdbmsObject diagnoseObj = Rdbms.updateTableRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT,
-                    EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, fieldsName), fieldsValue, sqlWhere, null);
-            InternalMessage sampleAuditAdd = null;
-            if (Boolean.TRUE.equals(diagnoseObj.getRunSuccess())) {
-                SampleAudit smpAudit = new SampleAudit();
-                sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
-                        resultId, sampleId, testId, resultId, fieldsName, fieldsValue, alternativeAuditEntry, alternativeAuditClass);
-                if (calcLinkedFldPosicInArray > -1) {
-                    AnalysisCalculations anCalc=new AnalysisCalculations(resultId, testId, sampleId, resultFieldsArr, resultData[0], this.sar, alternativeAuditEntry, alternativeAuditClass);
-                    anCalc=null;
+                    requiresUnitsConversion = true;
+                    UnitsOfMeasurement uom = new UnitsOfMeasurement(new BigDecimal(resultValue.toString()), resultUomName);
+                    uom.convertValue(specUomName);
+                    if (Boolean.FALSE.equals(uom.getConvertedFine())) {
+                        return new InternalMessage(LPPlatform.LAB_FALSE, DataInvRetErrorTrapping.CONVERTER_FALSE, new Object[]{resultId.toString(), uom.getConversionErrorDetail()[3].toString(), schemaDataName});
+                    }
+                    resultConverted = uom.getConvertedQuantity();
                 }
             }
-            if (Boolean.TRUE.equals(diagnoseObj.getRunSuccess())) {
-                DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId);
-            }
-            if (Boolean.TRUE.equals(diagnoseObj.getRunSuccess())) {
-                //checkMsgCode = (EnumIntMessages) resSpecEvaluation.getMessageCodeObj();
+            DataSpec resChkSpec = new DataSpec();
+            InternalMessage resSpecEvaluation = null;
+            ConfigSpecRule specRule = new ConfigSpecRule();
+            specRule.specLimitsRule(specLimitId, null);
+            Object[] messageCodeVariables = null;
+            if (Boolean.TRUE.equals(specRule.getRuleIsQualitative())) {
+                resSpecEvaluation = resChkSpec.resultCheck((String) resultValue, specRule.getQualitativeRule(),
+                        specRule.getQualitativeRuleValues(), specRule.getQualitativeRuleSeparator(), specRule.getQualitativeRuleListName());
+                //EnumIntMessages checkMsgCode = (EnumIntMessages) resSpecEvaluation;
                 messageCodeVariables = resSpecEvaluation.getMessageCodeVariables();
-                specEval = resSpecEvaluation.getMessageCodeObj().getErrorCode();
-                if (specEval.toUpperCase().contains(ConfigSpecRule.SPEC_WORD_FOR_UPON_CONTROL)) {
-                    this.sar.sarControlAction(resultId, sampleFieldName, sampleFieldValue, fieldsName, fieldsValue);
+                //String specEval = resSpecEvaluation.getMessageCodeObj().getErrorCode();
+                JSONObject responseJSONDiagnosticLPFalse = LPFrontEnd.responseJSONDiagnosticLPFalse(resSpecEvaluation.getMessageCodeObj().getErrorCode(), resSpecEvaluation.getMessageCodeVariables());
+                String specEval = responseJSONDiagnosticLPFalse.get(LPFrontEnd.ResponseTags.MESSAGE.getLabelName() + "_en").toString();
+
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluation.getDiagnostic())) {
+                    return resSpecEvaluation;
                 }
-                if ((resSpecEvaluation.getMessageCodeObj().getErrorCode()).toString().toUpperCase().contains(ConfigSpecRule.SPEC_WORD_FOR_OOS)) {
-                    this.sar.sarOOSAction(resultId, sampleFieldName, sampleFieldValue, fieldsName, fieldsValue);
+                fieldsName = LPArray.addValueToArray1D(fieldsName, new String[]{TblsData.SampleAnalysisResult.SPEC_EVAL.getName(), TblsData.SampleAnalysisResult.SPEC_EVAL_DETAIL.getName(),
+                    TblsData.SampleAnalysisResult.ENTERED_BY.getName(), TblsData.SampleAnalysisResult.ENTERED_ON.getName(), TblsData.SampleAnalysisResult.STATUS.getName()});
+                fieldsValue = LPArray.addValueToArray1D(fieldsValue, new Object[]{specEval, messageCodeVariables[messageCodeVariables.length - 2],
+                    token.getPersonName(), LPDate.getCurrentTimeStamp(), newResultStatus});
+                if (limitId == null || Boolean.FALSE.equals(Objects.equals(limitId, specLimitId))) {
+                    fieldsName = LPArray.addValueToArray1D(fieldsName, TblsData.SampleAnalysisResult.LIMIT_ID.getName());
+                    fieldsValue = LPArray.addValueToArray1D(fieldsValue, specLimitId);
                 }
+                SqlWhere sqlWhere = new SqlWhere();
+                sqlWhere.addConstraint(TblsData.SampleAnalysisResult.RESULT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{resultId}, "");
+                RdbmsObject diagnoseObj = Rdbms.updateTableRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT,
+                        EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, fieldsName), fieldsValue, sqlWhere, null);
+                if (Boolean.TRUE.equals(diagnoseObj.getRunSuccess())) {
+                    if (calcLinkedFldPosicInArray > -1) {
+                        AnalysisCalculations anCalc=new AnalysisCalculations(resultId, testId, sampleId, resultFieldsArr, resultData[0], this.sar, alternativeAuditEntry, alternativeAuditClass);
+                        anCalc=null;
+                    }
+                    SampleAudit smpAudit = new SampleAudit();
+                    smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
+                            resultId, sampleId, testId, resultId, fieldsName, fieldsValue, alternativeAuditEntry, alternativeAuditClass);
+                }
+                if (Boolean.TRUE.equals(diagnoseObj.getRunSuccess())) {
+                    DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId);
+                }
+                if (Boolean.TRUE.equals(diagnoseObj.getRunSuccess())) {
+                    if ((resSpecEvaluation.getMessageCodeObj()).toString().contains(ConfigSpecRule.SPEC_WORD_FOR_UPON_CONTROL)) {
+                        this.sar.sarControlAction(resultId, sampleFieldName, sampleFieldValue, fieldsName, fieldsValue);
+                    }
+                    if ((resSpecEvaluation.getMessageCodeObj()).toString().contains(ConfigSpecRule.SPEC_WORD_FOR_OOS)) {
+                        this.sar.sarOOSAction(resultId, sampleFieldName, sampleFieldValue, fieldsName, fieldsValue);
+                    }
+                }
+                return new InternalMessage(diagnoseObj.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, diagnoseObj.getErrorMessageCode(), diagnoseObj.getErrorMessageVariables());
             }
-            return new InternalMessage(diagnoseObj.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, diagnoseObj.getErrorMessageCode(), diagnoseObj.getErrorMessageVariables());
+            if (Boolean.TRUE.equals(specRule.getRuleIsQuantitative())) {
+                try {
+                    resultValue = new BigDecimal(resultValue.toString());
+                } catch (Exception e) {
+                    return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.NOT_NUMERIC_VALUE, new Object[]{resultValue, specRule.getRuleRepresentation(), specLimitId.toString(), schemaDataName});
+                }
+                if (Boolean.TRUE.equals(specRule.getQuantitativeHasControl())) {
+                    if (Boolean.TRUE.equals(requiresUnitsConversion)) {
+                        resSpecEvaluation = resChkSpec.resultCheck(resultConverted, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
+                    } else {
+                        resSpecEvaluation = resChkSpec.resultCheck((BigDecimal) resultValue, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
+                    }
+                } else {
+                    if (Boolean.TRUE.equals(requiresUnitsConversion)) {
+                        resSpecEvaluation = resChkSpec.resultCheck(resultConverted, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
+                    } else {
+                        resSpecEvaluation = resChkSpec.resultCheck((BigDecimal) resultValue, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinValAllowed(), specRule.getMaxValAllowed());
+                    }
+                }
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resSpecEvaluation.getDiagnostic())) {
+                    return resSpecEvaluation;
+                }
+                //EnumIntMessages checkMsgCode = (EnumIntMessages) resSpecEvaluation.getMessageCodeObj();
+                String specEval = resSpecEvaluation.getMessageCodeObj().getErrorCode();
+                JSONObject responseJSONDiagnosticLPFalse = LPFrontEnd.responseJSONDiagnosticLPFalse(resSpecEvaluation.getMessageCodeObj().getErrorCode(), resSpecEvaluation.getMessageCodeVariables());
+                String specEvalDetail = responseJSONDiagnosticLPFalse.get(LPFrontEnd.ResponseTags.MESSAGE.getLabelName() + "_en").toString();
+                if (Boolean.TRUE.equals(requiresUnitsConversion)) {
+                    specEvalDetail = specEvalDetail + " in " + specUomName;
+                }
+
+                fieldsName = LPArray.addValueToArray1D(fieldsName, new String[]{TblsData.SampleAnalysisResult.SPEC_EVAL.getName(), TblsData.SampleAnalysisResult.SPEC_EVAL_DETAIL.getName(),
+                    TblsData.SampleAnalysisResult.ENTERED_BY.getName(), TblsData.SampleAnalysisResult.ENTERED_ON.getName(), TblsData.SampleAnalysisResult.STATUS.getName()});
+                fieldsValue = LPArray.addValueToArray1D(fieldsValue, new Object[]{specEval, specEvalDetail, token.getPersonName(), LPDate.getCurrentTimeStamp(), newResultStatus});
+                if (limitId == null || Boolean.FALSE.equals(Objects.equals(limitId, specLimitId))) {
+                    fieldsName = LPArray.addValueToArray1D(fieldsName, TblsData.SampleAnalysisResult.LIMIT_ID.getName());
+                    fieldsValue = LPArray.addValueToArray1D(fieldsValue, specLimitId);
+                }
+                SqlWhere sqlWhere = new SqlWhere();
+                sqlWhere.addConstraint(TblsData.SampleAnalysisResult.RESULT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{resultId}, "");
+                RdbmsObject diagnoseObj = Rdbms.updateTableRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT,
+                        EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, fieldsName), fieldsValue, sqlWhere, null);
+                InternalMessage sampleAuditAdd = null;
+                if (Boolean.TRUE.equals(diagnoseObj.getRunSuccess())) {
+                    SampleAudit smpAudit = new SampleAudit();
+                    sampleAuditAdd = smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
+                            resultId, sampleId, testId, resultId, fieldsName, fieldsValue, alternativeAuditEntry, alternativeAuditClass);
+                    if (calcLinkedFldPosicInArray > -1) {
+                        AnalysisCalculations anCalc=new AnalysisCalculations(resultId, testId, sampleId, resultFieldsArr, resultData[0], this.sar, alternativeAuditEntry, alternativeAuditClass);
+                        anCalc=null;
+                    }
+                }
+                if (Boolean.TRUE.equals(diagnoseObj.getRunSuccess())) {
+                    DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId);
+                }
+                if (Boolean.TRUE.equals(diagnoseObj.getRunSuccess())) {
+                    //checkMsgCode = (EnumIntMessages) resSpecEvaluation.getMessageCodeObj();
+                    messageCodeVariables = resSpecEvaluation.getMessageCodeVariables();
+                    specEval = resSpecEvaluation.getMessageCodeObj().getErrorCode();
+                    if (specEval.toUpperCase().contains(ConfigSpecRule.SPEC_WORD_FOR_UPON_CONTROL)) {
+                        this.sar.sarControlAction(resultId, sampleFieldName, sampleFieldValue, fieldsName, fieldsValue);
+                    }
+                    if ((resSpecEvaluation.getMessageCodeObj().getErrorCode()).toString().toUpperCase().contains(ConfigSpecRule.SPEC_WORD_FOR_OOS)) {
+                        this.sar.sarOOSAction(resultId, sampleFieldName, sampleFieldValue, fieldsName, fieldsValue);
+                    }
+                }
+                return new InternalMessage(diagnoseObj.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, diagnoseObj.getErrorMessageCode(), diagnoseObj.getErrorMessageVariables());
+            }        
+            return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.SPECRULE_NOTIMPLEMENTED, new Object[]{resultId.toString(), schemaDataName, ruleType});        
         }
-        return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.SPECRULE_NOTIMPLEMENTED, new Object[]{resultId.toString(), schemaDataName, ruleType});
     } catch (Exception e) {
         return new InternalMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.EXCEPTION_RAISED, new Object[]{e.getMessage()});
     }

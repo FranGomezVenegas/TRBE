@@ -572,10 +572,10 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         Object[][] sampleSpecData = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaDataName, TblsData.TablesData.SAMPLE.getTableName(), new String[]{TblsData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId},
                 new String[]{TblsData.Sample.SAMPLE_ID.getName(), TblsData.Sample.SPEC_CODE.getName(), TblsData.Sample.SPEC_CODE_VERSION.getName(),
                     TblsData.Sample.SPEC_VARIATION_NAME.getName(), TblsData.Sample.STATUS.getName()});
-        if ((sampleSpecData[0][0] == null) || (!LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleSpecData[0][0].toString()))) {
-            sampleSpecCode = (String) sampleSpecData[0][1];
+        sampleSpecCode = LPNulls.replaceNull(sampleSpecData[0][1]).toString();
+        if ((sampleSpecCode.length()>0) && (!LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleSpecData[0][0].toString()))) {
             sampleSpecCodeVersion = Integer.valueOf(LPNulls.replaceNull(sampleSpecData[0][2]).toString());
-            sampleSpecVariationName = (String) sampleSpecData[0][3];
+            sampleSpecVariationName = LPNulls.replaceNull(sampleSpecData[0][3]).toString();
             if (sampleSpecCode != null) {
                 Object[][] specRules = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaConfigName, TblsCnfg.TablesConfig.SPEC_RULES.getTableName(),
                         new String[]{TblsCnfg.SpecRules.CODE.getName(), TblsCnfg.SpecRules.CONFIG_VERSION.getName()},
