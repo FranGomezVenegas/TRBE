@@ -304,7 +304,7 @@ public class AppProcedureListAPI extends HttpServlet {
                         jObj=moduleDefinition.getModuleMasterDataClass().getDeclaredConstructor().newInstance().getMasterDataJsonObject(procInstanceName);                        
                 } catch (Exception e) {
                     e.printStackTrace();
-                    jObj.put(procInstanceName, "no master data logic defined");
+                    jObj.put(procInstanceName, "no master data logic defined, this procedure has assigned the module "+moduleNameFromProcInstance);
                     // Handle the exception appropriately
                 }            
             }        
