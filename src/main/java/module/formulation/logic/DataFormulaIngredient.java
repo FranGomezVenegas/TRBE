@@ -50,7 +50,7 @@ public class DataFormulaIngredient {
         }
         AppFormulaAudit(FormulationEnums.AppFormulationAuditEvents.REMOVED_INGREDIENT,
                 formula.getFormulaName(), TablesFormulationData.FORMULA_INGREDIENTS.getTableName(),
-                ingredient, fldNames, fldValues);
+                ingredient, fldNames, fldValues, formula.getProjectName());
         messages.addMainForSuccess(FormulationEnums.FormulationAPIactionsEndpoints.FORMULA_REMOVE_INGREDIENT, new Object[]{formula.getFormulaName()});
         return new InternalMessage(LPPlatform.LAB_TRUE, FormulationEnums.FormulationAPIactionsEndpoints.FORMULA_REMOVE_INGREDIENT, new Object[]{formula.getFormulaName()}, formula.getFormulaName());
     }
@@ -63,7 +63,7 @@ public class DataFormulaIngredient {
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsFormulationData.TablesFormulationData.FORMULA_INGREDIENTS, fieldsName, fieldsValue);
         if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
             AppFormulaAudit(FormulationEnums.AppFormulationAuditEvents.ADDED_INGREDIENT, formula.getFormulaName(), TblsFormulationData.TablesFormulationData.FORMULA_INGREDIENTS.getTableName(), ingredient,
-                    fieldsName, fieldsValue);
+                    fieldsName, fieldsValue, formula.getProjectName());
         }
         return new InternalMessage(LPPlatform.LAB_TRUE, FormulationEnums.FormulationAPIactionsEndpoints.FORMULA_ADD_INGREDIENT, new Object[]{formula.getFormulaName()}, formula.getFormulaName());    
     }

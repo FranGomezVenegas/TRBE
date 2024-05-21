@@ -53,7 +53,7 @@ public class FormulationEnums {
     public enum FormulationAPIactionsEndpoints implements EnumIntEndpoints {
         NEW_FORMULA("NEW_FORMULA", null, "", "formulationNewFormulaCreated_success",
                 new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_FORMULA_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                    new LPAPIArguments(REQUEST_PARAM_PROJECT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
+                    new LPAPIArguments(REQUEST_PARAM_PROJECT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
                     new LPAPIArguments("purpose", LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
                     new LPAPIArguments("formula_template", LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
                     new LPAPIArguments("ingredientsList", LPAPIArguments.ArgumentType.STRING.toString(), false, 10, null, null, null),

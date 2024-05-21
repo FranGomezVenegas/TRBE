@@ -115,8 +115,8 @@ public class TblsFormulationData {
         PURPOSE("purpose", LPDatabase.string(), null, null, null, null, false),
         CREATED_BY("created_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null, true),
         CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null, true),
-        OPEN("open", LPDatabase.booleanFld(true), null, null, null, null, true),
-        LOCKED("locked", LPDatabase.booleanFld(false), null, null, null, null, true),
+        IS_OPEN("is_open", LPDatabase.booleanFld(true), null, null, null, null, true),
+        IS_LOCKED("is_locked", LPDatabase.booleanFld(false), null, null, null, null, true),
         RESPONSIBLE("responsible", LPDatabase.string(), null, null, null, null, true)
         ;
         private Project(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
@@ -152,7 +152,7 @@ public class TblsFormulationData {
         PURPOSE("purpose", LPDatabase.string(), null, null, null, null, false),
         CREATED_BY("created_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null, true),
         CREATED_ON("created_on", LPDatabase.dateTime(), null, null, null, null, true),
-        OPEN("open", LPDatabase.booleanFld(true), null, null, null, null, true),
+        IS_OPEN("is_open", LPDatabase.booleanFld(true), null, null, null, null, true),
         RESPONSIBLE("responsible", LPDatabase.string(), null, null, null, null, true),
         IS_LOCKED(TblsInstrumentsData.Instruments.IS_LOCKED.getName(),TblsInstrumentsData.Instruments.IS_LOCKED.getFieldType(), null, null, null, null, true),
         LOCKED_REASON(TblsInstrumentsData.Instruments.LOCKED_REASON.getName(),TblsInstrumentsData.Instruments.LOCKED_REASON.getFieldType(), null, null, null, null, true)

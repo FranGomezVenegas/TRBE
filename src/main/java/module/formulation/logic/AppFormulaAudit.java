@@ -21,13 +21,13 @@ public final class AppFormulaAudit {
     private AppFormulaAudit() {throw new java.lang.UnsupportedOperationException("This is a utility class and cannot be instantiated");}
     
     public static Object[] AppFormulaAudit(EnumIntAuditEvents action, String formulaName, String tableName, String tableId,
-                        String[] fldNames, Object[] fldValues) {
+                        String[] fldNames, Object[] fldValues, String projectName) {
         return AppFormulaAudit(action, formulaName, tableName, tableId,
-            fldNames, fldValues, null);
+            fldNames, fldValues, null, projectName);
     }
         
     public static Object[] AppFormulaAudit(EnumIntAuditEvents action, String formulaName, String tableName, String tableId,
-                        String[] fldNames, Object[] fldValues, String externalProcInstanceName) {
+                        String[] fldNames, Object[] fldValues, String externalProcInstanceName, String projectName) {
         GenericAuditFields gAuditFlds=new GenericAuditFields(action, TblsFormulationDataAudit.TablesFormulationDataAudit.FORMULA, fldNames, fldValues);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(gAuditFlds.getEvaluation())) return gAuditFlds.getErrorDetail();
         String[] fieldNames=gAuditFlds.getFieldNames();
@@ -40,6 +40,10 @@ public final class AppFormulaAudit {
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableName);
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsFormulationDataAudit.Formula.TABLE_ID.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableId);
+        if (projectName!=null){
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsFormulationDataAudit.Formula.PROJECT_NAME.getName());
+            fieldValues = LPArray.addValueToArray1D(fieldValues, projectName);
+        }
         if (externalProcInstanceName!=null){
             ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);  
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsFormulationDataAudit.Formula.EXTERNAL_PROCESS.getName());

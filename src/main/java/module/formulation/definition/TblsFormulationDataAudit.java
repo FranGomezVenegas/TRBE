@@ -56,6 +56,8 @@ public class TblsFormulationDataAudit {
     
     public enum Formula implements EnumIntTableFields{
         AUDIT_ID("audit_id", LPDatabase.integerNotNull(), null, null, null, null), 
+        FORMULA_NAME("formula_name", LPDatabase.string(), null, null, null, null), 
+        PROJECT_NAME("project_name", LPDatabase.string(), null, null, null, null), 
         TABLE_NAME("table_name", LPDatabase.string(), null, null, null, null), 
         TRANSACTION_ID("transaction_id", LPDatabase.integer(), null, null, null, null), 
         TABLE_ID("table_id", LPDatabase.string(), null, null, null, null), 
@@ -63,9 +65,6 @@ public class TblsFormulationDataAudit {
         PERSON("person", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), "", null),
         ACTION_NAME("action_name", LPDatabase.string(), null, null, null, null), 
         FIELDS_UPDATED("fields_updated", LPDatabase.string(), null, null, null, null), 
-        REFERENCE("reference", LPDatabase.string(), null, null, null, null), 
-        CATEGORY("category", LPDatabase.string(), null, null, null, null), 
-        FORMULA_NAME("formula_name", LPDatabase.string(), null, null, null, null), 
         USER_ROLE("user_role", LPDatabase.string(), null, null, null, null), 
         PROCEDURE("procedure", LPDatabase.string(), null, null, null, null), 
         PROCEDURE_VERSION("procedure_version", LPDatabase.integer(), null, null, null, null), 

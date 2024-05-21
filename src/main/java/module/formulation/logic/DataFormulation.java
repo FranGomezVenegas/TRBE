@@ -36,6 +36,9 @@ public class DataFormulation {
     public String getFormulaName() {
         return formulaName;
     }
+    public String getProjectName() {
+        return projectName;
+    }
 
     /**
      * @return the reference
@@ -45,6 +48,7 @@ public class DataFormulation {
      * @return the category
      */
     private final String formulaName;
+    private String projectName;
     private Boolean isLocked;
     private Boolean isRetired;
     private String lockedReason;
@@ -57,9 +61,8 @@ public class DataFormulation {
 
     public DataFormulation(String formula) {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        String procInstanceName = "";
         Object[][] formulaInfo = null;
-        formulaInfo = Rdbms.getRecordFieldsByFilter(procInstanceName,  LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsFormulationData.TablesFormulationData.FORMULA.getTableName(),
+        formulaInfo = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(),  LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsFormulationData.TablesFormulationData.FORMULA.getTableName(),
                 new String[]{TblsFormulationData.Formula.NAME.getName()},
                 new Object[]{formula}, getAllFieldNames(TblsFormulationData.TablesFormulationData.FORMULA.getTableFields()));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(formulaInfo[0][0].toString())) {
@@ -90,6 +93,10 @@ public class DataFormulation {
             fldValues = new Object[]{};
         }
         Object[][] referenceInfo = null;
+        
+        fldNames = LPArray.addValueToArray1D(fldNames, TblsFormulationData.Formula.NAME.getName());
+        fldValues = LPArray.addValueToArray1D(fldValues, formulaName);
+
         if (projectName !=null&&projectName.length()>0){
             fldNames = LPArray.addValueToArray1D(fldNames, TblsFormulationData.Formula.PROJECT.getName());
             fldValues = LPArray.addValueToArray1D(fldValues, projectName);
@@ -102,7 +109,7 @@ public class DataFormulation {
             return new InternalMessage(LPPlatform.LAB_FALSE, invLotCreationDiagn.getErrorMessageCode(), new Object[]{formulaName}, null);
         }
         AppFormulaAudit(FormulationEnums.AppFormulationAuditEvents.FORMULA_CREATION, formulaName, TablesFormulationData.FORMULA.getTableName(), formulaName,
-                fldNames, fldValues);
+                fldNames, fldValues, projectName);
         if (ingredientsList!=null&&ingredientsList.length()>0){
             int iIngredients=0;
             for (String curIngredient: ingredientsList.split("\\|")) {                                                
@@ -113,7 +120,7 @@ public class DataFormulation {
                     return new InternalMessage(LPPlatform.LAB_FALSE, formulaIngredientCreation.getErrorMessageCode(), new Object[]{formulaName}, null);
                 }
                 AppFormulaAudit(FormulationEnums.AppFormulationAuditEvents.FORMULA_CREATION, formulaName, TablesFormulationData.FORMULA.getTableName(), formulaName,
-                        fldNames, fldValues);
+                        fldNames, fldValues, projectName);
                 messages.addMinorForSuccess(FormulationEnums.FormulationAPIactionsEndpoints.NEW_FORMULA, new Object[]{curIngredient});                
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesFormulationData.FORMULA_INGREDIENTS.getTableName(), curIngredient);
             }            
@@ -136,7 +143,7 @@ public class DataFormulation {
             return new InternalMessage(LPPlatform.LAB_FALSE, invLotTurnAvailableDiagn.getErrorMessageCode(), new Object[]{this.getFormulaName()}, null);
         }
         AppFormulaAudit(auditEventObj, this.getFormulaName(), TablesFormulationData.FORMULA.getTableName(), this.getFormulaName(),
-        extraFldNames, extraFldValues);
+        extraFldNames, extraFldValues, projectName);
         messages.addMainForSuccess(actionObj, new Object[]{this.getFormulaName()});
         return new InternalMessage(LPPlatform.LAB_TRUE, actionObj, new Object[]{this.getFormulaName()}, this.getFormulaName());
     }
@@ -182,14 +189,14 @@ public class DataFormulation {
             return new InternalMessage(LPPlatform.LAB_FALSE, instUpdateDiagn.getErrorMessageCode(), instUpdateDiagn.getErrorMessageVariables());
         }
         AppFormulaAudit(FormulationEnums.AppFormulationAuditEvents.UPDATED_FORMULA, this.getFormulaName(), TablesFormulationData.FORMULA.getTableName(), this.getFormulaName(),
-                fldNames, fldValues);
+                fldNames, fldValues, this.projectName);
         messages.addMainForSuccess(FormulationEnums.FormulationAPIactionsEndpoints.UPDATE_FORMULA, new Object[]{getFormulaName()});
         return new InternalMessage(LPPlatform.LAB_TRUE, FormulationEnums.FormulationAPIactionsEndpoints.UPDATE_FORMULA, new Object[]{getFormulaName()}, getFormulaName());
     }
 
     public InternalMessage closeFormula(String[] fldNames, Object[] fldValues) {
         return updateLotTransaction(FormulationEnums.FormulationAPIactionsEndpoints.CLOSE_FORMULA,
-    FormulationEnums.AppFormulationAuditEvents.CLOSED_FORMULA, new String[]{TblsFormulationData.Formula.OPEN.getName()}, new Object[]{false});
+    FormulationEnums.AppFormulationAuditEvents.CLOSED_FORMULA, new String[]{TblsFormulationData.Formula.IS_OPEN.getName()}, new Object[]{false});
     }
 
     public InternalMessage addFormulaIngredient(String ingredient, String[] fldNames, Object[] fldValues) {
@@ -217,7 +224,7 @@ public class DataFormulation {
             return new InternalMessage(LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), null);
         }
         AppFormulaAudit.AppFormulaAudit(FormulationEnums.AppFormulationAuditEvents.ADDED_ATTACHMENT, getFormulaName(), 
-                TblsFormulationData.TablesFormulationData.FORMULA.getTableName(), getFormulaName(), fldNames, fldValues);
+                TblsFormulationData.TablesFormulationData.FORMULA.getTableName(), getFormulaName(), fldNames, fldValues, this.projectName);
         messages.addMainForSuccess(FormulationEnums.FormulationAPIactionsEndpoints.ADD_ATTACHMENT, new Object[]{getFormulaName()});
         return new InternalMessage(LPPlatform.LAB_TRUE, FormulationEnums.FormulationAPIactionsEndpoints.ADD_ATTACHMENT, new Object[]{getFormulaName()}, getFormulaName());
     }
@@ -239,7 +246,7 @@ public class DataFormulation {
             return new InternalMessage(LPPlatform.LAB_FALSE, updateRecordInTable.getErrorMessageCode(), updateRecordInTable.getErrorMessageVariables(), null);
         }
         AppFormulaAudit.AppFormulaAudit(FormulationEnums.AppFormulationAuditEvents.REMOVED_ATTACHMENT, getFormulaName(), 
-                TblsFormulationData.TablesFormulationData.FORMULA.getTableName(), getFormulaName(),EnumIntTableFields.getAllFieldNames(fldNamesObj), fldValues);
+                TblsFormulationData.TablesFormulationData.FORMULA.getTableName(), getFormulaName(),EnumIntTableFields.getAllFieldNames(fldNamesObj), fldValues, this.projectName);
         messages.addMainForSuccess(FormulationEnums.FormulationAPIactionsEndpoints.REMOVE_ATTACHMENT, new Object[]{getFormulaName()});
         return new InternalMessage(LPPlatform.LAB_TRUE, FormulationEnums.FormulationAPIactionsEndpoints.REMOVE_ATTACHMENT, new Object[]{getFormulaName()}, getFormulaName());
     }
@@ -261,7 +268,7 @@ public class DataFormulation {
             return new InternalMessage(LPPlatform.LAB_FALSE, updateRecordInTable.getErrorMessageCode(), updateRecordInTable.getErrorMessageVariables(), null);
         }
         AppFormulaAudit.AppFormulaAudit(FormulationEnums.AppFormulationAuditEvents.REACTIVATED_ATTACHMENT, getFormulaName(), TblsFormulationData.TablesFormulationData.FORMULA.getTableName(), getFormulaName(),
-        EnumIntTableFields.getAllFieldNames(fldNamesObj), fldValues);
+        EnumIntTableFields.getAllFieldNames(fldNamesObj), fldValues, this.projectName);
         messages.addMainForSuccess(FormulationEnums.FormulationAPIactionsEndpoints.REACTIVATE_ATTACHMENT, new Object[]{getFormulaName()});
         return new InternalMessage(LPPlatform.LAB_TRUE, FormulationEnums.FormulationAPIactionsEndpoints.REACTIVATE_ATTACHMENT, new Object[]{getFormulaName()}, getFormulaName());
     }

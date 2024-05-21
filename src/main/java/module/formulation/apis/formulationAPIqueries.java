@@ -93,7 +93,7 @@ public class formulationAPIqueries extends HttpServlet {
                     String project = LPNulls.replaceNull(argValues[1]).toString();
 
                     SqlWhere sW = new SqlWhere();
-                    sW.addConstraint(TblsFormulationData.Formula.OPEN, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{true}, null);
+                    sW.addConstraint(TblsFormulationData.Formula.IS_OPEN, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{true}, null);
                     if (formulaName.length() > 0) {
                         sW.addConstraint(TblsFormulationData.Formula.NAME, SqlStatement.WHERECLAUSE_TYPES.IN, formulaName.split("\\|"), "|");
                     }
