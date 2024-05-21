@@ -5,12 +5,17 @@
  */
 package module.projectrnd.apis;
 
+import com.labplanet.servicios.modulesample.ClassSampleQueries;
+import com.labplanet.servicios.modulesample.SampleAPIParams;
 import static platform.app.apis.IncidentAPIactions.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.SqlStatementEnums;
 import databases.SqlWhere;
+import databases.TblsData;
 import databases.features.Token;
+import functionaljavaa.materialspec.ConfigSpecRule;
+import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -28,11 +33,14 @@ import lbplanet.utilities.LPPlatform;
 import module.formulation.definition.TblsFormulationData;
 import module.formulation.logic.ClssFormulationQueries;
 import static module.formulation.logic.ClssFormulationQueries.getFormulas;
+import module.inspectionlot.rawmaterial.definition.TblsInspLotRMData;
 import module.projectrnd.definition.ProjectsRnDEnums.ProjectsRnDAPIqueriesEndpoints;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
+import trazit.enums.EnumIntViewFields;
+import trazit.globalvariables.GlobalVariables;
 import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ProcedureRequestSession;
 
@@ -99,7 +107,7 @@ public class ProjectRnDAPIqueries extends HttpServlet {
                     String projectType = LPNulls.replaceNull(argValues[1]).toString();                    
 
                     SqlWhere sW = new SqlWhere();
-                    sW.addConstraint(TblsFormulationData.Project.OPEN, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{true}, null);
+                    sW.addConstraint(TblsFormulationData.Project.IS_OPEN, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{true}, null);
                     if (project.length() > 0) {
                         sW.addConstraint(TblsFormulationData.Project.NAME, SqlStatement.WHERECLAUSE_TYPES.IN, project.split("\\|"), "|");
                     }
@@ -122,6 +130,7 @@ public class ProjectRnDAPIqueries extends HttpServlet {
                             if (Boolean.FALSE.equals(instLockingDetail.isEmpty())) {
                                 jObj.put("locking_reason", instLockingDetail);
                             }
+                            jObj.put("method_validation", fakeMethodValidationData());
                             jArr.add(jObj);
                         }
                     }
@@ -133,7 +142,7 @@ public class ProjectRnDAPIqueries extends HttpServlet {
                     project = LPNulls.replaceNull(argValues[1]).toString();
 
                     sW = new SqlWhere();
-                    sW.addConstraint(TblsFormulationData.Formula.OPEN, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{true}, null);
+                    sW.addConstraint(TblsFormulationData.Formula.IS_OPEN, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{true}, null);
                     if (formulaName.length() > 0) {
                         sW.addConstraint(TblsFormulationData.Formula.NAME, SqlStatement.WHERECLAUSE_TYPES.IN, formulaName.split("\\|"), "|");
                     }
@@ -144,6 +153,131 @@ public class ProjectRnDAPIqueries extends HttpServlet {
                     Rdbms.closeRdbms();
                     LPFrontEnd.servletReturnSuccess(request, response, getFormulas(sW, true));
                     return;
+                case GET_SAMPLE_ANALYSIS_RESULT_LIST:
+                    RelatedObjects rObj = RelatedObjects.getInstanceForActions();
+                        Integer sampleId = Integer.valueOf(LPNulls.replaceNull(argValues[0]).toString());
+                        String[] resultFieldToRetrieveArr = EnumIntViewFields.getAllFieldNames(EnumIntViewFields.getViewFieldsFromString(TblsInspLotRMData.ViewsInspLotRMData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, "ALL"));
+                        //fieldsToGet = EnumIntViewFields.(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, sampleAnalysisFieldToRetrieve.split("\\|"));
+                        resultFieldToRetrieveArr = LPArray.getUniquesArray(LPArray.addValueToArray1D(resultFieldToRetrieveArr, SampleAPIParams.MANDATORY_FIELDS_FRONTEND_TO_RETRIEVE_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|")));
+
+                        String[] sampleAnalysisWhereFieldsNameArr = new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName()};
+                        Object[] sampleAnalysisWhereFieldsValueArr = new Object[]{sampleId};
+
+                        String sampleAnalysisWhereFieldsName = LPNulls.replaceNull(argValues[2]).toString();
+                        if ((sampleAnalysisWhereFieldsName != null) && (sampleAnalysisWhereFieldsName.length() > 0)) {
+                            sampleAnalysisWhereFieldsNameArr = LPArray.addValueToArray1D(sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsName.split("\\|"));
+                        }
+                        String sampleAnalysisWhereFieldsValue = LPNulls.replaceNull(argValues[3]).toString();
+                        if ((sampleAnalysisWhereFieldsValue != null) && (sampleAnalysisWhereFieldsValue.length() > 0)) {
+                            sampleAnalysisWhereFieldsValueArr = LPArray.addValueToArray1D(sampleAnalysisWhereFieldsValueArr, LPArray.convertStringWithDataTypeToObjectArray(sampleAnalysisWhereFieldsValue.split("\\|")));
+                        }
+
+                        String sarWhereFieldsName = LPNulls.replaceNull(argValues[4]).toString();
+                        if ((sarWhereFieldsName != null) && (sarWhereFieldsName.length() > 0)) {
+                            sampleAnalysisWhereFieldsNameArr = LPArray.addValueToArray1D(sampleAnalysisWhereFieldsNameArr, sarWhereFieldsName.split("\\|"));
+                        }
+                        String sarWhereFieldsValue = LPNulls.replaceNull(argValues[5]).toString();
+                        if ((sarWhereFieldsValue != null) && (sarWhereFieldsValue.length() > 0)) {
+                            sampleAnalysisWhereFieldsValueArr = LPArray.addValueToArray1D(sampleAnalysisWhereFieldsValueArr, (sampleAnalysisWhereFieldsValue != null ? LPArray.convertStringWithDataTypeToObjectArray(sampleAnalysisWhereFieldsValue.split("\\|")) : new Object[]{}));
+                        }
+
+                        String[] sortFieldsNameArr = null;
+                        String sortFieldsName = LPNulls.replaceNull(argValues[6]).toString();
+                        if ((sortFieldsName != null) && (sortFieldsName.length() > 0)) {
+                            sortFieldsNameArr = sortFieldsName.split("\\|");
+                        } else {
+                            sortFieldsNameArr = LPArray.getUniquesArray(SampleAPIParams.MANDATORY_FIELDS_FRONTEND_WHEN_SORT_NULL_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|"));
+                        }
+
+                        Integer posicRawValueFld = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.RAW_VALUE.getName());
+                        if (posicRawValueFld == -1) {
+                            resultFieldToRetrieveArr = LPArray.addValueToArray1D(resultFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.RAW_VALUE.getName());
+                            posicRawValueFld = resultFieldToRetrieveArr.length;
+                        }
+    
+                        Object[][] analysisResultList = null;
+                        Object[] viewExists=Rdbms.dbViewExists(procReqInstance.getProcedureInstance(), procReqInstance.getProcedureInstance(), TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getRepositoryName(), TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName());
+                        Integer posicLimitIdFld = -1;
+                        EnumIntViewFields[] fldsToGetView = EnumIntViewFields.getAllFieldNamesFromDatabase(TblsInspLotRMData.ViewsInspLotRMData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, null);
+                        EnumIntTableFields[] fldsToGetTable = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, null);
+                        String[] fldsToGet=null;
+                        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(viewExists[0].toString())){
+                            fldsToGet=EnumIntViewFields.getAllFieldNames(fldsToGetView);
+                            posicLimitIdFld = EnumIntViewFields.getFldPosicInArray(fldsToGetView, TblsData.ViewSampleAnalysisResultWithSpecLimits.LIMIT_ID.getName());
+                            analysisResultList = QueryUtilitiesEnums.getViewData(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW,
+                                    fldsToGetView,
+                                    new SqlWhere(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsValueArr),
+                                    sortFieldsNameArr);
+                            
+                        }else{
+                            fldsToGet=EnumIntTableFields.getAllFieldNames(fldsToGetTable);
+                            posicLimitIdFld = EnumIntTableFields.getFldPosicInArray(fldsToGetTable, TblsData.ViewSampleAnalysisResultWithSpecLimits.LIMIT_ID.getName());
+                            analysisResultList = QueryUtilitiesEnums.getTableData(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT,
+                                    EnumIntTableFields.getAllFieldNamesFromDatabase(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT),
+                                    new SqlWhere(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, sampleAnalysisWhereFieldsNameArr, sampleAnalysisWhereFieldsValueArr),
+                                    new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()});                                    
+                        }
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisResultList[0][0].toString())) {
+                            Rdbms.closeRdbms();
+                            LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
+
+                            //this.isSuccess = true;
+                            //this.responseSuccessJArr = new JSONArray();
+                        } else {
+                            rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
+                            Object[] objectsIds = ClassSampleQueries.getObjectsId(fldsToGet, analysisResultList, "-");
+                            for (Object curObj : objectsIds) {
+                                String[] curObjDet = curObj.toString().split("-");
+                                if (TblsData.SampleAnalysisResult.TEST_ID.getName().equalsIgnoreCase(curObjDet[0])) {
+                                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), curObjDet[1]);
+                                }
+                                if (TblsData.SampleAnalysisResult.RESULT_ID.getName().equalsIgnoreCase(curObjDet[0])) {
+                                    rObj.addSimpleNode(GlobalVariables.Schemas.APP.getName(), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), curObjDet[1]);
+                                }
+                            }
+                            jArr = new JSONArray();
+                            for (Object[] curRow : analysisResultList) {
+                                ConfigSpecRule specRule = new ConfigSpecRule();
+                                String currRowRawValue = curRow[posicRawValueFld].toString();
+                                String currRowLimitId = curRow[posicLimitIdFld].toString();
+                                JSONObject row = new JSONObject();
+                                Object[] resultLockData = null;
+                                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(viewExists[0].toString())){
+                                    resultLockData = ClassSampleQueries.sampleAnalysisResultLockData(fldsToGet, curRow);
+                                }else{
+                                    resultLockData = ClassSampleQueries.sampleAnalysisResultLockData(fldsToGet, curRow);
+                                }
+                                if (resultLockData != null && resultLockData[0] != null) {
+                                    if (resultLockData.length > 2) {
+                                        row = LPJson.convertArrayRowToJSONObject(LPArray.addValueToArray1D(LPArray.addValueToArray1D(fldsToGet, (String) resultLockData[2]), (String[]) resultLockData[0]),
+                                                LPArray.addValueToArray1D(LPArray.addValueToArray1D(curRow, resultLockData[3]), (Object[]) resultLockData[1]));
+                                    } else {
+                                        row = LPJson.convertArrayRowToJSONObject(LPArray.addValueToArray1D(fldsToGet, (String[]) resultLockData[0]), LPArray.addValueToArray1D(curRow, (Object[]) resultLockData[1]));
+                                    }
+                                } else {
+                                    row = LPJson.convertArrayRowToJSONObject(fldsToGet, curRow);
+                                }
+                                if ((currRowLimitId != null) && (currRowLimitId.length() > 0)) {
+                                    specRule.specLimitsRule(Integer.valueOf(currRowLimitId), null);
+                                    row.put(ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_DETAILED, LPNulls.replaceNull(specRule.getRuleRepresentation()).replace(("R"), "R (" + currRowRawValue + ")"));
+                                    Object[][] specRuleDetail = specRule.getRuleData();
+                                    JSONArray specRuleDetailjArr = new JSONArray();
+                                    JSONObject specRuleDetailjObj = new JSONObject();
+                                    for (Object[] curSpcRlDet : specRuleDetail) {
+                                        specRuleDetailjObj.put(curSpcRlDet[0], curSpcRlDet[1]);
+                                    }
+                                    specRuleDetailjArr.add(specRuleDetailjObj);
+                                    row.put(ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_INFO, specRuleDetailjArr);
+                                }
+                                jArr.add(row);
+                            }
+                            Rdbms.closeRdbms();
+                            LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                            
+                            //this.isSuccess = true;
+                            //this.responseSuccessJArr = jArr;
+                        }
+                        return;                    
 /*                    
                 case ALL_INVENTORY_REFERENCES:
                     category = LPNulls.replaceNull(argValues[0]).toString();
@@ -746,6 +880,265 @@ public class ProjectRnDAPIqueries extends HttpServlet {
         return jArr;
     }
 */
+    static JSONArray fakeMethodValidationData(){
+        JSONArray jMainArr=new JSONArray();
+        
+        JSONObject jObj=new JSONObject();
+        jObj.put("title_en", "Repeatibility Assay");
+        jObj.put("title_es", "Ensayo repetibilidad");
+        JSONObject finalResultsJObj=new JSONObject();
+        finalResultsJObj.put("average", 98.667);
+        finalResultsJObj.put("standard_deviation", 0.776);
+        finalResultsJObj.put("c_v", 0.8);
+        finalResultsJObj.put("total_samples", 6);
+        jObj.put("final_results", finalResultsJObj);
+        JSONArray resultsJArr=new JSONArray();
+        
+        JSONObject sampleJObj=new JSONObject();
+        int i=0;
+        sampleJObj.put("order_number", i++);
+        sampleJObj.put("name", "sample 1");
+        sampleJObj.put("injection", "Inj 1");
+        sampleJObj.put("result", 99.6);
+        sampleJObj.put("final_result", "");
+        resultsJArr.add(sampleJObj);
+        sampleJObj=new JSONObject();
+        sampleJObj.put("order_number", i++);
+        sampleJObj.put("name", "");
+        sampleJObj.put("injection", "Inj 2");
+        sampleJObj.put("result", 99.7);
+        sampleJObj.put("final_result", "99.65");
+        resultsJArr.add(sampleJObj);
+        
+        sampleJObj=new JSONObject();
+        sampleJObj.put("order_number", i++);
+        sampleJObj.put("name", "sample 2");
+        sampleJObj.put("injection", "Inj 1");
+        sampleJObj.put("result", 98.2);
+        sampleJObj.put("final_result", "");
+        resultsJArr.add(sampleJObj);
+        sampleJObj=new JSONObject();
+        sampleJObj.put("order_number", i++);
+        sampleJObj.put("name", "");
+        sampleJObj.put("injection", "Inj 2");
+        sampleJObj.put("result", 98.4);
+        sampleJObj.put("final_result", "98.30");
+        resultsJArr.add(sampleJObj);
+        
+        sampleJObj=new JSONObject();
+        sampleJObj.put("order_number", i++);
+        sampleJObj.put("name", "sample 3");
+        sampleJObj.put("injection", "Inj 1");
+        sampleJObj.put("result", 97.9);
+        sampleJObj.put("final_result", "");
+        resultsJArr.add(sampleJObj);
+        sampleJObj=new JSONObject();
+        sampleJObj.put("order_number", i++);
+        sampleJObj.put("name", "");
+        sampleJObj.put("injection", "Inj 2");
+        sampleJObj.put("result", 98.0);
+        sampleJObj.put("final_result", "97.95");
+        resultsJArr.add(sampleJObj);
+
+        sampleJObj=new JSONObject();
+        sampleJObj.put("order_number", i++);
+        sampleJObj.put("name", "sample 4");
+        sampleJObj.put("injection", "Inj 1");
+        sampleJObj.put("result", 99.9);
+        sampleJObj.put("final_result", "");
+        resultsJArr.add(sampleJObj);
+        sampleJObj=new JSONObject();
+        sampleJObj.put("order_number", i++);
+        sampleJObj.put("name", "");
+        sampleJObj.put("injection", "Inj 2");
+        sampleJObj.put("result", 99.0);
+        sampleJObj.put("final_result", "99.45");
+        resultsJArr.add(sampleJObj);
+
+        sampleJObj=new JSONObject();
+        sampleJObj.put("order_number", i++);
+        sampleJObj.put("name", "sample 5");
+        sampleJObj.put("injection", "Inj 1");
+        sampleJObj.put("result", 97.7);
+        sampleJObj.put("final_result", "");
+        resultsJArr.add(sampleJObj);
+        sampleJObj=new JSONObject();
+        sampleJObj.put("order_number", i++);
+        sampleJObj.put("name", "");
+        sampleJObj.put("injection", "Inj 2");
+        sampleJObj.put("result", 97.9);
+        sampleJObj.put("final_result", "97.80");
+        resultsJArr.add(sampleJObj);
+
+        sampleJObj=new JSONObject();
+        sampleJObj.put("order_number", i++);
+        sampleJObj.put("name", "sample 6");
+        sampleJObj.put("injection", "Inj 1");
+        sampleJObj.put("result", 98.9);
+        sampleJObj.put("final_result", "");
+        resultsJArr.add(sampleJObj);
+        sampleJObj=new JSONObject();
+        sampleJObj.put("order_number", i++);
+        sampleJObj.put("name", "");
+        sampleJObj.put("injection", "Inj 2");
+        sampleJObj.put("result", 98.8);
+        sampleJObj.put("final_result", "98.85");
+        resultsJArr.add(sampleJObj);        
+        jObj.put("results", resultsJArr);        
+        jMainArr.add(jObj);
+        
+        jObj=new JSONObject();
+        jObj.put("title_en", "Lineality Assay");
+        jObj.put("title_es", "Ensayo linealidad");
+        
+        resultsJArr=new JSONArray();
+        JSONArray chartResultsJArr=new JSONArray();
+        
+        i=0;
+        sampleJObj=new JSONObject();
+        JSONObject chartJObj=new JSONObject();
+        sampleJObj.put("order_number", i++);
+
+        sampleJObj.put("sample_id", 25);
+        sampleJObj.put("test_id", 2);
+        sampleJObj.put("result_id", 1);
+
+        sampleJObj.put("theoretical_value", "10");
+        sampleJObj.put("name", "sample 1");
+        sampleJObj.put("injection", "Inj 1");
+        sampleJObj.put("result", 9.9);
+        sampleJObj.put("final_result", "");
+        resultsJArr.add(sampleJObj);
+        sampleJObj=new JSONObject();
+        sampleJObj.put("order_number", i++);
+
+        sampleJObj.put("sample_id", 25);
+        sampleJObj.put("test_id", 2);
+        sampleJObj.put("result_id", 2);
+
+        sampleJObj.put("theoretical_value", "");
+        sampleJObj.put("name", "");
+        sampleJObj.put("injection", "Inj 2");
+        sampleJObj.put("result", 9.8);
+        sampleJObj.put("final_result", "9.85");
+        chartJObj.put("theoretical_value", "10");
+        chartJObj.put("value", "9.85");
+        chartResultsJArr.add(chartJObj);
+        resultsJArr.add(sampleJObj);
+        
+        sampleJObj=new JSONObject();
+        chartJObj=new JSONObject();
+        sampleJObj.put("order_number", i++);
+        sampleJObj.put("theoretical_value", "25");
+        sampleJObj.put("name", "sample 2");
+        sampleJObj.put("injection", "Inj 1");
+        sampleJObj.put("result", 24.9);
+        sampleJObj.put("final_result", "");
+        resultsJArr.add(sampleJObj);
+        sampleJObj=new JSONObject();
+        sampleJObj.put("order_number", i++);
+        sampleJObj.put("theoretical_value", "");
+        sampleJObj.put("name", "");
+        sampleJObj.put("injection", "Inj 2");
+        sampleJObj.put("result", 25.0);
+        sampleJObj.put("final_result", "24.95");
+        chartJObj.put("theoretical_value", "25");
+        chartJObj.put("value", "24.95");
+        chartResultsJArr.add(chartJObj);
+        resultsJArr.add(sampleJObj);
+        
+        sampleJObj=new JSONObject();
+        chartJObj=new JSONObject();
+        sampleJObj.put("order_number", i++);
+        sampleJObj.put("theoretical_value", "50");
+        sampleJObj.put("name", "sample 3");
+        sampleJObj.put("injection", "Inj 1");
+        sampleJObj.put("result", 49.7);
+        sampleJObj.put("final_result", "");
+        resultsJArr.add(sampleJObj);
+        sampleJObj=new JSONObject();
+        sampleJObj.put("order_number", i++);
+        sampleJObj.put("theoretical_value", "");
+        sampleJObj.put("name", "");
+        sampleJObj.put("injection", "Inj 2");
+        sampleJObj.put("result", 50.2);
+        sampleJObj.put("final_result", "49.95");
+        chartJObj.put("theoretical_value", "50");
+        chartJObj.put("value", "49.95");
+        chartResultsJArr.add(chartJObj);
+        resultsJArr.add(sampleJObj);
+
+        sampleJObj=new JSONObject();
+        chartJObj=new JSONObject();
+        sampleJObj.put("order_number", i++);
+        sampleJObj.put("theoretical_value", "75");
+        sampleJObj.put("name", "sample 4");
+        sampleJObj.put("injection", "Inj 1");
+        sampleJObj.put("result", 76.0);
+        sampleJObj.put("final_result", "");
+        resultsJArr.add(sampleJObj);
+        sampleJObj=new JSONObject();        
+        sampleJObj.put("order_number", i++);
+        sampleJObj.put("theoretical_value", "");
+        sampleJObj.put("name", "");
+        sampleJObj.put("injection", "Inj 2");
+        sampleJObj.put("result", 75.8);
+        sampleJObj.put("final_result", "75.90");
+        chartJObj.put("theoretical_value", "75");
+        chartJObj.put("value", "75.90");
+        chartResultsJArr.add(chartJObj);
+        resultsJArr.add(sampleJObj);
+
+        sampleJObj=new JSONObject();
+        chartJObj=new JSONObject();
+        sampleJObj.put("order_number", i++);
+        sampleJObj.put("theoretical_value", "100");
+        sampleJObj.put("name", "sample 5");
+        sampleJObj.put("injection", "Inj 1");
+        sampleJObj.put("result", 99.8);
+        sampleJObj.put("final_result", "");
+        resultsJArr.add(sampleJObj);
+        sampleJObj=new JSONObject();
+        sampleJObj.put("order_number", i++);
+        sampleJObj.put("theoretical_value", "");
+        sampleJObj.put("name", "");
+        sampleJObj.put("injection", "Inj 2");
+        sampleJObj.put("result", 98.9);
+        sampleJObj.put("final_result", "99.35");
+        chartJObj.put("theoretical_value", "100");
+        chartJObj.put("value", "99.35");
+        chartResultsJArr.add(chartJObj);
+
+        sampleJObj=new JSONObject();
+        chartJObj=new JSONObject();
+        sampleJObj.put("order_number", i++);
+        sampleJObj.put("theoretical_value", "120");        
+        sampleJObj.put("name", "sample 6");
+        sampleJObj.put("injection", "Inj 1");
+        sampleJObj.put("result", 119.7);
+        sampleJObj.put("final_result", "");
+        resultsJArr.add(sampleJObj);
+        sampleJObj=new JSONObject();
+        sampleJObj.put("order_number", i++);
+        sampleJObj.put("theoretical_value", "");
+        sampleJObj.put("name", "");
+        sampleJObj.put("injection", "Inj 2");
+        sampleJObj.put("result", 119.0);
+        sampleJObj.put("final_result", "119.35");
+        chartJObj.put("theoretical_value", "120");
+        chartJObj.put("value", "119.35");
+        chartResultsJArr.add(chartJObj);
+        finalResultsJObj=new JSONObject();
+        finalResultsJObj.put("total_samples", 6);
+        jObj.put("final_results", finalResultsJObj);        
+        resultsJArr.add(sampleJObj);        
+        jObj.put("results", resultsJArr);  
+        jObj.put("chart_results", chartResultsJArr);  
+        
+        jMainArr.add(jObj);
+        
+        return jMainArr;
+    }
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.

@@ -7,7 +7,10 @@ package module.projectrnd.definition;
 
 import module.inventorytrack.definition.*;
 import com.labplanet.servicios.app.GlobalAPIsParams;
+import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME;
+import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE;
 import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_NAME;
+import static com.labplanet.servicios.app.GlobalAPIsParams.REQUEST_PARAM_PROJECT_TYPE;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.util.ArrayList;
@@ -18,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
-import module.inventorytrack.definition.TblsInvTrackingData.TablesInvTrackingData;
+import module.projectrnd.definition.TblsProjectRnDData.TablesProjectRnDData;
 import org.json.simple.JSONArray;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntBusinessRules;
@@ -39,12 +42,12 @@ public class ProjectsRnDEnums {
     public enum AppConfigInventoryTrackingAuditEvents implements EnumIntAuditEvents {
         REFERENCE_UPDATED, REFERENCE_CREATED
     }
-    public enum AppInventoryTrackingAuditEvents implements EnumIntAuditEvents {
-        CREATION, UOM_CONVERSION_ON_CREATION, TURN_AVAILABLE, TURN_UNAVAILABLE,
+    public enum ProjectRnDAuditEvents implements EnumIntAuditEvents {
+        PROJECT_CREATION, UPDATE_PROJECT,
+        UOM_CONVERSION_ON_CREATION, TURN_AVAILABLE, TURN_UNAVAILABLE,
         RETIRED, UNRETIRED,
         CREATED_QUALIFICATION, ADDED_VARIABLE, COMPLETE_QUALIFICATION, REOPEN_QUALIFICATION, UNLOCK_LOT_ONCE_QUALIFIED, TURN_AVAILABLE_ONCE_QUALIFIED,
-        LOT_QUANTITY_ADJUSTED, LOT_QUANTITY_CONSUMED, LOT_QUANTITY_ADDITION,
-        UPDATE_INVENTORY_LOT,
+        LOT_QUANTITY_ADJUSTED, LOT_QUANTITY_CONSUMED, LOT_QUANTITY_ADDITION,        
         VALUE_ENTERED, VALUE_REENTERED,
         ADDED_ATTACHMENT, REMOVED_ATTACHMENT, REACTIVATED_ATTACHMENT   
     }
@@ -65,25 +68,17 @@ public class ProjectsRnDEnums {
         }
     }
     public static final String INVENTORY_LOT_CAT = "inventoryLot";
-//checkerController.
 
-    public enum InventoryTrackAPIactionsEndpoints implements EnumIntEndpoints {
-        FORMULATION_NEW("FORMULATION_NEW", null, "", "invTrackingNewLotCreated_success",
-                new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                    new LPAPIArguments("purpose", LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
-                    new LPAPIArguments("formula_template", LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
-                    new LPAPIArguments("ingredientsList", LPAPIArguments.ArgumentType.STRING.toString(), false, 9, null, null, null)},
+    public enum ProjectRnDAPIactionsEndpoints implements EnumIntEndpoints {
+        NEW_PROJECT("NEW_PROJECT", null, "", "projectRnDNewProjectCreated_success",
+                new LPAPIArguments[]{new LPAPIArguments("projectName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments(REQUEST_PARAM_PROJECT_TYPE, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
+                    new LPAPIArguments("purpose", LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
+                    new LPAPIArguments("responsible", LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
+                    new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
+                    new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 11)},                    
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
-                        .add(GlobalAPIsParams.LBL_TABLE, TablesInvTrackingData.LOT.getTableName()).build()).build(),
-                null, null),
-        FORMULATION_ADD_INGREDIENT("FORMULATION_ADD_INGREDIENT", INVENTORY_LOT_CAT, "", "invTrackingLotTurnAvailable_success",
-                new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                    new LPAPIArguments("ingredient", LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
-                    new LPAPIArguments("quantity", LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
-                    new LPAPIArguments("quantity_uom", LPAPIArguments.ArgumentType.STRING.toString(), false, 9)
-                    },
-                Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
-                        .add(GlobalAPIsParams.LBL_TABLE, TablesInvTrackingData.LOT.getTableName()).build()).build(),
+                        .add(GlobalAPIsParams.LBL_TABLE, TablesProjectRnDData.PROJECT.getTableName()).build()).build(),
                 null, null),
 /*        TURN_LOT_UNAVAILABLE("TURN_LOT_UNAVAILABLE", INVENTORY_LOT_CAT, "", "invTrackingLotTurnUnavailable_success",
                 new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
@@ -246,7 +241,7 @@ public class ProjectsRnDEnums {
                 "Provides the ability for reactivate one previously removed attachment for a given lot or even for a given event if the event id (optional) is added as part of the request", null),        
         */
         ;
-        private InventoryTrackAPIactionsEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
+        private ProjectRnDAPIactionsEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode, LPAPIArguments[] argums, JsonArray outputObjectTypes, String devComment, String devCommentTag) {
             this.name = name;
             this.mandatoryParams = mandatoryParams;
             this.optionalParams = optionalParams;
@@ -320,7 +315,17 @@ public class ProjectsRnDEnums {
         ALL_ACTIVE_FORMULAS("ALL_ACTIVE_FORMULAS", "",
                 new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
                     new LPAPIArguments("project", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7)}, EndPointsToRequirements.endpointWithNoOutputObjects, null, null),
-/*        ALL_INVENTORY_REFERENCES("ALL_INVENTORY_REFERENCES", "",
+        GET_SAMPLE_ANALYSIS_RESULT_LIST("GET_SAMPLE_ANALYSIS_RESULT_LIST", "", new LPAPIArguments[]{
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 9),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 11),
+            new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 12), //new LPAPIArguments(EnvMonitAPIParams., LPAPIArguments.ArgumentType.STRING.toString(), false, 7)
+        }, null, null, null),
+
+        /*        ALL_INVENTORY_REFERENCES("ALL_INVENTORY_REFERENCES", "",
                 new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
                     new LPAPIArguments(REQUEST_PARAM_REFERENCE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7)}, EndPointsToRequirements.endpointWithNoOutputObjects, null, null),
         RETIRED_INVENTORY_LOTS_LAST_N_DAYS("RETIRED_INVENTORY_LOTS_LAST_N_DAYS", "",
@@ -446,13 +451,13 @@ public class ProjectsRnDEnums {
         private final String devCommentTag;
     }
 
-    public enum InventoryTrackBusinessRules implements EnumIntBusinessRules {
+    public enum ProjectRnDBusinessRules implements EnumIntBusinessRules {
         REVISION_MODE("inventoryAuditRevisionMode", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
         AUTHOR_CAN_REVIEW_AUDIT_TOO("inventoryAuditAuthorCanBeReviewerToo", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
         CHILD_REVISION_REQUIRED("inventoryAuditChildRevisionRequired", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null),
         CORRECTIVE_ACTION_FOR_REJECTED_QUALIFICATION("inventoryCreateCorrectiveActionForRejectedQualification", GlobalVariables.Schemas.PROCEDURE.getName(), null, null, '|', null, null);
 
-        private InventoryTrackBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator,
+        private ProjectRnDBusinessRules(String tgName, String areaNm, JSONArray valuesList, Boolean allowMulti, char separator,
                 Boolean isOpt, ArrayList<String[]> preReqs) {
             this.tagName = tgName;
             this.areaName = areaNm;
@@ -507,7 +512,7 @@ public class ProjectsRnDEnums {
         private final ArrayList<String[]> preReqs;
     }
 
-    public enum InventoryTrackingErrorTrapping implements EnumIntMessages {
+    public enum ProjectRnDErrorTrapping implements EnumIntMessages {
         REFERENCE_NOT_FOUND("inventoryTrackingReferenceNotFound", "The inventory reference <*1*> is not found in procedure <*2*>", "La referencia de inventario <*1*> no se ha encontrado para el proceso <*2*>"),
         UOM_NOT_INTHELIST("InventoryTracking_UnitNotPartOfAllowedList", "", ""),
         ALREADY_HAS_PENDING_QUALIFICATION("InventoryLotAlreadyHasPendingQualification", "The lot <*1*> already has one pending qualification in progress in this moment", "El lote <*1*> tiene actualmente una cualificación en curso en este momento"),
@@ -550,7 +555,7 @@ public class ProjectsRnDEnums {
         PARAMETER_MISSING("inventoryLotAuditRevisionMode_ParameterMissing", "", ""),
         DISABLED("inventoryLotAuditRevisionMode_Disable", "", ""),;
 
-        private InventoryTrackingErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs) {
+        private ProjectRnDErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs) {
             this.errorCode = errCode;
             this.defaultTextWhenNotInPropertiesFileEn = defaultTextEn;
             this.defaultTextWhenNotInPropertiesFileEs = defaultTextEs;
