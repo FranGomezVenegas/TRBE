@@ -423,6 +423,7 @@ public class GlobalAPIsParams extends HttpServlet {
 
     public static final String REQUEST_PARAM_FORMULA_NAME = "formulaName";
     public static final String REQUEST_PARAM_PROJECT_NAME = "projectName";
+    public static final String REQUEST_PARAM_PROJECT_TYPE = "projectType";
     
     public static final String LBL_MESSAGE_EN = "message_en";
     public static final String LBL_MESSAGE_ES = "message_es";

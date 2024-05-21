@@ -69,6 +69,8 @@ import module.inventorytrack.definition.TblsInvTrackingData;
 import module.inventorytrack.definition.TblsInvTrackingDataAudit;
 import module.inventorytrack.definition.TblsInvTrackingProcedure;
 import module.inventorytrack.logic.InvTrackingFrontendMasterData;
+import module.methodvalidation.definition.ClassMethodValidationactions;
+import module.methodvalidation.definition.MethodValidationEnums.MethodValidationAPIactionsEndpoints;
 import module.monitoring.definition.ClassEnvMon;
 import module.monitoring.definition.ClassEnvMonController;
 import module.monitoring.definition.ClassEnvMonIncubator;
@@ -85,6 +87,9 @@ import module.monitoring.definition.TblsEnvMonitConfigAudit;
 import module.monitoring.definition.TblsEnvMonitData;
 import module.monitoring.definition.TblsEnvMonitDataAudit;
 import module.monitoring.definition.TblsEnvMonitProcedure;
+import module.projectrnd.definition.ClassProjectRnDactions;
+import module.projectrnd.definition.ProjectsRnDEnums.ProjectRnDAPIactionsEndpoints;
+import module.projectrnd.logic.ProjectRnDMasterData;
 import modules.masterdata.analysis.ClassAnalysis;
 import modules.masterdata.analysis.MasterDataAnalysisEnums.MasterDataAnalysisActionsEndpoints;
 import modules.masterdata.spec.ClassSpec;
@@ -247,19 +252,21 @@ public class GlobalVariables {
                 null, TblsInspLotRMProcedure.TablesInspLotRMProcedure.values(),
                 null, null,
                 null, TblsInspLotRMData.ViewsInspLotRMData.values(),
-                null, null, InspLotRawMaterialMasterData.class,
+                null, null, ProjectRnDMasterData.class,
                 new ActionsEndpointPair[]{
-                    new ActionsEndpointPair(InspLotRMEnums.InspLotRMAPIactionsEndpoints.class.getName(), ClassInspLotRMactions.class.getName()),
+                    new ActionsEndpointPair(ProjectRnDAPIactionsEndpoints.class.getName(), ClassProjectRnDactions.class.getName()),
                     new ActionsEndpointPair(FormulationAPIactionsEndpoints.class.getName(), ClassFormulation.class.getName()),
+                    new ActionsEndpointPair(MethodValidationAPIactionsEndpoints.class.getName(), ClassMethodValidationactions.class.getName()),
+                    
                     new ActionsEndpointPair(SampleAPIactionsEndpoints.class.getName(), ClassSample.class.getName()),
                     new ActionsEndpointPair(CertifyAnalysisMethodAPIactionsEndpoints.class.getName(), ClassAnalysisMehtodCertif.class.getName()),
                     new ActionsEndpointPair(MasterDataSpecActionsEndpoints.class.getName(), ClassSpec.class.getName()),
                     new ActionsEndpointPair(MasterDataAnalysisActionsEndpoints.class.getName(), ClassAnalysis.class.getName()),
                     new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigation.class.getName())},
                 new ActionsEndpointPair[]{
-                    new ActionsEndpointPair(InspLotRMAPIactionsEndpoints.class.getName(), ClassInspLotRMController.class.getName()),
+                    new ActionsEndpointPair(ProjectRnDAPIactionsEndpoints.class.getName(), ClassProjectRnDactions.class.getName()),
                     new ActionsEndpointPair(FormulationAPIactionsEndpoints.class.getName(), ClassFormulation.class.getName()),
-                    new ActionsEndpointPair(EnvMonSampleAPI.EnvMonSampleAPIactionsEndpoints.class.getName(), ClassInspLotRMQueriesController.class.getName()),
+                    new ActionsEndpointPair(MethodValidationAPIactionsEndpoints.class.getName(), ClassMethodValidationactions.class.getName()),
                     new ActionsEndpointPair(SampleAPIactionsEndpoints.class.getName(), ClassSampleController.class.getName()),
                     new ActionsEndpointPair(SampleAPIqueriesEndpoints.class.getName(), ClassSampleQueriesController.class.getName()),
                     new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigationController.class.getName())},
@@ -275,15 +282,9 @@ public class GlobalVariables {
                     new ActionsEndpointPair(FormulationAPIactionsEndpoints.class.getName(), ClassFormulation.class.getName()),
                     new ActionsEndpointPair(CertifyAnalysisMethodAPIactionsEndpoints.class.getName(), ClassAnalysisMehtodCertif.class.getName()),
                     new ActionsEndpointPair(MasterDataSpecActionsEndpoints.class.getName(), ClassSpec.class.getName()),
-                    new ActionsEndpointPair(MasterDataAnalysisActionsEndpoints.class.getName(), ClassAnalysis.class.getName()),
-                    new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigation.class.getName())},
+                    new ActionsEndpointPair(MasterDataAnalysisActionsEndpoints.class.getName(), ClassAnalysis.class.getName())},
                 new ActionsEndpointPair[]{
-                    new ActionsEndpointPair(FormulationAPIactionsEndpoints.class.getName(), ClassFormulation.class.getName()),
-                    new ActionsEndpointPair(InspLotRMAPIactionsEndpoints.class.getName(), ClassInspLotRMController.class.getName()),
-                    new ActionsEndpointPair(EnvMonSampleAPI.EnvMonSampleAPIactionsEndpoints.class.getName(), ClassInspLotRMQueriesController.class.getName()),
-                    new ActionsEndpointPair(SampleAPIactionsEndpoints.class.getName(), ClassSampleController.class.getName()),
-                    new ActionsEndpointPair(SampleAPIqueriesEndpoints.class.getName(), ClassSampleQueriesController.class.getName()),
-                    new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigationController.class.getName())},
+                    new ActionsEndpointPair(FormulationAPIactionsEndpoints.class.getName(), ClassFormulation.class.getName())},
                 "Action Name;Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided"
         ),
         ;
