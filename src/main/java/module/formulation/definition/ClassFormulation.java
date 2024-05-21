@@ -122,18 +122,21 @@ public class ClassFormulation implements ActionsClass{
                     }
                     if (quantity.length()>0){
                         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsFormulationData.FormulaIngredients.QUANTITY.getName());
-                        fieldValues = LPArray.addValueToArray1D(fieldValues, quantity);                    
+                        fieldValues = LPArray.addValueToArray1D(fieldValues, Integer.valueOf(quantity));
                     }
                     if (quantityUom.length()>0){
                         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsFormulationData.FormulaIngredients.QUANTITY_UOM.getName());
-                        fieldValues = LPArray.addValueToArray1D(fieldValues, Integer.valueOf(quantityUom));
+                        fieldValues = LPArray.addValueToArray1D(fieldValues, quantityUom);
                     }                   
                     actionDiagnoses = formulaObj.addFormulaIngredient(ingredient, fieldNames, fieldValues);
                 }
                 break;
             case FORMULA_UPDATE_INGREDIENT:
-                fldNamesStr = argValues[3].toString();
-                fldValuesStr = argValues[4].toString();
+                ingredient = argValues[1].toString();
+                quantity = argValues[2].toString();
+                quantityUom = argValues[3].toString();
+                fldNamesStr = argValues[4].toString();
+                fldValuesStr = argValues[5].toString();
                 fieldNames = null;
                 fieldValues = null;
                 if (fldValuesStr != null && fldValuesStr.length() > 0) {
@@ -143,10 +146,18 @@ public class ClassFormulation implements ActionsClass{
                 if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                     actionDiagnoses = (InternalMessage) fieldValues[1];
                 } else {
+                    if (quantity.length()>0){
+                        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsFormulationData.FormulaIngredients.QUANTITY.getName());
+                        fieldValues = LPArray.addValueToArray1D(fieldValues, Integer.valueOf(quantity));
+                    }
+                    if (quantityUom.length()>0){
+                        fieldNames = LPArray.addValueToArray1D(fieldNames, TblsFormulationData.FormulaIngredients.QUANTITY_UOM.getName());
+                        fieldValues = LPArray.addValueToArray1D(fieldValues, quantityUom);
+                    }                                       
                     if (formulaObj == null) {
                         return;
                     }
-                    actionDiagnoses = formulaObj.updateFormula(fieldNames, fieldValues);
+                    actionDiagnoses = formulaObj.updateFormulaIngredient(ingredient, fieldNames, fieldValues);
                 }
                 break;
             case FORMULA_REMOVE_INGREDIENT:
@@ -399,7 +410,7 @@ public class ClassFormulation implements ActionsClass{
         }
 
         this.actionDiagnosesObj = actionDiagnoses;
-
+        this.messageDynamicData=actionDiagnoses.getMessageCodeVariables();
         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesInvTrackingData.LOT.getTableName(), formulaName);
         this.relatedObj = rObj;
         formulaObj = null;

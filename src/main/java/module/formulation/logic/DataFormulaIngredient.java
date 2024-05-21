@@ -51,10 +51,25 @@ public class DataFormulaIngredient {
         AppFormulaAudit(FormulationEnums.AppFormulationAuditEvents.REMOVED_INGREDIENT,
                 formula.getFormulaName(), TablesFormulationData.FORMULA_INGREDIENTS.getTableName(),
                 ingredient, fldNames, fldValues, formula.getProjectName());
-        messages.addMainForSuccess(FormulationEnums.FormulationAPIactionsEndpoints.FORMULA_REMOVE_INGREDIENT, new Object[]{formula.getFormulaName()});
-        return new InternalMessage(LPPlatform.LAB_TRUE, FormulationEnums.FormulationAPIactionsEndpoints.FORMULA_REMOVE_INGREDIENT, new Object[]{formula.getFormulaName()}, formula.getFormulaName());
+        return new InternalMessage(LPPlatform.LAB_TRUE, FormulationEnums.FormulationAPIactionsEndpoints.FORMULA_REMOVE_INGREDIENT, new Object[]{ingredient, formula.getFormulaName()}, formula.getFormulaName());
     }
 
+    public static InternalMessage updateFormulaIngredient(DataFormulation formula, String ingredient, String[] fldNames, Object[] fldValues) {
+        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
+        SqlWhere sqlWhere = new SqlWhere();
+        sqlWhere.addConstraint(TblsFormulationData.FormulaIngredients.FORMULA, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{formula.getFormulaName()}, "");
+        sqlWhere.addConstraint(TblsFormulationData.FormulaIngredients.INGREDIENT, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{ingredient}, "");
+        Object[] instCreationDiagn = Rdbms.updateRecordFieldsByFilter(TablesFormulationData.FORMULA_INGREDIENTS,
+                EnumIntTableFields.getTableFieldsFromString(TablesFormulationData.FORMULA_INGREDIENTS, fldNames), fldValues, sqlWhere, null);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instCreationDiagn[0].toString())) {
+            return new InternalMessage(LPPlatform.LAB_FALSE, instCreationDiagn[instCreationDiagn.length - 1].toString(), new Object[]{formula.getFormulaName()}, null);
+        }
+        AppFormulaAudit(FormulationEnums.AppFormulationAuditEvents.UPDATED_INGREDIENT,
+                formula.getFormulaName(), TablesFormulationData.FORMULA_INGREDIENTS.getTableName(),
+                ingredient, fldNames, fldValues, formula.getProjectName());
+        return new InternalMessage(LPPlatform.LAB_TRUE, FormulationEnums.FormulationAPIactionsEndpoints.FORMULA_REMOVE_INGREDIENT, new Object[]{ingredient, formula.getFormulaName()}, formula.getFormulaName());
+    }
+    
     public static InternalMessage addFormulaIngredient(DataFormulation formula, String ingredient, String[] fldNames, Object[] fldValues) {
         String[] fieldsName = new String[]{TblsFormulationData.FormulaIngredients.FORMULA.getName(), TblsFormulationData.FormulaIngredients.INGREDIENT.getName()};
         Object[] fieldsValue = new Object[]{formula.getFormulaName(), ingredient};
@@ -65,7 +80,7 @@ public class DataFormulaIngredient {
             AppFormulaAudit(FormulationEnums.AppFormulationAuditEvents.ADDED_INGREDIENT, formula.getFormulaName(), TblsFormulationData.TablesFormulationData.FORMULA_INGREDIENTS.getTableName(), ingredient,
                     fieldsName, fieldsValue, formula.getProjectName());
         }
-        return new InternalMessage(LPPlatform.LAB_TRUE, FormulationEnums.FormulationAPIactionsEndpoints.FORMULA_ADD_INGREDIENT, new Object[]{formula.getFormulaName()}, formula.getFormulaName());    
+        return new InternalMessage(LPPlatform.LAB_TRUE, FormulationEnums.FormulationAPIactionsEndpoints.FORMULA_ADD_INGREDIENT, new Object[]{ingredient, formula.getFormulaName()}, formula.getFormulaName());    
     }
 
     public static InternalMessage formulaAuditSetAuditRecordAsReviewed(Integer auditId, String personName) {

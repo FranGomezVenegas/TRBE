@@ -202,6 +202,10 @@ public class DataFormulation {
     public InternalMessage addFormulaIngredient(String ingredient, String[] fldNames, Object[] fldValues) {
         return DataFormulaIngredient.addFormulaIngredient(this, ingredient, fldNames, fldValues);
     }
+    public InternalMessage updateFormulaIngredient(String ingredient, String[] fldNames, Object[] fldValues) {
+        return DataFormulaIngredient.updateFormulaIngredient(this, ingredient, fldNames, fldValues);
+    }
+
     public InternalMessage removeFormulaIngredient(String ingredient) {
         return DataFormulaIngredient.removeFormulaIngredient(this, ingredient);
     }
