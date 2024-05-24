@@ -11,9 +11,6 @@ import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.platform.doc.EndPointsToRequirements.formatListForEmail;
 import static functionaljavaa.platform.doc.EndPointsToRequirements.jsonArrayToList;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPArray;
@@ -199,25 +196,20 @@ public class DevObjectsInModules {
             this.summaryInfo.put("03_list_of_all_objects_with_no_module", objsNotInModuleArr);
             Boolean sendMail = Boolean.valueOf(request.getParameter("sendMail"));        
             if (sendMail){
-                try {
-                    StringBuilder mailBody=new StringBuilder(0);
-                    mailBody.append("<h2>Endpoint APIS with no module: "+allApisNotFoundArr.length()+" from  a total of "+allApisArr.length()+"</h2><br>");
-                    mailBody.append("<h2>Business Rules with no module: "+allBusRulesNotFoundArr.length()+" from  a total of "+allBusRulesArr.length()+"</h2><br>");
-                    mailBody.append("<h2>Error notification families with no module: "+allErrorFamNotFoundArr.length()+" from  a total of "+allErrorFamArr.length()+"</h2><br>");
-                    mailBody.append("<h2>Audit events entities with no module: "+allAudEvNotFoundArr.length()+" from  a total of "+allAudEvArr.length()+"</h2><br>");
-                    
-                    mailBody.append("<b>Endpoint APIS with no module ones are:</b> <br>"+formatListForEmail(jsonArrayToList(allApisNotFoundArr))+"<br><br>");
-                    mailBody.append("<b>Business Rules with no module ones are:</b> <br>"+formatListForEmail(jsonArrayToList(allBusRulesNotFoundArr))+"<br><br>");
-                    mailBody.append("<b>Error notification with no module ones are:</b> <br>"+formatListForEmail(jsonArrayToList(allErrorFamNotFoundArr))+"<br><br>");
-                    mailBody.append("<b>Audit events with no module ones are:</b> <br>"+formatListForEmail(jsonArrayToList(allAudEvNotFoundArr))+"<br><br>");
-                    LPMailing newMail = new LPMailing();
-                    newMail.sendEmail(
-                            new String[]{"info.fran.gomez@gmail.com", "fgomez@trazit.net", "ibelmonte@trazit.net",
-                                "cdesantos@trazit.net", "promera@trazit.net"},            
-                            "Business Rules declaration: "+summaryDiagnoses, mailBody.toString(),null, summaryInfo);
-                } catch (MessagingException ex) {
-                    Logger.getLogger(DevObjectsInModules.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                StringBuilder mailBody=new StringBuilder(0);
+                mailBody.append("<h2>Endpoint APIS with no module: "+allApisNotFoundArr.length()+" from  a total of "+allApisArr.length()+"</h2><br>");
+                mailBody.append("<h2>Business Rules with no module: "+allBusRulesNotFoundArr.length()+" from  a total of "+allBusRulesArr.length()+"</h2><br>");
+                mailBody.append("<h2>Error notification families with no module: "+allErrorFamNotFoundArr.length()+" from  a total of "+allErrorFamArr.length()+"</h2><br>");
+                mailBody.append("<h2>Audit events entities with no module: "+allAudEvNotFoundArr.length()+" from  a total of "+allAudEvArr.length()+"</h2><br>");
+                mailBody.append("<b>Endpoint APIS with no module ones are:</b> <br>"+formatListForEmail(jsonArrayToList(allApisNotFoundArr))+"<br><br>");
+                mailBody.append("<b>Business Rules with no module ones are:</b> <br>"+formatListForEmail(jsonArrayToList(allBusRulesNotFoundArr))+"<br><br>");
+                mailBody.append("<b>Error notification with no module ones are:</b> <br>"+formatListForEmail(jsonArrayToList(allErrorFamNotFoundArr))+"<br><br>");
+                mailBody.append("<b>Audit events with no module ones are:</b> <br>"+formatListForEmail(jsonArrayToList(allAudEvNotFoundArr))+"<br><br>");
+                LPMailing newMail = new LPMailing();
+                newMail.sendEmail(
+                        new String[]{"info.fran.gomez@gmail.com", "fgomez@trazit.net", "ibelmonte@trazit.net",
+                            "cdesantos@trazit.net", "promera@trazit.net"},
+                        "Business Rules declaration: "+summaryDiagnoses, mailBody.toString(),null, summaryInfo);
             }             
         
     }

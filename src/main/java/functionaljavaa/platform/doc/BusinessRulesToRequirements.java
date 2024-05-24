@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPArray;
@@ -159,20 +158,14 @@ public class BusinessRulesToRequirements {
         
         Boolean sendMail = Boolean.valueOf(request.getParameter("sendMail"));        
         if (sendMail){
-            try {
-                StringBuilder mailBody=new StringBuilder(0);
-                mailBody.append("<h2>Business rules not found: "+eventsNotFound.length()+" from  a total of "+totalBusinessRulesVisitedInt+"</h2><br>");
-                
-                mailBody.append("<b>The not found ones are:</b> <br>"+formatListForEmail(jsonArrayToList(eventsNotFound))+"<br><br>");                
-                
-                LPMailing newMail = new LPMailing();
-                newMail.sendEmail(
-                        new String[]{"info.fran.gomez@gmail.com", "fgomez@trazit.net", "ibelmonte@trazit.net",
-                            "cdesantos@trazit.net", "promera@trazit.net"},
-                        "Business Rules declaration: "+summaryDiagnoses, mailBody.toString(),null, jMainObj);
-            } catch (MessagingException ex) {
-                Logger.getLogger(BusinessRulesToRequirements.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            StringBuilder mailBody=new StringBuilder(0);
+            mailBody.append("<h2>Business rules not found: "+eventsNotFound.length()+" from  a total of "+totalBusinessRulesVisitedInt+"</h2><br>");
+            mailBody.append("<b>The not found ones are:</b> <br>"+formatListForEmail(jsonArrayToList(eventsNotFound))+"<br><br>");
+            LPMailing newMail = new LPMailing();
+            newMail.sendEmail(
+                    new String[]{"info.fran.gomez@gmail.com", "fgomez@trazit.net", "ibelmonte@trazit.net",
+                        "cdesantos@trazit.net", "promera@trazit.net"},
+                    "Business Rules declaration: "+summaryDiagnoses, mailBody.toString(),null, jMainObj);
             
         }        
     }
