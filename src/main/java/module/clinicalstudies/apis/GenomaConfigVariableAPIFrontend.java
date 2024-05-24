@@ -23,7 +23,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntEndpoints;
 import trazit.globalvariables.GlobalVariables.ApiUrls;
@@ -123,7 +123,7 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
             String variableSetName=request.getParameter(GenomaProjectAPI.GenomaProjectAPIParamsList.VARIABLE_SET_NAME.getParamName());  
             Object[] varSetVariables=ClinicalStudyConfigVariablesQueries.getVariableSetVariablesId(variableSetName);            
             JSONArray jsonArr=new JSONArray();
-            jsonArr.add(LPJson.convertToJSON(varSetVariables, "Variable Name"));
+            jsonArr.put(LPJson.convertToJSON(varSetVariables, "Variable Name"));
             LPFrontEnd.servletReturnSuccess(request, response, jsonArr);
             break;        
         default:      

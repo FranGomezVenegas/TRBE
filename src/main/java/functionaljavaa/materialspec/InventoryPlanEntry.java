@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
 
@@ -70,7 +70,7 @@ public final class InventoryPlanEntry {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(materialInvPlanInfo[0][0].toString())){
             this.hasErrors=true;
             this.errorsArr=LPArray.addValueToArray1D(this.getErrorsArr(), materialInvPlanInfo[0][materialInvPlanInfo[0].length-1].toString());
-            this.getErrorsjArr().add(materialInvPlanInfo[0][materialInvPlanInfo[0].length-1].toString());
+            this.getErrorsjArr().put(materialInvPlanInfo[0][materialInvPlanInfo[0].length-1].toString());
             return;
         }
         for (Object[] curMatInvPlan: materialInvPlanInfo){
@@ -78,7 +78,7 @@ public final class InventoryPlanEntry {
                 String errMsg="for "+curMatInvPlan[0]+" inventory type"+curMatInvPlan[1]+" not recognized.";
                 this.errorsArr=LPArray.addValueToArray1D(this.getErrorsArr(), errMsg);
                 this.hasErrors=true;
-                this.getErrorsjArr().add(errMsg);
+                this.getErrorsjArr().put(errMsg);
             }
             
 /*            String algorithm=curMatInvPlan[1].toString();
@@ -132,7 +132,7 @@ public final class InventoryPlanEntry {
                 if (errorMsg.length()>0){
                     this.hasErrors=true;
                     this.errorsArr=LPArray.addValueToArray1D(this.getErrorsArr(), errorMsg); 
-                    this.getErrorsjArr().add(errorMsg);
+                    this.getErrorsjArr().put(errorMsg);
                 }else{
 */
                     InventoryPlanEntryItem ent=new InventoryPlanEntryItem(curMatInvPlan[0].toString(), curMatInvPlan[1].toString(), 
@@ -143,7 +143,7 @@ public final class InventoryPlanEntry {
                 this.hasErrors=true;
                 errorMsg="Algorithm "+algorithm+" not recognized, should be one of "+Arrays.toString(SamplingPlanEntry.SamplingPlanAlgorithms.values());
                 this.errorsArr=LPArray.addValueToArray1D(this.getErrorsArr(),errorMsg);
-                this.getErrorsjArr().add(errorMsg);
+                this.getErrorsjArr().put(errorMsg);
                 Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }*
         }*/

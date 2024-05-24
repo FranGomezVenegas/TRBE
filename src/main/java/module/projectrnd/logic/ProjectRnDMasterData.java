@@ -11,7 +11,7 @@ import databases.SqlWhere;
 import databases.TblsCnfg;
 import module.projectrnd.definition.TblsProjectRnDConfig;
 import org.json.simple.JSONObject;
-import trazit.enums.EnumIntTableFields;
+import static trazit.enums.EnumIntTableFields.getAllFieldNamesFromDatabase;
 import trazit.enums.FrontendMasterData;
 import trazit.queries.QueryUtilities;
 
@@ -32,7 +32,7 @@ public class ProjectRnDMasterData implements FrontendMasterData{
         
         jSummaryObj.put(TblsProjectRnDConfig.TablesProjectRnDConfig.INGREDIENTS.getTableName(),
                 QueryUtilities.dbRowsToJsonArr(alternativeProcInstanceName, alternativeProcInstanceName, TblsProjectRnDConfig.TablesProjectRnDConfig.INGREDIENTS, 
-                EnumIntTableFields.getTableFieldsFromString(TblsProjectRnDConfig.TablesProjectRnDConfig.INGREDIENTS, "ALL"), 
+                getAllFieldNamesFromDatabase(TblsProjectRnDConfig.TablesProjectRnDConfig.INGREDIENTS, alternativeProcInstanceName), 
                 wObj, new String[]{TblsProjectRnDConfig.Ingredients.NAME.getName()}, null, true));
 
         return jSummaryObj;

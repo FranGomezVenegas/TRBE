@@ -18,7 +18,7 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntTableFields;
@@ -59,7 +59,7 @@ public class GenericAuditFields {
         JSONArray jArr = new JSONArray();
         for (Object[] curRow: auditHighlightFields){
             JSONObject jObj=LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(tableFieldsObj), curRow);
-            jArr.add(jObj);
+            jArr.put(jObj);
         }        
         return jArr;
     }

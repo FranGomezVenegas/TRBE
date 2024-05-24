@@ -40,7 +40,7 @@ import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.queries.QueryUtilities.getTableData;
 import trazit.session.ProcedureRequestSession;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import static trazit.procedureinstance.definition.apis.prodDefQueriesViewDetail.getProcedureViews;
 import trazit.procedureinstance.definition.definition.TblsReqs;
@@ -107,7 +107,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                     JSONArray jArr = new JSONArray();
                     for (Object[] curRec : list) {
                         JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieveScripts, curRec);
-                        jArr.add(jObj);
+                        jArr.put(jObj);
                     }
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     return;
@@ -144,7 +144,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                                 curProcObj.put("definition", procInstanceDefinitionInRequirements(curProc[valuePosicProcInstanceNameInArray].toString()));
                                 curProcObj.put("support", procInstanceSupportInRequirements(curProc[valuePosicProcInstanceNameInArray].toString()));
                             }
-                            proceduresList.add(curProcObj);
+                            proceduresList.put(curProcObj);
                         }
                     }
                     jMainObj.put(mainObjectName, proceduresList);
@@ -165,7 +165,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                         if (Boolean.FALSE.equals(GlobalVariables.PROC_MANAGEMENT_SPECIAL_ROLE.equalsIgnoreCase(curProcInst.toString()))) {
                             JSONObject procInstanceDefinition = procInstanceDefinitionInRequirements(curProcInst.toString());
                             procInstanceDefinition.put("instance_name", curProcInst);
-                            procedures.add(procInstanceDefinition);
+                            procedures.put(procInstanceDefinition);
                         }
                     }
                     JSONObject proceduresListObj = new JSONObject();
@@ -203,7 +203,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                             Integer scriptIdPosic = LPArray.valuePosicInArray(fieldsToRetrieveScripts, TblsTesting.Script.SCRIPT_ID.getName());
                             for (Object[] curTest : scriptsTblInfo) {
                                 JSONObject curTestObj = getScriptWithSteps(Integer.valueOf(curTest[scriptIdPosic].toString()), procInstanceName, fieldsToRetrieveScripts, curTest);
-                                scriptsList.add(curTestObj);
+                                scriptsList.put(curTestObj);
                             }
                             jMainObj.put("scripts_list", scriptsList);
                         }
@@ -223,11 +223,11 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                         jArr = new JSONArray();
                         Object[][] mismatchTables = (Object[][]) actionDiagnosesAll.getNewObjectId();
                         for (int i = 1; i < mismatchTables.length; i++) {
-                            jArr.add(LPJson.convertArrayRowToJSONObject(LPArray.convertObjectArrayToStringArray(mismatchTables[0]), mismatchTables[i]));
+                            jArr.put(LPJson.convertArrayRowToJSONObject(LPArray.convertObjectArrayToStringArray(mismatchTables[0]), mismatchTables[i]));
                         }
                         JSONArray jTblColsArr = new JSONArray();
                         for (Object curCol : mismatchTables[0]) {
-                            jTblColsArr.add(curCol.toString());
+                            jTblColsArr.put(curCol.toString());
                         }
                         jObj = new JSONObject();
                         JSONObject jerrDetObj = new JSONObject();
@@ -264,7 +264,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                                 JSONArray scriptDetail = new JSONArray();
                                 for (String curId : curProc[valuePosicInArray].toString().split("\\|")) {
                                     JSONObject curTestObj = getScriptWithSteps(Integer.valueOf(curId), procInstanceName, null, null);
-                                    scriptDetail.add(curTestObj);
+                                    scriptDetail.put(curTestObj);
                                 }
                                 curProcObj.put("scripts_detail", scriptDetail);
                             }
@@ -283,7 +283,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                                 curProcObj.replace(TblsTesting.ScriptsCoverage.MSG_COVERAGE_DETAIL.getName(),
                                         LPJson.convertToJsonObjectStringedValue(curProc[valuePosicInArray].toString()));
                             }
-                            proceduresList.add(curProcObj);
+                            proceduresList.put(curProcObj);
                         }
                         jMainObj.put(mainObjectName, proceduresList);
                     }
@@ -355,7 +355,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         summaryObj.put("progress", 100);
         summaryObj.put("signed", true);
         summaryObj.put("tooltip", "If URS Requirements were covered by solutions into the Procedures Definition repository");
-        summaryArr.add(summaryObj);
+        summaryArr.put(summaryObj);
         summaryObj = new JSONObject();
         summaryObj.put("section", "Testing Scripts");
         String repositoryName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName());
@@ -370,7 +370,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
             summaryObj.put("signed", false);
             summaryObj.put("tooltip", "Not deployed yet");            
         }
-        summaryArr.add(summaryObj);
+        summaryArr.put(summaryObj);
         summaryObj = new JSONObject();
         summaryObj.put("section", "Testing Coverage");
         repositoryName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName());
@@ -385,13 +385,13 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
             summaryObj.put("signed", false);
             summaryObj.put("tooltip", "Not deployed yet");            
         }
-        summaryArr.add(summaryObj);
+        summaryArr.put(summaryObj);
         summaryObj = new JSONObject();
         summaryObj.put("section", "Deployed");
         summaryObj.put("progress", 90);
         summaryObj.put("signed", false);
         summaryObj.put("tooltip", "");
-        summaryArr.add(summaryObj);
+        summaryArr.put(summaryObj);
         mainObj.put("summary", summaryArr);
         return mainObj;
     }
@@ -444,18 +444,18 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                 new String[]{TblsReqs.viewQueriesInSolution.PRESENT.getName()+" desc",  TblsReqs.viewQueriesInSolution.ENTITY.getName(), TblsReqs.viewActionsInSolution.API_NAME.getName(), TblsReqs.viewQueriesInSolution.ENDPOINT_NAME.getName()},
                 new String[]{}, true, true);
 /*        JSONArray dbRowsToJsonFinalArr=new JSONArray();
-        for (int i=0;i<dbRowsToJsonArr.size();i++){
+        for (int i=0;i<dbRowsToJsonArr.length();i++){
             JSONObject curRow = (JSONObject) dbRowsToJsonArr.get(i);     
             String curEndpointName=curRow.get("endpoint_name").toString();
             if (Boolean.FALSE.equals(LPJson.ValueInJsonArray(LPJson.convertJsonArrayToJSONArray(dbRowsToJsonFinalArr), curEndpointName))){
                 JSONObject curRowObj=new JSONObject();
                 curRowObj.put("endpoint_name", curEndpointName);
-                dbRowsToJsonFinalArr.add(curRowObj);
+                dbRowsToJsonFinalArr.put(curRowObj);
             }
             //com.google.gson.JsonArray argArrayToJson = LPJson.convertToJsonArrayStringedObject(
             //    curRow.get(TblsTrazitDocTrazit.EndpointsDeclaration.ARGUMENTS_ARRAY.getName()).toString());
             //curRow.put(TblsTrazitDocTrazit.EndpointsDeclaration.ARGUMENTS_ARRAY.getName(), argArrayToJson);
-            //dbRowsToJsonFinalArr.add(curRow);
+            //dbRowsToJsonFinalArr.put(curRow);
         }  
         jMainObj.put("module_in_solution_queries", dbRowsToJsonFinalArr);*/
         jMainObj.put("module_in_solution_queries", dbRowsToJsonArr);
@@ -471,18 +471,18 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
             new String[]{}, true, true);  
         jMainObj.put("module_in_solution_special_views", dbRowsToJsonArr);
         /*dbRowsToJsonFinalArr=new JSONArray();
-        for (int i=0;i<dbRowsToJsonArr.size();i++){
+        for (int i=0;i<dbRowsToJsonArr.length();i++){
             JSONObject curRow = (JSONObject) dbRowsToJsonArr.get(i);     
             String curEndpointName=curRow.get(TblsReqs.viewSpecialViewsInSolution.VIEW_NAME.getName()).toString();
             if (Boolean.FALSE.equals(LPJson.ValueInJsonArray(LPJson.convertJsonArrayToJSONArray(dbRowsToJsonFinalArr), curEndpointName))){
                 JSONObject curRowObj=new JSONObject();
                 curRowObj.put(TblsReqs.viewSpecialViewsInSolution.VIEW_NAME.getName(), curEndpointName);
-                dbRowsToJsonFinalArr.add(curRowObj);
+                dbRowsToJsonFinalArr.put(curRowObj);
             }
             //com.google.gson.JsonArray argArrayToJson = LPJson.convertToJsonArrayStringedObject(
             //    curRow.get(TblsTrazitDocTrazit.EndpointsDeclaration.ARGUMENTS_ARRAY.getName()).toString());
             //curRow.put(TblsTrazitDocTrazit.EndpointsDeclaration.ARGUMENTS_ARRAY.getName(), argArrayToJson);
-            //dbRowsToJsonFinalArr.add(curRow);
+            //dbRowsToJsonFinalArr.put(curRow);
         }            
         jMainObj.put("module_in_solution_special_views", dbRowsToJsonFinalArr);*/
         jMainObj.put("procedure_tables", QueryUtilities.dbRowsToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_MODULE_TABLES.getTableName(),
@@ -662,7 +662,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                                 break;
                         }
                     }
-                    scriptStepsList.add(curStepObj);
+                    scriptStepsList.put(curStepObj);
                 }
                 curTestObj.put("steps", scriptStepsList);
             }
@@ -740,7 +740,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                                 break;
                         }
                     }
-                    scriptStepsList.add(curStepObj);
+                    scriptStepsList.put(curStepObj);
                 }
                 curTestObj.put("steps", scriptStepsList);
             }
@@ -860,14 +860,14 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                 getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableFields()), new String[]{TblsReqs.ProcedureReqSolution.PROC_INSTANCE_NAME.getName()},
                 new Object[]{procInstanceName},
                 new String[]{TblsReqs.ProcedureReqSolution.ORDER_NUMBER.getName()},null, true, true);*/
-        if (reqSolJsonArr.size()==1){
+        if (reqSolJsonArr.length()==1){
             JSONObject curRow=(JSONObject) reqSolJsonArr.get(0);
             if (curRow.containsKey("No Data"))
                 return reqSolJsonArr;
         }
-        for (int i=0;i<reqSolJsonArr.size();i++){
+        for (int i=0;i<reqSolJsonArr.length();i++){
             JSONObject curRow=(JSONObject) reqSolJsonArr.get(i);
-            reqSolJsonExtendedArr.add(solutionAddRelevantInfo(curRow));
+            reqSolJsonExtendedArr.put(solutionAddRelevantInfo(curRow));
         }   
         return reqSolJsonExtendedArr;
     }
@@ -922,7 +922,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
             return parentCodeArr;
         }
 
-        for (int i=0;i<parentCodeArr.size();i++){
+        for (int i=0;i<parentCodeArr.length();i++){
             curRow=(JSONObject) parentCodeArr.get(i);
             if (Boolean.FALSE.equals(curRow.containsKey(TblsReqs.ProcedureUserRequirements.REQ_ID.getName())))
                 return parentCodeFinalArr;
@@ -948,15 +948,15 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                 curRow.put("children", new JSONArray());
             else{
                 JSONArray codeFinalArr = new JSONArray();
-                for (int j=0;j<codeArr.size();j++){
+                for (int j=0;j<codeArr.length();j++){
                     JSONObject curChildrenRow=(JSONObject) codeArr.get(j);
                      if (Boolean.FALSE.equals(curChildrenRow.containsKey("No Data"))){
-                        codeFinalArr.add(solutionAddRelevantInfo(curChildrenRow));
+                        codeFinalArr.put(solutionAddRelevantInfo(curChildrenRow));
                      }
                 }                  
                 curRow.put("children", codeFinalArr);
             }
-            parentCodeFinalArr.add(curRow);
+            parentCodeFinalArr.put(curRow);
 /*
             SqlWhere parentCodeSolutionWhereObj = new SqlWhere();
             parentCodeSolutionWhereObj.addConstraint(TblsReqs.ProcedureReqSolution.REQ_ID,
@@ -973,7 +973,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
             if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(parentSolutionInfo[0][0].toString()))){
                 for (Object[] curParentSolution: parentSolutionInfo){
 
-                    parentCodeSolutionFinalArr.add(LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(parentCodeSolutionFldsObjFiltered), curParentSolution));
+                    parentCodeSolutionFinalArr.put(LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(parentCodeSolutionFldsObjFiltered), curParentSolution));
                 }
             }
 */            
@@ -988,9 +988,9 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
             JSONArray codesArr = QueryUtilities.dbRowsToJsonArr(procInstanceName, GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS, TblsReqs.ProcedureUserRequirements.values(), 
                     codeWhereObj, new String[]{TblsReqs.ProcedureUserRequirements.PARENT_CODE.getName(), TblsReqs.ProcedureUserRequirements.CODE.getName()}, null, false);                    
             JSONArray codesFinalArr=new JSONArray();
-//            if (Boolean.FALSE.equals(codesArr.size()==1&&
+//            if (Boolean.FALSE.equals(codesArr.length()==1&&
 //                (JSONObject)codesArr.get(0).containsKey(ClassReqProcedureQueries.NO_DATA))){
-                for (int j=0;j<codesArr.size();j++){
+                for (int j=0;j<codesArr.length();j++){
                     JSONObject curRowDet=(JSONObject) codesArr.get(j);
                     if (curRowDet.containsKey(ClassReqProcedureQueries.NO_DATA))
                         break;
@@ -998,11 +998,11 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                     String curCode=curRowDet.get(TblsReqs.ProcedureUserRequirements.CODE.getName()).toString();
                     curRowDet.put("key", curReqId);
                     curRowDet.put("label", curCode);
-                    codesFinalArr.add(curRowDet);
+                    codesFinalArr.put(curRowDet);
                 }
 //            } 
             curRow.put("children", codesFinalArr);
-            parentCodeFinalArr.add(curRow);
+            parentCodeFinalArr.put(curRow);
 */
         }   
         return parentCodeFinalArr;
@@ -1021,7 +1021,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                 parentCodeWhereObj, new String[]{TblsReqs.ProcedureUserRequirements.PARENT_CODE.getName(), TblsReqs.ProcedureUserRequirements.CODE.getName()}, null, false);        
 
 
-        for (int i=0;i<parentCodeArr.size();i++){
+        for (int i=0;i<parentCodeArr.length();i++){
             JSONObject curRow=(JSONObject) parentCodeArr.get(i);
             if (Boolean.FALSE.equals(curRow.containsKey(TblsReqs.ProcedureUserRequirements.REQ_ID.getName())))
                 return parentCodeFinalArr;
@@ -1042,9 +1042,9 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
             JSONArray codesArr = QueryUtilities.dbRowsToJsonArr(procInstanceName, GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS, TblsReqs.ProcedureUserRequirements.values(), 
                     codeWhereObj, new String[]{TblsReqs.ProcedureUserRequirements.PARENT_CODE.getName(), TblsReqs.ProcedureUserRequirements.CODE.getName()}, null, false);                    
             JSONArray codesFinalArr=new JSONArray();
-//            if (Boolean.FALSE.equals(codesArr.size()==1&&
+//            if (Boolean.FALSE.equals(codesArr.length()==1&&
 //                (JSONObject)codesArr.get(0).containsKey(ClassReqProcedureQueries.NO_DATA))){
-                for (int j=0;j<codesArr.size();j++){
+                for (int j=0;j<codesArr.length();j++){
                     JSONObject curRowDet=(JSONObject) codesArr.get(j);
                     if (curRowDet.containsKey(ClassReqProcedureQueries.NO_DATA))
                         break;
@@ -1052,11 +1052,11 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                     String curCode=curRowDet.get(TblsReqs.ProcedureUserRequirements.CODE.getName()).toString();
                     curRowDet.put("key", curReqId);
                     curRowDet.put("label", curCode);
-                    codesFinalArr.add(curRowDet);
+                    codesFinalArr.put(curRowDet);
                 }
 //            } 
             curRow.put("children", codesFinalArr);
-            parentCodeFinalArr.add(curRow);
+            parentCodeFinalArr.put(curRow);
         }   
         return parentCodeFinalArr;
     }

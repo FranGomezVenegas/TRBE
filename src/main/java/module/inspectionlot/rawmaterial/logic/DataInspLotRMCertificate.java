@@ -19,7 +19,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMConfig;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMData;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
@@ -77,9 +77,9 @@ public class DataInspLotRMCertificate {
                 convertArrayRowToJSONObject.put("value_en", fldValue);
                 convertArrayRowToJSONObject.put("value_es", fldValue);
                 if ("2".equalsIgnoreCase(curFld[0].toString())) {
-                    jCol2Arr.add(convertArrayRowToJSONObject);
+                    jCol2Arr.put(convertArrayRowToJSONObject);
                 } else {
-                    jColArr.add(convertArrayRowToJSONObject);
+                    jColArr.put(convertArrayRowToJSONObject);
                 }
             }
         }
@@ -126,9 +126,9 @@ public class DataInspLotRMCertificate {
                 jSubSectionObj.put(flds[0].toString().toLowerCase(), curFld[0]);
                 jSubSectionObj.put(flds[1].toString().toLowerCase(), curFld[1]);
                 jSubSectionObj.put(flds[3].toString().toLowerCase(), curFld[3]);
-                jhdrArr.add(jSubSectionObj);
+                jhdrArr.put(jSubSectionObj);
             }
-            for (int i = 0; i < specLimitsInfo.size(); i++) {
+            for (int i = 0; i < specLimitsInfo.length(); i++) {
                 JSONObject jsonObject = (JSONObject) specLimitsInfo.get(i);
                 String addInCoa = LPNulls.replaceNull(jsonObject.get(TblsInspLotRMConfig.SpecLimits.ADD_IN_COA.getName())).toString();
                 if (Boolean.valueOf(addInCoa)) {
@@ -148,15 +148,15 @@ public class DataInspLotRMCertificate {
                                     LPNulls.replaceNull(jsonObject.get(TblsInspLotRMConfig.SpecLimits.METHOD_NAME.getName())).toString(),
                                     LPNulls.replaceNull(jsonObject.get(TblsInspLotRMConfig.SpecLimits.VARIATION_NAME.getName())).toString(),
                                     fldsForSampleResults, lotSampleResultInfo, LotNotAnalyzedResultInfo));
-                            jSubSectionArr.add(jSubSectionObj);
+                            jSubSectionArr.put(jSubSectionObj);
                         } else {
                             jSubSectionObj = new JSONObject();
                             jSubSectionObj.put("value_en", LPNulls.replaceNull(jsonObject.get(curFld[2])));
                             jSubSectionObj.put("value_es", LPNulls.replaceNull(jsonObject.get(curFld[2])));
-                            jSubSectionArr.add(jSubSectionObj);
+                            jSubSectionArr.put(jSubSectionObj);
                         }
                     }
-                    jvlsArr.add(jSubSectionArr);
+                    jvlsArr.put(jSubSectionArr);
                 }
             }
             jSectionObj.put("header", jhdrArr);
@@ -210,7 +210,7 @@ public class DataInspLotRMCertificate {
             }
             jSectionObj.put("sign_electronically_en", LPNulls.replaceNull(curRow[2]).toString());
             jSectionObj.put("sign_electronically_es", LPNulls.replaceNull(curRow[3]).toString());
-            jSignsArr.add(jSectionObj);
+            jSignsArr.put(jSectionObj);
         }
         jMainObj.put("signatures", jSignsArr);
 

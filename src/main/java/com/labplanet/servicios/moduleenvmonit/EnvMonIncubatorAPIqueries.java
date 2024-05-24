@@ -33,7 +33,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntTableFields;
@@ -193,11 +193,11 @@ public class EnvMonIncubatorAPIqueries extends HttpServlet {
                             jObj.put("LAST_READINGS", "No readings");
                         } else {
                             for (Object[] curReading : instrReadings) {
-                                jReadingsArr.add(LPJson.convertArrayRowToJSONObject(fieldsToRetrieveReadings, curReading));
+                                jReadingsArr.put(LPJson.convertArrayRowToJSONObject(fieldsToRetrieveReadings, curReading));
                             }
                             jObj.put("LAST_READINGS", jReadingsArr);
                         }
-                        jArr.add(jObj);
+                        jArr.put(jObj);
                     }
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     break;
@@ -216,7 +216,7 @@ public class EnvMonIncubatorAPIqueries extends HttpServlet {
                     Object[][] instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(instrName, numPointsInt);
                     jArr = new JSONArray();
                     for (Object[] currReading : instrReadings) {
-                        jArr.add(LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currReading));
+                        jArr.put(LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currReading));
                     }
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     break;
@@ -236,7 +236,7 @@ public class EnvMonIncubatorAPIqueries extends HttpServlet {
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(prodLotsDeactivatedLastDays[0][0].toString()))) {
                         for (Object[] currIncident : prodLotsDeactivatedLastDays) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
-                            jArr.add(jObj);
+                            jArr.put(jObj);
                         }
                     }
                     Rdbms.closeRdbms();

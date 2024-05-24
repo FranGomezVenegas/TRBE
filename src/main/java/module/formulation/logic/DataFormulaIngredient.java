@@ -38,8 +38,8 @@ public class DataFormulaIngredient {
 
     public static InternalMessage removeFormulaIngredient(DataFormulation formula, String ingredient) {
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null, null).getMessages();
-        String[] fldNames = new String[]{TblsFormulationData.FormulaIngredients.REMOVED.getName()};        
-        Object[] fldValues = new Object[]{true};
+        String[] fldNames = new String[]{TblsFormulationData.FormulaIngredients.ACTIVE.getName(), TblsFormulationData.FormulaIngredients.REMOVED.getName()};        
+        Object[] fldValues = new Object[]{false, true};
         SqlWhere sqlWhere = new SqlWhere();
         sqlWhere.addConstraint(TblsFormulationData.FormulaIngredients.FORMULA, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{formula.getFormulaName()}, "");
         sqlWhere.addConstraint(TblsFormulationData.FormulaIngredients.INGREDIENT, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{ingredient}, "");

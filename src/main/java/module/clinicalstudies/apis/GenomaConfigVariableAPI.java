@@ -25,7 +25,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import module.clinicalstudies.definition.TblsGenomaConfig;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import trazit.enums.EnumIntEndpoints;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables.ApiUrls;

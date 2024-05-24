@@ -6,7 +6,7 @@
 package functionaljavaa.samplestructure;
 
 import java.util.ArrayList;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.InternalMessage;

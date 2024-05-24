@@ -16,7 +16,7 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_CODE_POSIC;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_EVALUATION_POSIC;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import trazit.enums.EnumIntTableFields;
 
 /**
@@ -119,7 +119,7 @@ public class StepExecDetail {
                     updFldNames = LPArray.addValueToArray1D(updFldNames, new String[]{TblsTesting.ScriptSteps.FUNCTION_CODE.getName(), TblsTesting.ScriptSteps.EVAL_CODE.getName(),
                         TblsTesting.ScriptSteps.DYNAMIC_DATA.getName()});
                     updFldValues = LPArray.addValueToArray1D(updFldValues, new Object[]{evaluate[TRAP_MESSAGE_CODE_POSIC], tstAssert.getEvalCodeDiagnostic(),
-                        functionRelatedObjects.toJSONString()});
+                        functionRelatedObjects.toString()});
                 }
             }
             SqlWhere sqlWhere = new SqlWhere();

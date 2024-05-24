@@ -19,6 +19,7 @@ import static databases.Rdbms.insertRecordInTableFromTable;
 import databases.RdbmsObject;
 import databases.SqlStatement;
 import databases.SqlWhere;
+import databases.TblsApp;
 import module.instrumentsmanagement.definition.TblsInstrumentsDataAudit;
 import databases.TblsCnfg;
 import databases.TblsData;
@@ -59,7 +60,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.ServiceLoader;
 import javax.servlet.ServletException;
@@ -81,7 +84,6 @@ import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntTables;
 import trazit.enums.EnumIntViews;
 import trazit.enums.deployrepository.DeployTables;
-import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import static lbplanet.utilities.LPDate.secondsInDateRange;
 import static lbplanet.utilities.LPLdap.LdapValidateUser;
 import static lbplanet.utilities.LPLdap.createLdapNewUser;
@@ -90,7 +92,7 @@ import module.inventorytrack.logic.OperationMetricsConsumptionEntry;
 import module.inventorytrack.logic.OperationMetricsConsumptionStock;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntViewFields;
 import static trazit.procedureinstance.definition.apis.ReqProcedureDefinitionQueries.getScriptWithSteps;
@@ -102,15 +104,20 @@ import trazit.thirdparties.sap.ExcelExporter;
 import trazit.thirdparties.sap.Mosquitto;
 import trazit.thirdparties.sap.PDFDataExtractor;
 import java.util.Set;
+import lbplanet.utilities.LPMailing;
 import lbplanet.utilities.Mailing;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMData.ViewsInspLotRMData;
+import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import trazit.platforminstance.logic.CreatePlatform;
 import trazit.procedureinstance.definition.apis.ReqProcedureDefinitionQueries;
 import static trazit.procedureinstance.definition.apis.prodDefQueriesViewDetail.getProcedureViews;
+import trazit.procedureinstance.definition.definition.TblsReqs.TablesReqs;
 import trazit.procedureinstance.definition.logic.ClassReqProcedureQueries;
 import static trazit.procedureinstance.definition.logic.ReqProcDefTestingCoverageSummary.procInstanceTestingInfo;
 import static trazit.procedureinstance.definition.logic.ReqProcedureFrontendMasterData.getActiveModulesJSON;
 import trazit.procedureinstance.deployment.logic.ModuleTableOrViewGet;
+import trazit.queries.QueriesDataMining;
+import trazit.queries.QueryUtilities;
 /**
  *
  * @author Administrator
@@ -131,6 +138,18 @@ public class TestingServer extends HttpServlet {
         request = LPHttp.requestPreparation(request);
         response = LPHttp.responsePreparation(response);
         try (PrintWriter out = response.getWriter()) {
+
+            String dbName="demo_v0_9_2";
+            String procInstanceName="RandD";
+            Rdbms.stablishDBConection(dbName);
+            JSONObject jMailObjAtt=new JSONObject();
+            jMailObjAtt.put("demo", "TRAZiT");
+            LPMailing newMail = new LPMailing();
+             out.println(newMail.sendEmail(new String[]{"noexisto@trazit.net", "info.fran.gomez@gmail.com", "fgomez@trazit.net", "ibelmonte@trazit.net"}, 
+                "prueba", "esto es una prueba desde Trazit ",null, jMailObjAtt));
+            //mail.sendMailViaTLS("prueba", "esto es una prueba desde Trazit ",
+        //      new String[]{"info.fran.gomez@gmail.com", "fgomez@trazit.net", "ibelmonte@trazit.net"});
+if (1==1) return;
 /*            out.println(lbplanet.utilities.LPMailing.mailAI("localhost", "25"));
             out.println(lbplanet.utilities.LPMailing.mailAI("localhost", "587"));
             out.println(lbplanet.utilities.LPMailing.mailAI("localhost", "465"));
@@ -140,8 +159,66 @@ public class TestingServer extends HttpServlet {
             out.println(lbplanet.utilities.LPMailing.mailAI("mail.trazit.net", "465"));
             out.println(lbplanet.utilities.LPMailing.mailAI("mail.trazit.net", "2525"));
 */
-        String dbName="demo_v0_9_2";
-        Rdbms.stablishDBConection(dbName);
+        
+                try {
+                    out.println("***** " + "getCarbohydratesByHPLCPDF" + " *****");
+                    //out.println(PDFDataExtractor.getHplcValidacionesPDF(null));
+                    out.println("***** " + "getHplcValidacionesPDF" + " *****");
+                    //out.println(PDFDataExtractor.getHplcValidacionesPDF(null));
+                    out.println("***** " + "getAmoxicilinaPDF" + " *****");
+                    out.println(PDFDataExtractor.getAmoxicilinaPDF());
+
+                } catch (Exception e) {
+                    out.print(e.getMessage());
+                    return;
+                }
+if (1==1)return;    
+        GlobalVariables.TrazitModules moduleDefinition = GlobalVariables.TrazitModules.valueOf("PROJECT_RD");
+                    // Create an instance of the class
+                    if (moduleDefinition.getModuleMasterDataClass()!=null)
+                        moduleDefinition.getModuleMasterDataClass().getDeclaredConstructor().newInstance().getMasterDataJsonObject(procInstanceName);                        
+if (1==1)return;        
+        procInstanceName="inspection_lot";
+        EnumIntTables curTbl1=TablesReqs.PROCEDURE_REQ_SOLUTION;
+        String tblCreateScript = createTableScript(curTbl1, "app", false, true, null);
+            //Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(curTbl1.getRepositoryName(), curTbl1.getTableName(), tblCreateScript, new Object[]{});
+            //out.println(curTbl1.getTableName()+": "+tblCreateScript);
+
+        JSONObject supportData=new JSONObject();        
+        supportData.put(TblsCnfg.TablesConfig.ZZZ_PROPERTIES_ERROR.getTableName(),QueryUtilities.dbRowsGroupedToJsonArrForParentChild(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsCnfg.TablesConfig.ZZZ_PROPERTIES_ERROR.getRepositoryName()), TblsCnfg.TablesConfig.ZZZ_PROPERTIES_ERROR.getTableName(),
+                new String[]{TblsCnfg.zzzPropertiesMissing.RULE_NAME.getName(), TblsCnfg.zzzPropertiesMissing.ID.getName(), TblsCnfg.zzzPropertiesMissing.ACTION_NAME.getName(), TblsCnfg.zzzPropertiesMissing.CREATION_DATE.getName()},
+                new String[]{TblsCnfg.zzzPropertiesMissing.RESOLVED.getName()}, new Object[]{false},
+                new String[]{TblsCnfg.zzzPropertiesMissing.RULE_NAME.getName(), TblsCnfg.zzzPropertiesMissing.ID.getName()+" desc"}));
+
+        supportData.put(TblsCnfg.TablesConfig.ZZZ_DB_ERROR.getTableName(), QueryUtilities.dbRowsGroupedToJsonArrForParentChild(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsCnfg.TablesConfig.ZZZ_DB_ERROR.getRepositoryName()), TblsCnfg.TablesConfig.ZZZ_DB_ERROR.getTableName(),
+                new String[]{TblsCnfg.zzzDbErrorLog.ERROR_MESSAGE.getName(), TblsCnfg.zzzDbErrorLog.ID.getName(), TblsCnfg.zzzDbErrorLog.ACTION_NAME.getName(), TblsCnfg.zzzDbErrorLog.CREATION_DATE.getName(), TblsCnfg.zzzDbErrorLog.QUERY.getName(), TblsCnfg.zzzDbErrorLog.QUERY_PARAMETERS.getName()},
+                new String[]{TblsCnfg.zzzDbErrorLog.RESOLVED.getName()}, new Object[]{false},
+                new String[]{TblsCnfg.zzzDbErrorLog.ERROR_MESSAGE.getName(), TblsCnfg.zzzDbErrorLog.ID.getName()+" desc"}));
+
+        supportData.put(TblsApp.TablesApp.INCIDENT.getTableName(),QueryUtilities.dbRowsGroupedToJsonArr("app", LPPlatform.buildSchemaName("app", TblsApp.TablesApp.INCIDENT.getRepositoryName()), TblsApp.TablesApp.INCIDENT.getTableName(),
+                new String[]{TblsApp.Incident.CATEGORY.getName(), TblsApp.Incident.ID.getName(), TblsApp.Incident.TITLE.getName(), TblsApp.Incident.DETAIL.getName(), TblsApp.Incident.DATE_CREATION.getName(), TblsApp.Incident.STATUS.getName()},
+                new String[]{TblsApp.Incident.INCIDENT_PROCEDURE.getName(), TblsApp.Incident.DATE_RESOLUTION.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, new Object[]{procInstanceName},
+                new String[]{TblsApp.Incident.CATEGORY.getName(), TblsApp.Incident.ID.getName()+" desc"}));
+
+        out.println(supportData);
+if (1==1)return;                
+
+        request.setAttribute(dbName, out);
+            procInstanceName="stock";
+
+                InvTrackingFrontendMasterData mdObj = new InvTrackingFrontendMasterData();
+                out.println(mdObj.getMasterDataJsonObject(procInstanceName));
+if (1==1)return;                
+
+            Map<String, String[]> paramsMap = new HashMap<>();
+            Map<EnumIntTables, String> tblsMap = new HashMap<>();
+            tblsMap.put(TblsProcedure.TablesProcedure.INVESTIGATION, "");
+            tblsMap.put(TblsProcedure.TablesProcedure.INVEST_OBJECTS, 
+                TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName()+"."+TblsProcedure.InvestObjects.INVEST_ID.getName()+"="+
+                TblsProcedure.TablesProcedure.INVESTIGATION.getTableName()+"."+TblsProcedure.Investigation.ID.getName());
+            JSONArray dataArr=QueriesDataMining.buildDynamicQuery(paramsMap, procInstanceName, tblsMap, new String[]{});
+out.println(dataArr);
+                    if (1==1)return;                
         
         out.println(ReqProcedureDefinitionQueries.procReqSolutionTree("Demo"));
 if (1==1)return;                
@@ -149,7 +226,7 @@ if (1==1)return;
         dbName="demo_v0_9_2";
         Rdbms.stablishDBConection(dbName);
                 Rdbms.stablishDBConection("labplanet");
-                InvTrackingFrontendMasterData mdObj = new InvTrackingFrontendMasterData();
+                mdObj = new InvTrackingFrontendMasterData();
                 JSONObject masterDataJsonObject = mdObj.getMasterDataJsonObject("inv-draft");
                 out.println(masterDataJsonObject.toJSONString());
                 out.println("************ ViewsInvTrackingData.AVAILABLE_LOTS_PER_REFERENCE testing. Begin");
@@ -190,7 +267,7 @@ if(1==1)return;
         Integer moduleVersion=1;
         String procedureName="stock";
         Integer procedureVersion=1;
-        String procInstanceName="stock";
+        procInstanceName="stock";
         
         
         
@@ -214,7 +291,7 @@ if (1==1)return;
         
         procInstanceName="inspection_lot";
         out.println("************ createTableScript.ANALYSIS. Begin");
-        ModuleTableOrViewGet tblDiagn=new ModuleTableOrViewGet(false, "INSPECTION_LOTS", "config-audit", "analysis", procInstanceName);
+            ModuleTableOrViewGet tblDiagn = new ModuleTableOrViewGet(false, "INSPECTION_LOTS", "config-audit", "analysis", procInstanceName);
         createTableScript(tblDiagn.getTableObj(), procInstanceName, true, true, null);
         out.println("************ createTableScript.SPEC. Begin");
         tblDiagn=new ModuleTableOrViewGet(false, "INSPECTION_LOTS", "config-audit", "spec", procInstanceName);
@@ -243,9 +320,9 @@ if (1==1)return;
 
         procInstanceName="inspection_lot";                
         out.println("************ ViewsAppProcData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW. Begin");
-        String tblCreateScript=EnumIntViews.getViewScriptCreation(ViewsInspLotRMData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, procInstanceName, false, false, true, null);
+        tblCreateScript=EnumIntViews.getViewScriptCreation(ViewsInspLotRMData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW, procInstanceName, false, false, true, null);
         out.println(tblCreateScript);
-Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(procInstanceName, ViewsInspLotRMData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName(), tblCreateScript, new Object[]{});
+        Object[] prepUpQuery = Rdbms.prepUpQueryWithDiagn(procInstanceName, ViewsInspLotRMData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName(), tblCreateScript, new Object[]{});
 out.println(Arrays.toString(prepUpQuery));
 out.println("************ ViewsAppProcData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW testing. End");
         out.println("************ ViewsAppProcData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW NO testing. Begin");
@@ -485,10 +562,10 @@ if (1==1)return;
                 }
                 anaMethodJObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curCertif);
                 anaMethodJObj.put(GlobalAPIsParams.REQUEST_PARAM_CERTIF_OBJECTS_LEVEL, certifObjCertifModeOwnUserAction(fieldsToRetrieve, curCertif));
-                myAnaMethCertif.add(anaMethodJObj);
+                myAnaMethCertif.put(anaMethodJObj);
             }
             myAnaMethCertifList.put("my_analysis_method_certifications", myAnaMethCertif);
-            myAnaMethCertifListArr.add(myAnaMethCertifList);
+            myAnaMethCertifListArr.put(myAnaMethCertifList);
 
             if (1 == 1) {
                 return;
@@ -523,9 +600,9 @@ if (1==1)return;
             if (1 == 2) {
                 try {
                     out.println("***** " + "getCarbohydratesByHPLCPDF" + " *****");
-                    out.println(PDFDataExtractor.getCarbohydratesByHPLCPDF());
-                    out.println("***** " + "getDataFromPDF" + " *****");
-                    out.println(PDFDataExtractor.getDataFromPDF());
+                    out.println(PDFDataExtractor.getCarbohydratesByHPLCPDF(null));
+                    out.println("***** " + "getHplcValidacionesPDF" + " *****");
+                    out.println(PDFDataExtractor.getHplcValidacionesPDF(null));
                     out.println("***** " + "getAmoxicilinaPDF" + " *****");
                     out.println(PDFDataExtractor.getAmoxicilinaPDF());
 
@@ -1468,6 +1545,8 @@ String holidaysCalendar="España Comunidad X 2019";
             Object[][] csvFileContent = LPArray.convertCSVinArray(csvPathName, csvFileSeparator);
             out.println("csv File Content: <br>" + LPTestingOutFormat.convertArrayInHtmlTable(csvFileContent));
 
+        }catch(Exception e){
+            String errMsg=e.getMessage();
         }
     }
 

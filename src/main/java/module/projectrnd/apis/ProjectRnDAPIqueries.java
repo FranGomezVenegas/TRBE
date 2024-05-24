@@ -10,7 +10,6 @@ import com.labplanet.servicios.modulesample.SampleAPIParams;
 import static platform.app.apis.IncidentAPIactions.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import databases.SqlStatement;
-import databases.SqlStatementEnums;
 import databases.SqlWhere;
 import databases.TblsData;
 import databases.features.Token;
@@ -34,9 +33,10 @@ import module.formulation.definition.TblsFormulationData;
 import module.formulation.logic.ClssFormulationQueries;
 import static module.formulation.logic.ClssFormulationQueries.getFormulas;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMData;
+import module.methodvalidation.definition.TblsMethodValidationData;
 import module.projectrnd.definition.ProjectsRnDEnums.ProjectsRnDAPIqueriesEndpoints;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntViewFields;
@@ -103,13 +103,23 @@ public class ProjectRnDAPIqueries extends HttpServlet {
             }
             switch (endPoint) {
                 case ALL_ACTIVE_PROJECTS:
+
+/*            LPMailing newMail = new LPMailing();
+             newMail.fakeMailForTesting(new String[]{"info.fran.gomez@gmail.com", "fgomez@trazit.net", "ibelmonte@trazit.net"}, 
+                "prueba, al ejecutar la consulta ALL_ACTIVE_PROJECTS", "esto es una prueba desde Trazit ",
+                    null, null);*/
                     String project = LPNulls.replaceNull(argValues[0]).toString();
                     String projectType = LPNulls.replaceNull(argValues[1]).toString();                    
 
                     SqlWhere sW = new SqlWhere();
                     sW.addConstraint(TblsFormulationData.Project.IS_OPEN, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{true}, null);
+                    
                     if (project.length() > 0) {
-                        sW.addConstraint(TblsFormulationData.Project.NAME, SqlStatement.WHERECLAUSE_TYPES.IN, project.split("\\|"), "|");
+                        if ("ALL".equalsIgnoreCase(project)){
+                            sW.addConstraint(TblsFormulationData.Project.NAME, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, null, "|");
+                        }else{
+                            sW.addConstraint(TblsFormulationData.Project.NAME, SqlStatement.WHERECLAUSE_TYPES.IN, project.split("\\|"), "|");
+                        }
                     }
                     if (projectType.length() > 0) {
                         sW.addConstraint(TblsFormulationData.Project.TYPE, SqlStatement.WHERECLAUSE_TYPES.IN, projectType.split("\\|"), "|");
@@ -117,21 +127,38 @@ public class ProjectRnDAPIqueries extends HttpServlet {
                     String[] fieldsToRetrieve = getAllFieldNames(TblsFormulationData.TablesFormulationData.PROJECT);
                     Object[][] projectsInfo = QueryUtilitiesEnums.getTableData(TblsFormulationData.TablesFormulationData.PROJECT,
                             EnumIntTableFields.getAllFieldNamesFromDatabase(TblsFormulationData.TablesFormulationData.PROJECT),
-                            sW, new String[]{TblsFormulationData.Project.NAME.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
+                            sW, new String[]{TblsFormulationData.Project.NAME.getName()});
                     JSONArray jArr = new JSONArray();
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(projectsInfo[0][0].toString()))) {
                         for (Object[] curProj : projectsInfo) {
-                            JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curProj);
+                            org.json.simple.JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curProj);
                             String curProjName=curProj[LPArray.valuePosicInArray(fieldsToRetrieve, TblsFormulationData.Project.NAME.getName())].toString();
                             sW = new SqlWhere();
                             sW.addConstraint(TblsFormulationData.Formula.PROJECT, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{curProjName}, null);
                             jObj.put(TblsFormulationData.TablesFormulationData.FORMULA.getTableName(), ClssFormulationQueries.getFormulas(sW, true));
-                            JSONObject instLockingDetail = ClssFormulationQueries.formulaLockingInfo(fieldsToRetrieve, curProj);
+                            org.json.simple.JSONObject  instLockingDetail = ClssFormulationQueries.formulaLockingInfo(fieldsToRetrieve, curProj);
                             if (Boolean.FALSE.equals(instLockingDetail.isEmpty())) {
                                 jObj.put("locking_reason", instLockingDetail);
                             }
-                            jObj.put("method_validation", fakeMethodValidationData());
-                            jArr.add(jObj);
+                            //jObj.put("method_validation", fakeMethodValidationData());
+                            JSONArray jMainArr=new JSONArray();
+                            sW = new SqlWhere();
+                            sW.addConstraint(TblsMethodValidationData.ValidationMethodParams.PROJECT, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{curProjName}, null);                            
+                            EnumIntTableFields[] fldToGet = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsMethodValidationData.TablesMethodValidationData.VALIDATION_METHOD_PARAMS);
+                            Object[][] projectParamsInfo = QueryUtilitiesEnums.getTableData(TblsMethodValidationData.TablesMethodValidationData.VALIDATION_METHOD_PARAMS,
+                                    fldToGet,sW, new String[]{TblsMethodValidationData.ValidationMethodParams.NAME.getName()});
+                            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projectParamsInfo[0][0].toString())){
+                                jObj.put("method_validation", jMainArr);
+                            }else{
+                                for (Object[] curParam: projectParamsInfo){                                    
+                                    jMainArr.put(methodValidationData(curProjName, 
+                                            curParam[EnumIntTableFields.getFldPosicInArray(fldToGet, TblsMethodValidationData.ValidationMethodParams.NAME.getName())].toString(),
+                                    curParam[EnumIntTableFields.getFldPosicInArray(fldToGet, TblsMethodValidationData.ValidationMethodParams.ANALYTICAL_PARAMETER.getName())].toString()));
+                                }
+                            }                            
+                            jObj.put("method_validation", jMainArr);
+                            
+                            jArr.put(jObj);
                         }
                     }
                     Rdbms.closeRdbms();
@@ -144,7 +171,11 @@ public class ProjectRnDAPIqueries extends HttpServlet {
                     sW = new SqlWhere();
                     sW.addConstraint(TblsFormulationData.Formula.IS_OPEN, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{true}, null);
                     if (formulaName.length() > 0) {
-                        sW.addConstraint(TblsFormulationData.Formula.NAME, SqlStatement.WHERECLAUSE_TYPES.IN, formulaName.split("\\|"), "|");
+                        if ("ALL".equalsIgnoreCase(formulaName)){
+                            sW.addConstraint(TblsFormulationData.Formula.NAME, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, null, "|");
+                        }else{
+                            sW.addConstraint(TblsFormulationData.Formula.NAME, SqlStatement.WHERECLAUSE_TYPES.IN, formulaName.split("\\|"), "|");
+                        }
                     }
                     if (project.length() > 0) {
                         sW.addConstraint(TblsFormulationData.Formula.PROJECT, SqlStatement.WHERECLAUSE_TYPES.IN, project.split("\\|"), "|");
@@ -249,13 +280,13 @@ public class ProjectRnDAPIqueries extends HttpServlet {
                                 }
                                 if (resultLockData != null && resultLockData[0] != null) {
                                     if (resultLockData.length > 2) {
-                                        row = LPJson.convertArrayRowToJSONObject(LPArray.addValueToArray1D(LPArray.addValueToArray1D(fldsToGet, (String) resultLockData[2]), (String[]) resultLockData[0]),
+                                        row = LPJson.convertArrayRowToJSONObjectNoJsonSimple(LPArray.addValueToArray1D(LPArray.addValueToArray1D(fldsToGet, (String) resultLockData[2]), (String[]) resultLockData[0]),
                                                 LPArray.addValueToArray1D(LPArray.addValueToArray1D(curRow, resultLockData[3]), (Object[]) resultLockData[1]));
                                     } else {
-                                        row = LPJson.convertArrayRowToJSONObject(LPArray.addValueToArray1D(fldsToGet, (String[]) resultLockData[0]), LPArray.addValueToArray1D(curRow, (Object[]) resultLockData[1]));
+                                        row = LPJson.convertArrayRowToJSONObjectNoJsonSimple(LPArray.addValueToArray1D(fldsToGet, (String[]) resultLockData[0]), LPArray.addValueToArray1D(curRow, (Object[]) resultLockData[1]));
                                     }
                                 } else {
-                                    row = LPJson.convertArrayRowToJSONObject(fldsToGet, curRow);
+                                    row = LPJson.convertArrayRowToJSONObjectNoJsonSimple(fldsToGet, curRow);
                                 }
                                 if ((currRowLimitId != null) && (currRowLimitId.length() > 0)) {
                                     specRule.specLimitsRule(Integer.valueOf(currRowLimitId), null);
@@ -264,12 +295,12 @@ public class ProjectRnDAPIqueries extends HttpServlet {
                                     JSONArray specRuleDetailjArr = new JSONArray();
                                     JSONObject specRuleDetailjObj = new JSONObject();
                                     for (Object[] curSpcRlDet : specRuleDetail) {
-                                        specRuleDetailjObj.put(curSpcRlDet[0], curSpcRlDet[1]);
+                                        specRuleDetailjObj.put(curSpcRlDet[0].toString(), curSpcRlDet[1]);
                                     }
-                                    specRuleDetailjArr.add(specRuleDetailjObj);
+                                    specRuleDetailjArr.put(specRuleDetailjObj);
                                     row.put(ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_INFO, specRuleDetailjArr);
                                 }
-                                jArr.add(row);
+                                jArr.put(row);
                             }
                             Rdbms.closeRdbms();
                             LPFrontEnd.servletReturnSuccess(request, response, jArr);
@@ -880,6 +911,75 @@ public class ProjectRnDAPIqueries extends HttpServlet {
         return jArr;
     }
 */
+    static JSONObject methodValidationData(String curProjName, String paramName, String analyticalParameter){
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(null, null, false);
+        String procInstanceName=procReqInstance.getProcedureInstance();
+        JSONObject jObj=new JSONObject();
+        switch (paramName.toLowerCase()){
+            case "lineality":
+                jObj.put("title_en", "Lineality Assay");
+                jObj.put("title_es", "Ensayo linealidad");
+                break;
+            case "repeteability":
+                jObj.put("title_en", "Repeatibility Assay");
+                jObj.put("title_es", "Ensayo repetibilidad");
+                break;
+        }     
+        Object[][] samplesInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsData.TablesData.SAMPLE.getRepositoryName()), TblsData.TablesData.SAMPLE.getTableName(),
+                new String[]{TblsMethodValidationData.Sample.PROJECT.getName(), TblsMethodValidationData.Sample.PARAMETER_NAME.getName()}, new Object[]{curProjName, paramName}, 
+                new String[]{TblsData.Sample.SAMPLE_ID.getName()},
+                new String[]{TblsData.Sample.SAMPLE_ID.getName()});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(samplesInfo[0][0].toString()))
+            return jObj;
+        int i=0;
+        JSONArray resultsJArr=new JSONArray();
+        String finalResult="";
+        for (Object[] curSmp: samplesInfo){
+            JSONObject sampleJObj=new JSONObject();
+            Object[][] testsInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsData.TablesData.SAMPLE_ANALYSIS.getRepositoryName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
+                    new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName()}, new Object[]{Integer.valueOf(curSmp[0].toString())}, 
+                    new String[]{TblsData.SampleAnalysis.TEST_ID.getName()},
+                    new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName()});
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(testsInfo[0][0].toString()))
+                return jObj;            
+            i++;
+            for (Object[] curTst: testsInfo){
+                int iInj=0;
+                String[] fldsToGetSmpRslt = new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName(),                 
+                    TblsData.SampleAnalysisResult.TEST_ID.getName(), TblsData.SampleAnalysisResult.RESULT_ID.getName(),
+                    TblsData.SampleAnalysisResult.PARAM_NAME.getName(), TblsData.SampleAnalysisResult.PARAM_TYPE.getName(),
+                    TblsData.SampleAnalysisResult.PRETTY_VALUE.getName()};
+                Object[][] resultsInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getRepositoryName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
+                        new String[]{TblsData.SampleAnalysisResult.TEST_ID.getName()}, new Object[]{Integer.valueOf(curTst[0].toString())}, 
+                        fldsToGetSmpRslt,
+                        new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName(), TblsData.SampleAnalysisResult.TEST_ID.getName()});
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultsInfo[0][0].toString()))
+                    return jObj;
+                jObj.put("total_samples", samplesInfo.length);                
+                //jObj.put("final_results", finalResultsJObj);
+                
+                for (Object[] curRslt: resultsInfo){
+                    if ("CALC".equalsIgnoreCase(curRslt[4].toString())){
+                        finalResult=curRslt[5].toString();
+                    }else{
+                        iInj++;
+                        sampleJObj=LPJson.convertArrayRowToJSONObjectNoJsonSimple(fldsToGetSmpRslt, curRslt);
+                        sampleJObj.put("order_number", i);
+                        sampleJObj.put("name", "sample "+i);
+                        sampleJObj.put("injection", "Inj " + iInj);
+                        sampleJObj.put("result", curRslt[5]);
+                        sampleJObj.put("final_result", "");
+                        resultsJArr.put(sampleJObj);
+                    }                    
+                }
+            }
+            JSONObject objToModify = resultsJArr.getJSONObject(resultsJArr.length()- 1); // Last added object
+            objToModify.put("final_result", finalResult);  // Update the final result
+            resultsJArr.put(resultsJArr.length()- 1, objToModify);
+            jObj.put("results", resultsJArr);  
+        }
+        return jObj;        
+    }
     static JSONArray fakeMethodValidationData(){
         JSONArray jMainArr=new JSONArray();
         
@@ -901,14 +1001,14 @@ public class ProjectRnDAPIqueries extends HttpServlet {
         sampleJObj.put("injection", "Inj 1");
         sampleJObj.put("result", 99.6);
         sampleJObj.put("final_result", "");
-        resultsJArr.add(sampleJObj);
+        resultsJArr.put(sampleJObj);
         sampleJObj=new JSONObject();
         sampleJObj.put("order_number", i++);
         sampleJObj.put("name", "");
         sampleJObj.put("injection", "Inj 2");
         sampleJObj.put("result", 99.7);
         sampleJObj.put("final_result", "99.65");
-        resultsJArr.add(sampleJObj);
+        resultsJArr.put(sampleJObj);
         
         sampleJObj=new JSONObject();
         sampleJObj.put("order_number", i++);
@@ -916,14 +1016,14 @@ public class ProjectRnDAPIqueries extends HttpServlet {
         sampleJObj.put("injection", "Inj 1");
         sampleJObj.put("result", 98.2);
         sampleJObj.put("final_result", "");
-        resultsJArr.add(sampleJObj);
+        resultsJArr.put(sampleJObj);
         sampleJObj=new JSONObject();
         sampleJObj.put("order_number", i++);
         sampleJObj.put("name", "");
         sampleJObj.put("injection", "Inj 2");
         sampleJObj.put("result", 98.4);
         sampleJObj.put("final_result", "98.30");
-        resultsJArr.add(sampleJObj);
+        resultsJArr.put(sampleJObj);
         
         sampleJObj=new JSONObject();
         sampleJObj.put("order_number", i++);
@@ -931,14 +1031,14 @@ public class ProjectRnDAPIqueries extends HttpServlet {
         sampleJObj.put("injection", "Inj 1");
         sampleJObj.put("result", 97.9);
         sampleJObj.put("final_result", "");
-        resultsJArr.add(sampleJObj);
+        resultsJArr.put(sampleJObj);
         sampleJObj=new JSONObject();
         sampleJObj.put("order_number", i++);
         sampleJObj.put("name", "");
         sampleJObj.put("injection", "Inj 2");
         sampleJObj.put("result", 98.0);
         sampleJObj.put("final_result", "97.95");
-        resultsJArr.add(sampleJObj);
+        resultsJArr.put(sampleJObj);
 
         sampleJObj=new JSONObject();
         sampleJObj.put("order_number", i++);
@@ -946,14 +1046,14 @@ public class ProjectRnDAPIqueries extends HttpServlet {
         sampleJObj.put("injection", "Inj 1");
         sampleJObj.put("result", 99.9);
         sampleJObj.put("final_result", "");
-        resultsJArr.add(sampleJObj);
+        resultsJArr.put(sampleJObj);
         sampleJObj=new JSONObject();
         sampleJObj.put("order_number", i++);
         sampleJObj.put("name", "");
         sampleJObj.put("injection", "Inj 2");
         sampleJObj.put("result", 99.0);
         sampleJObj.put("final_result", "99.45");
-        resultsJArr.add(sampleJObj);
+        resultsJArr.put(sampleJObj);
 
         sampleJObj=new JSONObject();
         sampleJObj.put("order_number", i++);
@@ -961,14 +1061,14 @@ public class ProjectRnDAPIqueries extends HttpServlet {
         sampleJObj.put("injection", "Inj 1");
         sampleJObj.put("result", 97.7);
         sampleJObj.put("final_result", "");
-        resultsJArr.add(sampleJObj);
+        resultsJArr.put(sampleJObj);
         sampleJObj=new JSONObject();
         sampleJObj.put("order_number", i++);
         sampleJObj.put("name", "");
         sampleJObj.put("injection", "Inj 2");
         sampleJObj.put("result", 97.9);
         sampleJObj.put("final_result", "97.80");
-        resultsJArr.add(sampleJObj);
+        resultsJArr.put(sampleJObj);
 
         sampleJObj=new JSONObject();
         sampleJObj.put("order_number", i++);
@@ -976,16 +1076,16 @@ public class ProjectRnDAPIqueries extends HttpServlet {
         sampleJObj.put("injection", "Inj 1");
         sampleJObj.put("result", 98.9);
         sampleJObj.put("final_result", "");
-        resultsJArr.add(sampleJObj);
+        resultsJArr.put(sampleJObj);
         sampleJObj=new JSONObject();
         sampleJObj.put("order_number", i++);
         sampleJObj.put("name", "");
         sampleJObj.put("injection", "Inj 2");
         sampleJObj.put("result", 98.8);
         sampleJObj.put("final_result", "98.85");
-        resultsJArr.add(sampleJObj);        
+        resultsJArr.put(sampleJObj);        
         jObj.put("results", resultsJArr);        
-        jMainArr.add(jObj);
+        jMainArr.put(jObj);
         
         jObj=new JSONObject();
         jObj.put("title_en", "Lineality Assay");
@@ -1008,7 +1108,7 @@ public class ProjectRnDAPIqueries extends HttpServlet {
         sampleJObj.put("injection", "Inj 1");
         sampleJObj.put("result", 9.9);
         sampleJObj.put("final_result", "");
-        resultsJArr.add(sampleJObj);
+        resultsJArr.put(sampleJObj);
         sampleJObj=new JSONObject();
         sampleJObj.put("order_number", i++);
 
@@ -1023,8 +1123,8 @@ public class ProjectRnDAPIqueries extends HttpServlet {
         sampleJObj.put("final_result", "9.85");
         chartJObj.put("theoretical_value", "10");
         chartJObj.put("value", "9.85");
-        chartResultsJArr.add(chartJObj);
-        resultsJArr.add(sampleJObj);
+        chartResultsJArr.put(chartJObj);
+        resultsJArr.put(sampleJObj);
         
         sampleJObj=new JSONObject();
         chartJObj=new JSONObject();
@@ -1034,7 +1134,7 @@ public class ProjectRnDAPIqueries extends HttpServlet {
         sampleJObj.put("injection", "Inj 1");
         sampleJObj.put("result", 24.9);
         sampleJObj.put("final_result", "");
-        resultsJArr.add(sampleJObj);
+        resultsJArr.put(sampleJObj);
         sampleJObj=new JSONObject();
         sampleJObj.put("order_number", i++);
         sampleJObj.put("theoretical_value", "");
@@ -1044,8 +1144,8 @@ public class ProjectRnDAPIqueries extends HttpServlet {
         sampleJObj.put("final_result", "24.95");
         chartJObj.put("theoretical_value", "25");
         chartJObj.put("value", "24.95");
-        chartResultsJArr.add(chartJObj);
-        resultsJArr.add(sampleJObj);
+        chartResultsJArr.put(chartJObj);
+        resultsJArr.put(sampleJObj);
         
         sampleJObj=new JSONObject();
         chartJObj=new JSONObject();
@@ -1055,7 +1155,7 @@ public class ProjectRnDAPIqueries extends HttpServlet {
         sampleJObj.put("injection", "Inj 1");
         sampleJObj.put("result", 49.7);
         sampleJObj.put("final_result", "");
-        resultsJArr.add(sampleJObj);
+        resultsJArr.put(sampleJObj);
         sampleJObj=new JSONObject();
         sampleJObj.put("order_number", i++);
         sampleJObj.put("theoretical_value", "");
@@ -1065,8 +1165,8 @@ public class ProjectRnDAPIqueries extends HttpServlet {
         sampleJObj.put("final_result", "49.95");
         chartJObj.put("theoretical_value", "50");
         chartJObj.put("value", "49.95");
-        chartResultsJArr.add(chartJObj);
-        resultsJArr.add(sampleJObj);
+        chartResultsJArr.put(chartJObj);
+        resultsJArr.put(sampleJObj);
 
         sampleJObj=new JSONObject();
         chartJObj=new JSONObject();
@@ -1076,7 +1176,7 @@ public class ProjectRnDAPIqueries extends HttpServlet {
         sampleJObj.put("injection", "Inj 1");
         sampleJObj.put("result", 76.0);
         sampleJObj.put("final_result", "");
-        resultsJArr.add(sampleJObj);
+        resultsJArr.put(sampleJObj);
         sampleJObj=new JSONObject();        
         sampleJObj.put("order_number", i++);
         sampleJObj.put("theoretical_value", "");
@@ -1086,8 +1186,8 @@ public class ProjectRnDAPIqueries extends HttpServlet {
         sampleJObj.put("final_result", "75.90");
         chartJObj.put("theoretical_value", "75");
         chartJObj.put("value", "75.90");
-        chartResultsJArr.add(chartJObj);
-        resultsJArr.add(sampleJObj);
+        chartResultsJArr.put(chartJObj);
+        resultsJArr.put(sampleJObj);
 
         sampleJObj=new JSONObject();
         chartJObj=new JSONObject();
@@ -1097,7 +1197,7 @@ public class ProjectRnDAPIqueries extends HttpServlet {
         sampleJObj.put("injection", "Inj 1");
         sampleJObj.put("result", 99.8);
         sampleJObj.put("final_result", "");
-        resultsJArr.add(sampleJObj);
+        resultsJArr.put(sampleJObj);
         sampleJObj=new JSONObject();
         sampleJObj.put("order_number", i++);
         sampleJObj.put("theoretical_value", "");
@@ -1107,7 +1207,7 @@ public class ProjectRnDAPIqueries extends HttpServlet {
         sampleJObj.put("final_result", "99.35");
         chartJObj.put("theoretical_value", "100");
         chartJObj.put("value", "99.35");
-        chartResultsJArr.add(chartJObj);
+        chartResultsJArr.put(chartJObj);
 
         sampleJObj=new JSONObject();
         chartJObj=new JSONObject();
@@ -1117,7 +1217,7 @@ public class ProjectRnDAPIqueries extends HttpServlet {
         sampleJObj.put("injection", "Inj 1");
         sampleJObj.put("result", 119.7);
         sampleJObj.put("final_result", "");
-        resultsJArr.add(sampleJObj);
+        resultsJArr.put(sampleJObj);
         sampleJObj=new JSONObject();
         sampleJObj.put("order_number", i++);
         sampleJObj.put("theoretical_value", "");
@@ -1127,15 +1227,15 @@ public class ProjectRnDAPIqueries extends HttpServlet {
         sampleJObj.put("final_result", "119.35");
         chartJObj.put("theoretical_value", "120");
         chartJObj.put("value", "119.35");
-        chartResultsJArr.add(chartJObj);
+        chartResultsJArr.put(chartJObj);
         finalResultsJObj=new JSONObject();
         finalResultsJObj.put("total_samples", 6);
         jObj.put("final_results", finalResultsJObj);        
-        resultsJArr.add(sampleJObj);        
+        resultsJArr.put(sampleJObj);        
         jObj.put("results", resultsJArr);  
         jObj.put("chart_results", chartResultsJArr);  
         
-        jMainArr.add(jObj);
+        jMainArr.put(jObj);
         
         return jMainArr;
     }

@@ -7,7 +7,7 @@ package functionaljavaa.testingscripts;
 
 //import databases.Rdbms;
 import lbplanet.utilities.LPNulls;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 
 /**
@@ -39,7 +39,7 @@ public class TestingMessageCodeVisited {
         jObj.put("messageCode", messageCode);
         jObj.put("messageValue", messageValue);
         jObj.put("className", LPNulls.replaceNull(className));
-        this.jsonContent.add(jObj);
+        this.jsonContent.put(jObj);
     }
     
 }

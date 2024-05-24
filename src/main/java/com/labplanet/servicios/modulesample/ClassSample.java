@@ -333,6 +333,13 @@ public class ClassSample implements ActionsClass{
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), resultId);
                 this.messageDynamicData = new Object[]{resultId};
                 break;
+            case ENTERRESULT_PARSING:
+                resultId = (Integer) argValues[0];
+                byte[] fileInBytes = (byte[]) argValues[1];
+                actionDiagnosesObj = smpAnaRes.sampleAnalysisResultEntryByParsing(resultId, fileInBytes, smp);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
+                this.messageDynamicData = new Object[]{resultId};
+                break;
             case RESULT_CHANGE_UOM:
                 resultId = 0;
                 resultId = (Integer) argValues[0];

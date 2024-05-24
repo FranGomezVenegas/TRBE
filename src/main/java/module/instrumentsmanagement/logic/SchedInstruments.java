@@ -13,7 +13,7 @@ import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
 import module.instrumentsmanagement.definition.TblsInstrumentsData;
 import module.instrumentsmanagement.definition.TblsInstrumentsData.ViewsInstrumentsData;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntViewFields;
 import trazit.globalvariables.GlobalVariables;
@@ -88,7 +88,7 @@ public class SchedInstruments {
                     }
                 }
                 JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrEv);
-                jArr.add(jObj);
+                jArr.put(jObj);
             }
         }
         return jArr;

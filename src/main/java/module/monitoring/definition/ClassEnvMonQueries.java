@@ -57,7 +57,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import module.monitoring.logic.ConfigMasterData;
 import module.monitoring.logic.DataProgramCorrectiveAction;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
@@ -125,7 +125,7 @@ public class ClassEnvMonQueries implements EnumIntQueriesObj{
                     } else {
                         for (Object[] curRow : sampleInfo) {
                             JSONObject row = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curRow);
-                            jArr.add(row);
+                            jArr.put(row);
                         }                        
                         for (Object[] curSample : sampleInfo) {
                             rObj.addSimpleNode(GlobalVariables.Schemas.DATA.getName(), TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), curSample[0], fieldsToRetrieve, curSample);
@@ -182,7 +182,7 @@ public class ClassEnvMonQueries implements EnumIntQueriesObj{
                     }
                     for (Object[] curRow : resultInfo) {
                         JSONObject row = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curRow);
-                        jArr.add(row);
+                        jArr.put(row);
                     }                                            
                     this.messageDynamicData = new Object[]{sampleId};
                     this.isSuccess = true;
@@ -251,7 +251,7 @@ public class ClassEnvMonQueries implements EnumIntQueriesObj{
                         JSONArray programSampleSummaryByStageJsonArray = new JSONArray();
                         for (Object[] curRec : samplesCounterPerStage) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldToRetrieveArr, curRec);
-                            programSampleSummaryByStageJsonArray.add(jObj);
+                            programSampleSummaryByStageJsonArray.put(jObj);
                         }
                         programJsonObj.put(JSON_TAG_GROUP_NAME_SAMPLES_SUMMARY_BY_STAGE, programSampleSummaryByStageJsonArray);
 
@@ -271,7 +271,7 @@ public class ClassEnvMonQueries implements EnumIntQueriesObj{
                         JSONArray programConfigScheduledPointsJsonArray = new JSONArray();
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programCalendarDatePending[0][0].toString())) {
                             jObj.put("message", "Nothing pending in procedure " + procInstanceName + " for the filter " + LPNulls.replaceNull(programCalendarDatePending[0][programCalendarDatePending.length - 1]).toString());
-                            programConfigScheduledPointsJsonArray.add(jObj);
+                            programConfigScheduledPointsJsonArray.put(jObj);
                         } else {
                             for (Object[] curRecord : programCalendarDatePending) {
                                 jObj = new JSONObject();
@@ -283,7 +283,7 @@ public class ClassEnvMonQueries implements EnumIntQueriesObj{
                                 jObj.put("date", curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitConfig.ViewProgramScheduledLocations.DATE.getName())].toString());
                                 jObj.put("category", "orange");
                                 jObj.put("color", "#000");
-                                programConfigScheduledPointsJsonArray.add(jObj);
+                                programConfigScheduledPointsJsonArray.put(jObj);
                             }
                         }
                         programJsonObj.put(JSON_TAG_GROUP_NAME_CONFIG_CALENDAR, programConfigScheduledPointsJsonArray);
@@ -323,7 +323,7 @@ public class ClassEnvMonQueries implements EnumIntQueriesObj{
                                             }
                                         }
                                         programLocationCardInfoJsonObj.putIfAbsent(JSON_TAG_NAME_PASS, JSON_TAG_NAME_PASS_VALUE_FALSE);
-                                        programLocationCardInfoJsonArr.add(programLocationCardInfoJsonObj);
+                                        programLocationCardInfoJsonArr.put(programLocationCardInfoJsonObj);
                                     }
                                 }
                                 programLocationJsonObj.put(JSON_TAG_GROUP_NAME_CARD_INFO, programLocationCardInfoJsonArr);
@@ -348,7 +348,7 @@ public class ClassEnvMonQueries implements EnumIntQueriesObj{
                                     programSampleSummaryJsonObj.put(JSON_TAG_NAME_VALUE, samplesStatusCounter[iStatuses]);
                                     programSampleSummaryJsonObj.put(JSON_TAG_NAME_TYPE, JSON_TAG_NAME_TYPE_VALUE_TEXT);
                                     programSampleSummaryJsonObj.put(JSON_TAG_NAME_PASS, JSON_TAG_NAME_PASS_VALUE_FALSE);
-                                    programSampleSummaryJsonArray.add(programSampleSummaryJsonObj);
+                                    programSampleSummaryJsonArray.put(programSampleSummaryJsonObj);
                                 }
                                 programLocationJsonObj.put(JSON_TAG_GROUP_NAME_SAMPLES_SUMMARY, programSampleSummaryJsonArray);
                                 fieldToRetrieveArr = new String[]{TblsEnvMonitData.Sample.CURRENT_STAGE.getName()};
@@ -362,11 +362,11 @@ public class ClassEnvMonQueries implements EnumIntQueriesObj{
                                 programSampleSummaryByStageJsonArray = new JSONArray();
                                 for (Object[] curRec : samplesCounterPerStage) {
                                     jObj = LPJson.convertArrayRowToJSONObject(fieldToRetrieveArr, curRec);
-                                    programSampleSummaryByStageJsonArray.add(jObj);
+                                    programSampleSummaryByStageJsonArray.put(jObj);
                                 }
                                 programLocationJsonObj.put(JSON_TAG_GROUP_NAME_SAMPLES_SUMMARY_BY_STAGE, programSampleSummaryByStageJsonArray);
 
-                                programLocationsJsonArray.add(programLocationJsonObj);
+                                programLocationsJsonArray.put(programLocationJsonObj);
                             }
                             programJsonObj.put(JSON_TAG_GROUP_NAME_SAMPLE_POINTS, programLocationsJsonArray);
                         }
@@ -391,11 +391,11 @@ public class ClassEnvMonQueries implements EnumIntQueriesObj{
                                 programSampleSummaryJsonObj.put(JSON_TAG_NAME_VALUE, LPNulls.replaceNull(samplesStatusCounter[iStatuses]));
                                 programSampleSummaryJsonObj.put(JSON_TAG_NAME_TYPE, JSON_TAG_NAME_TYPE_VALUE_TEXT);
                                 programSampleSummaryJsonObj.put(JSON_TAG_NAME_PASS, JSON_TAG_NAME_PASS_VALUE_FALSE);
-                                programSampleSummaryJsonArray.add(programSampleSummaryJsonObj);
+                                programSampleSummaryJsonArray.put(programSampleSummaryJsonObj);
                             }
                             programJsonObj.put(JSON_TAG_GROUP_NAME_SAMPLES_SUMMARY, programSampleSummaryJsonArray);
                         }
-                        programsJsonArr.add(programJsonObj);
+                        programsJsonArr.put(programJsonObj);
                         JSONObject programDataTemplateDefinition = new JSONObject();
                         JSONObject templateProgramInfo = EnvMonFrontEndUtilities.dataProgramInfo(curProgramName, null, null);
                         programDataTemplateDefinition.put(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM.getTableName(), templateProgramInfo);
@@ -442,7 +442,7 @@ public class ClassEnvMonQueries implements EnumIntQueriesObj{
                     }
                     for (Object[] curProgCorr : progCorrInfo) {
                         JSONObject jObj = LPJson.convertArrayRowToJSONObject(progCorrFldNameList, curProgCorr);
-                        jArr.add(jObj);
+                        jArr.put(jObj);
                     }
                     this.isSuccess = true;
                     this.responseSuccessJArr = jArr;
@@ -468,7 +468,7 @@ public class ClassEnvMonQueries implements EnumIntQueriesObj{
                     }
                     for (Object[] curProgram : programInfo) {
                         JSONObject jObj = LPJson.convertArrayRowToJSONObject(prodLotFldToRetrieve, curProgram);
-                        jArr.add(jObj);
+                        jArr.put(jObj);
                     }
                     this.isSuccess = true;
                     this.responseSuccessJArr = jArr;
@@ -518,11 +518,11 @@ public class ClassEnvMonQueries implements EnumIntQueriesObj{
                         new String[]{TblsEnvMonitConfig.ViewProgramScheduledLocations.SAMPLE_ID.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()}, false);
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programSchedEntries[0][0].toString())) {
                             jObj = LPFrontEnd.responseJSONDiagnosticLPFalse(Rdbms.RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);
-                            sampleJsonArr.add(jObj);
+                            sampleJsonArr.put(jObj);
                         } else {
                             for (Object[] curRec : programSchedEntries) {
                                 jObj = LPJson.convertArrayRowToJSONObject(EnumIntViewFields.getAllFieldNames(fieldsToGet), curRec);
-                                sampleJsonArr.add(jObj);
+                                sampleJsonArr.put(jObj);
                             }
                         }
                     }
@@ -623,7 +623,7 @@ public class ClassEnvMonQueries implements EnumIntQueriesObj{
                         }
                         JSONObject statAnalysis = LPMath.statAnalysis((double[]) doubleArray, durArr, "Hours");
                         statAnalysis.put("stage", curStage);
-                        statAnalysisArr.add(statAnalysis);
+                        statAnalysisArr.put(statAnalysis);
                     }
                     jObjMainObject.put("statistics_per_stage", statAnalysisArr);
                     
@@ -637,7 +637,7 @@ public class ClassEnvMonQueries implements EnumIntQueriesObj{
                     Object[][] data=Rdbms.runQueryByString(tblCreateScript, 3, whereForPercentagesView);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(data[0][0].toString())) {
                         jObj = LPFrontEnd.responseJSONDiagnosticLPFalse(Rdbms.RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);
-                        sampleJsonArr.add(jObj);
+                        sampleJsonArr.put(jObj);
                     } else {
                         for (Object[] curRow: data){
                             if (curRow[1]!=null&&curRow[2]!=null&&curRow[1].toString().length()>0&&curRow[2].toString().length()>0){
@@ -686,12 +686,12 @@ public class ClassEnvMonQueries implements EnumIntQueriesObj{
                     data=Rdbms.runQueryByString(tblCreateScript, 4, whereForPercentagesView);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(data[0][0].toString())) {
                         jObj = LPFrontEnd.responseJSONDiagnosticLPFalse(Rdbms.RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);
-                        sampleJsonArr.add(jObj);
+                        sampleJsonArr.put(jObj);
                     } else {
                         for (Object[] curRec : data) {
                             jObj = LPJson.convertArrayRowToJSONObject(new String[]{"stage", "violated_sample_stages", "total_sample_stages", "percentage"}, 
                                     curRec);
-                            sampleJsonArr.add(jObj);
+                            sampleJsonArr.put(jObj);
                         }
                     }
                     jObjMainObject.put("violations_percentage", sampleJsonArr);

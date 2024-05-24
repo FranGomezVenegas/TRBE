@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import functionaljavaa.user.UserProfile;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import functionaljavaa.sop.UserSop;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
@@ -361,12 +361,12 @@ public class SopUserAPIqueries extends HttpServlet {
                 sop = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curSop);
 
                 sop.put(GlobalAPIsParams.REQUEST_PARAM_CERTIF_OBJECTS_LEVEL, certifObjCertifReviewerPendingSign(fieldsToRetrieve, curSop));
-                mySops.add(sop);
+                mySops.put(sop);
             }
-            mySopsList.put("num_objects", mySops.size());
+            mySopsList.put("num_objects", mySops.length());
             mySopsList.put("objects", mySops);
             return mySopsList;
-            //mySopsListArr.add(mySopsList);        
+            //mySopsListArr.put(mySopsList);        
             //return mySopsListArr;
         } catch (Exception e) {
             JSONObject proceduresList = new JSONObject();
@@ -442,10 +442,10 @@ public class SopUserAPIqueries extends HttpServlet {
                 sop = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curSop);
 
                 sop.put(GlobalAPIsParams.REQUEST_PARAM_CERTIF_OBJECTS_LEVEL, certifObjCertifModeOwnUserAction(fieldsToRetrieve, curSop));
-                mySops.add(sop);
+                mySops.put(sop);
             }
             mySopsList.put("my_sops", mySops);
-            mySopsListArr.add(mySopsList);
+            mySopsListArr.put(mySopsList);
             return mySopsListArr;
         } catch (Exception e) {
             return new JSONArray();
@@ -508,9 +508,9 @@ public class SopUserAPIqueries extends HttpServlet {
                         sop.put(GlobalAPIsParams.REQUEST_PARAM_CERTIF_OBJECTS_LEVEL, certifObjCertifModeOwnUserAction(fieldsToRetrieve, userProcSop));
                         mySopsList.put("pending_sops", mySops);
                         mySopsList.put(FIELDS_NAMES_PROCEDURE_NAME, currProc);
-                        mySops.add(sop);
+                        mySops.put(sop);
                     }
-                    myPendingSopsByProc.add(mySopsList);
+                    myPendingSopsByProc.put(mySopsList);
                 }
             }
             return myPendingSopsByProc;
@@ -572,12 +572,12 @@ public class SopUserAPIqueries extends HttpServlet {
                         JSONObject sop = new JSONObject();
                         sop = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, procSop);
                         sop.put(GlobalAPIsParams.REQUEST_PARAM_CERTIF_OBJECTS_LEVEL, certifObjCertifModeOwnUserAction(fieldsToRetrieve, procSop));
-                        mySops.add(sop);
+                        mySops.put(sop);
                     }
                 }
                 mySopsList.put("procedure_sops", mySops);
                 mySopsList.put(FIELDS_NAMES_PROCEDURE_NAME, currProc);
-                myPendingSopsByProc.add(mySopsList);
+                myPendingSopsByProc.put(mySopsList);
             }
             return myPendingSopsByProc;
         } catch (Exception e) {
@@ -634,7 +634,7 @@ public class SopUserAPIqueries extends HttpServlet {
             sopOption.put(JSON_TAG_MODE, "edit");
             sopOption.put(JSON_TAG_BRANCH_LEVEL, JSON_TAG_VALUE_BRANCH_LEVEL_LEVEL_1);
             sopOption.put(JSON_TAG_TYPE, JSON_TAG_VALUE_TYPE_TREE_LIST);
-            sopOptions.add(sopOption);
+            sopOptions.put(sopOption);
 
             sopOption = new JSONObject();
             sopOption.put(JSON_TAG_NAME, "MyPendingSOPs");
@@ -645,7 +645,7 @@ public class SopUserAPIqueries extends HttpServlet {
             sopOption.put(JSON_TAG_BRANCH_LEVEL, JSON_TAG_VALUE_BRANCH_LEVEL_LEVEL_1);
             sopOption.put(JSON_TAG_BADGE, numPendingSOPs);
             sopOption.put(JSON_TAG_TYPE, JSON_TAG_VALUE_TYPE_TREE_LIST);
-            sopOptions.add(sopOption);
+            sopOptions.put(sopOption);
 
             sopOption = new JSONObject();
             sopOption.put(JSON_TAG_NAME, "ProcSOPs");
@@ -655,7 +655,7 @@ public class SopUserAPIqueries extends HttpServlet {
             sopOption.put(JSON_TAG_MODE, "edit");
             sopOption.put(JSON_TAG_BRANCH_LEVEL, JSON_TAG_VALUE_BRANCH_LEVEL_LEVEL_1);
             sopOption.put(JSON_TAG_TYPE, JSON_TAG_VALUE_TYPE_TREE_LIST);
-            sopOptions.add(sopOption);
+            sopOptions.put(sopOption);
 
             JSONObject sopElement = new JSONObject();
             sopElement.put(JSON_TAG_DEFINITION, sopOptions);
@@ -666,7 +666,7 @@ public class SopUserAPIqueries extends HttpServlet {
             sopElement.put(JSON_TAG_SCHEMA_PREFIX, "process-us");
 
             JSONArray arrFinal = new JSONArray();
-            arrFinal.add(sopElement);
+            arrFinal.put(sopElement);
             return arrFinal;
         } catch (Exception e) {
             return new JSONArray();

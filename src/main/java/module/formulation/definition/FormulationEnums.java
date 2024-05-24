@@ -22,7 +22,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
 import module.formulation.definition.TblsFormulationData.TablesFormulationData;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntEndpoints;
@@ -85,7 +85,7 @@ public class FormulationEnums {
                 new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_FORMULA_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments("ingredient", LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                     new LPAPIArguments("quantity", LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
-                    new LPAPIArguments("quantity_uom", LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
+                    new LPAPIArguments("quantityUom", LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
                     new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
                     new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 11)                    
                     },
@@ -99,7 +99,7 @@ public class FormulationEnums {
                 new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_FORMULA_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments("ingredient", LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
                     new LPAPIArguments("quantity", LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
-                    new LPAPIArguments("quantity_uom", LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
+                    new LPAPIArguments("quantityUom", LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
                     new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
                     new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 11)
                     },

@@ -33,7 +33,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import static trazit.globalvariables.GlobalVariables.DEFAULTLANGUAGE;
@@ -106,7 +106,7 @@ public class IncidentAPIqueries extends HttpServlet {
                 if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsClosedLastDays[0][0].toString()))){
                     for (Object[] currIncident: incidentsClosedLastDays){
                         JSONObject jObj=LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(fieldsToRetrieve), currIncident);
-                        jArr.add(jObj);
+                        jArr.put(jObj);
                     }
                 }
                 Rdbms.closeRdbms();  
@@ -148,7 +148,7 @@ public class IncidentAPIqueries extends HttpServlet {
                                 jObj.put("note", incidentsInfo[0][0].toString() +": "+incidentsInfo[0][1].toString());
                             }
                         }
-                        jArr.add(jObj);
+                        jArr.put(jObj);
                     }
                 }
                 Rdbms.closeRdbms();                  
@@ -168,7 +168,7 @@ public class IncidentAPIqueries extends HttpServlet {
                 if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsClosedLastDays[0][0].toString()))){
                     for (Object[] currIncident: incidentsClosedLastDays){
                         JSONObject jObj=LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(fieldsToRetrieve), currIncident);
-                        jArr.add(jObj);
+                        jArr.put(jObj);
                     }
                 }
                 Rdbms.closeRdbms();  

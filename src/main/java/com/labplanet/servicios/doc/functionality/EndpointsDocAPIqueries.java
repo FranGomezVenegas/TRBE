@@ -27,7 +27,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntTableFields;
@@ -147,7 +147,7 @@ public class EndpointsDocAPIqueries extends HttpServlet {
                         curApiName = LPNulls.replaceNull(currEndpoint[EnumIntTableFields.getFldPosicInArray(endpointDeclarationAllFieldNames, TblsTrazitDocTrazit.EndpointsDeclaration.API_NAME.getName())]).toString();
                         if (Boolean.FALSE.equals(jApiArr.isEmpty())) {
                             jApiObj.put("endpoints", jApiArr);
-                            jMainArr.add(jApiObj);
+                            jMainArr.put(jApiObj);
                         }
                         jApiArr = new JSONArray();
                         jApiObj = new JSONObject();
@@ -162,11 +162,11 @@ public class EndpointsDocAPIqueries extends HttpServlet {
                     com.google.gson.JsonArray argOutputToJson = LPJson.convertToJsonArrayStringedObject(
                             currEndpoint[EnumIntTableFields.getFldPosicInArray(endpointDeclarationAllFieldNames, TblsTrazitDocTrazit.EndpointsDeclaration.OUTPUT_OBJECT_TYPES.getName())].toString());
                     jObj.put(TblsTrazitDocTrazit.EndpointsDeclaration.OUTPUT_OBJECT_TYPES.getName(), argOutputToJson);
-                    jApiArr.add(jObj);
+                    jApiArr.put(jObj);
                 }
                 if (Boolean.FALSE.equals(jApiArr.isEmpty())) {
                     jApiObj.put("endpoints", jApiArr);
-                    jMainArr.add(jApiObj);
+                    jMainArr.put(jApiObj);
                 }
 
             } else {
@@ -179,7 +179,7 @@ public class EndpointsDocAPIqueries extends HttpServlet {
                     com.google.gson.JsonArray argOutputToJson = LPJson.convertToJsonArrayStringedObject(
                             currEndpoint[EnumIntTableFields.getFldPosicInArray(endpointDeclarationAllFieldNames, TblsTrazitDocTrazit.EndpointsDeclaration.OUTPUT_OBJECT_TYPES.getName())].toString());
                     jObj.put(TblsTrazitDocTrazit.EndpointsDeclaration.OUTPUT_OBJECT_TYPES.getName(), argOutputToJson);
-                    jMainArr.add(jObj);
+                    jMainArr.put(jObj);
                 }
             }
             Rdbms.closeRdbms();

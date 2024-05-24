@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.HttpHeaders;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import trazit.enums.ActionsEndpointPair;
 import trazit.globalvariables.GlobalVariables.TrazitModules;
 import trazit.procedureinstance.definition.definition.ReqProcedureEnums;

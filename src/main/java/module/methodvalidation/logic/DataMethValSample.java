@@ -54,10 +54,11 @@ public class DataMethValSample{
             Object[][] analyticalParameterInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsMethodValidationData.TablesMethodValidationData.VALIDATION_METHOD_PARAMS.getRepositoryName()), TblsMethodValidationData.TablesMethodValidationData.VALIDATION_METHOD_PARAMS.getTableName(),
                 new String[]{TblsMethodValidationData.ValidationMethodParams.NAME.getName()}, 
                 new Object[]{parameterName}, 
-                new String[]{TblsMethodValidationData.ValidationMethodParams.ANALYTICAL_PARAMETER.getName(), TblsMethodValidationData.ValidationMethodParams.NAME.getName()});
+                new String[]{TblsMethodValidationData.ValidationMethodParams.ANALYTICAL_PARAMETER.getName(), TblsMethodValidationData.ValidationMethodParams.NAME.getName(), TblsMethodValidationData.ValidationMethodParams.PROJECT.getName()});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analyticalParameterInfo[0][0].toString()))
                return new InternalMessage(LPPlatform.LAB_FALSE, EnvMonitErrorTrapping.LOGSAMPLE_PROGRAM_OR_LOCATION_NOTFOUND, new Object[]{parameterName});
             String analyticalParameter=analyticalParameterInfo[0][0].toString();
+            String projectName = analyticalParameterInfo[0][2].toString();
             
             Object[][] methodInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsCnfg.TablesConfig.METHODS.getRepositoryName()), TblsCnfg.TablesConfig.METHODS.getTableName(),
                 new String[]{TblsProjectRnDConfig.Methods.CODE.getName()}, 
@@ -88,7 +89,10 @@ public class DataMethValSample{
             fieldValue = LPArray.addValueToArray1D(fieldValue, parameterName);
             fieldName = LPArray.addValueToArray1D(fieldName, TblsMethodValidationData.Sample.ANALYTICAL_PARAMETER.getName());
             fieldValue = LPArray.addValueToArray1D(fieldValue, analyticalParameter);
-            
+            if (projectName!=null&&projectName.length()>0){
+                fieldName = LPArray.addValueToArray1D(fieldName, TblsMethodValidationData.Sample.PROJECT.getName());
+                fieldValue = LPArray.addValueToArray1D(fieldValue, projectName);                
+            }
             if (numSamplesToLog==null)
                 numSamplesToLog=1;
             newProjSample = ds.logSample(sampleTemplateCode, sampleTemplateCodeVersion, fieldName, fieldValue, numSamplesToLog, TblsEnvMonitData.TablesEnvMonitData.SAMPLE); 

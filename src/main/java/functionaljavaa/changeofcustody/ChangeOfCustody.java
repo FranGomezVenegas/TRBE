@@ -18,7 +18,7 @@ import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.parameter.Parameter;
 import java.util.ArrayList;
 import lbplanet.utilities.LPPlatform.LpPlatformErrorTrapping;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;

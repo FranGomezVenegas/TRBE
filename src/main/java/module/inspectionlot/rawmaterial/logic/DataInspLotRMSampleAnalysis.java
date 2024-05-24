@@ -20,7 +20,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPParadigm;
 import lbplanet.utilities.LPPlatform;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMConfig;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;

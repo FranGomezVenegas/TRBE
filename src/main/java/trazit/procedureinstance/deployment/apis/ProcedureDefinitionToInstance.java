@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPNulls;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.procedureinstance.deployment.logic.ProcDefToInstanceCreateProcViewsDeployed;
 import trazit.procedureinstance.deployment.logic.ProcDefToInstanceCreateSopMetaDataAndUserSop;
@@ -98,7 +98,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 createDBProcedureInfo.put("section_label_es", "Creación de Repositorios y Tablas Base del Proceso");
                 iSection++;
                 createDBProcedureInfo.put("index", iSection);
-                sectionsDetailCheckerArr.add(createDBProcedureInfo);
+                sectionsDetailCheckerArr.put(createDBProcedureInfo);
             }else{
                 runSection=Boolean.valueOf(argValues[5].toString()) || CREATE_REPOSITORIES_AND_PROC_TBLS;
                 sectionsSettingJobj.put("1) Create Base repositories and tables", runSection);
@@ -114,7 +114,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 createDBProcedureInfo.put("section_label_es", "Creación de sección Procedure Info");
                 iSection++;
                 createDBProcedureInfo.put("index", iSection);
-                sectionsDetailCheckerArr.add(createDBProcedureInfo);
+                sectionsDetailCheckerArr.put(createDBProcedureInfo);
             }else{                
                 runSection=Boolean.valueOf(argValues[6].toString()) || PROCDEPL_PROCEDURE_INFO;
                 sectionsSettingJobj.put("2) Procedure Info", runSection);
@@ -130,7 +130,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 createDBProcedureUserRoles.put("section_label_es", "Creación de sección Usuarios y Roles");
                 iSection++;
                 createDBProcedureUserRoles.put("index", iSection);
-                sectionsDetailCheckerArr.add(createDBProcedureUserRoles);
+                sectionsDetailCheckerArr.put(createDBProcedureUserRoles);
             }else{                
                 runSection=Boolean.valueOf(argValues[7].toString()) || PROCDEPL_PROCEDURE_USER_ROLES;
                 sectionsSettingJobj.put("3) ", runSection);
@@ -146,7 +146,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 createDBSopMetaDataAndUserSop.put("section_label_es", "Sección de PNTs");
                 iSection++;
                 createDBSopMetaDataAndUserSop.put("index", iSection);
-                sectionsDetailCheckerArr.add(createDBSopMetaDataAndUserSop);
+                sectionsDetailCheckerArr.put(createDBSopMetaDataAndUserSop);
             }else{
                 runSection=Boolean.valueOf(argValues[8].toString()) || PROCDEPL_PROCEDURE_SOP_META_DATA;
                 sectionsSettingJobj.put("4) SOPs", runSection);
@@ -162,7 +162,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 createDBProcedureUserRoles.put("section_label_es", "Sección de asignación de PNTs a Usuarios");
                 iSection++;
                 createDBProcedureUserRoles.put("index", iSection);
-                sectionsDetailCheckerArr.add(createDBProcedureUserRoles);
+                sectionsDetailCheckerArr.put(createDBProcedureUserRoles);
             }else{
                 runSection=Boolean.valueOf(argValues[9].toString()) || PROCDEPL_ASIGN_PROC_SOPS_TO_USERS;
                 sectionsSettingJobj.put("5) Assign SOPs to Users", runSection);
@@ -178,7 +178,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 createDBProcedureEvents.put("section_label_es", "Sección de Procedure Events");
                 iSection++;
                 createDBProcedureEvents.put("index", iSection);
-                sectionsDetailCheckerArr.add(createDBProcedureEvents);
+                sectionsDetailCheckerArr.put(createDBProcedureEvents);
             }else{
                 runSection=Boolean.valueOf(argValues[10].toString()) || PROCDEPL_PROCEDURE_ACTIONS;
                 sectionsSettingJobj.put("6) Procedure Actions", runSection);
@@ -195,7 +195,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 createPropBusinessRules.put("section_label_es", "Sección de Procedure Business Rules");
                 iSection++;
                 createPropBusinessRules.put("index", iSection);
-                sectionsDetailCheckerArr.add(createPropBusinessRules);
+                sectionsDetailCheckerArr.put(createPropBusinessRules);
             }else{
                 runSection=Boolean.valueOf(argValues[11].toString()) || PROCDEPL_BUSINESS_RULES_PROPTS_FILS;
                 sectionsSettingJobj.put("7) Business Rules", runSection);
@@ -211,7 +211,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 createDBModuleTablesAndFields.put("section_label_es", "Sección de Creación de Tablas y Campos del módulo");
                 iSection++;
                 createDBModuleTablesAndFields.put("index", iSection);
-                sectionsDetailCheckerArr.add(createDBModuleTablesAndFields);
+                sectionsDetailCheckerArr.put(createDBModuleTablesAndFields);
             }else{
                 runSection=Boolean.valueOf(argValues[12].toString()) || PROCDEPL_MODULE_TABLES_AND_FIELDS;
                 sectionsSettingJobj.put("8) Module tables and fields", runSection);
@@ -227,7 +227,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 createDBModuleTablesAndFields.put("section_label_es", "Sección de Creación de Data Maestra");
                 iSection++;
                 createDBModuleTablesAndFields.put("index", iSection);
-                sectionsDetailCheckerArr.add(createDBModuleTablesAndFields);
+                sectionsDetailCheckerArr.put(createDBModuleTablesAndFields);
             }else{
                 runSection=Boolean.valueOf(argValues[13].toString()) || PROCDEPL_MASTER_DATA;
                 sectionsSettingJobj.put("9) Master Data", runSection);
@@ -243,7 +243,7 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 dataRepositoriesAreMirror.put("section_label_es", "Sección para Comprobar que los Repositorios de Datos son Espejo");
                 iSection++;
                 dataRepositoriesAreMirror.put("index", iSection);
-                sectionsDetailCheckerArr.add(dataRepositoriesAreMirror);
+                sectionsDetailCheckerArr.put(dataRepositoriesAreMirror);
             }
             
             mainObj.put("actions_to_perform_settings", sectionsSettingJobj);

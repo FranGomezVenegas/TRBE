@@ -29,7 +29,7 @@ import static module.inventorytrack.logic.DataInventoryQualif.invTrackingAuditSe
 import static module.inventorytrack.logic.DataInventoryQualif.objectVariableChangeValue;
 import static module.inventorytrack.logic.DataInventoryQualif.objectVariableSetValue;
 import modules.masterdata.analysis.ConfigAnalysisStructure;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.ActionsClass;
 import trazit.enums.EnumIntTableFields;
@@ -390,7 +390,7 @@ public class ClassInvTracking implements ActionsClass{
                             jsonValuesObj.put(tblFields[i], argValues[i]);
                         }
                     }
-                    jArr.add(jsonValuesObj);
+                    jArr.put(jsonValuesObj);
                     jsonObj.put("values", jArr);
                     ClassMasterData clss = new ClassMasterData(procReqSession.getProcedureInstance(), TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName(), jsonObj.toJSONString(), TrazitModules.STOCKS.toString());
                     actionDiagnoses = clss.getDiagnostic();

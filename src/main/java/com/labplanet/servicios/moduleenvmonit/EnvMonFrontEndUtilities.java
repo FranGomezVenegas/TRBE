@@ -9,7 +9,7 @@ import module.monitoring.definition.TblsEnvMonitConfig;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import trazit.queries.QueryUtilitiesEnums;
@@ -108,7 +108,7 @@ public class EnvMonFrontEndUtilities {
     JSONArray jArr = new JSONArray();
     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(records[0][0].toString()))){
         for (Object[] curRec: records)
-            jArr.add(LPJson.convertArrayRowToJSONObject(fieldsName, curRec));    
+            jArr.put(LPJson.convertArrayRowToJSONObject(fieldsName, curRec));    
     }
     return jArr;
   }

@@ -1,52 +1,135 @@
 package trazit.thirdparties.sap;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class PDFDataExtractor {
 
-    public static String getDataFromPDF() throws IOException {
-
-        StringBuilder logSummary = new StringBuilder(0);
-
-        //String pdfUrl = "https://1drv.ms/b/s!Ah1ARh7IPhH8gcU-Gn2bmEW_SOMQFQ?e=azvXTm";
-//        URL url=new URL(pdfUrl);
-//        PDDocument document=PDDocument.load(url.openStream());
-        //PDDocument document = PDDocument.load(new URL(pdfUrl).openStream());
-//        URL url = new URL(pdfUrl);
-//        InputStream inputStream = url.openStream();
-//        PDDocument document = PDDocument.load(inputStream);    
-        //String pdfPath = "M:/LW-LIMS-V6-PROCAPS/HPLC_VALIDACIONES_FRAN_382.pdf";
-        String pdfPath = "D:/LP/Interfaces/HPLC_VALIDACIONES_FRAN_382.pdf";
-        File pdfFile = new File(pdfPath);
-
-        PDDocument document = PDDocument.load(pdfFile);
+    public static String PARSING_TABLE_TAG="table_data";
+    
+    public static JSONObject getHplcValidacionesPDFInputStream(InputStream inputStream) throws IOException {
+        
+        PDDocument document = null;
+        if (inputStream==null){
+            String pdfPath = "D:/LP/Interfaces/HPLC_VALIDACIONES_FRAN_382.pdf";
+            File pdfFile = new File(pdfPath);
+            document = PDDocument.load(pdfFile);
+        }else{
+            document = PDDocument.load(inputStream);
+        }
         //try (PDDocument document = PDDocument.load(new URL(pdfUrl))) {
         PDFTextStripper stripper = new PDFTextStripper();
         String text = stripper.getText(document);
-
-        Pattern minPattern = Pattern.compile("Min: (\\d+\\.\\d+)");
-        Matcher minMatcher = minPattern.matcher(text);
-        if (minMatcher.find()) {
-            String minValue = minMatcher.group(1);
-            logSummary.append("Min value: ").append(minValue);
+        String[][] individualMatcher=new String[][]{{"min", "Min: (\\d+\\.\\d+)"}, {"max", "Max: (\\d+\\.\\d+)"}, {"mean", "Mean: (\\d+\\.\\d+)"},
+            {"std_dev", "Std Dev: (\\d+\\.\\d+)"}, {"rsd", "%RSD: (\\d+\\.\\d+)"}};
+        JSONObject jMainObj=new JSONObject();
+        for (String[] curMatcher: individualMatcher){
+            Pattern minPattern = Pattern.compile(curMatcher[1]);
+            Matcher minMatcher = minPattern.matcher(text);            
+            if (minMatcher.find()) {
+                String matcherValue = minMatcher.group(1);
+                jMainObj.put(curMatcher[0], matcherValue);
+            }
         }
-
-        Pattern stdDevPattern = Pattern.compile("Std Dev: (\\d+\\.\\d+)");
-        Matcher stdDevMatcher = stdDevPattern.matcher(text);
-        if (stdDevMatcher.find()) {
-            String stdDevValue = stdDevMatcher.group(1);
-            logSummary.append("Std Dev value: ").append(stdDevValue);
-        }
-        //}
-        return logSummary.toString();
+        
+        Pattern tablePattern = Pattern.compile("DICLOFENACO SODICO\\s+Data Filename ESTD\\s+(.+?)\\s+Min:", Pattern.DOTALL);
+        JSONArray jTblArr= new JSONArray();
+        Matcher tableMatcher = tablePattern.matcher(text);
+        if (tableMatcher.find()) {
+            String tableText = tableMatcher.group(1).trim();
+            String[] lines = tableText.split("\\r?\\n");
+            for (String line : lines) {
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
+                // Split line based on spaces and add to JSON object
+                String[] parts = line.split("\\s+");
+                if (parts.length >= 4) {
+                    String id = parts[0];
+                    String filename = parts[1];
+                    String udcValue = parts[2];
+                    String estdValue = parts[3];
+                    JSONObject jTblRowObj=new JSONObject();
+                    jTblRowObj.put("index", id).put("filename", filename).put("udc", udcValue).put("estd", estdValue);
+                    jTblArr.put(jTblRowObj);
+                }
+            }
+            jMainObj.put("table_data", jTblArr);
+        }        
+        
+        document.close();
+        return jMainObj;
     }
 
+    public static JSONObject getHplcValidacionesPDF(byte[] pdfData) throws IOException {
+        PDDocument document = null;
+
+        if (pdfData == null) {
+            String pdfPath = "D:/LP/Interfaces/HPLC_VALIDACIONES_FRAN_382.pdf";
+            File pdfFile = new File(pdfPath);
+            document = PDDocument.load(pdfFile);
+        } else {
+            InputStream inputStream = new ByteArrayInputStream(pdfData);
+            document = PDDocument.load(inputStream);
+        }
+
+        PDFTextStripper stripper = new PDFTextStripper();
+        String text = stripper.getText(document);
+        String[][] individualMatcher = new String[][]{
+                {"min", "Min: (\\d+\\.\\d+)"},
+                {"max", "Max: (\\d+\\.\\d+)"},
+                {"mean", "Mean: (\\d+\\.\\d+)"},
+                {"std_dev", "Std Dev: (\\d+\\.\\d+)"},
+                {"rsd", "%RSD: (\\d+\\.\\d+)"}
+        };
+        JSONObject jMainObj = new JSONObject();
+        for (String[] curMatcher : individualMatcher) {
+            Pattern pattern = Pattern.compile(curMatcher[1]);
+            Matcher matcher = pattern.matcher(text);
+            if (matcher.find()) {
+                String matcherValue = matcher.group(1);
+                jMainObj.put(curMatcher[0], matcherValue);
+            }
+        }
+
+        Pattern tablePattern = Pattern.compile("DICLOFENACO SODICO\\s+Data Filename ESTD\\s+(.+?)\\s+Min:", Pattern.DOTALL);
+        JSONArray jTblArr = new JSONArray();
+        Matcher tableMatcher = tablePattern.matcher(text);
+        if (tableMatcher.find()) {
+            String tableText = tableMatcher.group(1).trim();
+            String[] lines = tableText.split("\\r?\\n");
+            for (String line : lines) {
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
+                // Split line based on spaces and add to JSON object
+                String[] parts = line.split("\\s+");
+                if (parts.length >= 4) {
+                    String id = parts[0];
+                    String filename = parts[1];
+                    String udcValue = parts[2];
+                    String estdValue = parts[3];
+                    JSONObject jTblRowObj = new JSONObject();
+                    jTblRowObj.put("estd", estdValue).put("index", id).put("filename", filename).put("udc", udcValue);
+                    jTblArr.put(jTblRowObj);
+                }
+            }
+            jMainObj.put(PARSING_TABLE_TAG, jTblArr);
+        }
+
+        document.close();
+        return jMainObj;
+    }
+    
     public static String getAmoxicilinaPDF() throws IOException {
         StringBuilder logSummary = new StringBuilder(0);
         // Open the PDF file
@@ -88,11 +171,15 @@ public class PDFDataExtractor {
         return logSummary.toString();
     }
 
-    public static String getCarbohydratesByHPLCPDF() throws IOException {
+    public static String getCarbohydratesByHPLCPDF(InputStream inputStream) throws IOException {
         StringBuilder logSummary = new StringBuilder(0);
         // Open the PDF file
-        PDDocument document = PDDocument.load(new File("D:/LP/Interfaces/Carbohydrates by HPLC Report.pdf"));
-
+        PDDocument document = null;
+        if (inputStream==null){
+            document = PDDocument.load(new File("D:/LP/Interfaces/Carbohydrates by HPLC Report.pdf"));
+        }else{
+            document = PDDocument.load(inputStream);
+        }
         // Create a PDFTextStripper object to extract the text from the PDF
         PDFTextStripper stripper = new PDFTextStripper();
 

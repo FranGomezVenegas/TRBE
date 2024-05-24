@@ -13,7 +13,7 @@ import trazit.procedureinstance.definition.definition.TblsReqs;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.procedureinstance.definition.logic.ClassReqProcedUserAndActionsForQueries.sopsByRoles;
@@ -43,7 +43,7 @@ public class ClassReqProcedureQueries {
         JSONArray jBlockArr = new JSONArray();
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procUsers[0][0].toString()))) {
             for (Object[] curRow : procUsers) {
-                jBlockArr.add(LPJson.convertArrayRowToJSONObject(fldsArr, curRow));
+                jBlockArr.put(LPJson.convertArrayRowToJSONObject(fldsArr, curRow));
             }
         }
         allContentArr1D=LPArray.addValueToArray1D(allContentArr1D, TblsReqs.TablesReqs.PROC_USERS.getTableName());
@@ -59,7 +59,7 @@ public class ClassReqProcedureQueries {
         jBlockArr = new JSONArray();
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procRoles[0][0].toString()))) {
             for (Object[] curRow : procRoles) {
-                jBlockArr.add(LPJson.convertArrayRowToJSONObject(fldsArr, curRow));
+                jBlockArr.put(LPJson.convertArrayRowToJSONObject(fldsArr, curRow));
             }
         }
         allContentArr1D=LPArray.addValueToArray1D(allContentArr1D, TblsReqs.TablesReqs.PROCEDURE_ROLES.getTableName());
@@ -74,7 +74,7 @@ public class ClassReqProcedureQueries {
         jBlockArr = new JSONArray();
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procUserRoles[0][0].toString()))) {
             for (Object[] curRow : procUserRoles) {
-                jBlockArr.add(LPJson.convertArrayRowToJSONObject(fldsArr, curRow));
+                jBlockArr.put(LPJson.convertArrayRowToJSONObject(fldsArr, curRow));
             }
         }
         allContentArr1D=LPArray.addValueToArray1D(allContentArr1D, TblsReqs.TablesReqs.PROC_USER_ROLES.getTableName());
@@ -122,18 +122,18 @@ public class ClassReqProcedureQueries {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValue[0][0].toString())) {
             JSONObject jObj = new JSONObject();
             jObj.put(NO_DATA, NO_DATA);
-            jArr.add(jObj);
+            jArr.put(jObj);
         } else {
             JSONObject jObj = new JSONObject();
             jObj.put("laptop_mode", JsonParser.parseString(ruleValue[0][0].toString()).getAsJsonObject());
-            jArr.add(jObj);
+            jArr.put(jObj);
             jObj = new JSONObject();
             if (ruleValue[0][1] == null || ruleValue[0][1].toString().length() == 0) {
                 jObj.put("mobile_mode", "no mobile version");
             } else {
                 jObj.put("mobile_mode", JsonParser.parseString(ruleValue[0][1].toString()).getAsJsonObject());
             }
-            jArr.add(jObj);
+            jArr.put(jObj);
 
         }
         return jArr;

@@ -24,7 +24,7 @@ import databases.TblsCnfg;
 import static functionaljavaa.parameter.Parameter.getBusinessRuleAppFile;
 import java.util.ArrayList;
 import java.util.Map;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;
 import trazit.globalvariables.GlobalVariables;

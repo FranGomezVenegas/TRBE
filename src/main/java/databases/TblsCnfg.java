@@ -200,6 +200,7 @@ public class TblsCnfg {
         CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date(), "to_char(" + "created_on" + ",'YYYY-MM-DD HH:MI')", null, null, null),
         ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(true), null, null, null, null),
         TESTING_GROUP( LPDatabase.FIELDS_NAMES_TESTING_GROUP, LPDatabase.string(), null, null, null, null),
+        PARSING( "parsing", LPDatabase.string(), null, null, null, null),
         APPROVED_FOR_USE( "approved_for_use", LPDatabase.booleanFld(false), null, null, null, null),
         APPROVED_BY( "approved_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         APPROVED_ON( "approved_on", LPDatabase.dateTime(), "to_char(" + "approved_on" + ",'YYYY-MM-DD HH:MI')", null, null, null),

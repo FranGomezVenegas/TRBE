@@ -573,7 +573,9 @@ public class TblsData {
         SUBALIQUOT_ID(FIELDS_NAMES_SUBALIQUOT_ID, LPDatabase.integer(), null, null, null, null),
         REVIEWED("reviewed", LPDatabase.booleanFld(), null, null, null, null),
         REVIEWED_ON("reviewed_on", LPDatabase.dateTime(), "to_char(" + "reviewed_on" + ",'YYYY-MM-DD HH:MI')", null, null, null),
-        REVIEWED_BY("reviewed_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),;
+        REVIEWED_BY("reviewed_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
+        PARSING("parsing", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null)
+        ;
 
         private SampleAnalysis(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules) {
@@ -655,7 +657,8 @@ public class TblsData {
         MIN_ALLOWED("min_allowed", LPDatabase.real(), null, null, null, null),
         MAX_ALLOWED("max_allowed", LPDatabase.real(), null, null, null, null),
         LIST_ENTRY("list_entry", LPDatabase.string(), null, null, null, null),
-        CALC_LINKED("calc_linked", LPDatabase.string(), null, null, null, null), /* Este bloque de campos está a nivel de SampleAnalysis, es posible que pueda ser interesante tb en sample_analysis_result
+        CALC_LINKED("calc_linked", LPDatabase.string(), null, null, null, null), 
+        TAG_IN_PARSING("tag_in_parsing", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null)/* Este bloque de campos está a nivel de SampleAnalysis, es posible que pueda ser interesante tb en sample_analysis_result
         , REVIEWER("reviewer", LPDatabase.String())
         , REVIEWER_ASSIGNED_ON("reviewer_assigned_on", LPDatabase.dateTime())        
         , REVIEWER_ASSIGNED_BY("reviewer_assigned_by", LPDatabase.String())        

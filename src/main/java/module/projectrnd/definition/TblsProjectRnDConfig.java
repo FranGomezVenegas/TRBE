@@ -22,7 +22,7 @@ import trazit.globalvariables.GlobalVariables;
  * @author Administrator
  */
 public class TblsProjectRnDConfig {
-    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.DATA.getName();
+    private static final java.lang.String SCHEMA_NAME = GlobalVariables.Schemas.CONFIG.getName();
     private static final Boolean IS_PRODEDURE_INSTANCE = true;
     public enum TablesProjectRnDConfig implements EnumIntTables{
         INGREDIENTS(null, "ingredients", SCHEMA_NAME, true, Ingredients.values(), null,
@@ -105,7 +105,7 @@ public class TblsProjectRnDConfig {
         ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(), null, null, null, null),
         NOTES("notes", LPDatabase.integer(), null, null, null, null),
         CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
-        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date(), null, null, null, null),
+        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.dateTimeWithDefaultNow(), null, null, null, null),
         ;
         private Ingredients(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){

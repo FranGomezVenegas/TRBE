@@ -129,6 +129,7 @@ public class TblsMethodValidationData {
         COC_REQUESTED_ON("coc_requested_on", LPDatabase.date(), null, null, null, null, true),
         COC_CONFIRMED_ON("coc_confirmed_on", LPDatabase.date()
             , null, null, null, null, true),
+        PROJECT("project", LPDatabase.stringNotNull(), null, null, null, null, true),
         PARAMETER_NAME("parameter_name",  LPDatabase.stringNotNull(), null, null, null, null, true),
         ANALYTICAL_PARAMETER("analytical_parameter",  LPDatabase.string(), null, null, null, null, true),
         REVIEWER("reviewer",LPDatabase.string(), null, null, null, null, true),

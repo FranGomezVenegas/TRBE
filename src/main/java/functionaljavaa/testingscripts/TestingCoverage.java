@@ -34,8 +34,8 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
@@ -174,10 +174,10 @@ public final class TestingCoverage {
                 }
                 if (LPArray.valueInArray(this.procActionsArr, curScriptEndpoint)) {
                     this.endpointsVisitedTotal++;
-                    visitedjObj.add(curScriptEndpoint);
+                    visitedjObj.put(curScriptEndpoint);
                 } else {
                     this.endpointsMissingTotal++;
-                    missingjObj.add(curScriptEndpoint);
+                    missingjObj.put(curScriptEndpoint);
                 }
             }
         }
@@ -185,13 +185,13 @@ public final class TestingCoverage {
         if (accVisited == null) {
             accVisited = visitedjObj;
         } else {
-            accVisited.addAll(visitedjObj);
+            accVisited.putAll(visitedjObj);
         }
         JSONArray accMissing = (JSONArray) this.endpointsCoverageDetail.get("missing");
         if (accMissing == null) {
             accMissing = missingjObj;
         } else {
-            accMissing.addAll(missingjObj);
+            accMissing.putAll(missingjObj);
         }
         this.endpointsCoverageDetail.put("visited", accVisited);
         this.endpointsCoverageDetail.put("missing", accMissing);
@@ -211,11 +211,11 @@ public final class TestingCoverage {
                 if (this.procBusRules.getConfigBusinessRule(curScriptConfigRule).length() == 0) {
                     this.busRuleVisitedMissingInProcConfig++;
                     this.busRuleVisitedMissingInProcTotal++;
-                    missingRulesJArr.add(jObj);
+                    missingRulesJArr.put(jObj);
                 } else {
                     this.busRuleVisitedTotal++;
                     this.busRuleVisitedConfigRules++;
-                    visitedRulesJArr.add(jObj);
+                    visitedRulesJArr.put(jObj);
                 }
             }
         }
@@ -230,11 +230,11 @@ public final class TestingCoverage {
                 if (this.procBusRules.getDataBusinessRule(curScriptDataRule).length() == 0) {
                     this.busRuleVisitedMissingInProcData++;
                     this.busRuleVisitedMissingInProcTotal++;
-                    missingRulesJArr.add(jObj);
+                    missingRulesJArr.put(jObj);
                 } else {
                     this.busRuleVisitedTotal++;
                     this.busRuleVisitedDataRules++;
-                    visitedRulesJArr.add(jObj);
+                    visitedRulesJArr.put(jObj);
                 }
             }
         }
@@ -243,18 +243,18 @@ public final class TestingCoverage {
 /*            if ((calcProcedure == null || calcProcedure.isEmpty() || !calcProcedure.contains(curScriptProcedureRule))
                     && Boolean.FALSE.equals(curScriptProcedureRule.contains("AuditReasonPhrase"))) {
                 if (curScriptProcedureRule != null) {
-                    calcProcedure.add(curScriptProcedureRule);
+                    calcProcedure.put(curScriptProcedureRule);
                     JSONObject jObj = new JSONObject();
                     jObj.put("area", "procedure");
                     jObj.put("rule_name", curScriptProcedureRule);
                     if (this.procBusRules.getProcedureBusinessRule(curScriptProcedureRule).length() == 0) {
                         this.busRuleVisitedMissingInProcProcedure++;
                         this.busRuleVisitedMissingInProcTotal++;
-                        missingRulesJArr.add(jObj);
+                        missingRulesJArr.put(jObj);
                     } else {
                         this.busRuleVisitedTotal++;
                         this.busRuleVisitedProcedureRules++;
-                        visitedRulesJArr.add(jObj);
+                        visitedRulesJArr.put(jObj);
                     }
                 }
             }
@@ -264,13 +264,13 @@ public final class TestingCoverage {
         if (accVisited == null) {
             accVisited = visitedRulesJArr;
         } else {
-            accVisited.addAll(visitedRulesJArr);
+            accVisited.putAll(visitedRulesJArr);
         }
         JSONArray accMissing = (JSONArray) this.busRuleCoverageDetail.get("missing");
         if (accMissing == null) {
             accMissing = missingRulesJArr;
         } else {
-            accMissing.addAll(missingRulesJArr);
+            accMissing.putAll(missingRulesJArr);
         }
         this.busRuleCoverageDetail.put("visited", accVisited);
         this.busRuleCoverageDetail.put("missing", accMissing);
@@ -282,11 +282,11 @@ public final class TestingCoverage {
             for (int i = 0; i < currScriptMessages.size(); i++) {
                 JsonElement msgCodeObj = currScriptMessages.get(i);
                 String curMsgCode = currScriptMessages.get(i).getAsJsonObject().get("messageCode").getAsString();
-                if (this.msgCodeVisitedObj == null || !this.msgCodeVisitedObj.contains(msgCodeObj)) {
-                    this.msgCodeVisitedObj.add(msgCodeObj);
+                if (this.msgCodeVisitedObj == null || !LPJson.contains(this.msgCodeVisitedObj, msgCodeObj)) {
+                    this.msgCodeVisitedObj.put(msgCodeObj);
                 }
-                if (Boolean.FALSE.equals(this.msgCodeVisited.contains(curMsgCode))) {
-                    this.msgCodeVisited.add(curMsgCode);
+                if (Boolean.FALSE.equals(LPJson.contains(this.msgCodeVisited, curMsgCode))) {
+                    this.msgCodeVisited.put(curMsgCode);
                 }
             }
         } catch (Exception e) {
@@ -332,14 +332,14 @@ public final class TestingCoverage {
 
         JSONObject unCoveredBusRules = new JSONObject();
         JSONArray excludedBusRules = new JSONArray();
-        excludedBusRules.addAll(Arrays.asList(this.coverageBusRulesExcludeList));
+        excludedBusRules.putAll(Arrays.asList(this.coverageBusRulesExcludeList));
         unCoveredBusRules.put("excluded_list", excludedBusRules);
 
         JSONArray notCoveredBusRules = new JSONArray();
 
         String[] accVisitedArr = new String[]{};
         JSONArray accVisited = (JSONArray) this.busRuleCoverageDetail.get("visited");
-        for (int iVisited = 0; iVisited < accVisited.size(); iVisited++) {
+        for (int iVisited = 0; iVisited < accVisited.length(); iVisited++) {
             JSONObject curVisited = (JSONObject) accVisited.get(iVisited);
             accVisitedArr = LPArray.addValueToArray1D(accVisitedArr, curVisited.get("area") + "_" + curVisited.get("rule_name"));
         }
@@ -351,12 +351,12 @@ public final class TestingCoverage {
         for (RuleInfo curRule : configBusinessRules) {
             JSONObject ruleJObj = new JSONObject();
             ruleJObj.put(curRule.getRuleName(), curRule.getRuleValue());
-            procBusRulesAreaJArr.add(ruleJObj);
+            procBusRulesAreaJArr.put(ruleJObj);
             String curRuleStr = "config_" + curRule.getRuleName();//+"="+curRule.getRuleValue();
             boolean inExclList = LPArray.valueInArray(this.coverageBusRulesExcludeList, curRuleStr);
             boolean valueInArray = LPArray.valueInArray(accVisitedArr, curRuleStr);
-            if (Boolean.FALSE.equals(valueInArray) && Boolean.FALSE.equals(inExclList) && Boolean.FALSE.equals(notCoveredBusRules.contains(curRuleStr))) {
-                notCoveredBusRules.add(curRuleStr);
+            if (Boolean.FALSE.equals(valueInArray) && Boolean.FALSE.equals(inExclList) && Boolean.FALSE.equals(LPJson.contains(notCoveredBusRules, curRuleStr))) {
+                notCoveredBusRules.put(curRuleStr);
             }
         }
         procBusRulesJObj.put("config", procBusRulesAreaJArr);
@@ -366,12 +366,12 @@ public final class TestingCoverage {
         for (RuleInfo curRule : dataBusinessRules) {
             JSONObject ruleJObj = new JSONObject();
             ruleJObj.put(curRule.getRuleName(), curRule.getRuleValue());
-            procBusRulesAreaJArr.add(ruleJObj);
+            procBusRulesAreaJArr.put(ruleJObj);
             String curRuleStr = "data_" + curRule.getRuleName();//+"="+curRule.getRuleValue();
             boolean inExclList = LPArray.valueInArray(this.coverageBusRulesExcludeList, curRuleStr);
             boolean valueInArray = LPArray.valueInArray(accVisitedArr, curRuleStr);
-            if (Boolean.FALSE.equals(valueInArray) && Boolean.FALSE.equals(inExclList) && Boolean.FALSE.equals(notCoveredBusRules.contains(curRuleStr))) {
-                notCoveredBusRules.add(curRuleStr);
+            if (Boolean.FALSE.equals(valueInArray) && Boolean.FALSE.equals(inExclList) && Boolean.FALSE.equals(LPJson.contains(notCoveredBusRules, curRuleStr))) {
+                notCoveredBusRules.put(curRuleStr);
             }
         }
         procBusRulesJObj.put("data", procBusRulesAreaJArr);
@@ -382,23 +382,23 @@ public final class TestingCoverage {
         for (RuleInfo curRule : procedureBusinessRules) {
             JSONObject ruleJObj = new JSONObject();
             ruleJObj.put(curRule.getRuleName(), curRule.getRuleValue());
-            procBusRulesAreaJArr.add(ruleJObj);
+            procBusRulesAreaJArr.put(ruleJObj);
             String curRuleStr = "procedure_" + curRule.getRuleName();
             boolean inExclList = LPArray.valueInArray(this.coverageBusRulesExcludeList, curRuleStr);
             boolean valueInArray = LPArray.valueInArray(accVisitedArr, curRuleStr);
-            if ((Boolean.FALSE.equals(valueInArray) && Boolean.FALSE.equals(notCoveredBusRules.contains(curRuleStr)) && Boolean.FALSE.equals(procedureRulesNotToPutInPlace(curRuleStr)))
+            if ((Boolean.FALSE.equals(valueInArray) && Boolean.FALSE.equals(LPJson.contains(notCoveredBusRules, curRuleStr)) && Boolean.FALSE.equals(procedureRulesNotToPutInPlace(curRuleStr)))
                     && (Boolean.FALSE.equals(inExclList) && Boolean.FALSE.equals(LPArray.valueInArray(this.busRuleExcludedByExcludeEndpoint, curRuleStr)))) {
-                notCoveredBusRules.add(curRuleStr);
+                notCoveredBusRules.put(curRuleStr);
             }
         }
         if (this.busRuleExcludedByExcludeEndpoint.length > 0) {
             JSONArray busRuleExcludedByExcludeEndpointJArr = new JSONArray();
-            busRuleExcludedByExcludeEndpointJArr.addAll(Arrays.asList(busRuleExcludedByExcludeEndpoint));
+            busRuleExcludedByExcludeEndpointJArr.putAll(Arrays.asList(busRuleExcludedByExcludeEndpoint));
             unCoveredBusRules.put("business_rules_excluded_by_exclude_the_endpoint", busRuleExcludedByExcludeEndpointJArr);
         }
 
         procBusRulesJObj.put("procedure", procBusRulesAreaJArr);
-        procBusRulesJArr.add(procBusRulesJObj);
+        procBusRulesJArr.put(procBusRulesJObj);
 
         this.busRuleCoverageDetail.put("procedure_rules", procBusRulesJArr);
         unCoveredBusRules.put("uncoverage_list", notCoveredBusRules);
@@ -412,7 +412,7 @@ public final class TestingCoverage {
         String percExplPatternStr = "The <*1*> is <*2*> div <*3*> ";
 
         JSONArray procActionsJArr = new JSONArray();
-        procActionsJArr.addAll(Arrays.asList(this.procActionsArr));
+        procActionsJArr.putAll(Arrays.asList(this.procActionsArr));
 
         JSONObject endpointsSummaryJObj = new JSONObject();
         double divisor = this.procActionsArr.length;
@@ -434,15 +434,15 @@ public final class TestingCoverage {
 
         JSONObject unCoveredEndPoints = new JSONObject();
         JSONArray excludedEndPoints = new JSONArray();
-        excludedEndPoints.addAll(Arrays.asList(this.coverageEndpointsExcludeList));
+        excludedEndPoints.putAll(Arrays.asList(this.coverageEndpointsExcludeList));
         unCoveredEndPoints.put("excluded_list", excludedEndPoints);
         JSONArray notCoveredEndPoints = new JSONArray();
         for (String curEnd : this.procActionsArr) {
             boolean inExclList = LPArray.valueInArray(this.coverageEndpointsExcludeList, curEnd);
             JSONArray accVisited = (JSONArray) this.endpointsCoverageDetail.get("visited");
-            boolean inVisitedList = accVisited.contains(curEnd);
+            boolean inVisitedList = LPJson.contains(accVisited, curEnd);
             if (Boolean.FALSE.equals(inExclList) && Boolean.FALSE.equals(inVisitedList) && curEnd.length() > 0 && Boolean.FALSE.equals(LPArray.valueInArray(this.busRuleExcludedByExcludeEndpoint, curEnd))) {
-                notCoveredEndPoints.add(curEnd);
+                notCoveredEndPoints.put(curEnd);
             }
         }
         unCoveredEndPoints.put("uncoverage_list", notCoveredEndPoints);
@@ -466,7 +466,7 @@ public final class TestingCoverage {
                 new EnumIntTableFields[]{TblsReqs.ModuleErrorNotifications.API_NAME, TblsReqs.ModuleErrorNotifications.ERROR_CODE}, null, false);        
             Object[] moduleAllAPIs=LPArray.getColumnFromArray2D(moduleAllNotifications, 0);
             
-            for (int iMsgs = 0; iMsgs < this.msgCodeVisitedObj.size(); iMsgs++) {
+            for (int iMsgs = 0; iMsgs < this.msgCodeVisitedObj.length(); iMsgs++) {
                 JsonObject curVisited = (JsonObject) this.msgCodeVisitedObj.get(iMsgs);
                 if (Boolean.TRUE.equals(LPArray.valueInArray(moduleAllAPIs, curVisited.get("className")))&&
                         Boolean.FALSE.equals(LPArray.valueInArray(msgClasses, curVisited.get("className")))) {
@@ -498,7 +498,7 @@ public final class TestingCoverage {
                             for (int j = 0; j < enumConstantObjects.size(); j++) {
                                 EnumIntMessages curBusRul = (EnumIntMessages) enumConstantObjects.get(j);
                                 String evName = curBusRul.getErrorCode();
-                                if (this.msgCodeVisited.contains(evName)) {
+                                if (LPJson.contains(this.msgCodeVisited, evName)) {
                                     evName = evName + " visited";
                                     totalVisitedNotif++;
                                     totalClassVisitedNotif++;
@@ -506,7 +506,7 @@ public final class TestingCoverage {
                                     totalNotVisitedNotif++;
                                     totalClassNotVisitedNotif++;
                                 }                                
-                                enumsIncomplete.add(evName);
+                                enumsIncomplete.put(evName);
                             }
                             jObj.put("total_notifications", totalClassNotifications);
                             jObj.put("visited_notifications", totalClassVisitedNotif);
@@ -515,7 +515,7 @@ public final class TestingCoverage {
                             jObj.put("messages", enumsIncomplete);
                         }
                     }
-                    msgClassAllMessagesJArr.add(jObj);
+                    msgClassAllMessagesJArr.put(jObj);
                 }
             }
         } catch (Exception e) {
@@ -556,7 +556,7 @@ public final class TestingCoverage {
 
         JSONObject unCoveredMsgCodes = new JSONObject();
         JSONArray excludedMsgCodes = new JSONArray();
-        excludedMsgCodes.addAll(Arrays.asList(this.coverageMsgCodeExcludeList));
+        excludedMsgCodes.putAll(Arrays.asList(this.coverageMsgCodeExcludeList));
         unCoveredMsgCodes.put("excluded_list", excludedMsgCodes);
     }
 
@@ -591,8 +591,8 @@ public final class TestingCoverage {
         this.msgCodeCoverageDetail = new JSONObject();
     }
 
-    public JSONObject getJsonSummary() {
-        JSONObject mainObj=LPFrontEnd.responseJSONDiagnosticPositiveEndpoint(ProcedureDefinitionAPIActionsEndpoints.TESTING_COVERAGE_RUN, new Object[]{this.coverageId}, null);
+    public org.json.simple.JSONObject getJsonSummary() {
+        org.json.simple.JSONObject mainObj=LPFrontEnd.responseJSONDiagnosticPositiveEndpointSimple(ProcedureDefinitionAPIActionsEndpoints.TESTING_COVERAGE_RUN, new Object[]{this.coverageId}, null);
         JSONObject coverageObj = new JSONObject();
         coverageObj.put("coverageId", this.coverageId);
         coverageObj.put("ScriptsIncluded", Arrays.toString(this.scriptIds));
@@ -623,7 +623,7 @@ public final class TestingCoverage {
             for (String curFld : fldsToGet) {
                 curRecObj.put(curFld, curRec[LPArray.valuePosicInArray(this.scriptsFldNameArr, curFld)].toString());
             }
-            scriptsInfoJArr.add(curRecObj);
+            scriptsInfoJArr.put(curRecObj);
         }
         mainObj.put("Scripts_Info", scriptsInfoJArr);
 

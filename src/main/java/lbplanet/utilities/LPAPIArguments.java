@@ -15,10 +15,11 @@ import javax.servlet.http.HttpServletRequest;
 import java.sql.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.http.Part;
+import javax.servlet.ServletException;
 import static lbplanet.utilities.LPHttp.toSnakeCase;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import trazit.session.ApiMessageReturn;
-
 /**
  *
  * @author User
@@ -285,8 +286,29 @@ public class LPAPIArguments {
                             //Object[] valueConvertedTopObjectArr = LPArray.convertStringWithDataTypeToObjectArray(requestArgValue.split("\\|"));   
                             returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
                             break;
-                        case FILE:
-                            StringBuilder requestBody = new StringBuilder();
+                        case FILE:   
+                            Part filePart = null;
+                        try {
+                            filePart = request.getPart("file");
+                        } catch (IOException | ServletException ex) {
+                            Logger.getLogger(LPAPIArguments.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                            if (filePart != null) {
+                                try (InputStream inputStream = filePart.getInputStream()) {
+                                    //returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, inputStream);
+                                    byte[] fileContent = inputStreamToByteArray(inputStream);                        
+                                    // Create a new InputStream from the byte array
+                                    //InputStream newInputStream = new ByteArrayInputStream(fileContent);                                    
+                                    // Return the new InputStream
+                                    returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, fileContent);
+                                                       
+                                } catch (IOException ex) {
+                                    returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, null);
+                                    Logger.getLogger(LPAPIArguments.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                            }  
+                            break;
+/*                            StringBuilder requestBody = new StringBuilder();
                             String line;
                             BufferedReader reader = null;
                             try {
@@ -298,7 +320,7 @@ public class LPAPIArguments {
                                 returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, requestBody.toString());
                             } catch (IOException ex) {
                                 Logger.getLogger(LPAPIArguments.class.getName()).log(Level.SEVERE, null, ex);
-                            }
+                            }*/
                         default:
                             returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
                             break;

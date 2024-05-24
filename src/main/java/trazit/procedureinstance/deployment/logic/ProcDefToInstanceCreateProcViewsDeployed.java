@@ -20,7 +20,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFilesTools;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntViewFields;
@@ -240,7 +240,7 @@ public class ProcDefToInstanceCreateProcViewsDeployed {
             if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procActionsArr[0][0].toString()))) {
                 JSONArray allViewActions = new JSONArray();
                 for (Object[] curAction : procActionsArr) {
-                    allViewActions.add(curAction[1]);
+                    allViewActions.put(curAction[1]);
                 }
                 jObjModel.remove("actions");
                 jObjModel.add("actions", JsonParser.parseString(allViewActions.toString()));
@@ -249,7 +249,7 @@ public class ProcDefToInstanceCreateProcViewsDeployed {
             if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procTableRowButtonsArr[0][0].toString()))) {
                 JSONArray allTableRowButtons = new JSONArray();
                 for (Object[] curAction : procTableRowButtonsArr) {
-                    allTableRowButtons.add(curAction[1]);
+                    allTableRowButtons.put(curAction[1]);
                 }
                 jObjModel.remove("row_buttons");
                 jObjModel.add("row_buttons", JsonParser.parseString(allTableRowButtons.toString()));

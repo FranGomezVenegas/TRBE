@@ -21,7 +21,7 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMProcedure;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMData;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntMessages;

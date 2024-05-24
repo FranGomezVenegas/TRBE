@@ -5,7 +5,7 @@
  */
 package trazit.session;
 
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 
 /**
  *

@@ -30,7 +30,7 @@ import static lbplanet.utilities.LPKPIs.getKPIs;
 import static lbplanet.utilities.LPKPIs.getRecoveryRate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntMessages;
@@ -343,7 +343,7 @@ public class EnvMonAPIStats extends HttpServlet {
                                 new String[]{TblsEnvMonitData.ProductionLot.CREATED_ON.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(prodLotInfo[0][0].toString())) {
                             jObj = LPFrontEnd.responseJSONDiagnosticLPFalse(Rdbms.RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);
-                            jArr.add(jObj);
+                            jArr.put(jObj);
                         } else {
                             for (Object[] curRec : prodLotInfo) {
                                 jObj = LPJson.convertArrayRowToJSONObject(prodLotFieldToRetrieveArr, curRec);
@@ -352,7 +352,7 @@ public class EnvMonAPIStats extends HttpServlet {
                                     jObjPieceOfInfo = new JSONObject();
                                     jObjPieceOfInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, prodLotFieldToRetrieveArr[i]);
                                     jObjPieceOfInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, curRec[i].toString());
-                                    jArr.add(jObjPieceOfInfo);
+                                    jArr.put(jObjPieceOfInfo);
                                 }
                             }
                         }
@@ -564,11 +564,11 @@ public class EnvMonAPIStats extends HttpServlet {
                                         }
                                     }
                                     if (findNumber == microOrganismsToFind.split("\\|").length) {
-                                        sampleJsonArr.add(jObj);
+                                        sampleJsonArr.put(jObj);
                                     }
                                 }
                             } else {
-                                sampleJsonArr.add(jObj);
+                                sampleJsonArr.put(jObj);
                             }
                         }
                     }
@@ -582,7 +582,7 @@ public class EnvMonAPIStats extends HttpServlet {
                             LPArray.convertArrayToString(curFilterFld.getFldValue(), ", ", "", true));
                     fltJObj.put("filter_name", curFilterFld.getVwFldName().getName() + " " + curFilterFld.getSymbol().getSqlClause());
                     fltJObj.put("value", LPArray.convertArrayToString(curFilterFld.getFldValue(), ", ", "", true));
-                    filterJArr.add(fltJObj);
+                    filterJArr.put(fltJObj);
                 }
                 jObjMainObject.put("filter_detail", filterJArr);
             }
@@ -627,7 +627,7 @@ public class EnvMonAPIStats extends HttpServlet {
                 } else {
                     for (Object[] curRec : investigationInfo) {
                         jObj = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(fieldsToGet), curRec);
-                        investigationJsonArr.add(jObj);
+                        investigationJsonArr.put(jObj);
                     }
                 }
                 jObjMainObject.put(RESPONSE_JSON_DATATABLE, investigationJsonArr);
@@ -638,7 +638,7 @@ public class EnvMonAPIStats extends HttpServlet {
                             LPArray.convertArrayToString(curFilterFld.getFldValue(), ", ", "", true));
                     fltJObj.put("filter_name", curFilterFld.getVwFldName().getName() + " " + curFilterFld.getSymbol().getSqlClause());
                     fltJObj.put("value", LPArray.convertArrayToString(curFilterFld.getFldValue(), ", ", "", true));
-                    filterJArr.add(fltJObj);
+                    filterJArr.put(fltJObj);
                 }
                 jObjMainObject.put("filter_detail", filterJArr);
 
@@ -660,7 +660,7 @@ public class EnvMonAPIStats extends HttpServlet {
                     } else {
                         for (Object[] curRec : groupedInfo) {
                             jObj = LPJson.convertArrayRowToJSONObject(smpGroupFldsArr, curRec);
-                            sampleGrouperJsonArr.add(jObj);
+                            sampleGrouperJsonArr.put(jObj);
                         }
                     }
                     jObjMainObject.put(groupInfo[1], sampleGrouperJsonArr);
@@ -683,7 +683,7 @@ public class EnvMonAPIStats extends HttpServlet {
                     } else {
                         for (Object[] curRec : groupedInfo) {
                             jObj = LPJson.convertArrayRowToJSONObject(invGroupFldsArr, curRec);
-                            investigationGrouperJsonArr.add(jObj);
+                            investigationGrouperJsonArr.put(jObj);
                         }
                     }
                     jObjMainObject.put(groupInfo[1], investigationGrouperJsonArr);

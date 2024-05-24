@@ -44,7 +44,7 @@ import module.inventorytrack.definition.TblsInvTrackingData;
 import module.inventorytrack.definition.TblsInvTrackingProcedure;
 import module.inventorytrack.logic.DataInventory;
 import static module.monitoring.logic.DataProgramCorrectiveAction.isProgramCorrectiveActionEnable;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
@@ -135,7 +135,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                             if (Boolean.FALSE.equals(instLockingDetail.isEmpty())) {
                                 jObj.put("locking_reason", instLockingDetail);
                             }
-                            jArr.add(jObj);
+                            jArr.put(jObj);
                         }
                     }
                     Rdbms.closeRdbms();
@@ -158,7 +158,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(configReferencesInfo[0][0].toString()))) {
                         for (Object[] currInstr : configReferencesInfo) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(fieldsToRetrieveObj), currInstr);
-                            jArr.add(jObj);
+                            jArr.put(jObj);
                         }
                     }
                     Rdbms.closeRdbms();
@@ -195,7 +195,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                                     childJObj = LPArray.addValueToArray1D(childJObj, "");
                                 }
                                 JSONObject jObjLvl2 = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, childJObj);
-                                jArrLvl2.add(jObjLvl2);
+                                jArrLvl2.put(jObjLvl2);
                             } else {
                                 for (Object[] curRowLvl2 : auditInfoLvl2) {
                                     JSONObject jObjLvl2 = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curRowLvl2,
@@ -204,11 +204,11 @@ public class InvTrackingAPIqueries extends HttpServlet {
                                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(convertToJsonObjectStringedObjectLvl2[0].toString())) {
                                         jObjLvl2.put(TblsInvTrackingDataAudit.Lot.FIELDS_UPDATED.getName(), convertToJsonObjectStringedObjectLvl2[1]);
                                     }
-                                    jArrLvl2.add(jObjLvl2);
+                                    jArrLvl2.put(jObjLvl2);
                                 }
                             }
                             jObj.put("sublevel", jArrLvl2);
-                            jArr.add(jObj);
+                            jArr.put(jObj);
                         }
                     }
                     Rdbms.closeRdbms();
@@ -225,7 +225,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(qualifsInProgress[0][0].toString()))) {
                         for (Object[] currInstrEv : qualifsInProgress) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrEv);
-                            jArr.add(jObj);
+                            jArr.put(jObj);
                         }
                     }
                     Rdbms.closeRdbms();
@@ -260,7 +260,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(qualifsInProgress[0][0].toString()))) {
                         for (Object[] currInstrEv : qualifsInProgress) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(tblFieldsToRetrieve, currInstrEv);
-                            jArr.add(jObj);
+                            jArr.put(jObj);
                         }
                     }
                     Rdbms.closeRdbms();
@@ -292,7 +292,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrDecommissionedClosedLastDays[0][0].toString()))) {
                         for (Object[] currIncident : instrDecommissionedClosedLastDays) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
-                            jArr.add(jObj);
+                            jArr.put(jObj);
                         }
                     }
                     Rdbms.closeRdbms();
@@ -345,7 +345,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithControlIssues[0][0].toString()))) {
                         for (Object[] currIncident : referenceWithControlIssues) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
-                            jArr.add(jObj);
+                            jArr.put(jObj);
                         }
                     }
                     Rdbms.closeRdbms();
@@ -380,7 +380,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithStockAvailableForUseUponMin[0][0].toString()))) {
                         for (Object[] currIncident : referenceWithStockAvailableForUseUponMin) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
-                            jArr.add(jObj);
+                            jArr.put(jObj);
                         }
                     }
                     Rdbms.closeRdbms();
@@ -410,7 +410,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithStockAvailableForUseUponMin[0][0].toString()))) {
                         for (Object[] currIncident : referenceWithStockAvailableForUseUponMin) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
-                            jArr.add(jObj);
+                            jArr.put(jObj);
                         }
                     }
                     Rdbms.closeRdbms();
@@ -440,7 +440,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithControlIssues[0][0].toString()))) {
                         for (Object[] currIncident : referenceWithControlIssues) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
-                            jArr.add(jObj);
+                            jArr.put(jObj);
                         }
                         jSummaryObj.put("has_expired_lots", true);
                     } else {
@@ -458,7 +458,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithStockAvailableForUseUponMin[0][0].toString()))) {
                         for (Object[] currIncident : referenceWithStockAvailableForUseUponMin) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
-                            jArr.add(jObj);
+                            jArr.put(jObj);
                         }
                         jSummaryObj.put("has_references_with_stock_upon_min", true);
                     } else {
@@ -476,7 +476,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(referenceWithStockAvailableForUseUponMin[0][0].toString()))) {
                         for (Object[] curRow : referenceWithStockAvailableForUseUponMin) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curRow);
-                            jArr.add(jObj);
+                            jArr.put(jObj);
                         }
                         jSummaryObj.put("has_references_with_stock_available_for_use_upon_min", true);
                     } else {
@@ -513,7 +513,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(invEventsCompletedLastDays[0][0].toString()))) {
                         for (Object[] currIncident : invEventsCompletedLastDays) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
-                            jArr.add(jObj);
+                            jArr.put(jObj);
                         }
                     }
                     Rdbms.closeRdbms();
@@ -591,12 +591,12 @@ public class InvTrackingAPIqueries extends HttpServlet {
                                 if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString()))) {
                                     for (Object[] currInvestObject : incidentsNotClosed) {
                                         JSONObject investObjectsJObj = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(fieldsToRetrieveInvestObj), currInvestObject);
-                                        investObjectsJArr.add(investObjectsJObj);
+                                        investObjectsJArr.put(investObjectsJObj);
                                     }
                                 }
                                 investigationJObj.put(TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(), investObjectsJArr);
                             }
-                            investigationJArr.add(investigationJObj);
+                            investigationJArr.put(investigationJObj);
                         }
                     }
                     LPFrontEnd.servletReturnSuccess(request, response, investigationJArr);
@@ -608,7 +608,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     if (Boolean.FALSE.equals(isTagValueOneOfEnableOnes(createInvCorrectiveAction))) {
                         jObj = new JSONObject();
                         jObj.put(TblsInvTrackingProcedure.TablesInvTrackingProcedure.INVENTORY_CORRECTIVE_ACTION.getTableName(), "corrective action not active!");
-                        jArray.add(jObj);
+                        jArray.put(jObj);
                     } else {
                         fieldsToRetrieveObj = TblsInvTrackingProcedure.TablesInvTrackingProcedure.INVENTORY_CORRECTIVE_ACTION.getTableFields();
                         Object[][] investigationResultsPendingDecision = QueryUtilitiesEnums.getTableData(TblsInvTrackingProcedure.TablesInvTrackingProcedure.INVENTORY_CORRECTIVE_ACTION,
@@ -622,7 +622,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
 
                         for (Object[] curRow : investigationResultsPendingDecision) {
                             jObj = LPJson.convertArrayRowToJSONObject(getAllFieldNames(fieldsToRetrieveObj), curRow);
-                            jArray.add(jObj);
+                            jArray.put(jObj);
                         }
                     }
                     LPFrontEnd.servletReturnSuccess(request, response, jArray);
@@ -633,7 +633,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     if (Boolean.FALSE.equals(isTagValueOneOfEnableOnes(createInvCorrectiveAction))) {
                         jObj = new JSONObject();
                         jObj.put(TblsInvTrackingProcedure.TablesInvTrackingProcedure.INVENTORY_CORRECTIVE_ACTION.getTableName(), "corrective action not active!");
-                        jArray.add(jObj);
+                        jArray.put(jObj);
                         LPFrontEnd.servletReturnSuccess(request, response, jArray);
                     }
                     Integer investigationId = null;
@@ -662,11 +662,11 @@ public class InvTrackingAPIqueries extends HttpServlet {
                             if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString()))) {
                                 for (Object[] currInvestObject : incidentsNotClosed) {
                                     JSONObject investObjectsJObj = LPJson.convertArrayRowToJSONObject(getAllFieldNames(fieldsToRetrieveObj), currInvestObject);
-                                    investObjectsJArr.add(investObjectsJObj);
+                                    investObjectsJArr.put(investObjectsJObj);
                                 }
                             }
                             investigationJObj.put(TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(), investObjectsJArr);
-                            investigationJArr.add(investigationJObj);
+                            investigationJArr.put(investigationJObj);
                         }
                     }
                     Rdbms.closeRdbms();
@@ -680,7 +680,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                         jObj = new JSONObject();
                         jObj.put("corrective_action_not_active", "please check the business rule, "+
                             Parameter.getBusinessRuleProcedureFile(procReqInstance.getProcedureInstance(), DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getAreaName(), DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getTagName()));
-                        jArray.add(jObj);
+                        jArray.put(jObj);
                         LPFrontEnd.servletReturnSuccess(request, response, jArray);
                     }
                     fieldsToRetrieveObj = TblsInvTrackingProcedure.TablesInvTrackingProcedure.INVENTORY_CORRECTIVE_ACTION.getTableFields();
@@ -694,7 +694,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
                     }
                     for (Object[] curRow : investigationResultsPendingDecision) {
                         jObj = LPJson.convertArrayRowToJSONObject(getAllFieldNames(fieldsToRetrieveObj), curRow);
-                        jArray.add(jObj);
+                        jArray.put(jObj);
                     }
                     Rdbms.closeRdbms();
                     LPFrontEnd.servletReturnSuccess(request, response, jArray);
@@ -736,7 +736,7 @@ public class InvTrackingAPIqueries extends HttpServlet {
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentFamily[0][0].toString()))) {
             for (Object[] currInstr : instrumentFamily) {
                 JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
-                jArr.add(jObj);
+                jArr.put(jObj);
             }
         }
         return jArr;

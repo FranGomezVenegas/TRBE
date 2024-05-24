@@ -11,7 +11,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import trazit.procedureinstance.definition.definition.TblsReqs;
@@ -52,9 +52,9 @@ public class ViewDesignerTableWithButtons {
         JSONObject jObj=new JSONObject();
         jObj.put("argumentName", argName);
         jObj.put("fixValue", argValue);
-        jMainArr.add(jObj);
+        jMainArr.put(jObj);
         String[] updFieldNames=new String[]{TblsReqs.ProcedureReqSolutionViewTableWithButtons.GRID_COLUMNS_DESIGNER.getName()};
-        Object[] updFieldValues=new Object[]{jMainArr.toJSONString()};
+        Object[] updFieldValues=new Object[]{jMainArr.toString()};
         RdbmsObject removeDiagn = Rdbms.updateTableRecordFieldsByFilter(TblsReqs.TablesReqs.PROCEDURE_REQ_SOL_VIEW_TBL_BUTTONS,
                 EnumIntTableFields.getTableFieldsFromString(TblsReqs.TablesReqs.PROCEDURE_REQ_SOL_VIEW_TBL_BUTTONS, updFieldNames), updFieldValues,
                 new SqlWhere(TblsReqs.TablesReqs.PROCEDURE_REQ_SOL_VIEW_TBL_BUTTONS,new String[]{TblsReqs.ProcedureReqSolutionViewTableWithButtons.PROCEDURE_NAME.getName(), TblsReqs.ProcedureReqSolutionViewTableWithButtons.PROCEDURE_VERSION.getName(),
@@ -73,10 +73,10 @@ public class ViewDesignerTableWithButtons {
         JSONObject jObj=new JSONObject();
         jObj.put("argumentName", argName);
         jObj.put("fixValue", argValue);
-        jMainArr.add(jObj);
+        jMainArr.put(jObj);
         
         String[] updFieldNames=new String[]{TblsReqs.ProcedureReqSolutionViewTableWithButtons.GRID_COLUMNS_DESIGNER.getName()};
-        Object[] updFieldValues=new Object[]{jMainArr.toJSONString()};
+        Object[] updFieldValues=new Object[]{jMainArr.toString()};
         RdbmsObject removeDiagn = Rdbms.updateTableRecordFieldsByFilter(TblsReqs.TablesReqs.PROCEDURE_REQ_SOL_VIEW_TBL_BUTTONS,
                 EnumIntTableFields.getTableFieldsFromString(TblsReqs.TablesReqs.PROCEDURE_REQ_SOL_VIEW_TBL_BUTTONS, updFieldNames), updFieldValues,
                 new SqlWhere(TblsReqs.TablesReqs.PROCEDURE_REQ_SOL_VIEW_TBL_BUTTONS,new String[]{TblsReqs.ProcedureReqSolutionViewTableWithButtons.PROCEDURE_NAME.getName(), TblsReqs.ProcedureReqSolutionViewTableWithButtons.PROCEDURE_VERSION.getName(),
@@ -92,7 +92,7 @@ public class ViewDesignerTableWithButtons {
         JSONArray jMainArr=getGridColumnInfo(procedureName, procedureVersion, procInstanceName, reqId, solId, tableId);
         jMainArr = LPJson.removeEntry(jMainArr, "argumentName", argName);
         String[] updFieldNames=new String[]{TblsReqs.ProcedureReqSolutionViewTableWithButtons.GRID_COLUMNS_DESIGNER.getName()};
-        Object[] updFieldValues=new Object[]{jMainArr.toJSONString()};
+        Object[] updFieldValues=new Object[]{jMainArr.toString()};
         RdbmsObject removeDiagn = Rdbms.updateTableRecordFieldsByFilter(TblsReqs.TablesReqs.PROCEDURE_REQ_SOL_VIEW_TBL_BUTTONS,
                 EnumIntTableFields.getTableFieldsFromString(TblsReqs.TablesReqs.PROCEDURE_REQ_SOL_VIEW_TBL_BUTTONS, updFieldNames), updFieldValues,
                 new SqlWhere(TblsReqs.TablesReqs.PROCEDURE_REQ_SOL_VIEW_TBL_BUTTONS,new String[]{TblsReqs.ProcedureReqSolutionViewTableWithButtons.PROCEDURE_NAME.getName(), TblsReqs.ProcedureReqSolutionViewTableWithButtons.PROCEDURE_VERSION.getName(),

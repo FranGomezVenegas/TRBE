@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.session.ProcedureRequestSession;
 
@@ -59,7 +59,7 @@ public class TestingReportJson implements TestingReport {
         JSONArray mainArr = new JSONArray();
         String[] fldsToGet = new String[]{"rule_name", "rule value"};
         for (Object[] curRow : BusinessRules.sessionBusinessRulesList(busRulesProcInstance, busRulesTesting)) {
-            mainArr.add(LPJson.convertArrayRowToJSONObject(fldsToGet, curRow));
+            mainArr.put(LPJson.convertArrayRowToJSONObject(fldsToGet, curRow));
         }
         //this.reportJson.put("business_rules", mainArr);
     }
@@ -129,7 +129,7 @@ public class TestingReportJson implements TestingReport {
                 }
                 curRowObj.put("argument_" + i, argsObj);
             }
-            mainArr.add(curRowObj);
+            mainArr.put(curRowObj);
         }
         this.reportJson.put("steps", mainArr);
     }

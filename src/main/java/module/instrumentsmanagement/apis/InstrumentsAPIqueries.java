@@ -53,7 +53,7 @@ import module.instrumentsmanagement.definition.TblsInstrumentsProcedure;
 import module.instrumentsmanagement.logic.DataInstrumentsCorrectiveAction;
 import static module.instrumentsmanagement.logic.SchedInstruments.logNextEventWhenExpiredOrClose;
 import static module.monitoring.logic.DataProgramCorrectiveAction.isProgramCorrectiveActionEnable;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
@@ -154,7 +154,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                             if (Boolean.FALSE.equals(instLockingDetail.isEmpty())) {
                                 jObj.put("locking_reason", instLockingDetail);
                             }
-                            jArr.add(jObj);
+                            jArr.put(jObj);
                         }
                     }
                     Rdbms.closeRdbms();
@@ -194,7 +194,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                                     childJObj = LPArray.addValueToArray1D(childJObj, "");
                                 }
                                 JSONObject jObjLvl2 = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, childJObj);
-                                jArrLvl2.add(jObjLvl2);
+                                jArrLvl2.put(jObjLvl2);
                             } else {
                                 for (Object[] curRowLvl2 : sampleAuditInfoLvl2) {
                                     JSONObject jObjLvl2 = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curRowLvl2,
@@ -203,11 +203,11 @@ public class InstrumentsAPIqueries extends HttpServlet {
                                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(convertToJsonObjectStringedObjectLvl2[0].toString())) {
                                         jObjLvl2.put(TblsDataAudit.Sample.FIELDS_UPDATED.getName(), convertToJsonObjectStringedObjectLvl2[1]);
                                     }
-                                    jArrLvl2.add(jObjLvl2);
+                                    jArrLvl2.put(jObjLvl2);
                                 }
                             }
                             jObj.put("sublevel", jArrLvl2);
-                            jArr.add(jObj);
+                            jArr.put(jObj);
                         }
                     }
                     Rdbms.closeRdbms();
@@ -225,7 +225,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(appInstrumentsAuditEvents[0][0].toString()))) {
                         for (Object[] currInstrEv : appInstrumentsAuditEvents) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrEv);
-                            jArr.add(jObj);
+                            jArr.put(jObj);
                         }
                     }
                     Rdbms.closeRdbms();
@@ -259,7 +259,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(appInstrumentsAuditEvents[0][0].toString()))) {
                         for (Object[] currInstrEv : appInstrumentsAuditEvents) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrEv);
-                            jArr.add(jObj);
+                            jArr.put(jObj);
                         }
                     }
                     Rdbms.closeRdbms();
@@ -319,7 +319,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                                 jObj.put("attachment_jsonNode", jsonNode);
                                 jObj.put("attachment_jsonstring", jsonString);
                             }
-                            jArr.add(jObj);
+                            jArr.put(jObj);
                         }
                     }
                     Rdbms.closeRdbms();
@@ -350,7 +350,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrDecommissionedClosedLastDays[0][0].toString()))) {
                         for (Object[] currIncident : instrDecommissionedClosedLastDays) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
-                            jArr.add(jObj);
+                            jArr.put(jObj);
                         }
                     }
                     Rdbms.closeRdbms();
@@ -372,7 +372,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrEventsCompletedLastDays[0][0].toString()))) {
                         for (Object[] currIncident : instrEventsCompletedLastDays) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currIncident);
-                            jArr.add(jObj);
+                            jArr.put(jObj);
                         }
                     }
                     Rdbms.closeRdbms();
@@ -401,7 +401,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                                 new String[]{TblsInstrumentsData.InstrumentEvent.INSTRUMENT.getName()},
                                 new Object[]{instrName},
                                 new String[]{TblsInstrumentsData.InstrumentEvent.CREATED_ON.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()});
-                        for (int i = 0; i < jArr.size(); i++) {
+                        for (int i = 0; i < jArr.length(); i++) {
 
                             JSONObject jsonObject = (JSONObject) jArr.get(i);
                             Object curEvId = jsonObject.get(TblsInstrumentsData.InstrumentEvent.ID.getName());
@@ -415,10 +415,10 @@ public class InstrumentsAPIqueries extends HttpServlet {
                                 if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(VariableValuesInfo[0][0].toString()))) {
                                     JSONArray varValuesArr = new JSONArray();
                                     for (Object[] curRow2 : VariableValuesInfo) {
-                                        varValuesArr.add(LPJson.convertArrayRowToJSONObject(getAllFieldNames(variablesValuesFieldsToRetrieveObj), curRow2));
+                                        varValuesArr.put(LPJson.convertArrayRowToJSONObject(getAllFieldNames(variablesValuesFieldsToRetrieveObj), curRow2));
                                     }
                                     jsonObject.put(TblsInstrumentsData.TablesInstrumentsData.INSTR_EVENT_VARIABLE_VALUES.getTableName(), varValuesArr);
-                                    jArr2.add(jsonObject);
+                                    jArr2.put(jsonObject);
                                 }
                             }
                         }
@@ -456,7 +456,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                                             if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(VariablesInfo[0][0].toString()))) {
                                                 JSONArray variablesArr = new JSONArray();
                                                 for (Object[] curRow2 : VariablesInfo) {
-                                                    variablesArr.add(LPJson.convertArrayRowToJSONObject(getAllFieldNames(variablesFieldsToRetrieveObj), curRow2));
+                                                    variablesArr.put(LPJson.convertArrayRowToJSONObject(getAllFieldNames(variablesFieldsToRetrieveObj), curRow2));
                                                 }
                                                 insFamJson.put(curFld.getName() + "_detail", variablesArr);
                                             }
@@ -520,7 +520,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                             jObjPieceOfInfo = new JSONObject();
                             jObjPieceOfInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, fieldToDisplayArr1);
                             jObjPieceOfInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, instrumentInfo[0][LPArray.valuePosicInArray(instrumentsTblAllFields, fieldToDisplayArr1)].toString());
-                            jArrPieceOfInfo.add(jObjPieceOfInfo);
+                            jArrPieceOfInfo.put(jObjPieceOfInfo);
                         }
                     }
                     jObjMainObject.put(GlobalAPIsParams.INCUBATION_REPORT_JSON_TAG_NAME_FIELD_TO_RETRIEVE, jObjInstrumentInfo);
@@ -559,7 +559,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                             jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currReading);
                         }
 
-                        jArrLastTempReadings.add(jObj);
+                        jArrLastTempReadings.put(jObj);
                     }
                     jObjMainObject.put(GlobalAPIsParams.INCUBATION_REPORT_JSON_TAG_NAME_LAST_N_TEMP_READINGS, jArrLastTempReadings);
                     jObjMainObject.put(reportInfoTagNAme, endPoint.getReportInfo());
@@ -605,12 +605,12 @@ public class InstrumentsAPIqueries extends HttpServlet {
                                 if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString()))) {
                                     for (Object[] currInvestObject : incidentsNotClosed) {
                                         JSONObject investObjectsJObj = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(fieldsToRetrieveInvestObj), currInvestObject);
-                                        investObjectsJArr.add(investObjectsJObj);
+                                        investObjectsJArr.put(investObjectsJObj);
                                     }
                                 }
                                 investigationJObj.put(TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(), investObjectsJArr);
                             }
-                            investigationJArr.add(investigationJObj);
+                            investigationJArr.put(investigationJObj);
                         }
                     }
                     LPFrontEnd.servletReturnSuccess(request, response, investigationJArr);
@@ -624,7 +624,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                         JSONObject jObj = new JSONObject();
                         jObj.put("corrective_action_not_active", "please check the business rule, "+
                             Parameter.getBusinessRuleProcedureFile(procReqInstance.getProcedureInstance(), DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getAreaName(), DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getTagName()));
-                        jArray.add(jObj);
+                        jArray.put(jObj);
                         LPFrontEnd.servletReturnSuccess(request, response, jArray);
                     } else {
                         fieldsToRetrieveObj = TblsInstrumentsProcedure.TablesInstrumentsProcedure.INSTRUMENT_CORRECTIVE_ACTION.getTableFields();
@@ -639,7 +639,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
 
                         for (Object[] curRow : investigationResultsPendingDecision) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(getAllFieldNames(fieldsToRetrieveObj), curRow);
-                            jArray.add(jObj);
+                            jArray.put(jObj);
                         }
                     }
                     LPFrontEnd.servletReturnSuccess(request, response, jArray);
@@ -651,7 +651,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                     if (Boolean.FALSE.equals(isTagValueOneOfEnableOnes(createInvCorrectiveAction))) {
                         JSONObject jObj = new JSONObject();
                         jObj.put(TblsInstrumentsProcedure.TablesInstrumentsProcedure.INSTRUMENT_CORRECTIVE_ACTION.getTableName(), "corrective action not active!");
-                        jArray.add(jObj);
+                        jArray.put(jObj);
                         LPFrontEnd.servletReturnSuccess(request, response, jArray);
                     }
                     Integer investigationId = null;
@@ -680,11 +680,11 @@ public class InstrumentsAPIqueries extends HttpServlet {
                             if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString()))) {
                                 for (Object[] currInvestObject : incidentsNotClosed) {
                                     JSONObject investObjectsJObj = LPJson.convertArrayRowToJSONObject(getAllFieldNames(fieldsToRetrieveObj), currInvestObject);
-                                    investObjectsJArr.add(investObjectsJObj);
+                                    investObjectsJArr.put(investObjectsJObj);
                                 }
                             }
                             investigationJObj.put(TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(), investObjectsJArr);
-                            investigationJArr.add(investigationJObj);
+                            investigationJArr.put(investigationJObj);
                         }
                     }
                     Rdbms.closeRdbms();
@@ -698,7 +698,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                         JSONObject jObj = new JSONObject();
                         jObj.put("corrective_action_not_active", "please check the business rule, "+
                             Parameter.getBusinessRuleProcedureFile(procReqInstance.getProcedureInstance(), DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getAreaName(), DataProgramCorrectiveAction.DataProgramCorrectiveActionBusinessRules.ACTION_MODE.getTagName()));
-                        jArray.add(jObj);
+                        jArray.put(jObj);
                         LPFrontEnd.servletReturnSuccess(request, response, jArray);
                     }
                     fieldsToRetrieveObj = TblsInstrumentsProcedure.TablesInstrumentsProcedure.INSTRUMENT_CORRECTIVE_ACTION.getTableFields();
@@ -712,7 +712,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                     }
                     for (Object[] curRow : investigationResultsPendingDecision) {
                         JSONObject jObj = LPJson.convertArrayRowToJSONObject(getAllFieldNames(fieldsToRetrieveObj), curRow);
-                        jArray.add(jObj);
+                        jArray.put(jObj);
                     }
                     Rdbms.closeRdbms();
                     LPFrontEnd.servletReturnSuccess(request, response, jArray);
@@ -764,7 +764,7 @@ public class InstrumentsAPIqueries extends HttpServlet {
                             for (Object[] currInstrEv : instEvents) {
                                 JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstrEv);
                                 jObj.put("type", "real");
-                                jArr.add(jObj);
+                                jArr.put(jObj);
                             }
                         }
                     }
@@ -787,7 +787,7 @@ try{
                             int count = dateCountMap.getOrDefault(curDate.toString(), 0);
                             dateCountMap.put(curDate.toString(), count + 1);
                             jObj.put("calendar_date", curDate.toString());
-                            jArr.add(jObj);
+                            jArr.put(jObj);
 
                         }
                     }
@@ -805,7 +805,7 @@ try{
                             int count = dateCountMap.getOrDefault(curDate.toString(), 0);
                             dateCountMap.put(curDate.toString(), count + 1);
                             jObj.put("calendar_date", curDate.toString());
-                            jArr.add(jObj);
+                            jArr.put(jObj);
                         }
                     }
                     JSONArray outputArray = new JSONArray();
@@ -818,7 +818,7 @@ try{
                         entry.put("counter", count);
 
                         // Add the JSON object to the output JSONArray
-                        outputArray.add(entry);
+                        outputArray.put(entry);
                     }
                     Rdbms.closeRdbms();
                     JSONObject jMain = new JSONObject();
@@ -896,7 +896,7 @@ try{
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentFamily[0][0].toString()))) {
             for (Object[] currInstr : instrumentFamily) {
                 JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
-                jArr.add(jObj);
+                jArr.put(jObj);
             }
         }
         return jArr;
@@ -918,7 +918,7 @@ try{
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentFamily[0][0].toString()))) {
             for (Object[] currInstr : instrumentFamily) {
                 JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
-                jArr.add(jObj);
+                jArr.put(jObj);
             }
         }
         return jArr;
@@ -940,7 +940,7 @@ try{
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentFamily[0][0].toString()))) {
             for (Object[] currInstr : instrumentFamily) {
                 JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
-                jArr.add(jObj);
+                jArr.put(jObj);
             }
         }
         return jArr;
@@ -963,7 +963,7 @@ try{
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentFamily[0][0].toString()))) {
             for (Object[] currInstr : instrumentFamily) {
                 JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
-                jArr.add(jObj);
+                jArr.put(jObj);
             }
         }
         return jArr;
@@ -984,7 +984,7 @@ try{
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrumentFamily[0][0].toString()))) {
             for (Object[] currInstr : instrumentFamily) {
                 JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
-                jArr.add(jObj);
+                jArr.put(jObj);
             }
         }
         return jArr;

@@ -6,7 +6,7 @@
 package trazit.enums;
 
 import java.util.ArrayList;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 
 /**
  *

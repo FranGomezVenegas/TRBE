@@ -23,7 +23,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
@@ -115,11 +115,11 @@ public class HolidayCalendarAPIqueries extends HttpServlet {
                                     jCalDateObj.put("date_year", stringFormatToDate.getYear());
                                     jCalDateObj.put("date_month", stringFormatToDate.getMonthValue());
                                     jCalDateObj.put("date_dayOfMonth", stringFormatToDate.getDayOfMonth());
-                                    jDatesArr.add(jCalDateObj);
+                                    jDatesArr.put(jCalDateObj);
                                 }
                             }
                             jObj.put(TblsApp.TablesApp.HOLIDAYS_CALENDAR_DATE.getTableName(), jDatesArr);
-                            jCalendarsArr.add(jObj);
+                            jCalendarsArr.put(jObj);
                         }
                     }
                     LPFrontEnd.servletReturnSuccess(request, response, jCalendarsArr);

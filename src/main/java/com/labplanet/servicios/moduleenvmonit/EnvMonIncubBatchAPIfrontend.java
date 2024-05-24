@@ -26,7 +26,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
@@ -234,7 +234,7 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                 for (Object[] curLastReading: instrReadings){
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrReadings[0][0].toString()))){
                         JSONObject curLastReadingjObj=LPJson.convertArrayRowToJSONObject(tempReadingFldsToRetrieve, curLastReading);
-                        instrLast10ReadingsjArr.add(curLastReadingjObj);
+                        instrLast10ReadingsjArr.put(curLastReadingjObj);
                     }
                 }
             }                    
@@ -242,7 +242,7 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
             Object[] incubBatchContentInfo=incubBatchContentJson(fieldsToRetrieve, currBatch);
             jObj.put("SAMPLES_ARRAY", incubBatchContentInfo[0]);
             jObj.put("NUM_SAMPLES", incubBatchContentInfo[1]);                 
-            jArr.add(jObj);
+            jArr.put(jObj);
         }
         return jArr;
     }
@@ -258,7 +258,7 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                 for (String currSample: samplesArr){
                     String[] currSampleArr=currSample.split(fieldsSeparator);
                     JSONObject jReadingsObj=LPJson.convertArrayRowToJSONObject(fieldsTag, currSampleArr);
-                    jbatchSamplesArr.add(jReadingsObj);
+                    jbatchSamplesArr.put(jReadingsObj);
                 }
                 return new Object[]{jbatchSamplesArr, samplesArr.length};
                 
@@ -280,7 +280,7 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                     posicObj.put("y", y+1);
                     posicObj.put("posic name", rowsName[x]+colsName[y]);
                     posicObj.put("content", batchContent2D[x][y]);
-                    jbatchSamplesArr.add(posicObj);
+                    jbatchSamplesArr.put(posicObj);
                 }
             }
                 return new Object[]{jbatchSamplesArr, ""};            

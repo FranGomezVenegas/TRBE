@@ -21,7 +21,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntMessages;
@@ -362,6 +362,15 @@ public class LPFrontEnd {
         servetInvokeResponseSuccessServlet(request, response);
     }
 
+    public static final void servletReturnSuccess(HttpServletRequest request, HttpServletResponse response, org.json.simple.JSONArray jsonArr) {
+        if (jsonArr == null) {
+            request.setAttribute(GlobalVariables.ServletsResponse.SUCCESS.getAttributeName(), "");
+        } else {
+            request.setAttribute(GlobalVariables.ServletsResponse.SUCCESS.getAttributeName(), jsonArr.toString());
+        }
+        servetInvokeResponseSuccessServlet(request, response);
+    }
+    
     /**
      * En mucho uso, CANDIDATO A BORRAR
      *
@@ -449,7 +458,7 @@ public class LPFrontEnd {
         return errJsObj;
     }
 
-    public static JSONObject responseJSONDiagnosticPositiveEndpoint(EnumIntEndpoints endpoint, Object[] msgDynamicValues, JSONArray relatedObjects) {
+    public static JSONObject responseJSONDiagnosticPositiveEndpoint(EnumIntEndpoints endpoint, Object[] msgDynamicValues, org.json.JSONArray relatedObjects) {
 
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
         Object[][] mainMessage = messages.getMainMessage();
@@ -504,6 +513,63 @@ public class LPFrontEnd {
         return errJsObj;
     }
 
+    public static JSONObject responseJSONDiagnosticPositiveEndpointSimple(EnumIntEndpoints endpoint, Object[] msgDynamicValues, org.json.simple.JSONArray relatedObjects) {
+
+        ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
+        Object[][] mainMessage = messages.getMainMessage();
+        Object[] errorMsgEn = null;
+        Object[] errorMsgEs = null;
+        String errorTextEn = "";
+        String errorTextEs = "";
+        String errorCode = "";
+        if (mainMessage != null && mainMessage.length > 0 && mainMessage[0].length > 1 && !mainMessage[0][0].toString().toUpperCase().contains("NULL")) {
+            Object[] msgArg3 = new Object[]{};
+            if (mainMessage[0].length > 2) {
+                msgArg3 = (Object[]) mainMessage[0][2];
+            }
+            errorCode = mainMessage[0][1].toString();
+            errorMsgEn = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, mainMessage[0][1].toString(), msgArg3, DEFAULTLANGUAGE, mainMessage[0], true);
+            errorMsgEs = ApiMessageReturn.trapMessage(LPPlatform.LAB_TRUE, mainMessage[0][1].toString(), msgArg3, "es", mainMessage[0], false);
+            errorTextEn = errorMsgEn[errorMsgEn.length - 1].toString();
+            errorTextEs = errorMsgEs[errorMsgEs.length - 1].toString();
+        } else {
+            errorCode = endpoint.getSuccessMessageCode();
+            errorTextEn = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE + endpoint.getClass().getSimpleName(), null, endpoint.getSuccessMessageCode(), DEFAULTLANGUAGE, null, true, endpoint.getClass().getSimpleName());
+            errorTextEs = Parameter.getMessageCodeValue(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE + endpoint.getClass().getSimpleName(), null, endpoint.getSuccessMessageCode(), "es", null, false, endpoint.getClass().getSimpleName());
+
+            if (msgDynamicValues != null) {
+                for (int iVarValue = 1; iVarValue <= msgDynamicValues.length; iVarValue++) {
+                    errorTextEn = errorTextEn.replace("<*" + iVarValue + "*>", LPNulls.replaceNull(msgDynamicValues[iVarValue - 1]).toString());
+                    errorTextEs = errorTextEs.replace("<*" + iVarValue + "*>", LPNulls.replaceNull(msgDynamicValues[iVarValue - 1]).toString());
+                }
+            }
+            if (errorTextEn.length() == 0) {
+                errorTextEn = endpoint + " (*** This MessageCode, " + endpoint + ", has no entry defined in messages property file) ";
+                if (msgDynamicValues != null) {
+                    errorTextEn = errorTextEn + Arrays.toString(msgDynamicValues);
+                }
+            }
+            if (errorTextEs.length() == 0) {
+                errorTextEs = endpoint + " (*** Este CódigoDeMensaje, " + endpoint + ", no está definido en los archivos de mensajes) ";
+                if (msgDynamicValues != null) {
+                    errorTextEs = errorTextEs + Arrays.toString(msgDynamicValues);
+                }
+            }
+
+        }
+        JSONObject errJsObj = new JSONObject();
+        errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), LPPlatform.LAB_TRUE);
+        errJsObj.put(ResponseTags.CATEGORY.getLabelName(), endpoint.getClass().getSimpleName().toUpperCase().replace("API", ""));
+        errJsObj.put(ResponseTags.MESSAGE_CODE.getLabelName(), errorCode);
+        errJsObj.put(ResponseTags.MESSAGE.getLabelName() + "_es", errorTextEs);
+        errJsObj.put(ResponseTags.MESSAGE.getLabelName() + "_en", errorTextEn);
+        errJsObj.put(ResponseTags.RELATED_OBJECTS.getLabelName(), relatedObjects);
+        errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), false);
+        return errJsObj;
+    }
+    
+
+    
     public static JSONObject responseJSONDiagnosticLPFalse(EnumIntMessages errorCode, Object[] msgVariables) {
         JSONObject errJsObj = new JSONObject();
         errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), LPPlatform.LAB_FALSE);

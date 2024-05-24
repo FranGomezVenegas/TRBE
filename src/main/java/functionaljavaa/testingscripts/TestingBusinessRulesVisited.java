@@ -6,8 +6,9 @@
 package functionaljavaa.testingscripts;
 
 //import databases.Rdbms;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import lbplanet.utilities.LPJson;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  *
@@ -39,8 +40,8 @@ public class TestingBusinessRulesVisited {
         jObj.put("className", className);
         jObj.put("ruleName", ruleName);
         jObj.put("ruleValue", ruleValue);
-        if (Boolean.FALSE.equals(this.jsonContent.contains(jObj)))
-            this.jsonContent.add(jObj);
+        if (Boolean.FALSE.equals(LPJson.contains(this.jsonContent, jObj)))
+            this.jsonContent.put(jObj);
     }
     
 }

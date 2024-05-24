@@ -24,7 +24,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.procedureinstance.definition.definition.TblsReqs;
 
@@ -107,6 +107,10 @@ public class LPJson {
         return convertArrayRowToJSONObject(header, row, null);
     }
 
+    public static org.json.JSONObject convertArrayRowToJSONObjectNoJsonSimple(String[] header, Object[] row) {
+        return convertArrayRowToJSONObjectNoJsonSimple(header, row, null);
+    }
+
     public static JSONArray convertArrayRowToJSONFieldNameAndValueObject(String[] header, Object[] row, String[] fieldsToExclude) {
         JSONArray jArr = new JSONArray();
         if (header.length == 0) {
@@ -131,7 +135,7 @@ public class LPJson {
                     }
                 }
             }
-            jArr.add(jObj);
+            jArr.put(jObj);
         }
         return jArr;
     }
@@ -172,9 +176,45 @@ public class LPJson {
         return jObj;
     }
 
+    public static org.json.JSONObject convertArrayRowToJSONObjectNoJsonSimple(String[] header, Object[] row, String[] fieldsToExclude) {
+        org.json.JSONObject jObj = new org.json.JSONObject();
+        if (header.length == 0) {
+            return jObj;
+        }
+        for (int iField = 0; iField < header.length; iField++) {
+            if (row[iField] == null) {
+                jObj.put(header[iField], "");
+            }else if (row[iField].toString().toUpperCase().contains("NULL>>>")){
+                jObj.put(setAlias(header[iField]).toString(), "null");
+            } else {
+                if (fieldsToExclude == null || !LPArray.valueInArray(fieldsToExclude, header[iField])) {
+                    String clase = row[iField].getClass().toString();
+                    if ((clase.toUpperCase().contains("DATE"))|| (clase.toUpperCase().contains("TIME"))){                        
+                        jObj.put(setAlias(header[iField]), row[iField].toString());
+                    }else if ((clase.toUpperCase().contains("CLASS [B"))){    
+                        try {
+                            ObjectMapper objectMapper = new ObjectMapper();
+                            JsonNode jsonNode = objectMapper.convertValue(row[iField], JsonNode.class);
+                            String jsonString = objectMapper.writeValueAsString(jsonNode);
+                            jObj.put(setAlias(header[iField]), jsonString);
+                        } catch (JsonProcessingException ex) {
+                            Logger.getLogger(LPJson.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    } else {
+                        if ("NULL".equalsIgnoreCase(row[iField].toString())) {
+                            row[iField] = "null";
+                        }
+                        jObj.put(setAlias(header[iField]), row[iField]);
+                    }
+                }
+            }
+        }
+        return jObj;
+    }
+
     public static JSONArray convertToJSONArray(Object[] diagn) {
         JSONArray jMainArr = new JSONArray();
-        jMainArr.addAll(Arrays.asList(diagn));
+        jMainArr.putAll(Arrays.asList(diagn));
         return jMainArr;
     }
 
@@ -210,21 +250,21 @@ public class LPJson {
      */
     public static JSONArray convertToJSON(String[] normalArray) {
         JSONArray jsonArray = new JSONArray();
-        jsonArray.addAll(Arrays.asList(normalArray));
+        jsonArray.putAll(Arrays.asList(normalArray));
         return jsonArray;
     }
 
     public static JSONArray convertArrayJsonToJSON(JsonArray jsonArr) {
         JSONArray jsonArray = new JSONArray();
         jsonArr.forEach(jsonElement -> {
-            jsonArray.add(jsonElement);
+            jsonArray.put(jsonElement);
         });
         return jsonArray;
     }
     public static JsonArray convertJsonArrayToJSONArray(JSONArray jsonArray) {
     JsonArray jsonArrayResult = new JsonArray();
 
-    for (int i = 0; i < jsonArray.size(); i++) {
+    for (int i = 0; i < jsonArray.length(); i++) {
         try {
             // Convert each element to a JsonElement using Gson
             JsonElement jsonElement = JsonParser.parseString(jsonArray.get(i).toString());
@@ -398,7 +438,7 @@ for (JsonElement element : list) {
     public static Object[] filterJArrByProperty(JSONArray arr, String filterPropName, String filterPropValue, String propToGet) {
         Object[] newArr = new Object[]{}; // Initialize the array to the same length as the original array
         
-        for (int i = 0; i < arr.size(); i++) {
+        for (int i = 0; i < arr.length(); i++) {
             JSONObject entry = (JSONObject) arr.get(i);
             
             String stage = entry.get(filterPropName).toString();
@@ -414,7 +454,7 @@ for (JsonElement element : list) {
     }
 
     public static boolean JSONArraycontainsValue(JSONArray jsonArray, String value) {
-        for (int i = 0; i < jsonArray.size(); i++) {
+        for (int i = 0; i < jsonArray.length(); i++) {
             Object item = jsonArray.get(i);
             if (item instanceof JSONObject) {
                 JSONObject jsonObject = (JSONObject) item;
@@ -432,7 +472,7 @@ for (JsonElement element : list) {
     } 
     
     public static Integer JSONArrayValuePosic(JSONArray jsonArray, String argName, String argValue) {
-        for (int i = 0; i < jsonArray.size(); i++) {
+        for (int i = 0; i < jsonArray.length(); i++) {
             Object item = jsonArray.get(i);
             if (item instanceof JSONObject) {
                 JSONObject jsonObject = (JSONObject) item;
@@ -459,12 +499,58 @@ for (JsonElement element : list) {
         }
 
         JSONArray newArray = new JSONArray();
-        for (int i = 0; i < jsonArray.size(); i++) {
+        for (int i = 0; i < jsonArray.length(); i++) {
             if (i != indexToRemove) {
-                newArray.add(jsonArray.get(i));
+                newArray.put(jsonArray.get(i));
             }
         }
-
         return newArray;
     }    
+    
+    public static boolean contains(JSONArray jsonContent,  org.json.JSONObject jObj){
+        boolean exists = false;
+        for (int i = 0; i < jsonContent.length(); i++) {
+            org.json.JSONObject existingObj = jsonContent.getJSONObject(i);
+            if (existingObj.similar(jObj)) {
+                exists = true;
+                break;
+            }
+        }
+        return exists;
+    }
+    
+    public static boolean contains(JSONArray jsonContent,  JsonElement jObj){
+        boolean exists = false;
+        for (int i = 0; i < jsonContent.length(); i++) {
+            org.json.JSONObject existingObj = jsonContent.getJSONObject(i);
+            if (existingObj.similar(jObj)) {
+                exists = true;
+                break;
+            }
+        }
+        return exists;
+    } 
+    public static boolean containsJsonOfStrings(JSONArray jsonContent,  String stringToFind){
+        boolean exists = false;
+        for (int i = 0; i < jsonContent.length(); i++) {
+            String existingObj = jsonContent.getString(i);
+            if (existingObj.equalsIgnoreCase(stringToFind)) {
+                exists = true;
+                break;
+            }
+        }
+        return exists;
+    }       
+
+    public static boolean contains(JSONArray jsonContent,  String stringToFind){
+        boolean exists = false;
+        for (int i = 0; i < jsonContent.length(); i++) {
+            org.json.JSONObject existingObj = jsonContent.getJSONObject(i);
+            if (existingObj.similar(stringToFind)) {
+                exists = true;
+                break;
+            }
+        }
+        return exists;
+    }       
 }

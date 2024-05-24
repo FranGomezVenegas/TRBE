@@ -11,7 +11,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
 import module.formulation.definition.TblsFormulationData;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
@@ -39,7 +39,7 @@ public class ClssFormulationQueries {
                 if (Boolean.FALSE.equals(formulaLockingDetail.isEmpty())) {
                     jObj.put("locking_reason", formulaLockingDetail);
                 }
-                jArr.add(jObj);
+                jArr.put(jObj);
             }
         }
         return jArr;
@@ -61,7 +61,7 @@ public class ClssFormulationQueries {
                 if (Boolean.FALSE.equals(formulaLockingDetail.isEmpty())) {
                     jObj.put("locking_reason", formulaLockingDetail);
                 }
-                jArr.add(jObj);
+                jArr.put(jObj);
             }
         }
         return jArr;

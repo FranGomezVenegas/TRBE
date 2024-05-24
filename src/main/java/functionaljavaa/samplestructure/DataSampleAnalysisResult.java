@@ -38,6 +38,7 @@ import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntTableFields;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
+import trazit.parsing.ResultsEntering;
 import trazit.session.InternalMessage;
 import trazit.session.ResponseMessages;
 
@@ -189,6 +190,50 @@ public class DataSampleAnalysisResult {
             }
         }
         return new InternalMessage(diagnoseObj.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, diagnoseObj.getErrorMessageCode(), diagnoseObj.getErrorMessageVariables());
+    }
+
+    public InternalMessage sampleAnalysisResultEntryByParsing(Integer resultId, byte[] fileInByte, DataSample dataSample) {
+        String procInstanceName = ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+
+        Object[][] parsingAndActionsToPerform=ResultsEntering.getParsingData(resultId, fileInByte);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(parsingAndActionsToPerform[0][0].toString()))
+            return new InternalMessage(LPPlatform.LAB_FALSE, LPPlatform.LpPlatformErrorTrapping.SPECIALFUNCTION_CAUSEDEXCEPTION, new Object[]{"getParsingData"});
+        for (Object[] curResult:parsingAndActionsToPerform){
+            String resultIdStr=curResult[0].toString();
+            String resultNameStr=curResult[1].toString();
+            String resultValueStr=curResult[2].toString();
+            if ("ADHOC".equalsIgnoreCase(resultIdStr)){
+                
+            }else{
+                sampleAnalysisResultEntry(Integer.valueOf(resultIdStr), resultValueStr, dataSample);
+            }
+        }
+        sampleAnalysisResultEntry(resultId, "Uploaded", dataSample);
+/*
+        for (Object[] curRes: parsingData){
+            sampleAnalysisResultEntry((Integer) curRes[0], curRes[1], dataSample, null, null);
+        }
+*/        
+/*        String[] analysisNameArr = analysisName.split("\\|");
+        Object[] resultValueArr = resultValue.toString().split("\\|");
+        Object[] diagn = new Object[]{};
+        for (int i = 0; i < analysisNameArr.length; i++) {
+            Object[][] resultInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
+                    new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName(), TblsData.SampleAnalysisResult.ANALYSIS.getName()},
+                    new Object[]{sampleId, analysisNameArr[i]},
+                    new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()});
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultInfo[0][0].toString())) {
+                return new InternalMessage(LPPlatform.LAB_FALSE, RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{sampleId, analysisNameArr[i]});
+            }
+            if (resultInfo.length > 1) {
+                return new InternalMessage(LPPlatform.LAB_FALSE, DataSampleAnalysisResultErrorTrapping.ANALYSIS_HAS_SOME_PARAMETERS, null);
+            }
+            InternalMessage actionDiagnoses = sampleAnalysisResultEntry(Integer.valueOf(resultInfo[0][0].toString()), resultValueArr[i], dataSample);            
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses.getDiagnostic())) {
+                return actionDiagnoses;
+            }
+        }*/
+        return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, null);
     }
 
     public InternalMessage sampleAnalysisResultEntryByAnalysisName(Integer sampleId, String analysisName, Object resultValue, DataSample dataSample) {

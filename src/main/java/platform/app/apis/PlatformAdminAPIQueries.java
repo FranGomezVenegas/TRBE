@@ -26,7 +26,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
@@ -127,7 +127,7 @@ public class PlatformAdminAPIQueries extends HttpServlet {
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(ipBlackLists[0][0].toString()))){
                         for (Object[] currInstr: ipBlackLists){
                             JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInstr);
-                            jArr.add(jObj);
+                            jArr.put(jObj);
                         }
                     }
                     if (tblsIP.length==1){

@@ -12,7 +12,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
 import module.inventorytrack.definition.TblsInvTrackingConfig;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
@@ -69,15 +69,15 @@ public class FormulationFrontendMasterData implements FrontendMasterData{
                 JSONArray jArrLvl2 = new JSONArray();
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(catReferencesInfo[0][0].toString())){
                     JSONObject jObjLvl2=new JSONObject();
-                    jArrLvl2.add(jObjLvl2);
+                    jArrLvl2.put(jObjLvl2);
                 }else{
                     for (Object[] curRowLvl2: catReferencesInfo){
                         JSONObject jObjLvl2=LPJson.convertArrayRowToJSONObject(fieldsToRetrieveLvl2, curRowLvl2);  
-                        jArrLvl2.add(jObjLvl2);
+                        jArrLvl2.put(jObjLvl2);
                     }
                 }
                 jObj.put(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName(), jArrLvl2);
-                jSummaryArr.add(jObj);
+                jSummaryArr.put(jObj);
             }
         }                
         jSummaryObj.put("category_and_references", jSummaryArr);

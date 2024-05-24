@@ -45,7 +45,7 @@ import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_CODE_POSIC;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_EVALUATION_POSIC;
 import lbplanet.utilities.TrazitUtiilitiesEnums;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
@@ -220,7 +220,7 @@ public class LPTestingOutFormat {
                     updFldNames = LPArray.addValueToArray1D(updFldNames, new String[]{TblsTesting.ScriptSteps.FUNCTION_CODE.getName(), TblsTesting.ScriptSteps.EVAL_CODE.getName(),
                         TblsTesting.ScriptSteps.DYNAMIC_DATA.getName()});
                     updFldValues = LPArray.addValueToArray1D(updFldValues, new Object[]{evaluate.length<TRAP_MESSAGE_CODE_POSIC?"":evaluate[TRAP_MESSAGE_CODE_POSIC], tstAssert.getEvalCodeDiagnostic(),
-                        functionRelatedObjects.toJSONString()});
+                        functionRelatedObjects.toString()});
                 }
             }
             if (1==2){
@@ -261,7 +261,7 @@ public class LPTestingOutFormat {
                     updFldNames = LPArray.addValueToArray1D(updFldNames, new String[]{TblsTesting.ScriptSteps.FUNCTION_CODE.getName(), TblsTesting.ScriptSteps.EVAL_CODE.getName(),
                         TblsTesting.ScriptSteps.DYNAMIC_DATA.getName()});
                     updFldValues = LPArray.addValueToArray1D(updFldValues, new Object[]{tstAssert.getEvalCode(), tstAssert.getEvalCodeDiagnostic(),
-                        functionRelatedObjects.toJSONString()});
+                        functionRelatedObjects.toString()});
                 }
             }
             if (1==2){
@@ -395,13 +395,13 @@ public class LPTestingOutFormat {
         if (testingBusinessRulesVisitedObj != null) {
             JSONArray jsonContent = testingBusinessRulesVisitedObj.getJsonContent();
             updFldNames = LPArray.addValueToArray1D(updFldNames, TblsTesting.Script.BUSINESS_RULES_VISITED.getName());
-            updFldValues = LPArray.addValueToArray1D(updFldValues, jsonContent.toJSONString());
+            updFldValues = LPArray.addValueToArray1D(updFldValues, jsonContent.toString());
         }
         TestingMessageCodeVisited testingMessageCodeVisitedObj = procReqInstance.getTestingMessageCodeVisitedObj();
         if (testingMessageCodeVisitedObj != null) {
             JSONArray jsonContent = testingMessageCodeVisitedObj.getJsonContent();
             updFldNames = LPArray.addValueToArray1D(updFldNames, TblsTesting.Script.MESSAGES_VISITED.getName());
-            updFldValues = LPArray.addValueToArray1D(updFldValues, jsonContent.toJSONString());
+            updFldValues = LPArray.addValueToArray1D(updFldValues, jsonContent.toString());
         }
         return new Object[]{updFldNames, updFldValues};
     }
@@ -1268,7 +1268,7 @@ public class LPTestingOutFormat {
         JSONArray auditIndexInfo = getScriptAuditIncrements(procInstanceName, scriptId, scriptAuditIds, moment);
         if (auditIndexInfo != null) {
             String[] updFldNames = new String[]{TblsTesting.Script.AUDIT_IDS_VALUES.getName()};
-            Object[] updFldValues = new Object[]{auditIndexInfo.toJSONString()};
+            Object[] updFldValues = new Object[]{auditIndexInfo.toString()};
             SqlWhere sqlWhere = new SqlWhere();
             sqlWhere.addConstraint(TblsTesting.Script.SCRIPT_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{scriptId}, "");
             Rdbms.updateRecordFieldsByFilter(TblsTesting.TablesTesting.SCRIPT,
@@ -1295,7 +1295,7 @@ public class LPTestingOutFormat {
                 } else {
                     currIndxInfo.put(Arrays.toString(auditIdInfo).replace("\\*", "_") + "_" + moment, dbGetIndexLastNumberInUse[dbGetIndexLastNumberInUse.length - 1]);
                 }
-                indxInfo.add(currIndxInfo);
+                indxInfo.put(currIndxInfo);
             }
         }
         return indxInfo;
@@ -1327,7 +1327,7 @@ public class LPTestingOutFormat {
         } else {
             currIndxInfo.put(indexName.replace("\\*", "_") + "_" + moment, dbGetIndexLastNumberInUse[dbGetIndexLastNumberInUse.length - 1]);
         }
-        indxInfo.add(currIndxInfo);
+        indxInfo.put(currIndxInfo);
         return indxInfo;
     }
 
