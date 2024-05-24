@@ -18,6 +18,7 @@ import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
 import io.github.classgraph.ScanResult;
+import java.util.ArrayList;
 import lbplanet.utilities.LPFrontEnd;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -33,13 +34,14 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
 import trazit.globalvariables.GlobalVariables.Languages;
 import java.util.TreeMap;
+import lbplanet.utilities.LPMailing;
 /**
  *
  * @author User
@@ -113,9 +115,9 @@ public final class EndPointsToRequirements {
 
                     Integer numEndpointArguments = curEndpoint.getArguments().length;
                     if (LPArray.valueInArray(endpointsApiAndEndpointNamesKey, curEndpoint.getClass().getSimpleName() + "-" + curEndpoint.getName())) {
-                        endpointsFound.add(curEndpoint.getClass().getSimpleName() + "-" + curEndpoint.getName());
+                        endpointsFound.put(curEndpoint.getClass().getSimpleName() + "-" + curEndpoint.getName());
                     } else {
-                        endpointsNotFound.add(curEndpoint.getClass().getSimpleName() + "-" + curEndpoint.getName());
+                        endpointsNotFound.put(curEndpoint.getClass().getSimpleName() + "-" + curEndpoint.getName());
                     }
                     if (Boolean.FALSE.equals(summaryOnlyMode)) {
                         addCodeInErrorTrapping(curEndpoint.getClass().getSimpleName(), curEndpoint.getSuccessMessageCode(), "");
@@ -129,7 +131,7 @@ public final class EndPointsToRequirements {
                                 notifInfo.put("endpoint_name", curEndpoint.getName());
                                 notifInfo.put("notification_code", curEndpoint.getSuccessMessageCode());
                                 notifInfo.put("missing_language", curLang);
-                                successMessageWithNoNotificationTranslation.add(notifInfo);
+                                successMessageWithNoNotificationTranslation.put(notifInfo);
                             }
                         }
                         try {
@@ -140,7 +142,7 @@ public final class EndPointsToRequirements {
                             jObj.put("enum", getMine.getSimpleName());
                             jObj.put("endpoint_code", curEndpoint.toString());
                             jObj.put(GlobalAPIsParams.LBL_ERROR, e.getMessage());
-                            enumsIncomplete.add(jObj);
+                            enumsIncomplete.put(jObj);
                         }
                     }
                     totalEndpointsVisitedInjection++;
@@ -154,14 +156,14 @@ public final class EndPointsToRequirements {
                     JSONObject jObj = new JSONObject();
                     jObj.put("enum", getMine.getSimpleName());
                     jObj.put("messages", enumConstantObjects.size());
-                    enumsCompleteSuccess.add(jObj);
+                    enumsCompleteSuccess.put(jObj);
                 }
 //                    }
             }
         } catch (InterruptedException  e) {    
             Thread.currentThread().interrupt();
             JSONArray errorJArr = new JSONArray();
-            errorJArr.add("Error found then ending incomplete in index:" + totalEndpointsVisitedInjection + audEvObjStr + "_" + evName + ":" + e.getMessage());
+            errorJArr.put("Error found then ending incomplete in index:" + totalEndpointsVisitedInjection + audEvObjStr + "_" + evName + ":" + e.getMessage());
             LPFrontEnd.servletReturnSuccess(request, response, errorJArr);
             //return;
         }
@@ -176,28 +178,46 @@ public final class EndPointsToRequirements {
         }
         JSONArray endpointsInDatabaseNoLongerInUse = endpointsInDatabaseNoLongerInUse(endpointsFound);
         if (Boolean.FALSE.equals(endpointsInDatabaseNoLongerInUse.isEmpty())) {
-            summaryDiagnoses = summaryDiagnoses + " There are "+endpointsInDatabaseNoLongerInUse.size()+ "endpoints in the dictionary but not longer in use";
+            summaryDiagnoses = summaryDiagnoses + " There are "+endpointsInDatabaseNoLongerInUse.length()+ "endpoints in the dictionary but not longer in use";
         }
         if (Boolean.FALSE.equals(successMessageWithNoNotificationTranslation.isEmpty())) {
-            summaryDiagnoses = summaryDiagnoses + " There are "+successMessageWithNoNotificationTranslation.size()+" missing translations for endpoints success notification";
+            summaryDiagnoses = summaryDiagnoses + " There are "+successMessageWithNoNotificationTranslation.length()+" missing translations for endpoints success notification";
         }
         jMainObj.put("00_summary", summaryDiagnoses);
         jMainObj.put("01_total_apis_in_dictionary_before_running", this.apiName1d.length);
         jMainObj.put("01_total_endpoints_in_dictionary_before_running", this.endpointsFromDatabase.length);
         jMainObj.put("02_total_apis_in_code", classesImplementingInt.toString());
-        jMainObj.put("03_total_apis_visited_in_this_run", enumsCompleteSuccess.size());
+        jMainObj.put("03_total_apis_visited_in_this_run", enumsCompleteSuccess.length());
         jMainObj.put("03_list_of_apis_visited_in_this_run", enumsCompleteSuccess);
         jMainObj.put("04_total_number_of_messages_visited", totalEndpointsVisitedInt);
         jMainObj.put("04_list of_endpoints_found", endpointsFound);
-        jMainObj.put("05_total_endpoints_found", endpointsFound.size());
+        jMainObj.put("05_total_endpoints_found", endpointsFound.length());
         jMainObj.put("05_list_of_endpoints_not_found", endpointsNotFound);
-        jMainObj.put("05_total_endpoints_not_found", endpointsNotFound.size());
-        jMainObj.put("05_total_success_notifications_with_no_pretty_text", successMessageWithNoNotificationTranslation.size());
+        jMainObj.put("05_total_endpoints_not_found", endpointsNotFound.length());
+        jMainObj.put("05_total_success_notifications_with_no_pretty_text", successMessageWithNoNotificationTranslation.length());
         jMainObj.put("05_list_of_success_notifications_with_no_pretty_text", successMessageWithNoNotificationTranslation);
         
         if (Boolean.FALSE.equals(endpointsInDatabaseNoLongerInUse.isEmpty())) {
             jMainObj.put("05_endpoints_in_dictionary_not_longer_in_use", endpointsInDatabaseNoLongerInUse);
         }
+        
+        Boolean sendMail = Boolean.valueOf(request.getParameter("sendMail"));        
+        if (sendMail){
+            StringBuilder mailBody=new StringBuilder(0);
+            mailBody.append("<h2>Total endpoints not found: "+endpointsNotFound.length()+"</h2><br>");
+            mailBody.append("<h2>Total messages with no notification translation: "+successMessageWithNoNotificationTranslation.length()+"</h2><br>");
+            
+            mailBody.append("<b>The not found endpoints are:</b> <br>"+formatListForEmail(jsonArrayToList(endpointsNotFound))+"<br><br>");
+            mailBody.append("<b>The messages with no notification translation are:</b> <br>"+formatListForEmail(jsonArrayToList(successMessageWithNoNotificationTranslation))+"<br>");
+            
+            LPMailing newMail = new LPMailing();            
+             newMail.sendEmail(
+                new String[]{"info.fran.gomez@gmail.com", "fgomez@trazit.net", "ibelmonte@trazit.net",
+                "cdesantos@trazit.net", "promera@trazit.net"}, 
+                "Endpoints declaration: "+summaryDiagnoses, mailBody.toString(),null, jMainObj);
+            
+        }
+        
 /*        TreeMap<String, Object> sortedJsonData = new TreeMap<>();
         Iterator<String> keys = jMainObj.keys();
         while (keys.hasNext()) {
@@ -217,14 +237,30 @@ public final class EndPointsToRequirements {
         this.summaryInfo = sortedJsonObject;
     } catch (Exception e) {        
         JSONArray errorsJArr = new JSONArray();
-        errorsJArr.add("totalApisVisitedInjection:" + totalApisVisitedInjection+" totalEndpointsVisitedInjection:" + totalEndpointsVisitedInjection + " current event when failed:"+evName+". Error:" + e.getMessage());
+        errorsJArr.put("totalApisVisitedInjection:" + totalApisVisitedInjection+" totalEndpointsVisitedInjection:" + totalEndpointsVisitedInjection + " current event when failed:"+evName+". Error:" + e.getMessage());
         JSONObject jObj=new JSONObject();
         jObj.put("current_entity", currentEntityIndex);
         jObj.put("total_entities", totalEntities);
-        errorsJArr.add(jObj);
+        errorsJArr.put(jObj);
         LPFrontEnd.servletReturnSuccess(request, response, errorsJArr);
         return;                
     }
+    }
+    
+    public static List<String> jsonArrayToList(org.json.JSONArray jsonArray) {
+        List<String> list = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            list.add(jsonArray.getString(i));
+        }
+        return list;
+    }
+    
+    public static String formatListForEmail(List<String> list) {
+        StringBuilder formattedString = new StringBuilder();
+        for (String item : list) {
+            formattedString.append(item).append("\n").append("<br>");
+        }
+        return formattedString.toString();
     }
     
     public EndPointsToRequirements() {
@@ -237,9 +273,9 @@ public final class EndPointsToRequirements {
         String[] argHeader = new String[]{"name", "type", "is_mandatory?", "testing arg posic", "dev_comment", "dev_comment_tags"};
         JSONArray argsJsonArr = new JSONArray();
         for (LPAPIArguments curArg : arguments) {
-            JSONObject argsJson = LPJson.convertArrayRowToJSONObject(argHeader, new Object[]{curArg.getName(), curArg.getType(),
+            JSONObject argsJson = LPJson.convertArrayRowToJSONObjectNoJsonSimple(argHeader, new Object[]{curArg.getName(), curArg.getType(),
                 curArg.getMandatory(), curArg.getTestingArgPosic(), curArg.getDevComment(), curArg.getDevCommentTags()});
-            argsJsonArr.add(argsJson);
+            argsJsonArr.put(argsJson);
         }
         return argsJsonArr;
     }
@@ -256,17 +292,34 @@ public final class EndPointsToRequirements {
         this.endpointsApiAndEndpointNamesKey = LPArray.joinTwo1DArraysInOneOf1DString(apiName1d, LPArray.array2dTo1d(this.endpointsFromDatabase, endpointNamePosic), "-");
         this.apiName1d = LPArray.getUniquesArray(apiName1d);
     }
-
-    private JSONArray endpointsInDatabaseNoLongerInUse(JSONArray endpointsFound) {
+/*
+    private JSONArray endpointsInDatabaseNoLongerInUseFran(JSONArray endpointsFound) {
         JSONArray jArr = new JSONArray();
         for (String curEntry : this.endpointsApiAndEndpointNamesKey) {
             if (endpointsFound.indexOf(curEntry) == -1) {
-                jArr.add(curEntry);
+                jArr.put(curEntry);
             }
         }
         return jArr;
     }
-
+*/
+    public static int indexOf(JSONArray jsonArray, String element) {
+        for (int i = 0; i < jsonArray.length(); i++) {
+            if (jsonArray.getString(i).equals(element)) {
+                return i;
+            }
+        }
+        return -1; // Return -1 if the element is not found
+    }
+    private JSONArray endpointsInDatabaseNoLongerInUse(JSONArray endpointsFound) {
+        JSONArray jArr = new JSONArray();
+        for (String curEntry : this.endpointsApiAndEndpointNamesKey) {
+            if (indexOf(endpointsFound, curEntry) == -1) {
+                jArr.put(curEntry);
+            }
+        }
+        return jArr;
+    }
     private Object[] existsEndPointInDatabase(String apiName, String endpointName) {
         Integer valuePosicInArray = LPArray.valuePosicInArray(this.endpointsApiAndEndpointNamesKey, apiName + "-" + endpointName);
         if (valuePosicInArray == -1) {

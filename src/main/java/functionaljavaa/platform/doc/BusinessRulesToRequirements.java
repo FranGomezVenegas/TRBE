@@ -13,6 +13,8 @@ import lbplanet.utilities.LPFrontEnd;
 import databases.TblsTrazitDocTrazit;
 import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.parameter.Parameter.getBusinessRuleAppFile;
+import static functionaljavaa.platform.doc.EndPointsToRequirements.formatListForEmail;
+import static functionaljavaa.platform.doc.EndPointsToRequirements.jsonArrayToList;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
@@ -23,14 +25,17 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
+import lbplanet.utilities.LPJson;
+import lbplanet.utilities.LPMailing;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
@@ -51,8 +56,8 @@ public class BusinessRulesToRequirements {
         JSONArray vList=new JSONArray();
         String rulesNames="businessRulesEnableValues|businessRulesDisableValues";
         for (String curRule:rulesNames.split("\\|")){
-            String enableValuesStr=getBusinessRuleAppFile(curRule, true); 
-            vList.addAll(Arrays.asList(enableValuesStr.split("\\|")));
+            String enableValuesStr=getBusinessRuleAppFile(curRule, true);             
+            vList.putAll(Arrays.asList(enableValuesStr.split("\\|")));
         }
         return vList;
     }
@@ -73,10 +78,12 @@ public class BusinessRulesToRequirements {
         String evName="";
         Integer classesImplementingInt=-999;
         Integer totalEndpointsVisitedInt=0;
+        Integer totalBusinessRulesVisitedInt=0;
             try (       io.github.classgraph.ScanResult scanResult = new ClassGraph().enableAllInfo()//.acceptPackages("com.xyz")
             .scan()) {    
                 ClassInfoList classesImplementing = scanResult.getClassesImplementing("trazit.enums.EnumIntBusinessRules");
                 classesImplementingInt=classesImplementing.size();
+                
                 for (int i=0;i<classesImplementing.size();i++){
                     ClassInfo getMine = classesImplementing.get(i);  
                     audEvObjStr=getMine.getSimpleName();
@@ -84,15 +91,18 @@ public class BusinessRulesToRequirements {
                     JSONArray enumsIncomplete = new JSONArray();
                     totalEndpointsVisitedInt=totalEndpointsVisitedInt+enumConstantObjects.size();
                     for (int j=0;j<enumConstantObjects.size();j++) {
+                        totalBusinessRulesVisitedInt++;
                         EnumIntBusinessRules curBusRul=(EnumIntBusinessRules)enumConstantObjects.get(j);
                         audEvObjStr=curBusRul.getAreaName();
                         evName=curBusRul.getTagName();
                         String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.BusinessRulesDeclaration.PROPERTY_NAME.getName()});
                         Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul.getTagName()});
                         if (LPArray.valueInArray(this.businessRules1d, curBusRul.getAreaName()+"-"+curBusRul.getTagName())){
-                            eventsFound.add(curBusRul.getAreaName()+"-"+curBusRul.getTagName());
+                            if (Boolean.FALSE.equals(LPJson.containsJsonOfStrings(eventsFound, curBusRul.getAreaName()+"-"+curBusRul.getTagName())))
+                                eventsFound.put(curBusRul.getAreaName()+"-"+curBusRul.getTagName());
                         }else{
-                            eventsNotFound.add(curBusRul.getAreaName()+"-"+curBusRul.getTagName());
+                            if (Boolean.FALSE.equals(LPJson.containsJsonOfStrings(eventsNotFound, curBusRul.getAreaName()+"-"+curBusRul.getTagName())))
+                                eventsNotFound.put(curBusRul.getAreaName()+"-"+curBusRul.getTagName());
                         }
                         if (Boolean.FALSE.equals(summaryOnlyMode)){
                             try{
@@ -105,7 +115,7 @@ public class BusinessRulesToRequirements {
                                 jObj.put("family",getMine.getSimpleName());
                                 jObj.put("business_rule",curBusRul.toString());
                                 jObj.put(GlobalAPIsParams.LBL_ERROR,e.getMessage());
-                                enumsIncomplete.add(jObj);
+                                enumsIncomplete.put(jObj);
                             }
                         }
                     }
@@ -116,13 +126,13 @@ public class BusinessRulesToRequirements {
                         JSONObject jObj=new JSONObject();
                         jObj.put("family",getMine.getSimpleName());
                         jObj.put("business_rule",enumConstantObjects.size());
-                        busRulesVisitedSuccess.add(jObj);
+                        busRulesVisitedSuccess.put(jObj);
                     }
                 }
             }catch(Exception e){
                 ScanResult.closeAll();
                 JSONArray errorJArr = new JSONArray();
-                errorJArr.add(audEvObjStr+"_"+evName+":"+e.getMessage()); 
+                errorJArr.put(audEvObjStr+"_"+evName+":"+e.getMessage()); 
                 Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, audEvObjStr+"_"+evName+":"+e.getMessage());
                 LPFrontEnd.servletReturnSuccess(request, response, errorJArr);                
                 return;
@@ -130,19 +140,41 @@ public class BusinessRulesToRequirements {
         
         ScanResult.closeAll();        
         JSONObject jMainObj=new JSONObject();
+        String summaryDiagnoses="";
         if (eventsNotFound.isEmpty())
-            jMainObj.put("00_summary", "SUCCESS");
+            summaryDiagnoses="SUCCESS";            
         else
-            jMainObj.put("00_summary", "WITH ERRORS. There are "+eventsNotFound.size()+" business rules not found");
+            summaryDiagnoses="WITH ERRORS. There are "+eventsNotFound.length()+" business rules not found";
+        
+        jMainObj.put("00_summary", summaryDiagnoses);
         jMainObj.put("01_total_families_in_code",classesImplementingInt.toString());
-        jMainObj.put("02_total_families_visited",busRulesVisitedSuccess.size());
+        jMainObj.put("02_total_families_visited",busRulesVisitedSuccess.length());
         jMainObj.put("03_list_of_business_rules_visited", busRulesVisitedSuccess);
         jMainObj.put("04_total_number_of_endpoints_visited", totalEndpointsVisitedInt);
-        jMainObj.put("05_total_business_rules_found", eventsFound.size());
+        jMainObj.put("05_total_business_rules_found", eventsFound.length());
         jMainObj.put("05_list_of_business_rules_found", eventsFound);
-        jMainObj.put("05_total_business_rules_not_found", eventsNotFound.size());
+        jMainObj.put("05_total_business_rules_not_found", eventsNotFound.length());
         jMainObj.put("05_list_of_business_rules_not_found", eventsNotFound);        
         this.summaryInfo=jMainObj;
+        
+        Boolean sendMail = Boolean.valueOf(request.getParameter("sendMail"));        
+        if (sendMail){
+            try {
+                StringBuilder mailBody=new StringBuilder(0);
+                mailBody.append("<h2>Business rules not found: "+eventsNotFound.length()+" from  a total of "+totalBusinessRulesVisitedInt+"</h2><br>");
+                
+                mailBody.append("<b>The not found ones are:</b> <br>"+formatListForEmail(jsonArrayToList(eventsNotFound))+"<br><br>");                
+                
+                LPMailing newMail = new LPMailing();
+                newMail.sendEmail(
+                        new String[]{"info.fran.gomez@gmail.com", "fgomez@trazit.net", "ibelmonte@trazit.net",
+                            "cdesantos@trazit.net", "promera@trazit.net"},
+                        "Business Rules declaration: "+summaryDiagnoses, mailBody.toString(),null, jMainObj);
+            } catch (MessagingException ex) {
+                Logger.getLogger(BusinessRulesToRequirements.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        }        
     }
 private static void declareBusinessRuleInDatabaseOld(String apiName, String areaName, String tagName, String[] fieldNames, Object[] fieldValues){
 //    Rdbms.getRecordFieldsByFilter(apiName, apiName, fieldNames, fieldValues, fieldNames)
@@ -202,7 +234,7 @@ private static void declareBusinessRuleInDatabaseWithValuesList(String apiName, 
         }else{
             updFldName=LPArray.addValueToArray1D(updFldName, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.VALUES_LIST.getName(),
             TblsTrazitDocTrazit.BusinessRulesDeclaration.ALLOW_MULTI_VALUES.getName(), TblsTrazitDocTrazit.BusinessRulesDeclaration.VALUES_SEPARATOR.getName()});
-            updFldValue=LPArray.addValueToArray1D(updFldValue, new Object[]{valuesLst.toJSONString()});
+            updFldValue=LPArray.addValueToArray1D(updFldValue, new Object[]{valuesLst.toString()});
             String val="";
             if (allowMultilist==null){ 
                 val="NULL>>>BOOLEAN";

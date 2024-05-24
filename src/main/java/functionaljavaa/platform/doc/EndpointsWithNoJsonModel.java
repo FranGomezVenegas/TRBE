@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
@@ -50,7 +50,7 @@ public class EndpointsWithNoJsonModel {
         }else{
             for (Object[] curRow: reqEndpointInfo){
                 JSONObject convertArrayRowToJSONObject = LPJson.convertArrayRowToJSONObject(fldNames, curRow);
-                summaryApisAndEndPointJsonModels.add(convertArrayRowToJSONObject);
+                summaryApisAndEndPointJsonModels.put(convertArrayRowToJSONObject);
             }
         }                                                                        
         fldNames = EnumIntTableFields.getAllFieldNames(TblsTrazitDocTrazit.TablesTrazitDocTrazit.VIEW_ENDPOINTS_PENDING_JSONMODEL.getTableFields());        
@@ -63,7 +63,7 @@ public class EndpointsWithNoJsonModel {
         }else{
             for (Object[] curRow: reqEndpointInfo){
                 JSONObject convertArrayRowToJSONObject = LPJson.convertArrayRowToJSONObject(fldNames, curRow);
-                endpointsWithPendingJsonModel.add(convertArrayRowToJSONObject);
+                endpointsWithPendingJsonModel.put(convertArrayRowToJSONObject);
             }
         }
 
@@ -76,13 +76,13 @@ public class EndpointsWithNoJsonModel {
                 summaryDiagnoses = "SUCCESS";
             } else {
 
-                summaryDiagnoses = "WITH ERRORS, There are "+endpointsWithPendingJsonModel.size()+" endpoints with no json model assigned and required";
+                summaryDiagnoses = "WITH ERRORS, There are "+endpointsWithPendingJsonModel.length()+" endpoints with no json model assigned and required";
             }
             this.summaryInfo.put("00_summary",summaryDiagnoses);
-            this.summaryInfo.put("01_total_endpoint_pending_of_json_model",endpointsWithPendingJsonModel.size());
+            this.summaryInfo.put("01_total_endpoint_pending_of_json_model",endpointsWithPendingJsonModel.length());
             this.summaryInfo.put("01_list_of_endpoint_pending_of_json_model", endpointsWithPendingJsonModel);
 
-            this.summaryInfo.put("01_total_apis",summaryApisAndEndPointJsonModels.size());
+            this.summaryInfo.put("01_total_apis",summaryApisAndEndPointJsonModels.length());
             this.summaryInfo.put("01_summary_of_jsonmodels_per_api", summaryApisAndEndPointJsonModels);
     }    
 }

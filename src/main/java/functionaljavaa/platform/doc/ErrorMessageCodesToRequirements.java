@@ -11,6 +11,8 @@ import databases.SqlStatement;
 import databases.TblsTrazitDocTrazit;
 import functionaljavaa.parameter.Parameter;
 import functionaljavaa.parameter.Parameter.PropertyFilesType;
+import static functionaljavaa.platform.doc.EndPointsToRequirements.formatListForEmail;
+import static functionaljavaa.platform.doc.EndPointsToRequirements.jsonArrayToList;
 import io.github.classgraph.ClassGraph;
 import io.github.classgraph.ClassInfo;
 import io.github.classgraph.ClassInfoList;
@@ -26,7 +28,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
@@ -36,6 +38,7 @@ import java.nio.file.Files;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import lbplanet.utilities.LPMailing;
 /**
  *
  * @author User
@@ -92,9 +95,9 @@ public class ErrorMessageCodesToRequirements {
                             String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
                             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul.getErrorCode()});
                             if (LPArray.valueInArray(apiAndErrorMsgCodeKey, curBusRul.getClass().getSimpleName()+"-"+curBusRul.getErrorCode()))
-                                msgCodesFound.add(curBusRul.getClass().getSimpleName()+"-"+curBusRul.getErrorCode());
+                                msgCodesFound.put(curBusRul.getClass().getSimpleName()+"-"+curBusRul.getErrorCode());
                             else
-                                msgCodesNotFound.add(curBusRul.getClass().getSimpleName()+"-"+curBusRul.getErrorCode());
+                                msgCodesNotFound.put(curBusRul.getClass().getSimpleName()+"-"+curBusRul.getErrorCode());
                             if (Boolean.FALSE.equals(summaryOnlyMode)){
                                 addCodeInErrorTrapping(curBusRul.getErrorCode(), "");
                                 String [] langsArr=new String[]{"en", "es"};
@@ -106,7 +109,7 @@ public class ErrorMessageCodesToRequirements {
                                         notifInfo.put("family_name", curBusRul.getClass().getSimpleName());
                                         notifInfo.put("notification_code", curBusRul.getErrorCode());
                                         notifInfo.put("missing_language", curLang);
-                                        successMessageWithNoNotificationTranslation.add(notifInfo);
+                                        successMessageWithNoNotificationTranslation.put(notifInfo);
                                     }
                                 }                                
                                 try{                                    
@@ -116,7 +119,7 @@ public class ErrorMessageCodesToRequirements {
                                     jObj.put("enum",getMine.getSimpleName());
                                     jObj.put("message_code",curBusRul.toString());
                                     jObj.put(GlobalAPIsParams.LBL_ERROR,e.getMessage());
-                                    enumsIncomplete.add(jObj);
+                                    enumsIncomplete.put(jObj);
                                 }
                             }
                         }
@@ -127,13 +130,13 @@ public class ErrorMessageCodesToRequirements {
                             JSONObject jObj=new JSONObject();
                             jObj.put("enum",getMine.getSimpleName());
                             jObj.put("messages",enumConstantObjects.size());
-                            enumsCompleteSuccess.add(jObj);
+                            enumsCompleteSuccess.put(jObj);
                         }
                     }
                 }catch(Exception e){
                     ScanResult.closeAll();
                     JSONArray errorJArr = new JSONArray();
-                    errorJArr.add(audEvObjStr+"_"+evName+":"+e.getMessage());
+                    errorJArr.put(audEvObjStr+"_"+evName+":"+e.getMessage());
                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, audEvObjStr+"_"+evName+":"+e.getMessage());                
                     LPFrontEnd.servletReturnSuccess(request, response, errorJArr);
                     return;
@@ -155,25 +158,38 @@ public class ErrorMessageCodesToRequirements {
             }
             
             if (Boolean.FALSE.equals(msgCodesNotFound.isEmpty())) {
-                summaryDiagnoses = summaryDiagnoses + " There are "+msgCodesNotFound.size()+ "notifications not found";
+                summaryDiagnoses = summaryDiagnoses + " There are "+msgCodesNotFound.length()+ "notifications not found";
             }
             if (Boolean.FALSE.equals(successMessageWithNoNotificationTranslation.isEmpty())) {
-                summaryDiagnoses = summaryDiagnoses + " There are "+successMessageWithNoNotificationTranslation.size()+" missing translations for endpoints success notification";
+                summaryDiagnoses = summaryDiagnoses + " There are "+successMessageWithNoNotificationTranslation.length()+" missing translations for endpoints success notification";
             }
             
             jMainObj.put("01_total_in_dictionary_before_running", messageCodeFromDatabase.length);
             jMainObj.put("01_total_families_in_dictionary_before_running", this.enumName1d.length);
             jMainObj.put("02_total_families_in_code",classesImplementingInt.toString());
-            jMainObj.put("03_total_families_visited",enumsCompleteSuccess.size());
+            jMainObj.put("03_total_families_visited",enumsCompleteSuccess.length());
             jMainObj.put("04_list_of_families_visited_in_this_run", enumsCompleteSuccess);
             jMainObj.put("04_total_number_of_notifications_visited_in_this_run", totalEndpointsVisitedInt);
-            jMainObj.put("05_total_notifications_found", msgCodesFound.size());
+            jMainObj.put("05_total_notifications_found", msgCodesFound.length());
             jMainObj.put("05_list_of_notifications_found", msgCodesFound);
-            jMainObj.put("05_total_notifications_not_found", msgCodesNotFound.size());        
+            jMainObj.put("05_total_notifications_not_found", msgCodesNotFound.length());        
             jMainObj.put("05_list_of_notifications_not_found", msgCodesNotFound);  
-            jMainObj.put("05_total_notifications_with_no_pretty_text", successMessageWithNoNotificationTranslation.size());
+            jMainObj.put("05_total_notifications_with_no_pretty_text", successMessageWithNoNotificationTranslation.length());
             jMainObj.put("05_list_of_notifications_with_no_pretty_text", successMessageWithNoNotificationTranslation);
             
+            Boolean sendMail = Boolean.valueOf(request.getParameter("sendMail"));        
+            if (sendMail){
+                StringBuilder mailBody=new StringBuilder(0);
+                mailBody.append("<h2>Notifications not found: "+msgCodesNotFound.length()+" from  a total of "+(msgCodesNotFound.length()+msgCodesFound.length())+"</h2><br>");
+                mailBody.append("<h2>Notifications with no pretty message : "+successMessageWithNoNotificationTranslation.length());
+                mailBody.append("<b>The not found ones are:</b> <br>"+formatListForEmail(jsonArrayToList(msgCodesNotFound))+"<br><br>");
+                mailBody.append("<b>Notifications with no pretty message are:</b> <br>"+formatListForEmail(jsonArrayToList(successMessageWithNoNotificationTranslation))+"<br><br>");
+                LPMailing newMail = new LPMailing();
+                newMail.sendEmail(
+                        new String[]{"info.fran.gomez@gmail.com", "fgomez@trazit.net", "ibelmonte@trazit.net",
+                            "cdesantos@trazit.net", "promera@trazit.net"},
+                        "Business Rules declaration: "+summaryDiagnoses, mailBody.toString(),null, jMainObj);            
+            }              
             this.summaryInfo=jMainObj;
             //LPFrontEnd.servletReturnSuccess(request, response, jMainObj);
         }catch(Exception e){
@@ -313,7 +329,7 @@ public class ErrorMessageCodesToRequirements {
                         while ((line = reader.readLine()) != null) {
                             if (Pattern.compile("\\b" + enumNameToFind + "\\b").matcher(line).find()) {
                                 // Encontramos el enum en esta línea, registra el método
-                                methodsUsingEnum.add("En archivo: " + filePath + ", Línea: " + line.trim());
+                                methodsUsingEnum.put("En archivo: " + filePath + ", Línea: " + line.trim());
                             }
                         }
                         reader.close();
