@@ -26,7 +26,7 @@ import module.formulation.definition.FormulationEnums.FormulationAPIqueriesEndpo
 import static module.formulation.definition.FormulationEnums.FormulationAPIqueriesEndpoints.ACTIVE_FORMULAS;
 import module.formulation.definition.TblsFormulationData;
 import static module.formulation.logic.ClssFormulationQueries.getFormulas;
-import org.json.simple.JSONArray;
+import org.json.JSONArray;
 import trazit.session.ProcedureRequestSession;
 
 /**
