@@ -107,7 +107,7 @@ public class ClassFormulation implements ActionsClass{
                 String quantity = argValues[2].toString();
                 String quantityUom = argValues[3].toString();
                 fldNamesStr = argValues[4].toString();
-                fldValuesStr = argValues[5].toString();
+                fldValuesStr = argValues[5].toString();                
                 fieldNames = null;
                 fieldValues = null;
                 if (fldValuesStr != null && fldValuesStr.length() > 0) {
