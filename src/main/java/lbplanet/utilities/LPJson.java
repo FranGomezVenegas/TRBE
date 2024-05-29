@@ -111,6 +111,35 @@ public class LPJson {
         return convertArrayRowToJSONObjectNoJsonSimple(header, row, null);
     }
 
+    public static org.json.simple.JSONArray convertArrayRowToJSONFieldNameAndValueObjectJsonSimple(String[] header, Object[] row, String[] fieldsToExclude) {
+        org.json.simple.JSONArray jArr = new org.json.simple.JSONArray();
+        if (header.length == 0) {
+            return jArr;
+        }
+        for (int iField = 0; iField < header.length; iField++) {
+            JSONObject jObj = new JSONObject();
+            if (row[iField] == null) {
+                jObj.put("field_name", header[iField]);
+                jObj.put("field_value", "");
+            } else {
+                if (fieldsToExclude == null || !LPArray.valueInArray(fieldsToExclude, header[iField])) {
+                    String clase = row[iField].getClass().toString();
+                    if ((clase.toUpperCase().contains("DATE"))|| (clase.toUpperCase().contains("TIME"))){
+                        jObj.put(setAlias(header[iField]), row[iField].toString());
+                    } else {
+                        if (row[iField].toString().toUpperCase().contains("NULL")) {
+                            row[iField] = "null";
+                        }
+                        jObj.put("field_name", setAlias(header[iField]));
+                        jObj.put("field_value", row[iField]);
+                    }
+                }
+            }
+            jArr.add(jObj);
+        }
+        return jArr;
+    }
+
     public static JSONArray convertArrayRowToJSONFieldNameAndValueObject(String[] header, Object[] row, String[] fieldsToExclude) {
         JSONArray jArr = new JSONArray();
         if (header.length == 0) {
@@ -261,10 +290,11 @@ public class LPJson {
         });
         return jsonArray;
     }
-    public static JsonArray convertJsonArrayToJSONArray(JSONArray jsonArray) {
+
+    public static JsonArray convertJsonArrayToJSONArray(org.json.simple.JSONArray jsonArray) {
     JsonArray jsonArrayResult = new JsonArray();
 
-    for (int i = 0; i < jsonArray.length(); i++) {
+    for (int i = 0; i < jsonArray.size(); i++) {
         try {
             // Convert each element to a JsonElement using Gson
             JsonElement jsonElement = JsonParser.parseString(jsonArray.get(i).toString());
