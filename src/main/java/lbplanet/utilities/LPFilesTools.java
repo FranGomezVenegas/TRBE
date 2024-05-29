@@ -12,7 +12,6 @@ import com.opencsv.exceptions.CsvException;
 
 import com.opencsv.CSVWriter;
 
-import java.io.FileOutputStream;
 
 import java.io.OutputStreamWriter;
 import java.net.URL;
@@ -35,6 +34,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipEntry;
+import java.io.OutputStream;
+import java.io.FileOutputStream;
 /**
  *
  * @author User
@@ -146,6 +149,40 @@ List<String[]> rows=new ArrayList<>();
             }
         }
         return jContent;
+    }    
+    private void unzip(File zipFile, Path destDir) throws IOException {
+        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile))) {
+            ZipEntry entry;
+            while ((entry = zis.getNextEntry()) != null) {
+                Path newPath = destDir.resolve(entry.getName());
+                if (entry.isDirectory()) {
+                    Files.createDirectories(newPath);
+                } else {
+                    Files.createDirectories(newPath.getParent());
+                    try (OutputStream os = Files.newOutputStream(newPath)) {
+                        byte[] buffer = new byte[1024];
+                        int len;
+                        while ((len = zis.read(buffer)) > 0) {
+                            os.write(buffer, 0, len);
+                        }
+                    }
+                }
+            }
+        }
+    }   
+    public static File byteArrToFile(String fileName, byte[] byteArray) {
+        // Define the file path
+        File file = new File(fileName);
+
+        // Write byte[] to file
+        try (FileOutputStream fos = new FileOutputStream(file)) {
+            fos.write(byteArray);
+            return file;
+            //System.out.println("File created successfully!");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }    
    /* public static JsonObject getLocalFileContentAsJsonObject(File file){
         if (file.isFile() && file.getName().endsWith(".json")) {
