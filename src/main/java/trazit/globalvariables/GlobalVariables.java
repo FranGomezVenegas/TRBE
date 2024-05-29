@@ -87,7 +87,9 @@ import module.monitoring.definition.TblsEnvMonitConfigAudit;
 import module.monitoring.definition.TblsEnvMonitData;
 import module.monitoring.definition.TblsEnvMonitDataAudit;
 import module.monitoring.definition.TblsEnvMonitProcedure;
+import module.projectrnd.definition.ClassDailyEntryactions;
 import module.projectrnd.definition.ClassProjectRnDactions;
+import module.projectrnd.definition.DailyEntryEnums.DailyEntryAPIactionsEndpoints;
 import module.projectrnd.definition.ProjectsRnDEnums.ProjectRnDAPIactionsEndpoints;
 import module.projectrnd.logic.ProjectRnDMasterData;
 import modules.masterdata.analysis.ClassAnalysis;
@@ -255,6 +257,7 @@ public class GlobalVariables {
                 null, null, ProjectRnDMasterData.class,
                 new ActionsEndpointPair[]{
                     new ActionsEndpointPair(ProjectRnDAPIactionsEndpoints.class.getName(), ClassProjectRnDactions.class.getName()),
+                    new ActionsEndpointPair(DailyEntryAPIactionsEndpoints.class.getName(), ClassDailyEntryactions.class.getName()),
                     new ActionsEndpointPair(FormulationAPIactionsEndpoints.class.getName(), ClassFormulation.class.getName()),
                     new ActionsEndpointPair(MethodValidationAPIactionsEndpoints.class.getName(), ClassMethodValidationactions.class.getName()),
                     
@@ -265,6 +268,7 @@ public class GlobalVariables {
                     new ActionsEndpointPair(InvestigationAPIactionsEndpoints.class.getName(), ClassInvestigation.class.getName())},
                 new ActionsEndpointPair[]{
                     new ActionsEndpointPair(ProjectRnDAPIactionsEndpoints.class.getName(), ClassProjectRnDactions.class.getName()),
+                    new ActionsEndpointPair(DailyEntryAPIactionsEndpoints.class.getName(), ClassDailyEntryactions.class.getName()),
                     new ActionsEndpointPair(FormulationAPIactionsEndpoints.class.getName(), ClassFormulation.class.getName()),
                     new ActionsEndpointPair(MethodValidationAPIactionsEndpoints.class.getName(), ClassMethodValidationactions.class.getName()),
                     new ActionsEndpointPair(SampleAPIactionsEndpoints.class.getName(), ClassSampleController.class.getName()),
