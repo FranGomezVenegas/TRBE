@@ -57,6 +57,8 @@ public class TblsApp {
             new String[]{LdapSetting.NAME.getName()}, null, "LDAP Settings declaration"),
         MAILING(null, "mailing", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Mailing.values(), null,
             new String[]{Mailing.SENDER_USER.getName()}, null, "Mailing Settings"),
+        AWS(null, "aws", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, Aws.values(), null,
+            new String[]{Aws.BUCKET_NAME.getName()}, null, "AWS Settings"),
         ;
         private TablesApp(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){
@@ -435,4 +437,28 @@ public class TblsApp {
         private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }    
 
+    public enum Aws implements EnumIntTableFields{
+        BUCKET_NAME("bucket_name", LPDatabase.stringNotNull(),null, null, "", null),
+        ACCESS_KEY("access_key", LPDatabase.string(),null, null, "", null),
+        SECRET_KEY("secret_key", LPDatabase.string(),null, null, "", null),
+        REGION("region", LPDatabase.string(),null, null, "", null),
+        ACTIVE("active", LPDatabase.booleanFld(true),null, null, "", null),
+        ;
+        private Aws(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName; @Override        public String getName(){return this.fieldName;}
+        private final String fieldType; @Override        public String getFieldType() {return this.fieldType;}
+        private final String fieldMask; @Override        public String getFieldMask() {return this.fieldMask;}
+        private final ReferenceFld reference; @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
+        private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }    
+    
 }
