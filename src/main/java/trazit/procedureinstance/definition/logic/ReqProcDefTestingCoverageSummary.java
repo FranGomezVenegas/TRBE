@@ -15,7 +15,7 @@ import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.LpPlatformBusinessRules;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import static trazit.procedureinstance.definition.apis.ReqProcedureDefinitionQueries.getScriptWithSteps;
@@ -31,22 +31,22 @@ public class ReqProcDefTestingCoverageSummary {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(schemaExists[0].toString())){
             return jMainObj;
         }
-        JSONArray dbRowsToJsonArr = QueryUtilities.dbRowsToJsonArr(procInstanceName, repositoryName, TblsTesting.TablesTesting.SCRIPT.getTableName(), getAllFieldNames(TblsTesting.TablesTesting.SCRIPT.getTableFields()), new String[]{TblsTesting.Script.ACTIVE.getName()}, new Object[]{true}, null, new String[]{}, true, true);
+        JSONArray dbRowsToJsonArr = QueryUtilities.dbRowsToJsonArrSimpleJson(procInstanceName, repositoryName, TblsTesting.TablesTesting.SCRIPT.getTableName(), getAllFieldNames(TblsTesting.TablesTesting.SCRIPT.getTableFields()), new String[]{TblsTesting.Script.ACTIVE.getName()}, new Object[]{true}, null, new String[]{}, true, true);
 
-        for (int i = 0; i < dbRowsToJsonArr.length(); i++) {
+        for (int i = 0; i < dbRowsToJsonArr.size(); i++) {
             JSONObject jsonObject = (JSONObject) dbRowsToJsonArr.get(i);
             String scriptId = LPNulls.replaceNull(jsonObject.get(TblsTesting.Script.SCRIPT_ID.getName())).toString();
             if (scriptId.length() > 0) {
                 JSONObject curTestObj = getScriptWithSteps(Integer.valueOf(scriptId), procInstanceName, null, null);
-                dbRowsToJsonArr2.put(curTestObj);
+                dbRowsToJsonArr2.add(curTestObj);
             }
         }
         jMainObj.put("scripts", dbRowsToJsonArr2);
         dbRowsToJsonArr2 = new JSONArray();
-        dbRowsToJsonArr = QueryUtilities.dbRowsToJsonArr(procInstanceName,LPPlatform.buildSchemaName(procInstanceName, TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getRepositoryName()), 
+        dbRowsToJsonArr = QueryUtilities.dbRowsToJsonArrSimpleJson(procInstanceName,LPPlatform.buildSchemaName(procInstanceName, TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getRepositoryName()), 
                 TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableName(), getAllFieldNames(TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableFields()), 
                 new String[]{TblsTesting.ScriptsCoverage.ACTIVE.getName()}, new Object[]{true}, null, new String[]{}, true, true);
-        for (int j = 0; j < dbRowsToJsonArr.length(); j++) {
+        for (int j = 0; j < dbRowsToJsonArr.size(); j++) {
             JSONObject jsonObject = (JSONObject) dbRowsToJsonArr.get(j);
             String coverageDetail = LPNulls.replaceNull(jsonObject.get("endpoints_coverage_detail")).toString();
             String endpointsExcludeList = LPNulls.replaceNull(jsonObject.get("endpoints_exclude_list")).toString();
@@ -56,7 +56,7 @@ public class ReqProcDefTestingCoverageSummary {
             jsonObject.put("business_rules_summary_json", covSectionDetailBusinessRules(coverageId, coverageDetail));
             coverageDetail = LPNulls.replaceNull(jsonObject.get("msg_coverage_detail")).toString();
             jsonObject.put("notifications_summary_json", covSectionDetailNotifications(coverageId, coverageDetail));
-            dbRowsToJsonArr2.put(jsonObject);
+            dbRowsToJsonArr2.add(jsonObject);
         }
         jMainObj.put("coverage", dbRowsToJsonArr2);
         return jMainObj;
