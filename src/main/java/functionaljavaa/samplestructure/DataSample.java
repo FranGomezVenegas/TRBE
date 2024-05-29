@@ -242,7 +242,9 @@ public class DataSample {
         if (numSamplesToLog == null) {
             numSamplesToLog = 1;
         }
-
+        if (numSamplesToLog==0){
+            return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, null);
+        }
         for (int iNumSamplesToLog = 0; iNumSamplesToLog < numSamplesToLog; iNumSamplesToLog++) {
             RdbmsObject insertRecordInTable = null;
             if (alternativeTblObj == null) {
