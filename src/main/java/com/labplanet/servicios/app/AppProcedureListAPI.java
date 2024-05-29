@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import functionaljavaa.sop.UserSop;
 import static functionaljavaa.sop.UserSop.isProcedureSopEnable;
 import static functionaljavaa.user.UserProfile.getProcedureUsers;
@@ -181,7 +181,7 @@ public class AppProcedureListAPI extends HttpServlet {
                             procedure.put("procModel", procModel(curProc.toString(), sizeValue, token.getUserRole()));
                         }
                         procedure.put("master_data", getMasterData(token, curProc.toString()));
-                        procedures.put(procedure);                                            
+                        procedures.add(procedure);                                            
                     }
                 } catch (Exception e) {
                     JSONObject procWithError = new JSONObject();
@@ -312,7 +312,7 @@ public class AppProcedureListAPI extends HttpServlet {
             if (Boolean.FALSE.equals(GlobalVariables.PROC_MANAGEMENT_SPECIAL_ROLE.equalsIgnoreCase(token.getUserRole()))){
                 for (Object[] curRow : getProcedureUsersAndRolesList(procInstanceName, null)) {
                     JSONObject convertArrayRowToJSONObject = LPJson.convertArrayRowToJSONObject(new String[]{"user_name", TblsProcedure.PersonProfile.ROLE_NAME.getName()}, curRow);
-                    usArr.put(convertArrayRowToJSONObject);
+                    usArr.add(convertArrayRowToJSONObject);
                 }
             }
             jObj.put("users_and_roles", usArr);
@@ -322,7 +322,7 @@ public class AppProcedureListAPI extends HttpServlet {
                 for (Object curRow : getProcedureUsers(procInstanceName, null)) {
                     JSONObject newRow = new JSONObject();
                     newRow.put("user", curRow);
-                    usArr.put(newRow);
+                    usArr.add(newRow);
                 }
             }
             jObj.put("users", usArr);
@@ -404,7 +404,7 @@ public class AppProcedureListAPI extends HttpServlet {
                         userHasNotCompletedSOP = true;
                         procEventSopDetailJson.put(LABEL_SOP_TOTAL_COMPLETED, false);
                     }
-                    procEventSopSummary.put(procEventSopDetailJson);
+                    procEventSopSummary.add(procEventSopDetailJson);
                 }
                 procEventJson.put(LABEL_SOPS_PASSED, !userHasNotCompletedSOP);
                 procEventSopDetail.put(LABEL_SOP_TOTAL, procEventSopsArr.length);
@@ -439,13 +439,13 @@ public class AppProcedureListAPI extends HttpServlet {
                     JSONObject procEventSopDetail = procEventSops(token.getPersonName(), curProc.toString(), procedure, procEventJson, procEventFldNameIconsDownArray, procEvent1, isForTesting);
 
                     procEventJson.put(LABEL_ARRAY_SOPS, procEventSopDetail);
-                    procEventsIconsDown.put(procEventJson);
+                    procEventsIconsDown.add(procEventJson);
                 }
             }
             return procEventsIconsDown;
         } catch (Exception e) {
             JSONArray proceduresList = new JSONArray();
-            proceduresList.put("Error:" + e.getMessage());
+            proceduresList.add("Error:" + e.getMessage());
             return proceduresList;
         }
     }
@@ -468,13 +468,13 @@ public class AppProcedureListAPI extends HttpServlet {
                     JSONObject procEventSopDetail = procEventSops(token.getPersonName(), curProc.toString(), procedure, procEventJson, procEventFldNameIconsUpArray, procEvent1, isForTesting);
 
                     procEventJson.put(LABEL_ARRAY_SOPS, procEventSopDetail);
-                    procEventsIconsUp.put(procEventJson);
+                    procEventsIconsUp.add(procEventJson);
                 }
             }
             return procEventsIconsUp;
         } catch (Exception e) {
             JSONArray proceduresList = new JSONArray();
-            proceduresList.put("Error:" + e.getMessage());
+            proceduresList.add("Error:" + e.getMessage());
             return proceduresList;
         }
     }
@@ -514,14 +514,14 @@ public class AppProcedureListAPI extends HttpServlet {
                 if (Boolean.FALSE.equals(curProcEventType.equalsIgnoreCase(elementType.TWOICONS.toString().toLowerCase()))) {
                     if (Boolean.FALSE.equals(childs.isEmpty())) {
                         procEventJson.put(LABEL_ICONS, childs);
-                        procEvents.put(procEventJson);
+                        procEvents.add(procEventJson);
                         procEventJson = new JSONObject();
                     }
                     procEventJson = LPJson.convertArrayRowToJSONObject(procEventFldNameArray, procEvent1, excludedAttributesForOtherItem);
                     JSONObject procEventSopDetail = procEventSops(token.getPersonName(), curProc.toString(), procedure, procEventJson, procEventFldNameArray, procEvent1, isForTesting);
                     procEventJson.put(LABEL_ARRAY_SOPS, procEventSopDetail);
                     childs = new JSONArray();
-                    procEvents.put(procEventJson);
+                    procEvents.add(procEventJson);
                     procEventJson = new JSONObject();
                 }
                 if (curProcEventType.equalsIgnoreCase(elementType.TWOICONS.toString().toLowerCase())) {
@@ -529,7 +529,7 @@ public class AppProcedureListAPI extends HttpServlet {
                     if ("0".equalsIgnoreCase(curProcEventPosition)) {
                         if (Boolean.FALSE.equals(childs.isEmpty())) {
                             procEventJson.put(LABEL_ICONS, childs);
-                            procEvents.put(procEventJson);
+                            procEvents.add(procEventJson);
                             procEventJson = new JSONObject();
                         }
                         procEventJson = LPJson.convertArrayRowToJSONObject(procEventFldNameArray, procEvent1, excludedAttributesForParentIconGroupItem);
@@ -542,7 +542,7 @@ public class AppProcedureListAPI extends HttpServlet {
                         JSONObject procEventSopDetail2 = new JSONObject();
                         procEventSopDetail2 = procEventSops(token.getPersonName(), curProc.toString(), procedure, procEventJson2, procEventFldNameArray, procEvent1, isForTesting);
                         procEventJson2.put(LABEL_ARRAY_SOPS, procEventSopDetail2);
-                        childs.put(procEventJson2);
+                        childs.add(procEventJson2);
                         procEventJson2 = new JSONObject();
                     }
                 }
@@ -551,7 +551,7 @@ public class AppProcedureListAPI extends HttpServlet {
                 procEventJson.put(LABEL_ICONS, childs);
             }
             if (Boolean.FALSE.equals(procEventJson.isEmpty())) {
-                procEvents.put(procEventJson);
+                procEvents.add(procEventJson);
             }
         }
         return procEvents;
