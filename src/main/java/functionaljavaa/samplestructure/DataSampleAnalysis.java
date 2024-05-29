@@ -712,7 +712,9 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         }*/
         whereResultFieldValue = LPArray.addValueToArray1D(whereResultFieldValue, value);
         String[] getResultFieldsBeforeEach = new String[]{TblsCnfg.AnalysisMethodParams.PARAM_NAME.getName(), TblsCnfg.AnalysisMethodParams.MANDATORY.getName(), TblsCnfg.AnalysisMethodParams.ANALYSIS.getName(),
-            TblsCnfg.AnalysisMethodParams.PARAM_TYPE.getName(), TblsCnfg.AnalysisMethodParams.NUM_REPLICAS.getName(), TblsCnfg.AnalysisMethodParams.UOM.getName(), TblsCnfg.AnalysisMethodParams.UOM_CONVERSION_MODE.getName(), TblsCnfg.AnalysisMethodParams.CALC_LINKED.getName(), TblsCnfg.AnalysisMethodParams.LIST_ENTRY.getName()};
+            TblsCnfg.AnalysisMethodParams.PARAM_TYPE.getName(), TblsCnfg.AnalysisMethodParams.NUM_REPLICAS.getName(), TblsCnfg.AnalysisMethodParams.UOM.getName(), TblsCnfg.AnalysisMethodParams.UOM_CONVERSION_MODE.getName(), TblsCnfg.AnalysisMethodParams.CALC_LINKED.getName(), TblsCnfg.AnalysisMethodParams.LIST_ENTRY.getName()
+        //    , TblsCnfg.AnalysisMethodParams.MAX_DP.getName()
+        };
         Object[][] resultFieldRecords = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaConfigName, TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(),
                 whereResultFieldName, whereResultFieldValue, getResultFieldsBeforeEach, new String[]{TblsCnfg.AnalysisMethodParams.ORDER_NUMBER.getName(), TblsCnfg.AnalysisMethodParams.PARAM_NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultFieldRecords[0][0].toString())) {
@@ -1036,7 +1038,9 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
         */
         whereResultFieldValue = LPArray.addValueToArray1D(whereResultFieldValue, value);
         String[] getResultFieldsBeforeEach = new String[]{TblsCnfg.AnalysisMethodParams.PARAM_NAME.getName(), TblsCnfg.AnalysisMethodParams.MANDATORY.getName(), TblsCnfg.AnalysisMethodParams.ANALYSIS.getName(),
-            TblsCnfg.AnalysisMethodParams.PARAM_TYPE.getName(), TblsCnfg.AnalysisMethodParams.NUM_REPLICAS.getName(), TblsCnfg.AnalysisMethodParams.UOM.getName(), TblsCnfg.AnalysisMethodParams.UOM_CONVERSION_MODE.getName(), TblsCnfg.AnalysisMethodParams.CALC_LINKED.getName(), TblsCnfg.AnalysisMethodParams.LIST_ENTRY.getName()};
+            TblsCnfg.AnalysisMethodParams.PARAM_TYPE.getName(), TblsCnfg.AnalysisMethodParams.NUM_REPLICAS.getName(), TblsCnfg.AnalysisMethodParams.UOM.getName(), TblsCnfg.AnalysisMethodParams.UOM_CONVERSION_MODE.getName(), TblsCnfg.AnalysisMethodParams.CALC_LINKED.getName(), TblsCnfg.AnalysisMethodParams.LIST_ENTRY.getName()
+        //, TblsCnfg.AnalysisMethodParams.MAX_DP.getName()
+        };
         Object[][] resultFieldRecords = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaConfigName, TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(),
                 whereResultFieldName, whereResultFieldValue, getResultFieldsBeforeEach, new String[]{TblsCnfg.AnalysisMethodParams.ORDER_NUMBER.getName(), TblsCnfg.AnalysisMethodParams.PARAM_NAME.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultFieldRecords[0][0].toString())) {
@@ -1287,7 +1291,9 @@ public class DataSampleAnalysis {// implements DataSampleAnalysisStrategy{
             Integer numReplicas = 1;
 
             String[] getResultFieldsBeforeEach = new String[]{TblsCnfg.AnalysisMethodParams.PARAM_NAME.getName(), TblsCnfg.AnalysisMethodParams.MANDATORY.getName(), TblsCnfg.AnalysisMethodParams.ANALYSIS.getName(),
-                TblsCnfg.AnalysisMethodParams.PARAM_TYPE.getName(), TblsCnfg.AnalysisMethodParams.NUM_REPLICAS.getName(), TblsCnfg.AnalysisMethodParams.UOM.getName(), TblsCnfg.AnalysisMethodParams.UOM_CONVERSION_MODE.getName(), TblsCnfg.AnalysisMethodParams.CALC_LINKED.getName(), TblsCnfg.AnalysisMethodParams.LIST_ENTRY.getName()};
+                TblsCnfg.AnalysisMethodParams.PARAM_TYPE.getName(), TblsCnfg.AnalysisMethodParams.NUM_REPLICAS.getName(), TblsCnfg.AnalysisMethodParams.UOM.getName(), TblsCnfg.AnalysisMethodParams.UOM_CONVERSION_MODE.getName(), TblsCnfg.AnalysisMethodParams.CALC_LINKED.getName(), TblsCnfg.AnalysisMethodParams.LIST_ENTRY.getName()
+                //, TblsCnfg.AnalysisMethodParams.MAX_DP.getName()
+            };
             Object[][] resultFieldRecords = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaConfigName, TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(),
                     whereResultFieldName, whereResultFieldValue, getResultFieldsBeforeEach, new String[]{TblsCnfg.AnalysisMethodParams.ORDER_NUMBER.getName(), TblsCnfg.AnalysisMethodParams.PARAM_NAME.getName()});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultFieldRecords[0][0].toString())) {

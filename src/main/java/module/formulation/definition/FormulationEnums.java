@@ -541,6 +541,7 @@ public class FormulationEnums {
         ALREADY_AVAILABLE("InventoryLotAlreadyAvailable", "The Lot <*1*> is currently available", "El Lote <*1*> está actualmente disponible"),
         ALREADY_UNAVAILABLE("InventoryLotAlreadyUnAvailable", "The Lot <*1*> is currently available", "El Lote <*1*> está actualmente disponible"),
         ALREADY_EXISTS("InventoryLotAlreadyExists", "", ""),
+        INGREDIENT_ALREADY_EXISTS("formulationIngredientAlreadyExists", "", ""),
         ALREADY_RETIRED("instrumentAlreadyRetired", "Inventory lot <*1*> already retired", "Lote <*1*> ya fue retirado"),
         NO_LOT_QUANTITY_SPECIFIED_AND_REQUIRED("inventoryTrackingNoLotVolumeSpecifiedAndRequired", "", ""),
         INV_LOT_HAS_NOT_ENOUGH_QUANTITY("InventoryLotHasNotEnoughVolume", "The lot <*1*> has not enough volume, <*2*>, for a consume of <*3*> <*4*>", "El lote <*1*> no tiene suficiente volumen, <*2*>, para consumir <*3*> de <*4*>"),

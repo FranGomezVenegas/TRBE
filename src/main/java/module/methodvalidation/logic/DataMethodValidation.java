@@ -113,6 +113,13 @@ public class DataMethodValidation {
         }
         MethodValidationAudit.MethodValidationAudit(ProjectsRnDEnums.ProjectRnDAuditEvents.PROJECT_CREATION, parameterName, TblsMethodValidationData.TablesMethodValidationData.VALIDATION_METHOD_PARAMS.getTableName(), parameterName,
                 fldNames, fldValues, projectName);        
+
+        Integer fldPosic=LPArray.valuePosicInArray(fldNames, TblsMethodValidationData.ValidationMethodParams.NUM_SAMPLES.getName());
+
+        DataMethValSample MethSmp= new DataMethValSample();
+        MethSmp.logParameterSample(parameterName, null, null, 
+            (fldPosic==-1)? 0:Integer.valueOf(fldValues[fldPosic].toString()));
+
         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesMethodValidationData.VALIDATION_METHOD_PARAMS.getTableName(), parameterName);
         messages.addMainForSuccess(MethodValidationAPIactionsEndpoints.NEW_PARAMETER, new Object[]{parameterName});
         return new InternalMessage(LPPlatform.LAB_TRUE, MethodValidationAPIactionsEndpoints.NEW_PARAMETER, new Object[]{parameterName}, parameterName);

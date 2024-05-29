@@ -81,7 +81,7 @@ public class MethodValidationEnums {
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TablesMethodValidationDataAudit.PARAMETER.getTableName()).build()).build(),
                 null, null),
-        LOGSAMPLE("LOGSAMPLE", null, "", "sampleLogged_success",
+        ADDSAMPLE("ADDSAMPLE", null, "", "sampleLogged_success",
             new LPAPIArguments[]{new LPAPIArguments("parameterName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 8),

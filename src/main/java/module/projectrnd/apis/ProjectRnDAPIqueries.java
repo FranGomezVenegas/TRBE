@@ -7,6 +7,7 @@ package module.projectrnd.apis;
 
 import com.labplanet.servicios.modulesample.ClassSampleQueries;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
+import static com.labplanet.servicios.modulesample.SampleAPIfrontend.sampleAnalysisResultView;
 import static platform.app.apis.IncidentAPIactions.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import databases.SqlStatement;
@@ -34,13 +35,17 @@ import module.formulation.logic.ClssFormulationQueries;
 import static module.formulation.logic.ClssFormulationQueries.getFormulas;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMData;
 import module.methodvalidation.definition.TblsMethodValidationData;
+import static module.methodvalidation.logic.DataMethValQueriesPerParameter.methodValidationData;
 import module.projectrnd.definition.ProjectsRnDEnums.ProjectsRnDAPIqueriesEndpoints;
+import module.projectrnd.definition.TblsProjectRnDData;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
+import static trazit.enums.EnumIntTableFields.getAllFieldNamesFromDatabase;
 import trazit.enums.EnumIntViewFields;
 import trazit.globalvariables.GlobalVariables;
+import trazit.queries.QueryUtilities;
 import trazit.queries.QueryUtilitiesEnums;
 import trazit.session.ProcedureRequestSession;
 
@@ -140,7 +145,12 @@ public class ProjectRnDAPIqueries extends HttpServlet {
                             if (Boolean.FALSE.equals(instLockingDetail.isEmpty())) {
                                 jObj.put("locking_reason", instLockingDetail);
                             }
-                            //jObj.put("method_validation", fakeMethodValidationData());
+                            jObj.put(TblsProjectRnDData.TablesProjectRnDData.PROJECT_NOTES.getTableName(), 
+                                projectNotes(curProjName, null, null, null) );
+                            jObj.put(TblsProjectRnDData.TablesProjectRnDData.PROJECT_ATTACHMENT.getTableName(), 
+                                projectAttachments(curProjName, null, null, null) );
+     
+                            jObj.put("fake_method_validation", fakeMethodValidationData());
                             JSONArray jMainArr=new JSONArray();
                             sW = new SqlWhere();
                             sW.addConstraint(TblsMethodValidationData.ValidationMethodParams.PROJECT, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{curProjName}, null);                            
@@ -151,12 +161,85 @@ public class ProjectRnDAPIqueries extends HttpServlet {
                                 jObj.put("method_validation", jMainArr);
                             }else{
                                 for (Object[] curParam: projectParamsInfo){                                    
-                                    jMainArr.put(methodValidationData(curProjName, 
-                                            curParam[EnumIntTableFields.getFldPosicInArray(fldToGet, TblsMethodValidationData.ValidationMethodParams.NAME.getName())].toString(),
-                                    curParam[EnumIntTableFields.getFldPosicInArray(fldToGet, TblsMethodValidationData.ValidationMethodParams.ANALYTICAL_PARAMETER.getName())].toString()));
+                                    org.json.simple.JSONObject curParamJObj=LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(fldToGet), curParam);
+                                    
+                                    String curJsonModel=curParam[EnumIntTableFields.getFldPosicInArray(fldToGet, TblsMethodValidationData.ValidationMethodParams.JSON_MODEL.getName())].toString();
+                                    if (curJsonModel.length()==0){
+                                        curParamJObj.remove(TblsMethodValidationData.ValidationMethodParams.JSON_MODEL.getName());
+                                        //TblsMethodValidationData.ValidationMethodParams.JSON_MODEL.getName(), new JSONObject());
+                                    }else{
+                                        JSONObject jsonArray = new JSONObject(curJsonModel);
+                                        curParamJObj.put(TblsMethodValidationData.ValidationMethodParams.JSON_MODEL.getName(), jsonArray);
+                                    }
+                                    String curParameterName=curParam[EnumIntTableFields.getFldPosicInArray(fldToGet, TblsMethodValidationData.ValidationMethodParams.NAME.getName())].toString();
+                                    curParamJObj.put(TblsProjectRnDData.TablesProjectRnDData.PROJECT_NOTES.getTableName(), 
+                                        projectNotes(curProjName, null, curParameterName, null) );
+                                    curParamJObj.put(TblsProjectRnDData.TablesProjectRnDData.PROJECT_ATTACHMENT.getTableName(), 
+                                        projectAttachments(curProjName, null, curParameterName, null) );
+                                    curParamJObj.put(TblsData.TablesData.SAMPLE.getTableName(), methodValidationData(curProjName, 
+                                        curParam[EnumIntTableFields.getFldPosicInArray(fldToGet, TblsMethodValidationData.ValidationMethodParams.NAME.getName())].toString(),
+                                        curParam[EnumIntTableFields.getFldPosicInArray(fldToGet, TblsMethodValidationData.ValidationMethodParams.ANALYTICAL_PARAMETER.getName())].toString()));
+                                        jMainArr.put(curParamJObj);                                            
                                 }
                             }                            
                             jObj.put("method_validation", jMainArr);
+                            
+
+                            jMainArr=new JSONArray();
+                            sW = new SqlWhere();
+                            sW.addConstraint(TblsProjectRnDData.RdDailyEntry.PROJECT, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{curProjName}, null);                            
+                            fldToGet = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsProjectRnDData.TablesProjectRnDData.RD_DAILY_ENTRY);
+                            Object[][] projectDailyEntryInfo = QueryUtilitiesEnums.getTableData(TblsProjectRnDData.TablesProjectRnDData.RD_DAILY_ENTRY,
+                                    fldToGet,sW, new String[]{TblsProjectRnDData.RdDailyEntry.NAME.getName()});
+                            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projectDailyEntryInfo[0][0].toString())){
+                                jObj.put(TblsProjectRnDData.TablesProjectRnDData.RD_DAILY_ENTRY.getTableName(), jMainArr);
+                            }else{
+                                for (Object[] curdailyEntry: projectDailyEntryInfo){                                    
+                                    org.json.simple.JSONObject curParamJObj=LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(fldToGet), curdailyEntry);
+                                    String curdailyEntryName=curdailyEntry[EnumIntTableFields.getFldPosicInArray(fldToGet, TblsMethodValidationData.ValidationMethodParams.NAME.getName())].toString();
+                                    curParamJObj.put(TblsProjectRnDData.TablesProjectRnDData.PROJECT_NOTES.getTableName(), 
+                                        projectNotes(curProjName, null, null, curdailyEntryName) );
+                                    curParamJObj.put(TblsProjectRnDData.TablesProjectRnDData.PROJECT_ATTACHMENT.getTableName(), 
+                                        projectAttachments(curProjName, null, null, curdailyEntryName) );
+                                    jMainArr.put(curParamJObj);
+                                }
+                            }                            
+                            jObj.put(TblsProjectRnDData.TablesProjectRnDData.RD_DAILY_ENTRY.getTableName(), jMainArr);
+
+                            jMainArr=new JSONArray();
+                            sW = new SqlWhere();
+                            sW.addConstraint(TblsProjectRnDData.MethodDevelopmentSequence.PROJECT, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{curProjName}, null);                            
+                            fldToGet = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsProjectRnDData.TablesProjectRnDData.METHOD_DEVELOPMENT_SEQUENCE);
+                            Object[][] projectmethodDevSeqInfo = QueryUtilitiesEnums.getTableData(TblsProjectRnDData.TablesProjectRnDData.METHOD_DEVELOPMENT_SEQUENCE,
+                                    fldToGet,sW, new String[]{TblsProjectRnDData.MethodDevelopmentSequence.NAME.getName()});
+                            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projectmethodDevSeqInfo[0][0].toString())){
+                                jObj.put(TblsProjectRnDData.TablesProjectRnDData.METHOD_DEVELOPMENT_SEQUENCE.getTableName(), jMainArr);
+                            }else{
+                                for (Object[] curMethodDevSeq: projectmethodDevSeqInfo){                                    
+                                    org.json.simple.JSONObject curParamJObj=LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(fldToGet), curMethodDevSeq);
+                                    String curdailyEntryName=curMethodDevSeq[EnumIntTableFields.getFldPosicInArray(fldToGet, TblsProjectRnDData.MethodDevelopmentSequence.NAME.getName())].toString();
+                                    curParamJObj.put(TblsProjectRnDData.TablesProjectRnDData.PROJECT_NOTES.getTableName(), 
+                                        projectNotes(curProjName, null, null, curdailyEntryName) );
+                                    curParamJObj.put(TblsProjectRnDData.TablesProjectRnDData.PROJECT_ATTACHMENT.getTableName(), 
+                                        projectAttachments(curProjName, null, null, curdailyEntryName) );
+                                    jMainArr.put(curParamJObj);
+                                }
+                            }                            
+                            jObj.put(TblsProjectRnDData.TablesProjectRnDData.METHOD_DEVELOPMENT_SEQUENCE.getTableName(), jMainArr);
+
+                            /*
+                            jMainArr=new JSONArray();
+                            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projectDailyEntryInfo[0][0].toString())){
+                                jObj.put("method_validation", jMainArr);
+                            }else{
+                                for (Object[] curDailyEntry: projectDailyEntryInfo){                                    
+                                    jMainArr.put(
+                                    LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(fldToGet), curDailyEntry)
+                                    );
+                                }
+                            }                            
+                            jObj.put(TblsProjectRnDData.TablesProjectRnDData.RD_DAILY_ENTRY.getTableName(), jMainArr);
+*/
                             
                             jArr.put(jObj);
                         }
@@ -911,74 +994,86 @@ public class ProjectRnDAPIqueries extends HttpServlet {
         return jArr;
     }
 */
-    static JSONObject methodValidationData(String curProjName, String paramName, String analyticalParameter){
+  
+    static JSONArray projectNotes(String projectName, String formulaName, String parameterName, String dailyEntryName){
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(null, null, false);
         String procInstanceName=procReqInstance.getProcedureInstance();
-        JSONObject jObj=new JSONObject();
-        switch (paramName.toLowerCase()){
-            case "lineality":
-                jObj.put("title_en", "Lineality Assay");
-                jObj.put("title_es", "Ensayo linealidad");
-                break;
-            case "repeteability":
-                jObj.put("title_en", "Repeatibility Assay");
-                jObj.put("title_es", "Ensayo repetibilidad");
-                break;
-        }     
-        Object[][] samplesInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsData.TablesData.SAMPLE.getRepositoryName()), TblsData.TablesData.SAMPLE.getTableName(),
-                new String[]{TblsMethodValidationData.Sample.PROJECT.getName(), TblsMethodValidationData.Sample.PARAMETER_NAME.getName()}, new Object[]{curProjName, paramName}, 
-                new String[]{TblsData.Sample.SAMPLE_ID.getName()},
-                new String[]{TblsData.Sample.SAMPLE_ID.getName()});
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(samplesInfo[0][0].toString()))
-            return jObj;
-        int i=0;
-        JSONArray resultsJArr=new JSONArray();
-        String finalResult="";
-        for (Object[] curSmp: samplesInfo){
-            JSONObject sampleJObj=new JSONObject();
-            Object[][] testsInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsData.TablesData.SAMPLE_ANALYSIS.getRepositoryName()), TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
-                    new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName()}, new Object[]{Integer.valueOf(curSmp[0].toString())}, 
-                    new String[]{TblsData.SampleAnalysis.TEST_ID.getName()},
-                    new String[]{TblsData.SampleAnalysis.SAMPLE_ID.getName()});
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(testsInfo[0][0].toString()))
-                return jObj;            
-            i++;
-            for (Object[] curTst: testsInfo){
-                int iInj=0;
-                String[] fldsToGetSmpRslt = new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName(),                 
-                    TblsData.SampleAnalysisResult.TEST_ID.getName(), TblsData.SampleAnalysisResult.RESULT_ID.getName(),
-                    TblsData.SampleAnalysisResult.PARAM_NAME.getName(), TblsData.SampleAnalysisResult.PARAM_TYPE.getName(),
-                    TblsData.SampleAnalysisResult.PRETTY_VALUE.getName()};
-                Object[][] resultsInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getRepositoryName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
-                        new String[]{TblsData.SampleAnalysisResult.TEST_ID.getName()}, new Object[]{Integer.valueOf(curTst[0].toString())}, 
-                        fldsToGetSmpRslt,
-                        new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName(), TblsData.SampleAnalysisResult.TEST_ID.getName()});
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultsInfo[0][0].toString()))
-                    return jObj;
-                jObj.put("total_samples", samplesInfo.length);                
-                //jObj.put("final_results", finalResultsJObj);
-                
-                for (Object[] curRslt: resultsInfo){
-                    if ("CALC".equalsIgnoreCase(curRslt[4].toString())){
-                        finalResult=curRslt[5].toString();
-                    }else{
-                        iInj++;
-                        sampleJObj=LPJson.convertArrayRowToJSONObjectNoJsonSimple(fldsToGetSmpRslt, curRslt);
-                        sampleJObj.put("order_number", i);
-                        sampleJObj.put("name", "sample "+i);
-                        sampleJObj.put("injection", "Inj " + iInj);
-                        sampleJObj.put("result", curRslt[5]);
-                        sampleJObj.put("final_result", "");
-                        resultsJArr.put(sampleJObj);
-                    }                    
-                }
-            }
-            JSONObject objToModify = resultsJArr.getJSONObject(resultsJArr.length()- 1); // Last added object
-            objToModify.put("final_result", finalResult);  // Update the final result
-            resultsJArr.put(resultsJArr.length()- 1, objToModify);
-            jObj.put("results", resultsJArr);  
+        SqlWhere wObj=new SqlWhere();
+        if (projectName!=null){
+            wObj.addConstraint(TblsProjectRnDData.ProjectNotes.PROJECT_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{projectName}, null);
+        }else{
+            wObj.addConstraint(TblsProjectRnDData.ProjectNotes.PROJECT_NAME, SqlStatement.WHERECLAUSE_TYPES.IS_NULL, new Object[]{}, null);
         }
-        return jObj;        
+        if (formulaName!=null){
+            wObj.addConstraint(TblsProjectRnDData.ProjectNotes.FORMULA_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{formulaName}, null);
+        }else{
+            wObj.addConstraint(TblsProjectRnDData.ProjectNotes.FORMULA_NAME, SqlStatement.WHERECLAUSE_TYPES.IS_NULL, new Object[]{}, null);
+        }
+        if (parameterName!=null){
+            wObj.addConstraint(TblsProjectRnDData.ProjectNotes.PARAMETER_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{parameterName}, null);
+        }else{
+            wObj.addConstraint(TblsProjectRnDData.ProjectNotes.PARAMETER_NAME, SqlStatement.WHERECLAUSE_TYPES.IS_NULL, new Object[]{}, null);
+        }
+        if (dailyEntryName!=null){
+            wObj.addConstraint(TblsProjectRnDData.ProjectNotes.DAILY_ENTRY_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{dailyEntryName}, null);
+        }else{
+            wObj.addConstraint(TblsProjectRnDData.ProjectNotes.DAILY_ENTRY_NAME, SqlStatement.WHERECLAUSE_TYPES.IS_NULL, new Object[]{}, null);
+        }
+        return QueryUtilities.dbRowsToJsonArr(procInstanceName, procInstanceName, TblsProjectRnDData.TablesProjectRnDData.PROJECT_NOTES, 
+            getAllFieldNamesFromDatabase(TblsProjectRnDData.TablesProjectRnDData.PROJECT_NOTES, procInstanceName), 
+            wObj, new String[]{TblsProjectRnDData.ProjectNotes.ID.getName()}, null, true);
+    }
+    static JSONArray projectAttachments(String projectName, String formulaName, String parameterName, String dailyEntryName){
+        ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(null, null, false);
+        String procInstanceName=procReqInstance.getProcedureInstance();
+        SqlWhere wObj=new SqlWhere();
+        if (projectName!=null){
+            wObj.addConstraint(TblsProjectRnDData.ProjectAttachments.PROJECT_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{projectName}, null);
+        }else{
+            wObj.addConstraint(TblsProjectRnDData.ProjectAttachments.PROJECT_NAME, SqlStatement.WHERECLAUSE_TYPES.IS_NULL, new Object[]{}, null);
+        }
+        if (formulaName!=null){
+            wObj.addConstraint(TblsProjectRnDData.ProjectAttachments.FORMULA_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{projectName}, null);
+        }else{
+            wObj.addConstraint(TblsProjectRnDData.ProjectAttachments.FORMULA_NAME, SqlStatement.WHERECLAUSE_TYPES.IS_NULL, new Object[]{}, null);
+        }
+        if (parameterName!=null){
+            wObj.addConstraint(TblsProjectRnDData.ProjectAttachments.PARAMETER_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{parameterName}, null);
+        }else{
+            wObj.addConstraint(TblsProjectRnDData.ProjectAttachments.PARAMETER_NAME, SqlStatement.WHERECLAUSE_TYPES.IS_NULL, new Object[]{}, null);
+        }
+        if (dailyEntryName!=null){
+            wObj.addConstraint(TblsProjectRnDData.ProjectAttachments.DAILY_ENTRY_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{dailyEntryName}, null);
+        }else{
+            wObj.addConstraint(TblsProjectRnDData.ProjectAttachments.DAILY_ENTRY_NAME, SqlStatement.WHERECLAUSE_TYPES.IS_NULL, new Object[]{}, null);
+        }
+        return QueryUtilities.dbRowsToJsonArr(procInstanceName, procInstanceName, TblsProjectRnDData.TablesProjectRnDData.PROJECT_ATTACHMENT, 
+            getAllFieldNamesFromDatabase(TblsProjectRnDData.TablesProjectRnDData.PROJECT_ATTACHMENT, procInstanceName), 
+            wObj, new String[]{TblsProjectRnDData.ProjectAttachments.ID.getName()}, null, true);
+    }   
+    
+    static JSONArray projectSampleStructure(String projectName, String formulaName, String parameterName, String dailyEntryName){
+        String whereFieldsName="";
+        String whereFieldsValue="";
+        if (projectName!=null){
+            if (whereFieldsName.length()>0)whereFieldsName=whereFieldsName+"|";
+            whereFieldsName=whereFieldsName+projectName;            
+        }
+        if (formulaName!=null){
+            if (whereFieldsName.length()>0)whereFieldsName=whereFieldsName+"|";
+            whereFieldsName=whereFieldsName+formulaName;
+        }
+        if (parameterName!=null){
+            if (whereFieldsName.length()>0)whereFieldsName=whereFieldsName+"|";
+            whereFieldsName=whereFieldsName+parameterName;
+        }
+        if (dailyEntryName!=null){
+            if (whereFieldsName.length()>0)whereFieldsName=whereFieldsName+"|";
+            whereFieldsName=whereFieldsName+dailyEntryName;
+        }        
+        EnumIntTableFields[] fieldToRetrieveArrObj = EnumIntTableFields.getAllFieldNamesFromDatabase(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT);
+        return sampleAnalysisResultView(EnumIntTableFields.getAllFieldNames(fieldToRetrieveArrObj), 
+                whereFieldsName, whereFieldsValue, null);        
     }
     static JSONArray fakeMethodValidationData(){
         JSONArray jMainArr=new JSONArray();

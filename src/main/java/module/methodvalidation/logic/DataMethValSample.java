@@ -15,6 +15,7 @@ import functionaljavaa.samplestructure.DataSample;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import module.methodvalidation.definition.TblsMethodValidationData;
 import module.projectrnd.definition.TblsProjectRnDConfig;
@@ -41,15 +42,9 @@ public class DataMethValSample{
     }
 
     public InternalMessage logParameterSample(String parameterName, String[] fieldName, Object[] fieldValue, Integer numSamplesToLog) {
-        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        String procInstanceName=instanceForActions.getProcedureInstance();
-        ResponseMessages messages = instanceForActions.getMessages();
-        InternalMessage newProjSample= null;
-        String samplerTemplateCode=null;
-        Integer samplerTemplateCodeVersion=null;
         try {
-            DataParameterSampleAnalysis dsParameterAna = new DataParameterSampleAnalysis();
-            DataSample ds = new DataSample(dsParameterAna);
+            ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+            String procInstanceName=instanceForActions.getProcedureInstance();
 
             Object[][] analyticalParameterInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsMethodValidationData.TablesMethodValidationData.VALIDATION_METHOD_PARAMS.getRepositoryName()), TblsMethodValidationData.TablesMethodValidationData.VALIDATION_METHOD_PARAMS.getTableName(),
                 new String[]{TblsMethodValidationData.ValidationMethodParams.NAME.getName()}, 
@@ -60,14 +55,6 @@ public class DataMethValSample{
             String analyticalParameter=analyticalParameterInfo[0][0].toString();
             String projectName = analyticalParameterInfo[0][2].toString();
             
-            Object[][] methodInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsCnfg.TablesConfig.METHODS.getRepositoryName()), TblsCnfg.TablesConfig.METHODS.getTableName(),
-                new String[]{TblsProjectRnDConfig.Methods.CODE.getName()}, 
-                new Object[]{analyticalParameter}, 
-                new String[]{TblsProjectRnDConfig.Methods.SAMPLE_TEMPLATE.getName(), TblsProjectRnDConfig.Methods.SAMPLE_TEMPLATE.getName()}, true);            
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(methodInfo[0][0].toString()))
-               return new InternalMessage(LPPlatform.LAB_FALSE, EnvMonitErrorTrapping.LOGSAMPLE_PROGRAM_OR_LOCATION_NOTFOUND, new Object[]{analyticalParameter});
-            String sampleTemplateCode=methodInfo[0][0].toString();
-            Integer sampleTemplateCodeVersion=1;
 /*            
             Object[][] diagnosis = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_LOCATION.getRepositoryName()), TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM_LOCATION.getTableName(),
                 new String[]{TblsEnvMonitConfig.ProgramLocation.PROGRAM_NAME.getName(), TblsEnvMonitConfig.ProgramLocation.LOCATION_NAME.getName()}, 
@@ -93,17 +80,56 @@ public class DataMethValSample{
                 fieldName = LPArray.addValueToArray1D(fieldName, TblsMethodValidationData.Sample.PROJECT.getName());
                 fieldValue = LPArray.addValueToArray1D(fieldValue, projectName);                
             }
-            if (numSamplesToLog==null)
-                numSamplesToLog=1;
-            newProjSample = ds.logSample(sampleTemplateCode, sampleTemplateCodeVersion, fieldName, fieldValue, numSamplesToLog, TblsEnvMonitData.TablesEnvMonitData.SAMPLE); 
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newProjSample.getDiagnostic()))
-                return newProjSample; 
-            messages.addMainForSuccess(EnvMonSampleAPIactionsEndpoints.LOGSAMPLE, 
-                new Object[]{newProjSample.getNewObjectId(), parameterName, analyticalParameter});            
+            return logTheSamples(parameterName, analyticalParameter, fieldName, fieldValue, numSamplesToLog);
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(DataMethValSample.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return newProjSample;
+            return new InternalMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.EXCEPTION_RAISED, new Object[]{ex.getMessage()});
+        }        
     }
 
+    public InternalMessage logAnalyticalParameterSamplelogParameterSample(String projectName, String analyticalSequenceName, String analyticalParameter, String[] fieldName, Object[] fieldValue, Integer numSamplesToLog) {
+            fieldName = LPArray.addValueToArray1D(fieldName, TblsMethodValidationData.Sample.ANALYTICAL_SEQUENCE_NAME.getName());
+            fieldValue = LPArray.addValueToArray1D(fieldValue, analyticalSequenceName);
+            fieldName = LPArray.addValueToArray1D(fieldName, TblsMethodValidationData.Sample.ANALYTICAL_PARAMETER.getName());
+            fieldValue = LPArray.addValueToArray1D(fieldValue, analyticalParameter);
+            if (projectName!=null&&projectName.length()>0){
+                fieldName = LPArray.addValueToArray1D(fieldName, TblsMethodValidationData.Sample.PROJECT.getName());
+                fieldValue = LPArray.addValueToArray1D(fieldValue, projectName);                
+            }
+            return logTheSamples(analyticalSequenceName, analyticalParameter, fieldName, fieldValue, numSamplesToLog);
+    }
+    
+    private InternalMessage logTheSamples(String paramOrSequenceName, String analyticalParameter, String[] fieldName, Object[] fieldValue, Integer numSamplesToLog){
+        ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        ResponseMessages messages = instanceForActions.getMessages();
+        InternalMessage newProjSample= null;
+        String samplerTemplateCode=null;
+        Integer samplerTemplateCodeVersion=null;
+
+        DataParameterSampleAnalysis dsParameterAna = new DataParameterSampleAnalysis();
+        DataSample ds = new DataSample(dsParameterAna);
+        
+        Object[][] methodInfo = Rdbms.getRecordFieldsByFilter(instanceForActions.getProcedureInstance(), LPPlatform.buildSchemaName(instanceForActions.getProcedureInstance(), TblsCnfg.TablesConfig.METHODS.getRepositoryName()), 
+                TblsCnfg.TablesConfig.METHODS.getTableName(),
+            new String[]{TblsProjectRnDConfig.Methods.CODE.getName()}, new Object[]{analyticalParameter}, 
+            new String[]{TblsProjectRnDConfig.Methods.SAMPLE_TEMPLATE.getName(), TblsProjectRnDConfig.Methods.SAMPLE_TEMPLATE.getName(),
+                TblsProjectRnDConfig.Methods.NUM_SAMPLES.getName()}, true);            
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(methodInfo[0][0].toString()))
+           return new InternalMessage(LPPlatform.LAB_FALSE, EnvMonitErrorTrapping.LOGSAMPLE_PROGRAM_OR_LOCATION_NOTFOUND, new Object[]{analyticalParameter});
+        String sampleTemplateCode=methodInfo[0][0].toString();
+        Integer sampleTemplateCodeVersion=1;
+        if ( (numSamplesToLog==null||numSamplesToLog==0) && (LPNulls.replaceNull(methodInfo[0][2]).toString().length()>0) ) {
+            numSamplesToLog=Integer.valueOf(methodInfo[0][2].toString());
+        }
+
+        if (numSamplesToLog==null)
+            numSamplesToLog=1;
+        newProjSample = ds.logSample(sampleTemplateCode, sampleTemplateCodeVersion, fieldName, fieldValue, numSamplesToLog, TblsEnvMonitData.TablesEnvMonitData.SAMPLE); 
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newProjSample.getDiagnostic()))
+            return newProjSample; 
+        messages.addMainForSuccess(EnvMonSampleAPIactionsEndpoints.LOGSAMPLE, 
+            new Object[]{newProjSample.getNewObjectId(), paramOrSequenceName, analyticalParameter});            
+        return newProjSample;
+    }
 }
+

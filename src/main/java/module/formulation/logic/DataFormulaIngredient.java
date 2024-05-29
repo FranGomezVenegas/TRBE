@@ -73,8 +73,15 @@ public class DataFormulaIngredient {
     public static InternalMessage addFormulaIngredient(DataFormulation formula, String ingredient, String[] fldNames, Object[] fldValues) {
         String[] fieldsName = new String[]{TblsFormulationData.FormulaIngredients.FORMULA.getName(), TblsFormulationData.FormulaIngredients.INGREDIENT.getName()};
         Object[] fieldsValue = new Object[]{formula.getFormulaName(), ingredient};
+
+        Object[] existMethod = Rdbms.existsRecord(TblsFormulationData.TablesFormulationData.FORMULA_INGREDIENTS, fieldsName, fieldsValue, null);
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existMethod[0].toString())) {
+            return new InternalMessage(LPPlatform.LAB_FALSE, FormulationEnums.FormulationErrorTrapping.INGREDIENT_ALREADY_EXISTS, new Object[]{ingredient, formula.getFormulaName()}, formula.getFormulaName());
+        }
+
         fieldsName = LPArray.addValueToArray1D(fieldsName, fldNames);
         fieldsValue = LPArray.addValueToArray1D(fieldsValue, fldValues);
+
         RdbmsObject insertRecordInTable = Rdbms.insertRecordInTable(TblsFormulationData.TablesFormulationData.FORMULA_INGREDIENTS, fieldsName, fieldsValue);
         if (Boolean.TRUE.equals(insertRecordInTable.getRunSuccess())) {
             AppFormulaAudit(FormulationEnums.AppFormulationAuditEvents.ADDED_INGREDIENT, formula.getFormulaName(), TblsFormulationData.TablesFormulationData.FORMULA_INGREDIENTS.getTableName(), ingredient,

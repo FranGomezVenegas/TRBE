@@ -15,6 +15,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.ApiErrorTraping;
 import module.methodvalidation.definition.MethodValidationEnums.MethodValidationAPIactionsEndpoints;
+import static module.methodvalidation.definition.MethodValidationEnums.MethodValidationAPIactionsEndpoints.NEW_PARAMETER;
 import module.methodvalidation.logic.DataMethValSample;
 import module.methodvalidation.logic.DataMethodValidation;
 import module.monitoring.definition.TblsEnvMonitData;
@@ -113,7 +114,7 @@ public class ClassMethodValidationactions implements ActionsClass{
                 }
                 actionDiagnoses = methValidObj.createNewParameter(parameterName, analyticalParameter, projectName, fieldNames, fieldValues);
                 break;
-            case LOGSAMPLE:
+            case ADDSAMPLE:
                 fieldNames = null;
                 fieldValues = null;
                 if (LPNulls.replaceNull(argValues[1]).toString().length() > 0) {
@@ -123,7 +124,6 @@ public class ClassMethodValidationactions implements ActionsClass{
                     if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                         actionDiagnoses = (InternalMessage) fieldValues[1];
                     }
-
                 }
                 if (fieldNames != null) {
                     Object[] checkTwoArraysSameLength = LPArray.checkTwoArraysSameLength(fieldNames, fieldValues);

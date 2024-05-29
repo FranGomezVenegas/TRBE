@@ -5,6 +5,10 @@
  */
 package module.projectrnd.definition;
 
+import databases.Rdbms;
+import databases.RdbmsObject;
+import databases.SqlStatement;
+import databases.SqlWhere;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -66,6 +70,7 @@ public class ClassProjectRnDactions implements ActionsClass{
         }
         if (Boolean.FALSE.equals("NEW_PROJECT".equalsIgnoreCase(endPoint.getName())) 
             && Boolean.FALSE.equals(endPoint.getName().toUpperCase().startsWith("CONFIG_"))
+            && Boolean.FALSE.equals("PROJECT_NOTE_REMOVE".equalsIgnoreCase(endPoint.getName()))                 
             && Boolean.FALSE.equals("PROJECTAUDIT_SET_AUDIT_ID_REVIEWED".equalsIgnoreCase(endPoint.getName()))                
             ) {
             projectRnDObj = new DataProjectRnD(projectName);
@@ -97,7 +102,7 @@ public class ClassProjectRnDactions implements ActionsClass{
                     actionDiagnoses = (InternalMessage) fieldValues[1];                
                 }
                 if (projectType.length()>0){
-                    fieldNames = LPArray.addValueToArray1D(fieldNames, TblsProjectRnDData.Project.PURPOSE.getName());
+                    fieldNames = LPArray.addValueToArray1D(fieldNames, TblsProjectRnDData.Project.TYPE.getName());
                     fieldValues = LPArray.addValueToArray1D(fieldValues, projectType);                    
                 }
                 if (purpose.length()>0){
@@ -110,6 +115,55 @@ public class ClassProjectRnDactions implements ActionsClass{
                 }
                 actionDiagnoses = DataProjectRnD.createNewProject(projectName, fieldNames, fieldValues);
                 break;
+            case NEW_ANALYTICAL_SEQUENCE:
+                String analyticalSequenceName = LPNulls.replaceNull(argValues[1]).toString();
+                String analyticalPurpose = LPNulls.replaceNull(argValues[2]).toString();
+                String analyticalParameter = LPNulls.replaceNull(argValues[3]).toString();
+                purpose = LPNulls.replaceNull(argValues[4]).toString();                
+                responsible = LPNulls.replaceNull(argValues[5]).toString();
+                fldNamesStr = argValues[5].toString();
+                fldValuesStr = argValues[6].toString();
+                //? 1 : Integer.valueOf(LPNulls.replaceNull(argValues[15].toString()));
+                fieldNames = null;
+                fieldValues = null;
+                if (fldValuesStr != null && fldValuesStr.length() > 0) {
+                    fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(fldValuesStr.split("\\|"));
+                    fieldNames = fldNamesStr.split("\\|");
+                }
+                if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                    actionDiagnoses = (InternalMessage) fieldValues[1];                
+                }
+                if (analyticalPurpose.length()>0){
+                    fieldNames = LPArray.addValueToArray1D(fieldNames, TblsProjectRnDData.MethodDevelopmentSequence.ANALYTICAL_PURPOSE.getName());
+                    fieldValues = LPArray.addValueToArray1D(fieldValues, analyticalPurpose);                    
+                }
+                if (analyticalParameter.length()>0){
+                    fieldNames = LPArray.addValueToArray1D(fieldNames, TblsProjectRnDData.MethodDevelopmentSequence.ANALYTICAL_PARAMETER.getName());
+                    fieldValues = LPArray.addValueToArray1D(fieldValues, analyticalParameter);                    
+                }
+
+                if (purpose.length()>0){
+                    fieldNames = LPArray.addValueToArray1D(fieldNames, TblsProjectRnDData.MethodDevelopmentSequence.PURPOSE.getName());
+                    fieldValues = LPArray.addValueToArray1D(fieldValues, purpose);                    
+                }
+                if (responsible.length()>0){
+                    fieldNames = LPArray.addValueToArray1D(fieldNames, TblsProjectRnDData.MethodDevelopmentSequence.RESPONSIBLE.getName());
+                    fieldValues = LPArray.addValueToArray1D(fieldValues, responsible);                    
+                }
+                actionDiagnoses = DataProjectRnD.createNewAnalyticalSequence(analyticalSequenceName, analyticalParameter, projectName, fieldNames, fieldValues);
+                break;
+            case PROJECT_NOTE_REMOVE:
+                Integer noteId =Integer.valueOf(argValues[0].toString());
+                Object[] exist = Rdbms.existsRecord(TblsProjectRnDData.TablesProjectRnDData.PROJECT_NOTES, 
+                        new String[]{TblsProjectRnDData.ProjectNotes.ID.getName()}, new Object[]{noteId}, procReqSession.getProcedureInstance());
+                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(exist[0].toString())) {
+                    actionDiagnoses=new InternalMessage(LPPlatform.LAB_FALSE, ProjectsRnDEnums.ProjectRnDErrorTrapping.NOTE_NOT_FOUND, new Object[]{noteId}, null);
+                }
+                SqlWhere whereObj=new SqlWhere();
+                whereObj.addConstraint(TblsProjectRnDData.ProjectNotes.ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{noteId}, null);
+                RdbmsObject removeRecordInTable = Rdbms.removeRecordInTable(TblsProjectRnDData.TablesProjectRnDData.PROJECT_NOTES, whereObj, procReqSession.getProcedureInstance());
+                actionDiagnoses=new InternalMessage(removeRecordInTable.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, 
+                        removeRecordInTable.getErrorMessageCode(), removeRecordInTable.getErrorMessageVariables(), null);
 /*            case FORMULA_ADD_INGREDIENT:
                 String ingredient = argValues[1].toString();
                 String quantity = argValues[2].toString();

@@ -80,6 +80,23 @@ public class ProjectsRnDEnums {
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TablesProjectRnDData.PROJECT.getTableName()).build()).build(),
                 null, null),
+        NEW_ANALYTICAL_SEQUENCE("NEW_ANALYTICAL_SEQUENCE", null, "", "analyticalSequenceNewCreated_success",
+                new LPAPIArguments[]{new LPAPIArguments("projectName", LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
+                    new LPAPIArguments("analyticalSequenceName", LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
+                    new LPAPIArguments("analyticalPurpose", LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
+                    new LPAPIArguments("analyticalParameter", LPAPIArguments.ArgumentType.STRING.toString(), false, 9),                    
+                    new LPAPIArguments("purpose", LPAPIArguments.ArgumentType.STRING.toString(), false, 10),
+                    new LPAPIArguments("responsible", LPAPIArguments.ArgumentType.STRING.toString(), false, 11),
+                    new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 12),
+                    new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 13)},
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
+                        .add(GlobalAPIsParams.LBL_TABLE, TblsProjectRnDData.TablesProjectRnDData.METHOD_DEVELOPMENT_SEQUENCE.getTableName()).build()).build(),
+                null, null),
+        PROJECT_NOTE_REMOVE("PROJECT_NOTE_REMOVE", null, "", "projectRnDProjectNoteRemoved_success",
+                new LPAPIArguments[]{new LPAPIArguments("noteId", LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)},                    
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
+                        .add(GlobalAPIsParams.LBL_TABLE, TablesProjectRnDData.PROJECT.getTableName()).build()).build(),
+                null, null),
 /*        TURN_LOT_UNAVAILABLE("TURN_LOT_UNAVAILABLE", INVENTORY_LOT_CAT, "", "invTrackingLotTurnUnavailable_success",
                 new LPAPIArguments[]{new LPAPIArguments(REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments(REQUEST_PARAM_CATEGORY, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
@@ -513,6 +530,8 @@ public class ProjectsRnDEnums {
     }
 
     public enum ProjectRnDErrorTrapping implements EnumIntMessages {
+        NOTE_NOT_FOUND("NoteNotFound", "The Lot <*1*> is not found in procedure <*2*>", "El Lote <*1*> no se ha encontrado para el proceso <*2*>"),
+        
         REFERENCE_NOT_FOUND("inventoryTrackingReferenceNotFound", "The inventory reference <*1*> is not found in procedure <*2*>", "La referencia de inventario <*1*> no se ha encontrado para el proceso <*2*>"),
         UOM_NOT_INTHELIST("InventoryTracking_UnitNotPartOfAllowedList", "", ""),
         ALREADY_HAS_PENDING_QUALIFICATION("InventoryLotAlreadyHasPendingQualification", "The lot <*1*> already has one pending qualification in progress in this moment", "El lote <*1*> tiene actualmente una cualificación en curso en este momento"),

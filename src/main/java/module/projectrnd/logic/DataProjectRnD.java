@@ -11,6 +11,8 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import module.methodvalidation.definition.TblsMethodValidationData;
+import module.methodvalidation.logic.DataMethValSample;
 import module.projectrnd.definition.ProjectsRnDEnums;
 import module.projectrnd.definition.TblsProjectRnDData;
 import module.projectrnd.definition.TblsProjectRnDData.TablesProjectRnDData;
@@ -56,7 +58,7 @@ public class DataProjectRnD {
 
     public DataProjectRnD(String projectName) {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        String procInstanceName = "";
+        String procInstanceName = procReqSession.getProcedureInstance();
         Object[][] projectRnDinfo = null;
         projectRnDinfo = Rdbms.getRecordFieldsByFilter(procInstanceName,  LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsProjectRnDData.TablesProjectRnDData.PROJECT.getTableName(),
                 new String[]{TblsProjectRnDData.Project.NAME.getName()},
@@ -79,9 +81,16 @@ public class DataProjectRnD {
     }
 
     public static InternalMessage createNewProject(String projectName, String[] fldNames, Object[] fldValues) {
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+
+        Object[] existMethod = Rdbms.existsRecord(TablesProjectRnDData.PROJECT, 
+                new String[]{TblsProjectRnDData.Project.NAME.getName()}, new Object[]{projectName}, procReqSession.getProcedureInstance());
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existMethod[0].toString())) {
+            return new InternalMessage(LPPlatform.LAB_FALSE, ProjectsRnDEnums.ProjectRnDErrorTrapping.ALREADY_EXISTS, new Object[]{projectName}, projectName);
+        }
+
         RelatedObjects rObj = RelatedObjects.getInstanceForActions();
         
-        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         ResponseMessages messages = procReqSession.getMessages();
         Token token = procReqSession.getToken();
         if (fldNames == null) {
@@ -93,8 +102,10 @@ public class DataProjectRnD {
         fldNames = LPArray.addValueToArray1D(fldNames, TblsProjectRnDData.Project.NAME.getName());
         fldValues = LPArray.addValueToArray1D(fldValues, projectName);
 
+        
         fldNames = LPArray.addValueToArray1D(fldNames, new String[]{TblsProjectRnDData.Project.CREATED_ON.getName(), TblsProjectRnDData.Project.CREATED_BY.getName()});
         fldValues = LPArray.addValueToArray1D(fldValues, new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName()});
+
 
         RdbmsObject invLotCreationDiagn = Rdbms.insertRecordInTable(TablesProjectRnDData.PROJECT, fldNames, fldValues);
         if (Boolean.FALSE.equals(invLotCreationDiagn.getRunSuccess())) {
@@ -107,6 +118,45 @@ public class DataProjectRnD {
         return new InternalMessage(LPPlatform.LAB_TRUE, ProjectsRnDEnums.ProjectRnDAPIactionsEndpoints.NEW_PROJECT, new Object[]{projectName}, projectName);
     }
 
+    
+    public static InternalMessage createNewAnalyticalSequence(String analyticalSequenceName, String analyticalParameter, String projectName, String[] fldNames, Object[] fldValues) {
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        Object[] existMethod = Rdbms.existsRecord(TablesProjectRnDData.METHOD_DEVELOPMENT_SEQUENCE, 
+                new String[]{TblsProjectRnDData.MethodDevelopmentSequence.NAME.getName(), TblsProjectRnDData.MethodDevelopmentSequence.PROJECT.getName()}, 
+                new Object[]{analyticalSequenceName, projectName}, procReqSession.getProcedureInstance());
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existMethod[0].toString())) {
+            return new InternalMessage(LPPlatform.LAB_FALSE, ProjectsRnDEnums.ProjectRnDErrorTrapping.ALREADY_EXISTS, new Object[]{analyticalSequenceName, projectName}, analyticalSequenceName);
+        }
+        fldNames = LPArray.addValueToArray1D(fldNames, new String[]{TblsProjectRnDData.MethodDevelopmentSequence.NAME.getName(), TblsProjectRnDData.MethodDevelopmentSequence.PROJECT.getName()});
+        fldValues = LPArray.addValueToArray1D(fldValues, new Object[]{analyticalSequenceName, projectName});
+        
+        if (analyticalParameter!=null&&analyticalParameter.length()>0&&LPArray.valuePosicInArray(fldNames, TblsProjectRnDData.MethodDevelopmentSequence.ANALYTICAL_PARAMETER.getName())==-1){
+            fldNames = LPArray.addValueToArray1D(fldNames, TblsProjectRnDData.MethodDevelopmentSequence.ANALYTICAL_PARAMETER.getName());
+            fldValues = LPArray.addValueToArray1D(fldValues, analyticalParameter);            
+        }
+        RelatedObjects rObj = RelatedObjects.getInstanceForActions();
+        ResponseMessages messages = procReqSession.getMessages();
+        
+        RdbmsObject invLotCreationDiagn = Rdbms.insertRecordInTable(TablesProjectRnDData.METHOD_DEVELOPMENT_SEQUENCE, fldNames, fldValues);
+        if (Boolean.FALSE.equals(invLotCreationDiagn.getRunSuccess())) {
+            return new InternalMessage(LPPlatform.LAB_FALSE, invLotCreationDiagn.getErrorMessageCode(), new Object[]{projectName}, null);
+        }
+        AppProjectRnDAudit(ProjectsRnDEnums.ProjectRnDAuditEvents.PROJECT_CREATION, projectName, TablesProjectRnDData.METHOD_DEVELOPMENT_SEQUENCE.getTableName(), analyticalSequenceName,
+                fldNames, fldValues);        
+
+        if (analyticalParameter!=null&&analyticalParameter.length()>0){
+            Integer fldPosic=LPArray.valuePosicInArray(fldNames, TblsMethodValidationData.ValidationMethodParams.NUM_SAMPLES.getName());
+            DataMethValSample MethSmp= new DataMethValSample();
+            MethSmp.logAnalyticalParameterSamplelogParameterSample(projectName, analyticalSequenceName, analyticalParameter, null, null, 
+                (fldPosic==-1)? null:Integer.valueOf(fldValues[fldPosic].toString()));
+        }
+        
+        rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesProjectRnDData.PROJECT.getTableName(), projectName);
+        messages.addMainForSuccess(ProjectsRnDEnums.ProjectRnDAPIactionsEndpoints.NEW_ANALYTICAL_SEQUENCE, new Object[]{analyticalSequenceName});
+        return new InternalMessage(LPPlatform.LAB_TRUE, ProjectsRnDEnums.ProjectRnDAPIactionsEndpoints.NEW_ANALYTICAL_SEQUENCE, new Object[]{analyticalSequenceName}, projectName);
+        
+    }
+    
     private InternalMessage updateLotTransaction(EnumIntEndpoints actionObj, EnumIntAuditEvents auditEventObj, String[] extraFldNames, Object[] extraFldValues) {
 
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);

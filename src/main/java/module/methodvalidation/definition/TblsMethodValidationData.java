@@ -7,6 +7,13 @@ package module.methodvalidation.definition;
 
 import databases.TblsAppConfig;
 import databases.TblsData;
+import static databases.TblsData.FIELDS_NAMES_ALIQUOT_ID;
+import static databases.TblsData.FIELDS_NAMES_ANALYSIS;
+import static databases.TblsData.FIELDS_NAMES_REPLICA;
+import static databases.TblsData.FIELDS_NAMES_SPEC_EVAL;
+import static databases.TblsData.FIELDS_NAMES_STATUS;
+import static databases.TblsData.FIELDS_NAMES_STATUS_PREVIOUS;
+import static databases.TblsData.FIELDS_NAMES_SUBALIQUOT_ID;
 import lbplanet.utilities.LPDatabase;
 import module.instrumentsmanagement.definition.TblsInstrumentsData;
 import trazit.enums.EnumIntTableFields;
@@ -28,10 +35,14 @@ public class TblsMethodValidationData {
     public enum TablesMethodValidationData implements EnumIntTables{
         SAMPLE(null, "sample", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsMethodValidationData.Sample.values(), Sample.SAMPLE_ID.getName()
             , new String[]{Sample.SAMPLE_ID.getName()}, null, "sample table"),
+        SAMPLE_ANALYSIS(null, "sample_analysis", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, TblsMethodValidationData.SampleAnalysis.values(), TblsMethodValidationData.SampleAnalysis.SAMPLE_ID.getName()
+            , new String[]{TblsMethodValidationData.SampleAnalysis.SAMPLE_ID.getName()}, null, "sample table"),
         VALIDATION_METHOD_PARAMS(null, "validation_method_params", SCHEMA_NAME, IS_PRODEDURE_INSTANCE, ValidationMethodParams.values(), 
             null, new String[]{ValidationMethodParams.NAME.getName()}, null, ""),
         PROJECT_ATTACHMENT(null, "project_attachment", SCHEMA_NAME, true, ProjectAttachments.values(), ProjectAttachments.ID.getName(),
             new String[]{ProjectAttachments.ID.getName()}, null, "ProjectAttachments"),        
+        PROJECT_NOTES(null, "project_notes", SCHEMA_NAME, true, ProjectNotes.values(), ProjectNotes.ID.getName(),
+            new String[]{ProjectNotes.ID.getName()}, null, "ProjectAttachments"),        
         ;
         private TablesMethodValidationData(FldBusinessRules[] fldBusRules, String dbTblName, String repositoryName, Boolean isProcedure, EnumIntTableFields[] tblFlds, 
                 String seqName, String[] primaryK, Object[] foreignK, String comment){
@@ -131,6 +142,8 @@ public class TblsMethodValidationData {
             , null, null, null, null, true),
         PROJECT("project", LPDatabase.stringNotNull(), null, null, null, null, true),
         PARAMETER_NAME("parameter_name",  LPDatabase.stringNotNull(), null, null, null, null, true),
+        ANALYTICAL_SEQUENCE_NAME("analytical_sequence_name",  LPDatabase.stringNotNull(), null, null, null, null, true),
+        
         ANALYTICAL_PARAMETER("analytical_parameter",  LPDatabase.string(), null, null, null, null, true),
         REVIEWER("reviewer",LPDatabase.string(), null, null, null, null, true),
         REVIEWED("reviewed", LPDatabase.booleanFld(), null, null, null, null, true), 
@@ -164,6 +177,83 @@ public class TblsMethodValidationData {
         @Override        public Boolean isSystemField(){return this.isSystemFld;}
     }            
 
+    public enum SampleAnalysis implements EnumIntTableFields {
+        TEST_ID("test_id", LPDatabase.integerNotNull(), null, null, null, null),
+        SAMPLE_ID(TblsData.Sample.SAMPLE_ID.getName(), LPDatabase.integer(), null, null, null, null),
+        STATUS(FIELDS_NAMES_STATUS, LPDatabase.stringNotNull(), null, null, null, null),
+        STATUS_PREVIOUS(FIELDS_NAMES_STATUS_PREVIOUS, LPDatabase.string(), null, null, null, null),
+        ANALYSIS(FIELDS_NAMES_ANALYSIS, LPDatabase.stringNotNull(), null, null, null, null),
+        METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, LPDatabase.string(), null, null, null, null),
+        METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, LPDatabase.integer(), null, null, null, null),
+        REPLICA(FIELDS_NAMES_REPLICA, LPDatabase.integer(), null, null, null, null),
+        ADDED_ON("added_on", LPDatabase.dateTime(), "to_char(" + "added_on" + ",'YYYY-MM-DD HH:MI')", null, null, null),
+        ADDED_BY("added_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
+        SPEC_EVAL(FIELDS_NAMES_SPEC_EVAL, LPDatabase.string(2), null, null, null, null),
+        REVIEWER("reviewer", LPDatabase.string(), null, null, null, null),
+        REVIEWER_ASSIGNED_ON("reviewer_assigned_on", LPDatabase.dateTime(), "to_char(" + "reviewer_assigned_on" + ",'YYYY-MM-DD HH:MI')", null, null, null),
+        REVIEWER_ASSIGNED_BY("reviewer_assigned_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
+        ANALYST("analyst", LPDatabase.string(), null, null, null, null),
+        ANALYST_ASSIGNED_ON("analyst_assigned_on", LPDatabase.dateTime(), "to_char(" + "analyst_assigned_on" + ",'YYYY-MM-DD HH:MI')", null, null, null),
+        ANALYST_ASSIGNED_BY("analyst_assigned_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
+        ANALYST_CERTIFICATION_MODE("analyst_certification_mode", LPDatabase.string(), null, null, null, null),
+        ALIQUOT_ID(FIELDS_NAMES_ALIQUOT_ID, LPDatabase.integer(), null, null, null, null),
+        TESTING_GROUP("testing_group", LPDatabase.string(), null, null, null, null),
+        READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld(), null, null, null, null),
+        SUBALIQUOT_ID(FIELDS_NAMES_SUBALIQUOT_ID, LPDatabase.integer(), null, null, null, null),
+        REVIEWED("reviewed", LPDatabase.booleanFld(), null, null, null, null),
+        REVIEWED_ON("reviewed_on", LPDatabase.dateTime(), "to_char(" + "reviewed_on" + ",'YYYY-MM-DD HH:MI')", null, null, null),
+        REVIEWED_BY("reviewed_by", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
+        PARSING("parsing", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
+        THEORETICAL_VALUE("theoretical_value", LPDatabase.integer(), null, null, null, null),
+        Q_VALUE("q_value", LPDatabase.integer(), null, null, null, null)
+        ;
+
+        private SampleAnalysis(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules) {
+            this.fieldName = dbObjName;
+            this.fieldType = dbObjType;
+            this.fieldMask = fieldMask;
+            this.reference = refer;
+            this.fieldComment = comment;
+            this.fldBusinessRules = fldBusRules;
+        }
+        private final String fieldName;
+        private final String fieldType;
+        private final String fieldMask;
+        private final ReferenceFld reference;
+        private final String fieldComment;
+        private final FldBusinessRules[] fldBusinessRules;
+
+        @Override
+        public String getName() {
+            return this.fieldName;
+        }
+
+        @Override
+        public String getFieldType() {
+            return this.fieldType;
+        }
+
+        @Override
+        public String getFieldMask() {
+            return this.fieldMask;
+        }
+
+        @Override
+        public ReferenceFld getReferenceTable() {
+            return this.reference;
+        }
+
+        @Override
+        public String getFieldComment() {
+            return this.fieldComment;
+        }
+
+        @Override
+        public FldBusinessRules[] getFldBusinessRules() {
+            return this.fldBusinessRules;
+        }
+    }
     
     public enum ValidationMethodParams implements EnumIntTableFields{
         NAME("name", LPDatabase.stringNotNull(), null, null, null, null, true),
@@ -212,8 +302,11 @@ public class TblsMethodValidationData {
 
     public enum ProjectAttachments implements EnumIntTableFields{
         ID("id", LPDatabase.integerNotNull(), null, null, null, null),
-        FORMULA_NAME("formula_name", LPDatabase.stringNotNull(), null, null, null, null),
-        QUALIF_ID("qualif_id", LPDatabase.integer(), null, null, null, null),        
+        PROJECT_NAME("project_name", LPDatabase.string(), null, null, null, null),
+        FORMULA_NAME("formula_name", LPDatabase.string(), null, null, null, null),
+        PARAMETER_NAME("parameter_name", LPDatabase.string(), null, null, null, null),
+        RD_DAILY_ENTRY_NAME("rd_daily_entry", LPDatabase.string(), null, null, null, null),
+        SAMPLE_ID("sample_id", LPDatabase.integer(), null, null, null, null),
         CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
         CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.dateTime(), null, null, null, null),
         FILE_LINK("file_link", LPDatabase.string(), null, null, null, null),
@@ -238,4 +331,35 @@ public class TblsMethodValidationData {
         private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
     }                
     
+    public enum ProjectNotes implements EnumIntTableFields{
+        ID("id", LPDatabase.integerNotNull(), null, null, null, null),
+        PROJECT_NAME("project_name", LPDatabase.string(), null, null, null, null),
+        FORMULA_NAME("formula_name", LPDatabase.string(), null, null, null, null),
+        PARAMETER_NAME("parameter_name", LPDatabase.string(), null, null, null, null),
+        RD_DAILY_ENTRY_NAME("rd_daily_entry", LPDatabase.string(), null, null, null, null),
+        SAMPLE_ID("sample_id", LPDatabase.integer(), null, null, null, null),
+        CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, null, null, null),
+        CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.dateTime(), null, null, null, null),
+        FILE_LINK("file_link", LPDatabase.string(), null, null, null, null),
+        DB_FILE("db_file", LPDatabase.embeddedFile(), null, null, null, null),
+        BRIEF_SUMMARY("brief_summary", LPDatabase.string(), null, null, null, null),
+        REMOVED("removed", LPDatabase.booleanFld(false), null, null, null, null),
+        ;
+        private ProjectNotes(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
+                FldBusinessRules[] fldBusRules){
+            this.fieldName=dbObjName;
+            this.fieldType=dbObjType;
+            this.fieldMask=fieldMask;
+            this.reference=refer;
+            this.fieldComment=comment;
+            this.fldBusinessRules=fldBusRules;
+        }
+        private final String fieldName; @Override        public String getName(){return this.fieldName;}
+        private final String fieldType; @Override        public String getFieldType() {return this.fieldType;}
+        private final String fieldMask; @Override        public String getFieldMask() {return this.fieldMask;}
+        private final ReferenceFld reference; @Override        public ReferenceFld getReferenceTable() {return this.reference;}
+        private final String fieldComment;    @Override        public String getFieldComment(){return this.fieldComment;}
+        private final FldBusinessRules[] fldBusinessRules;     @Override        public FldBusinessRules[] getFldBusinessRules(){return this.fldBusinessRules;}
+    }                
+
 }
