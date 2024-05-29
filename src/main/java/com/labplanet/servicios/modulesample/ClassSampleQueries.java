@@ -31,7 +31,6 @@ import static com.labplanet.servicios.modulesample.SampleAPIfrontend.sampleAnaly
 import static com.labplanet.servicios.modulesample.SampleAPIfrontend.sampleAnalysisView;
 import databases.Rdbms;
 import databases.SqlStatement;
-import databases.SqlStatementEnums;
 import databases.SqlWhere;
 import databases.TblsApp;
 import databases.TblsCnfg;
@@ -1616,7 +1615,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                 EnumIntTableFields.getAllFieldNamesFromDatabase(TblsCnfg.TablesConfig.ANALYSIS_METHOD, alternativeProcInstanceName),
                 new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName() + "<>"},
                 new Object[]{">>>"},
-                new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()}, alternativeProcInstanceName);
+                new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName()}, alternativeProcInstanceName);
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisMethodsList[0][0].toString()))) {
             for (Object[] currAnalysisMeth : analysisMethodsList) {
                 JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currAnalysisMeth);
@@ -1637,7 +1636,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                 EnumIntTableFields.getAllFieldNamesFromDatabase(TblsCnfg.TablesConfig.METHODS, procInstanceName),
                 new String[]{TblsCnfg.Methods.CODE.getName() + "<>"},
                 new Object[]{">>>"},
-                new String[]{TblsCnfg.Methods.CODE.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()}, procInstanceName);
+                new String[]{TblsCnfg.Methods.CODE.getName()}, procInstanceName);
         
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisMethodsList[0][0].toString()))) {
             for (Object[] currAnalysisMeth : analysisMethodsList) {
