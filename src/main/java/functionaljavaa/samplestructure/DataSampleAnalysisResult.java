@@ -28,11 +28,14 @@ import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleAnalys
 import functionaljavaa.samplestructure.DataSampleStructureEnums.DataSampleAnalysisResultErrorTrapping;
 import functionaljavaa.samplestructure.DataSampleStructureStatuses.SampleStatuses;
 import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement;
+import java.io.File;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Objects;
 import lbplanet.utilities.LPDate;
+import lbplanet.utilities.LPFilesTools;
 import lbplanet.utilities.LPFrontEnd;
+import lbplanet.utilities.LPaws;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntTableFields;
@@ -198,6 +201,15 @@ public class DataSampleAnalysisResult {
         Object[][] parsingAndActionsToPerform=ResultsEntering.getParsingData(resultId, fileInByte);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(parsingAndActionsToPerform[0][0].toString()))
             return new InternalMessage(LPPlatform.LAB_FALSE, LPPlatform.LpPlatformErrorTrapping.SPECIALFUNCTION_CAUSEDEXCEPTION, new Object[]{"getParsingData"});
+        
+        LPaws aws=new LPaws(null);
+        if (aws.getHasError()){
+            return aws.getErrorDetail();
+        }
+        String uploadKey = "projectName"+this.hashCode()+"pdf";
+        File pictureFile=LPFilesTools.byteArrToFile(uploadKey, fileInByte);             
+        aws.uploadFile(uploadKey, pictureFile);
+        
         for (Object[] curResult:parsingAndActionsToPerform){
             String resultIdStr=curResult[0].toString();
             String resultNameStr=curResult[1].toString();
@@ -416,6 +428,7 @@ public class DataSampleAnalysisResult {
                     AnalysisCalculations anCalc=new AnalysisCalculations(resultId, testId, sampleId, resultFieldsArr, resultData[0], this.sar, alternativeAuditEntry, alternativeAuditClass);
                     anCalc=null;
                 }
+                dataSample.smpAna.calcsPostEnterResult(resultId, testId, sampleId, dataSample);
             }
             if (Boolean.TRUE.equals(diagnosesObj.getRunSuccess())) {
                 DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId);
@@ -446,7 +459,8 @@ public class DataSampleAnalysisResult {
                     if (calcLinkedFldPosicInArray > -1) {
                         AnalysisCalculations anCalc=new AnalysisCalculations(resultId, testId, sampleId, resultFieldsArr, resultData[0], this.sar, alternativeAuditEntry, alternativeAuditClass);
                         anCalc=null;
-                    }
+                    }                    
+                    dataSample.smpAna.calcsPostEnterResult(resultId, testId, sampleId, dataSample);
                 }
                 if (Boolean.TRUE.equals(diagnosesObj.getRunSuccess())) {
                     DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId);
@@ -511,6 +525,7 @@ public class DataSampleAnalysisResult {
                         AnalysisCalculations anCalc=new AnalysisCalculations(resultId, testId, sampleId, resultFieldsArr, resultData[0], this.sar, alternativeAuditEntry, alternativeAuditClass);
                         anCalc=null;
                     }
+                    dataSample.smpAna.calcsPostEnterResult(resultId, testId, sampleId, dataSample);
                     SampleAudit smpAudit = new SampleAudit();
                     smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
                             resultId, sampleId, testId, resultId, fieldsName, fieldsValue, alternativeAuditEntry, alternativeAuditClass);
@@ -578,6 +593,7 @@ public class DataSampleAnalysisResult {
                         AnalysisCalculations anCalc=new AnalysisCalculations(resultId, testId, sampleId, resultFieldsArr, resultData[0], this.sar, alternativeAuditEntry, alternativeAuditClass);
                         anCalc=null;
                     }
+                    dataSample.smpAna.calcsPostEnterResult(resultId, testId, sampleId, dataSample);
                 }
                 if (Boolean.TRUE.equals(diagnoseObj.getRunSuccess())) {
                     DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId);
