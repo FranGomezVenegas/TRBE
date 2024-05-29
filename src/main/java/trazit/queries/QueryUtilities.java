@@ -73,6 +73,18 @@ public final class QueryUtilities {
         return jBlockArr;
     }
 
+    public static org.json.simple.JSONArray dbSingleRowToJsonFldNameAndValueArrJsonSimple(String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue) {
+        Object[][] procTblRows = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), tblName, whereFldName, whereFldValue, fldsToGet);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procTblRows[0][0].toString())) {
+            JSONObject jObj = new JSONObject();
+            jObj.put(NO_DATA, NO_DATA);
+            org.json.simple.JSONArray jArr = new org.json.simple.JSONArray();
+            jArr.add(jObj);
+            return jArr;
+        } else {
+            return LPJson.convertArrayRowToJSONFieldNameAndValueObjectJsonSimple(fldsToGet, procTblRows[0], null);
+        }
+    }    
     public static JSONArray dbSingleRowToJsonFldNameAndValueArr(String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue) {
         Object[][] procTblRows = Rdbms.getRecordFieldsByFilter("", GlobalVariables.Schemas.REQUIREMENTS.getName(), tblName, whereFldName, whereFldValue, fldsToGet);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procTblRows[0][0].toString())) {
@@ -86,13 +98,28 @@ public final class QueryUtilities {
         }
     }
 
+    public static org.json.simple.JSONArray dbRowsToJsonArrSimpleJson(String procInstanceName, String schemaName, EnumIntTables tblObj, EnumIntTableFields[] fldsToGet, SqlWhere wObj, String[] sortFlds, String[] fldsToExclude, Boolean emptyWhenNoData) {
+        Object[][] procTblRows = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, tblObj, wObj, fldsToGet, sortFlds, false);
+        return convertArray2DtoJArrJsonSimple(procTblRows, EnumIntTableFields.getAllFieldNames(fldsToGet), fldsToExclude, emptyWhenNoData);
+    }
+
     public static JSONArray dbRowsToJsonArr(String procInstanceName, String schemaName, EnumIntTables tblObj, EnumIntTableFields[] fldsToGet, SqlWhere wObj, String[] sortFlds, String[] fldsToExclude, Boolean emptyWhenNoData) {
         Object[][] procTblRows = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, tblObj, wObj, fldsToGet, sortFlds, false);
         return convertArray2DtoJArr(procTblRows, EnumIntTableFields.getAllFieldNames(fldsToGet), fldsToExclude, emptyWhenNoData);
     }
+    public static org.json.simple.JSONArray dbRowsToJsonArrSimpleJson(String procInstanceName, String schemaName, EnumIntViews tblObj, EnumIntViewFields[] fldsToGet, SqlWhere wObj, String[] sortFlds, String[] fldsToExclude, Boolean emptyWhenNoData) {
+        Object[][] procTblRows = Rdbms.getRecordFieldsByFilterForViews(procInstanceName, schemaName, tblObj, wObj, fldsToGet, sortFlds, false);        
+        return convertArray2DtoJArrJsonSimple(procTblRows, EnumIntViewFields.getAllFieldNames(fldsToGet), fldsToExclude, emptyWhenNoData);
+    }
+
     public static JSONArray dbRowsToJsonArr(String procInstanceName, String schemaName, EnumIntViews tblObj, EnumIntViewFields[] fldsToGet, SqlWhere wObj, String[] sortFlds, String[] fldsToExclude, Boolean emptyWhenNoData) {
         Object[][] procTblRows = Rdbms.getRecordFieldsByFilterForViews(procInstanceName, schemaName, tblObj, wObj, fldsToGet, sortFlds, false);        
         return convertArray2DtoJArr(procTblRows, EnumIntViewFields.getAllFieldNames(fldsToGet), fldsToExclude, emptyWhenNoData);
+    }
+
+    public static org.json.simple.JSONArray dbRowsToJsonArrSimpleJson(String procInstanceName, String schemaName, String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue, String[] sortFlds, String[] fldsToExclude, Boolean emptyWhenNoData, Boolean inforceDistinct) {
+        Object[][] procTblRows = Rdbms.getRecordFieldsByFilter(procInstanceName, schemaName, tblName, whereFldName, whereFldValue, fldsToGet, sortFlds, inforceDistinct);
+        return convertArray2DtoJArrJsonSimple(procTblRows, fldsToGet, fldsToExclude, emptyWhenNoData);
     }
 
     public static JSONArray dbRowsToJsonArr(String procInstanceName, String schemaName, String tblName, String[] fldsToGet, String[] whereFldName, Object[] whereFldValue, String[] sortFlds, String[] fldsToExclude, Boolean emptyWhenNoData, Boolean inforceDistinct) {
@@ -124,6 +151,36 @@ public final class QueryUtilities {
                 }
             } catch (JsonSyntaxException e) {
                 jBlockArr.put("Errors trying to get the master data records info. " + e.getMessage());
+                return jBlockArr;
+            }
+        }
+        return jBlockArr;
+    }
+
+    public static org.json.simple.JSONArray convertArray2DtoJArrJsonSimple(Object[][] procTblRows, String[] fldsToGet, String[] jsonFlds, Boolean emptyWhenNoData) {
+        org.json.simple.JSONArray jBlockArr = new org.json.simple.JSONArray();
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procTblRows[0][0].toString())) {
+            if (Boolean.TRUE.equals(emptyWhenNoData)) {
+                return jBlockArr;
+            }
+            JSONObject jObj = new JSONObject();
+            jObj.put(NO_DATA, NO_DATA);
+            jBlockArr.add(jObj);
+        } else {
+            try {
+                for (Object[] curRow : procTblRows) {
+                    if (jsonFlds == null) {
+                        jBlockArr.add(LPJson.convertArrayRowToJSONObject(fldsToGet, curRow));
+                    } else {
+                        org.json.simple.JSONObject jObj = LPJson.convertArrayRowToJSONObject(fldsToGet, curRow, jsonFlds);
+                        for (String curJsonFld : jsonFlds) {
+                            jObj.put(TblsReqs.ProcedureMasterData.JSON_OBJ.getName(), JsonParser.parseString(curRow[LPArray.valuePosicInArray(fldsToGet, curJsonFld)].toString()).getAsJsonObject());
+                        }
+                        jBlockArr.add(jObj);
+                    }
+                }
+            } catch (JsonSyntaxException e) {
+                jBlockArr.add("Errors trying to get the master data records info. " + e.getMessage());
                 return jBlockArr;
             }
         }
