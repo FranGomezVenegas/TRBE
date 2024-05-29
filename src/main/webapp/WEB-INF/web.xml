@@ -306,6 +306,10 @@
         <servlet-class>com.labplanet.servicios.app.InvestigationAPIfrontend</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>InvTrackingAPIactions</servlet-name>
+        <servlet-class>module.inventorytrack.apis.InvTrackingAPIactions</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>InvTrackingAPIqueries</servlet-name>
         <servlet-class>module.inventorytrack.apis.InvTrackingAPIqueries</servlet-class>
     </servlet>
@@ -628,6 +632,10 @@
     </servlet-mapping>
     <!-- Block 8.2 Instruments Module End. -->
     <!-- Block 8.3 Instruments Module Begin. -->
+    <servlet-mapping>
+        <servlet-name>InvTrackingAPIactions</servlet-name>
+        <url-pattern>/app/procs/InvTrackingAPIactions</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>InvTrackingAPIqueries</servlet-name>
         <url-pattern>/app/procs/InvTrackingAPIqueries</url-pattern>
