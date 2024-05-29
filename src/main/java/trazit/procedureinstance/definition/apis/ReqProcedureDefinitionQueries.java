@@ -40,7 +40,7 @@ import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.globalvariables.GlobalVariables;
 import static trazit.queries.QueryUtilities.getTableData;
 import trazit.session.ProcedureRequestSession;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static trazit.procedureinstance.definition.apis.prodDefQueriesViewDetail.getProcedureViews;
 import trazit.procedureinstance.definition.definition.TblsReqs;
@@ -107,7 +107,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                     JSONArray jArr = new JSONArray();
                     for (Object[] curRec : list) {
                         JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieveScripts, curRec);
-                        jArr.put(jObj);
+                        jArr.add(jObj);
                     }
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     return;
@@ -144,7 +144,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                                 curProcObj.put("definition", procInstanceDefinitionInRequirements(curProc[valuePosicProcInstanceNameInArray].toString()));
                                 curProcObj.put("support", procInstanceSupportInRequirements(curProc[valuePosicProcInstanceNameInArray].toString()));
                             }
-                            proceduresList.put(curProcObj);
+                            proceduresList.add(curProcObj);
                         }
                     }
                     jMainObj.put(mainObjectName, proceduresList);
@@ -165,7 +165,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                         if (Boolean.FALSE.equals(GlobalVariables.PROC_MANAGEMENT_SPECIAL_ROLE.equalsIgnoreCase(curProcInst.toString()))) {
                             JSONObject procInstanceDefinition = procInstanceDefinitionInRequirements(curProcInst.toString());
                             procInstanceDefinition.put("instance_name", curProcInst);
-                            procedures.put(procInstanceDefinition);
+                            procedures.add(procInstanceDefinition);
                         }
                     }
                     JSONObject proceduresListObj = new JSONObject();
@@ -203,7 +203,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                             Integer scriptIdPosic = LPArray.valuePosicInArray(fieldsToRetrieveScripts, TblsTesting.Script.SCRIPT_ID.getName());
                             for (Object[] curTest : scriptsTblInfo) {
                                 JSONObject curTestObj = getScriptWithSteps(Integer.valueOf(curTest[scriptIdPosic].toString()), procInstanceName, fieldsToRetrieveScripts, curTest);
-                                scriptsList.put(curTestObj);
+                                scriptsList.add(curTestObj);
                             }
                             jMainObj.put("scripts_list", scriptsList);
                         }
@@ -223,11 +223,11 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                         jArr = new JSONArray();
                         Object[][] mismatchTables = (Object[][]) actionDiagnosesAll.getNewObjectId();
                         for (int i = 1; i < mismatchTables.length; i++) {
-                            jArr.put(LPJson.convertArrayRowToJSONObject(LPArray.convertObjectArrayToStringArray(mismatchTables[0]), mismatchTables[i]));
+                            jArr.add(LPJson.convertArrayRowToJSONObject(LPArray.convertObjectArrayToStringArray(mismatchTables[0]), mismatchTables[i]));
                         }
                         JSONArray jTblColsArr = new JSONArray();
                         for (Object curCol : mismatchTables[0]) {
-                            jTblColsArr.put(curCol.toString());
+                            jTblColsArr.add(curCol.toString());
                         }
                         jObj = new JSONObject();
                         JSONObject jerrDetObj = new JSONObject();
@@ -264,7 +264,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                                 JSONArray scriptDetail = new JSONArray();
                                 for (String curId : curProc[valuePosicInArray].toString().split("\\|")) {
                                     JSONObject curTestObj = getScriptWithSteps(Integer.valueOf(curId), procInstanceName, null, null);
-                                    scriptDetail.put(curTestObj);
+                                    scriptDetail.add(curTestObj);
                                 }
                                 curProcObj.put("scripts_detail", scriptDetail);
                             }
@@ -283,7 +283,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                                 curProcObj.replace(TblsTesting.ScriptsCoverage.MSG_COVERAGE_DETAIL.getName(),
                                         LPJson.convertToJsonObjectStringedValue(curProc[valuePosicInArray].toString()));
                             }
-                            proceduresList.put(curProcObj);
+                            proceduresList.add(curProcObj);
                         }
                         jMainObj.put(mainObjectName, proceduresList);
                     }
@@ -339,14 +339,14 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    private static JSONObject procInstanceCardDataInRequirements(String procInstanceName) {
+    private static org.json.simple.JSONObject procInstanceCardDataInRequirements(String procInstanceName) {
         JSONObject mainObj = new JSONObject();
         mainObj.put("title", procInstanceName);
         mainObj.put("subtitle", procInstanceName);
-        JSONArray fieldsArr = new JSONArray();
+        org.json.simple.JSONArray fieldsArr = new org.json.simple.JSONArray();
         String[] allFieldNames = getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableFields(),
             new String[]{TblsReqs.ProcedureInfo.DESCRIPTION.getName(), TblsReqs.ProcedureInfo.MODULE_SETTINGS.getName()});
-        fieldsArr = QueryUtilities.dbSingleRowToJsonFldNameAndValueArr(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName(),
+        fieldsArr = QueryUtilities.dbSingleRowToJsonFldNameAndValueArrJsonSimple(TblsReqs.TablesReqs.PROCEDURE_INFO.getTableName(),
                 allFieldNames, new String[]{TblsReqs.ProcedureInfo.PROC_INSTANCE_NAME.getName()}, new Object[]{procInstanceName});
         mainObj.put("fields", fieldsArr);
         JSONArray summaryArr = new JSONArray();
@@ -355,7 +355,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         summaryObj.put("progress", 100);
         summaryObj.put("signed", true);
         summaryObj.put("tooltip", "If URS Requirements were covered by solutions into the Procedures Definition repository");
-        summaryArr.put(summaryObj);
+        summaryArr.add(summaryObj);
         summaryObj = new JSONObject();
         summaryObj.put("section", "Testing Scripts");
         String repositoryName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName());
@@ -370,7 +370,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
             summaryObj.put("signed", false);
             summaryObj.put("tooltip", "Not deployed yet");            
         }
-        summaryArr.put(summaryObj);
+        summaryArr.add(summaryObj);
         summaryObj = new JSONObject();
         summaryObj.put("section", "Testing Coverage");
         repositoryName = LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.TESTING.getName());
@@ -385,13 +385,13 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
             summaryObj.put("signed", false);
             summaryObj.put("tooltip", "Not deployed yet");            
         }
-        summaryArr.put(summaryObj);
+        summaryArr.add(summaryObj);
         summaryObj = new JSONObject();
         summaryObj.put("section", "Deployed");
         summaryObj.put("progress", 90);
         summaryObj.put("signed", false);
         summaryObj.put("tooltip", "");
-        summaryArr.put(summaryObj);
+        summaryArr.add(summaryObj);
         mainObj.put("summary", summaryArr);
         return mainObj;
     }
@@ -410,8 +410,8 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         String moduleName=dbSingleRowToJsonObj.get("module_name").toString();
         Integer moduleVersion=dbSingleRowToJsonObj.get("module_version").toString().length()>0?Integer.valueOf(dbSingleRowToJsonObj.get("module_version").toString()):-1;        
         
-        JSONArray dbRowsToJsonArr = new JSONArray();        
-        dbRowsToJsonArr = QueryUtilities.dbRowsToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.BUSINESS_RULES_IN_SOLUTION.getViewName(),
+        org.json.simple.JSONArray dbRowsToJsonArr = new org.json.simple.JSONArray();        
+        dbRowsToJsonArr = QueryUtilities.dbRowsToJsonArrSimpleJson("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.BUSINESS_RULES_IN_SOLUTION.getViewName(),
             new String[]{TblsReqs.viewBusinessRulesInSolution.AREA.getName(),
                 TblsReqs.viewBusinessRulesInSolution.RULE_NAME.getName(), TblsReqs.viewBusinessRulesInSolution.PRESENT.getName(), TblsReqs.viewBusinessRulesInSolution.REQUIREMENTS_LIST.getName(),
                 TblsReqs.viewBusinessRulesInSolution.PREREQUISITE.getName(), TblsReqs.viewBusinessRulesInSolution.IS_MANDATORY.getName(),
@@ -422,8 +422,8 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
             new String[]{TblsReqs.viewBusinessRulesInSolution.PRESENT.getName()+" desc",  TblsReqs.viewBusinessRulesInSolution.AREA.getName(), TblsReqs.viewBusinessRulesInSolution.RULE_NAME.getName()},
             new String[]{},true, true);
         jMainObj.put("module_in_solution_business_rules", dbRowsToJsonArr);
-        dbRowsToJsonArr = new JSONArray();        
-        dbRowsToJsonArr = QueryUtilities.dbRowsToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.ACTIONS_IN_SOLUTION.getViewName(),
+        dbRowsToJsonArr = new org.json.simple.JSONArray();        
+        dbRowsToJsonArr = QueryUtilities.dbRowsToJsonArrSimpleJson("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.ACTIONS_IN_SOLUTION.getViewName(),
                 new String[]{TblsReqs.viewActionsInSolution.PRETTY_EN.getName(), TblsReqs.viewActionsInSolution.PRETTY_ES.getName(),
                     TblsReqs.viewActionsInSolution.ENTITY.getName(), TblsReqs.viewActionsInSolution.PRESENT.getName(), TblsReqs.viewActionsInSolution.REQUIREMENTS_LIST.getName(),
                     TblsReqs.viewActionsInSolution.ENDPOINT_NAME.getName(), TblsReqs.viewActionsInSolution.API_NAME.getName(), TblsReqs.viewActionsInSolution.OUTPUT_OBJECT_TYPES.getName(),
@@ -433,7 +433,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                 new String[]{TblsReqs.viewActionsInSolution.PRESENT.getName()+" desc", TblsReqs.viewQueriesInSolution.ENTITY.getName(), TblsReqs.viewActionsInSolution.API_NAME.getName(), TblsReqs.viewActionsInSolution.ENDPOINT_NAME.getName()},
                 new String[]{}, true, true);
         jMainObj.put("module_in_solution_actions", dbRowsToJsonArr);
-        dbRowsToJsonArr = QueryUtilities.dbRowsToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.QUERIES_IN_SOLUTION.getViewName(),
+        dbRowsToJsonArr = QueryUtilities.dbRowsToJsonArrSimpleJson("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.QUERIES_IN_SOLUTION.getViewName(),
                 new String[]{TblsReqs.viewActionsInSolution.PRETTY_EN.getName(), TblsReqs.viewActionsInSolution.PRETTY_ES.getName(),
                     TblsReqs.viewQueriesInSolution.ENTITY.getName(), TblsReqs.viewQueriesInSolution.PRESENT.getName(), TblsReqs.viewQueriesInSolution.REQUIREMENTS_LIST.getName(),
                     TblsReqs.viewQueriesInSolution.ENDPOINT_NAME.getName(), TblsReqs.viewQueriesInSolution.API_NAME.getName(),
@@ -460,7 +460,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         jMainObj.put("module_in_solution_queries", dbRowsToJsonFinalArr);*/
         jMainObj.put("module_in_solution_queries", dbRowsToJsonArr);
         
-        dbRowsToJsonArr=QueryUtilities.dbRowsToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.SPECIAL_VIEWS_IN_SOLUTION.getViewName(),
+        dbRowsToJsonArr=QueryUtilities.dbRowsToJsonArrSimpleJson("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.ViewsReqs.SPECIAL_VIEWS_IN_SOLUTION.getViewName(),
             new String[]{TblsReqs.viewSpecialViewsInSolution.PRETTY_EN.getName(), TblsReqs.viewSpecialViewsInSolution.PRETTY_ES.getName(),
                 TblsReqs.viewSpecialViewsInSolution.ENTITY.getName(), TblsReqs.viewSpecialViewsInSolution.PRESENT.getName(), TblsReqs.viewSpecialViewsInSolution.REQUIREMENTS_LIST.getName(),
                 TblsReqs.viewSpecialViewsInSolution.VIEW_NAME.getName(),
@@ -556,19 +556,19 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
     }
 
     private static JSONArray procInstanceMasterDataInRequirements(String procInstanceName) {
-        return QueryUtilities.dbRowsToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_MASTER_DATA.getTableName(),
+        return QueryUtilities.dbRowsToJsonArrSimpleJson("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_MASTER_DATA.getTableName(),
                 getAllFieldNames(TblsReqs.TablesReqs.PROC_MASTER_DATA.getTableFields()), new String[]{TblsReqs.ProcedureMasterData.PROC_INSTANCE_NAME.getName()}, new Object[]{procInstanceName},
                 null, new String[]{TblsReqs.ProcedureMasterData.JSON_OBJ.getName()}, true, true);
     }
 
     private static JSONArray procInstanceFrontendTestingInRequirements(String procInstanceName) {
-        return QueryUtilities.dbRowsToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_FRONT_TESTING_WITNESS.getTableName(),
+        return QueryUtilities.dbRowsToJsonArrSimpleJson("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_FRONT_TESTING_WITNESS.getTableName(),
                 getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_FRONT_TESTING_WITNESS.getTableFields()), new String[]{TblsReqs.ProcedureFrontendTestingWitness.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureFrontendTestingWitness.ACTIVE.getName()}, new Object[]{procInstanceName, true},
                 new String[]{TblsReqs.ProcedureFrontendTestingWitness.ORDER_NUMBER.getName()}, new String[]{}, true, true);
     }
 
     private static JSONArray procInstanceManualsInRequirements(String procInstanceName) {
-        return QueryUtilities.dbRowsToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_MANUALS.getTableName(),
+        return QueryUtilities.dbRowsToJsonArrSimpleJson("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROC_MANUALS.getTableName(),
                 getAllFieldNames(TblsReqs.TablesReqs.PROC_MANUALS.getTableFields()), new String[]{TblsReqs.ProcedureManuals.PROC_INSTANCE_NAME.getName(), TblsReqs.ProcedureManuals.ACTIVE.getName()}, new Object[]{procInstanceName, true},
                 new String[]{TblsReqs.ProcedureManuals.ORDER_NUMBER.getName()}, new String[]{}, true, true);       
     }
@@ -662,7 +662,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                                 break;
                         }
                     }
-                    scriptStepsList.put(curStepObj);
+                    scriptStepsList.add(curStepObj);
                 }
                 curTestObj.put("steps", scriptStepsList);
             }
@@ -740,7 +740,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                                 break;
                         }
                     }
-                    scriptStepsList.put(curStepObj);
+                    scriptStepsList.add(curStepObj);
                 }
                 curTestObj.put("steps", scriptStepsList);
             }
@@ -854,20 +854,20 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
         SqlWhere wObj = new SqlWhere();
         wObj.addConstraint(TblsReqs.ProcedureBusinessRules.PROC_INSTANCE_NAME,
                 SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{procInstanceName}, null);        
-        JSONArray reqSolJsonArr = QueryUtilities.dbRowsToJsonArr(procInstanceName, GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, TblsReqs.ProcedureReqSolution.values(), 
+        JSONArray reqSolJsonArr = QueryUtilities.dbRowsToJsonArrSimpleJson(procInstanceName, GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, TblsReqs.ProcedureReqSolution.values(), 
             wObj, null, null, false);        
         /*JSONArray reqSolJsonArr = ClassReqProcedureQueries.dbRowsToJsonArr("", GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableName(),
                 getAllFieldNames(TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION.getTableFields()), new String[]{TblsReqs.ProcedureReqSolution.PROC_INSTANCE_NAME.getName()},
                 new Object[]{procInstanceName},
                 new String[]{TblsReqs.ProcedureReqSolution.ORDER_NUMBER.getName()},null, true, true);*/
-        if (reqSolJsonArr.length()==1){
+        if (reqSolJsonArr.size()==1){
             JSONObject curRow=(JSONObject) reqSolJsonArr.get(0);
             if (curRow.containsKey("No Data"))
                 return reqSolJsonArr;
         }
-        for (int i=0;i<reqSolJsonArr.length();i++){
+        for (int i=0;i<reqSolJsonArr.size();i++){
             JSONObject curRow=(JSONObject) reqSolJsonArr.get(i);
-            reqSolJsonExtendedArr.put(solutionAddRelevantInfo(curRow));
+            reqSolJsonExtendedArr.add(solutionAddRelevantInfo(curRow));
         }   
         return reqSolJsonExtendedArr;
     }
@@ -914,7 +914,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                 SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, null);
         parentCodeWhereObj.addConstraint(TblsReqs.ProcedureUserRequirements.CODE,
                 SqlStatement.WHERECLAUSE_TYPES.IS_NULL, new Object[]{}, null);
-        JSONArray parentCodeArr = QueryUtilities.dbRowsToJsonArr(procInstanceName, GlobalVariables.Schemas.REQUIREMENTS.getName(), 
+        JSONArray parentCodeArr = QueryUtilities.dbRowsToJsonArrSimpleJson(procInstanceName, GlobalVariables.Schemas.REQUIREMENTS.getName(), 
                 TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_VIEW, TblsReqs.viewProcReqAndSolutionView.values(), 
                 parentCodeWhereObj, new String[]{TblsReqs.viewProcReqSolutionViews.PARENT_CODE.getName(), TblsReqs.viewProcReqSolutionViews.CODE.getName()}, null, false);        
         JSONObject curRow=(JSONObject) parentCodeArr.get(0);
@@ -922,7 +922,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
             return parentCodeArr;
         }
 
-        for (int i=0;i<parentCodeArr.length();i++){
+        for (int i=0;i<parentCodeArr.size();i++){
             curRow=(JSONObject) parentCodeArr.get(i);
             if (Boolean.FALSE.equals(curRow.containsKey(TblsReqs.ProcedureUserRequirements.REQ_ID.getName())))
                 return parentCodeFinalArr;
@@ -940,7 +940,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                     SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{curParentCode}, null);
             parentCodeWhereObj.addConstraint(TblsReqs.ProcedureUserRequirements.CODE,
                     SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, null);
-            JSONArray codeArr = QueryUtilities.dbRowsToJsonArr(procInstanceName, GlobalVariables.Schemas.REQUIREMENTS.getName(), 
+            JSONArray codeArr = QueryUtilities.dbRowsToJsonArrSimpleJson(procInstanceName, GlobalVariables.Schemas.REQUIREMENTS.getName(), 
                     TblsReqs.ViewsReqs.PROC_REQ_SOLUTION_VIEW, TblsReqs.viewProcReqAndSolutionView.values(), 
                     parentCodeWhereObj, new String[]{TblsReqs.ProcedureUserRequirements.PARENT_CODE.getName(), TblsReqs.ProcedureUserRequirements.CODE.getName()}, null, false);        
             
@@ -948,15 +948,15 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                 curRow.put("children", new JSONArray());
             else{
                 JSONArray codeFinalArr = new JSONArray();
-                for (int j=0;j<codeArr.length();j++){
+                for (int j=0;j<codeArr.size();j++){
                     JSONObject curChildrenRow=(JSONObject) codeArr.get(j);
                      if (Boolean.FALSE.equals(curChildrenRow.containsKey("No Data"))){
-                        codeFinalArr.put(solutionAddRelevantInfo(curChildrenRow));
+                        codeFinalArr.add(solutionAddRelevantInfo(curChildrenRow));
                      }
                 }                  
                 curRow.put("children", codeFinalArr);
             }
-            parentCodeFinalArr.put(curRow);
+            parentCodeFinalArr.add(curRow);
 /*
             SqlWhere parentCodeSolutionWhereObj = new SqlWhere();
             parentCodeSolutionWhereObj.addConstraint(TblsReqs.ProcedureReqSolution.REQ_ID,
@@ -985,7 +985,7 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                     SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{curParentCode}, null);
             codeWhereObj.addConstraint(TblsReqs.ProcedureUserRequirements.CODE,
                     SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, null);
-            JSONArray codesArr = QueryUtilities.dbRowsToJsonArr(procInstanceName, GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS, TblsReqs.ProcedureUserRequirements.values(), 
+            JSONArray codesArr = QueryUtilities.dbRowsToJsonArrSimpleJson(procInstanceName, GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS, TblsReqs.ProcedureUserRequirements.values(), 
                     codeWhereObj, new String[]{TblsReqs.ProcedureUserRequirements.PARENT_CODE.getName(), TblsReqs.ProcedureUserRequirements.CODE.getName()}, null, false);                    
             JSONArray codesFinalArr=new JSONArray();
 //            if (Boolean.FALSE.equals(codesArr.length()==1&&
@@ -1017,11 +1017,11 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                 SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, null);
         parentCodeWhereObj.addConstraint(TblsReqs.ProcedureUserRequirements.CODE,
                 SqlStatement.WHERECLAUSE_TYPES.IS_NULL, new Object[]{}, null);
-        JSONArray parentCodeArr = QueryUtilities.dbRowsToJsonArr(procInstanceName, GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS, TblsReqs.ProcedureUserRequirements.values(), 
+        JSONArray parentCodeArr = QueryUtilities.dbRowsToJsonArrSimpleJson(procInstanceName, GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS, TblsReqs.ProcedureUserRequirements.values(), 
                 parentCodeWhereObj, new String[]{TblsReqs.ProcedureUserRequirements.PARENT_CODE.getName(), TblsReqs.ProcedureUserRequirements.CODE.getName()}, null, false);        
 
 
-        for (int i=0;i<parentCodeArr.length();i++){
+        for (int i=0;i<parentCodeArr.size();i++){
             JSONObject curRow=(JSONObject) parentCodeArr.get(i);
             if (Boolean.FALSE.equals(curRow.containsKey(TblsReqs.ProcedureUserRequirements.REQ_ID.getName())))
                 return parentCodeFinalArr;
@@ -1039,12 +1039,12 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                     SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{curParentCode}, null);
             codeWhereObj.addConstraint(TblsReqs.ProcedureUserRequirements.CODE,
                     SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, null);
-            JSONArray codesArr = QueryUtilities.dbRowsToJsonArr(procInstanceName, GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS, TblsReqs.ProcedureUserRequirements.values(), 
+            JSONArray codesArr = QueryUtilities.dbRowsToJsonArrSimpleJson(procInstanceName, GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_USER_REQS, TblsReqs.ProcedureUserRequirements.values(), 
                     codeWhereObj, new String[]{TblsReqs.ProcedureUserRequirements.PARENT_CODE.getName(), TblsReqs.ProcedureUserRequirements.CODE.getName()}, null, false);                    
             JSONArray codesFinalArr=new JSONArray();
 //            if (Boolean.FALSE.equals(codesArr.length()==1&&
 //                (JSONObject)codesArr.get(0).containsKey(ClassReqProcedureQueries.NO_DATA))){
-                for (int j=0;j<codesArr.length();j++){
+                for (int j=0;j<codesArr.size();j++){
                     JSONObject curRowDet=(JSONObject) codesArr.get(j);
                     if (curRowDet.containsKey(ClassReqProcedureQueries.NO_DATA))
                         break;
@@ -1052,11 +1052,11 @@ public class ReqProcedureDefinitionQueries extends HttpServlet {
                     String curCode=curRowDet.get(TblsReqs.ProcedureUserRequirements.CODE.getName()).toString();
                     curRowDet.put("key", curReqId);
                     curRowDet.put("label", curCode);
-                    codesFinalArr.put(curRowDet);
+                    codesFinalArr.add(curRowDet);
                 }
 //            } 
             curRow.put("children", codesFinalArr);
-            parentCodeFinalArr.put(curRow);
+            parentCodeFinalArr.add(curRow);
         }   
         return parentCodeFinalArr;
     }
