@@ -96,4 +96,10 @@ public class DataModuleInstrumentsAnalysis implements DataSampleAnalysisStrategy
     }
 
   */
-}}
+    }
+    @Override
+    public InternalMessage calcsPostEnterResult(Integer resultId, Integer testId, Integer sampleId, DataSample dataSample) {
+        return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, null);
+    }
+    
+}
