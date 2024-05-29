@@ -6,6 +6,7 @@
 package module.methodvalidation.logic;
 
 import databases.Rdbms;
+import databases.TblsCnfg;
 import databases.TblsData;
 import functionaljavaa.samplestructure.DataSample;
 import functionaljavaa.samplestructure.DataSampleAnalysis;
@@ -17,6 +18,7 @@ import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.TrazitUtiilitiesEnums;
 import module.methodvalidation.definition.TblsMethodValidationData;
 import module.monitoring.logic.EnvMonEnums;
+import module.projectrnd.definition.TblsProjectRnDConfig;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.InternalMessage;
@@ -45,22 +47,29 @@ public class DataParameterSampleAnalysis implements DataSampleAnalysisStrategy {
         Object[][] anaName = new Object[0][0];
         StringBuilder analysisAdded = new StringBuilder();
         
-        Integer posicField = LPArray.valuePosicInArray(sampleFieldName, TblsMethodValidationData.Sample.PARAMETER_NAME.getName());
+//        Integer posicField = LPArray.valuePosicInArray(sampleFieldName, TblsMethodValidationData.Sample.PARAMETER_NAME.getName());
+        Integer posicField = LPArray.valuePosicInArray(sampleFieldName, TblsMethodValidationData.Sample.ANALYTICAL_PARAMETER.getName());
         if (posicField!=-1){
-            String parameterName=sampleFieldValue[posicField].toString();
+            String analyticalParameter=sampleFieldValue[posicField].toString();
+            Object[][] methodInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsCnfg.TablesConfig.METHODS.getRepositoryName()), 
+                TblsCnfg.TablesConfig.METHODS.getTableName(),
+            new String[]{TblsProjectRnDConfig.Methods.CODE.getName()}, new Object[]{analyticalParameter}, 
+            new String[]{TblsProjectRnDConfig.Methods.ADD_ANALYSIS_ON_LOG.getName(), TblsProjectRnDConfig.Methods.ANALYSIS_LIST.getName(),
+                TblsProjectRnDConfig.Methods.NUM_SAMPLES.getName()}, true);            
+  /*          String parameterName=sampleFieldValue[posicField].toString();
             Object[][] analyticalParameterInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsMethodValidationData.TablesMethodValidationData.VALIDATION_METHOD_PARAMS.getRepositoryName()), TblsMethodValidationData.TablesMethodValidationData.VALIDATION_METHOD_PARAMS.getTableName(),
                 new String[]{TblsMethodValidationData.ValidationMethodParams.NAME.getName()}, 
                 new Object[]{parameterName}, 
                 new String[]{TblsMethodValidationData.ValidationMethodParams.ADD_ANALYSIS_ON_LOG.getName(), TblsMethodValidationData.ValidationMethodParams.ANALYSIS_LIST.getName(), 
-                    TblsMethodValidationData.ValidationMethodParams.ANALYTICAL_PARAMETER.getName()});
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analyticalParameterInfo[0][0].toString()))
-               return new InternalMessage(LPPlatform.LAB_FALSE, EnvMonEnums.EnvMonitErrorTrapping.LOGSAMPLE_PROGRAM_OR_LOCATION_NOTFOUND, new Object[]{parameterName});
-            if (Boolean.FALSE.equals(Boolean.valueOf(LPNulls.replaceNull(analyticalParameterInfo[0][0].toString())))){
+                    TblsMethodValidationData.ValidationMethodParams.ANALYTICAL_PARAMETER.getName()});*/
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(methodInfo[0][0].toString()))
+               return new InternalMessage(LPPlatform.LAB_FALSE, EnvMonEnums.EnvMonitErrorTrapping.LOGSAMPLE_PROGRAM_OR_LOCATION_NOTFOUND, new Object[]{analyticalParameter});
+            if (Boolean.FALSE.equals(Boolean.valueOf(LPNulls.replaceNull(methodInfo[0][0].toString())))){
                 return new InternalMessage(LPPlatform.LAB_TRUE, DataSampleStructureEnums.DataSampleStructureSuccess.AUTOSAMPLEANALYSIS_ADDED_SUCCESS, new String[]{"Added analysis " + analysisAdded.toString() + " to the sample " + sampleId.toString() + " for schema " + procInstanceName});
             }
-            String analysisList=analyticalParameterInfo[0][1].toString();
-            String analyticalParameter=LPNulls.replaceNull(analyticalParameterInfo[0][2]).toString();
-            for (String curAnalysis : analyticalParameter.split("\\|")) {
+            String analysisList=methodInfo[0][1].toString();
+           // String analyticalParameter=LPNulls.replaceNull(methodInfo[0][2]).toString();
+            for (String curAnalysis : analysisList.split("\\|")) {
                 String[] fieldsName = new String[]{TblsData.SampleAnalysis.ANALYSIS.getName(), TblsData.SampleAnalysis.METHOD_NAME.getName(), TblsData.SampleAnalysis.METHOD_VERSION.getName()};
                 Object[] fieldsValue = new Object[]{(String) curAnalysis, analyticalParameter, 1};
 
@@ -181,6 +190,10 @@ public class DataParameterSampleAnalysis implements DataSampleAnalysisStrategy {
             return "ERROR: The status " + status + " is not of one the defined status (" + statuses + " for the template " + template + " exists but the rule record is missing in the schema " + schemaConfigName;
         }
 */
+    }
+    @Override
+    public InternalMessage calcsPostEnterResult(Integer resultId, Integer testId, Integer sampleId, DataSample dataSample) {
+        return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, null);
     }
 
 
