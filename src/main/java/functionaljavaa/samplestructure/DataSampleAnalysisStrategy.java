@@ -31,4 +31,6 @@ public interface DataSampleAnalysisStrategy {
      */
     public abstract InternalMessage specialFieldCheckSampleAnalysisAnalyst(String template, Integer templateVersion, DataSample dataSample);
   
+    public abstract InternalMessage calcsPostEnterResult(Integer resultId, Integer testId, Integer sampleId, DataSample dataSample);
+
 }
