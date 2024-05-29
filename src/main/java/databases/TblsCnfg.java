@@ -266,6 +266,7 @@ public class TblsCnfg {
         NUM_REPLICAS("num_replicas", LPDatabase.integer(), null, null, null, null),
         UOM("uom", LPDatabase.string(), null, null, null, null),
         UOM_CONVERSION_MODE("uom_conversion_mode", LPDatabase.string(), null, null, null, null),
+        MAX_DP("max_dp", LPDatabase.integer(), null, null, null, null),
         CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date(), null, null, null, null),
         CALC_LINKED("calc_linked",  LPDatabase.string(), null, null, null, null),
