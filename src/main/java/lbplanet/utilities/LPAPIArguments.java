@@ -6,13 +6,15 @@
 package lbplanet.utilities;
 
 import modules.masterdata.analysis.ConfigAnalysisStructure.ConfigAnalysisErrorTrapping;
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.http.Part;
@@ -27,7 +29,7 @@ import trazit.session.ApiMessageReturn;
 public class LPAPIArguments {
 
     public enum ArgumentType {
-        STRING, INTEGER, BIGDECIMAL, STRINGARR, STRINGOFOBJECTS, DATE, DATETIME, BOOLEAN, BOOLEANARR, FILE
+        STRING, INTEGER, BIGDECIMAL, STRINGARR, STRINGOFOBJECTS, DATE, DATETIME, BOOLEAN, BOOLEANARR, FILE, FILES, PICTURE
     }
     private final String name;
     private String type = ArgumentType.STRING.toString();
@@ -192,20 +194,74 @@ public class LPAPIArguments {
                             //Object[] valueConvertedTopObjectArr = LPArray.convertStringWithDataTypeToObjectArray(requestArgValue.split("\\|"));   
                             returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
                             break;
-                        case FILE:
-                            StringBuilder requestBody = new StringBuilder();
-                            String line;
-                            BufferedReader reader = null;
+                        case FILE:   
+                            Part filePart = null;
                             try {
-                                reader = request.getReader();
-                                while ((line = reader.readLine()) != null) {
-                                    requestBody.append(line);
-                                }
-                                reader.close();
-                                returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, requestBody.toString());
-                            } catch (IOException ex) {
+                                filePart = request.getPart("file");
+                            } catch (IOException | ServletException ex) {
                                 Logger.getLogger(LPAPIArguments.class.getName()).log(Level.SEVERE, null, ex);
                             }
+                                if (filePart != null) {
+                                    try (InputStream inputStream = filePart.getInputStream()) {
+                                        //returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, inputStream);
+                                        byte[] fileContent = inputStreamToByteArray(inputStream);                        
+                                        // Create a new InputStream from the byte array
+                                        //InputStream newInputStream = new ByteArrayInputStream(fileContent);                                    
+                                        // Return the new InputStream
+                                        returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, fileContent);
+
+                                    } catch (IOException ex) {
+                                        returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, null);
+                                        Logger.getLogger(LPAPIArguments.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                }  
+                                break;
+                            case FILES:
+                                List<LPAPIFileData> fileDataList = new ArrayList<>();
+                                try {
+                                    Collection<Part> parts = request.getParts();
+                                    for (Part part : parts) {
+                                        if (part.getName().equals("files")) {
+                                            try (InputStream inputStream = part.getInputStream()) {
+                                                byte[] fileContent = inputStreamToByteArray(inputStream);
+                                                String fileName = part.getSubmittedFileName();
+                                                fileDataList.add(new LPAPIFileData(fileContent, fileName));
+                                            } catch (IOException ex) {
+                                                fileDataList.add(new LPAPIFileData(null, null));
+                                                Logger.getLogger(LPAPIArguments.class.getName()).log(Level.SEVERE, null, ex);
+                                            }
+                                        }
+                                    }
+                                } catch (IOException | ServletException ex) {
+                                    Logger.getLogger(LPAPIArguments.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+
+                                // Convert List to array and add it to returnArgsDef
+                                LPAPIFileData[] filesArray = fileDataList.toArray(new LPAPIFileData[fileDataList.size()]);
+                                returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, filesArray);
+                                break;
+                        case PICTURE:
+                            filePart = null;
+                            try {
+                                filePart = request.getPart("picture");
+                            } catch (IOException | ServletException ex) {
+                                Logger.getLogger(LPAPIArguments.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                                if (filePart != null) {
+                                    try (InputStream inputStream = filePart.getInputStream()) {
+                                        //returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, inputStream);
+                                        byte[] fileContent = inputStreamToByteArray(inputStream);                        
+                                        // Create a new InputStream from the byte array
+                                        //InputStream newInputStream = new ByteArrayInputStream(fileContent);                                    
+                                        // Return the new InputStream
+                                        returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, fileContent);
+
+                                    } catch (IOException ex) {
+                                        returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, null);
+                                        Logger.getLogger(LPAPIArguments.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                }  
+                                break;                  
                         default:
                             returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
                             break;
@@ -229,7 +285,10 @@ public class LPAPIArguments {
             if (requestArgValue == null) {
                 requestArgValue = LPNulls.replaceNull(request.getParameter(currArg.getName()));
             }
-            if (LPNulls.replaceNull(requestArgValue).length() == 0 && Boolean.FALSE.equals(ArgumentType.FILE.toString().equalsIgnoreCase(currArg.getType()))) {
+            if (LPNulls.replaceNull(requestArgValue).length() == 0 
+                    && Boolean.FALSE.equals(ArgumentType.PICTURE.toString().equalsIgnoreCase(currArg.getType()))
+                    && Boolean.FALSE.equals(ArgumentType.FILE.toString().equalsIgnoreCase(currArg.getType()))
+                    && Boolean.FALSE.equals(ArgumentType.FILES.toString().equalsIgnoreCase(currArg.getType()))) {
                 if (Boolean.TRUE.equals(currArg.getMandatory())) {
                     return new Object[]{LPPlatform.LAB_FALSE, ApiMessageReturn.trapMessage(LPPlatform.LAB_FALSE, ConfigAnalysisErrorTrapping.MISSING_MANDATORY_FIELDS, new Object[]{currArg.getName()}), currArg.getName()};
                 } else {
@@ -288,39 +347,72 @@ public class LPAPIArguments {
                             break;
                         case FILE:   
                             Part filePart = null;
-                        try {
-                            filePart = request.getPart("file");
-                        } catch (IOException | ServletException ex) {
-                            Logger.getLogger(LPAPIArguments.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                            if (filePart != null) {
-                                try (InputStream inputStream = filePart.getInputStream()) {
-                                    //returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, inputStream);
-                                    byte[] fileContent = inputStreamToByteArray(inputStream);                        
-                                    // Create a new InputStream from the byte array
-                                    //InputStream newInputStream = new ByteArrayInputStream(fileContent);                                    
-                                    // Return the new InputStream
-                                    returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, fileContent);
-                                                       
-                                } catch (IOException ex) {
-                                    returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, null);
-                                    Logger.getLogger(LPAPIArguments.class.getName()).log(Level.SEVERE, null, ex);
-                                }
-                            }  
-                            break;
-/*                            StringBuilder requestBody = new StringBuilder();
-                            String line;
-                            BufferedReader reader = null;
                             try {
-                                reader = request.getReader();
-                                while ((line = reader.readLine()) != null) {
-                                    requestBody.append(line);
-                                }
-                                reader.close();
-                                returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, requestBody.toString());
-                            } catch (IOException ex) {
+                                filePart = request.getPart("file");
+                            } catch (IOException | ServletException ex) {
                                 Logger.getLogger(LPAPIArguments.class.getName()).log(Level.SEVERE, null, ex);
-                            }*/
+                            }
+                                if (filePart != null) {
+                                    try (InputStream inputStream = filePart.getInputStream()) {
+                                        //returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, inputStream);
+                                        byte[] fileContent = inputStreamToByteArray(inputStream);                        
+                                        // Create a new InputStream from the byte array
+                                        //InputStream newInputStream = new ByteArrayInputStream(fileContent);                                    
+                                        // Return the new InputStream
+                                        returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, fileContent);
+
+                                    } catch (IOException ex) {
+                                        returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, null);
+                                        Logger.getLogger(LPAPIArguments.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                }  
+                                break;
+                        case FILES:
+                            List<LPAPIFileData> fileDataList = new ArrayList<>();
+                            try {
+                                Collection<Part> parts = request.getParts();
+                                for (Part part : parts) {
+                                    if (part.getName().equals("files")) {
+                                        try (InputStream inputStream = part.getInputStream()) {
+                                            byte[] fileContent = inputStreamToByteArray(inputStream);
+                                            String fileName = part.getSubmittedFileName();
+                                            fileDataList.add(new LPAPIFileData(fileContent, fileName));
+                                        } catch (IOException ex) {
+                                            fileDataList.add(new LPAPIFileData(null, null));
+                                            Logger.getLogger(LPAPIArguments.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
+                                    }
+                                }
+                            } catch (IOException | ServletException ex) {
+                                Logger.getLogger(LPAPIArguments.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+
+                            // Convert List to array and add it to returnArgsDef
+                            LPAPIFileData[] filesArray = fileDataList.toArray(new LPAPIFileData[fileDataList.size()]);
+                            returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, fileDataList);
+                            break;
+                        case PICTURE:
+                            filePart = null;
+                            try {
+                                filePart = request.getPart("picture");
+                            } catch (IOException | ServletException ex) {
+                                Logger.getLogger(LPAPIArguments.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                                if (filePart != null) {
+                                    try (InputStream inputStream = filePart.getInputStream()) {
+                                        //returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, inputStream);
+                                        byte[] fileContent = inputStreamToByteArray(inputStream);                        
+                                        // Create a new InputStream from the byte array
+                                        //InputStream newInputStream = new ByteArrayInputStream(fileContent);                                    
+                                        // Return the new InputStream
+                                        returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, fileContent);
+
+                                    } catch (IOException ex) {
+                                        returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, null);
+                                        Logger.getLogger(LPAPIArguments.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                }  
+                                break;                  
                         default:
                             returnArgsDef = LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
                             break;
