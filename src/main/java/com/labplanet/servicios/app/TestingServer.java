@@ -105,6 +105,7 @@ import trazit.thirdparties.sap.Mosquitto;
 import trazit.thirdparties.sap.PDFDataExtractor;
 import java.util.Set;
 import lbplanet.utilities.LPMailing;
+import lbplanet.utilities.LPaws;
 import lbplanet.utilities.Mailing;
 import module.inspectionlot.rawmaterial.definition.TblsInspLotRMData.ViewsInspLotRMData;
 import static trazit.enums.deployrepository.DeployTables.createTableScript;
@@ -142,6 +143,23 @@ public class TestingServer extends HttpServlet {
             String dbName="demo_v0_9_2";
             String procInstanceName="RandD";
             Rdbms.stablishDBConection(dbName);
+
+        LPaws aws=new LPaws(null);
+        if (aws.getHasError()){
+            out.println(aws.getErrorDetail());
+        }
+        String uploadKey = "example.pdf";
+        //String uploadFilePath = "file.txt";
+        String pdfPath = "D:/LP/Interfaces/HPLC_VALIDACIONES_FRAN_382.pdf";
+        File pdfFile = new File(pdfPath);        
+        out.println(aws.uploadFile(uploadKey, pdfFile));
+
+        // Download file
+        String downloadKey = "example.txt5f690aefa11e471ce36d292e098a7d03";
+        String downloadFilePath = "D:/LP/Interfaces/example_downloading_HPLC_VALIDACIONES_FRAN_382.pdf";
+        out.println(aws.downloadFile(downloadKey, downloadFilePath));
+if (1==1) return;
+        
             JSONObject jMailObjAtt=new JSONObject();
             jMailObjAtt.put("demo", "TRAZiT");
             LPMailing newMail = new LPMailing();
@@ -582,8 +600,8 @@ if (1==1)return;
             }
             String url2 = "https://example.com/path/to/example.pdf";
             String text = "";
-            String pdfPath = "D:/LP/Interfaces/HPLC_VALIDACIONES_FRAN_382.pdf";
-            File pdfFile = new File(pdfPath);
+            pdfPath = "D:/LP/Interfaces/HPLC_VALIDACIONES_FRAN_382.pdf";
+            pdfFile = new File(pdfPath);
 
             PDDocument document = PDDocument.load(pdfFile);
 
