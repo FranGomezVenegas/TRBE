@@ -22,7 +22,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
 import module.methodvalidation.definition.TblsMethodValidationDataAudit.TablesMethodValidationDataAudit;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntEndpoints;
@@ -72,23 +72,59 @@ public class MethodValidationEnums {
     public enum MethodValidationAPIactionsEndpoints implements EnumIntEndpoints {
         NEW_PARAMETER("NEW_PARAMETER", null, "", "parameterNewParametertCreated_success",
                 new LPAPIArguments[]{new LPAPIArguments("parameterName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                    new LPAPIArguments("analyticalParameter", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                    new LPAPIArguments("projectName", LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
-                    new LPAPIArguments("purpose", LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
-                    new LPAPIArguments("responsible", LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
-                    new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
-                    new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 11)},                    
+                    new LPAPIArguments("analyticalParameter", LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
+                    new LPAPIArguments("projectName", LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
+                    new LPAPIArguments("purpose", LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
+                    new LPAPIArguments("responsible", LPAPIArguments.ArgumentType.STRING.toString(), false, 10),
+                    new LPAPIArguments(REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 11),
+                    new LPAPIArguments(REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 12)},
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TablesMethodValidationDataAudit.PARAMETER.getTableName()).build()).build(),
                 null, null),
-        ADDSAMPLE("ADDSAMPLE", null, "", "sampleLogged_success",
-            new LPAPIArguments[]{new LPAPIArguments("parameterName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 8),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_NUM_SAMPLES_TO_LOG, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 9)}, 
+        ADD_SAMPLE_TO_PARAMETER("ADD_SAMPLE_TO_PARAMETER", null, "", "sampleLogged_success",
+                new LPAPIArguments[]{new LPAPIArguments("parameterName", LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
+                new LPAPIArguments("sequenceName", LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
+                new LPAPIArguments("analyticalParameter", LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
+                new LPAPIArguments("projectName", LPAPIArguments.ArgumentType.STRING.toString(), true, 9),                
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 11),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_NUM_SAMPLES_TO_LOG, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 12)}, 
             Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
                 .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE.getTableName()).build()).build()
             , null, null),
+        ENTERRESULT("ENTERRESULT", null, "", "enterResult_success",
+                new LPAPIArguments[]{new LPAPIArguments("parameterName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments("analyticalParameter", LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
+                    new LPAPIArguments("projectName", LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)},
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
+                        .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE.getTableName()).build())
+                        .add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
+                                .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName()).build()).build(), 
+                 null, null),
+        REENTERRESULT("REENTERRESULT", null, "", "reEnterResult_success",
+                new LPAPIArguments[]{new LPAPIArguments("parameterName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments("analyticalParameter", LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
+                    new LPAPIArguments("projectName", LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)},
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
+                        .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE.getTableName()).build())
+                        .add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
+                                .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName()).build()).build(), 
+                 null, null),
+        ENTERRESULT_PARSING("ENTERRESULT_PARSING", null, "", "reEnterResult_success",
+                new LPAPIArguments[]{new LPAPIArguments("parameterName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments("analyticalParameter", LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
+                    new LPAPIArguments("projectName", LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
+                    new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
+                    new LPAPIArguments("file", LPAPIArguments.ArgumentType.FILE.toString(), false, 7)},
+                Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
+                        .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE.getTableName()).build())
+                        .add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.DATA.getName())
+                                .add(GlobalAPIsParams.LBL_TABLE, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName()).build()).build(), 
+                 null, null),
 
         
 /*        TURN_LOT_UNAVAILABLE("TURN_LOT_UNAVAILABLE", INVENTORY_LOT_CAT, "", "invTrackingLotTurnUnavailable_success",
@@ -514,6 +550,8 @@ public class MethodValidationEnums {
     }
 
     public enum ProjectRnDErrorTrapping implements EnumIntMessages {
+        ATTRIBUTE_NOT_FOUND("sampleAnalysisAttributeNotFound", "The inventory reference <*1*> is not found in procedure <*2*>", "La referencia de inventario <*1*> no se ha encontrado para el proceso <*2*>"),
+
         REFERENCE_NOT_FOUND("inventoryTrackingReferenceNotFound", "The inventory reference <*1*> is not found in procedure <*2*>", "La referencia de inventario <*1*> no se ha encontrado para el proceso <*2*>"),
         UOM_NOT_INTHELIST("InventoryTracking_UnitNotPartOfAllowedList", "", ""),
         ALREADY_HAS_PENDING_QUALIFICATION("InventoryLotAlreadyHasPendingQualification", "The lot <*1*> already has one pending qualification in progress in this moment", "El lote <*1*> tiene actualmente una cualificación en curso en este momento"),

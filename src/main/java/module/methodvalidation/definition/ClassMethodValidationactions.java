@@ -5,7 +5,15 @@
  */
 package module.methodvalidation.definition;
 
+import com.labplanet.servicios.app.GlobalAPIsParams;
+import com.labplanet.servicios.modulesample.SampleAPIParams;
+import databases.Rdbms;
+import databases.TblsData;
+import functionaljavaa.modulesample.DataModuleSampleAnalysisResult;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
+import functionaljavaa.samplestructure.DataSample;
+import functionaljavaa.samplestructure.DataSampleAnalysisResult;
+import functionaljavaa.samplestructure.DataSampleStructureEnums;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
@@ -18,6 +26,7 @@ import module.methodvalidation.definition.MethodValidationEnums.MethodValidation
 import static module.methodvalidation.definition.MethodValidationEnums.MethodValidationAPIactionsEndpoints.NEW_PARAMETER;
 import module.methodvalidation.logic.DataMethValSample;
 import module.methodvalidation.logic.DataMethodValidation;
+import module.methodvalidation.logic.DataParameterSampleAnalysis;
 import module.monitoring.definition.TblsEnvMonitData;
 import module.projectrnd.definition.TblsProjectRnDData;
 import module.projectrnd.definition.TblsProjectRnDData.TablesProjectRnDData;
@@ -66,17 +75,23 @@ public class ClassMethodValidationactions implements ActionsClass{
         DataMethodValidation methValidObj = null;
         String parameterName = "";
         String analyticalParameter ="";
-        if (Boolean.FALSE.equals("PARAMETERAUDIT_SET_AUDIT_ID_REVIEWED".equalsIgnoreCase(endPoint.getName()))) {
+        String projectName ="";
+        if (Boolean.FALSE.equals("PARAMETERAUDIT_SET_AUDIT_ID_REVIEWED".equalsIgnoreCase(endPoint.getName()))
+/*            && Boolean.FALSE.equals("ENTERRESULT".equalsIgnoreCase(endPoint.getName()))                
+            && Boolean.FALSE.equals("REENTERRESULT".equalsIgnoreCase(endPoint.getName()))                
+            && Boolean.FALSE.equals("ENTERRESULT_PARSING".equalsIgnoreCase(endPoint.getName()))                */
+                ) {
             parameterName = argValues[0].toString();
             analyticalParameter = argValues[1].toString();
+            projectName = argValues[2].toString();
         }
-        if (Boolean.FALSE.equals("NEW_PARAMETER".equalsIgnoreCase(endPoint.getName())) 
-            && Boolean.FALSE.equals("LOGSAMPLE".equalsIgnoreCase(endPoint.getName()))                
-                
+        if (Boolean.FALSE.equals("NEW_PARAMETER".equalsIgnoreCase(endPoint.getName()))
+            && Boolean.FALSE.equals("LOGSAMPLE".equalsIgnoreCase(endPoint.getName()))
+
             && Boolean.FALSE.equals(endPoint.getName().toUpperCase().startsWith("CONFIG_"))
             && Boolean.FALSE.equals("PARAMETERAUDIT_SET_AUDIT_ID_REVIEWED".equalsIgnoreCase(endPoint.getName()))                
             ) {
-            methValidObj = new DataMethodValidation(parameterName, analyticalParameter);
+            methValidObj = new DataMethodValidation(parameterName, analyticalParameter, projectName);
             if (Boolean.TRUE.equals(methValidObj.getHasError())) {
                 this.actionDiagnosesObj = methValidObj.getErrorDetail();
                 this.relatedObj = rObj;
@@ -85,11 +100,19 @@ public class ClassMethodValidationactions implements ActionsClass{
                 return;
             }
         }
+        DataParameterSampleAnalysis methValParamSmpAna = new DataParameterSampleAnalysis();
+        DataModuleSampleAnalysisResult moduleSmpAnaRes = new DataModuleSampleAnalysisResult();
+        DataSample smp = new DataSample(methValParamSmpAna);
+        DataSampleAnalysisResult smpAnaRes = new DataSampleAnalysisResult(moduleSmpAnaRes);
+        Integer incubationStage = null;
+        Integer sampleId = null;
+        
+        
         this.enumConstantByName=endPoint;
         this.functionFound = true;
         switch (endPoint) {
             case NEW_PARAMETER:
-                String projectName = LPNulls.replaceNull(argValues[2]).toString();
+                projectName = LPNulls.replaceNull(argValues[2]).toString();
                 String purpose = LPNulls.replaceNull(argValues[3]).toString();                
                 String responsible = LPNulls.replaceNull(argValues[4]).toString();
                 String fldNamesStr = argValues[5].toString();
@@ -114,7 +137,7 @@ public class ClassMethodValidationactions implements ActionsClass{
                 }
                 actionDiagnoses = methValidObj.createNewParameter(parameterName, analyticalParameter, projectName, fieldNames, fieldValues);
                 break;
-            case ADDSAMPLE:
+            case ADD_SAMPLE_TO_PARAMETER:
                 fieldNames = null;
                 fieldValues = null;
                 if (LPNulls.replaceNull(argValues[1]).toString().length() > 0) {
@@ -136,6 +159,46 @@ public class ClassMethodValidationactions implements ActionsClass{
                     actionDiagnoses = MethSmp.logParameterSample(parameterName, fieldNames, fieldValues, 
                         (LPNulls.replaceNull(argValues[3]).toString().length() > 0?Integer.valueOf(argValues[3].toString()):null));
                 }
+                break;
+            case REENTERRESULT: 
+            case ENTERRESULT:
+                Integer resultId = (Integer) argValues[3];
+                String rawValueResult = argValues[4].toString();
+                Object[][] resultData = Rdbms.getRecordFieldsByFilter(procReqSession.getProcedureInstance(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
+                        new String[]{TblsData.SampleAnalysisResult.RESULT_ID.getName()}, new Object[]{resultId},
+                        new String[]{TblsData.SampleAnalysisResult.SAMPLE_ID.getName(), TblsData.SampleAnalysisResult.TEST_ID.getName(), TblsData.SampleAnalysisResult.ANALYSIS.getName(),
+                            TblsData.SampleAnalysisResult.METHOD_NAME.getName(), TblsData.SampleAnalysisResult.METHOD_VERSION.getName(), TblsData.SampleAnalysisResult.PARAM_NAME.getName(),
+                            TblsData.SampleAnalysisResult.STATUS.getName(), TblsData.SampleAnalysisResult.RAW_VALUE.getName(), TblsData.SampleAnalysisResult.UOM.getName(),
+                            TblsData.SampleAnalysisResult.UOM_CONVERSION_MODE.getName()});
+                if (LPPlatform.LAB_FALSE.equals(resultData[0][0].toString())) {
+                    actionDiagnosesObj = new InternalMessage(LPPlatform.LAB_FALSE, DataSampleStructureEnums.DataSampleAnalysisResultErrorTrapping.NOT_FOUND, new Object[]{resultId.toString(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName())});
+                } else {
+                    String currRawValue = (String) resultData[0][7];
+                    if (currRawValue != null && currRawValue.length() > 0 && SampleAPIParams.SampleAPIactionsEndpoints.ENTERRESULT.getName().equalsIgnoreCase(endPoint.getName())) {
+                        procReqSession.killIt();
+                        request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, SampleAPIParams.SampleAPIactionsEndpoints.REENTERRESULT.getName());
+                        procReqSession = ProcedureRequestSession.getInstanceForActions(request, null, procReqSession.getIsForTesting());
+                        if (Boolean.TRUE.equals(procReqSession.getHasErrors())) {
+                            procReqSession.killIt();
+                            actionDiagnosesObj = new InternalMessage(LPPlatform.LAB_FALSE, 
+                                    procReqSession.getErrorMessageCodeObj(), new Object[]{resultId.toString(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName())});
+                            break;
+                        }
+                    }
+                }
+                actionDiagnosesObj = smpAnaRes.sampleAnalysisResultEntry(resultId, rawValueResult, smp);                
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), resultId);
+                this.messageDynamicData = new Object[]{resultId};
+                break;
+            case ENTERRESULT_PARSING:
+                resultId = (Integer) argValues[3];
+                byte[] fileInBytes = (byte[]) argValues[4];
+                actionDiagnosesObj = smpAnaRes.sampleAnalysisResultEntryByParsing(resultId, fileInBytes, smp);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TblsData.TablesData.SAMPLE.getTableName(), sampleId);
+                this.messageDynamicData = new Object[]{resultId};
+                break;
+
 /*                ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
                 String procInstanceName=instanceForActions.getProcedureInstance();                
                 ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();                
@@ -145,8 +208,7 @@ public class ClassMethodValidationactions implements ActionsClass{
                     Integer sampleId = Integer.valueOf(actionDiagnoses.getNewObjectId().toString());
                     actionDiagnoses = new InternalMessage(LPPlatform.LAB_TRUE, endPoint, new Object[]{argValues[0], procInstanceName}, sampleId);
                     messages.addMainForSuccess(endPoint, new Object[]{sampleId, procInstanceName, (String) argValues[5]});
-                }*/
-                break;
+                }*/                
                 
 /*            case FORMULA_ADD_INGREDIENT:
                 String ingredient = argValues[1].toString();

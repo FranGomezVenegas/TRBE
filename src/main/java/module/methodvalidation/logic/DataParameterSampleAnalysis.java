@@ -16,6 +16,8 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.TrazitUtiilitiesEnums;
+import module.methodvalidation.definition.MethodParamLinealityHandler;
+import module.methodvalidation.definition.ParameterHandlerFactory;
 import module.methodvalidation.definition.TblsMethodValidationData;
 import module.monitoring.logic.EnvMonEnums;
 import module.projectrnd.definition.TblsProjectRnDConfig;
@@ -193,6 +195,23 @@ public class DataParameterSampleAnalysis implements DataSampleAnalysisStrategy {
     }
     @Override
     public InternalMessage calcsPostEnterResult(Integer resultId, Integer testId, Integer sampleId, DataSample dataSample) {
+        String procInstanceName=ProcedureRequestSession.getInstanceForActions(null, null, null).getProcedureInstance();
+
+        
+        Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(procInstanceName, LPPlatform.buildSchemaName(procInstanceName, TblsMethodValidationData.TablesMethodValidationData.SAMPLE.getRepositoryName()), 
+            TblsMethodValidationData.TablesMethodValidationData.SAMPLE.getTableName(),
+        new String[]{TblsMethodValidationData.Sample.SAMPLE_ID.getName()}, new Object[]{sampleId}, 
+        new String[]{TblsMethodValidationData.Sample.ANALYTICAL_PARAMETER.getName(), TblsMethodValidationData.Sample.PARAMETER_NAME.getName(),
+        TblsMethodValidationData.Sample.PROJECT.getName(), TblsMethodValidationData.Sample.ANALYTICAL_SEQUENCE_NAME.getName()}, true);            
+        if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString()))){
+            String analyticalParameter=sampleInfo[0][0].toString();
+            String parameterName=LPNulls.replaceNull(sampleInfo[0][1]).toString();
+            String project=sampleInfo[0][2].toString();
+            String analyticalSequenceName=LPNulls.replaceNull(sampleInfo[0][3]).toString();
+            MethodParamLinealityHandler handler = ParameterHandlerFactory.getHandler(analyticalParameter);
+            handler.calcParamResults(resultId, testId, sampleId, dataSample, analyticalParameter,
+                parameterName.length()==0?null:parameterName, analyticalSequenceName.length()==0?null:analyticalSequenceName, project);
+        }
         return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, null);
     }
 

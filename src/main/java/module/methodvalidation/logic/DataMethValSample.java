@@ -80,7 +80,7 @@ public class DataMethValSample{
                 fieldName = LPArray.addValueToArray1D(fieldName, TblsMethodValidationData.Sample.PROJECT.getName());
                 fieldValue = LPArray.addValueToArray1D(fieldValue, projectName);                
             }
-            return logTheSamples(parameterName, analyticalParameter, fieldName, fieldValue, numSamplesToLog);
+            return logTheSamples(parameterName, null, analyticalParameter, fieldName, fieldValue, numSamplesToLog);
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(DataMethValSample.class.getName()).log(Level.SEVERE, null, ex);
             return new InternalMessage(LPPlatform.LAB_FALSE, LPPlatform.ApiErrorTraping.EXCEPTION_RAISED, new Object[]{ex.getMessage()});
@@ -96,10 +96,10 @@ public class DataMethValSample{
                 fieldName = LPArray.addValueToArray1D(fieldName, TblsMethodValidationData.Sample.PROJECT.getName());
                 fieldValue = LPArray.addValueToArray1D(fieldValue, projectName);                
             }
-            return logTheSamples(analyticalSequenceName, analyticalParameter, fieldName, fieldValue, numSamplesToLog);
+            return logTheSamples(null, analyticalSequenceName, analyticalParameter, fieldName, fieldValue, numSamplesToLog);
     }
     
-    private InternalMessage logTheSamples(String paramOrSequenceName, String analyticalParameter, String[] fieldName, Object[] fieldValue, Integer numSamplesToLog){
+    private InternalMessage logTheSamples(String parameterName, String sequenceName, String analyticalParameter, String[] fieldName, Object[] fieldValue, Integer numSamplesToLog){
         ProcedureRequestSession instanceForActions = ProcedureRequestSession.getInstanceForActions(null, null, null);
         ResponseMessages messages = instanceForActions.getMessages();
         InternalMessage newProjSample= null;
@@ -121,14 +121,23 @@ public class DataMethValSample{
         if ( (numSamplesToLog==null||numSamplesToLog==0) && (LPNulls.replaceNull(methodInfo[0][2]).toString().length()>0) ) {
             numSamplesToLog=Integer.valueOf(methodInfo[0][2].toString());
         }
-
+/*
+        if (parameterName!=null){
+            fieldName=LPArray.addValueToArray1D(fieldName, TblsMethodValidationData.Sample.PARAMETER_NAME.getName());
+            fieldValue=LPArray.addValueToArray1D(fieldValue, parameterName);
+        }
+        if (sequenceName!=null){
+            fieldName=LPArray.addValueToArray1D(fieldName, TblsMethodValidationData.Sample.ANALYTICAL_SEQUENCE_NAME.getName());
+            fieldValue=LPArray.addValueToArray1D(fieldValue, sequenceName);
+        }
+*/
         if (numSamplesToLog==null)
             numSamplesToLog=1;
         newProjSample = ds.logSample(sampleTemplateCode, sampleTemplateCodeVersion, fieldName, fieldValue, numSamplesToLog, TblsEnvMonitData.TablesEnvMonitData.SAMPLE); 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newProjSample.getDiagnostic()))
             return newProjSample; 
         messages.addMainForSuccess(EnvMonSampleAPIactionsEndpoints.LOGSAMPLE, 
-            new Object[]{newProjSample.getNewObjectId(), paramOrSequenceName, analyticalParameter});            
+            new Object[]{newProjSample.getNewObjectId(), parameterName!=null?parameterName:sequenceName, analyticalParameter});            
         return newProjSample;
     }
 }

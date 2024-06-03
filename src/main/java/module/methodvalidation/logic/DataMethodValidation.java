@@ -59,16 +59,16 @@ public class DataMethodValidation {
     private String[] ingredientsFieldNames;
     private Object[] ingredientsFieldValues;
 
-    public DataMethodValidation(String parameterName, String analyticalParameter) {
+    public DataMethodValidation(String parameterName, String analyticalParameter, String projectName) {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
-        String procInstanceName = "";        
+        String procInstanceName = procReqSession.getProcedureInstance();        
         Object[][] projectRnDinfo = Rdbms.getRecordFieldsByFilter(procInstanceName,  LPPlatform.buildSchemaName(procInstanceName, GlobalVariables.Schemas.DATA.getName()), TblsMethodValidationData.TablesMethodValidationData.VALIDATION_METHOD_PARAMS.getTableName(),
-                new String[]{TblsMethodValidationData.ValidationMethodParams.NAME.getName()},
-                new Object[]{projectName}, getAllFieldNames(TblsMethodValidationData.TablesMethodValidationData.VALIDATION_METHOD_PARAMS.getTableFields()));
+                new String[]{TblsMethodValidationData.ValidationMethodParams.NAME.getName(), TblsMethodValidationData.ValidationMethodParams.ANALYTICAL_PARAMETER.getName(), TblsMethodValidationData.ValidationMethodParams.PROJECT.getName()},
+                new Object[]{parameterName, analyticalParameter, projectName}, getAllFieldNames(TblsMethodValidationData.TablesMethodValidationData.VALIDATION_METHOD_PARAMS.getTableFields()));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projectRnDinfo[0][0].toString())) {
             this.parameterName = null;
             this.hasError = true;
-            this.errorDetail = new InternalMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{projectName, TblsMethodValidationData.TablesMethodValidationData.VALIDATION_METHOD_PARAMS.getTableName(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName())}, projectName);
+            this.errorDetail = new InternalMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{parameterName, TblsMethodValidationData.TablesMethodValidationData.VALIDATION_METHOD_PARAMS.getTableName(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName())}, parameterName);
         } else {
             this.hasError = false;
             this.formulaFieldNames = getAllFieldNames(TblsMethodValidationData.TablesMethodValidationData.VALIDATION_METHOD_PARAMS.getTableFields());
@@ -124,6 +124,7 @@ public class DataMethodValidation {
         messages.addMainForSuccess(MethodValidationAPIactionsEndpoints.NEW_PARAMETER, new Object[]{parameterName});
         return new InternalMessage(LPPlatform.LAB_TRUE, MethodValidationAPIactionsEndpoints.NEW_PARAMETER, new Object[]{parameterName}, parameterName);
     }
+
 
     private InternalMessage updateLotTransaction(EnumIntEndpoints actionObj, EnumIntAuditEvents auditEventObj, String[] extraFldNames, Object[] extraFldValues) {
 
