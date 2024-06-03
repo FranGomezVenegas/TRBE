@@ -221,7 +221,8 @@ public class TblsProjectRnDData {
         RESPONSIBLE("responsible", LPDatabase.string(), null, null, null, null, true),
         IS_LOCKED(TblsInstrumentsData.Instruments.IS_LOCKED.getName(),TblsInstrumentsData.Instruments.IS_LOCKED.getFieldType(), null, null, null, null, true),
         LOCKED_REASON(TblsInstrumentsData.Instruments.LOCKED_REASON.getName(),TblsInstrumentsData.Instruments.LOCKED_REASON.getFieldType(), null, null, null, null, true),
-        LINKED_SEQUENCE_ANALYSIS_LIST("linked_sequence_analysis_list", LPDatabase.string(), null, null, null, null, true)
+        LINKED_SEQUENCE_ANALYSIS_LIST("linked_sequence_analysis_list", LPDatabase.string(), null, null, null, null, true),
+        LINKED_FORMULATION_LIST("linked_formulation_list", LPDatabase.string(), null, null, null, null, true)
         ;
         private RdDailyEntry(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules, Boolean isSystFld){
@@ -265,6 +266,7 @@ public class TblsProjectRnDData {
         LOCKED_REASON(TblsInstrumentsData.Instruments.LOCKED_REASON.getName(),TblsInstrumentsData.Instruments.LOCKED_REASON.getFieldType(), null, null, null, null, true),
         RESPONSIBLE("responsible", LPDatabase.string(), null, null, null, null, true),
         LINKED_SEQUENCE_ANALYSIS_LIST("linked_sequence_analysis_list", LPDatabase.string(), null, null, null, null, true),
+        LINKED_FORMULATION_LIST("linked_formulation_list", LPDatabase.string(), null, null, null, null, true),
         JSON_MODEL("json_model", LPDatabase.json(), null, null, null, null, true)
         ;
         private MethodDevelopmentSequence(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
