@@ -96,16 +96,12 @@ public class ClassDailyEntryactions implements ActionsClass{
                 if (fieldValues != null && fieldValues.length>0 && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
                     actionDiagnoses = (InternalMessage) fieldValues[1];                
                 }
-                if (projectName.length()>0){
-                    fieldNames = LPArray.addValueToArray1D(fieldNames, TblsProjectRnDData.Project.PURPOSE.getName());
-                    fieldValues = LPArray.addValueToArray1D(fieldValues, projectName);                    
-                }
                 if (purpose.length()>0){
-                    fieldNames = LPArray.addValueToArray1D(fieldNames, TblsProjectRnDData.Project.PURPOSE.getName());
+                    fieldNames = LPArray.addValueToArray1D(fieldNames, TblsProjectRnDData.RdDailyEntry.PURPOSE.getName());
                     fieldValues = LPArray.addValueToArray1D(fieldValues, purpose);                    
                 }
                 if (responsible.length()>0){
-                    fieldNames = LPArray.addValueToArray1D(fieldNames, TblsProjectRnDData.Project.RESPONSIBLE.getName());
+                    fieldNames = LPArray.addValueToArray1D(fieldNames, TblsProjectRnDData.RdDailyEntry.RESPONSIBLE.getName());
                     fieldValues = LPArray.addValueToArray1D(fieldValues, responsible);                    
                 }
                 actionDiagnoses = dailyEntryObj.createNewDailyEntry(dailyEntryName, projectName, fieldNames, fieldValues);
@@ -466,6 +462,7 @@ public class ClassDailyEntryactions implements ActionsClass{
         }
 
         this.actionDiagnosesObj = actionDiagnoses;
+        this.messageDynamicData=actionDiagnoses.getMessageCodeVariables();
 
         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesProjectRnDData.PROJECT.getTableName(), dailyEntryName);
         this.relatedObj = rObj;
