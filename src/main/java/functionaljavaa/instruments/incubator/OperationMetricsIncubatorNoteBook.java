@@ -16,7 +16,7 @@ import lbplanet.utilities.LPMath;
 import lbplanet.utilities.LPPlatform;
 import module.monitoring.definition.TblsEnvMonitData;
 import module.monitoring.definition.TblsEnvMonitProcedure;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import trazit.queries.QueryUtilities;
@@ -53,7 +53,7 @@ public class OperationMetricsIncubatorNoteBook {
                 whereForPercentagesView = LPArray.addValueToArray1D(whereForPercentagesView, buildDateRangeFromStrings[2]);
             }
         }
-        JSONArray qryJsonArr = QueryUtilities.dbRowsToJsonArr(procInstanceName, procInstanceName, TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK,
+        JSONArray qryJsonArr = QueryUtilities.dbRowsToJsonArrSimpleJson(procInstanceName, procInstanceName, TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK,
                 EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.INSTRUMENT_INCUB_NOTEBOOK, "ALL"),
                 wObj, new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName()},
                 null, true);
@@ -116,7 +116,7 @@ public class OperationMetricsIncubatorNoteBook {
         Object[][] data = Rdbms.runQueryByString(tblCreateScript, 3, whereForPercentagesView);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(data[0][0].toString())) {
             JSONObject jObj = LPFrontEnd.responseJSONDiagnosticLPFalse(Rdbms.RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);
-            sampleJsonArr.put(jObj);
+            sampleJsonArr.add(jObj);
         } else {
             for (Object[] curRow : data) {
                 if (curRow[1] != null && curRow[2] != null && curRow[1].toString().length() > 0 && curRow[2].toString().length() > 0) {
@@ -143,7 +143,7 @@ public class OperationMetricsIncubatorNoteBook {
             jObjMainObject.put("statistics_per_end_to_end_sample_process", statAnalysis);
         }
 
-        qryJsonArr = QueryUtilities.dbRowsToJsonArr(procInstanceName, procInstanceName, TblsEnvMonitProcedure.TablesEnvMonitProcedure.INCUB_TEMP_READING_VIOLATIONS,
+        qryJsonArr = QueryUtilities.dbRowsToJsonArrSimpleJson(procInstanceName, procInstanceName, TblsEnvMonitProcedure.TablesEnvMonitProcedure.INCUB_TEMP_READING_VIOLATIONS,
                 EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitProcedure.TablesEnvMonitProcedure.INCUB_TEMP_READING_VIOLATIONS, "ALL"),
                 wObj2, new String[]{TblsEnvMonitProcedure.IncubatorTempReadingViolations.CREATED_BY.getName()},
                 null, true);
@@ -161,12 +161,12 @@ public class OperationMetricsIncubatorNoteBook {
         data = Rdbms.runQueryByString(tblCreateScript, 4, whereForPercentagesView);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(data[0][0].toString())) {
             JSONObject jObj = LPFrontEnd.responseJSONDiagnosticLPFalse(Rdbms.RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);
-            sampleJsonArr.put(jObj);
+            sampleJsonArr.add(jObj);
         } else {
             for (Object[] curRec : data) {
                 JSONObject jObj = LPJson.convertArrayRowToJSONObject(new String[]{"stage", "violated_sample_stages", "total_sample_stages", "percentage"},
                         curRec);
-                sampleJsonArr.put(jObj);
+                sampleJsonArr.add(jObj);
             }
         }
         jObjMainObject.put("violations_percentage", sampleJsonArr);

@@ -6,7 +6,7 @@
 package trazit.enums;
 
 import functionaljavaa.responserelatedobjects.RelatedObjects;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public interface EnumIntQueriesObj {

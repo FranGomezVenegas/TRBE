@@ -13,7 +13,7 @@ import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
@@ -58,8 +58,8 @@ public class ActionsControl {
         for (String curAction : justifReasonRequired) {
             JSONObject jActionObj = new JSONObject();
             jActionObj.put(curAction, actionDetailInBusRules(procInstanceName, curAction));
-            jArr.put(jActionObj);
-            jArr.put(curAction);
+            jArr.add(jActionObj);
+            jArr.add(curAction);
         }
         return jArr;
     }
@@ -79,16 +79,16 @@ public class ActionsControl {
             for (Object[] curAction : ruleValue) {
                 JSONObject jActionObj = new JSONObject();
                 jActionObj.put(curAction[0], actionDetailInTable(curAction[0], curAction[1], curAction[2], curAction[3]));
-                jArr.put(jActionObj);
-                jArr.put(curAction[0]);
+                jArr.add(jActionObj);
+                jArr.add(curAction[0]);
             }
         }
         if (ruleValueMasterData!=null&&Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString()))){
             for (Object[] curAction : ruleValueMasterData) {
                 JSONObject jActionObj = new JSONObject();
                 jActionObj.put(curAction[0], actionDetailInTable(curAction[0], curAction[1], curAction[2], curAction[3]));
-                jArr.put(jActionObj);
-                jArr.put(curAction[0]);
+                jArr.add(jActionObj);
+                jArr.add(curAction[0]);
             }
         }
         return jArr;
@@ -108,7 +108,7 @@ public class ActionsControl {
             return jArr;
         }
         String[] justifReasonRequired = LPNulls.replaceNull(ruleValue[0][0]).toString().split("\\|");
-        jArr.putAll(Arrays.asList(justifReasonRequired));
+        jArr.addAll(Arrays.asList(justifReasonRequired));
         return jArr;
     }
     private static JSONArray procActionsWithActionConfirmInTable(String procInstanceName) {
@@ -127,16 +127,16 @@ public class ActionsControl {
             for (Object[] curAction : ruleValue) {
                 JSONObject jActionObj = new JSONObject();
                 jActionObj.put(curAction[0], actionDetailInTable(curAction[0], curAction[1], curAction[2], curAction[3]));
-                jArr.put(jActionObj);
-                jArr.put(curAction[0]);
+                jArr.add(jActionObj);
+                jArr.add(curAction[0]);
             }
         }
         if (ruleValueMasterData!=null&&Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString()))){
             for (Object[] curAction : ruleValueMasterData) {
                 JSONObject jActionObj = new JSONObject();
                 jActionObj.put(curAction[0], actionDetailInTable(curAction[0], curAction[1], curAction[2], curAction[3]));
-                jArr.put(jActionObj);
-                jArr.put(curAction[0]);
+                jArr.add(jActionObj);
+                jArr.add(curAction[0]);
             }
         }
         return jArr;
@@ -159,8 +159,8 @@ public class ActionsControl {
         for (String curAction : eSignRequired) {
             JSONObject jActionObj = new JSONObject();
             jActionObj.put(curAction, actionDetailInBusRules(procInstanceName, curAction));
-            jArr.put(jActionObj);
-            jArr.put(curAction);
+            jArr.add(jActionObj);
+            jArr.add(curAction);
         }
         return jArr;
     }
@@ -179,16 +179,16 @@ public class ActionsControl {
             for (Object[] curAction : ruleValue) {
                 JSONObject jActionObj = new JSONObject();
                 jActionObj.put(curAction[0], actionDetailInTable(curAction[0], curAction[1], curAction[2], curAction[3]));
-                jArr.put(jActionObj);
-                jArr.put(curAction[0]);
+                jArr.add(jActionObj);
+                jArr.add(curAction[0]);
             }
         }
         if (ruleValueMasterData!=null&&Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString()))){
             for (Object[] curAction : ruleValueMasterData) {
                 JSONObject jActionObj = new JSONObject();
                 jActionObj.put(curAction[0], actionDetailInTable(curAction[0], curAction[1], curAction[2], curAction[3]));
-                jArr.put(jActionObj);
-                jArr.put(curAction[0]);
+                jArr.add(jActionObj);
+                jArr.add(curAction[0]);
             }
         }
         return jArr;
@@ -211,8 +211,8 @@ public class ActionsControl {
         for (String curAction : verifyUserRequired) {
             JSONObject jActionObj = new JSONObject();
             jActionObj.put(curAction, actionDetailInBusRules(procInstanceName, curAction));
-            jArr.put(jActionObj);
-            jArr.put(curAction);
+            jArr.add(jActionObj);
+            jArr.add(curAction);
         }
         return jArr;
     }
@@ -231,16 +231,16 @@ public class ActionsControl {
             for (Object[] curAction : ruleValue) {
                 JSONObject jActionObj = new JSONObject();
                 jActionObj.put(curAction[0], actionDetailInTable(curAction[0], curAction[1], curAction[2], curAction[3]));
-                jArr.put(jActionObj);
-                jArr.put(curAction[0]);
+                jArr.add(jActionObj);
+                jArr.add(curAction[0]);
             }
         }
         if (ruleValueMasterData!=null&&Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(ruleValueMasterData[0][0].toString()))){
             for (Object[] curAction : ruleValueMasterData) {
                 JSONObject jActionObj = new JSONObject();
                 jActionObj.put(curAction[0], actionDetailInTable(curAction[0], curAction[1], curAction[2], curAction[3]));
-                jArr.put(jActionObj);
-                jArr.put(curAction[0]);
+                jArr.add(jActionObj);
+                jArr.add(curAction[0]);
             }
         }
         return jArr;
@@ -255,7 +255,7 @@ public class ActionsControl {
         jObj.put("type", actionDetail[0]);
         if (actionDetail[0].toUpperCase().contains("LIST")) {
             JSONArray jObjListEntries = new JSONArray();
-            jObjListEntries.putAll(Arrays.asList(actionDetail));
+            jObjListEntries.addAll(Arrays.asList(actionDetail));
             jObj.put("list_entries", jObjListEntries);
         }
         return jObj;
@@ -268,13 +268,13 @@ public class ActionsControl {
         jObj.put("type", auditReasonType);
         if (LPNulls.replaceNull(auditReasonType).toString().toUpperCase().contains("LIST")) {
             JSONArray jObjListEntries = new JSONArray();
-            jObjListEntries.putAll(Arrays.asList(listEnArr));
+            jObjListEntries.addAll(Arrays.asList(listEnArr));
             jObj.put("list_entries", jObjListEntries);
             jObjListEntries = new JSONArray();
-            jObjListEntries.putAll(Arrays.asList(listEnArr));
+            jObjListEntries.addAll(Arrays.asList(listEnArr));
             jObj.put("list_entries_en", jObjListEntries);
             jObjListEntries = new JSONArray();
-            jObjListEntries.putAll(Arrays.asList(listEsArr));
+            jObjListEntries.addAll(Arrays.asList(listEsArr));
             jObj.put("list_entries_es", jObjListEntries);
         }
         return jObj; 

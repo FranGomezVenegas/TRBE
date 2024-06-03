@@ -9,7 +9,7 @@ package functionaljavaa.testingscripts;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 /**
@@ -49,7 +49,7 @@ public class TestingAuditIds {
         if (this.jsonContent.isEmpty())
             this.minAuditId=auditId;
         this.maxAuditId=auditId;
-        this.jsonContent.put(jObj);
+        this.jsonContent.add(jObj);
     }
    
 }

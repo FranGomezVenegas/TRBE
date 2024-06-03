@@ -7,7 +7,7 @@ package functionaljavaa.responserelatedobjects;
 
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 /**
@@ -60,7 +60,7 @@ public class RelatedObjects {
             for (int iFld=0;iFld<fldName.length;iFld++){
                 jObj.put(fldName[iFld],  fldValue[iFld]);}
         
-        mainStructureObject.jArrMainObject.put(jObj);
+        mainStructureObject.jArrMainObject.add(jObj);
     }
 
     

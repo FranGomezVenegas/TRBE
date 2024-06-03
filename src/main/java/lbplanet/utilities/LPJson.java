@@ -24,34 +24,34 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.procedureinstance.definition.definition.TblsReqs;
 
 public class LPJson {
 
-    public static org.json.JSONArray pivotTable(Object[][] dataInfo, Integer dataAxisPosic, Integer dataContentPosic, Object[][] colsData, String headerCrossTextEn, String headerCrossTextEs, String linkedFieldName) {
+    public static JSONArray pivotTable(Object[][] dataInfo, Integer dataAxisPosic, Integer dataContentPosic, Object[][] colsData, String headerCrossTextEn, String headerCrossTextEs, String linkedFieldName) {
         Map<String, Set<String>> userRolesMap = new HashMap<>();
         String[] procRoles1D = LPArray.getUniquesArray(LPArray.array2dTo1d(colsData));
-        org.json.JSONArray rolesActionsOutput = new org.json.JSONArray();
-        org.json.JSONArray header = new org.json.JSONArray();
+        JSONArray rolesActionsOutput = new JSONArray();
+        JSONArray header = new JSONArray();
         JSONObject fldDef = new JSONObject();
         fldDef.put("label", headerCrossTextEn);
         fldDef.put("is_translation", true);
         fldDef.put(linkedFieldName, TblsReqs.viewProcReqSolutionActions.PRETTY_EN.getName());
-        header.put(fldDef);
+        header.add(fldDef);
         fldDef = new JSONObject();
         fldDef.put("label", headerCrossTextEn);
         fldDef.put("is_translation", true);
         fldDef.put(linkedFieldName, TblsReqs.viewProcReqSolutionActions.PRETTY_ES.getName());
-        header.put(fldDef);
-        rolesActionsOutput.put(header);
+        header.add(fldDef);
+        rolesActionsOutput.add(header);
         if (Boolean.TRUE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(colsData[0][0].toString())))
             return rolesActionsOutput;
         if (Boolean.TRUE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(dataInfo[0][0].toString())))
             return rolesActionsOutput;
         for (String curRole : procRoles1D) {
-            header.put(curRole);
+            header.add(curRole);
         }
         for (Object[] curActRow : dataInfo) {
             String userName = curActRow[dataAxisPosic].toString();
@@ -80,7 +80,7 @@ public class LPJson {
                     curUserRow.put("");
                 }
             }
-            rolesActionsOutput.put(curUserRow);
+            rolesActionsOutput.add(curUserRow);
         }
         return rolesActionsOutput;
     }
@@ -164,7 +164,7 @@ public class LPJson {
                     }
                 }
             }
-            jArr.put(jObj);
+            jArr.add(jObj);
         }
         return jArr;
     }
@@ -243,7 +243,7 @@ public class LPJson {
 
     public static JSONArray convertToJSONArray(Object[] diagn) {
         JSONArray jMainArr = new JSONArray();
-        jMainArr.putAll(Arrays.asList(diagn));
+        jMainArr.addAll(Arrays.asList(diagn));
         return jMainArr;
     }
 
@@ -279,14 +279,14 @@ public class LPJson {
      */
     public static JSONArray convertToJSON(String[] normalArray) {
         JSONArray jsonArray = new JSONArray();
-        jsonArray.putAll(Arrays.asList(normalArray));
+        jsonArray.addAll(Arrays.asList(normalArray));
         return jsonArray;
     }
 
     public static JSONArray convertArrayJsonToJSON(JsonArray jsonArr) {
         JSONArray jsonArray = new JSONArray();
         jsonArr.forEach(jsonElement -> {
-            jsonArray.put(jsonElement);
+            jsonArray.add(jsonElement);
         });
         return jsonArray;
     }
@@ -468,7 +468,7 @@ for (JsonElement element : list) {
     public static Object[] filterJArrByProperty(JSONArray arr, String filterPropName, String filterPropValue, String propToGet) {
         Object[] newArr = new Object[]{}; // Initialize the array to the same length as the original array
         
-        for (int i = 0; i < arr.length(); i++) {
+        for (int i = 0; i < arr.size(); i++) {
             JSONObject entry = (JSONObject) arr.get(i);
             
             String stage = entry.get(filterPropName).toString();
@@ -484,7 +484,7 @@ for (JsonElement element : list) {
     }
 
     public static boolean JSONArraycontainsValue(JSONArray jsonArray, String value) {
-        for (int i = 0; i < jsonArray.length(); i++) {
+        for (int i = 0; i < jsonArray.size(); i++) {
             Object item = jsonArray.get(i);
             if (item instanceof JSONObject) {
                 JSONObject jsonObject = (JSONObject) item;
@@ -502,7 +502,7 @@ for (JsonElement element : list) {
     } 
     
     public static Integer JSONArrayValuePosic(JSONArray jsonArray, String argName, String argValue) {
-        for (int i = 0; i < jsonArray.length(); i++) {
+        for (int i = 0; i < jsonArray.size(); i++) {
             Object item = jsonArray.get(i);
             if (item instanceof JSONObject) {
                 JSONObject jsonObject = (JSONObject) item;
@@ -529,15 +529,15 @@ for (JsonElement element : list) {
         }
 
         JSONArray newArray = new JSONArray();
-        for (int i = 0; i < jsonArray.length(); i++) {
+        for (int i = 0; i < jsonArray.size(); i++) {
             if (i != indexToRemove) {
-                newArray.put(jsonArray.get(i));
+                newArray.add(jsonArray.get(i));
             }
         }
         return newArray;
     }    
     
-    public static boolean contains(JSONArray jsonContent,  org.json.JSONObject jObj){
+    public static boolean contains(org.json.JSONArray jsonContent,  org.json.JSONObject jObj){
         boolean exists = false;
         for (int i = 0; i < jsonContent.length(); i++) {
             org.json.JSONObject existingObj = jsonContent.getJSONObject(i);
@@ -549,7 +549,43 @@ for (JsonElement element : list) {
         return exists;
     }
     
-    public static boolean contains(JSONArray jsonContent,  JsonElement jObj){
+    public static boolean containsForSimple (JSONArray jsonContent, JSONObject jObj) {
+        boolean exists = false;
+        for (Object obj : jsonContent) {
+            if (obj instanceof JSONObject) {
+                JSONObject existingObj = (JSONObject) obj;
+                if (similar(existingObj, jObj)) {
+                    exists = true;
+                    break;
+                }
+            }
+        }
+        return exists;
+    }
+    private static boolean similar(JSONObject obj1, JSONObject obj2) {
+        return obj1.equals(obj2);
+    }
+
+        public static boolean contains(JSONArray jsonContent, JsonElement jObj) {
+        boolean exists = false;
+        for (Object obj : jsonContent) {
+            if (obj instanceof JSONObject) {
+                JSONObject existingObj = (JSONObject) obj;
+                JsonElement existingJsonElement = convertToJsonElement(existingObj);
+                if (existingJsonElement.equals(jObj)) {
+                    exists = true;
+                    break;
+                }
+            }
+        }
+        return exists;
+    }
+
+    private static JsonElement convertToJsonElement(JSONObject jsonObj) {
+        return JsonParser.parseString(jsonObj.toJSONString());
+    }
+
+    public static boolean contains(org.json.JSONArray jsonContent,  JsonElement jObj){
         boolean exists = false;
         for (int i = 0; i < jsonContent.length(); i++) {
             org.json.JSONObject existingObj = jsonContent.getJSONObject(i);
@@ -560,7 +596,7 @@ for (JsonElement element : list) {
         }
         return exists;
     } 
-    public static boolean containsJsonOfStrings(JSONArray jsonContent,  String stringToFind){
+    public static boolean containsJsonOfStrings(org.json.JSONArray jsonContent,  String stringToFind){
         boolean exists = false;
         for (int i = 0; i < jsonContent.length(); i++) {
             String existingObj = jsonContent.getString(i);
@@ -572,7 +608,25 @@ for (JsonElement element : list) {
         return exists;
     }       
 
-    public static boolean contains(JSONArray jsonContent,  String stringToFind){
+    public static boolean contains(org.json.simple.JSONArray jsonContent, String stringToFind) {
+        boolean exists = false;
+        for (Object obj : jsonContent) {
+            if (obj instanceof JSONObject) {
+                JSONObject existingObj = (JSONObject) obj;
+                if (similar(existingObj.toJSONString(), stringToFind)) {
+                    exists = true;
+                    break;
+                }
+            }
+        }
+        return exists;
+    }
+
+    private static boolean similar(String jsonString, String stringToFind) {
+        return jsonString.equals(stringToFind);
+    }   
+
+    public static boolean containsNotSimple(org.json.JSONArray jsonContent,  String stringToFind){
         boolean exists = false;
         for (int i = 0; i < jsonContent.length(); i++) {
             org.json.JSONObject existingObj = jsonContent.getJSONObject(i);

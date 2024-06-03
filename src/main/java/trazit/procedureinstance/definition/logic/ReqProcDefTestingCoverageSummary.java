@@ -33,8 +33,8 @@ public class ReqProcDefTestingCoverageSummary {
         }
         JSONArray dbRowsToJsonArr = QueryUtilities.dbRowsToJsonArrSimpleJson(procInstanceName, repositoryName, TblsTesting.TablesTesting.SCRIPT.getTableName(), getAllFieldNames(TblsTesting.TablesTesting.SCRIPT.getTableFields()), new String[]{TblsTesting.Script.ACTIVE.getName()}, new Object[]{true}, null, new String[]{}, true, true);
 
-        for (int i = 0; i < dbRowsToJsonArr.size(); i++) {
-            JSONObject jsonObject = (JSONObject) dbRowsToJsonArr.get(i);
+        for (int i = 0; i < dbRowsToJsonArr2.size(); i++) {
+            JSONObject jsonObject = (JSONObject) dbRowsToJsonArr2.get(i);
             String scriptId = LPNulls.replaceNull(jsonObject.get(TblsTesting.Script.SCRIPT_ID.getName())).toString();
             if (scriptId.length() > 0) {
                 JSONObject curTestObj = getScriptWithSteps(Integer.valueOf(scriptId), procInstanceName, null, null);

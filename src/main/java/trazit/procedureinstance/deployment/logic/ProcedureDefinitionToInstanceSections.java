@@ -23,7 +23,7 @@ import databases.features.DbEncryption;
 import functionaljavaa.requirement.masterdata.ClassMasterData;
 import java.util.Arrays;
 import lbplanet.utilities.LPNulls;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
@@ -267,7 +267,7 @@ public class ProcedureDefinitionToInstanceSections {
                     }
                 }
                 if (procRoles.length > 1) {
-                    multiRolejArr.put(multiRolCurEvent);
+                    multiRolejArr.add(multiRolCurEvent);
                 }
             }
         }
@@ -323,7 +323,7 @@ public class ProcedureDefinitionToInstanceSections {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procUsrReqs[0][0].toString())) {
             JSONObject jObj = new JSONObject();
             jObj.put(GlobalAPIsParams.LBL_ERROR, "no entries in " + TblsReqs.TablesReqs.PROCEDURE_USER_REQS.getTableName() + " table");
-            jArr.put(jObj);
+            jArr.add(jObj);
         } else {
             String allProcActionsInOne = LPArray.convertArrayToString(LPArray.getColumnFromArray2D(procUsrReqs, 0), "|", "", true);
             allProcActionsInOne = allProcActionsInOne.replace("||", "|");
@@ -338,7 +338,7 @@ public class ProcedureDefinitionToInstanceSections {
             } else {
                 jObj.put(LPPlatform.LpPlatformBusinessRules.PROCEDURE_ACTIONS.getTagName(), allProcActionsInOne + " " + "error adding" + insertRecordInTable.getErrorMessageCode());
             }
-            jArr.put(jObj);
+            jArr.add(jObj);
             StringBuilder esigns = new StringBuilder(0);
             StringBuilder verifUsers = new StringBuilder(0);
             StringBuilder actionConfirm = new StringBuilder(0);
@@ -357,7 +357,7 @@ public class ProcedureDefinitionToInstanceSections {
                         } else {
                             jObj.put(LPPlatform.LpPlatformBusinessRules.ACTION_ENABLED_ROLES.getTagName() + curAction[0].toString(), curRole + " " + "error adding" + insertRecordInTable.getErrorMessageCode());
                         }
-                        jArr.put(jObj);
+                        jArr.add(jObj);
                     }
                     String[] confirmDialog = LPNulls.replaceNull(curAction[2]).toString().split("\\|");
                     if (confirmDialog.length > 0) {
@@ -397,7 +397,7 @@ public class ProcedureDefinitionToInstanceSections {
                         } else {
                             jObj.put(actionName + LPPlatform.LpPlatformBusinessRules.AUDITREASON_PHRASE.getTagName(), confirmDialogPhrase + " " + "error adding" + insertRecordInTable.getErrorMessageCode());
                         }
-                        jArr.put(jObj);
+                        jArr.add(jObj);
                     }
                 }
             }
@@ -411,7 +411,7 @@ public class ProcedureDefinitionToInstanceSections {
                 } else {
                     jObj.put(LPPlatform.LpPlatformBusinessRules.ESIGN_REQUIRED.getTagName(), esigns + " " + "error adding" + insertRecordInTable.getErrorMessageCode());
                 }
-                jArr.put(jObj);
+                jArr.add(jObj);
             }
             if (verifUsers.length() > 0) {
                 fldValues = new Object[]{false, LPPlatform.LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getAreaName(),
@@ -423,7 +423,7 @@ public class ProcedureDefinitionToInstanceSections {
                 } else {
                     jObj.put(LPPlatform.LpPlatformBusinessRules.VERIFYUSER_REQUIRED.getTagName(), verifUsers + " " + "error adding" + insertRecordInTable.getErrorMessageCode());
                 }
-                jArr.put(jObj);
+                jArr.add(jObj);
             }
             if (actionConfirm.length() > 0) {
                 fldValues = new Object[]{false, LPPlatform.LpPlatformBusinessRules.ACTIONCONFIRM_REQUIRED.getAreaName(),
@@ -435,7 +435,7 @@ public class ProcedureDefinitionToInstanceSections {
                 } else {
                     jObj.put(LPPlatform.LpPlatformBusinessRules.ACTIONCONFIRM_REQUIRED.getTagName(), actionConfirm + " " + "error adding" + insertRecordInTable.getErrorMessageCode());
                 }
-                jArr.put(jObj);
+                jArr.add(jObj);
             }
             if (justifReason.length() > 0) {
                 fldValues = new Object[]{false, LPPlatform.LpPlatformBusinessRules.AUDIT_JUSTIF_REASON_REQUIRED.getAreaName(),
@@ -447,7 +447,7 @@ public class ProcedureDefinitionToInstanceSections {
                 } else {
                     jObj.put(LPPlatform.LpPlatformBusinessRules.AUDIT_JUSTIF_REASON_REQUIRED.getTagName(), justifReason + " " + "error adding" + insertRecordInTable.getErrorMessageCode());
                 }
-                jArr.put(jObj);
+                jArr.add(jObj);
             }
 //          procedureActionsAndRoles(procInstanceName, ProcedureDefinitionQueries.ProcBusinessRulesQueries bsnRuleQry, mainObj);
         }
@@ -472,18 +472,18 @@ public class ProcedureDefinitionToInstanceSections {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procUsrReqs[0][0].toString())) {
             JSONObject jObj = new JSONObject();
             jObj.put(GlobalAPIsParams.LBL_ERROR, "no entries in " + TblsReqs.TablesReqs.PROCEDURE_USER_REQS.getTableName() + " table");
-            jArr.put(jObj);
+            jArr.add(jObj);
         } else {
             Integer windowActionFldPosic = LPArray.valuePosicInArray(fldsToGet, TblsReqs.ProcedureReqSolution.WINDOW_ACTION.getName());
             Integer extraColFldPosic = LPArray.valuePosicInArray(fldsToGet, TblsReqs.ProcedureReqSolution.EXTRA_ACTIONS.getName());
             for (Object[] curAction : procUsrReqs) {
                 String actionName = LPNulls.replaceNull(curAction[0]).toString();
-                jArr.put(createProcActionRecord(fldsToGet, curAction, procInstanceName));
+                jArr.add(createProcActionRecord(fldsToGet, curAction, procInstanceName));
                 if (extraColFldPosic>-1){
                     if (LPNulls.replaceNull(curAction[extraColFldPosic]).toString().length()>0){
                         for (String curExtraAction:curAction[extraColFldPosic].toString().split("\\|")){
                             curAction[windowActionFldPosic]=curExtraAction;
-                            jArr.put(createProcActionRecord(fldsToGet, curAction, procInstanceName));
+                            jArr.add(createProcActionRecord(fldsToGet, curAction, procInstanceName));
                         }
                     }
                 }
@@ -624,7 +624,7 @@ public class ProcedureDefinitionToInstanceSections {
                         FLDSTO_INSERT_PROC_USR_ROLE_DEST.split("\\|"), new Object[]{curPersonName.toString().toLowerCase(), curRoleName.toString().toLowerCase(), true}, schemaNameDestinationProcedure);
                 jsonObj.put("User Role inserted in the instance?", insertRecord.getApiMessage()[0].toString());
             }
-            jsArr.put(jsUserRoleObj);
+            jsArr.add(jsUserRoleObj);
             jsonObj.put("User " + curUserName + " & Role " + curRoleName, jsArr);
         }
         jsonObj.put(JsonTags.NUM_RECORDS_IN_DEFINITION.getTagValueEn(), procUserRolesRecordsSource.length);
@@ -644,7 +644,7 @@ public class ProcedureDefinitionToInstanceSections {
         for (String fn : schemaNames) {
             JSONArray jsSchemaArr = new JSONArray();
             String configSchemaName = schemaNamePrefix + "-" + fn;
-            jsSchemaArr.put(configSchemaName);
+            jsSchemaArr.add(configSchemaName);
 
             configSchemaName = LPPlatform.buildSchemaName(configSchemaName, fn);
             String configSchemaScript = "CREATE SCHEMA " + configSchemaName + "  AUTHORIZATION " + SCHEMA_AUTHORIZATION_ROLE + ";"
@@ -719,7 +719,7 @@ public class ProcedureDefinitionToInstanceSections {
                     fildsToGet, new String[]{});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procActionsEnabledBusRules[0][0].toString())) {
                 jsonObj.put(JsonTags.ERROR.getTagValueEn(), LPJson.convertToJSON(procActionsEnabledBusRules[0]));
-                jsonArr.put(jsonObj);
+                jsonArr.add(jsonObj);
                 return jsonArr;
             }
             fildsToGet = new String[]{TblsReqs.ProcedureReqSolution.BUSINESS_RULE.getName(), TblsReqs.ProcedureReqSolution.BUSINESS_RULE_VALUE.getName()};
@@ -728,7 +728,7 @@ public class ProcedureDefinitionToInstanceSections {
                         new String[]{TblsProcedure.ProcedureBusinessRules.RULE_NAME.getName(), TblsProcedure.ProcedureBusinessRules.RULE_VALUE.getName(), TblsProcedure.ProcedureBusinessRules.AREA.getName()},
                         LPArray.addValueToArray1D(curProcActionEnabled, "procedure"), instanceName);
                 JSONObject convertArrayRowToJSONObject = LPJson.convertArrayRowToJSONObject(fildsToGet, curProcActionEnabled);
-                jsonArr.put(convertArrayRowToJSONObject);                
+                jsonArr.add(convertArrayRowToJSONObject);                
             }
             return jsonArr;
         } catch (Exception e) {
@@ -746,7 +746,7 @@ public class ProcedureDefinitionToInstanceSections {
             Object[][] allMismatches = (Object[][]) allMismatchesDiagnAll.getNewObjectId();
             JSONArray jArr = new JSONArray();
             for (int i = 1; i < allMismatches.length; i++) {
-                jArr.put(LPJson.convertArrayRowToJSONObject(LPArray.convertObjectArrayToStringArray(allMismatches[0]), allMismatches[i]));
+                jArr.add(LPJson.convertArrayRowToJSONObject(LPArray.convertObjectArrayToStringArray(allMismatches[0]), allMismatches[i]));
             }
             jsonObjSummary.put("error_not_mirror_tables", jArr);
             return jsonObjSummary;
@@ -762,9 +762,9 @@ public class ProcedureDefinitionToInstanceSections {
             JSONArray jsonRowArr = new JSONArray();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procMasterDataObjs[0][0].toString())) {
                 jsonObj.put(JsonTags.ERROR.getTagValueEn(), LPJson.convertToJSON(procMasterDataObjs[0]));
-                jsonArr.put(jsonObj);
+                jsonArr.add(jsonObj);
             } else {
-                jsonArr.put(jsonObj);
+                jsonArr.add(jsonObj);
                 for (Object[] curRow : procMasterDataObjs) {
                     try {
                         ClassMasterData clssMD = new ClassMasterData(instanceName, curRow[0].toString(), curRow[1].toString(), moduleName);
@@ -773,11 +773,11 @@ public class ProcedureDefinitionToInstanceSections {
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(clssMD.getDiagnostic().getDiagnostic())) {
                             jsonRowObj.put("error_detail", clssMD.getDiagnostic().getMessageCodeObj().getErrorCode());
                         }
-                        jsonRowArr.put(jsonRowObj);
+                        jsonRowArr.add(jsonRowObj);
                     } catch (Exception e) {
                         JSONObject jsonRowObj = new JSONObject();
                         jsonRowObj.put("error_in_" + curRow[0].toString(), e.getMessage() + Arrays.toString(curRow));
-                        jsonRowArr.put(jsonRowObj);
+                        jsonRowArr.add(jsonRowObj);
                         jsonObjSummary.put("summary_with_errors", jsonRowArr);
                         return jsonObjSummary;
                     }
@@ -840,7 +840,7 @@ public class ProcedureDefinitionToInstanceSections {
                             + " " + Arrays.toString(updateTableRecordFieldsByFilter.getErrorMessageVariables()));                    
                 }            
             //curViewLog.put("model", mainViewDef);
-            mainLog.put(curView);
+            mainLog.add(curView);
         }
         return mainLog;
     }

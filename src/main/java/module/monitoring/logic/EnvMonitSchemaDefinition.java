@@ -9,7 +9,7 @@ import databases.TblsProcedure;
 import databases.Rdbms;
 import trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.JsonTags;
 import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.SCHEMA_AUTHORIZATION_ROLE;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import trazit.globalvariables.GlobalVariables;
@@ -34,7 +34,7 @@ public final class EnvMonitSchemaDefinition {
          jsonObj.put(JsonTags.NUM_RECORDS_IN_DEFINITION.getTagValueEn(), schemaNames.length);     
         for (String configSchemaName:schemaNames){
             JSONArray jsSchemaArr = new JSONArray();
-            jsSchemaArr.put(configSchemaName);
+            jsSchemaArr.add(configSchemaName);
             
             String configSchemaScript = "CREATE SCHEMA "+configSchemaName+"  AUTHORIZATION "+SCHEMA_AUTHORIZATION_ROLE+";"+
                     " GRANT ALL ON SCHEMA "+configSchemaName+" TO "+SCHEMA_AUTHORIZATION_ROLE+ ";";     

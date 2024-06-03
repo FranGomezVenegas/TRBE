@@ -23,7 +23,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -101,7 +101,7 @@ public class SavedQueriesAPIfrontend extends HttpServlet {
                             }
                         }
                         savedQryObj.put("definition_json", json);
-                        savedQryJArr.put(savedQryObj);
+                        savedQryJArr.add(savedQryObj);
                     }                    
                 }
                 Rdbms.closeRdbms();  

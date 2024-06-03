@@ -30,7 +30,7 @@ import static lbplanet.utilities.LPDatabase.FIELDS_NAMES_PROCEDURE_NAME;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform.LpPlatformErrorTrapping;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;

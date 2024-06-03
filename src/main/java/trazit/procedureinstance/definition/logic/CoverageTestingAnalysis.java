@@ -12,7 +12,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.JSONObject;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.procedureinstance.definition.definition.ReqProcedureEnums.ReqProcedureDefinitionErrorTraping;
@@ -38,7 +38,7 @@ public class CoverageTestingAnalysis {
             TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableName(), getAllFieldNames(TblsTesting.TablesTesting.SCRIPTS_COVERAGE.getTableFields()), 
             new String[]{TblsTesting.ScriptsCoverage.COVERAGE_ID.getName()}, new Object[]{coverageId}, null, new String[]{}, true, true);
         this.isCoverageLocked=false;
-        if (coverageInfoArr.length()!=1){
+        if (coverageInfoArr.size()!=1){
             this.isCoverageLocked=true;
             lockedReason=new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.COVERAGE_NOT_FOUND, new Object[]{this.coverageId, this.procInstanceName});
             return;

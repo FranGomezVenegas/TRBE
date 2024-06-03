@@ -17,7 +17,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.TrazitUtiilitiesEnums;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import trazit.enums.ActionsClass;
 import trazit.enums.EnumIntEndpoints;
 import trazit.session.InternalMessage;

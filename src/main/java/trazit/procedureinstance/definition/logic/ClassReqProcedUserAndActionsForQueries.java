@@ -14,7 +14,7 @@ import lbplanet.utilities.LPArray;
 import trazit.procedureinstance.definition.definition.TblsReqs;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import trazit.globalvariables.GlobalVariables;
 import trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.ReqSolutionTypes;
 

@@ -12,7 +12,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
 import module.inventorytrack.definition.TblsInvTrackingConfig;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
@@ -33,7 +33,7 @@ public class InvTrackingFrontendMasterData implements FrontendMasterData{
             TblsInvTrackingConfig.TablesInvTrackingConfig.UOM.getRepositoryName()), TblsInvTrackingConfig.TablesInvTrackingConfig.UOM.getTableName());
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(dbTableExists[0].toString()))){
             jSummaryObj.put(TblsInvTrackingConfig.TablesInvTrackingConfig.UOM.getTableName(),
-                QueryUtilities.dbRowsToJsonArr(alternativeProcInstanceName, 
+                QueryUtilities.dbRowsToJsonArrSimpleJson(alternativeProcInstanceName, 
                 LPPlatform.buildSchemaName(alternativeProcInstanceName, TblsInvTrackingConfig.TablesInvTrackingConfig.UOM.getRepositoryName()),
                 TblsInvTrackingConfig.TablesInvTrackingConfig.UOM.getTableName(),
                     EnumIntTableFields.getAllFieldNames(EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInvTrackingConfig.TablesInvTrackingConfig.UOM, alternativeProcInstanceName)),
@@ -69,20 +69,20 @@ public class InvTrackingFrontendMasterData implements FrontendMasterData{
                 JSONArray jArrLvl2 = new JSONArray();
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(catReferencesInfo[0][0].toString())){
                     JSONObject jObjLvl2=new JSONObject();
-                    jArrLvl2.put(jObjLvl2);
+                    jArrLvl2.add(jObjLvl2);
                 }else{
                     for (Object[] curRowLvl2: catReferencesInfo){
                         JSONObject jObjLvl2=LPJson.convertArrayRowToJSONObject(fieldsToRetrieveLvl2, curRowLvl2);  
-                        jArrLvl2.put(jObjLvl2);
+                        jArrLvl2.add(jObjLvl2);
                     }
                 }
                 jObj.put(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName(), jArrLvl2);
-                jSummaryArr.put(jObj);
+                jSummaryArr.add(jObj);
             }
         }                
         jSummaryObj.put("category_and_references", jSummaryArr);
         jSummaryObj.put(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName(),
-            QueryUtilities.dbRowsToJsonArr(alternativeProcInstanceName, 
+            QueryUtilities.dbRowsToJsonArrSimpleJson(alternativeProcInstanceName, 
             LPPlatform.buildSchemaName(alternativeProcInstanceName, TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getRepositoryName()),
             TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE.getTableName(),
                 EnumIntTableFields.getAllFieldNames(EnumIntTableFields.getAllFieldNamesFromDatabase(TblsInvTrackingConfig.TablesInvTrackingConfig.INV_REFERENCE, alternativeProcInstanceName)),

@@ -45,7 +45,7 @@ import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_CODE_POSIC;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_EVALUATION_POSIC;
 import lbplanet.utilities.TrazitUtiilitiesEnums;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
@@ -1295,7 +1295,7 @@ public class LPTestingOutFormat {
                 } else {
                     currIndxInfo.put(Arrays.toString(auditIdInfo).replace("\\*", "_") + "_" + moment, dbGetIndexLastNumberInUse[dbGetIndexLastNumberInUse.length - 1]);
                 }
-                indxInfo.put(currIndxInfo);
+                indxInfo.add(currIndxInfo);
             }
         }
         return indxInfo;
@@ -1327,7 +1327,7 @@ public class LPTestingOutFormat {
         } else {
             currIndxInfo.put(indexName.replace("\\*", "_") + "_" + moment, dbGetIndexLastNumberInUse[dbGetIndexLastNumberInUse.length - 1]);
         }
-        indxInfo.put(currIndxInfo);
+        indxInfo.add(currIndxInfo);
         return indxInfo;
     }
 

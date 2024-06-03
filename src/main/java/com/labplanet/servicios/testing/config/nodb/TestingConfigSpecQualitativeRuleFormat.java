@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import trazit.session.InternalMessage;
 
 /**

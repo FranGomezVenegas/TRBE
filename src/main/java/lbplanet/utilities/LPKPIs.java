@@ -11,7 +11,7 @@ import databases.SqlStatement;
 import databases.TblsData;
 import java.util.Date;
 import javax.sql.rowset.CachedRowSet;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ProcedureRequestSession;
@@ -62,7 +62,7 @@ public final class LPKPIs {
             }else{
                 for (Object[] curRec: dataInfo){
                     jObj= LPJson.convertArrayRowToJSONObject(curFldsToRetrieveArr, curRec);
-                    dataJSONArr.put(jObj);
+                    dataJSONArr.add(jObj);
                 }
             } 
             jObjMainObject.put(curgrouperName, dataJSONArr);
@@ -136,14 +136,14 @@ public final class LPKPIs {
     }else{
         for (Object[] curRec: dataInfo){
             jObj= LPJson.convertArrayRowToJSONObject(fldToRetrieve, curRec);
-            dataJSONArr.put(jObj);
+            dataJSONArr.add(jObj);
         }
         jObjMainObject.put("data", dataJSONArr);
         dataJSONArr=new JSONArray();
         for (Object curFld: fldToRetrieve){
             jObj= new JSONObject();
             jObj.put("name", curFld);
-            dataJSONArr.put(jObj);
+            dataJSONArr.add(jObj);
         }
     } 
     //jObjMainObject.put("data", dataJSONArr);

@@ -4,7 +4,7 @@ import databases.SqlStatement;
 import databases.SqlWhere;
 import java.util.Arrays;
 import lbplanet.utilities.LPPlatform;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntViewFields;
@@ -69,7 +69,7 @@ public static final JSONArray getProcedureViews(String procedure, Integer procVe
                 }
                 
                 
-                mainLogArr.put(viewRowAndContentInfoToJsonObject);
+                mainLogArr.add(viewRowAndContentInfoToJsonObject);
             }
             //return mainLogArr;
         }    
@@ -82,7 +82,7 @@ public static final JSONArray getProcedureViews(String procedure, Integer procVe
             vwProcReqSolFlds, null, false);
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(procViewsArr[0][0].toString()))) {
             for (Object[] curView : procSpecialViewsArr) {
-                mainLogArr.put(viewRowAndContentInfoToJsonObject(procedure, procVersion, procInstanceName, vwProcReqSolFlds, curView));
+                mainLogArr.add(viewRowAndContentInfoToJsonObject(procedure, procVersion, procInstanceName, vwProcReqSolFlds, curView));
             }
         }
         return mainLogArr;
@@ -94,7 +94,7 @@ public static final JSONArray getProcedureViews(String procedure, Integer procVe
         jsonObj.put("windowType", windowType);
         jsonObj.put("error_exception", e.getMessage());
         //mainLog.put(currentParentCode, jsonObj);
-        mainLogArr.put(jsonObj);
+        mainLogArr.add(jsonObj);
         return mainLogArr;
     }
     }    
@@ -133,9 +133,9 @@ public static final JSONArray getProcedureViews(String procedure, Integer procVe
         SqlWhere wObj = new SqlWhere();
         wObj.addConstraint(TblsReqs.ProcedureReqSolution.PROC_INSTANCE_NAME, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{procInstanceName}, null);        
         wObj.addConstraint(TblsReqs.ProcedureReqSolution.TYPE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{ReqSolutionTypes.WINDOW.getTagValue()}, null);        
-        JSONArray reqSolJsonArr = QueryUtilities.dbRowsToJsonArr(procInstanceName, GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, TblsReqs.ProcedureReqSolution.values(), 
+        JSONArray reqSolJsonArr = QueryUtilities.dbRowsToJsonArrSimpleJson(procInstanceName, GlobalVariables.Schemas.REQUIREMENTS.getName(), TblsReqs.TablesReqs.PROCEDURE_REQ_SOLUTION, TblsReqs.ProcedureReqSolution.values(), 
             wObj, null, null, false);        
-        for (int i=0;i<reqSolJsonArr.length();i++){
+        for (int i=0;i<reqSolJsonArr.size();i++){
             JSONObject curView=(JSONObject) reqSolJsonArr.get(i);
             String curType=curView.get("type").toString();
            // ReqWindowTypes curTypeObj = ReqWindowTypes.getByTagValue(curType);

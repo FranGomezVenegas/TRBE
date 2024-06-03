@@ -26,7 +26,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import functionaljavaa.user.UserProfile;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.util.HashMap;
@@ -216,10 +216,10 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
                 curCertif[procedureFldPosic]=curCertif[procedureFldPosic].toString().replace("-config", "").replace("\"", "");
             anaMethodJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curCertif);
             anaMethodJObj.put(GlobalAPIsParams.REQUEST_PARAM_CERTIF_OBJECTS_LEVEL, certifObjCertifModeOwnUserAction(fieldsToRetrieve, curCertif));
-            myAnaMethCertif.put(anaMethodJObj);
+            myAnaMethCertif.add(anaMethodJObj);
         }    
         myAnaMethCertifList.put("my_analysis_method_certifications", myAnaMethCertif);
-        myAnaMethCertifListArr.put(myAnaMethCertifList);        
+        myAnaMethCertifListArr.add(myAnaMethCertifList);        
         return myAnaMethCertifListArr;
     }catch(Exception e){
         return new JSONArray();
@@ -277,15 +277,15 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
                     myAnaMethCertifList.put("pending_analysis_method_certification", myAnaMethCertif);
                     myAnaMethCertifList.put(FIELDS_NAMES_PROCEDURE_NAME, currProc);
                     anaMethCertifJObj.put(GlobalAPIsParams.REQUEST_PARAM_CERTIF_OBJECTS_LEVEL, certifObjCertifModeOwnUserAction(fieldsToRetrieve, curAnaMethCertif));
-                    myAnaMethCertif.put(anaMethCertifJObj);
+                    myAnaMethCertif.add(anaMethCertifJObj);
                 }    
-                myPendingAnaMethCertifByProc.put(myAnaMethCertifList);
+                myPendingAnaMethCertifByProc.add(myAnaMethCertifList);
             }
         }
         return myPendingAnaMethCertifByProc;
     }catch(Exception e){
         JSONArray proceduresList = new JSONArray();
-        proceduresList.put("Error:"+e.getMessage());
+        proceduresList.add("Error:"+e.getMessage());
         return proceduresList;            
     }
     }
@@ -334,17 +334,17 @@ public class CertifyAnalysisMethodAPIfrontend extends HttpServlet {
                         JSONObject anaMethodJObj = new JSONObject();
                         anaMethodJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curAnaMeth);
                         anaMethodJObj.put(GlobalAPIsParams.REQUEST_PARAM_CERTIF_OBJECTS_LEVEL, certifObjCertifModeOwnUserAction(fieldsToRetrieve, curAnaMeth));                            
-                        myAnaMethCertif.put(anaMethodJObj);
+                        myAnaMethCertif.add(anaMethodJObj);
                     }    
             }
             myAnaMethCertifList.put("procedure_analysis_methods", myAnaMethCertif);
             myAnaMethCertifList.put(FIELDS_NAMES_PROCEDURE_NAME, currProc);
-            myPendingAnaMethCertifByProc.put(myAnaMethCertifList);
+            myPendingAnaMethCertifByProc.add(myAnaMethCertifList);
         }                
         return myPendingAnaMethCertifByProc;                   
     }catch(Exception e){
         JSONArray proceduresList = new JSONArray();
-        proceduresList.put("Error:"+e.getMessage());
+        proceduresList.add("Error:"+e.getMessage());
         return proceduresList;            
     }
     }

@@ -92,7 +92,7 @@ import module.inventorytrack.logic.OperationMetricsConsumptionEntry;
 import module.inventorytrack.logic.OperationMetricsConsumptionStock;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
 import trazit.enums.EnumIntViewFields;
 import static trazit.procedureinstance.definition.apis.ReqProcedureDefinitionQueries.getScriptWithSteps;
@@ -234,7 +234,7 @@ if (1==1)return;
             tblsMap.put(TblsProcedure.TablesProcedure.INVEST_OBJECTS, 
                 TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName()+"."+TblsProcedure.InvestObjects.INVEST_ID.getName()+"="+
                 TblsProcedure.TablesProcedure.INVESTIGATION.getTableName()+"."+TblsProcedure.Investigation.ID.getName());
-            JSONArray dataArr=QueriesDataMining.buildDynamicQuery(paramsMap, procInstanceName, tblsMap, new String[]{});
+            org.json.simple.JSONArray dataArr=QueriesDataMining.buildDynamicQuery(paramsMap, procInstanceName, tblsMap, new String[]{});
 out.println(dataArr);
                     if (1==1)return;                
         
@@ -323,10 +323,10 @@ if (1==1)return;
             new Object[]{procInstanceName}, fldsArr,
             new String[]{TblsReqs.ProcedureUserRoles.ROLE_NAME.getName()});
         procInstanceName="inspection_lot";
-        org.json.JSONArray viewsBySops = AnalysisMethodCertifQueries.methodsByUser(procInstanceName);
+        JSONArray viewsBySops = AnalysisMethodCertifQueries.methodsByUser(procInstanceName);
         out.println(viewsBySops);
 if (1==1)return;                
-        org.json.JSONArray actionsByRoles = ClassReqProcedUserAndActionsForQueries.actionsByRoles(procInstanceName, procRoles);
+        JSONArray actionsByRoles = ClassReqProcedUserAndActionsForQueries.actionsByRoles(procInstanceName, procRoles);
         out.println(actionsByRoles);
         
 if (1==1)return;        
@@ -580,10 +580,10 @@ if (1==1)return;
                 }
                 anaMethodJObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curCertif);
                 anaMethodJObj.put(GlobalAPIsParams.REQUEST_PARAM_CERTIF_OBJECTS_LEVEL, certifObjCertifModeOwnUserAction(fieldsToRetrieve, curCertif));
-                myAnaMethCertif.put(anaMethodJObj);
+                myAnaMethCertif.add(anaMethodJObj);
             }
             myAnaMethCertifList.put("my_analysis_method_certifications", myAnaMethCertif);
-            myAnaMethCertifListArr.put(myAnaMethCertifList);
+            myAnaMethCertifListArr.add(myAnaMethCertifList);
 
             if (1 == 1) {
                 return;

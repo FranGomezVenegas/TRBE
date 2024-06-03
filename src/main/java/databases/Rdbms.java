@@ -41,7 +41,7 @@ import java.util.Map;
 import java.util.Properties;
 import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;

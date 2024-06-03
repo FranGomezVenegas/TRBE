@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPArray;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import trazit.enums.ActionsClass;
 import trazit.session.InternalMessage;
 import trazit.enums.EnumIntEndpoints;

@@ -21,7 +21,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntMessages;
@@ -362,7 +362,7 @@ public class LPFrontEnd {
         servetInvokeResponseSuccessServlet(request, response);
     }
 
-    public static final void servletReturnSuccess(HttpServletRequest request, HttpServletResponse response, org.json.simple.JSONArray jsonArr) {
+    public static final void servletReturnSuccess(HttpServletRequest request, HttpServletResponse response, org.json.JSONArray jsonArr) {
         if (jsonArr == null) {
             request.setAttribute(GlobalVariables.ServletsResponse.SUCCESS.getAttributeName(), "");
         } else {
@@ -458,7 +458,7 @@ public class LPFrontEnd {
         return errJsObj;
     }
 
-    public static JSONObject responseJSONDiagnosticPositiveEndpoint(EnumIntEndpoints endpoint, Object[] msgDynamicValues, org.json.JSONArray relatedObjects) {
+    public static JSONObject responseJSONDiagnosticPositiveEndpointNoSimple(EnumIntEndpoints endpoint, Object[] msgDynamicValues, org.json.JSONArray relatedObjects) {
 
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
         Object[][] mainMessage = messages.getMainMessage();
@@ -513,7 +513,7 @@ public class LPFrontEnd {
         return errJsObj;
     }
 
-    public static JSONObject responseJSONDiagnosticPositiveEndpointSimple(EnumIntEndpoints endpoint, Object[] msgDynamicValues, org.json.simple.JSONArray relatedObjects) {
+    public static JSONObject responseJSONDiagnosticPositiveEndpoint(EnumIntEndpoints endpoint, Object[] msgDynamicValues, org.json.simple.JSONArray relatedObjects) {
 
         ResponseMessages messages = ProcedureRequestSession.getInstanceForActions(null, null, null).getMessages();
         Object[][] mainMessage = messages.getMainMessage();

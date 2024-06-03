@@ -16,7 +16,7 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_CODE_POSIC;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_EVALUATION_POSIC;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import trazit.enums.EnumIntTableFields;
 
 /**

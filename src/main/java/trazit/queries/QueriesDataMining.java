@@ -6,7 +6,7 @@ package trazit.queries;
 
 import databases.Rdbms;
 import java.util.Map;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import trazit.enums.EnumIntTables;
 
 /**

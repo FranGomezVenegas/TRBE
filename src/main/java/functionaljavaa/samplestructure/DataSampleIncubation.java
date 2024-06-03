@@ -32,7 +32,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.LpPlatformErrorTrapping;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;

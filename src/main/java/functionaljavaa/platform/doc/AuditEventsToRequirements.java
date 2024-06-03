@@ -35,7 +35,7 @@ import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPMailing;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntTableFields;
@@ -91,9 +91,9 @@ public final class AuditEventsToRequirements {
                         EnumIntAuditEvents curAudEv = (EnumIntAuditEvents) enumConstantObjects.get(j);
                         evName=curAudEv.toString();
                         if (LPArray.valueInArray(auditObjectAndEventName1d, curAudEv.getClass().getSimpleName()+"-"+curAudEv.toString()))
-                            eventsFound.put(curAudEv.getClass().getSimpleName()+"-"+curAudEv.toString());
+                            eventsFound.add(curAudEv.getClass().getSimpleName()+"-"+curAudEv.toString());
                         else
-                            eventsNotFound.put(curAudEv.getClass().getSimpleName()+"-"+curAudEv.toString());
+                            eventsNotFound.add(curAudEv.getClass().getSimpleName()+"-"+curAudEv.toString());
                         if (Boolean.FALSE.equals(summaryOnlyMode)){
                             try{
                                 declareInDatabase(curAudEv.getClass().getSimpleName(), curAudEv.toString());
@@ -102,7 +102,7 @@ public final class AuditEventsToRequirements {
                                 jObj.put("enum",getMine.getSimpleName());
                                 jObj.put("endpoint_code",curAudEv.toString());
                                 jObj.put(GlobalAPIsParams.LBL_ERROR,e.getMessage());
-                                enumsIncomplete.put(jObj);
+                                enumsIncomplete.add(jObj);
                             }
                         }
                         String[] langsArr = new String[]{"en", "es"};
@@ -115,7 +115,7 @@ public final class AuditEventsToRequirements {
                                 jObj.put("entry", evName);
                                 jObj.put("language", curLang);
                                 jObj.put("value_found", propValue);
-                                auditWithNoPrettyValues.put(jObj);
+                                auditWithNoPrettyValues.add(jObj);
                             }
                         }
                     }
@@ -126,13 +126,13 @@ public final class AuditEventsToRequirements {
                         JSONObject jObj=new JSONObject();
                         jObj.put("enum",getMine.getSimpleName());
                         jObj.put("messages",enumConstantObjects.size());
-                        enumsCompleteSuccess.put(jObj);
+                        enumsCompleteSuccess.add(jObj);
                     }
                 }
             }catch(Exception e){
                 ScanResult.closeAll();
                 JSONArray errorJArr = new JSONArray();
-                errorJArr.put(audEvObjStr+"_"+evName+":"+e.getMessage());
+                errorJArr.add(audEvObjStr+"_"+evName+":"+e.getMessage());
                 Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, audEvObjStr+"_"+evName+":"+e.getMessage());                
                 LPFrontEnd.servletReturnSuccess(request, response, errorJArr);
                 return;
@@ -146,30 +146,30 @@ public final class AuditEventsToRequirements {
         else{
             summaryDiagnoses="WITH ERRORS.";
             if (Boolean.FALSE.equals(auditWithNoPrettyValues.isEmpty())){
-               summaryDiagnoses=summaryDiagnoses+"The are "+auditWithNoPrettyValues.length()+" audit events with no pretty value";
+               summaryDiagnoses=summaryDiagnoses+"The are "+auditWithNoPrettyValues.size()+" audit events with no pretty value";
             }
             if (Boolean.FALSE.equals(eventsNotFound.isEmpty())){
-               summaryDiagnoses=summaryDiagnoses+"The are "+eventsNotFound.length()+" audit events not found";
+               summaryDiagnoses=summaryDiagnoses+"The are "+eventsNotFound.size()+" audit events not found";
             }            
         }
         jMainObj.put("00_summary", summaryDiagnoses);
         jMainObj.put("00_total_audit_events_in_dictionary_before_running", this.auditEventsFromDatabase.length);
         jMainObj.put("01_total_entities_in_code",classesImplementingInt.toString());
-        jMainObj.put("02_total_entities_visited",enumsCompleteSuccess.length());
+        jMainObj.put("02_total_entities_visited",enumsCompleteSuccess.size());
         jMainObj.put("03_list_of_audit_events_visited", enumsCompleteSuccess);
         jMainObj.put("04_total_audit_events_visited", totalEndpointsVisitedInt);
-        jMainObj.put("05_total_audit_events_found", eventsFound.length());
+        jMainObj.put("05_total_audit_events_found", eventsFound.size());
         jMainObj.put("05_list_of_audit_events_found", eventsFound);
-        jMainObj.put("05_total_audit_events_not_found", eventsNotFound.length());
+        jMainObj.put("05_total_audit_events_not_found", eventsNotFound.size());
         jMainObj.put("05_list_of_audit_events_not_found", eventsNotFound);
-        jMainObj.put("05_total_audit_events_with_no_pretty_message", auditWithNoPrettyValues.length());
+        jMainObj.put("05_total_audit_events_with_no_pretty_message", auditWithNoPrettyValues.size());
         jMainObj.put("05_list_of_audit_events_with_no_pretty_message", auditWithNoPrettyValues);
 
         Boolean sendMail = Boolean.valueOf(request.getParameter("sendMail"));        
         if (sendMail){
             StringBuilder mailBody=new StringBuilder(0);
-            mailBody.append("<h2>Audit events not found: "+eventsNotFound.length()+" from  a total of "+(eventsFound.length()+eventsNotFound.length())+"</h2><br>");
-            mailBody.append("<h2>Audit events with no pretty message : "+auditWithNoPrettyValues.length());
+            mailBody.append("<h2>Audit events not found: "+eventsNotFound.size()+" from  a total of "+(eventsFound.size()+eventsNotFound.size())+"</h2><br>");
+            mailBody.append("<h2>Audit events with no pretty message : "+auditWithNoPrettyValues.size());
             mailBody.append("<b>The not found ones are:</b> <br>"+formatListForEmail(jsonArrayToList(eventsFound))+"<br><br>");
             mailBody.append("<b>Audit events with no pretty message are:</b> <br>"+formatListForEmail(jsonArrayToList(auditWithNoPrettyValues))+"<br><br>");
             LPMailing newMail = new LPMailing();
@@ -188,7 +188,7 @@ private static JSONArray getEndPointArguments(LPAPIArguments[] arguments){
     JSONArray argsJsonArr = new JSONArray();
     for (LPAPIArguments curArg: arguments){
         JSONObject argsJson = LPJson.convertArrayRowToJSONObject(argHeader, new Object[]{curArg.getName(), curArg.getType(), curArg.getMandatory(), curArg.getTestingArgPosic()});
-        argsJsonArr.put(argsJson);
+        argsJsonArr.add(argsJson);
     }
     return argsJsonArr;
 }

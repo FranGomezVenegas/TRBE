@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPNulls;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
@@ -104,7 +104,7 @@ public class SampleAPIfrontend extends HttpServlet {
                     LPFrontEnd.responseError(LPArray.array2dTo1d(datas));
                     return;
                 }else{                   
-                   jArray.putAll(Arrays.asList(LPArray.array2dTo1d(datas)));    
+                   jArray.addAll(Arrays.asList(LPArray.array2dTo1d(datas)));    
                 }           
                 LPFrontEnd.servletReturnSuccess(request, response, jArray);
                 return;
@@ -164,7 +164,7 @@ public class SampleAPIfrontend extends HttpServlet {
                     whereFieldsNameArr, whereFieldsValueArr, sortFieldsNameArr);
                 JSONArray smplsJsArr= new JSONArray();
                 for (Object[] curSmp: smplsData){
-                    smplsJsArr.put(LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curSmp));
+                    smplsJsArr.add(LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curSmp));
                 }
                 Rdbms.closeRdbms();
                 LPFrontEnd.servletReturnSuccess(request, response, smplsJsArr);       
@@ -201,7 +201,7 @@ public class SampleAPIfrontend extends HttpServlet {
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(smplsAnaData[0][0].toString()))
                     LPFrontEnd.servletReturnSuccess(request, response, smplAnaJsArr); 
                 for (Object[] curSmpAna: smplsAnaData){
-                    smplAnaJsArr.put(LPJson.convertArrayRowToJSONObject(EnumIntViewFields.getAllFieldNames(fieldsToGet), curSmpAna));
+                    smplAnaJsArr.add(LPJson.convertArrayRowToJSONObject(EnumIntViewFields.getAllFieldNames(fieldsToGet), curSmpAna));
                 }
                 Rdbms.closeRdbms();
                 LPFrontEnd.servletReturnSuccess(request, response, smplAnaJsArr);       
@@ -261,7 +261,7 @@ public class SampleAPIfrontend extends HttpServlet {
                 }else{                        
                     for (Object[] mySample : mySamples) {
                         JSONObject myJSObj = LPJson.convertArrayRowToJSONObject(fieldToRetrieveArr, mySample); 
-                        myJSArr.put(myJSObj);
+                        myJSArr.add(myJSObj);
                     }
                     LPFrontEnd.servletReturnSuccess(request, response, myJSArr);                    
                     return;
@@ -485,7 +485,7 @@ public class SampleAPIfrontend extends HttpServlet {
                           specRule.specLimitsRule(Integer.valueOf(currRowLimitId) , null);                        
                           row.put(ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_DETAILED, specRule.getRuleRepresentation());                          
                         }
-                        jArr.put(row);
+                        jArr.add(row);
                       }                        
                       Rdbms.closeRdbms();                    
                       LPFrontEnd.servletReturnSuccess(request, response, jArr);
@@ -661,7 +661,7 @@ public class SampleAPIfrontend extends HttpServlet {
                             for (int iChild=childJObj.length;iChild<sampleFieldToRetrieveArr.length;iChild++)
                                 childJObj=LPArray.addValueToArray1D(childJObj, null);                            
                             JSONObject jObjLvl2=LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, childJObj); 
-                            jArrLvl2.put(jObjLvl2);
+                            jArrLvl2.add(jObjLvl2);
                         }else{
                             for (Object[] curRowLvl2: sampleAuditInfoLvl2){
                                 JSONObject jObjLvl2=LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curRowLvl2,
@@ -669,11 +669,11 @@ public class SampleAPIfrontend extends HttpServlet {
                                 Object[] convertToJsonObjectStringedObjectLvl2 = LPJson.convertToJsonObjectStringedObject(curRowLvl2[LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsDataAudit.Sample.FIELDS_UPDATED.getName())].toString());
                                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(convertToJsonObjectStringedObjectLvl2[0].toString()))
                                     jObjLvl2.put(TblsDataAudit.Sample.FIELDS_UPDATED.getName(), convertToJsonObjectStringedObjectLvl2[1]);            
-                                jArrLvl2.put(jObjLvl2);
+                                jArrLvl2.add(jObjLvl2);
                             }
                         }
                         jObj.put("sublevel", jArrLvl2);
-                    jArr.put(jObj);
+                    jArr.add(jObj);
                    }
                    Rdbms.closeRdbms();
                    jMainObj.put(GenericAuditFields.TAG_AUDIT_INFO, jArr);
@@ -689,7 +689,7 @@ public class SampleAPIfrontend extends HttpServlet {
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(dataValues[0][0].toString()))){
                         for (Object[] curRow: dataValues){      
                             JSONObject jObj=LPJson.convertArrayRowToJSONObject(fldNames, curRow);
-                            jArr.put(jObj);
+                            jArr.add(jObj);
                         }
                     }
                     Rdbms.closeRdbms();
@@ -810,16 +810,16 @@ public class SampleAPIfrontend extends HttpServlet {
                                 JSONObject mySampleAnaResJSObj = new JSONObject();
                                 for (Object[] mySampleAnalysisResult : mySampleAnalysisResults) {
                                     mySampleAnaResJSObj = LPJson.convertArrayRowToJSONObject(sampleAnalysisResultFieldToRetrieveArr, mySampleAnalysisResult);
-                                    mySamplesAnaResJSArr.put(mySampleAnaResJSObj);
+                                    mySamplesAnaResJSArr.add(mySampleAnaResJSObj);
                                 }
                                 mySampleAnaJSObj.put(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), mySamplesAnaResJSArr);  
                             }
-                            mySamplesAnaJSArr.put(mySampleAnaJSObj);
+                            mySamplesAnaJSArr.add(mySampleAnaJSObj);
                         }        
                         mySampleJSObj.put(TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), mySamplesAnaJSArr);
                     }
                 }                            
-                mySamplesJSArr.put(mySampleJSObj);
+                mySamplesJSArr.add(mySampleJSObj);
             }
             return mySamplesJSArr;
         }
@@ -850,13 +850,13 @@ public class SampleAPIfrontend extends HttpServlet {
                             testObj.put(sampleAnalysisFieldToRetrieveArr[ySmpAna], mySampleAnalysi[ySmpAna]);
                         }
                     }      
-                    sampleArray.put(testObj);
+                    sampleArray.add(testObj);
                 }
                 sampleObj.put(TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), sampleArray);
             }
-            sampleArray.put(sampleObj);                        
+            sampleArray.add(sampleObj);                        
         }
-        samplesArray.put(sampleArray);
+        samplesArray.add(sampleArray);
         return samplesArray;
     }
     
@@ -937,11 +937,11 @@ public class SampleAPIfrontend extends HttpServlet {
                         JSONObject mySampleAnaResJSObj = new JSONObject();
                         for (Object[] mySampleAnalysisResult : mySampleAnalysisResults) {
                             mySampleAnaResJSObj = LPJson.convertArrayRowToJSONObject(sampleAnalysisResultFieldToRetrieveArr, mySampleAnalysisResult);
-                            mySamplesAnaResJSArr.put(mySampleAnaResJSObj);
+                            mySamplesAnaResJSArr.add(mySampleAnaResJSObj);
                         }
                         mySampleAnaJSObj.put(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), mySamplesAnaResJSArr);  
                     }
-                    mySampleAnalysisJSArr.put(mySampleAnaJSObj);
+                    mySampleAnalysisJSArr.add(mySampleAnaJSObj);
                 }
                 return mySampleAnalysisJSArr;
             }
@@ -1000,7 +1000,7 @@ public class SampleAPIfrontend extends HttpServlet {
         JSONArray mySampleAnalysisResultJSArr = new JSONArray();
         for (Object[] curSampAnaRes : mySampleAnalysisResult) {
             JSONObject mySampleJSObj = LPJson.convertArrayRowToJSONObject(fieldToRetrieveArr, curSampAnaRes);                
-            mySampleAnalysisResultJSArr.put(mySampleJSObj);
+            mySampleAnalysisResultJSArr.add(mySampleJSObj);
         }
         return mySampleAnalysisResultJSArr;            
     }

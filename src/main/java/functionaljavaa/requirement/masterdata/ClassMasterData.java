@@ -35,7 +35,7 @@ import static lbplanet.utilities.LPJson.convertToJsonObjectStringedObject;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import module.instrumentsmanagement.definition.TblsInstrumentsData;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import trazit.enums.EnumIntTables;
@@ -126,7 +126,7 @@ public class ClassMasterData {
                             this.diagnostic = new InternalMessage(LPPlatform.LAB_FALSE, insertRecord.getErrorMessageCode(), insertRecord.getErrorMessageVariables(), insertRecord.getNewRowId());
                             globalDiagn = this.diagnostic.getDiagnostic();
                             jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, this.diagnostic.getDiagnostic());
-                            jLogArr.put(jLog);
+                            jLogArr.add(jLog);
                             calculateDiagnostic(jLogArr);
                             return;
                         }
@@ -136,7 +136,7 @@ public class ClassMasterData {
                     this.diagnostic = new InternalMessage(globalDiagn, "created with success", new Object[]{tableName}, null);
                 }
                 jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, this.diagnostic.getDiagnostic());
-                jLogArr.put(jLog);
+                jLogArr.add(jLog);
             }
             calculateDiagnostic(jLogArr);
         } else {
@@ -214,13 +214,13 @@ public class ClassMasterData {
                                         globalDiagn = newRecord.getDiagnostic();
                                     }
                                     jUserAssignLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, newRecord.getNewObjectId());
-                                    jUserAssignLogArr.put(jUserAssignLog);
+                                    jUserAssignLogArr.add(jUserAssignLog);
                                 }
                                 jLog.put("users_assignment_detail", jUserAssignLogArr);
                             }
                         }
                         jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, diagn);
-                        jLogArr.put(jLog);
+                        jLogArr.add(jLog);
                     }
                     calculateDiagnostic(jLogArr);
                     break;
@@ -391,7 +391,7 @@ public class ClassMasterData {
                             jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, resSpecEvaluation.getDiagnostic());
                         }
                         jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, this.diagnostic.getDiagnostic());
-                        jLogArr.put(jLog);
+                        jLogArr.add(jLog);
                     }
                     calculateDiagnostic(jLogArr);
                     break;
@@ -412,7 +412,7 @@ public class ClassMasterData {
                             this.diagnostic = new InternalMessage(insertRecord.getSqlStatement(), insertRecord.getErrorMessageCode(), insertRecord.getErrorMessageVariables(), insertRecord.getNewRowId());
                         }
                         jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, this.diagnostic.getDiagnostic());
-                        jLogArr.put(jLog);
+                        jLogArr.add(jLog);
                     }
                     calculateDiagnostic(jLogArr);
                     /*                        
@@ -446,7 +446,7 @@ public class ClassMasterData {
                             this.diagnostic = new InternalMessage(insertRecord.getSqlStatement(), insertRecord.getErrorMessageCode(), insertRecord.getErrorMessageVariables(), insertRecord.getNewRowId());
                         }
                         jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, this.diagnostic.getDiagnostic());
-                        jLogArr.put(jLog);
+                        jLogArr.add(jLog);
                     }
                     calculateDiagnostic(jLogArr);
                     break;
@@ -656,7 +656,7 @@ public class ClassMasterData {
                             this.diagnostic = new InternalMessage(insertRecord.getSqlStatement(), insertRecord.getErrorMessageCode(), insertRecord.getErrorMessageVariables(), insertRecord.getNewRowId());
                         }
                         jLog.put(GlobalAPIsParams.LBL_DIAGNOSTIC, this.diagnostic.getDiagnostic());
-                        jLogArr.put(jLog);
+                        jLogArr.add(jLog);
                     }
                     calculateDiagnostic(jLogArr);
                     break;

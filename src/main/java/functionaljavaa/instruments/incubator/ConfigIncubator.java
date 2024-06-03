@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;
@@ -86,7 +86,7 @@ public enum ConfigIncubatorErrorTrapping  implements EnumIntMessages{
                 jObj.put("value", obj.value);
                 jObj.put("description_en", obj.descriptionEn);
                 jObj.put("description_es", obj.descriptionEs);
-                jArr.put(jObj);
+                jArr.add(jObj);
             }           
             return jArr;
         }

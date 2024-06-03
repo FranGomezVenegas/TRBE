@@ -29,7 +29,7 @@ import java.util.ResourceBundle;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import org.json.JSONObject;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import trazit.enums.EnumIntTables;
 import static trazit.enums.deployrepository.DeployTables.createTableScript;
 import static trazit.globalvariables.GlobalVariables.PROC_MANAGEMENT_SPECIAL_ROLE;
@@ -103,11 +103,11 @@ public class CreatePlatform {
         if (this.errorsList.isEmpty()){
             conclusionStr="All correct, no problems";
         }else{
-            conclusionStr="Found "+this.errorsList.length()+" errors";
+            conclusionStr="Found "+this.errorsList.size()+" errors";
             summary.put("errors_found", errorsList);
         }        
         this.executionLog.put("conclusion", conclusionStr);
-        if (this.errorsList.length()>0)
+        if (this.errorsList.size()>0)
             this.executionLog.put("errors_detected", summary);
         return executionLog;
     }
@@ -127,11 +127,11 @@ public class CreatePlatform {
             return false;
         }            
         if (Boolean.FALSE.equals(tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE)) && Boolean.FALSE.equals(tblCreateScript.toLowerCase().contains("already"))){
-            this.errorsList.put(infoToReport(curTbl, tblCreateScript));
+            this.errorsList.add(infoToReport(curTbl, tblCreateScript));
             return true;
         }
         if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains(GlobalAPIsParams.LBL_ERROR)){
-            this.errorsList.put(infoToReport(curTbl, tblCreateScript));
+            this.errorsList.add(infoToReport(curTbl, tblCreateScript));
             return true;
         }
         return false;        
@@ -141,11 +141,11 @@ public class CreatePlatform {
             return false;
         }            
         if (Boolean.FALSE.equals(tblCreateScript.toLowerCase().startsWith(GlobalAPIsParams.LBL_TABLE)) && Boolean.FALSE.equals(tblCreateScript.toLowerCase().contains("already"))){
-            this.errorsList.put(infoToReport(curView, tblCreateScript));
+            this.errorsList.add(infoToReport(curView, tblCreateScript));
             return true;
         }
         if (prepUpQuery[prepUpQuery.length-1].toString().toLowerCase().contains(GlobalAPIsParams.LBL_ERROR)){
-            this.errorsList.put(infoToReport(curView, tblCreateScript));
+            this.errorsList.add(infoToReport(curView, tblCreateScript));
             return true;
         }
         return false;        
@@ -175,7 +175,7 @@ public class CreatePlatform {
                 return false;
             }
             log.put("inserting_procedure_info_"+"app",insertRecord!=null?insertRecord.getErrorMessageCode():errorDetailStr);
-            this.errorsList.put(log);
+            this.errorsList.add(log);
             return true;
         }
     }
@@ -242,7 +242,7 @@ public class CreatePlatform {
                 }else{
                     curTblObj.put("script", viewCreateScript);            
                 }
-                curSchemaArr.put(curTblObj);
+                curSchemaArr.add(curTblObj);
             }
             curSchemaObj.put("tables", curSchemaArr);
             allSchemasObj.put(enumArray[0].getRepositoryName(), curSchemaObj);
@@ -265,7 +265,7 @@ public class CreatePlatform {
                     curViewObj.put("script", viewCreateScript);            
                 }
                 curViewObj.put("repository", curView.getRepositoryName());
-                allViewsArr.put(curViewObj);
+                allViewsArr.add(curViewObj);
 //            }
         }        
         mainBlockReport.put("views", allViewsArr);
@@ -381,7 +381,7 @@ public class CreatePlatform {
             RdbmsObject insertRecord = Rdbms.insertRecord(TblsApp.TablesApp.APP_BUSINESS_RULES, fields, curRule,
 TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
             Boolean errorForInsertRecord = isErrorForInsertRecord(TblsApp.TablesApp.APP_BUSINESS_RULES, insertRecord, curRule[1].toString());
-            jArr.put(infoToReportForInsertRecord(TblsApp.TablesApp.APP_BUSINESS_RULES, insertRecord, curRule[1].toString(), errorForInsertRecord, null));                        
+            jArr.add(infoToReportForInsertRecord(TblsApp.TablesApp.APP_BUSINESS_RULES, insertRecord, curRule[1].toString(), errorForInsertRecord, null));                        
         }        
         
             RdbmsObject insertRecord2 = Rdbms.insertRecord(TblsProcedure.TablesProcedure.PROCEDURE_INFO, 
@@ -407,7 +407,7 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
             RdbmsObject insertRecord = Rdbms.insertRecord(TblsApp.TablesApp.APP_PROCEDURE_VIEWS, fields, curRule,
 TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
             errorForInsertRecord = isErrorForInsertRecord(TblsApp.TablesApp.APP_PROCEDURE_VIEWS, insertRecord, curRule[0].toString());
-            jArr.put(infoToReportForInsertRecord(TblsApp.TablesApp.APP_PROCEDURE_VIEWS, insertRecord, curRule[0].toString(), errorForInsertRecord, null));                        
+            jArr.add(infoToReportForInsertRecord(TblsApp.TablesApp.APP_PROCEDURE_VIEWS, insertRecord, curRule[0].toString(), errorForInsertRecord, null));                        
         }        
         prcDeplSectionLog.put(TblsApp.TablesApp.APP_PROCEDURE_VIEWS.getTableName(), jArr);
         
@@ -583,13 +583,13 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
                                 curModuleCreationLog.put("manuals",createManuals(moduleName, moduleVersion, manuals));
 
                                 curModuleInfo.put("creation_log", curModuleCreationLog);
-                                allModuleFilesInfo.put(curModuleInfo);
+                                allModuleFilesInfo.add(curModuleInfo);
                             } catch (IOException e) {
                                 JSONObject curModuleInfo = new JSONObject();
                                 curModuleInfo.put("moduleName", moduleName);
                                 curModuleInfo.put("file_content", jFileContentObjModel);
                                 curModuleInfo.put("module_info_error", e.getMessage());
-                                allModuleFilesInfo.put(curModuleInfo);
+                                allModuleFilesInfo.add(curModuleInfo);
                                 e.printStackTrace();
                             }
                         }
@@ -598,7 +598,7 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
                         curModuleInfo.put("moduleName", moduleName);
                         curModuleInfo.put("file_content", jFileContentObjModel);
                         curModuleInfo.put("module_info_error", e.getMessage());
-                        allModuleFilesInfo.put(curModuleInfo);
+                        allModuleFilesInfo.add(curModuleInfo);
                     }
                 }                            
             }
@@ -678,13 +678,13 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
                                     curModuleSpecialViewInfo.put("specialViewName", viewName);                                    
                                     curModuleSpecialViewInfo.put("fileContent", jFileContentObjModel);
                                 }
-                                allModuleSpecialViewsInfo.put(curModuleSpecialViewInfo);
+                                allModuleSpecialViewsInfo.add(curModuleSpecialViewInfo);
                             } catch (IOException e) {
                                 JSONObject curModuleInfo = new JSONObject();
                                 curModuleInfo.put("moduleName", moduleName);
                                 curModuleInfo.put("fileContent", jFileContentObjModel);
                                 curModuleInfo.put("specialViewAreaRrror", e.getMessage());
-                                allModuleSpecialViewsInfo.put(curModuleInfo);
+                                allModuleSpecialViewsInfo.add(curModuleInfo);
                                 e.printStackTrace();
                             }
                         }
@@ -693,7 +693,7 @@ TblsApp.TablesApp.APP_BUSINESS_RULES.getRepositoryName());
                         curModuleInfo.put("moduleName", moduleName);
                         curModuleInfo.put("fileContent", jFileContentObjModel);
                         curModuleInfo.put("specialViewAreaRrror", e.getMessage());
-                        allModuleSpecialViewsInfo.put(curModuleInfo);
+                        allModuleSpecialViewsInfo.add(curModuleInfo);
                     }
                 }                            
             }            
@@ -799,14 +799,14 @@ if (curBusRuleObj.getTagName().contains("certificationUserSOPMode")){
                 }
                 curApiObj.put("inserts_log", jMainObj);
             }
-            allBusRulesArr.put(curApiObj);
+            allBusRulesArr.add(curApiObj);
         }
         }catch(Exception e){
             JSONObject curApiObj=new JSONObject();
             curApiObj.put("current_api_when_failed", apiName);
             curApiObj.put("current_tag_when_failed", curBusRuleObj.getTagName());
             curApiObj.put("error", e.getMessage());
-            allBusRulesArr.put(curApiObj);
+            allBusRulesArr.add(curApiObj);
             return allBusRulesArr;
         }                          
         return allBusRulesArr;
@@ -857,13 +857,13 @@ if (curBusRuleObj.getTagName().contains("certificationUserSOPMode")){
                 }
                 curApiObj.put("inserts_log", jMainObj);
             }  
-            allErrorNotifArr.put(curApiObj);
+            allErrorNotifArr.add(curApiObj);
         }
         }catch(Exception e){
             JSONObject curApiObj=new JSONObject();
             curApiObj.put("current_api_when_failed", apiName);
             curApiObj.put("error", e.getMessage());
-            allErrorNotifArr.put(curApiObj);
+            allErrorNotifArr.add(curApiObj);
             return allErrorNotifArr;
         }                  
         return allErrorNotifArr;
@@ -916,7 +916,7 @@ if (curBusRuleObj.getTagName().contains("certificationUserSOPMode")){
                     TblsReqs.ModuleActionsAndQueries.ARGUMENTS_ARRAY.getName(), TblsReqs.ModuleActionsAndQueries.OUTPUT_OBJECT_TYPES.getName()};
                 for (int j = 0; j < enumConstantObjects.size(); j++) {
                     EnumIntEndpoints curEndpoint = (EnumIntEndpoints) enumConstantObjects.get(j);
-                    apiEndpointsArr.put(curEndpoint.getName());
+                    apiEndpointsArr.add(curEndpoint.getName());
                     String outputObjectTpesStr = LPNulls.replaceNull(curEndpoint.getOutputObjectTypes()).toString();
                     if (outputObjectTpesStr.length()==0){
                         outputObjectTpesStr="NULL>>>STRING";
@@ -948,13 +948,13 @@ if (curBusRuleObj.getTagName().contains("certificationUserSOPMode")){
                 curApiObj.put("endpoints", apiEndpointsArr);
                 curApiObj.put("inserts_log", jMainObj);
             }
-            allApisArr.put(curApiObj);
+            allApisArr.add(curApiObj);
         }
         }catch(Exception e){
             JSONObject curApiObj=new JSONObject();
             curApiObj.put("current_api", curApi);
             curApiObj.put("error", e.getMessage());
-            allApisArr.put(curApiObj);
+            allApisArr.add(curApiObj);
             return allApisArr;
         }
         return allApisArr;
@@ -1004,13 +1004,13 @@ if (curBusRuleObj.getTagName().contains("certificationUserSOPMode")){
             RdbmsObject insertRecord = Rdbms.insertRecord(TblsReqs.TablesReqs.MODULE_MANUALS, fldsInTable, fieldValues, TblsReqs.TablesReqs.MODULE_BUSINESS_RULES.getRepositoryName());                                
             Boolean errorForInsertRecord = isErrorForInsertRecord(TblsReqs.TablesReqs.MODULE_MANUALS, insertRecord, manualName);
             curRowObj.put("inserts_log", infoToReportForInsertRecord(TblsReqs.TablesReqs.MODULE_MANUALS, insertRecord, manualName, errorForInsertRecord, null));
-            allManualsArr.put(curRowObj);
+            allManualsArr.add(curRowObj);
         }
         }catch(Exception e){
             JSONObject curApiObj=new JSONObject();
             curApiObj.put("current_manual", manualName);
             curApiObj.put("error", e.getMessage());
-            allManualsArr.put(curApiObj);
+            allManualsArr.add(curApiObj);
             return allManualsArr;
         }        
         return allManualsArr;    
@@ -1026,7 +1026,7 @@ if (curBusRuleObj.getTagName().contains("certificationUserSOPMode")){
         org.json.JSONArray moduleTableAndViewsInfo=jFileContentObjModel.getJSONArray("tables_and_views");
         if (moduleTableAndViewsInfo.isEmpty()){
            JSONArray jArr=new JSONArray();
-            jArr.put("tables_and_views is empty");
+            jArr.add("tables_and_views is empty");
             return jArr;                    
         }   
         JSONArray moduleTableAndViewsLogArr=new JSONArray();
@@ -1090,13 +1090,13 @@ if (curBusRuleObj.getTagName().contains("certificationUserSOPMode")){
                 Boolean errorForInsertRecord = isErrorForInsertRecord(TblsReqs.TablesReqs.MODULE_TABLES_AND_VIEWS, insertRecord, schemaName+"-"+tableName);
                 curRowObj.put("inserts_log", infoToReportForInsertRecord(TblsReqs.TablesReqs.MODULE_MANUALS, insertRecord, schemaName+"-"+tableName, errorForInsertRecord, null));
             }
-            moduleTableAndViewsLogArr.put(curRowObj);
+            moduleTableAndViewsLogArr.add(curRowObj);
         }
         }catch(Exception e){
             JSONObject curApiObj=new JSONObject();
             curApiObj.put("current_table_when_failed", curRowObj);
             curApiObj.put("error", e.getMessage());
-            moduleTableAndViewsLogArr.put(curApiObj);
+            moduleTableAndViewsLogArr.add(curApiObj);
             return moduleTableAndViewsLogArr;
         }          
         return moduleTableAndViewsLogArr;    

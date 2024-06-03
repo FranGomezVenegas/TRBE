@@ -28,7 +28,7 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntMessages;
@@ -227,7 +227,7 @@ public class TestingAPIActions extends HttpServlet {
         JSONArray scriptStepsJArr = new JSONArray();
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptStepsInfo[0][0].toString()))) {
             for (Object[] curStep : scriptStepsInfo) {
-                scriptStepsJArr.put(LPJson.convertArrayRowToJSONObject(scriptFldToRetrieve, curStep));
+                scriptStepsJArr.add(LPJson.convertArrayRowToJSONObject(scriptFldToRetrieve, curStep));
             }
         }
         jObj.put("steps", scriptStepsJArr);
@@ -238,7 +238,7 @@ public class TestingAPIActions extends HttpServlet {
         JSONArray scriptBusRulesJArr = new JSONArray();
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptBusRulesInfo[0][0].toString()))) {
             for (Object[] curBusRules : scriptBusRulesInfo) {
-                scriptBusRulesJArr.put(LPJson.convertArrayRowToJSONObject(scriptFldToRetrieve, curBusRules));
+                scriptBusRulesJArr.add(LPJson.convertArrayRowToJSONObject(scriptFldToRetrieve, curBusRules));
             }
         }
         jObj.put("business_rules", scriptBusRulesJArr);

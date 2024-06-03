@@ -60,7 +60,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntQueriesObj;
 import trazit.enums.EnumIntTableFields;
@@ -202,10 +202,10 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                             for (Object[] curSpcRlDet : specRuleDetail) {
                                 specRuleDetailjObj.put(curSpcRlDet[0], curSpcRlDet[1]);
                             }
-                            specRuleDetailjArr.put(specRuleDetailjObj);
+                            specRuleDetailjArr.add(specRuleDetailjObj);
                             row.put(ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_INFO, specRuleDetailjArr);
                         }
-                        jArr.put(row);
+                        jArr.add(row);
                     }
                     Rdbms.closeRdbms();
                     this.isSuccess = true;
@@ -364,7 +364,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                     return;
                 }
                 for (Object[] curSmpAna : smplsAnaData) {
-                    smplAnaJsArr.put(LPJson.convertArrayRowToJSONObject(EnumIntViewFields.getAllFieldNames(fieldsToGet), curSmpAna));
+                    smplAnaJsArr.add(LPJson.convertArrayRowToJSONObject(EnumIntViewFields.getAllFieldNames(fieldsToGet), curSmpAna));
                 }
                 this.isSuccess = true;
                 this.responseSuccessJArr = smplAnaJsArr;
@@ -538,7 +538,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                     JSONArray jArr = new JSONArray();
                     for (Object[] curRow : analysisList) {
                         JSONObject row = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(tblFldsToGet), curRow);
-                        jArr.put(row);
+                        jArr.add(row);
                     }
                     Rdbms.closeRdbms();
                     this.isSuccess = true;
@@ -556,7 +556,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                     LPFrontEnd.responseError(LPArray.array2dTo1d(datas));
                     return;
                 }else{                   
-                   jArray.putAll(Arrays.asList(LPArray.array2dTo1d(datas)));    
+                   jArray.addAll(Arrays.asList(LPArray.array2dTo1d(datas)));    
                 }           
                 LPFrontEnd.servletReturnSuccess(request, response, jArray);
                 return;
@@ -616,7 +616,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                     whereFieldsNameArr, whereFieldsValueArr, sortFieldsNameArr);
                 JSONArray smplsJsArr= new JSONArray();
                 for (Object[] curSmp: smplsData){
-                    smplsJsArr.put(LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curSmp));
+                    smplsJsArr.add(LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curSmp));
                 }
                 Rdbms.closeRdbms();
                 LPFrontEnd.servletReturnSuccess(request, response, smplsJsArr);       
@@ -654,7 +654,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(smplsAnaData[0][0].toString()))
                     LPFrontEnd.servletReturnSuccess(request, response, smplAnaJsArr); 
                 for (Object[] curSmpAna: smplsAnaData){
-                    smplAnaJsArr.put(LPJson.convertArrayRowToJSONObject(EnumIntViewFields.getAllFieldNames(fieldsToGet), curSmpAna));
+                    smplAnaJsArr.add(LPJson.convertArrayRowToJSONObject(EnumIntViewFields.getAllFieldNames(fieldsToGet), curSmpAna));
                 }
                 Rdbms.closeRdbms();
                 LPFrontEnd.servletReturnSuccess(request, response, smplAnaJsArr);       
@@ -714,7 +714,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                 }else{                        
                     for (Object[] mySample : mySamples) {
                         JSONObject myJSObj = LPJson.convertArrayRowToJSONObject(fieldToRetrieveArr, mySample); 
-                        myJSArr.put(myJSObj);
+                        myJSArr.add(myJSObj);
                     }
                     LPFrontEnd.servletReturnSuccess(request, response, myJSArr);                    
                     return;
@@ -947,7 +947,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                           specRule.specLimitsRule(Integer.valueOf(currRowLimitId) , null);                        
                           row.put(ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_DETAILED, specRule.getRuleRepresentation());                          
                         }
-                        jArr.put(row);
+                        jArr.add(row);
                       }                        
                       Rdbms.closeRdbms();                    
                       LPFrontEnd.servletReturnSuccess(request, response, jArr);
@@ -1126,7 +1126,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                             for (int iChild=childJObj.length;iChild<sampleFieldToRetrieveArr.length;iChild++)
                                 childJObj=LPArray.addValueToArray1D(childJObj, null);                            
                             JSONObject jObjLvl2=LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, childJObj); 
-                            jArrLvl2.put(jObjLvl2);
+                            jArrLvl2.add(jObjLvl2);
                         }else{
                             for (Object[] curRowLvl2: sampleAuditInfoLvl2){
                                 JSONObject jObjLvl2=LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curRowLvl2,
@@ -1134,11 +1134,11 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                                 Object[] convertToJsonObjectStringedObjectLvl2 = LPJson.convertToJsonObjectStringedObject(curRowLvl2[LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsDataAudit.Sample.FIELDS_UPDATED.getName())].toString());
                                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(convertToJsonObjectStringedObjectLvl2[0].toString()))
                                     jObjLvl2.put(TblsDataAudit.Sample.FIELDS_UPDATED.getName(), convertToJsonObjectStringedObjectLvl2[1]);            
-                                jArrLvl2.put(jObjLvl2);
+                                jArrLvl2.add(jObjLvl2);
                             }
                         }
                         jObj.put("sublevel", jArrLvl2);
-                    jArr.put(jObj);
+                    jArr.add(jObj);
                    }
                    Rdbms.closeRdbms();
                    jMainObj.put(GenericAuditFields.TAG_AUDIT_INFO, jArr);
@@ -1154,7 +1154,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(dataValues[0][0].toString()))){
                         for (Object[] curRow: dataValues){      
                             JSONObject jObj=LPJson.convertArrayRowToJSONObject(fldNames, curRow);
-                            jArr.put(jObj);
+                            jArr.add(jObj);
                         }
                     }
                     Rdbms.closeRdbms();
@@ -1291,16 +1291,16 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                                     JSONObject mySampleAnaResJSObj = new JSONObject();
                                     for (Object[] mySampleAnalysisResult : mySampleAnalysisResults) {
                                         mySampleAnaResJSObj = LPJson.convertArrayRowToJSONObject(sampleAnalysisResultFieldToRetrieveArr, mySampleAnalysisResult);
-                                        mySamplesAnaResJSArr.put(mySampleAnaResJSObj);
+                                        mySamplesAnaResJSArr.add(mySampleAnaResJSObj);
                                     }
                                     mySampleAnaJSObj.put(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), mySamplesAnaResJSArr);
                                 }
-                                mySamplesAnaJSArr.put(mySampleAnaJSObj);
+                                mySamplesAnaJSArr.add(mySampleAnaJSObj);
                             }
                             mySampleJSObj.put(TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), mySamplesAnaJSArr);
                         }
                     }
-                    mySamplesJSArr.put(mySampleJSObj);
+                    mySamplesJSArr.add(mySampleJSObj);
                 }
                 return mySamplesJSArr;
             }
@@ -1331,13 +1331,13 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                                 testObj.put(sampleAnalysisFieldToRetrieveArr[ySmpAna], mySampleAnalysi[ySmpAna]);
                             }
                         }
-                        sampleArray.put(testObj);
+                        sampleArray.add(testObj);
                     }
                     sampleObj.put(TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), sampleArray);
                 }
-                sampleArray.put(sampleObj);
+                sampleArray.add(sampleObj);
             }
-            samplesArray.put(sampleArray);
+            samplesArray.add(sampleArray);
             return samplesArray;
         }
 
@@ -1359,7 +1359,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                 jObj.put(TblsEnvMonitData.Sample.SAMPLING_DATE.getName(), sampleFldValue[LPArray.valuePosicInArray(sampleFldName, TblsEnvMonitData.Sample.SAMPLING_DATE.getName())].toString());
                 jObj.put(GlobalAPIsParams.LBL_FIELD_NAME, TblsEnvMonitData.Sample.SAMPLING_DATE.getName());
                 jObj.put(GlobalAPIsParams.LBL_FIELD_VALUE, sampleFldValue[LPArray.valuePosicInArray(sampleFldName, TblsEnvMonitData.Sample.SAMPLING_DATE.getName())].toString());
-                jArrMainObj.put(jObj);
+                jArrMainObj.add(jObj);
                 return jArrMainObj;
             case "INCUBATION":
                 String[] incub1Flds = new String[]{TblsEnvMonitData.Sample.INCUBATION_PASSED.getName(), TblsEnvMonitData.Sample.INCUBATION_INCUBATOR.getName(), TblsEnvMonitData.Sample.INCUBATION_BATCH.getName(),
@@ -1370,29 +1370,29 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                     if (fldPosic > -1) {
                         jObj = new JSONObject();
                         jObj.put(curFld, sampleFldValue[fldPosic].toString());
-                        jArrMainObj.put(jObj);
+                        jArrMainObj.add(jObj);
                         JSONObject jObjSampleStageInfo = new JSONObject();
                         jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, curFld);
                         jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, sampleFldValue[fldPosic].toString());
-                        jArrMainObj.put(jObjSampleStageInfo);
+                        jArrMainObj.add(jObjSampleStageInfo);
                     }
                     curFld = curFld.replace("incubation", "incubation2");
                     fldPosic = LPArray.valuePosicInArray(sampleFldName, curFld);
                     if (fldPosic > -1) {
                         jObj = new JSONObject();
                         jObj.put(curFld, sampleFldValue[fldPosic].toString());
-                        jArrMainObj2.put(jObj);
+                        jArrMainObj2.add(jObj);
                         JSONObject jObjSampleStageInfo = new JSONObject();
                         jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, curFld);
                         jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, sampleFldValue[fldPosic].toString());
-                        jArrMainObj2.put(jObjSampleStageInfo);
+                        jArrMainObj2.add(jObjSampleStageInfo);
                     }
                 }
                 JSONObject jObj2 = new JSONObject();
                 jObj2.put("incubation_1", jArrMainObj);
                 jObj2.put("incubation_2", jArrMainObj2);
                 jArrMainObj = new JSONArray();
-                jArrMainObj.put(jObj2);
+                jArrMainObj.add(jObj2);
                 return jArrMainObj;
             case "PLATEREADING":
             case "MICROORGANISMIDENTIFICATION":
@@ -1408,10 +1408,10 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
                     JSONObject jObjSampleStageInfo = new JSONObject();
                     jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, tblAllFlds[iFlds]);
                     jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, sampleStageInfo[0][iFlds].toString());
-                    jArrMainObj.put(jObjSampleStageInfo);
+                    jArrMainObj.add(jObjSampleStageInfo);
                 }
                 jObj.put("counting", jObj2);
-                jArrMainObj.put(jObj);
+                jArrMainObj.add(jObj);
                 return jArrMainObj;
             default:
                 return jArrMainObj;
@@ -1619,7 +1619,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisMethodsList[0][0].toString()))) {
             for (Object[] currAnalysisMeth : analysisMethodsList) {
                 JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currAnalysisMeth);
-                jArr.put(jObj);
+                jArr.add(jObj);
             }
         }
         return jArr;
@@ -1641,7 +1641,7 @@ public class ClassSampleQueries implements EnumIntQueriesObj {
         if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisMethodsList[0][0].toString()))) {
             for (Object[] currAnalysisMeth : analysisMethodsList) {
                 JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currAnalysisMeth);
-                jArr.put(jObj);
+                jArr.add(jObj);
             }
         }
         return jArr;

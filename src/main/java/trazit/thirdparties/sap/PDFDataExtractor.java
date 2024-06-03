@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.JSONObject;
 
 public class PDFDataExtractor {
@@ -60,7 +60,7 @@ public class PDFDataExtractor {
                     String estdValue = parts[3];
                     JSONObject jTblRowObj=new JSONObject();
                     jTblRowObj.put("index", id).put("filename", filename).put("udc", udcValue).put("estd", estdValue);
-                    jTblArr.put(jTblRowObj);
+                    jTblArr.add(jTblRowObj);
                 }
             }
             jMainObj.put("table_data", jTblArr);
@@ -120,7 +120,7 @@ public class PDFDataExtractor {
                     String estdValue = parts[3];
                     JSONObject jTblRowObj = new JSONObject();
                     jTblRowObj.put("estd", estdValue).put("index", id).put("filename", filename).put("udc", udcValue);
-                    jTblArr.put(jTblRowObj);
+                    jTblArr.add(jTblRowObj);
                 }
             }
             jMainObj.put(PARSING_TABLE_TAG, jTblArr);

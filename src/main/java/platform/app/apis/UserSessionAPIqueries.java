@@ -38,7 +38,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntTableFields;
@@ -229,7 +229,7 @@ public class UserSessionAPIqueries extends HttpServlet {
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(userSessionInfo[0][0].toString()))) {
                         for (Object[] currUsrSession : userSessionInfo) {
                             JSONObject userSessionObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currUsrSession);
-                            userSessionArr.put(userSessionObj);
+                            userSessionArr.add(userSessionObj);
                         }
                     }
                     Rdbms.closeRdbms();
@@ -275,11 +275,11 @@ public class UserSessionAPIqueries extends HttpServlet {
                                                     JSONObject procAuditCurTableJson = new JSONObject();
                                                     for (Object[] curTblAuditRec : dataAuditCurTableInfo) {
                                                         JSONObject procAuditTablesJson = LPJson.convertArrayRowToJSONObject(procAuditTablesFieldsToRetrieve, curTblAuditRec);
-                                                        auditCurTableArr.put(procAuditTablesJson);
+                                                        auditCurTableArr.add(procAuditTablesJson);
                                                     }
                                                     procAuditCurTableJson.put("audit_records", auditCurTableArr);
                                                     procAuditCurTableJson.put(GlobalAPIsParams.LBL_TABLE, curTable);
-                                                    procAuditCurTableArr.put(procAuditCurTableJson);
+                                                    procAuditCurTableArr.add(procAuditCurTableJson);
                                                     procAuditJson.put("proc_audit_records", procAuditCurTableArr);
                                                 }
                                             }
@@ -288,10 +288,10 @@ public class UserSessionAPIqueries extends HttpServlet {
                                         procAuditJson.put("proc_audit_records", "error: " + e.getMessage());
                                     }
                                 }
-                                procAuditArr.put(procAuditJson);
+                                procAuditArr.add(procAuditJson);
                             }
                             userSessionObj.put("audit_actions", procAuditArr);
-                            userSessionArr.put(userSessionObj);
+                            userSessionArr.add(userSessionObj);
                         }
                     }
                     Rdbms.closeRdbms();

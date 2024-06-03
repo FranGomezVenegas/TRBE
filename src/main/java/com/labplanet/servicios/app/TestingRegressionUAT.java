@@ -40,7 +40,7 @@ import static lbplanet.utilities.LPPlatform.LAB_FALSE;
 import static lbplanet.utilities.LPPlatform.LAB_TRUE;
 import lbplanet.utilities.LPPlatform.LpPlatformErrorTrapping;
 import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntTableFields;
@@ -115,7 +115,7 @@ public class TestingRegressionUAT extends HttpServlet {
                     jObj.put("testerFileName", curTstr.getTesterFileName());
                     jObj.put("numTables", curTstr.getNumTables());
                     jObj.put("tablesHeaders", curTstr.getTablesHeaders());
-                    jArr.put(jObj);
+                    jArr.add(jObj);
                 }
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
                 return;

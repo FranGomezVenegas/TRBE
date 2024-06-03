@@ -16,7 +16,7 @@ import java.net.MalformedURLException;
 import static trazit.procedureinstance.deployment.logic.ProcedureDefinitionToInstanceSections.SCHEMA_AUTHORIZATION_ROLE;
 import java.util.Arrays;
 import lbplanet.utilities.LPPlatform;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.JSONObject;
 import trazit.globalvariables.GlobalVariables;
 import java.util.ResourceBundle;
@@ -511,7 +511,7 @@ public class DbObjects {
                 }
                 break;
             }
-            mainLogArr.put(jsonObj);
+            mainLogArr.add(jsonObj);
         }
         return mainLogArr;
      }    
@@ -584,7 +584,7 @@ public class DbObjects {
                     }
                 }
                 if (procRoles.length>1)
-                    multiRolejArr.put(multiRolCurEvent);
+                    multiRolejArr.add(multiRolCurEvent);
             }
         }
         if (Boolean.FALSE.equals(multiRolejArr.isEmpty()))

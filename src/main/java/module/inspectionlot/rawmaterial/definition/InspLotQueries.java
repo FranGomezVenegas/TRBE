@@ -10,7 +10,7 @@ import databases.TblsData;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
@@ -39,7 +39,7 @@ public final class InspLotQueries {
             if (includeMatCertificate==null || includeMatCertificate) jObj.put(TblsInspLotRMConfig.TablesInspLotRMConfig.MATERIAL_CERTIFICATE.getTableName(), configMaterialCertificateStructure(name, null, null, new String[]{}));
             if (includeMatInventoryPlan==null || includeMatInventoryPlan) jObj.put(TblsInspLotRMConfig.TablesInspLotRMConfig.MATERIAL_INVENTORY_PLAN.getTableName(), configMaterialInventoryPlanStructure(name, null, null, new String[]{}));
             if (includeMatSamplingPlan==null || includeMatSamplingPlan) jObj.put(TblsInspLotRMConfig.TablesInspLotRMConfig.MATERIAL_SAMPLING_PLAN.getTableName(), configMaterialSamplingPlanStructure(name, null, null, new String[]{}));
-            jArr.put(jObj);
+            jArr.add(jObj);
         }
         return jArr;
     }
@@ -57,7 +57,7 @@ public final class InspLotQueries {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(matCertifInfo[0][0].toString())) return jArr;
         for (Object[] currMatCertif: matCertifInfo){
             JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currMatCertif);
-            jArr.put(jObj);
+            jArr.add(jObj);
         }
         return jArr;
     }
@@ -75,7 +75,7 @@ public final class InspLotQueries {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(matCertifInfo[0][0].toString())) return jArr;
         for (Object[] currMatCertif: matCertifInfo){
             JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currMatCertif);
-            jArr.put(jObj);
+            jArr.add(jObj);
         }
         return jArr;
     }
@@ -93,7 +93,7 @@ public final class InspLotQueries {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(matCertifInfo[0][0].toString())) return jArr;
         for (Object[] currMatCertif: matCertifInfo){
             JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currMatCertif);
-            jArr.put(jObj);
+            jArr.add(jObj);
         }
         return jArr;
     }
@@ -118,13 +118,13 @@ public final class InspLotQueries {
                 }
                 JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currRec);
                 if (includeAnalysis==null || includeAnalysis) jObj.put(TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), dataSampleAnalysisStructure(sampleId, null, new String[]{}, includeAnalysisResults));
-                jArr.put(jObj);
+                jArr.add(jObj);
             }
             return jArr;
         }catch(Exception e){
             JSONObject jObj=new JSONObject();
             jObj.put(GlobalAPIsParams.LBL_ERROR, e.getMessage());
-            jArr.put(jObj);
+            jArr.add(jObj);
             return jArr;
         }
     }
@@ -141,7 +141,7 @@ public final class InspLotQueries {
             Integer testId=Integer.valueOf(currRec[LPArray.valuePosicInArray(fieldsToRetrieve, TblsData.SampleAnalysis.TEST_ID.getName())].toString());
             JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currRec);
             if (includeAnalysisResults==null || includeAnalysisResults) jObj.put(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), dataSampAnaResStructure(testId, null, new String[]{}, null));            
-            jArr.put(jObj);
+            jArr.add(jObj);
         }
         return jArr;
     }    
@@ -156,7 +156,7 @@ public final class InspLotQueries {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(materialInfo[0][0].toString())) return jArr;
         for (Object[] currRec: materialInfo){
             JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currRec);
-            jArr.put(jObj);
+            jArr.add(jObj);
         }
         return jArr;
     }    

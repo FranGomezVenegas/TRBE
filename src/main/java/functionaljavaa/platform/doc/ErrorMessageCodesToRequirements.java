@@ -28,7 +28,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import trazit.globalvariables.GlobalVariables;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
@@ -95,9 +95,9 @@ public class ErrorMessageCodesToRequirements {
                             String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.MessageCodeDeclaration.PROPERTY_NAME.getName()});
                             Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul.getErrorCode()});
                             if (LPArray.valueInArray(apiAndErrorMsgCodeKey, curBusRul.getClass().getSimpleName()+"-"+curBusRul.getErrorCode()))
-                                msgCodesFound.put(curBusRul.getClass().getSimpleName()+"-"+curBusRul.getErrorCode());
+                                msgCodesFound.add(curBusRul.getClass().getSimpleName()+"-"+curBusRul.getErrorCode());
                             else
-                                msgCodesNotFound.put(curBusRul.getClass().getSimpleName()+"-"+curBusRul.getErrorCode());
+                                msgCodesNotFound.add(curBusRul.getClass().getSimpleName()+"-"+curBusRul.getErrorCode());
                             if (Boolean.FALSE.equals(summaryOnlyMode)){
                                 addCodeInErrorTrapping(curBusRul.getErrorCode(), "");
                                 String [] langsArr=new String[]{"en", "es"};
@@ -109,7 +109,7 @@ public class ErrorMessageCodesToRequirements {
                                         notifInfo.put("family_name", curBusRul.getClass().getSimpleName());
                                         notifInfo.put("notification_code", curBusRul.getErrorCode());
                                         notifInfo.put("missing_language", curLang);
-                                        successMessageWithNoNotificationTranslation.put(notifInfo);
+                                        successMessageWithNoNotificationTranslation.add(notifInfo);
                                     }
                                 }                                
                                 try{                                    
@@ -119,7 +119,7 @@ public class ErrorMessageCodesToRequirements {
                                     jObj.put("enum",getMine.getSimpleName());
                                     jObj.put("message_code",curBusRul.toString());
                                     jObj.put(GlobalAPIsParams.LBL_ERROR,e.getMessage());
-                                    enumsIncomplete.put(jObj);
+                                    enumsIncomplete.add(jObj);
                                 }
                             }
                         }
@@ -130,13 +130,13 @@ public class ErrorMessageCodesToRequirements {
                             JSONObject jObj=new JSONObject();
                             jObj.put("enum",getMine.getSimpleName());
                             jObj.put("messages",enumConstantObjects.size());
-                            enumsCompleteSuccess.put(jObj);
+                            enumsCompleteSuccess.add(jObj);
                         }
                     }
                 }catch(Exception e){
                     ScanResult.closeAll();
                     JSONArray errorJArr = new JSONArray();
-                    errorJArr.put(audEvObjStr+"_"+evName+":"+e.getMessage());
+                    errorJArr.add(audEvObjStr+"_"+evName+":"+e.getMessage());
                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, audEvObjStr+"_"+evName+":"+e.getMessage());                
                     LPFrontEnd.servletReturnSuccess(request, response, errorJArr);
                     return;
@@ -158,30 +158,30 @@ public class ErrorMessageCodesToRequirements {
             }
             
             if (Boolean.FALSE.equals(msgCodesNotFound.isEmpty())) {
-                summaryDiagnoses = summaryDiagnoses + " There are "+msgCodesNotFound.length()+ "notifications not found";
+                summaryDiagnoses = summaryDiagnoses + " There are "+msgCodesNotFound.size()+ "notifications not found";
             }
             if (Boolean.FALSE.equals(successMessageWithNoNotificationTranslation.isEmpty())) {
-                summaryDiagnoses = summaryDiagnoses + " There are "+successMessageWithNoNotificationTranslation.length()+" missing translations for endpoints success notification";
+                summaryDiagnoses = summaryDiagnoses + " There are "+successMessageWithNoNotificationTranslation.size()+" missing translations for endpoints success notification";
             }
             
             jMainObj.put("01_total_in_dictionary_before_running", messageCodeFromDatabase.length);
             jMainObj.put("01_total_families_in_dictionary_before_running", this.enumName1d.length);
             jMainObj.put("02_total_families_in_code",classesImplementingInt.toString());
-            jMainObj.put("03_total_families_visited",enumsCompleteSuccess.length());
+            jMainObj.put("03_total_families_visited",enumsCompleteSuccess.size());
             jMainObj.put("04_list_of_families_visited_in_this_run", enumsCompleteSuccess);
             jMainObj.put("04_total_number_of_notifications_visited_in_this_run", totalEndpointsVisitedInt);
-            jMainObj.put("05_total_notifications_found", msgCodesFound.length());
+            jMainObj.put("05_total_notifications_found", msgCodesFound.size());
             jMainObj.put("05_list_of_notifications_found", msgCodesFound);
-            jMainObj.put("05_total_notifications_not_found", msgCodesNotFound.length());        
+            jMainObj.put("05_total_notifications_not_found", msgCodesNotFound.size());        
             jMainObj.put("05_list_of_notifications_not_found", msgCodesNotFound);  
-            jMainObj.put("05_total_notifications_with_no_pretty_text", successMessageWithNoNotificationTranslation.length());
+            jMainObj.put("05_total_notifications_with_no_pretty_text", successMessageWithNoNotificationTranslation.size());
             jMainObj.put("05_list_of_notifications_with_no_pretty_text", successMessageWithNoNotificationTranslation);
             
             Boolean sendMail = Boolean.valueOf(request.getParameter("sendMail"));        
             if (sendMail){
                 StringBuilder mailBody=new StringBuilder(0);
-                mailBody.append("<h2>Notifications not found: "+msgCodesNotFound.length()+" from  a total of "+(msgCodesNotFound.length()+msgCodesFound.length())+"</h2><br>");
-                mailBody.append("<h2>Notifications with no pretty message : "+successMessageWithNoNotificationTranslation.length());
+                mailBody.append("<h2>Notifications not found: "+msgCodesNotFound.size()+" from  a total of "+(msgCodesNotFound.size()+msgCodesFound.size())+"</h2><br>");
+                mailBody.append("<h2>Notifications with no pretty message : "+successMessageWithNoNotificationTranslation.size());
                 mailBody.append("<b>The not found ones are:</b> <br>"+formatListForEmail(jsonArrayToList(msgCodesNotFound))+"<br><br>");
                 mailBody.append("<b>Notifications with no pretty message are:</b> <br>"+formatListForEmail(jsonArrayToList(successMessageWithNoNotificationTranslation))+"<br><br>");
                 LPMailing newMail = new LPMailing();

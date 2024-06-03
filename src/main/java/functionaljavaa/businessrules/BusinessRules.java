@@ -17,7 +17,7 @@ import java.util.Collections;
 import java.util.List;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import trazit.globalvariables.GlobalVariables;
 import trazit.session.ApiMessageReturn;
 import trazit.session.ProcedureRequestSession;

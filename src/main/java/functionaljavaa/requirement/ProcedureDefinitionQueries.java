@@ -23,7 +23,7 @@ import static lbplanet.utilities.LPPlatform.CONFIG_PROC_CONFIG_FILE_NAME;
 import static lbplanet.utilities.LPPlatform.CONFIG_PROC_DATA_FILE_NAME;
 import static lbplanet.utilities.LPPlatform.CONFIG_PROC_FILE_NAME;
 import lbplanet.utilities.LPPlatform.LpPlatformBusinessRules;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -137,7 +137,7 @@ public class ProcedureDefinitionQueries {
             else
                 procedureActionsObj.put("auto_move_to_next", "NO");           
             
-            procActionAndRolesArr.put(procedureActionsObj);
+            procActionAndRolesArr.add(procedureActionsObj);
             String[] curActionRoles = getBusinessRuleProcedureFile(procInstanceName, CONFIG_PROC_FILE_NAME, "actionEnabled"+curProcAction).split("\\|");
                    
            //         Parameter.getMessageCodeValue(procInstanceName.replace("\"", "")+"-"+CONFIG_PROC_FILE_NAME, "actionEnabled"+curProcAction).split("\\|");
@@ -145,7 +145,7 @@ public class ProcedureDefinitionQueries {
                 JSONObject currActionRolObj = convertArrayRowToJSONObject(new String[]{"rol"}, new Object[]{curActionRole});                
                 procedureActionsObj.put("rol", currActionRolObj);
             }                     
-            procActionsArr.put(procActionAndRolesArr);
+            procActionsArr.add(procActionAndRolesArr);
         }
         mainObj.put(bsnRuleQry.getMethodSectionName(), procActionsArr);
         return mainObj;
@@ -157,7 +157,7 @@ public class ProcedureDefinitionQueries {
         JSONArray sopArr=new JSONArray();
         for (Object[] curProcSop: procSopInMetaData){ 
             JSONObject currActionRolObj = convertArrayRowToJSONObject(PROC_DISP_PROC_INSTC_SOPS_FLD_NAME.split("\\|"), curProcSop);
-            sopArr.put(currActionRolObj);            
+            sopArr.add(currActionRolObj);            
         }                             
         mainObj.put(bsnRuleQry.getMethodSectionName().toLowerCase(), sopArr);
         return mainObj;
@@ -196,14 +196,14 @@ public class ProcedureDefinitionQueries {
                     for (String curPrevStage: propValuePrevious){
                        JSONObject curPrevStageObj = new JSONObject();
                        curPrevStageObj.put("stage", curPrevStage);
-                       curStagePreviousStages.put(curPrevStageObj);
+                       curStagePreviousStages.add(curPrevStageObj);
                     } 
                     stageDetailObj.put(curDirection.toLowerCase()+"_stages", curStagePreviousStages);
                 }
                 if (LPArray.valueInArray(sampleStagesTimingCaptureStages, curSampleStage) || LPArray.valueInArray(sampleStagesTimingCaptureStages, "ALL"))
                     stageDetailObj.put("timing_capture", "YES");                
             }
-            sampleStagesDataArr.put(stageDetailObj);
+            sampleStagesDataArr.add(stageDetailObj);
         }
         mainObj.put(bsnRuleQry.getMethodSectionName(), sampleStagesDataArr);
         return mainObj;
@@ -216,7 +216,7 @@ public class ProcedureDefinitionQueries {
         for (String curIncubRule: sampleIncubationTempReadingBusinessRule){
             JSONObject incubRulesObj = new JSONObject();
             incubRulesObj.put("rule", curIncubRule);  
-            incubRulesArr.put(incubRulesObj);
+            incubRulesArr.add(incubRulesObj);
         }    
         mainObj.put(bsnRuleQry.getMethodSectionName(), incubRulesArr); 
         return mainObj;
@@ -239,7 +239,7 @@ public class ProcedureDefinitionQueries {
             for (String currEncrypTable: encryptedTables){
                 if (currEncrypTable.length()==0){
                     encrypTableFldsObjArr=new JSONArray();
-                    encrypTableFldsObjArr.put("Nothing");
+                    encrypTableFldsObjArr.add("Nothing");
                 }else{
                     encrypTableFldsObjArr=new JSONArray();
                     String[] encryptedTableFlds = getBusinessRuleProcedureFile(procInstanceName, curSchema, "encrypted_"+currEncrypTable, false).split("\\|");
@@ -248,17 +248,17 @@ public class ProcedureDefinitionQueries {
                         encrypTableFldsObj.put(totalFields, 0);
                     else
                         encrypTableFldsObj.put(totalFields, encryptedTableFlds.length);
-                    encrypTableFldsObjArr.put(encrypTableFldsObj);
+                    encrypTableFldsObjArr.add(encrypTableFldsObj);
                     for (String curFld: encryptedTableFlds){
                         encrypTableFldsObj = new JSONObject(); 
                         encrypTableFldsObj.put("field", curFld);
-                        encrypTableFldsObjArr.put(encrypTableFldsObj);
+                        encrypTableFldsObjArr.add(encrypTableFldsObj);
                     }
                 }
                 curSchemaMainObj.put(currEncrypTable, encrypTableFldsObjArr);  
             } 
             curSchemaObj.put(curSchema.replace("-", ""), curSchemaMainObj);
-            schemasDataArr.put(curSchemaObj);
+            schemasDataArr.add(curSchemaObj);
         }
         mainObj.put(bsnRuleQry.getMethodSectionName(), schemasDataArr);
         return mainObj;

@@ -39,7 +39,7 @@ import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.LpPlatformSuccess;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import org.json.JSONObject;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import trazit.enums.EnumIntMessages;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
@@ -1786,7 +1786,7 @@ public class ClassReqProcedureActions {
                 }
                 JSONArray jArr = new JSONArray();
                 for (Object[] curRow : testingData) {
-                    jArr.put(LPJson.convertArrayRowToJSONObject((String[]) testing[0], curRow));
+                    jArr.add(LPJson.convertArrayRowToJSONObject((String[]) testing[0], curRow));
                 }
                 LPFrontEnd.servletReturnSuccess(request, response, jArr);
                 break;

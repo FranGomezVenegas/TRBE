@@ -21,7 +21,7 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import module.instrumentsmanagement.definition.TblsInstrumentsProcedure;
 import module.instrumentsmanagement.definition.TblsInstrumentsData;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntMessages;

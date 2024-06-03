@@ -40,7 +40,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lbplanet.utilities.LPAPIArguments;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static lbplanet.utilities.LPSession.frontEndIpChecker;
 import lbplanet.utilities.Mailing;
@@ -164,7 +164,7 @@ public class AuthenticationAPI extends HttpServlet {
                         return;
                     }
                     JSONArray jArray = new JSONArray();
-                    jArray.putAll(Arrays.asList(allUserProcedureRoles));
+                    jArray.addAll(Arrays.asList(allUserProcedureRoles));
                     Rdbms.closeRdbms();
                     response.getWriter().write(jArray.toString());
                     return;
@@ -223,7 +223,7 @@ public class AuthenticationAPI extends HttpServlet {
                                 jObj.put(curAttr[0], curAttr[1]);
                             }
                         }
-                        jArr.put(jObj);
+                        jArr.add(jObj);
                     }
                     jsonObj.put(AuthenticationAPIParams.RESPNS_JSON_TAG_APPUSERTBS_ONLOGIN, jArr);
                     request.setAttribute(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myFinalToken);

@@ -53,7 +53,7 @@ import module.inspectionlot.rawmaterial.definition.InspLotRMEnums.DataInspLotCer
 import module.inspectionlot.rawmaterial.definition.InspLotRMEnums.DataInspLotErrorTrapping;
 import module.inspectionlot.rawmaterial.definition.InspLotRMEnums.InspectionLotRMAuditEvents;
 import module.inspectionlot.rawmaterial.definition.InspLotRMEnums.InspectionLotRMClousureTypes;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;

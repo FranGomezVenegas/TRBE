@@ -33,7 +33,7 @@ import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPMailing;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.JSONObject;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntTableFields;
@@ -56,7 +56,7 @@ public class BusinessRulesToRequirements {
         String rulesNames="businessRulesEnableValues|businessRulesDisableValues";
         for (String curRule:rulesNames.split("\\|")){
             String enableValuesStr=getBusinessRuleAppFile(curRule, true);             
-            vList.putAll(Arrays.asList(enableValuesStr.split("\\|")));
+            vList.addAll(Arrays.asList(enableValuesStr.split("\\|")));
         }
         return vList;
     }
@@ -97,11 +97,11 @@ public class BusinessRulesToRequirements {
                         String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{TblsTrazitDocTrazit.BusinessRulesDeclaration.API_NAME.getName(),  TblsTrazitDocTrazit.BusinessRulesDeclaration.PROPERTY_NAME.getName()});
                         Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curBusRul.getClass().getSimpleName(), curBusRul.getTagName()});
                         if (LPArray.valueInArray(this.businessRules1d, curBusRul.getAreaName()+"-"+curBusRul.getTagName())){
-                            if (Boolean.FALSE.equals(LPJson.containsJsonOfStrings(eventsFound, curBusRul.getAreaName()+"-"+curBusRul.getTagName())))
-                                eventsFound.put(curBusRul.getAreaName()+"-"+curBusRul.getTagName());
+                            if (Boolean.FALSE.equals(LPJson.contains(eventsFound, curBusRul.getAreaName()+"-"+curBusRul.getTagName())))
+                                eventsFound.add(curBusRul.getAreaName()+"-"+curBusRul.getTagName());
                         }else{
-                            if (Boolean.FALSE.equals(LPJson.containsJsonOfStrings(eventsNotFound, curBusRul.getAreaName()+"-"+curBusRul.getTagName())))
-                                eventsNotFound.put(curBusRul.getAreaName()+"-"+curBusRul.getTagName());
+                            if (Boolean.FALSE.equals(LPJson.contains(eventsNotFound, curBusRul.getAreaName()+"-"+curBusRul.getTagName())))
+                                eventsNotFound.add(curBusRul.getAreaName()+"-"+curBusRul.getTagName());
                         }
                         if (Boolean.FALSE.equals(summaryOnlyMode)){
                             try{
@@ -114,7 +114,7 @@ public class BusinessRulesToRequirements {
                                 jObj.put("family",getMine.getSimpleName());
                                 jObj.put("business_rule",curBusRul.toString());
                                 jObj.put(GlobalAPIsParams.LBL_ERROR,e.getMessage());
-                                enumsIncomplete.put(jObj);
+                                enumsIncomplete.add(jObj);
                             }
                         }
                     }
@@ -125,13 +125,13 @@ public class BusinessRulesToRequirements {
                         JSONObject jObj=new JSONObject();
                         jObj.put("family",getMine.getSimpleName());
                         jObj.put("business_rule",enumConstantObjects.size());
-                        busRulesVisitedSuccess.put(jObj);
+                        busRulesVisitedSuccess.add(jObj);
                     }
                 }
             }catch(Exception e){
                 ScanResult.closeAll();
                 JSONArray errorJArr = new JSONArray();
-                errorJArr.put(audEvObjStr+"_"+evName+":"+e.getMessage()); 
+                errorJArr.add(audEvObjStr+"_"+evName+":"+e.getMessage()); 
                 Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, audEvObjStr+"_"+evName+":"+e.getMessage());
                 LPFrontEnd.servletReturnSuccess(request, response, errorJArr);                
                 return;
@@ -143,23 +143,23 @@ public class BusinessRulesToRequirements {
         if (eventsNotFound.isEmpty())
             summaryDiagnoses="SUCCESS";            
         else
-            summaryDiagnoses="WITH ERRORS. There are "+eventsNotFound.length()+" business rules not found";
+            summaryDiagnoses="WITH ERRORS. There are "+eventsNotFound.size()+" business rules not found";
         
         jMainObj.put("00_summary", summaryDiagnoses);
         jMainObj.put("01_total_families_in_code",classesImplementingInt.toString());
-        jMainObj.put("02_total_families_visited",busRulesVisitedSuccess.length());
+        jMainObj.put("02_total_families_visited",busRulesVisitedSuccess.size());
         jMainObj.put("03_list_of_business_rules_visited", busRulesVisitedSuccess);
         jMainObj.put("04_total_number_of_endpoints_visited", totalEndpointsVisitedInt);
-        jMainObj.put("05_total_business_rules_found", eventsFound.length());
+        jMainObj.put("05_total_business_rules_found", eventsFound.size());
         jMainObj.put("05_list_of_business_rules_found", eventsFound);
-        jMainObj.put("05_total_business_rules_not_found", eventsNotFound.length());
+        jMainObj.put("05_total_business_rules_not_found", eventsNotFound.size());
         jMainObj.put("05_list_of_business_rules_not_found", eventsNotFound);        
         this.summaryInfo=jMainObj;
         
         Boolean sendMail = Boolean.valueOf(request.getParameter("sendMail"));        
         if (sendMail){
             StringBuilder mailBody=new StringBuilder(0);
-            mailBody.append("<h2>Business rules not found: "+eventsNotFound.length()+" from  a total of "+totalBusinessRulesVisitedInt+"</h2><br>");
+            mailBody.append("<h2>Business rules not found: "+eventsNotFound.size()+" from  a total of "+totalBusinessRulesVisitedInt+"</h2><br>");
             mailBody.append("<b>The not found ones are:</b> <br>"+formatListForEmail(jsonArrayToList(eventsNotFound))+"<br><br>");
             LPMailing newMail = new LPMailing();
             newMail.sendEmail(

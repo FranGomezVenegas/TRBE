@@ -31,7 +31,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
@@ -116,12 +116,12 @@ public class InvestigationAPIfrontend extends HttpServlet {
                                 if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString()))){
                                     for (Object[] currInvestObject: incidentsNotClosed){
                                         JSONObject investObjectsJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieveInvestObj, currInvestObject);
-                                        investObjectsJArr.put(investObjectsJObj);
+                                        investObjectsJArr.add(investObjectsJObj);
                                     }
                                 }
                                 investigationJObj.put(TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(), investObjectsJArr);
                             }
-                            investigationJArr.put(investigationJObj);
+                            investigationJArr.add(investigationJObj);
                         }
                     }
                     instanceForQueries.killIt();                
@@ -132,7 +132,7 @@ public class InvestigationAPIfrontend extends HttpServlet {
                     if (Boolean.FALSE.equals(isProgramCorrectiveActionEnable(procInstanceName))){
                       JSONObject jObj=new JSONObject();
                       jObj.put(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(), "corrective action not active!");
-                      jArray.put(jObj);
+                      jArray.add(jObj);
                     }
                     else{
                         Object[][] investigationResultsPendingDecision = QueryUtilitiesEnums.getTableData(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION, 
@@ -143,7 +143,7 @@ public class InvestigationAPIfrontend extends HttpServlet {
                       if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationResultsPendingDecision[0][0].toString()))LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
                       for (Object[] curRow: investigationResultsPendingDecision){
                         JSONObject jObj=LPJson.convertArrayRowToJSONObject(getAllFieldNames(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableFields()), curRow);
-                        jArray.put(jObj);
+                        jArray.add(jObj);
                       }
                     }
                            
@@ -154,7 +154,7 @@ public class InvestigationAPIfrontend extends HttpServlet {
                     if (Boolean.FALSE.equals(isProgramCorrectiveActionEnable(procInstanceName))){
                       JSONObject jObj=new JSONObject();
                       jObj.put(TblsProcedure.TablesProcedure.PROGRAM_CORRECTIVE_ACTION.getTableName(), "program corrective action not active!");
-                      jArray.put(jObj);
+                      jArray.add(jObj);
                       LPFrontEnd.servletReturnSuccess(request, response, jArray);
                     }
                     Integer investigationId=null;
@@ -181,11 +181,11 @@ public class InvestigationAPIfrontend extends HttpServlet {
                             if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString()))){
                                 for (Object[] currInvestObject: incidentsNotClosed){
                                     JSONObject investObjectsJObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currInvestObject);
-                                    investObjectsJArr.put(investObjectsJObj);
+                                    investObjectsJArr.add(investObjectsJObj);
                                 }
                             }
                             investigationJObj.put(TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(), investObjectsJArr);
-                            investigationJArr.put(investigationJObj);
+                            investigationJArr.add(investigationJObj);
                         }
                     }
                     Rdbms.closeRdbms();  

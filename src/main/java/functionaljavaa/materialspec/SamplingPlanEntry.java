@@ -14,7 +14,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import trazit.session.ProcedureRequestSession;
 import trazit.globalvariables.GlobalVariables;
 /**
@@ -74,7 +74,7 @@ public class SamplingPlanEntry {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(materialSampPlanInfo[0][0].toString())){
             this.hasErrors=true;
             this.errorsArr=LPArray.addValueToArray1D(this.getErrorsArr(), materialSampPlanInfo[0][materialSampPlanInfo[0].length-1].toString());
-            this.getErrorsjArr().put(materialSampPlanInfo[0][materialSampPlanInfo[0].length-1].toString());
+            this.getErrorsjArr().add(materialSampPlanInfo[0][materialSampPlanInfo[0].length-1].toString());
             return;
         }
         for (Object[] curMatSampPlan: materialSampPlanInfo){
@@ -130,7 +130,7 @@ public class SamplingPlanEntry {
                 if (errorMsg.length()>0){
                     this.hasErrors=true;
                     this.errorsArr=LPArray.addValueToArray1D(this.getErrorsArr(), errorMsg); 
-                    this.getErrorsjArr().put(errorMsg);
+                    this.getErrorsjArr().add(errorMsg);
                 }else{
                     SamplingPlanEntryItem ent=new SamplingPlanEntryItem(curMatSampPlan[0].toString(), 
                         curMatSampPlan[1].toString(), numSamples);
@@ -140,7 +140,7 @@ public class SamplingPlanEntry {
                 this.hasErrors=true;
                 errorMsg="Algorithm "+algorithm+" not recognized, should be one of "+Arrays.toString(SamplingPlanAlgorithms.values());
                 this.errorsArr=LPArray.addValueToArray1D(this.getErrorsArr(),errorMsg);
-                this.getErrorsjArr().put(errorMsg);
+                this.getErrorsjArr().add(errorMsg);
                 Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }

@@ -5,7 +5,7 @@
  */
 package trazit.enums;
 
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 
 public interface EnumIntQueriesEndpoints {
     Boolean getFunctionFound(); 

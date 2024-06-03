@@ -11,7 +11,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import trazit.procedureinstance.definition.definition.TblsReqs;
@@ -52,7 +52,7 @@ public class ViewDesignerTableWithButtons {
         JSONObject jObj=new JSONObject();
         jObj.put("argumentName", argName);
         jObj.put("fixValue", argValue);
-        jMainArr.put(jObj);
+        jMainArr.add(jObj);
         String[] updFieldNames=new String[]{TblsReqs.ProcedureReqSolutionViewTableWithButtons.GRID_COLUMNS_DESIGNER.getName()};
         Object[] updFieldValues=new Object[]{jMainArr.toString()};
         RdbmsObject removeDiagn = Rdbms.updateTableRecordFieldsByFilter(TblsReqs.TablesReqs.PROCEDURE_REQ_SOL_VIEW_TBL_BUTTONS,
@@ -73,7 +73,7 @@ public class ViewDesignerTableWithButtons {
         JSONObject jObj=new JSONObject();
         jObj.put("argumentName", argName);
         jObj.put("fixValue", argValue);
-        jMainArr.put(jObj);
+        jMainArr.add(jObj);
         
         String[] updFieldNames=new String[]{TblsReqs.ProcedureReqSolutionViewTableWithButtons.GRID_COLUMNS_DESIGNER.getName()};
         Object[] updFieldValues=new Object[]{jMainArr.toString()};

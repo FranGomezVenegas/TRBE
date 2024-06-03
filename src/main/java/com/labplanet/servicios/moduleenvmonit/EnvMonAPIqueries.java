@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPNulls;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.SqlStatementEnums;
@@ -207,7 +207,7 @@ GlobalAPIsParams.
                         JSONArray programSampleSummaryByStageJsonArray = new JSONArray();
                         for (Object[] curRec : samplesCounterPerStage) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldToRetrieveArr, curRec);
-                            programSampleSummaryByStageJsonArray.put(jObj);
+                            programSampleSummaryByStageJsonArray.add(jObj);
                         }
                         programJsonObj.put(JSON_TAG_GROUP_NAME_SAMPLES_SUMMARY_BY_STAGE, programSampleSummaryByStageJsonArray);
 
@@ -227,7 +227,7 @@ GlobalAPIsParams.
                         JSONArray programConfigScheduledPointsJsonArray = new JSONArray();
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programCalendarDatePending[0][0].toString())) {
                             jObj.put("message", "Nothing pending in procedure " + procInstanceName + " for the filter " + LPNulls.replaceNull(programCalendarDatePending[0][programCalendarDatePending.length - 1]).toString());
-                            programConfigScheduledPointsJsonArray.put(jObj);
+                            programConfigScheduledPointsJsonArray.add(jObj);
                         } else {
                             for (Object[] curRecord : programCalendarDatePending) {
                                 jObj = new JSONObject();
@@ -239,7 +239,7 @@ GlobalAPIsParams.
                                 jObj.put("date", curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitConfig.ViewProgramScheduledLocations.DATE.getName())].toString());
                                 jObj.put("category", "orange");
                                 jObj.put("color", "#000");
-                                programConfigScheduledPointsJsonArray.put(jObj);
+                                programConfigScheduledPointsJsonArray.add(jObj);
                             }
                         }
                         programJsonObj.put(JSON_TAG_GROUP_NAME_CONFIG_CALENDAR, programConfigScheduledPointsJsonArray);
@@ -279,7 +279,7 @@ GlobalAPIsParams.
                                             }
                                         }
                                         programLocationCardInfoJsonObj.putIfAbsent(JSON_TAG_NAME_PASS, JSON_TAG_NAME_PASS_VALUE_FALSE);
-                                        programLocationCardInfoJsonArr.put(programLocationCardInfoJsonObj);
+                                        programLocationCardInfoJsonArr.add(programLocationCardInfoJsonObj);
                                     }
                                 }
                                 programLocationJsonObj.put(JSON_TAG_GROUP_NAME_CARD_INFO, programLocationCardInfoJsonArr);
@@ -304,7 +304,7 @@ GlobalAPIsParams.
                                     programSampleSummaryJsonObj.put(JSON_TAG_NAME_VALUE, samplesStatusCounter[iStatuses]);
                                     programSampleSummaryJsonObj.put(JSON_TAG_NAME_TYPE, JSON_TAG_NAME_TYPE_VALUE_TEXT);
                                     programSampleSummaryJsonObj.put(JSON_TAG_NAME_PASS, JSON_TAG_NAME_PASS_VALUE_FALSE);
-                                    programSampleSummaryJsonArray.put(programSampleSummaryJsonObj);
+                                    programSampleSummaryJsonArray.add(programSampleSummaryJsonObj);
                                 }
                                 programLocationJsonObj.put(JSON_TAG_GROUP_NAME_SAMPLES_SUMMARY, programSampleSummaryJsonArray);
                                 fieldToRetrieveArr = new String[]{TblsEnvMonitData.Sample.CURRENT_STAGE.getName()};
@@ -318,11 +318,11 @@ GlobalAPIsParams.
                                 programSampleSummaryByStageJsonArray = new JSONArray();
                                 for (Object[] curRec : samplesCounterPerStage) {
                                     jObj = LPJson.convertArrayRowToJSONObject(fieldToRetrieveArr, curRec);
-                                    programSampleSummaryByStageJsonArray.put(jObj);
+                                    programSampleSummaryByStageJsonArray.add(jObj);
                                 }
                                 programLocationJsonObj.put(JSON_TAG_GROUP_NAME_SAMPLES_SUMMARY_BY_STAGE, programSampleSummaryByStageJsonArray);
 
-                                programLocationsJsonArray.put(programLocationJsonObj);
+                                programLocationsJsonArray.add(programLocationJsonObj);
                             }
                             programJsonObj.put(JSON_TAG_GROUP_NAME_SAMPLE_POINTS, programLocationsJsonArray);
                         }
@@ -347,11 +347,11 @@ GlobalAPIsParams.
                                 programSampleSummaryJsonObj.put(JSON_TAG_NAME_VALUE, LPNulls.replaceNull(samplesStatusCounter[iStatuses]));
                                 programSampleSummaryJsonObj.put(JSON_TAG_NAME_TYPE, JSON_TAG_NAME_TYPE_VALUE_TEXT);
                                 programSampleSummaryJsonObj.put(JSON_TAG_NAME_PASS, JSON_TAG_NAME_PASS_VALUE_FALSE);
-                                programSampleSummaryJsonArray.put(programSampleSummaryJsonObj);
+                                programSampleSummaryJsonArray.add(programSampleSummaryJsonObj);
                             }
                             programJsonObj.put(JSON_TAG_GROUP_NAME_SAMPLES_SUMMARY, programSampleSummaryJsonArray);
                         }
-                        programsJsonArr.put(programJsonObj);
+                        programsJsonArr.add(programJsonObj);
                         JSONObject programDataTemplateDefinition = new JSONObject();
                         JSONObject templateProgramInfo = EnvMonFrontEndUtilities.dataProgramInfo(curProgramName, null, null);
                         programDataTemplateDefinition.put(TblsEnvMonitConfig.TablesEnvMonitConfig.PROGRAM.getTableName(), templateProgramInfo);
@@ -396,7 +396,7 @@ GlobalAPIsParams.
                     }
                     for (Object[] curProgCorr : progCorrInfo) {
                         JSONObject jObj = LPJson.convertArrayRowToJSONObject(progCorrFldNameList, curProgCorr);
-                        jArr.put(jObj);
+                        jArr.add(jObj);
                     }
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     return;
@@ -420,7 +420,7 @@ GlobalAPIsParams.
                     }
                     for (Object[] curProgram : programInfo) {
                         JSONObject jObj = LPJson.convertArrayRowToJSONObject(prodLotFldToRetrieve, curProgram);
-                        jArr.put(jObj);
+                        jArr.add(jObj);
                     }
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     return;
@@ -466,11 +466,11 @@ GlobalAPIsParams.
                         new String[]{TblsEnvMonitConfig.ViewProgramScheduledLocations.SAMPLE_ID.getName() + SqlStatementEnums.SORT_DIRECTION.DESC.getSqlClause()}, false);
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programSchedEntries[0][0].toString())) {
                             jObj = LPFrontEnd.responseJSONDiagnosticLPFalse(Rdbms.RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);
-                            sampleJsonArr.put(jObj);
+                            sampleJsonArr.add(jObj);
                         } else {
                             for (Object[] curRec : programSchedEntries) {
                                 jObj = LPJson.convertArrayRowToJSONObject(EnumIntViewFields.getAllFieldNames(fieldsToGet), curRec);
-                                sampleJsonArr.put(jObj);
+                                sampleJsonArr.add(jObj);
                             }
                         }
                     }
@@ -483,7 +483,7 @@ GlobalAPIsParams.
                     jObjMainObject = new JSONObject();
                     wObj = new SqlWhere();
                     wObj.addConstraint(TblsProcedureConfig.StageTimingInterval.STAGE, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, null);
-                    JSONArray qryJsonArr=QueryUtilities.dbRowsToJsonArr(procInstanceName, procInstanceName, TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL, 
+                    JSONArray qryJsonArr=QueryUtilities.dbRowsToJsonArrSimpleJson(procInstanceName, procInstanceName, TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL, 
                         EnumIntTableFields.getTableFieldsFromString(TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL, "ALL"), 
                         wObj, new String[]{TblsProcedureConfig.StageTimingInterval.STAGE.getName()}, 
                         null, true);
@@ -492,7 +492,7 @@ GlobalAPIsParams.
                     wObj = new SqlWhere();
                     wObj.addConstraint(TblsProcedureConfig.StageTimingInterval.STAGE, SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL, new Object[]{}, null);
                     
-                    qryJsonArr=QueryUtilities.dbRowsToJsonArr(procInstanceName, procInstanceName, TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL, 
+                    qryJsonArr=QueryUtilities.dbRowsToJsonArrSimpleJson(procInstanceName, procInstanceName, TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL, 
                         EnumIntTableFields.getTableFieldsFromString(TblsProcedureConfig.TablesProcedureConfig.STAGE_TIMING_INTERVAL, "ALL"), 
                         wObj, new String[]{TblsProcedureConfig.StageTimingInterval.STAGE.getName()}, 
                         null, true);
@@ -516,7 +516,7 @@ GlobalAPIsParams.
                             whereForPercentagesView=LPArray.addValueToArray1D(whereForPercentagesView, buildDateRangeFromStrings[2]);
                         }
                     }
-                    qryJsonArr=QueryUtilities.dbRowsToJsonArr(procInstanceName, procInstanceName, TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE, 
+                    qryJsonArr=QueryUtilities.dbRowsToJsonArrSimpleJson(procInstanceName, procInstanceName, TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE, 
                         EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_CAPTURE, "ALL"), 
                         wObj, new String[]{TblsProcedure.SampleStageTimingCapture.STARTED_ON.getName()}, 
                         null, true);
@@ -569,7 +569,7 @@ GlobalAPIsParams.
                         }
                         JSONObject statAnalysis = LPMath.statAnalysis((double[]) doubleArray, durArr, "Hours");
                         statAnalysis.put("stage", curStage);
-                        statAnalysisArr.put(statAnalysis);
+                        statAnalysisArr.add(statAnalysis);
                     }
                     jObjMainObject.put("statistics_per_stage", statAnalysisArr);
                     
@@ -583,7 +583,7 @@ GlobalAPIsParams.
                     Object[][] data=Rdbms.runQueryByString(tblCreateScript, 3, whereForPercentagesView);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(data[0][0].toString())) {
                         jObj = LPFrontEnd.responseJSONDiagnosticLPFalse(Rdbms.RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);
-                        sampleJsonArr.put(jObj);
+                        sampleJsonArr.add(jObj);
                     } else {
                         for (Object[] curRow: data){
                             if (curRow[1]!=null&&curRow[2]!=null&&curRow[1].toString().length()>0&&curRow[2].toString().length()>0){
@@ -611,7 +611,7 @@ GlobalAPIsParams.
                     }                    
                     
                     
-                    qryJsonArr=QueryUtilities.dbRowsToJsonArr(procInstanceName, procInstanceName, TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION, 
+                    qryJsonArr=QueryUtilities.dbRowsToJsonArrSimpleJson(procInstanceName, procInstanceName, TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION, 
                         EnumIntTableFields.getTableFieldsFromString(TblsProcedure.TablesProcedure.SAMPLE_STAGE_TIMING_INTERVAL_DEVIATION, "ALL"), 
                         wObj2, new String[]{TblsProcedure.SampleStageTimingIntervalDeviation.ENDED_ON.getName()}, 
                         null, true);
@@ -632,12 +632,12 @@ GlobalAPIsParams.
                     data=Rdbms.runQueryByString(tblCreateScript, 4, whereForPercentagesView);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(data[0][0].toString())) {
                         jObj = LPFrontEnd.responseJSONDiagnosticLPFalse(Rdbms.RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);
-                        sampleJsonArr.put(jObj);
+                        sampleJsonArr.add(jObj);
                     } else {
                         for (Object[] curRec : data) {
                             jObj = LPJson.convertArrayRowToJSONObject(new String[]{"stage", "violated_sample_stages", "total_sample_stages", "percentage"}, 
                                     curRec);
-                            sampleJsonArr.put(jObj);
+                            sampleJsonArr.add(jObj);
                         }
                     }
                     jObjMainObject.put("violations_percentage", sampleJsonArr);

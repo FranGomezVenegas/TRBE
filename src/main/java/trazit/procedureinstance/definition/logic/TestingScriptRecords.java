@@ -11,7 +11,7 @@ import databases.SqlWhere;
 import databases.TblsTesting;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.TrazitUtiilitiesEnums;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
@@ -36,7 +36,7 @@ public class TestingScriptRecords {
             TblsTesting.TablesTesting.SCRIPT.getTableName(), getAllFieldNames(TblsTesting.TablesTesting.SCRIPT.getTableFields()), 
             new String[]{TblsTesting.Script.SCRIPT_ID.getName()}, new Object[]{coverageId}, null, new String[]{}, true, true);
         this.isScriptRecordLocked=false;
-        if (coverageInfoArr.length()!=1){
+        if (coverageInfoArr.size()!=1){
             this.isScriptRecordLocked=true;
             lockedReason=new InternalMessage(LPPlatform.LAB_FALSE, ReqProcedureDefinitionErrorTraping.COVERAGE_NOT_FOUND, new Object[]{this.scriptId, this.procInstanceName});
             return;

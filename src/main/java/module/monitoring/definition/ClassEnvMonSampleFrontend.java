@@ -49,7 +49,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntEndpoints;
 import trazit.enums.EnumIntQueriesObj;
@@ -385,7 +385,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                         JSONArray jArr = new JSONArray();
                         for (Object[] curRow : analysisList) {
                             JSONObject row = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(tblFldsToGetObj), curRow);
-                            jArr.put(row);
+                            jArr.add(row);
                         }
                         this.isSuccess = true;
                         this.responseSuccessJArr = jArr;
@@ -494,10 +494,10 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                                 for (Object[] curSpcRlDet : specRuleDetail) {
                                     specRuleDetailjObj.put(curSpcRlDet[0], curSpcRlDet[1]);
                                 }
-                                specRuleDetailjArr.put(specRuleDetailjObj);
+                                specRuleDetailjArr.add(specRuleDetailjObj);
                                 row.put(ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_INFO, specRuleDetailjArr);
                             }
-                            jArr.put(row);
+                            jArr.add(row);
                         }
 //                        Rdbms.closeRdbms();
                         this.isSuccess = true;
@@ -513,7 +513,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                     JSONArray jArr = new JSONArray();
                     for (Object[] curRec : list) {
                         JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curRec);
-                        jArr.put(jObj);
+                        jArr.add(jObj);
                     }
                     this.isSuccess = true;
                     this.responseSuccessJArr = jArr;
@@ -579,12 +579,12 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                                     JSONObject jmicObj = new JSONObject();
                                     jmicObj.put("name", curMic[0]);
                                     jmicObj.put("items", curMic[1]);
-                                    jMicArr.put(jmicObj);
+                                    jMicArr.add(jmicObj);
                                 }
                             }
                             jObj.put("microorganism_list_array", jMicArr);
                         }
-                        jArr.put(jObj);
+                        jArr.add(jObj);
                     }
                     this.isSuccess = true;
                     this.responseSuccessJArr = jArr;
@@ -635,7 +635,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                             jObjPieceOfInfo = new JSONObject();
                             jObjPieceOfInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, sampleToDisplayArr1);
                             jObjPieceOfInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, sampleInfo[0][LPArray.valuePosicInArray(sampleTblAllFields, sampleToDisplayArr1)].toString());
-                            jArrPieceOfInfo.put(jObjPieceOfInfo);
+                            jArrPieceOfInfo.add(jObjPieceOfInfo);
                         }
                     }
 
@@ -664,7 +664,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                             JSONArray jArrMainObj2 = new JSONArray();
                             jArrMainObj2 = sampleStageDataJsonArr(sampleId, sampleTblAllFields, sampleInfo[0], sampleStageTimingCaptureAllFlds, curRec);
                             jObj.put("data", jArrMainObj2);
-                            jArrMainObj.put(jObj);
+                            jArrMainObj.add(jObj);
                         }
                     }
                     jObjMainObject.put("stages", jArrMainObj);
@@ -736,12 +736,12 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                                         JSONArray resultJsArr = new JSONArray();
                                         for (Object[] curResult : resultInfo) {
                                             JSONObject curResultJsObj = LPJson.convertArrayRowToJSONObject(resultFldsArr, curResult);
-                                            resultJsArr.put(curResultJsObj);
+                                            resultJsArr.add(curResultJsObj);
                                         }
                                         curTestJsObj.put(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), resultJsArr);
                                     }
 
-                                    testJsArr.put(curTestJsObj);
+                                    testJsArr.add(curTestJsObj);
                                 }
                                 curTstGrpJObj.put(TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), testJsArr);
                             }
@@ -754,11 +754,11 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                                 JSONArray testJsArr = new JSONArray();
                                 for (Object[] curTestWSpec : testWithSpecsInfo) {
                                     JSONObject curTestJsObj = LPJson.convertArrayRowToJSONObject(testFldsArr, curTestWSpec);
-                                    testJsArr.put(curTestJsObj);
+                                    testJsArr.add(curTestJsObj);
                                 }
                                 curTstGrpJObj.put(TblsData.ViewsData.SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW.getViewName(), testJsArr);
                             }
-                            tstGrpJsArr.put(curTstGrpJObj);
+                            tstGrpJsArr.add(curTstGrpJObj);
                         }
                         jObjSampleInfo.put(TblsData.TablesData.SAMPLE_REVISION_TESTING_GROUP.getTableName(), tstGrpJsArr);
                     }
@@ -813,7 +813,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                             jObjPieceOfInfo = new JSONObject();
                             jObjPieceOfInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, fieldToDisplayArr1);
                             jObjPieceOfInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, batchInfo[0][LPArray.valuePosicInArray(batchTblAllFields, fieldToDisplayArr1)].toString());
-                            jArrPieceOfInfo.put(jObjPieceOfInfo);
+                            jArrPieceOfInfo.add(jObjPieceOfInfo);
                         }
                     }
                     jObjMainObject.put(GlobalAPIsParams.REQUEST_PARAM_BATCH_FIELD_TO_RETRIEVE, jObjBatchInfo);
@@ -831,7 +831,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                         JSONObject jObj = new JSONObject();
                         jObj.put(GlobalAPIsParams.LBL_ERROR, "This is not a completed batch so temperature readings cannot be"
                                 + ". IncubName:" + incubName + ". incubStart:" + incubStart + ". incubEnd:" + incubEnd);
-                        jArrLastTempReadings.put(jObj);
+                        jArrLastTempReadings.add(jObj);
                     } else {
                         fieldsToRetrieve = new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.EVENT_TYPE.getName(),
                             TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.CREATED_BY.getName(),
@@ -844,11 +844,11 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrReadings[0][0].toString())) {
                             JSONObject jObj = new JSONObject();
                             jObj.put(GlobalAPIsParams.LBL_ERROR, "No temperature readings found");
-                            jArrLastTempReadings.put(jObj);
+                            jArrLastTempReadings.add(jObj);
                         } else {
                             for (Object[] currReading : instrReadings) {
                                 JSONObject jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currReading);
-                                jArrLastTempReadings.put(jObj);
+                                jArrLastTempReadings.add(jObj);
                             }
                         }
                     }
@@ -907,7 +907,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                             jObjPieceOfInfo = new JSONObject();
                             jObjPieceOfInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, fieldToDisplayArr1);
                             jObjPieceOfInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, prodLotInfo[0][LPArray.valuePosicInArray(prodLotTblAllFields, fieldToDisplayArr1)].toString());
-                            jArrPieceOfInfo.put(jObjPieceOfInfo);
+                            jArrPieceOfInfo.add(jObjPieceOfInfo);
                         }
                     }
                     jObjMainObject.put(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_RETRIEVE, jObjProdLotInfo);
@@ -947,10 +947,10 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) {
                         jObj = LPFrontEnd.responseJSONDiagnosticLPFalse(Rdbms.RdbmsErrorTrapping.TABLE_WITH_NO_RECORDS, new Object[0]);
                     } else {
-                        sampleJsonArr.put(jObj);
+                        sampleJsonArr.add(jObj);
                         for (Object[] curRec : sampleInfo) {
                             jObj = LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curRec);
-                            sampleJsonArr.put(jObj);
+                            sampleJsonArr.add(jObj);
                         }
                     }
                     jObjMainObject.put(TblsEnvMonitData.TablesEnvMonitData.SAMPLE.getTableName(), sampleJsonArr);
@@ -959,7 +959,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                     for (String fieldToDisplayArr1 : sampleFieldToRetrieveArr) {
                         jObjPieceOfInfo = new JSONObject();
                         jObjPieceOfInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, fieldToDisplayArr1);
-                        sampleJsonArr.put(jObjPieceOfInfo);
+                        sampleJsonArr.add(jObjPieceOfInfo);
                     }
                     jObjMainObject.put(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_DISPLAY, sampleJsonArr);
 
@@ -981,7 +981,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                             } else {
                                 for (Object[] curRec : groupedInfo) {
                                     jObj = LPJson.convertArrayRowToJSONObject(smpGroupFldsArr, curRec);
-                                    sampleGrouperJsonArr.put(jObj);
+                                    sampleGrouperJsonArr.add(jObj);
                                 }
                             }
                             jObjMainObject.put(groupInfo[1], sampleGrouperJsonArr);
@@ -1039,7 +1039,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                             jObjPieceOfInfo = new JSONObject();
                             jObjPieceOfInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, fieldToDisplayArr1);
                             jObjPieceOfInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, incubInfo[0][LPArray.valuePosicInArray(incubTblAllFields, fieldToDisplayArr1)].toString());
-                            jArrPieceOfInfo.put(jObjPieceOfInfo);
+                            jArrPieceOfInfo.add(jObjPieceOfInfo);
                         }
                     }
                     jObjMainObject.put(GlobalAPIsParams.INCUBATION_REPORT_JSON_TAG_NAME_FIELD_TO_RETRIEVE, jObjProdLotInfo);
@@ -1078,7 +1078,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                             jObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currReading);
                         }
 
-                        jArrLastTempReadings.put(jObj);
+                        jArrLastTempReadings.add(jObj);
                     }
                     jObjMainObject.put(GlobalAPIsParams.INCUBATION_REPORT_JSON_TAG_NAME_LAST_N_TEMP_READINGS, jArrLastTempReadings);
                     jObjMainObject.put(reportInfoTagNAme, endPoint.getReportInfo());
@@ -1119,7 +1119,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                     jArr = new JSONArray();
                     for (Object[] curRec : samplesCounterPerStage) {
                         jObj = LPJson.convertArrayRowToJSONObject(prodLotfieldToRetrieveArr, curRec);
-                        jArr.put(jObj);
+                        jArr.add(jObj);
                     }
                     this.isSuccess = true;
                     this.responseSuccessJArr = jArr;
@@ -1164,7 +1164,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                         jArr = new JSONArray();
                         for (int i = 0; i < numTotalRecords; i++) {
                             jObj = LPJson.convertArrayRowToJSONObject(prodLotfieldToRetrieveArr, programLastResults[i]);
-                            jArr.put(jObj);
+                            jArr.add(jObj);
                         }
                     } else {
                         String[] whereLimitsFieldNames = new String[0];
@@ -1213,11 +1213,11 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                                 }
                                 for (int i = 0; i < numTotalRecords; i++) {
                                     JSONObject jResultsObj = LPJson.convertArrayRowToJSONObject(fieldToRetrieveGroupedArr, programLastResults[i]);
-                                    jArrSampleResults.put(jResultsObj);
+                                    jArrSampleResults.add(jResultsObj);
                                 }
                             }
                             jObj.put(JSON_TAG_NAME_SAMPLE_RESULTS, jArrSampleResults);
-                            jArr.put(jObj);
+                            jArr.add(jObj);
                         }
 
                     }
@@ -1299,7 +1299,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(smpArr[0][0].toString()))) {
                         for (Object[] curSmp : smpArr) {
                             JSONObject curRecordJObj = LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curSmp);
-                            jArr.put(curRecordJObj);
+                            jArr.add(curRecordJObj);
                         }
                     }
                     jObj.put("samples_stillIncubationStageAndBothIncubCompleted", jArr);
@@ -1411,7 +1411,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                                 currPendingIncubBatch = curSmp[LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsData.Sample.INCUBATION2_BATCH.getName())].toString();
                                 incubRow.put("current_pending_incub_batch", currPendingIncubBatch);
                             }
-                            jArr.put(incubRow);
+                            jArr.add(incubRow);
                         }
                         jObj.put("samplesWithAnyPendingIncubation", jArr);
                     }
@@ -1608,16 +1608,16 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                                     JSONObject mySampleAnaResJSObj = new JSONObject();
                                     for (Object[] mySampleAnalysisResult : mySampleAnalysisResults) {
                                         mySampleAnaResJSObj = LPJson.convertArrayRowToJSONObject(sampleAnalysisResultFieldToRetrieveArr, mySampleAnalysisResult);
-                                        mySamplesAnaResJSArr.put(mySampleAnaResJSObj);
+                                        mySamplesAnaResJSArr.add(mySampleAnaResJSObj);
                                     }
                                     mySampleAnaJSObj.put(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), mySamplesAnaResJSArr);
                                 }
-                                mySamplesAnaJSArr.put(mySampleAnaJSObj);
+                                mySamplesAnaJSArr.add(mySampleAnaJSObj);
                             }
                             mySampleJSObj.put(TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), mySamplesAnaJSArr);
                         }
                     }
-                    mySamplesJSArr.put(mySampleJSObj);
+                    mySamplesJSArr.add(mySampleJSObj);
                 }
                 return mySamplesJSArr;
             }
@@ -1648,13 +1648,13 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                                 testObj.put(sampleAnalysisFieldToRetrieveArr[ySmpAna], mySampleAnalysi[ySmpAna]);
                             }
                         }
-                        sampleArray.put(testObj);
+                        sampleArray.add(testObj);
                     }
                     sampleObj.put(TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), sampleArray);
                 }
-                sampleArray.put(sampleObj);
+                sampleArray.add(sampleObj);
             }
-            samplesArray.put(sampleArray);
+            samplesArray.add(sampleArray);
             return samplesArray;
         }
     }catch (Exception e){
@@ -1679,7 +1679,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
             case "SAMPLING":
                 jObj.put(GlobalAPIsParams.LBL_FIELD_NAME, TblsEnvMonitData.Sample.SAMPLING_DATE.getName());
                 jObj.put(GlobalAPIsParams.LBL_FIELD_VALUE, sampleFldValue[LPArray.valuePosicInArray(sampleFldName, TblsEnvMonitData.Sample.SAMPLING_DATE.getName())].toString());
-                jArrMainObj.put(jObj);
+                jArrMainObj.add(jObj);
                 return jArrMainObj;
             case "INCUBATION":
                 String[] incub1Flds = new String[]{TblsEnvMonitData.Sample.INCUBATION_PASSED.getName(), TblsEnvMonitData.Sample.INCUBATION_INCUBATOR.getName(), TblsEnvMonitData.Sample.INCUBATION_BATCH.getName(),
@@ -1692,7 +1692,7 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                         JSONObject jObjSampleStageInfo = new JSONObject();
                         jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, curFld);
                         jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, sampleFldValue[fldPosic].toString());
-                        jArrMainObj.put(jObjSampleStageInfo);
+                        jArrMainObj.add(jObjSampleStageInfo);
                     }
                     curFld = curFld.replace("incubation", "incubation2");
                     fldPosic = LPArray.valuePosicInArray(sampleFldName, curFld);
@@ -1701,14 +1701,14 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                         JSONObject jObjSampleStageInfo = new JSONObject();
                         jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, curFld);
                         jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, sampleFldValue[fldPosic].toString());
-                        jArrMainObj2.put(jObjSampleStageInfo);
+                        jArrMainObj2.add(jObjSampleStageInfo);
                     }
                 }
                 JSONObject jObj2 = new JSONObject();
                 jObj2.put("incubation_1", jArrMainObj);
                 jObj2.put("incubation_2", jArrMainObj2);
                 jArrMainObj = new JSONArray();
-                jArrMainObj.put(jObj2);
+                jArrMainObj.add(jObj2);
                 return jArrMainObj;
             case "PLATEREADING":
             case "MICROORGANISMIDENTIFICATION":
@@ -1723,9 +1723,9 @@ public class ClassEnvMonSampleFrontend implements EnumIntQueriesObj {
                     JSONObject jObjSampleStageInfo = new JSONObject();
                     jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_NAME, tblAllFlds[iFlds]);
                     jObjSampleStageInfo.put(GlobalAPIsParams.LBL_FIELD_VALUE, sampleStageInfo[0][iFlds].toString());
-                    jArrMainObj.put(jObjSampleStageInfo);
+                    jArrMainObj.add(jObjSampleStageInfo);
                 }
-                jArrMainObj.put(jObj);
+                jArrMainObj.add(jObj);
                 return jArrMainObj;
             default:
                 return jArrMainObj;

@@ -17,7 +17,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPMailing;
 import lbplanet.utilities.LPPlatform;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import trazit.globalvariables.GlobalVariables;
@@ -67,7 +67,7 @@ public class DevObjectsInModules {
         }else{
             for (Object[] curRow: reqEndpointInfo){
                 JSONObject convertArrayRowToJSONObject = LPJson.convertArrayRowToJSONObject(fldNames, curRow);
-                allApisArr.put(convertArrayRowToJSONObject);
+                allApisArr.add(convertArrayRowToJSONObject);
             }
             evaluateInfo(fldNames, reqEndpointInfo, "APIS");
         }
@@ -81,7 +81,7 @@ public class DevObjectsInModules {
         }else{
             for (Object[] curRow: reqEndpointInfo){
                 JSONObject convertArrayRowToJSONObject = LPJson.convertArrayRowToJSONObject(fldNames, curRow);
-                allAudEvArr.put(convertArrayRowToJSONObject);
+                allAudEvArr.add(convertArrayRowToJSONObject);
             }
             evaluateInfo(fldNames, reqEndpointInfo, "AUDIT");
         }
@@ -95,7 +95,7 @@ public class DevObjectsInModules {
         }else{
             for (Object[] curRow: reqEndpointInfo){
                 JSONObject convertArrayRowToJSONObject = LPJson.convertArrayRowToJSONObject(fldNames, curRow);
-                allBusRulesArr.put(convertArrayRowToJSONObject);
+                allBusRulesArr.add(convertArrayRowToJSONObject);
             }
             evaluateInfo(fldNames, reqEndpointInfo, "BUSINESS");
         }
@@ -109,7 +109,7 @@ public class DevObjectsInModules {
         }else{
             for (Object[] curRow: reqEndpointInfo){
                 JSONObject convertArrayRowToJSONObject = LPJson.convertArrayRowToJSONObject(fldNames, curRow);
-                allErrorFamArr.put(convertArrayRowToJSONObject);
+                allErrorFamArr.add(convertArrayRowToJSONObject);
             }
             evaluateInfo(fldNames, reqEndpointInfo, "ERRORS");
         }
@@ -130,21 +130,21 @@ public class DevObjectsInModules {
                 }                
                 switch (objType){
                     case "ERRORS":
-                        this.allErrorFamNotFoundArr.put(missingObj);
+                        this.allErrorFamNotFoundArr.add(missingObj);
                         break;
                     case "BUSINESS":
-                        this.allBusRulesNotFoundArr.put(missingObj);
+                        this.allBusRulesNotFoundArr.add(missingObj);
                         break;
                     case "AUDIT":
-                        this.allAudEvNotFoundArr.put(missingObj);
+                        this.allAudEvNotFoundArr.add(missingObj);
                         break;
                     case "APIS":
-                        this.allApisNotFoundArr.put(missingObj);
+                        this.allApisNotFoundArr.add(missingObj);
                         break;
                     default: 
                         return;
                 }
-                this.objsNotInModuleArr.put(missingObj);                
+                this.objsNotInModuleArr.add(missingObj);                
             }else{
                 return;
             }
@@ -162,45 +162,45 @@ public class DevObjectsInModules {
             JSONObject summaryDiagnObj=new JSONObject();
             summaryDiagnObj.put("summary", summaryDiagnoses);
             JSONArray summaryDiagnArr=new JSONArray();
-            if (allApisNotFoundArr.length()>0)
-                summaryDiagnArr.put("For endpoints, There are "+allApisNotFoundArr.length()+" apis not assigned to any module");
-            if (allBusRulesNotFoundArr.length()>0)
-                summaryDiagnArr.put("For Business Rules, There are "+allBusRulesNotFoundArr.length()+" business rules apis not assigned to any module");
-            if (allErrorFamNotFoundArr.length()>0)
-                summaryDiagnArr.put("For Error notifications, There are "+allErrorFamNotFoundArr.length()+" families not assigned to any module");
-            if (allAudEvNotFoundArr.length()>0)
-                summaryDiagnArr.put("For Audit events, There are "+allAudEvNotFoundArr.length()+" entities not assigned to any module");
+            if (allApisNotFoundArr.size()>0)
+                summaryDiagnArr.add("For endpoints, There are "+allApisNotFoundArr.size()+" apis not assigned to any module");
+            if (allBusRulesNotFoundArr.size()>0)
+                summaryDiagnArr.add("For Business Rules, There are "+allBusRulesNotFoundArr.size()+" business rules apis not assigned to any module");
+            if (allErrorFamNotFoundArr.size()>0)
+                summaryDiagnArr.add("For Error notifications, There are "+allErrorFamNotFoundArr.size()+" families not assigned to any module");
+            if (allAudEvNotFoundArr.size()>0)
+                summaryDiagnArr.add("For Audit events, There are "+allAudEvNotFoundArr.size()+" entities not assigned to any module");
 
             summaryDiagnObj.put("detail", summaryDiagnArr);
 
             this.summaryInfo.put("00_summary",summaryDiagnObj);
-            this.summaryInfo.put("01_total_endpoint_apis",allApisArr.length());
+            this.summaryInfo.put("01_total_endpoint_apis",allApisArr.size());
             this.summaryInfo.put("01_list_of_endpoint_apis", allApisArr);
-            this.summaryInfo.put("02_total_business_rules_apis",allBusRulesArr.length());
+            this.summaryInfo.put("02_total_business_rules_apis",allBusRulesArr.size());
             this.summaryInfo.put("02_list_of_business_rules_apis", allBusRulesArr);
-            this.summaryInfo.put("03_total_error_families",allErrorFamArr.length());
+            this.summaryInfo.put("03_total_error_families",allErrorFamArr.size());
             this.summaryInfo.put("03_list_of_error_families", allErrorFamArr);
-            this.summaryInfo.put("04_total_audit_event_entities",allAudEvArr.length());
+            this.summaryInfo.put("04_total_audit_event_entities",allAudEvArr.size());
             this.summaryInfo.put("04_list_of_audit_event_entities", allAudEvArr);
 
-            this.summaryInfo.put("01_total_endpoint_apis_with_no_module",allApisNotFoundArr.length());
+            this.summaryInfo.put("01_total_endpoint_apis_with_no_module",allApisNotFoundArr.size());
             this.summaryInfo.put("01_list_of_endpoint_apis_with_no_module", allApisNotFoundArr);
-            this.summaryInfo.put("02_total_business_rules_apis_with_no_module",allBusRulesNotFoundArr.length());
+            this.summaryInfo.put("02_total_business_rules_apis_with_no_module",allBusRulesNotFoundArr.size());
             this.summaryInfo.put("02_list_of_business_rules_apis_with_no_module", allBusRulesNotFoundArr);
-            this.summaryInfo.put("03_total_error_families_with_no_module",allErrorFamNotFoundArr.length());
+            this.summaryInfo.put("03_total_error_families_with_no_module",allErrorFamNotFoundArr.size());
             this.summaryInfo.put("03_list_of_error_families_with_no_module", allErrorFamNotFoundArr);
-            this.summaryInfo.put("04_total_audit_event_entities_with_no_module",allAudEvNotFoundArr.length());
+            this.summaryInfo.put("04_total_audit_event_entities_with_no_module",allAudEvNotFoundArr.size());
             this.summaryInfo.put("04_list_of_audit_event_entities_with_no_module", allAudEvNotFoundArr);
             
-            this.summaryInfo.put("03_total_all_objects_with_no_module",objsNotInModuleArr.length());
+            this.summaryInfo.put("03_total_all_objects_with_no_module",objsNotInModuleArr.size());
             this.summaryInfo.put("03_list_of_all_objects_with_no_module", objsNotInModuleArr);
             Boolean sendMail = Boolean.valueOf(request.getParameter("sendMail"));        
             if (sendMail){
                 StringBuilder mailBody=new StringBuilder(0);
-                mailBody.append("<h2>Endpoint APIS with no module: "+allApisNotFoundArr.length()+" from  a total of "+allApisArr.length()+"</h2><br>");
-                mailBody.append("<h2>Business Rules with no module: "+allBusRulesNotFoundArr.length()+" from  a total of "+allBusRulesArr.length()+"</h2><br>");
-                mailBody.append("<h2>Error notification families with no module: "+allErrorFamNotFoundArr.length()+" from  a total of "+allErrorFamArr.length()+"</h2><br>");
-                mailBody.append("<h2>Audit events entities with no module: "+allAudEvNotFoundArr.length()+" from  a total of "+allAudEvArr.length()+"</h2><br>");
+                mailBody.append("<h2>Endpoint APIS with no module: "+allApisNotFoundArr.size()+" from  a total of "+allApisArr.size()+"</h2><br>");
+                mailBody.append("<h2>Business Rules with no module: "+allBusRulesNotFoundArr.size()+" from  a total of "+allBusRulesArr.size()+"</h2><br>");
+                mailBody.append("<h2>Error notification families with no module: "+allErrorFamNotFoundArr.size()+" from  a total of "+allErrorFamArr.size()+"</h2><br>");
+                mailBody.append("<h2>Audit events entities with no module: "+allAudEvNotFoundArr.size()+" from  a total of "+allAudEvArr.size()+"</h2><br>");
                 mailBody.append("<b>Endpoint APIS with no module ones are:</b> <br>"+formatListForEmail(jsonArrayToList(allApisNotFoundArr))+"<br><br>");
                 mailBody.append("<b>Business Rules with no module ones are:</b> <br>"+formatListForEmail(jsonArrayToList(allBusRulesNotFoundArr))+"<br><br>");
                 mailBody.append("<b>Error notification with no module ones are:</b> <br>"+formatListForEmail(jsonArrayToList(allErrorFamNotFoundArr))+"<br><br>");

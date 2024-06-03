@@ -428,7 +428,7 @@ public class DataSampleAnalysisResult {
                     AnalysisCalculations anCalc=new AnalysisCalculations(resultId, testId, sampleId, resultFieldsArr, resultData[0], this.sar, alternativeAuditEntry, alternativeAuditClass);
                     anCalc=null;
                 }
-                dataSample.smpAna.calcsPostEnterResult(resultId, testId, sampleId, dataSample);
+                dataSample.smpAna.calcsPostEnterResult(resultId, testId, sampleId, dataSample);                
             }
             if (Boolean.TRUE.equals(diagnosesObj.getRunSuccess())) {
                 DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId);
@@ -759,6 +759,7 @@ public class DataSampleAnalysisResult {
                 if (Boolean.TRUE.equals(diagnosesObj.getRunSuccess())) {
                     DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId);
                 }
+                dataSample.smpAna.calcsPostEnterResult(resultId, testId, sampleId, dataSample);
             }
             Object[][] specLimits = ConfigSpecRule.getSpecLimitLimitIdFromSpecVariables(sampleSpecCode, sampleSpecCodeVersion, sampleSpecVariationName, analysis, methodName, paramName,
                     new String[]{TblsCnfg.SpecLimits.LIMIT_ID.getName(), TblsCnfg.SpecLimits.RULE_TYPE.getName(), TblsCnfg.SpecLimits.RULE_VARIABLES.getName(), TblsCnfg.SpecLimits.LIMIT_ID.getName(),
@@ -783,6 +784,7 @@ public class DataSampleAnalysisResult {
                 }
                 if (Boolean.TRUE.equals(diagnoseObj.getRunSuccess())) {
                     DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId);
+                    dataSample.smpAna.calcsPostEnterResult(resultId, testId, sampleId, dataSample);
                 }
                 return new InternalMessage(diagnoseObj.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, diagnoseObj.getErrorMessageCode(), diagnoseObj.getErrorMessageVariables());
             }
@@ -846,6 +848,7 @@ public class DataSampleAnalysisResult {
                 }
                 if (Boolean.TRUE.equals(diagnoseObj.getRunSuccess())) {
                     DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId);
+                    dataSample.smpAna.calcsPostEnterResult(resultId, testId, sampleId, dataSample);
                 }
                 if (Boolean.TRUE.equals(diagnoseObj.getRunSuccess())) {
                     if ((messageCodeVariables[messageCodeVariables.length - 1]).toString().contains(ConfigSpecRule.SPEC_WORD_FOR_UPON_CONTROL)) {
@@ -910,6 +913,7 @@ public class DataSampleAnalysisResult {
                 }
                 if (Boolean.TRUE.equals(diagnoseObj.getRunSuccess())) {
                     DataSampleAnalysis.sampleAnalysisEvaluateStatus(sampleId, testId);
+                    dataSample.smpAna.calcsPostEnterResult(resultId, testId, sampleId, dataSample);
                 }
                 if (Boolean.TRUE.equals(diagnoseObj.getRunSuccess())) {
                     //checkMsgCode = (EnumIntMessages) resSpecEvaluation.getMessageCodeObj();
@@ -968,6 +972,7 @@ public class DataSampleAnalysisResult {
         if (Boolean.FALSE.equals(diagnoseObj.getRunSuccess())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, diagnoseObj.getErrorMessageCode(), diagnoseObj.getErrorMessageVariables());
         }
+        dataSample.smpAna.calcsPostEnterResult(resultId, testId, sampleId, dataSample);
         SampleAudit smpAudit = new SampleAudit();
         EnumIntAuditEvents auditActionName = SampleAudit.DataSampleAnalysisResultAuditEvents.UOM_CHANGED;
         smpAudit.sampleAuditAdd(auditActionName, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(),
@@ -1043,7 +1048,7 @@ public class DataSampleAnalysisResult {
                             RdbmsObject diagnosesObj = Rdbms.updateTableRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT,
                                     EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT, updFldNames), updFldValues, sqlWhere, null);
                             diagnoses=new InternalMessage(diagnosesObj.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, diagnosesObj.getErrorMessageCode(), diagnosesObj.getErrorMessageVariables());
-                            if (Boolean.TRUE.equals(diagnosesObj.getRunSuccess())) {
+                            if (Boolean.TRUE.equals(diagnosesObj.getRunSuccess())) {                                
                                 SampleAudit smpAudit = new SampleAudit();
                                 smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_UNCANCELED, TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), +resultId,
                                         sampleId, testId, resultId, updFldNames, updFldValues);
@@ -1081,7 +1086,7 @@ public class DataSampleAnalysisResult {
                     RdbmsObject diagnosesObj = Rdbms.updateTableRecordFieldsByFilter(TblsData.TablesData.SAMPLE_ANALYSIS,
                             EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE_ANALYSIS, updFldNames), updFldValues, sqlWhere, null);
                     diagnoses=new InternalMessage(diagnosesObj.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, diagnosesObj.getErrorMessageCode(), diagnosesObj.getErrorMessageVariables());
-                    if (Boolean.TRUE.equals(diagnosesObj.getRunSuccess())) {
+                    if (Boolean.TRUE.equals(diagnosesObj.getRunSuccess())) {                        
                         SampleAudit smpAudit = new SampleAudit();
                         smpAudit.sampleAuditAdd(SampleAudit.DataSampleAnalysisAuditEvents.SAMPLE_ANALYSIS_UNCANCELED, TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(),
                                 currTest, sampleId, currTest, null, updFldNames, updFldValues);
@@ -1108,7 +1113,7 @@ public class DataSampleAnalysisResult {
                 RdbmsObject diagnosesObj = Rdbms.updateTableRecordFieldsByFilter(TblsData.TablesData.SAMPLE,
                         EnumIntTableFields.getTableFieldsFromString(TblsData.TablesData.SAMPLE, updFldNames), updFldValues, sqlWhere, null);
                 diagnoses=new InternalMessage(diagnosesObj.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, diagnosesObj.getErrorMessageCode(), diagnosesObj.getErrorMessageVariables());
-                if (Boolean.TRUE.equals(diagnosesObj.getRunSuccess())) {
+                if (Boolean.TRUE.equals(diagnosesObj.getRunSuccess())) {                    
                     SampleAudit smpAudit = new SampleAudit();
                     smpAudit.sampleAuditAdd(SampleAudit.DataSampleAuditEvents.SAMPLE_UNCANCELED, TblsData.TablesData.SAMPLE.getTableName(),
                             currSample, currSample, null, null, updFldNames, updFldValues);

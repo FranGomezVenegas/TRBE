@@ -15,7 +15,7 @@ import static lbplanet.utilities.LPFrontEnd.responseJSONDiagnosticLPFalse;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.globalvariables.GlobalVariables;
 import trazit.procedureinstance.definition.definition.TblsReqs;
@@ -75,7 +75,7 @@ public class ProcDefToInstanceCreateSopMetaDataAndUserSop {
             }else{
                 jsUserRoleObj.put("diagnotic", "SOP was already part of this procedure");
             }
-            jsArr.put(jsUserRoleObj);
+            jsArr.add(jsUserRoleObj);
             jsonObj.put("SOP Id " + curSopId + " & SOP Name " + curSopName, jsArr);
         }
         return jsonObj;
@@ -123,13 +123,13 @@ public class ProcDefToInstanceCreateSopMetaDataAndUserSop {
                     if (sopRolePosic == -1) {
                        jsSopRoleObj.put("Assignmnet_detail", ProcedureDefinitionToInstanceUtility.procedureAddSopToUsersByRole(procedure, procVersion, procInstanceName, roleFromArr, sopFromArr, null, null));
                     }
-                    jsSopRoleArr.put(jsSopRoleObj);
+                    jsSopRoleArr.add(jsSopRoleObj);
                     existingSopRole = LPArray.addValueToArray1D(existingSopRole, sopRoleValue);
                 }
-                jsEventArr.put(jsSopRoleArr);
+                jsEventArr.add(jsSopRoleArr);
                 jsUserRoleObj.put("Event SOPs Log", jsEventArr);
             }
-            jsArr.put(jsUserRoleObj);
+            jsArr.add(jsUserRoleObj);
             jsonObj.put("Procedure Event " + curProcEventName + " & SOP Name " + curSops + " & Role Name " + curRoleName, jsArr);
         }
         return jsonObj;

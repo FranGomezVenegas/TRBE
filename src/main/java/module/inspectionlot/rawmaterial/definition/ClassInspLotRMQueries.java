@@ -39,7 +39,7 @@ import static module.inspectionlot.rawmaterial.definition.InspLotQueries.dataSam
 import module.inspectionlot.rawmaterial.definition.InspLotRMEnums.InspLotRMBusinessRules;
 import module.inspectionlot.rawmaterial.logic.DataInsLotsCorrectiveAction;
 import module.inspectionlot.rawmaterial.logic.DataInspLotRMCertificate;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntQueriesObj;
 import trazit.enums.EnumIntTableFields;
@@ -112,7 +112,7 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                             new String[]{TblsInspLotRMData.Lot.NAME.getName()}, null);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(lotInfo[0][0].toString())) {
                         lotJsonObj.put(GlobalAPIsParams.LBL_ERROR, Arrays.toString(lotInfo[0]));
-                        lotsJsonArr.put(lotJsonObj);
+                        lotsJsonArr.add(lotJsonObj);
                         Rdbms.closeRdbms();
                         LPFrontEnd.servletReturnSuccess(request, response, lotsJsonArr);
                         return;
@@ -154,7 +154,7 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                                     jLotSectionInfoObj.put(TblsInspLotRMConfig.Material.DEFAULT_UOM.getName(), (String) matInfoObj.get(TblsInspLotRMConfig.Material.DEFAULT_UOM.getName()));
                                     jLotSectionInfoObj.put(TblsInspLotRMConfig.Material.ALTERNATIVE_UOMS.getName(), (String) matInfoObj.get(TblsInspLotRMConfig.Material.ALTERNATIVE_UOMS.getName()));
                                 }
-                                lotInfoJsonArr.put(jLotSectionInfoObj);
+                                lotInfoJsonArr.add(jLotSectionInfoObj);
                             }
                             lotJsonObj.put(TblsInspLotRMData.TablesInspLotRMData.LOT_BULK.getTableName(), lotInfoJsonArr);
                         }
@@ -170,7 +170,7 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                             JSONArray lotInfoJsonArr = new JSONArray();
                             for (Object[] curRow : lotInfo) {
                                 JSONObject jLotSectionInfoObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieveBulk, curRow);
-                                lotInfoJsonArr.put(jLotSectionInfoObj);
+                                lotInfoJsonArr.add(jLotSectionInfoObj);
                             }
                             lotJsonObj.put(TblsInspLotRMData.TablesInspLotRMData.INVENTORY_RETAIN.getTableName(), lotInfoJsonArr);
                         }
@@ -187,7 +187,7 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                             JSONArray lotInfoJsonArr = new JSONArray();
                             for (Object[] curRow : lotInfo) {
                                 JSONObject jLotSectionInfoObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieveBulk, curRow);
-                                lotInfoJsonArr.put(jLotSectionInfoObj);
+                                lotInfoJsonArr.add(jLotSectionInfoObj);
                             }
                             lotJsonObj.put(TblsInspLotRMData.TablesInspLotRMData.LOT_NOT_ANALYZED_RESULT.getTableName(), lotInfoJsonArr);
                         }
@@ -233,17 +233,17 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                                             JSONArray sampleAnaResJsonArr = new JSONArray();
                                             for (Object[] curRow3 : sampleAnaResInfo) {
                                                 JSONObject sampleAnaResSectionInfoObj = LPJson.convertArrayRowToJSONObject(fieldsToRetrieveSmpAnaRes, curRow3);
-                                                sampleAnaResJsonArr.put(sampleAnaResSectionInfoObj);
+                                                sampleAnaResJsonArr.add(sampleAnaResSectionInfoObj);
                                             }
                                             sampleAnaSectionInfoObj.put(TblsData.TablesData.SAMPLE_ANALYSIS_RESULT.getTableName(), sampleAnaResJsonArr);
 
-                                            sampleAnaJsonArr.put(sampleAnaSectionInfoObj);
+                                            sampleAnaJsonArr.add(sampleAnaSectionInfoObj);
                                         }
                                         jLotSampleSectionInfoObj.put(TblsData.TablesData.SAMPLE_ANALYSIS.getTableName(), sampleAnaJsonArr);
                                     }
                                 }
 
-                                jLotSampleSectionInfoArr.put(jLotSampleSectionInfoObj);
+                                jLotSampleSectionInfoArr.add(jLotSampleSectionInfoObj);
                             }
                             lotJsonObj.put(TblsInspLotRMData.TablesInspLotRMData.SAMPLE.getTableName(), jLotSampleSectionInfoArr);
                         }
@@ -269,7 +269,7 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                         }
                         lotJsonObj.put("lot_coa", DataInspLotRMCertificate.getLotCoAInfo(lotName, "CC", jLotInfoObj, fieldsToRetrieveSample, lotSampleInfo, specFlds, specLimitsInfo));
 
-                        lotsJsonArr.put(lotJsonObj);
+                        lotsJsonArr.add(lotJsonObj);
                     }
                     Rdbms.closeRdbms();
                     LPFrontEnd.servletReturnSuccess(request, response, lotsJsonArr);
@@ -295,7 +295,7 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                     }
                     for (Object[] curRow : lotsPendingDecisionInfo) {
                         JSONObject jObj = LPJson.convertArrayRowToJSONObject(getAllFieldNames(fieldsToRetrieveObj), curRow);
-                        jArr.put(jObj);
+                        jArr.add(jObj);
                     }
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     break;
@@ -306,7 +306,7 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                     Boolean includesSampleAnalysisInfo = Boolean.valueOf(LPNulls.replaceNull(argValues[2]).toString());
                     Boolean includesSampleAnalysisResultInfo = Boolean.valueOf(LPNulls.replaceNull(argValues[3]).toString());
                     jArr = new JSONArray();
-                    jArr.put(dataSampleStructure(lotName, null, fieldsToRetrieveStr, new String[]{TblsInspLotRMData.Sample.SAMPLE_ID.getName()}, includesSampleAnalysisInfo, includesSampleAnalysisResultInfo));
+                    jArr.add(dataSampleStructure(lotName, null, fieldsToRetrieveStr, new String[]{TblsInspLotRMData.Sample.SAMPLE_ID.getName()}, includesSampleAnalysisInfo, includesSampleAnalysisResultInfo));
                     Rdbms.closeRdbms();
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     break;
@@ -351,7 +351,7 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                             Object[] childJObj = new Object[fieldsToRetrieve.length];
                             childJObj[2] = "No child";
                             JSONObject jObjLvl2 = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, childJObj);
-                            jArrLvl2.put(jObjLvl2);
+                            jArrLvl2.add(jObjLvl2);
                         } else {
                             for (Object[] curRowLvl2 : sampleAuditInfoLvl2) {
                                 JSONObject jObjLvl2 = LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curRowLvl2,
@@ -360,11 +360,11 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                                 if (LPPlatform.LAB_TRUE.equalsIgnoreCase(convertToJsonObjectStringedObjectLvl2[0].toString())) {
                                     jObjLvl2.put(TblsInspLotRMDataAudit.Lot.FIELDS_UPDATED.getName(), convertToJsonObjectStringedObjectLvl2[1]);
                                 }
-                                jArrLvl2.put(jObjLvl2);
+                                jArrLvl2.add(jObjLvl2);
                             }
                         }
                         jObj.put("sublevel", jArrLvl2);
-                        jArr.put(jObj);
+                        jArr.add(jObj);
                     }
                     Rdbms.closeRdbms();
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
@@ -393,12 +393,12 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                                 if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString()))) {
                                     for (Object[] currInvestObject : incidentsNotClosed) {
                                         JSONObject investObjectsJObj = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(fieldsToRetrieveInvestObj), currInvestObject);
-                                        investObjectsJArr.put(investObjectsJObj);
+                                        investObjectsJArr.add(investObjectsJObj);
                                     }
                                 }
                                 investigationJObj.put(TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(), investObjectsJArr);
                             }
-                            investigationJArr.put(investigationJObj);
+                            investigationJArr.add(investigationJObj);
                         }
                     }
                     LPFrontEnd.servletReturnSuccess(request, response, investigationJArr);
@@ -411,7 +411,7 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                     if (Boolean.FALSE.equals(isTagValueOneOfEnableOnes(createInvCorrectiveAction))) {
                         JSONObject jObj = new JSONObject();
                         jObj.put(TblsInspLotRMProcedure.TablesInspLotRMProcedure.LOT_CORRECTIVE_ACTION.getTableName(), "corrective action not active!");
-                        jArray.put(jObj);
+                        jArray.add(jObj);
                     } else {
                         fieldsToRetrieveObj = TblsInspLotRMProcedure.TablesInspLotRMProcedure.LOT_CORRECTIVE_ACTION.getTableFields();
                         Object[][] investigationResultsPendingDecision = QueryUtilitiesEnums.getTableData(TblsInspLotRMProcedure.TablesInspLotRMProcedure.LOT_CORRECTIVE_ACTION,
@@ -425,7 +425,7 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
 
                         for (Object[] curRow : investigationResultsPendingDecision) {
                             JSONObject jObj = LPJson.convertArrayRowToJSONObject(getAllFieldNames(fieldsToRetrieveObj), curRow);
-                            jArray.put(jObj);
+                            jArray.add(jObj);
                         }
                     }
                     LPFrontEnd.servletReturnSuccess(request, response, jArray);
@@ -436,7 +436,7 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                     if (Boolean.FALSE.equals(isTagValueOneOfEnableOnes(createInvCorrectiveAction))) {
                         JSONObject jObj = new JSONObject();
                         jObj.put(TblsInspLotRMProcedure.TablesInspLotRMProcedure.LOT_CORRECTIVE_ACTION.getTableName(), "corrective action not active!");
-                        jArray.put(jObj);
+                        jArray.add(jObj);
                         LPFrontEnd.servletReturnSuccess(request, response, jArray);
                     }
                     Integer investigationId = null;
@@ -465,11 +465,11 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                             if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(incidentsNotClosed[0][0].toString()))) {
                                 for (Object[] currInvestObject : incidentsNotClosed) {
                                     JSONObject investObjectsJObj = LPJson.convertArrayRowToJSONObject(getAllFieldNames(fieldsToRetrieveObj), currInvestObject);
-                                    investObjectsJArr.put(investObjectsJObj);
+                                    investObjectsJArr.add(investObjectsJObj);
                                 }
                             }
                             investigationJObj.put(TblsProcedure.TablesProcedure.INVEST_OBJECTS.getTableName(), investObjectsJArr);
-                            investigationJArr.put(investigationJObj);
+                            investigationJArr.add(investigationJObj);
                         }
                     }
                     Rdbms.closeRdbms();
@@ -490,7 +490,7 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                     for (Object[] curRow : materialInfo) {
                         JSONObject jObj2 = new JSONObject();
                         jObj2 = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(flds), curRow);
-                        jArr.put(jObj2);
+                        jArr.add(jObj2);
                     }
 
                     Rdbms.closeRdbms();
@@ -530,7 +530,7 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                                 for (String curAna: analysisListStr.toString().split("\\|")){
                                     JSONObject jObj=new JSONObject();
                                     jObj.put("name", curAna);
-                                    analysisJArr.put(jObj);
+                                    analysisJArr.add(jObj);
                                 }
                                 jObj2.put("analysis_list", analysisJArr);
                             }
@@ -544,7 +544,7 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                                 for (String curVar: variationsListStr.toString().split("\\|")){
                                     JSONObject jObj=new JSONObject();
                                     jObj.put("name", curVar);
-                                    variationsJArr.put(jObj);
+                                    variationsJArr.add(jObj);
                                 }
                                 jObj2.put("variations_list", variationsJArr);
                             }
@@ -553,13 +553,13 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                         whereObj.addConstraint(TblsInspLotRMConfig.SpecLimits.CODE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{curSpecCode}, null);
                         whereObj.addConstraint(TblsInspLotRMConfig.SpecLimits.CONFIG_VERSION, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{curSpecConfigVersion}, null);
                         
-                        JSONArray specRulesInfo = QueryUtilities.dbRowsToJsonArr(procInstanceName, procInstanceName, TblsCnfg.TablesConfig.SPEC_RULES, 
+                        JSONArray specRulesInfo = QueryUtilities.dbRowsToJsonArrSimpleJson(procInstanceName, procInstanceName, TblsCnfg.TablesConfig.SPEC_RULES, 
                         EnumIntTableFields.getTableFieldsFromString(TblsCnfg.TablesConfig.SPEC_RULES, "ALL"),
                         whereObj, new String[]{}, null, true);
                         jObj2.put(TblsCnfg.TablesConfig.SPEC_RULES.getTableName(), specRulesInfo);
                         
                         JSONArray specRulesCardArr=new JSONArray();
-                        if (specRulesInfo != null && specRulesInfo.length() > 0) {
+                        if (specRulesInfo != null && specRulesInfo.size() > 0) {
                             JSONObject jsonObject = (JSONObject) specRulesInfo.get(0);
 
                             // Iterate through the keys of the JSONObject
@@ -570,7 +570,7 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                                     specRulesCardObj.put(key, jsonObject.get(key));
                                     specRulesCardObj.put("name", key);
                                     specRulesCardObj.put("value", jsonObject.get(key));
-                                    specRulesCardArr.put(specRulesCardObj);
+                                    specRulesCardArr.add(specRulesCardObj);
                                 }
                             }
                         }                        
@@ -587,7 +587,7 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                         for (Object[] curRow2 : specLimitsInfo) {
                             JSONObject jObj3 = new JSONObject();
                             jObj3 = LPJson.convertArrayRowToJSONObject(EnumIntTableFields.getAllFieldNames(fldsSpecLimits), curRow2);
-                            jSpecLimitsArr.put(jObj3);
+                            jSpecLimitsArr.add(jObj3);
                         }
                         jObj2.put(TblsInspLotRMConfig.TablesInspLotRMConfig.SPEC_LIMITS.getTableName(), jSpecLimitsArr);
 
@@ -598,13 +598,13 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                                 JSONObject curTestObj = ReqProcedureDefinitionQueries.getSpecScriptWithSteps(Integer.valueOf(curId),
                                         procReqInstance.getProcedureInstance(), null, null);
                                 if (Boolean.FALSE.equals(curTestObj.isEmpty())) {
-                                    scriptDetail.put(curTestObj);
+                                    scriptDetail.add(curTestObj);
                                 }
                             }
                         }
                         jObj2.put("scripts_detail", scriptDetail);
 
-                        jArr.put(jObj2);
+                        jArr.add(jObj2);
                     }
                     Rdbms.closeRdbms();
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
@@ -628,32 +628,32 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                         whereObj.addConstraint(TblsCnfg.Analysis.CODE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{code}, null);
                     }
                     String repositoryName=LPPlatform.buildSchemaName(procReqInstance.getProcedureInstance(), TblsCnfg.TablesConfig.ANALYSIS.getRepositoryName());
-                    JSONArray mainArr = QueryUtilities.dbRowsToJsonArr(procReqInstance.getProcedureInstance(), repositoryName, TblsCnfg.TablesConfig.ANALYSIS.getTableName(),
-                        EnumIntTableFields.getAllFieldNames(TblsCnfg.TablesConfig.ANALYSIS.getTableFields()),
+                    JSONArray mainArr = QueryUtilities.dbRowsToJsonArrSimpleJson(procReqInstance.getProcedureInstance(), repositoryName, TblsCnfg.TablesConfig.ANALYSIS.getTableName(),
+                        EnumIntTableFields.getAllFieldNames(EnumIntTableFields.getAllFieldNamesFromDatabase(TblsCnfg.TablesConfig.ANALYSIS)),
                         wFldN, wFldV,
                         new String[]{TblsCnfg.Analysis.CODE.getName()}, null, false, false);                    
                     JSONArray dbRowsToJsonArr2 = new JSONArray();                    
-                    for (int i = 0; i < mainArr.length(); i++) {
+                    for (int i = 0; i < mainArr.size(); i++) {
                         JSONObject anajObj = (JSONObject) mainArr.get(i);
                         String curAnalysis = LPNulls.replaceNull(anajObj.get("code")).toString();
-                        JSONArray anaMethod = QueryUtilities.dbRowsToJsonArr(procReqInstance.getProcedureInstance(), repositoryName, TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName(),
-                            EnumIntTableFields.getAllFieldNames(TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableFields()),
+                        JSONArray anaMethod = QueryUtilities.dbRowsToJsonArrSimpleJson(procReqInstance.getProcedureInstance(), repositoryName, TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName(),
+                            EnumIntTableFields.getAllFieldNames(EnumIntTableFields.getAllFieldNamesFromDatabase(TblsCnfg.TablesConfig.ANALYSIS_METHOD)),
                             new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName()},new Object[]{curAnalysis},
                             new String[]{TblsCnfg.AnalysisMethod.ANALYSIS.getName()}, null, false, false);   
                         JSONArray anaMethodArr = new JSONArray();
-                        for (int j = 0; j < anaMethod.length(); j++) {
+                        for (int j = 0; j < anaMethod.size(); j++) {
                             JSONObject anaMethodjObj = (JSONObject) anaMethod.get(j);
                             String curAnaMethod = LPNulls.replaceNull(anaMethodjObj.get(TblsCnfg.AnalysisMethod.METHOD_NAME.getName())).toString();
-                            JSONArray anaMethodParam = QueryUtilities.dbRowsToJsonArr(procReqInstance.getProcedureInstance(), repositoryName, TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(),
-                                EnumIntTableFields.getAllFieldNames(TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableFields()),
+                            JSONArray anaMethodParam = QueryUtilities.dbRowsToJsonArrSimpleJson(procReqInstance.getProcedureInstance(), repositoryName, TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(),
+                                EnumIntTableFields.getAllFieldNames(EnumIntTableFields.getAllFieldNamesFromDatabase(TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS)),
                                 new String[]{TblsCnfg.AnalysisMethodParams.ANALYSIS.getName(), TblsCnfg.AnalysisMethodParams.METHOD_NAME.getName()},
                                 new Object[]{curAnalysis, curAnaMethod},
                                 new String[]{TblsCnfg.AnalysisMethodParams.ANALYSIS.getName()}, null, false, false);   
                             anaMethodjObj.put(TblsCnfg.TablesConfig.ANALYSIS_METHOD_PARAMS.getTableName(), anaMethodParam);
-                            anaMethodArr.put(anaMethodjObj);
+                            anaMethodArr.add(anaMethodjObj);
                         }
                         anajObj.put(TblsCnfg.TablesConfig.ANALYSIS_METHOD.getTableName(), anaMethodArr);
-                        dbRowsToJsonArr2.put(anajObj);
+                        dbRowsToJsonArr2.add(anajObj);
                     }                    
                     Rdbms.closeRdbms();
                     JSONObject jMainObj=new JSONObject();
@@ -756,10 +756,10 @@ public class ClassInspLotRMQueries implements EnumIntQueriesObj {
                                     for (Object[] curSpcRlDet : specRuleDetail) {
                                         specRuleDetailjObj.put(curSpcRlDet[0], curSpcRlDet[1]);
                                     }
-                                    specRuleDetailjArr.put(specRuleDetailjObj);
+                                    specRuleDetailjArr.add(specRuleDetailjObj);
                                     row.put(ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_INFO, specRuleDetailjArr);
                                 }
-                                jArr.put(row);
+                                jArr.add(row);
                             }
                             Rdbms.closeRdbms();
                             this.isSuccess = true;

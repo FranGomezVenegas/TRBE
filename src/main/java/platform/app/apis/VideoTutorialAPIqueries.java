@@ -12,7 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.util.HashMap;
@@ -231,7 +231,7 @@ public class VideoTutorialAPIqueries extends HttpServlet {
                 }
                 JSONArray vidObj=new JSONArray();
                 for (Object[] curVid: videoTutorialsJson){
-                    vidObj.put(curVid[1]);
+                    vidObj.add(curVid[1]);
                 }
                 LPFrontEnd.servletReturnSuccess(request, response, vidObj);
                 return;
@@ -252,13 +252,13 @@ public class VideoTutorialAPIqueries extends HttpServlet {
                     Object curItemParentId=curItem[LPArray.valuePosicInArray(getAllFieldNames(TblsApp.TablesApp.VIDEO_TUTORIAL.getTableFields()), TblsApp.VideoTutorial.PARENT_ID.getName())];
                     if ("0".equalsIgnoreCase(curItemParentId.toString())){
                         itemPosic=LPArray.addValueToArray1D(itemPosic, curItemId.toString());
-                        jArr.put(LPJson.convertArrayRowToJSONObject(getAllFieldNames(TblsApp.TablesApp.VIDEO_TUTORIAL.getTableFields()), curItem));
+                        jArr.add(LPJson.convertArrayRowToJSONObject(getAllFieldNames(TblsApp.TablesApp.VIDEO_TUTORIAL.getTableFields()), curItem));
                     }else{
                         Integer parentValuePosicInArray = LPArray.valuePosicInArray(itemPosic, curItemParentId.toString());
                         if (parentValuePosicInArray!=-1){
                             JSONObject get = (JSONObject) jArr.get(parentValuePosicInArray);
                             get.putIfAbsent("children", LPJson.convertArrayRowToJSONObject(getAllFieldNames(TblsApp.TablesApp.VIDEO_TUTORIAL.getTableFields()), curItem));
-                            jArr.put(parentValuePosicInArray, get);
+                            jArr.add(parentValuePosicInArray, get);
                         }
                     }                   
                 }

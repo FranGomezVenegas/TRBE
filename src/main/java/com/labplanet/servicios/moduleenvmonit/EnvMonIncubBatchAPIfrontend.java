@@ -26,7 +26,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import functionaljavaa.platform.doc.EndPointsToRequirements;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
@@ -189,14 +189,14 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
     }
     
     
-    public static JSONArray getActiveBatchData(String[] fieldsToRetrieve, String[] whereFieldsNameArr, Object[] whereFieldsValueArr){
+    public static org.json.simple.JSONArray getActiveBatchData(String[] fieldsToRetrieve, String[] whereFieldsNameArr, Object[] whereFieldsValueArr){
         ProcedureRequestSession procReqInstance = ProcedureRequestSession.getInstanceForQueries(null, null, false);  
         String procInstanceName= procReqInstance.getProcedureInstance();
         Object[][] activeBatchesList=QueryUtilitiesEnums.getTableData(TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH, 
             EnumIntTableFields.getTableFieldsFromString(TblsEnvMonitData.TablesEnvMonitData.INCUB_BATCH, fieldsToRetrieve),
             whereFieldsNameArr, whereFieldsValueArr, 
             new String[]{TblsEnvMonitData.IncubBatch.NAME.getName()});
-        JSONArray jArr = new JSONArray();
+        org.json.simple.JSONArray jArr = new org.json.simple.JSONArray();
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(activeBatchesList[0][0].toString())) return jArr;
         for (Object[] currBatch: activeBatchesList){
             JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currBatch);
@@ -234,7 +234,7 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                 for (Object[] curLastReading: instrReadings){
                     if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(instrReadings[0][0].toString()))){
                         JSONObject curLastReadingjObj=LPJson.convertArrayRowToJSONObject(tempReadingFldsToRetrieve, curLastReading);
-                        instrLast10ReadingsjArr.put(curLastReadingjObj);
+                        instrLast10ReadingsjArr.add(curLastReadingjObj);
                     }
                 }
             }                    
@@ -242,7 +242,7 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
             Object[] incubBatchContentInfo=incubBatchContentJson(fieldsToRetrieve, currBatch);
             jObj.put("SAMPLES_ARRAY", incubBatchContentInfo[0]);
             jObj.put("NUM_SAMPLES", incubBatchContentInfo[1]);                 
-            jArr.put(jObj);
+            jArr.add(jObj);
         }
         return jArr;
     }
@@ -258,7 +258,7 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                 for (String currSample: samplesArr){
                     String[] currSampleArr=currSample.split(fieldsSeparator);
                     JSONObject jReadingsObj=LPJson.convertArrayRowToJSONObject(fieldsTag, currSampleArr);
-                    jbatchSamplesArr.put(jReadingsObj);
+                    jbatchSamplesArr.add(jReadingsObj);
                 }
                 return new Object[]{jbatchSamplesArr, samplesArr.length};
                 
@@ -280,7 +280,7 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
                     posicObj.put("y", y+1);
                     posicObj.put("posic name", rowsName[x]+colsName[y]);
                     posicObj.put("content", batchContent2D[x][y]);
-                    jbatchSamplesArr.put(posicObj);
+                    jbatchSamplesArr.add(posicObj);
                 }
             }
                 return new Object[]{jbatchSamplesArr, ""};            

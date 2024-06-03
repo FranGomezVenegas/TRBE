@@ -13,7 +13,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
@@ -124,7 +124,7 @@ public class SpecFrontEndUtilities {
                 }
                 curRec = LPArray.addValueToArray1D(curRec, specRule.getRuleRepresentation());
             }
-            jArr.put(LPJson.convertArrayRowToJSONObject(fieldsName, curRec));
+            jArr.add(LPJson.convertArrayRowToJSONObject(fieldsName, curRec));
         }
         return jArr;
     }

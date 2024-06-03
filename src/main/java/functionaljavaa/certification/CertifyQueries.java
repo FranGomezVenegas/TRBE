@@ -14,7 +14,7 @@ import functionaljavaa.requirement.ProcedureDefinitionQueries.ProcBusinessRulesQ
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import trazit.enums.EnumIntTableFields;
 import static trazit.enums.EnumIntTableFields.getAllFieldNames;
@@ -70,7 +70,7 @@ public class CertifyQueries {
                 jObj.put(GlobalAPIsParams.LBL_TABLE, curCertifObj.getTable().getTableName());
                 jObj.put("business_rule_to_enable_id", curCertifObj.getPropertyName());
                 jObj.put("business_rule_value", tagValue);
-                jGlobalArr.put(jObj);
+                jGlobalArr.add(jObj);
             }
         }
         return jGlobalArr;
@@ -112,16 +112,16 @@ public class CertifyQueries {
                                 if (Boolean.FALSE.equals(LPPlatform.LAB_FALSE.equalsIgnoreCase(certifRowAuditInfo[0][0].toString()))){
                                     JSONArray jCertifAuditObjArr=new JSONArray();
                                     for (Object[] curAuditRow: certifRowAuditInfo)
-                                        jCertifAuditObjArr.put(LPJson.convertArrayRowToJSONObject(curCertifObj.getAuditFieldsToGet(), curAuditRow));
+                                        jCertifAuditObjArr.add(LPJson.convertArrayRowToJSONObject(curCertifObj.getAuditFieldsToGet(), curAuditRow));
                                     jObj.put("audit", jCertifAuditObjArr);
                                 }else
                                     jObj.put("audit", "nothing");
                             }
-                            jCertifObjArr.put(jObj);
+                            jCertifObjArr.add(jObj);
                         }
                         JSONObject jCertifObjObj=new JSONObject();
                         jCertifObjObj.put(curCertifObj.toString().toLowerCase(), jCertifObjArr);
-                        jGlobalArr.put(jCertifObjObj);
+                        jGlobalArr.add(jCertifObjObj);
                     }
                 }
             }

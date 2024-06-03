@@ -7,6 +7,8 @@ package lbplanet.utilities;
 
 import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Arrays;
 import lbplanet.utilities.TrazitUtiilitiesEnums.TrazitUtilitiesErrorTrapping;
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -171,6 +173,66 @@ public class LPMath {
         return new InternalMessage(LPPlatform.LAB_TRUE, LPPlatform.LpPlatformSuccess.ALL_FINE, null);
     }
 
+    private static String roundToDecimalPlaces(double value, int decPlaces) {
+        BigDecimal bd = new BigDecimal(Double.toString(value));
+        bd = bd.setScale(decPlaces, RoundingMode.HALF_UP);
+        return bd.toString();
+    }
+
+    public static String[] calculateMin(String[] numArray, Integer decPlaces) {
+        double min = Arrays.stream(numArray)
+                           .mapToDouble(Double::parseDouble)
+                           .min()
+                           .orElseThrow(() -> new IllegalArgumentException("Array is empty"));
+        String originalValue = Double.toString(min);
+        String roundedValue = (decPlaces != null) ? roundToDecimalPlaces(min, decPlaces) : originalValue;
+        return new String[]{originalValue, roundedValue};
+    }
+
+    public static String[] calculateMax(String[] numArray, Integer decPlaces) {
+        double max = Arrays.stream(numArray)
+                           .mapToDouble(Double::parseDouble)
+                           .max()
+                           .orElseThrow(() -> new IllegalArgumentException("Array is empty"));
+        String originalValue = Double.toString(max);
+        String roundedValue = (decPlaces != null) ? roundToDecimalPlaces(max, decPlaces) : originalValue;
+        return new String[]{originalValue, roundedValue};
+    }
+
+    public static String[] calculateAverage(String[] numArray, Integer decPlaces) {
+        double average = Arrays.stream(numArray)
+                               .mapToDouble(Double::parseDouble)
+                               .average()
+                               .orElseThrow(() -> new IllegalArgumentException("Array is empty"));
+        String originalValue = Double.toString(average);
+        String roundedValue = (decPlaces != null) ? roundToDecimalPlaces(average, decPlaces) : originalValue;
+        return new String[]{originalValue, roundedValue};
+    }
+
+    public static String[] calculateStandardDeviation(String[] numArray, Integer decPlaces) {
+        double[] doubleArray = Arrays.stream(numArray)
+                                     .mapToDouble(Double::parseDouble)
+                                     .toArray();
+        double sum = 0.0;
+        double standardDeviation = 0.0;
+        int length = doubleArray.length;
+
+        for (double num : doubleArray) {
+            sum += num;
+        }
+
+        double mean = sum / length;
+
+        for (double num : doubleArray) {
+            standardDeviation += Math.pow(num - mean, 2);
+        }
+
+        double stdDev = Math.sqrt(standardDeviation / length);
+        String originalValue = Double.toString(stdDev);
+        String roundedValue = (decPlaces != null) ? roundToDecimalPlaces(stdDev, decPlaces) : originalValue;
+        return new String[]{originalValue, roundedValue};
+    }
+    
     public static double calculateSD(double numArray[]) {
         double sum = 0.0, standardDeviation = 0.0;
         int length = numArray.length;

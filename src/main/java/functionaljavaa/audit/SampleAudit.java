@@ -23,7 +23,7 @@ import trazit.procedureinstance.deployment.logic.Requirement;
 import functionaljavaa.samplestructure.DataSampleStages;
 import java.util.ArrayList;
 import lbplanet.utilities.LPDate;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntMessages;
