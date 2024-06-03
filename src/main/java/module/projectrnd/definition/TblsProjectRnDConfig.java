@@ -136,7 +136,8 @@ public class TblsProjectRnDConfig {
         SAMPLE_TEMPLATE( "sample_template", LPDatabase.string(), null, new ReferenceFld(GlobalVariables.Schemas.CONFIG.getName(), TblsAppConfig.TablesAppConfig.PERSON.getTableName(), TblsAppConfig.Person.PERSON_ID.getName()), null, null),
         NUM_SAMPLES("num_samples", LPDatabase.integer(), null, null, null, null),
         ADD_ANALYSIS_ON_LOG("add_analysis_on_log", LPDatabase.booleanFld(true), null, null, null, null),
-        ANALYSIS_LIST("analysis_list", LPDatabase.string(), null, null, null, null)
+        ANALYSIS_LIST("analysis_list", LPDatabase.string(), null, null, null, null),
+        FINAL_RESULTS("final_results", LPDatabase.string(), null, null, null, null)        
         ;
         private Methods(String dbObjName, String dbObjType, String fieldMask, ReferenceFld refer, String comment,
                 FldBusinessRules[] fldBusRules){

@@ -21,7 +21,7 @@ import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
 import module.projectrnd.definition.TblsProjectRnDData.TablesProjectRnDData;
-import org.json.JSONArray;
+import org.json.simple.JSONArray;
 import trazit.enums.EnumIntAuditEvents;
 import trazit.enums.EnumIntBusinessRules;
 import trazit.enums.EnumIntEndpoints;
@@ -42,7 +42,7 @@ public class DailyEntryEnums {
         REFERENCE_UPDATED, REFERENCE_CREATED
     }
     public enum DailyEntryAuditEvents implements EnumIntAuditEvents {
-        PROJECT_CREATION, UPDATE_PROJECT,
+        DAILY_ENTRY_CREATION, UPDATE_PROJECT,
         UOM_CONVERSION_ON_CREATION, TURN_AVAILABLE, TURN_UNAVAILABLE,
         RETIRED, UNRETIRED,
         CREATED_QUALIFICATION, ADDED_VARIABLE, COMPLETE_QUALIFICATION, REOPEN_QUALIFICATION, UNLOCK_LOT_ONCE_QUALIFIED, TURN_AVAILABLE_ONCE_QUALIFIED,
@@ -69,7 +69,7 @@ public class DailyEntryEnums {
     public static final String INVENTORY_LOT_CAT = "inventoryLot";
 
     public enum DailyEntryAPIactionsEndpoints implements EnumIntEndpoints {
-        NEW_DAILY_ENTRY("NEW_DAILY_ENTRY", null, "", "projectRnDNewProjectCreated_success",
+        NEW_DAILY_ENTRY("NEW_DAILY_ENTRY", null, "", "newDailyEntryCreated_success",
                 new LPAPIArguments[]{new LPAPIArguments("dailyEntryName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments("projectName", LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
                     new LPAPIArguments("purpose", LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
@@ -79,7 +79,7 @@ public class DailyEntryEnums {
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TablesProjectRnDData.PROJECT.getTableName()).build()).build(),
                 null, null),
-        DAILY_ENTRY_ADDPICTURE("DAILY_ENTRY_ADDPICTURE", null, "", "projectRnDNewProjectCreated_success",
+        DAILY_ENTRY_ADDPICTURE("DAILY_ENTRY_ADDPICTURE", null, "", "pictureAddedToDailyEntry_success",
                 new LPAPIArguments[]{new LPAPIArguments("dailyEntryName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments("projectName", LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
                     new LPAPIArguments("picture", LPAPIArguments.ArgumentType.PICTURE.toString(), false, 8),
@@ -89,7 +89,7 @@ public class DailyEntryEnums {
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TablesProjectRnDData.PROJECT.getTableName()).build()).build(),
                 null, null),
-        DAILY_ENTRY_ADDAWSATTACHMENT("DAILY_ENTRY_ADDAWSATTACHMENT", null, "", "projectRnDNewProjectCreated_success",
+        DAILY_ENTRY_ADDAWSATTACHMENT("DAILY_ENTRY_ADDAWSATTACHMENT", null, "", "attachmentAddedToDailyEntry_success",
                 new LPAPIArguments[]{new LPAPIArguments("dailyEntryName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments("projectName", LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
                     new LPAPIArguments("file", LPAPIArguments.ArgumentType.FILE.toString(), false, 8),
@@ -99,7 +99,7 @@ public class DailyEntryEnums {
                 Json.createArrayBuilder().add(Json.createObjectBuilder().add(GlobalAPIsParams.LBL_REPOSITORY, GlobalVariables.Schemas.APP.getName())
                         .add(GlobalAPIsParams.LBL_TABLE, TablesProjectRnDData.PROJECT.getTableName()).build()).build(),
                 null, null),
-        DAILY_ENTRY_ADDURLATTACHMENT("DAILY_ENTRY_ADDURLATTACHMENT", null, "", "projectRnDNewProjectCreated_success",
+        DAILY_ENTRY_ADDURLATTACHMENT("DAILY_ENTRY_ADDURLATTACHMENT", null, "", "attachmentUrlAddedToDailyEntry_success",
                 new LPAPIArguments[]{new LPAPIArguments("dailyEntryName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments("projectName", LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
                     new LPAPIArguments("url", LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
@@ -110,7 +110,7 @@ public class DailyEntryEnums {
                         .add(GlobalAPIsParams.LBL_TABLE, TablesProjectRnDData.PROJECT.getTableName()).build()).build(),
                 null, null),
         
-        DAILY_ENTRY_ADDNOTE("DAILY_ENTRY_ADDNOTE", null, "", "projectRnDNewProjectCreated_success",
+        DAILY_ENTRY_ADDNOTE("DAILY_ENTRY_ADDNOTE", null, "", "noteAddedToDailyEntry_success_success",
                 new LPAPIArguments[]{new LPAPIArguments("dailyEntryName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                     new LPAPIArguments("projectName", LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
                     new LPAPIArguments("note", LPAPIArguments.ArgumentType.STRING.toString(), true, 8),

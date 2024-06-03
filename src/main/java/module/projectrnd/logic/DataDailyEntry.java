@@ -14,7 +14,7 @@ import lbplanet.utilities.LPFilesTools;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPaws;
-import module.projectrnd.definition.ProjectsRnDEnums;
+import module.projectrnd.definition.DailyEntryEnums;
 import module.projectrnd.definition.TblsProjectRnDData;
 import module.projectrnd.definition.TblsProjectRnDData.TablesProjectRnDData;
 import trazit.enums.EnumIntAuditEvents;
@@ -93,21 +93,24 @@ public class DataDailyEntry {
         }
         Object[][] referenceInfo = null;
         
-        fldNames = LPArray.addValueToArray1D(fldNames, TblsProjectRnDData.Project.NAME.getName());
+        fldNames = LPArray.addValueToArray1D(fldNames, TblsProjectRnDData.RdDailyEntry.NAME.getName());
+        fldValues = LPArray.addValueToArray1D(fldValues, dailyEntryName);
+
+        fldNames = LPArray.addValueToArray1D(fldNames, TblsProjectRnDData.RdDailyEntry.PROJECT.getName());
         fldValues = LPArray.addValueToArray1D(fldValues, projectName);
 
-        fldNames = LPArray.addValueToArray1D(fldNames, new String[]{TblsProjectRnDData.Project.CREATED_ON.getName(), TblsProjectRnDData.Project.CREATED_BY.getName()});
+        fldNames = LPArray.addValueToArray1D(fldNames, new String[]{TblsProjectRnDData.RdDailyEntry.CREATED_ON.getName(), TblsProjectRnDData.Project.CREATED_BY.getName()});
         fldValues = LPArray.addValueToArray1D(fldValues, new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName()});
 
-        RdbmsObject invLotCreationDiagn = Rdbms.insertRecordInTable(TablesProjectRnDData.PROJECT, fldNames, fldValues);
+        RdbmsObject invLotCreationDiagn = Rdbms.insertRecordInTable(TablesProjectRnDData.RD_DAILY_ENTRY, fldNames, fldValues);
         if (Boolean.FALSE.equals(invLotCreationDiagn.getRunSuccess())) {
             return new InternalMessage(LPPlatform.LAB_FALSE, invLotCreationDiagn.getErrorMessageCode(), new Object[]{projectName}, null);
         }
-        AppProjectRnDAudit(ProjectsRnDEnums.ProjectRnDAuditEvents.PROJECT_CREATION, projectName, TablesProjectRnDData.PROJECT.getTableName(), projectName,
+        AppProjectRnDAudit(DailyEntryEnums.DailyEntryAuditEvents.DAILY_ENTRY_CREATION, projectName, TablesProjectRnDData.RD_DAILY_ENTRY.getTableName(), dailyEntryName,
                 fldNames, fldValues);        
         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesProjectRnDData.PROJECT.getTableName(), projectName);
-        messages.addMainForSuccess(ProjectsRnDEnums.ProjectRnDAPIactionsEndpoints.NEW_PROJECT, new Object[]{projectName});
-        return new InternalMessage(LPPlatform.LAB_TRUE, ProjectsRnDEnums.ProjectRnDAPIactionsEndpoints.NEW_PROJECT, new Object[]{projectName}, projectName);
+        messages.addMainForSuccess(DailyEntryEnums.DailyEntryAPIactionsEndpoints.NEW_DAILY_ENTRY, new Object[]{dailyEntryName, projectName});
+        return new InternalMessage(LPPlatform.LAB_TRUE, DailyEntryEnums.DailyEntryAPIactionsEndpoints.NEW_DAILY_ENTRY, new Object[]{dailyEntryName, projectName}, dailyEntryName);
     }
 
     private InternalMessage updateLotTransaction(EnumIntEndpoints actionObj, EnumIntAuditEvents auditEventObj, String[] extraFldNames, Object[] extraFldValues) {
@@ -203,7 +206,11 @@ public class DataDailyEntry {
             procReqSession.getToken().getPersonName(), LPDate.getCurrentTimeStamp()});
         RdbmsObject insertRecordInTable = Rdbms.insertRecord(TblsProjectRnDData.TablesProjectRnDData.PROJECT_NOTES, 
                 fldNames, fldValues, procReqSession.getProcedureInstance());
-        return new InternalMessage(insertRecordInTable.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), null);
+        if (insertRecordInTable.getRunSuccess()){
+            return new InternalMessage(LPPlatform.LAB_TRUE,DailyEntryEnums.DailyEntryAPIactionsEndpoints.DAILY_ENTRY_ADDNOTE, new Object[]{this.dailyEntryName}, null);
+        }else{
+            return new InternalMessage(LPPlatform.LAB_FALSE, insertRecordInTable.getErrorMessageCode(), insertRecordInTable.getErrorMessageVariables(), null);            
+        }
     }
     /*
     public InternalMessage turnAvailable(String[] fldNames, Object[] fldValues) {

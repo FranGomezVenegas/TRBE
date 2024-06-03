@@ -8,9 +8,11 @@ import databases.features.Token;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import trazit.session.ResponseMessages;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPDatabase;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import module.methodvalidation.definition.MethodValidationEnums;
 import module.methodvalidation.definition.TblsMethodValidationData;
 import module.methodvalidation.logic.DataMethValSample;
 import module.projectrnd.definition.ProjectsRnDEnums;
@@ -32,10 +34,10 @@ import static module.projectrnd.logic.AppProjectRnDAudit.AppProjectRnDAudit;
 public class DataProjectRnD {
 
     /**
-     * @return the formulaName
+     * @return the projectName
      */
     public String getFormulaName() {
-        return formulaName;
+        return projectName;
     }
 
     /**
@@ -45,7 +47,7 @@ public class DataProjectRnD {
     /**
      * @return the category
      */
-    private final String formulaName;
+    private final String projectName;
     private Boolean isLocked;
     private Boolean isRetired;
     private String lockedReason;
@@ -64,14 +66,14 @@ public class DataProjectRnD {
                 new String[]{TblsProjectRnDData.Project.NAME.getName()},
                 new Object[]{projectName}, getAllFieldNames(TblsProjectRnDData.TablesProjectRnDData.PROJECT.getTableFields()));
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projectRnDinfo[0][0].toString())) {
-            this.formulaName = null;
+            this.projectName = null;
             this.hasError = true;
             this.errorDetail = new InternalMessage(LPPlatform.LAB_FALSE, Rdbms.RdbmsErrorTrapping.RDBMS_RECORD_NOT_FOUND, new Object[]{projectName, TablesProjectRnDData.PROJECT.getTableName(), LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName())}, projectName);
         } else {
             this.hasError = false;
             this.formulaFieldNames = getAllFieldNames(TblsProjectRnDData.TablesProjectRnDData.PROJECT.getTableFields());
             this.formulaFieldValues = projectRnDinfo[0];
-            this.formulaName = LPNulls.replaceNull(projectRnDinfo[0][LPArray.valuePosicInArray(formulaFieldNames, TblsProjectRnDData.Project.NAME.getName())]).toString();
+            this.projectName = LPNulls.replaceNull(projectRnDinfo[0][LPArray.valuePosicInArray(formulaFieldNames, TblsProjectRnDData.Project.NAME.getName())]).toString();
             this.isLocked = Boolean.valueOf(LPNulls.replaceNull(projectRnDinfo[0][LPArray.valuePosicInArray(formulaFieldNames, TblsProjectRnDData.Project.IS_LOCKED.getName())]).toString());
             if (this.isLocked == null) {
                 this.isLocked = false;
@@ -119,7 +121,7 @@ public class DataProjectRnD {
     }
 
     
-    public static InternalMessage createNewAnalyticalSequence(String analyticalSequenceName, String analyticalParameter, String projectName, String[] fldNames, Object[] fldValues) {
+    public static InternalMessage createNewAnalyticalSequence(String analyticalSequenceName, String analyticalParameter, String projectName, String[] fldNames, Object[] fldValues, Integer numSamplesToLog) {
         ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
         Object[] existMethod = Rdbms.existsRecord(TablesProjectRnDData.METHOD_DEVELOPMENT_SEQUENCE, 
                 new String[]{TblsProjectRnDData.MethodDevelopmentSequence.NAME.getName(), TblsProjectRnDData.MethodDevelopmentSequence.PROJECT.getName()}, 
@@ -145,10 +147,13 @@ public class DataProjectRnD {
                 fldNames, fldValues);        
 
         if (analyticalParameter!=null&&analyticalParameter.length()>0){
-            Integer fldPosic=LPArray.valuePosicInArray(fldNames, TblsMethodValidationData.ValidationMethodParams.NUM_SAMPLES.getName());
+            if (numSamplesToLog==null){
+                Integer fldPosic=LPArray.valuePosicInArray(fldNames, TblsMethodValidationData.ValidationMethodParams.NUM_SAMPLES.getName());
+                numSamplesToLog=(fldPosic==-1)? null:Integer.valueOf(fldValues[fldPosic].toString());
+            }
             DataMethValSample MethSmp= new DataMethValSample();
             MethSmp.logAnalyticalParameterSamplelogParameterSample(projectName, analyticalSequenceName, analyticalParameter, null, null, 
-                (fldPosic==-1)? null:Integer.valueOf(fldValues[fldPosic].toString()));
+                numSamplesToLog);
         }
         
         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesProjectRnDData.PROJECT.getTableName(), projectName);
@@ -174,6 +179,38 @@ public class DataProjectRnD {
         messages.addMainForSuccess(actionObj, new Object[]{this.getFormulaName()});
         return new InternalMessage(LPPlatform.LAB_TRUE, actionObj, new Object[]{this.getFormulaName()}, this.getFormulaName());
     }
+    public static InternalMessage updateTestAttribute(Integer testId, String attrName, String attrValue) {
+        RelatedObjects rObj = RelatedObjects.getInstanceForActions();
+        
+        ProcedureRequestSession procReqSession = ProcedureRequestSession.getInstanceForActions(null, null, null);
+        ResponseMessages messages = procReqSession.getMessages();
+        Token token = procReqSession.getToken();
+        Integer fldPosicInArray = EnumIntTableFields.getFldPosicInArray(TblsMethodValidationData.TablesMethodValidationData.SAMPLE_ANALYSIS.getTableFields(), attrName);
+        if (fldPosicInArray==-1)
+            return new InternalMessage(LPPlatform.LAB_FALSE, MethodValidationEnums.ProjectRnDErrorTrapping.ATTRIBUTE_NOT_FOUND, new Object[]{attrName}, null);
+        String[] fldNames = new String[]{attrName};
+        
+        EnumIntTableFields tableFieldDefinition = TblsMethodValidationData.TablesMethodValidationData.SAMPLE_ANALYSIS.getTableFields()[fldPosicInArray];
+        Object[] fldValues = new Object[]{};
+        if (LPDatabase.integer().equalsIgnoreCase(tableFieldDefinition.getFieldType())){
+            fldValues=new Object[]{Integer.valueOf(attrValue)};
+        }else{
+            fldValues=new Object[]{attrValue};
+        }
+                
+        SqlWhere wObj=new SqlWhere();
+        wObj.addConstraint(TblsMethodValidationData.SampleAnalysis.TEST_ID, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{testId}, null);
+        RdbmsObject invLotCreationDiagn = Rdbms.updateTableRecordFieldsByFilter(TblsMethodValidationData.TablesMethodValidationData.SAMPLE_ANALYSIS, 
+            EnumIntTableFields.getTableFieldsFromString(TblsMethodValidationData.TablesMethodValidationData.SAMPLE_ANALYSIS, fldNames), fldValues, wObj, procReqSession.getProcedureInstance());
+        if (Boolean.FALSE.equals(invLotCreationDiagn.getRunSuccess())) {
+            return new InternalMessage(LPPlatform.LAB_FALSE, invLotCreationDiagn.getErrorMessageCode(), new Object[]{attrName.replace("_", " ")}, null);
+        }
+/*        AppProjectRnDAudit(ProjectsRnDEnums.ProjectRnDAuditEvents.TEST_ATTRIBUTE_UPDATE, attrName, TblsMethodValidationData.TablesMethodValidationData.SAMPLE_ANALYSIS.getTableName(), testId.toString(),
+            fldNames, fldValues, this.projectName);        */
+
+        return new InternalMessage(LPPlatform.LAB_TRUE, MethodValidationEnums.MethodValidationAPIactionsEndpoints.NEW_PARAMETER, new Object[]{attrName.replace("_", " ")}, testId);
+    }
+    
 /*
     public InternalMessage turnAvailable(String[] fldNames, Object[] fldValues) {
         if (Boolean.TRUE.equals(this.getRequiresQualification()) && Boolean.FALSE.equals(this.getIsQualified())){

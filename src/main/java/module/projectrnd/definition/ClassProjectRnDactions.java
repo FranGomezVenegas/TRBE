@@ -18,6 +18,8 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPPlatform.ApiErrorTraping;
+import module.methodvalidation.logic.DataMethValSample;
+import module.monitoring.definition.TblsEnvMonitData;
 import module.projectrnd.definition.ProjectsRnDEnums.ProjectRnDAPIactionsEndpoints;
 import module.projectrnd.definition.TblsProjectRnDData.TablesProjectRnDData;
 import module.projectrnd.logic.DataProjectRnD;
@@ -64,24 +66,43 @@ public class ClassProjectRnDactions implements ActionsClass{
             return;
         }        
         DataProjectRnD projectRnDObj = null;
+        DataMethodDevSeq medDevSequenceObj = null;
+
         String projectName = "";
-        if (Boolean.FALSE.equals("PROJECTAUDIT_SET_AUDIT_ID_REVIEWED".equalsIgnoreCase(endPoint.getName()))) {
-            projectName = argValues[0].toString();
-        }
-        if (Boolean.FALSE.equals("NEW_PROJECT".equalsIgnoreCase(endPoint.getName())) 
-            && Boolean.FALSE.equals(endPoint.getName().toUpperCase().startsWith("CONFIG_"))
-            && Boolean.FALSE.equals("PROJECT_NOTE_REMOVE".equalsIgnoreCase(endPoint.getName()))                 
-            && Boolean.FALSE.equals("PROJECTAUDIT_SET_AUDIT_ID_REVIEWED".equalsIgnoreCase(endPoint.getName()))                
-            ) {
-            projectRnDObj = new DataProjectRnD(projectName);
-            if (Boolean.TRUE.equals(projectRnDObj.getHasError())) {
-                this.actionDiagnosesObj = projectRnDObj.getErrorDetail();
+        String sequenceName = "";
+        String analyticalParameter = "";
+        if ( ("ADD_SAMPLE_TO_SEQUENCE".equalsIgnoreCase(endPoint.getName())) ||
+             ("LOG_SAMPLE_TO_SEQUENCE".equalsIgnoreCase(endPoint.getName())) ){   
+            sequenceName = argValues[0].toString();
+            analyticalParameter = argValues[1].toString();
+            projectName = argValues[2].toString();      
+            medDevSequenceObj = new DataMethodDevSeq(sequenceName, analyticalParameter, projectName);
+            if (Boolean.TRUE.equals(medDevSequenceObj.getHasError())) {
+                this.actionDiagnosesObj = medDevSequenceObj.getErrorDetail();
                 this.relatedObj = rObj;
                 rObj.killInstance();
-                projectRnDObj = null;
+                medDevSequenceObj = null;
                 return;
+            }          
+        }else{
+            if (Boolean.FALSE.equals("PROJECTAUDIT_SET_AUDIT_ID_REVIEWED".equalsIgnoreCase(endPoint.getName()))) {
+                projectName = argValues[0].toString();
             }
-        }
+            if (Boolean.FALSE.equals("NEW_PROJECT".equalsIgnoreCase(endPoint.getName())) 
+                && Boolean.FALSE.equals(endPoint.getName().toUpperCase().startsWith("CONFIG_"))
+                && Boolean.FALSE.equals("PROJECT_NOTE_REMOVE".equalsIgnoreCase(endPoint.getName()))                 
+                && Boolean.FALSE.equals("PROJECTAUDIT_SET_AUDIT_ID_REVIEWED".equalsIgnoreCase(endPoint.getName()))                
+                ) {
+                projectRnDObj = new DataProjectRnD(projectName);
+                if (Boolean.TRUE.equals(projectRnDObj.getHasError())) {
+                    this.actionDiagnosesObj = projectRnDObj.getErrorDetail();
+                    this.relatedObj = rObj;
+                    rObj.killInstance();
+                    projectRnDObj = null;
+                    return;
+                }
+            }
+}
         this.enumConstantByName=endPoint;
         this.functionFound = true;
         switch (endPoint) {
@@ -118,11 +139,12 @@ public class ClassProjectRnDactions implements ActionsClass{
             case NEW_ANALYTICAL_SEQUENCE:
                 String analyticalSequenceName = LPNulls.replaceNull(argValues[1]).toString();
                 String analyticalPurpose = LPNulls.replaceNull(argValues[2]).toString();
-                String analyticalParameter = LPNulls.replaceNull(argValues[3]).toString();
+                analyticalParameter = LPNulls.replaceNull(argValues[3]).toString();
                 purpose = LPNulls.replaceNull(argValues[4]).toString();                
                 responsible = LPNulls.replaceNull(argValues[5]).toString();
-                fldNamesStr = argValues[5].toString();
-                fldValuesStr = argValues[6].toString();
+                String numSamplesStr = LPNulls.replaceNull(argValues[6]).toString();
+                fldNamesStr = argValues[7].toString();
+                fldValuesStr = argValues[8].toString();
                 //? 1 : Integer.valueOf(LPNulls.replaceNull(argValues[15].toString()));
                 fieldNames = null;
                 fieldValues = null;
@@ -150,7 +172,56 @@ public class ClassProjectRnDactions implements ActionsClass{
                     fieldNames = LPArray.addValueToArray1D(fieldNames, TblsProjectRnDData.MethodDevelopmentSequence.RESPONSIBLE.getName());
                     fieldValues = LPArray.addValueToArray1D(fieldValues, responsible);                    
                 }
-                actionDiagnoses = DataProjectRnD.createNewAnalyticalSequence(analyticalSequenceName, analyticalParameter, projectName, fieldNames, fieldValues);
+                actionDiagnoses = DataProjectRnD.createNewAnalyticalSequence(analyticalSequenceName, analyticalParameter, projectName, fieldNames, fieldValues, numSamplesStr.length()==0?null:Integer.valueOf(numSamplesStr));
+                break;
+            case ADD_SAMPLE_TO_SEQUENCE:
+                String numSamplesToLogStr=LPNulls.replaceNull(argValues[3]).toString();
+                fieldNames = null;
+                fieldValues = null;
+                if (LPNulls.replaceNull(argValues[4]).toString().length() > 0) {
+                    fieldNames = argValues[6].toString().split("\\|");                        
+                    fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(argValues[5].toString().split("\\|"),
+                    TblsEnvMonitData.TablesEnvMonitData.SAMPLE, fieldNames);
+                    if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                        actionDiagnoses = (InternalMessage) fieldValues[1];
+                    }
+                }
+                if (fieldNames != null) {
+                    Object[] checkTwoArraysSameLength = LPArray.checkTwoArraysSameLength(fieldNames, fieldValues);
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(checkTwoArraysSameLength[0].toString())) {
+                        actionDiagnoses=new InternalMessage(LPPlatform.LAB_FALSE, checkTwoArraysSameLength[checkTwoArraysSameLength.length - 1].toString(), null, null);
+                    }
+                }
+                if (actionDiagnoses == null) {
+                    DataMethValSample MethSmp= new DataMethValSample();
+                    actionDiagnoses = MethSmp.logAnalyticalParameterSamplelogParameterSample(projectName, sequenceName, analyticalParameter, fieldNames, fieldValues, 
+                        numSamplesToLogStr.length()==0?1:Integer.valueOf(numSamplesToLogStr));
+                }
+                break;
+            case LOG_SAMPLE_TO_SEQUENCE:
+                String analysisList=LPNulls.replaceNull(argValues[3]).toString();
+                numSamplesToLogStr=LPNulls.replaceNull(argValues[4]).toString();
+                fieldNames = null;
+                fieldValues = null;
+                if (LPNulls.replaceNull(argValues[5]).toString().length() > 0) {
+                    fieldNames = argValues[7].toString().split("\\|");                        
+                    fieldValues = LPArray.convertStringWithDataTypeToObjectArrayInternalMessage(argValues[6].toString().split("\\|"),
+                    TblsEnvMonitData.TablesEnvMonitData.SAMPLE, fieldNames);
+                    if (fieldValues != null && LPPlatform.LAB_FALSE.equalsIgnoreCase(fieldValues[0].toString())) {
+                        actionDiagnoses = (InternalMessage) fieldValues[1];
+                    }
+                }
+                if (fieldNames != null) {
+                    Object[] checkTwoArraysSameLength = LPArray.checkTwoArraysSameLength(fieldNames, fieldValues);
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(checkTwoArraysSameLength[0].toString())) {
+                        actionDiagnoses=new InternalMessage(LPPlatform.LAB_FALSE, checkTwoArraysSameLength[checkTwoArraysSameLength.length - 1].toString(), null, null);
+                    }
+                }
+                if (actionDiagnoses == null) {
+                    DataMethValSample MethSmp= new DataMethValSample();
+                    actionDiagnoses = MethSmp.logAnalyticalParameterSamplelogParameterSample(projectName, sequenceName, analyticalParameter, fieldNames, fieldValues, 
+                        numSamplesToLogStr.length()==0?1:Integer.valueOf(numSamplesToLogStr));
+                }       
                 break;
             case PROJECT_NOTE_REMOVE:
                 Integer noteId =Integer.valueOf(argValues[0].toString());
@@ -164,6 +235,14 @@ public class ClassProjectRnDactions implements ActionsClass{
                 RdbmsObject removeRecordInTable = Rdbms.removeRecordInTable(TblsProjectRnDData.TablesProjectRnDData.PROJECT_NOTES, whereObj, procReqSession.getProcedureInstance());
                 actionDiagnoses=new InternalMessage(removeRecordInTable.getRunSuccess()?LPPlatform.LAB_TRUE:LPPlatform.LAB_FALSE, 
                         removeRecordInTable.getErrorMessageCode(), removeRecordInTable.getErrorMessageVariables(), null);
+                break;
+            case UPDATE_TEST_ATTRIBUTE:
+                String testIdStr = LPNulls.replaceNull(argValues[1]).toString();
+                String attrName = argValues[2].toString();
+                String attrValue = argValues[3].toString();                
+                actionDiagnoses = DataProjectRnD.updateTestAttribute(Integer.valueOf(testIdStr), attrName, attrValue);
+                break;
+                
 /*            case FORMULA_ADD_INGREDIENT:
                 String ingredient = argValues[1].toString();
                 String quantity = argValues[2].toString();
@@ -462,7 +541,7 @@ public class ClassProjectRnDactions implements ActionsClass{
         }
 
         this.actionDiagnosesObj = actionDiagnoses;
-
+        this.messageDynamicData=actionDiagnoses.getMessageCodeVariables();
         rObj.addSimpleNode(LPPlatform.buildSchemaName(procReqSession.getProcedureInstance(), GlobalVariables.Schemas.DATA.getName()), TablesProjectRnDData.PROJECT.getTableName(), projectName);
         this.relatedObj = rObj;
         projectRnDObj = null;

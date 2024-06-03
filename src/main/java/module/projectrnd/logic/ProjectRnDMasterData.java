@@ -28,7 +28,7 @@ public class ProjectRnDMasterData implements FrontendMasterData{
         SqlWhere wObj=new SqlWhere();
         wObj.addConstraint(TblsCnfg.Analysis.ACTIVE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{true}, null);
         jSummaryObj.put(TblsCnfg.TablesConfig.ANALYSIS.getTableName(),
-                QueryUtilities.dbRowsToJsonArr(alternativeProcInstanceName, alternativeProcInstanceName, TblsCnfg.TablesConfig.ANALYSIS, 
+                QueryUtilities.dbRowsToJsonArrSimpleJson(alternativeProcInstanceName, alternativeProcInstanceName, TblsCnfg.TablesConfig.ANALYSIS, 
                 getAllFieldNamesFromDatabase(TblsCnfg.TablesConfig.ANALYSIS, alternativeProcInstanceName), 
                 wObj, new String[]{TblsCnfg.Analysis.CODE.getName()}, null, true));
 
@@ -39,7 +39,7 @@ public class ProjectRnDMasterData implements FrontendMasterData{
         wObj.addConstraint(TblsProjectRnDConfig.Ingredients.ACTIVE, SqlStatement.WHERECLAUSE_TYPES.EQUAL, new Object[]{true}, null);
         
         jSummaryObj.put(TblsProjectRnDConfig.TablesProjectRnDConfig.INGREDIENTS.getTableName(),
-                QueryUtilities.dbRowsToJsonArr(alternativeProcInstanceName, alternativeProcInstanceName, TblsProjectRnDConfig.TablesProjectRnDConfig.INGREDIENTS, 
+                QueryUtilities.dbRowsToJsonArrSimpleJson(alternativeProcInstanceName, alternativeProcInstanceName, TblsProjectRnDConfig.TablesProjectRnDConfig.INGREDIENTS, 
                 getAllFieldNamesFromDatabase(TblsProjectRnDConfig.TablesProjectRnDConfig.INGREDIENTS, alternativeProcInstanceName), 
                 wObj, new String[]{TblsProjectRnDConfig.Ingredients.NAME.getName()}, null, true));
 
